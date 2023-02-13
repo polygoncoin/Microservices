@@ -72,17 +72,18 @@ foreach(explode('/', $_SERVER['REQUEST_URI']) as $element) {
 if (!file_exists(__DIR__ . '/crud/' . $method . '/'. $routes['file'])) {
     echo '{"status":501,"message":"Crud file missing"}';die;
 }
-include __DIR__ . '/crud/' . $method . '/'. $file;
+include __DIR__ . '/crud/' . $method . '/'. $routes['file'];
 //validate payload params
 $params = $config['uriParams'];
 if (in_array($method, ['POST', 'PUT'])) {
-    $payloadKeys = array_keys($payload);
-    foreach (array_merge($config['payload']['required'], $config['payload']['optional']) as $value) {
-        if (!in_array($value, $payloadKeys)) {
-            echo '{"status":404,"message":"Missing param \''.$value.'\' in payload"}';die;
-        } else {
-            $params[':'.$value] = $payload[$value];
-    
+    $payloadKeys = array_keys($payload['required']);
+    if (isset($config['payload'])) {
+        foreach (array_merge($config['payload']['required'], $config['payload']['optional']) as $value) {
+            if (!in_array($value, $payloadKeys)) {
+                echo '{"status":404,"message":"Missing required param \''.$value.'\' in payload"}';die;
+            } elseif (isset($payload[$value])) {
+                $params[':'.$value] = $payload[$value];
+            }
         }
     }
 }

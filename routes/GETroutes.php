@@ -3,7 +3,7 @@
 //reserved keywords are 'required' & 'optional' & 'file'
 $routes = [
     'crud' => [
-        'file' => 'crud.php',
+        '__file__' => 'crud.php',
         '{int}'  => ['file' => 'crud.php']
     ]
 ];

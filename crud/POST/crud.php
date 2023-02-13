@@ -1,22 +1,23 @@
 <?php
-$query = 'INSERT INTO table SET __COLS__;';
-$params = [];
-if ($element !== 'int') {
-    $config = [
-        'uri' => '/crud',
+$uriConfig = [
+    'uri' => '/crud/{tableName}',
+];
+$columnsConfig = [
+    'table0' => [
         'payload' => [
             'required' => [],
             'optional' => []
-        ],
-        'session' = []
-    ];
-} else {
-    $config = [
-        'uri' => '/crud/{crudID}',
-        'payload' => [//$payload
+        ]
+    ],
+    'table1' => [
+        'payload' => [
             'required' => [],
             'optional' => []
-        ],
-        'session' = []
-    ];
+        ]
+    ]
+]
+if (!in_array($uriParams[':tableName'], array_keys($config))) {
+
 }
+$query = "INSERT INTO {$uriParams[':tableName']} SET __COLS__;";
+$params = [];

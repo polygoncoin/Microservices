@@ -2,20 +2,23 @@
 //$uriParams,
 //$payload
 $queries = [
-    ['SELECT * FROM table __WHERE__;', []],
-    'key1' => ['SELECT * FROM table __WHERE__;', []],
-    'key2' => ['SELECT * FROM table __WHERE__;', []]
+    'key1' => ['SELECT * FROM table __WHERE__;'],
+    'key2' => ['SELECT * FROM table __WHERE__;']
 ];
-if ($element !== 'int') {
+if ($pos !== 0) {
     $config = [
         'uri' => '/crud',
-        'uriParams' => [],
-        'session' = []//if set these will be required always.
+        'payload' => [
+            'required' => [],
+            'optional' => []
+        ]
     ];
 } else {
     $config = [
         'uri' => '/crud/{crud_id}',
-        'uriParams' => [':crud_id' => $uriParams[1]],
-        'session' = []
+        'payload' => [
+            'required' => [],
+            'optional' => []
+        ]
     ];
 }
