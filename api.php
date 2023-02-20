@@ -65,14 +65,27 @@ if (!isset($_SESSION['user']['id'])) {
 $method = $_SERVER['REQUEST_METHOD'];
 //include method route file.
 define('__DOC_ROOT__',__DIR__);
-if (file_exists(__DOC_ROOT__ . '/routes/' . $method . 'routes.php')) {
-    include __DOC_ROOT__ . '/routes/' . $method . 'routes.php';
+$REQUEST_URI = trim($_GET['REQUEST_URI'], '/');
+if ((strpos($REQUEST_URI, 'crud/') !== false)) {// is a crud operation.
+    $routeFileLocation = __DOC_ROOT__ . '/crudApi/routes/' . $method . 'routes.php';
+} else {
+    $routeFileLocation = __DOC_ROOT__ . '/customApi/routes/' . $method . 'routes.php';
+}
+if (file_exists($routeFileLocation)) {
+    include $routeFileLocation;
 } else {
     return501('Missing' . ' routes file for' . " $method " . 'method');
 }
 // Validate route
 $uriParameters = [];
-foreach(explode('/', trim($_GET['REQUEST_URI'], '/')) as $element) {
+$crud = null;
+foreach(explode('/', $REQUEST_URI) as $element) {
+    if ($element === 'crud' && is_null($crud)) {
+        $crud = true;
+        continue;
+    } else {
+        $crud = false;
+    }
     $pos = false;
     if (isset($routes[$element])) {
         $routes = &$routes[$element];
@@ -129,7 +142,6 @@ if (file_exists($routes['__file__'])) {
     return501('Missing' . ' crud file for' . " $method " . 'method');
 }
 //validate payload params
-$params = $config['uriParams'];
 if (in_array($method, ['POST', 'PUT'])) {
     $payloadKeys = array_keys($payload['required']);
     if (isset($config['payload'])) {
