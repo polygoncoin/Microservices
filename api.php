@@ -1,78 +1,133 @@
 <?php
+function return404($errMessage, $customise = false)
+{
+    if ($customise) {
+        $arr = explode('|', $errMessage);
+        echo json_encode([
+            'status' => 404,
+            'Error' => [
+                'Parameter' => $arr[0],
+                'Supported Values' => explode(',', $arr[1])
+            ]
+        ]);
+    } else {
+        echo '{"status":404,"message":"'.$errMessage.'."}';
+    }
+    die;
+}
+function return501($errMessage)
+{
+    echo '{"status":501,"message":"'.$errMessage.'."}';die;
+}
 header('Content-Type: application/json; charset=utf-8');
+// Get token - START
 $token = null;
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
     $headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
     if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
         $token = $matches[1];
+    } else {
+        return404('Missing token in authorization header');    
     }
+} else {
+    return404('Missing authorization header');
 }
-if (!$token) {
-    echo '{"status":401,"message":"Missing token"}';die;
+if (empty($token)) {
+    return404('Missing token');
 }
-if (!isset($_GET['crud']) {
-    echo '{"status":404,"message":"Missing required params"}';die;
-}
+// Get token - END
 
-define('REDIS_HOST','127.0.0.1');
-define('REDIS_PORT','6379');
-
+// Check token - START
+// connection to Redis server for tokens.
+define('TOKEN_REDIS_HOST','127.0.0.1');
+define('TOKEN_REDIS_PORT','6379');
 $redis = new Redis();
-$redis->connect(REDIS_HOST, REDIS_PORT, 1, NULL, 100);
-
+$redis->connect(TOKEN_REDIS_HOST, TOKEN_REDIS_PORT, 1, NULL, 100);
 try {
     $redis->ping();
 } catch (Exception $e) {
-    echo '{"status":501,"message":"REDIS NOT CONNECTED '.$e->getMessage().'"}';
+    return501('Unable to connect to token cache server');
 }
+
 //check token in redis.
-if ($sess = $redis->get($token)) {
-    $_SESSION = json_decode($sess, true);
-    unset($sess);
+if ($redis->exists($token)) {
+    $_SESSION = json_decode($redis->get($token), true);
 } else {
-    echo '{"status":401,"message":"Token expired"}';die;
+    return404('Token expired');
 }
+$redis = null;
+// Check token - END
 //check session
 if (!isset($_SESSION['user']['id'])) {
-    echo '{"status":401,"message":"Invalid token"}';die;
+    return404('Invalid token');
 }
 //collect params in $_POST
 $method = $_SERVER['REQUEST_METHOD'];
-if (in_array($method, ['POST', 'PUT'])) {
-    parse_str(file_get_contents('php://input'), $payload);
-}
-// validate crud params
-if (!in_array($method, $_SESSION['cruds'][$_POST['crud']])) {
-    echo '{"status":401,"message":"Method not supported"}';die;
-}
 //include method route file.
-include 'routes/' . $method . 'routes.php';
-// parse/validate route
-$value = [];
-foreach(explode('/', $_SERVER['REQUEST_URI']) as $element) {
+define('__DOC_ROOT__',__DIR__);
+if (file_exists(__DOC_ROOT__ . '/routes/' . $method . 'routes.php')) {
+    include __DOC_ROOT__ . '/routes/' . $method . 'routes.php';
+} else {
+    return501('Missing' . ' routes file for' . " $method " . 'method');
+}
+// Validate route
+$uriParameters = [];
+foreach(explode('/', trim($_GET['REQUEST_URI'], '/')) as $element) {
     $pos = false;
     if (isset($routes[$element])) {
         $routes = &$routes[$element];
     } else {
-        foreach (array_keys($routes) as $key) {
-            $pos = strpos($key, '{');
-            if ($pos === 0) {
-                $uriParams[':' . trim($key, '{}')] = $element;
-                break;
+        if (is_array($routes)) {
+            foreach (array_keys($routes) as $key) {
+                $pos = strpos($key, '{');
+                if ($pos === 0) {
+                    $keyArr = explode('|', $key);
+                    $keyDetails = explode(':', trim($keyArr[0], '{}'));
+                    $keysDetail[$keyDetails[1]] = [$key, $keyDetails[0]];
+                    $found = true;
+                }
             }
-        }
-        if ($pos === 0) {
-            continue;
+            if ($found) {
+                switch (true) {
+                    case isset($keysDetail['int']) && ctype_digit($element):
+                        $restrictedArr = explode('|', $keysDetail['int'][0]);
+                        if (!empty($restrictedArr[1]) && !in_array($element, explode(',', $restrictedArr[1]))) {
+                            return404($keysDetail['int'][0], true);
+                        }
+                        $uriParameters[$keysDetail['int'][1]] = (int)$element;
+                        $routes = &$routes[$keysDetail['int'][0]];
+                        break;
+                    case isset($keysDetail['string']):
+                        $restrictedArr = explode('|', $keysDetail['string'][0]);
+                        if (!empty($restrictedArr[1]) && !in_array($element, explode(',', $restrictedArr[1]))) {
+                            return404($keysDetail['string'][0], true);
+                        }
+                        $uriParameters[$keysDetail['string'][1]] = $element;
+                        $routes = &$routes[$keysDetail['string'][0]];
+                        break;
+                }
+                
+            } else {
+                return404('Route not supported');
+            }
         } else {
-            echo '{"status":404,"message":"Route not supported"}';die;
+            return404('Route not supported');
         }
     }
 }
-//include route configuration file.
-if (!file_exists(__DIR__ . '/crud/' . $method . '/'. $routes['file'])) {
-    echo '{"status":501,"message":"Crud file missing"}';die;
+// validate crud params
+if (!isset($_SESSION['cruds'][$uriParameters['table']]) || !in_array($method, $_SESSION['cruds'][$uriParameters['table']])) {
+    return404('Method not supported');
 }
-include __DIR__ . '/crud/' . $method . '/'. $routes['file'];
+//include route configuration file.
+if (empty($routes['__file__'])) {
+    return501('Missing' . ' crud file configuration for' . " $method " . 'method');
+}
+if (file_exists($routes['__file__'])) {
+    include $routes['__file__'];
+} else {
+    return501('Missing' . ' crud file for' . " $method " . 'method');
+}
 //validate payload params
 $params = $config['uriParams'];
 if (in_array($method, ['POST', 'PUT'])) {
@@ -80,7 +135,7 @@ if (in_array($method, ['POST', 'PUT'])) {
     if (isset($config['payload'])) {
         foreach (array_merge($config['payload']['required'], $config['payload']['optional']) as $value) {
             if (!in_array($value, $payloadKeys)) {
-                echo '{"status":404,"message":"Missing required param \''.$value.'\' in payload"}';die;
+                return404("Missing required param '$value' in payload");
             } elseif (isset($payload[$value])) {
                 $params[':'.$value] = $payload[$value];
             }
@@ -89,37 +144,57 @@ if (in_array($method, ['POST', 'PUT'])) {
 }
 //perform DB operation based on crud config.
 try {
-    $dbhost = 'localhost';
-    $dbname = 'hr';
-    $dbuser = 'root';
-    $dbpass = '';
-    $connec = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
-}catch (PDOException $e) {
-    echo "Error : " . $e->getMessage() . "<br/>";
-    die();
+    define('MYSQL_HOSTNAME', '127.0.0.1');
+    define('MYSQL_USERNAME', 'root');
+    define('MYSQL_PASSWORD', '');
+    define('MYSQL_DATABASE', 'product_global');
+    $connection = new PDO('mysql:host='.MYSQL_HOSTNAME.';dbname='.MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, [PDO::ATTR_EMULATE_PREPARES => false]);
+} catch (PDOException $e) {
+    return501('Unable to connect to database server');
 }
+//print_r($queries);die;
 /* Execute a prepared statement by passing an array of values */
 $result = [];
 switch ($method) {
     case 'GET':
+        if (isset($queries['default'])) {
+            $sth = $connection->prepare($queries['default'][0], array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            $sth->execute($queries['default'][1]);
+            if ($queries['default'][2] === 'singleRowFormat') {
+                $result = $sth->fetch(PDO::FETCH_ASSOC);
+                $sth->closeCursor();
+            }
+            if ($queries['default'][2] === 'multipleRowFormat') {
+                $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+                $sth->closeCursor();
+                break;
+            }
+        }
         foreach ($queries as $key => &$value) {
-            $sth = $connec->prepare($value[0], array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            if ($key === 'default') continue;
+            $sth = $connection->prepare($value[0], array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
             $sth->execute($value[1]);
-            $result[$key] = $sth->fetchAll();
+            $result[$key] = $sth->fetchAll(PDO::FETCH_ASSOC);
+            if ($queries[$key][2] === 'singleRowFormat') {
+                $result[$key] = $sth->fetch(PDO::FETCH_ASSOC);
+            }
+            if ($queries[$key][2] === 'multipleRowFormat') {
+                $result[$key] = $sth->fetchAll(PDO::FETCH_ASSOC);
+            }
             $sth->closeCursor();
         }
         break;
     case 'POST':
         foreach ($queries as $key => &$value) {
-            $sth = $connec->prepare($value[0], [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $sth = $connection->prepare($value[0], [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $sth->execute($value[1]);
-            $result[$key] = $connec->lastInsertId();
+            $result[$key] = $connection->lastInsertId();
             $sth->closeCursor();
         }
         break;
     case 'PUT':
         foreach ($queries as $key => &$value) {
-            $sth = $connec->prepare($value[0], [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $sth = $connection->prepare($value[0], [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $sth->execute($value[1]);
             $result[$key] = $sth->rowCount();
             $sth->closeCursor();
@@ -127,12 +202,13 @@ switch ($method) {
         break;
     case 'DELETE':
         foreach ($queries as $key => &$value) {
-            $sth = $connec->prepare($value[0], [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+            $sth = $connection->prepare($value[0], [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
             $sth->execute($value[1]);
             $result[$key] = $sth->rowCount();
             $sth->closeCursor();
         }
         break;
 }
+$connection = null;
 // output JSON.
 echo json_encode($result);die;

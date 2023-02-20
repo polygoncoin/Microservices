@@ -26,16 +26,16 @@ $redis->connect(REDIS_HOST, REDIS_PORT, 1, NULL, 100);
 try {
     $redis->ping();
 } catch (Exception $e) {
-    return501('REDIS NOT CONNECTED');
+    return501('Unable to connect to cache server');
 }
-/*
+
 $userID = 1;
 $redis->delete('id_' . $_POST['username']);
 $redis->delete('hash_' . $userID);
 $redis->delete('token_' . $userID);
 $redis->set('id_' . $_POST['username'], $userID);
 $redis->set('hash_' . $userID, password_hash($_POST['password'], PASSWORD_DEFAULT));
-*/
+
 // Redis - one can find the userID from username.
 $userID = null;
 if ($redis->exists('id_' . $_POST['username'])) {
@@ -67,19 +67,20 @@ if (password_verify($_POST['password'], $redis->get('hash_' . $userID))) { // ge
                 break;
             }
         }
+        $redis = null;
         try {
-            $dbhost = '127.0.0.1';
-            $dbname='product_global';
-            $dbuser = 'root';
-            $dbpass = '';
-            $connection = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
-        }catch (PDOException $e) {
-            return501('MySql not connected');
+            define('MYSQL_HOSTNAME', '127.0.0.1');
+            define('MYSQL_USERNAME', 'root');
+            define('MYSQL_PASSWORD', '');
+            define('MYSQL_DATABASE', 'product_global');
+            $connection = new PDO('mysql:host='.MYSQL_HOSTNAME.';dbname='.MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, [PDO::ATTR_EMULATE_PREPARES => false]);
+        } catch (PDOException $e) {
+            return501('Unable to connect to database server');
         }
         $sth = $connection->prepare('SELECT * FROM users u WHERE u.username = ?', array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute([$_POST['username']]);
         $sessRedis = [
-            'user' => ($sth->fetchAll())[0],
+            'user' => ($sth->fetchAll(PDO::FETCH_ASSOC))[0],
             'cruds' => [],
         ];
         $sth->closeCursor();
@@ -93,13 +94,25 @@ if (password_verify($_POST['password'], $redis->get('hash_' . $userID))) { // ge
         . 'ORDER BY crud';
         $sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute([$_POST['username']]);
-        foreach($sth->fetchAll() as $rows) {
+        foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $rows) {
             if (!isset($sessRedis['cruds'][$rows['crud']])) $sessRedis['cruds'][$rows['crud']] = [];
             $sessRedis['cruds'][$rows['crud']][] = $rows['http'];
         }
         $sth->closeCursor();
-        //set session details.
-        $redis->set($token, json_encode($sessRedis), EXPIRY_TIME);
+        $connection = null;
+        // set session details.
+        // connection to Redis server for tokens.
+        define('TOKEN_REDIS_HOST','127.0.0.1');
+        define('TOKEN_REDIS_PORT','6379');
+        $tokenRedis = new Redis();
+        $tokenRedis->connect(TOKEN_REDIS_HOST, TOKEN_REDIS_PORT, 1, NULL, 100);
+        try {
+            $tokenRedis->ping();
+        } catch (Exception $e) {
+            return501('Unable to connect to token cache server');
+        }
+        $tokenRedis->set($token, json_encode($sessRedis), EXPIRY_TIME);
+        $tokenRedis = null;
     }
     $tokenDetails = json_decode($redisToken, true);
     echo json_encode(['token' => $tokenDetails['token'], 'expires' => (EXPIRY_TIME - ($timestamp - $tokenDetails['timestamp']))]);die;
