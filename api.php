@@ -66,10 +66,10 @@ $method = $_SERVER['REQUEST_METHOD'];
 //include method route file.
 define('__DOC_ROOT__',__DIR__);
 $REQUEST_URI = trim($_GET['REQUEST_URI'], '/');
-if ((strpos($REQUEST_URI, 'crud/') !== false)) {// is a crud operation.
-    $routeFileLocation = __DOC_ROOT__ . '/crudApi/routes/' . $method . 'routes.php';
+if ((strpos($REQUEST_URI, 'crud/') === 0)) {// is a crud operation.
+    $routeFileLocation = __DOC_ROOT__ . '/crudApi/crudRoutes/' . $method . 'routes.php';
 } else {
-    $routeFileLocation = __DOC_ROOT__ . '/customApi/routes/' . $method . 'routes.php';
+    $routeFileLocation = __DOC_ROOT__ . '/customApi/customRoutes/' . $method . 'routes.php';
 }
 if (file_exists($routeFileLocation)) {
     include $routeFileLocation;
