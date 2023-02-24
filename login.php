@@ -1,5 +1,4 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
 function return404($errMessage)
 {
     echo '{"status":404,"message":"'.$errMessage.'."}';die;
@@ -8,9 +7,18 @@ function return501($errMessage)
 {
     echo '{"status":501,"message":"'.$errMessage.'."}';die;
 }
+
+if (!isset($_SERVER['REMOTE_ADDR'])) {
+    http_response_code(404);
+}
+
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json; charset=utf-8');
+
 if ('POST' !== $_SERVER['REQUEST_METHOD']) {
     return404('Invalid request method');
 }
+
 foreach (array('username','password') as $value) {
     if (!isset($_POST[$value]) || empty($_POST[$value])) {
         return404('Missing required parameters');
@@ -21,33 +29,30 @@ define('REDIS_HOST','127.0.0.1');
 define('REDIS_PORT','6379');
 define('EXPIRY_TIME',3600);
 
-$redis = new Redis();
-$redis->connect(REDIS_HOST, REDIS_PORT, 1, NULL, 100);
 try {
+    $redis = new Redis();
+    $redis->connect(REDIS_HOST, REDIS_PORT, 1, NULL, 100);
     $redis->ping();
 } catch (Exception $e) {
     return501('Unable to connect to cache server');
 }
 
-$userID = 1;
-$redis->delete('id_' . $_POST['username']);
-$redis->delete('hash_' . $userID);
-$redis->delete('token_' . $userID);
-$redis->set('id_' . $_POST['username'], $userID);
-$redis->set('hash_' . $userID, password_hash($_POST['password'], PASSWORD_DEFAULT));
-
 // Redis - one can find the userID from username.
-$userID = null;
-if ($redis->exists('id_' . $_POST['username'])) {
-    $userID = $redis->get('id_' . $_POST['username']);
-}
-if (empty($userID)) {
+if ($redis->exists('ids_' . $_POST['username'])) {
+    $userIdDetails = json_decode($redis->get('ids_' . $_POST['username']), true);
+    $userID = $userIdDetails['user_id'];
+    $groupID = $userIdDetails['group_id'];
+} else {
     return404('Invalid credentials');
 }
+
+if (empty($userID) || empty($groupID)) {
+    return404('Invalid credentials');
+}
+
 // Compare password with hash stored in redis.
 // The hash and userIDs are cached in Redis with no expiry.
 // Redis stores the hash to handle the load if attack occurs.
-
 if (password_verify($_POST['password'], $redis->get('hash_' . $userID))) { // get hash from redis and compares with password
     $timestamp = time();
     // Redis - Check if token was already generated.
@@ -60,14 +65,14 @@ if (password_verify($_POST['password'], $redis->get('hash_' . $userID))) { // ge
         while (true) {
             $token = bin2hex(random_bytes(16));
             if (!$redis->exists($token)) {
-                $redisToken = json_encode(['token' => $token, 'timestamp' => $timestamp]);
                 $redis->set($token, '{}', EXPIRY_TIME);
+                $redisToken = json_encode(['token' => $token, 'timestamp' => $timestamp]);
                 // We set this to have a check first if multiple request/attack occurs.
                 $redis->set('token_' . $userID, $redisToken, EXPIRY_TIME);
                 break;
             }
         }
-        $redis = null;
+
         try {
             define('MYSQL_HOSTNAME', '127.0.0.1');
             define('MYSQL_USERNAME', 'root');
@@ -77,45 +82,19 @@ if (password_verify($_POST['password'], $redis->get('hash_' . $userID))) { // ge
         } catch (PDOException $e) {
             return501('Unable to connect to database server');
         }
-        $sth = $connection->prepare('SELECT * FROM users u WHERE u.username = ?', array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute([$_POST['username']]);
-        $sessRedis = [
-            'user' => ($sth->fetchAll(PDO::FETCH_ASSOC))[0],
-            'cruds' => [],
-        ];
-        $sth->closeCursor();
-        $sql = 'SELECT mbc.name as crud, mhttp.name as http'."\n"
-        . 'FROM link_crud_http_group lchg'."\n"
-        . 'LEFT JOIN link_crud_http lch ON lchg.link_crud_http_id = lch.id'."\n"
-        . 'LEFT JOIN master_bu_crud mbc ON lch.crud_id = mbc.id'."\n"
-        . 'LEFT JOIN master_http mhttp on lch.http_id = mhttp.id'."\n"
-        . 'LEFT JOIN users u ON lchg.group_id = u.group_id'."\n"
-        . 'WHERE u.username = ?'."\n"
-        . 'ORDER BY crud';
-        $sth = $connection->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute([$_POST['username']]);
-        foreach($sth->fetchAll(PDO::FETCH_ASSOC) as $rows) {
-            if (!isset($sessRedis['cruds'][$rows['crud']])) $sessRedis['cruds'][$rows['crud']] = [];
-            $sessRedis['cruds'][$rows['crud']][] = $rows['http'];
-        }
+
+        $sth = $connection->prepare('SELECT * FROM users u WHERE u.id = ?', array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth->execute([$userID]);
+        $sessRedis = $sth->fetch(PDO::FETCH_ASSOC);
         $sth->closeCursor();
         $connection = null;
-        // set session details.
-        // connection to Redis server for tokens.
-        define('TOKEN_REDIS_HOST','127.0.0.1');
-        define('TOKEN_REDIS_PORT','6379');
-        $tokenRedis = new Redis();
-        $tokenRedis->connect(TOKEN_REDIS_HOST, TOKEN_REDIS_PORT, 1, NULL, 100);
-        try {
-            $tokenRedis->ping();
-        } catch (Exception $e) {
-            return501('Unable to connect to token cache server');
-        }
-        $tokenRedis->set($token, json_encode($sessRedis), EXPIRY_TIME);
-        $tokenRedis = null;
+    
+        $redis->set($token, json_encode($sessRedis), EXPIRY_TIME);
     }
+
     $tokenDetails = json_decode($redisToken, true);
-    echo json_encode(['token' => $tokenDetails['token'], 'expires' => (EXPIRY_TIME - ($timestamp - $tokenDetails['timestamp']))]);die;
+    echo json_encode(['token' => $tokenDetails['token'], 'expires' => (EXPIRY_TIME - ($timestamp - $tokenDetails['timestamp']))]);
 } else {
     return404('Invalid credentials');
 }
+$redis = null;

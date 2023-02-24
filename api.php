@@ -19,7 +19,9 @@ function return501($errMessage)
 {
     echo '{"status":501,"message":"'.$errMessage.'."}';die;
 }
+
 header('Content-Type: application/json; charset=utf-8');
+
 // Get token - START
 $token = null;
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) { //Nginx or fast CGI
@@ -39,55 +41,62 @@ if (empty($token)) {
 
 // Check token - START
 // connection to Redis server for tokens.
-define('TOKEN_REDIS_HOST','127.0.0.1');
-define('TOKEN_REDIS_PORT','6379');
-$redis = new Redis();
-$redis->connect(TOKEN_REDIS_HOST, TOKEN_REDIS_PORT, 1, NULL, 100);
+define('REDIS_HOST','127.0.0.1');
+define('REDIS_PORT','6379');
+
 try {
+    $redis = new Redis();
+    $redis->connect(TOKEN_REDIS_HOST, TOKEN_REDIS_PORT, 1, NULL, 100);
     $redis->ping();
 } catch (Exception $e) {
     return501('Unable to connect to token cache server');
 }
 
-//check token in redis.
+// Check token - START
 if ($redis->exists($token)) {
     $_SESSION = json_decode($redis->get($token), true);
 } else {
     return404('Token expired');
 }
-$redis = null;
 // Check token - END
+
 //check session
-if (!isset($_SESSION['user']['id'])) {
+if (empty($_SESSION['id']) || empty($_SESSION['group_id'])) {
     return404('Invalid token');
+} else {
+    $userID = $_SESSION['id'];
+    $groupID = $_SESSION['group_id'];
 }
-//collect params in $_POST
-$method = $_SERVER['REQUEST_METHOD'];
+
 //include method route file.
 define('__DOC_ROOT__',__DIR__);
+
+$method = $_SERVER['REQUEST_METHOD'];
 $REQUEST_URI = trim($_GET['REQUEST_URI'], '/');
-if ((strpos($REQUEST_URI, 'crud/') === 0)) {// is a crud operation.
+$crud = (strpos($REQUEST_URI, 'crud/') === 0) ? true : false;
+
+if ($crud) {// is a crud operation.
     $routeFileLocation = __DOC_ROOT__ . '/crudApi/crudRoutes/' . $method . 'routes.php';
 } else {
     $routeFileLocation = __DOC_ROOT__ . '/customApi/customRoutes/' . $method . 'routes.php';
 }
+
 if (file_exists($routeFileLocation)) {
     include $routeFileLocation;
 } else {
-    return501('Missing' . ' routes file for' . " $method " . 'method');
+    return501('Missing' . ' route file for' . " $method " . 'method');
 }
 // Validate route
 $uriParameters = [];
-$crud = null;
-foreach(explode('/', $REQUEST_URI) as $element) {
-    if ($element === 'crud' && is_null($crud)) {
-        $crud = true;
+$uriArr = [];
+foreach(explode('/', $REQUEST_URI) as $key => $element) {
+    if ($key === 0 && $crud) {
+        $uriArr[] = $element;
         continue;
-    } else {
-        $crud = false;
     }
     $pos = false;
     if (isset($routes[$element])) {
+        $uriArr[] = $element;
         $routes = &$routes[$element];
     } else {
         if (is_array($routes)) {
@@ -108,6 +117,7 @@ foreach(explode('/', $REQUEST_URI) as $element) {
                             return404($keysDetail['int'][0], true);
                         }
                         $uriParameters[$keysDetail['int'][1]] = (int)$element;
+                        $uriArr[] = $keysDetail['int'][0];
                         $routes = &$routes[$keysDetail['int'][0]];
                         break;
                     case isset($keysDetail['string']):
@@ -116,10 +126,10 @@ foreach(explode('/', $REQUEST_URI) as $element) {
                             return404($keysDetail['string'][0], true);
                         }
                         $uriParameters[$keysDetail['string'][1]] = $element;
+                        $uriArr[] = $keysDetail['string'][0];
                         $routes = &$routes[$keysDetail['string'][0]];
                         break;
                 }
-                
             } else {
                 return404('Route not supported');
             }
@@ -129,9 +139,101 @@ foreach(explode('/', $REQUEST_URI) as $element) {
     }
 }
 // validate crud params
-if (!isset($_SESSION['cruds'][$uriParameters['table']]) || !in_array($method, $_SESSION['cruds'][$uriParameters['table']])) {
-    return404('Method not supported');
+$route = implode('/',$uriArr);
+$routeBase64 = base64_encode($route);
+
+if ($redis->exists($groupID . '_' . $routeBase64)) {
+    $routeDetails = json_decode($redis->get($groupID . '_' . $routeBase64), true);
+    if (!isset($routeDetails[$method])) {
+        return404('Method not supported');
+    } else {
+        $corporateID = $routeDetails[$method]['corporate_id'];
+        $companyID = $routeDetails[$method]['company_id'];
+        $applicationID = $routeDetails[$method]['application_id'];
+        $clientID = $routeDetails[$method]['client_id'];
+        $moduleID = $routeDetails[$method]['module_id'];
+    }
+} else {
+    return404('Route details not present on cache server');
 }
+
+//validate IP - START
+$remoteIpNumber = ip2long($_SERVER['REMOTE_ADDR']);
+if ($redis->exists('group_ips_' . $groupID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('group_ips_' . $groupID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+if ($redis->exists('corporate_ips_' . $corporateID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('corporate_ips_' . $corporateID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+if ($redis->exists('company_ips_' . $companyID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('company_ips_' . $companyID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+if ($redis->exists('application_ips_' . $applicationID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('application_ips_' . $applicationID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+if ($redis->exists('module_ips_' . $moduleID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('module_ips_' . $moduleID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+if ($redis->exists('client_ips_' . $clientID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('client_ips_' . $clientID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+if ($redis->exists('user_ips_' . $userID)) {
+    $foundIP = false;
+    foreach(json_decode($redis->get('user_ips_' . $userID), true) as $range) {
+        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
+            $foundIP = true;
+            break;
+        }
+    }
+    if (!$foundIP) return404('IP Address not supported');
+}
+//validate IP - END
+
+// Release Redis connection
+$redis = null;
+
 //include route configuration file.
 if (empty($routes['__file__'])) {
     return501('Missing' . ' crud file configuration for' . " $method " . 'method');
@@ -141,6 +243,7 @@ if (file_exists($routes['__file__'])) {
 } else {
     return501('Missing' . ' crud file for' . " $method " . 'method');
 }
+
 //validate payload params
 if (in_array($method, ['POST', 'PUT'])) {
     $payloadKeys = array_keys($payload['required']);
@@ -154,6 +257,7 @@ if (in_array($method, ['POST', 'PUT'])) {
         }
     }
 }
+
 //perform DB operation based on crud config.
 try {
     define('MYSQL_HOSTNAME', '127.0.0.1');
@@ -164,7 +268,7 @@ try {
 } catch (PDOException $e) {
     return501('Unable to connect to database server');
 }
-//print_r($queries);die;
+
 /* Execute a prepared statement by passing an array of values */
 $result = [];
 switch ($method) {
@@ -223,4 +327,4 @@ switch ($method) {
 }
 $connection = null;
 // output JSON.
-echo json_encode($result);die;
+echo json_encode($result);
