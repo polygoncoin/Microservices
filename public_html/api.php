@@ -69,17 +69,12 @@ if (empty($_SESSION['id']) || empty($_SESSION['group_id'])) {
 }
 
 //include method route file.
-define('__DOC_ROOT__',__DIR__);
+define('__DOC_ROOT__', realpath(__DIR__ . '/../'));
+define('__REQUEST_URI__', '/' . trim($_GET['REQUEST_URI'], '/'));
 
 $method = $_SERVER['REQUEST_METHOD'];
-$REQUEST_URI = trim($_GET['REQUEST_URI'], '/');
-$crud = (strpos($REQUEST_URI, 'crud/') === 0) ? true : false;
 
-if ($crud) {// is a crud operation.
-    $routeFileLocation = __DOC_ROOT__ . '/crudApi/crudRoutes/' . $method . 'routes.php';
-} else {
-    $routeFileLocation = __DOC_ROOT__ . '/customApi/customRoutes/' . $method . 'routes.php';
-}
+$routeFileLocation = __DOC_ROOT__ . '/app/routes/' . $method . 'routes.php';
 
 if (file_exists($routeFileLocation)) {
     include $routeFileLocation;
@@ -89,9 +84,8 @@ if (file_exists($routeFileLocation)) {
 // Validate route
 $uriParameters = [];
 $uriArr = [];
-foreach(explode('/', $REQUEST_URI) as $key => $element) {
-    if ($key === 0 && $crud) {
-        $uriArr[] = $element;
+foreach(explode('/', __REQUEST_URI__) as $key => $element) {
+    if ($key === 0) {
         continue;
     }
     $pos = false;
@@ -139,7 +133,7 @@ foreach(explode('/', $REQUEST_URI) as $key => $element) {
     }
 }
 // validate crud params
-$route = implode('/',$uriArr);
+$route = '/' . implode('/',$uriArr);
 $routeBase64 = base64_encode($route);
 
 if ($redis->exists($groupID . '_' . $routeBase64)) {

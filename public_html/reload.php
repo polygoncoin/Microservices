@@ -29,9 +29,9 @@ function ipRange($cidr)
     }
     return $range;
 }
-header('Content-Type: application/json; charset=utf-8');
 
 $supportedReload = [
+    'all',
     'ids',
     'hash',
     'group_ips',
@@ -45,19 +45,17 @@ $supportedReload = [
 ];
 
 if (empty($_GET['reload']) || !in_array($_GET['reload'], $supportedReload)) {
-    return404('Invalid request.');
+    return404('Invalid request');
 }
 
-if (empty($_GET['ids'])) {
-    return404('Invalid request.');
-}
-
-$idsArray = explode(',', $_GET['ids']);
-foreach ($idsArray as &$value) {
-    if (ctype_digit($$value)) {
-        $value = (int)$value;
-    } else {
-        return404('Only integer values supported for ids.');
+if (!empty($_GET['ids'])) {
+    $idsArray = explode(',', $_GET['ids']);
+    foreach ($idsArray as &$value) {
+        if (ctype_digit($$value)) {
+            $value = (int)$value;
+        } else {
+            return404('Only integer values supported for ids.');
+        }
     }
 }
 
@@ -77,13 +75,14 @@ try {
 
 
 $where = '';
-if (count($idsArray) > 0) {
+if ($_GET['reload'] !== 'all' && count($idsArray) > 0) {
     $where = ' WHERE id IN (' . implode($idsArray) . ');';
 } else {
     $where = ';';
 }
 
 switch ($_GET['reload']) {
+    case 'all':
     case 'ids':
         $sth = $connection->prepare('SELECT id, username, group_id FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -91,15 +90,17 @@ switch ($_GET['reload']) {
             $redis->set('ids_' . $row['username'], json_encode(['user_id' => $row['id'], 'group_id' => $row['group_id']]));
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'hash':
-        $sth = $connection->prepare('SELECT id, password FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth = $connection->prepare('SELECT id, password_hash FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $redis->set('hash_' . $row['id'], $row['password']);
+            $redis->set('hash_' . $row['id'], $row['password_hash']);
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'group_ips':
         $sth = $connection->prepare('SELECT id, allowed_ips FROM m000_master_group' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -117,9 +118,10 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'corporate_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m000_master_corporate' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth = $connection->prepare('SELECT id, allowed_ips FROM m001_master_corporate' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
             if (!empty(trim($row['allowed_ips']))) {
@@ -134,8 +136,8 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
-
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'company_ips':
         $sth = $connection->prepare('SELECT id, allowed_ips FROM m002_master_company' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -152,7 +154,8 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'application_ips':
         $sth = $connection->prepare('SELECT id, allowed_ips FROM m003_master_application' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -169,7 +172,8 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'client_ips':
         $sth = $connection->prepare('SELECT id, allowed_ips FROM m009_master_client' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -186,7 +190,8 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'module_ips':
         $sth = $connection->prepare('SELECT id, allowed_ips FROM m004_master_module' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -203,9 +208,10 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'user_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth = $connection->prepare('SELECT id, allowed_ips FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
             if (!empty(trim($row['allowed_ips']))) {
@@ -220,7 +226,8 @@ switch ($_GET['reload']) {
             }
         }
         $sth->closeCursor();
-        break;
+        if ($_GET['reload'] !== 'all') break;
+    case 'all':
     case 'route':
         $sth = $connection->prepare('SELECT * FROM m007_master_route' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
@@ -240,5 +247,4 @@ switch ($_GET['reload']) {
 $connection = null;
 $redis = null;
 
-header('Content-Type: application/json; charset=utf-8');
-echo '{"status" : 200, "message" : "Successfully done"}';
+echo 'done';
