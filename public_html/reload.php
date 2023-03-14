@@ -3,10 +3,10 @@ define('REDIS_HOST','127.0.0.1');
 define('REDIS_PORT','6379');
 define('EXPIRY_TIME',3600);
 
-define('MYSQL_HOSTNAME', '127.0.0.1');
-define('MYSQL_USERNAME', 'root');
-define('MYSQL_PASSWORD', '');
-define('MYSQL_DATABASE', 'product_global');
+define('MYSQL_READ_HOSTNAME', '127.0.0.1');
+define('MYSQL_READ_USERNAME', 'root');
+define('MYSQL_READ_PASSWORD', '');
+define('MYSQL_READ_DATABASE', 'product_global');
 
 function return404($errMessage)
 {
@@ -68,7 +68,7 @@ try {
 }
 
 try {
-    $connection = new PDO('mysql:host='.MYSQL_HOSTNAME.';dbname='.MYSQL_DATABASE, MYSQL_USERNAME, MYSQL_PASSWORD, [PDO::ATTR_EMULATE_PREPARES => false]);
+    $connection = new PDO('mysql:host='.MYSQL_READ_HOSTNAME.';dbname='.MYSQL_READ_DATABASE, MYSQL_READ_USERNAME, MYSQL_READ_PASSWORD, [PDO::ATTR_EMULATE_PREPARES => false]);
 } catch (PDOException $e) {
     return501('Unable to connect to database server');
 }
@@ -84,127 +84,46 @@ if ($_GET['reload'] !== 'all' && count($idsArray) > 0) {
 switch ($_GET['reload']) {
     case 'all':
     case 'ids':
-        $sth = $connection->prepare('SELECT id, username, group_id FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth = $connection->prepare('SELECT * FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $redis->set('ids_' . $row['username'], json_encode(['user_id' => $row['id'], 'group_id' => $row['group_id']]));
+            $redis->set($row['username'], $row);
         }
         $sth->closeCursor();
         if ($_GET['reload'] !== 'all') break;
     case 'all':
-    case 'hash':
-        $sth = $connection->prepare('SELECT id, password_hash FROM m008_master_user' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    case 'allowed_ips':
+        $sth = $connection->prepare('SELECT id, corporate_allowed_ips, company_allowed_ips, application_allowed_ips FROM m000_master_group' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $redis->set('hash_' . $row['id'], $row['password_hash']);
-        }
-        $sth->closeCursor();
-        if ($_GET['reload'] !== 'all') break;
-    case 'all':
-    case 'group_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m000_master_group' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            if (!empty(trim($row['allowed_ips']))) {
-                $count = 0;
-                $allowedIpsArray = [];
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
+            $allowedIpsArray = [];
+            $count = 0;
+            if (!empty(trim($row['corporate_allowed_ips']))) {
+                foreach (explode(',', $row['corporate_allowed_ips']) as $cidr) {
                     $cidr = str_replace(' ', '', trim($cidr));
                     if (!empty(trim($cidr))) {
                         $allowedIpsArray[$count++] = ipRange($cidr);
                     }
                 }
-                $redis->set('group_ips_' . $row['id'], json_encode($allowedIpsArray));
             }
-        }
-        $sth->closeCursor();
-        if ($_GET['reload'] !== 'all') break;
-    case 'all':
-    case 'corporate_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m001_master_corporate' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            if (!empty(trim($row['allowed_ips']))) {
-                $allowedIpsArray = [];
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
+            if (!empty(trim($row['company_allowed_ips']))) {
+                foreach (explode(',', $row['company_allowed_ips']) as $cidr) {
                     $cidr = str_replace(' ', '', trim($cidr));
                     if (!empty(trim($cidr))) {
                         $allowedIpsArray[$count++] = ipRange($cidr);
                     }
                 }
-                $redis->set('corporate_ips_' . $row['id'], json_encode($allowedIpsArray));
             }
-        }
-        $sth->closeCursor();
-        if ($_GET['reload'] !== 'all') break;
-    case 'all':
-    case 'company_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m002_master_company' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            if (!empty(trim($row['allowed_ips']))) {
-                $allowedIpsArray = [];
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
+            if (!empty(trim($row['application_allowed_ips']))) {
+                foreach (explode(',', $row['application_allowed_ips']) as $cidr) {
                     $cidr = str_replace(' ', '', trim($cidr));
                     if (!empty(trim($cidr))) {
                         $allowedIpsArray[$count++] = ipRange($cidr);
                     }
                 }
-                $redis->set('company_ips_' . $row['id'], json_encode($allowedIpsArray));
             }
-        }
-        $sth->closeCursor();
-        if ($_GET['reload'] !== 'all') break;
-    case 'all':
-    case 'application_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m003_master_application' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            if (!empty(trim($row['allowed_ips']))) {
-                $allowedIpsArray = [];
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
-                    $cidr = str_replace(' ', '', trim($cidr));
-                    if (!empty(trim($cidr))) {
-                        $allowedIpsArray[$count++] = ipRange($cidr);
-                    }
-                }
-                $redis->set('application_ips_' . $row['id'], json_encode($allowedIpsArray));
-            }
-        }
-        $sth->closeCursor();
-        if ($_GET['reload'] !== 'all') break;
-    case 'all':
-    case 'client_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m009_master_client' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            if (!empty(trim($row['allowed_ips']))) {
-                $allowedIpsArray = [];
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
-                    $cidr = str_replace(' ', '', trim($cidr));
-                    if (!empty(trim($cidr))) {
-                        $allowedIpsArray[$count++] = ipRange($cidr);
-                    }
-                }
-                $redis->set('client_ips_' . $row['id'], json_encode($allowedIpsArray));
-            }
-        }
-        $sth->closeCursor();
-        if ($_GET['reload'] !== 'all') break;
-    case 'all':
-    case 'module_ips':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM m004_master_module' . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            if (!is_null($row['allowed_ips'])) {
-                $allowedIpsArray = [];
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
-                    $cidr = str_replace(' ', '', trim($cidr));
-                    if (!empty(trim($cidr))) {
-                        $allowedIpsArray[$count++] = ipRange($cidr);
-                    }
-                }
-                $redis->set('module_ips_' . $row['id'], json_encode($allowedIpsArray));
+            if (count($allowedIpsArray) !== 0) {
+                $redis->set('allowed_ips_' . $row['id'], json_encode($allowedIpsArray));
             }
         }
         $sth->closeCursor();

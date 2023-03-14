@@ -41,8 +41,8 @@ if (empty($token)) {
 
 // Check token - START
 // connection to Redis server for tokens.
-define('REDIS_HOST','127.0.0.1');
-define('REDIS_PORT','6379');
+define('TOKEN_REDIS_HOST','127.0.0.1');
+define('TOKEN_REDIS_PORT','6379');
 
 try {
     $redis = new Redis();
@@ -70,9 +70,11 @@ if (empty($_SESSION['id']) || empty($_SESSION['group_id'])) {
 
 //include method route file.
 define('__DOC_ROOT__', realpath(__DIR__ . '/../'));
-define('__REQUEST_URI__', '/' . trim($_GET['REQUEST_URI'], '/'));
+define('__REQUEST_URI__', trim($_GET['REQUEST_URI'], '/'));
 
 $method = $_SERVER['REQUEST_METHOD'];
+
+$isCrud = (strpos(__REQUEST_URI__, 'crud/') === 0) ? true : false;
 
 $routeFileLocation = __DOC_ROOT__ . '/app/routes/' . $method . 'routes.php';
 
@@ -85,9 +87,6 @@ if (file_exists($routeFileLocation)) {
 $uriParameters = [];
 $uriArr = [];
 foreach(explode('/', __REQUEST_URI__) as $key => $element) {
-    if ($key === 0) {
-        continue;
-    }
     $pos = false;
     if (isset($routes[$element])) {
         $uriArr[] = $element;
@@ -134,9 +133,8 @@ foreach(explode('/', __REQUEST_URI__) as $key => $element) {
 }
 // validate crud params
 $route = '/' . implode('/',$uriArr);
-$routeBase64 = base64_encode($route);
 
-if ($redis->exists($groupID . '_' . $routeBase64)) {
+if ($redis->exists('crud_' . $groupID)) {
     $routeDetails = json_decode($redis->get($groupID . '_' . $routeBase64), true);
     if (!isset($routeDetails[$method])) {
         return404('Method not supported');
@@ -153,59 +151,9 @@ if ($redis->exists($groupID . '_' . $routeBase64)) {
 
 //validate IP - START
 $remoteIpNumber = ip2long($_SERVER['REMOTE_ADDR']);
-if ($redis->exists('group_ips_' . $groupID)) {
+if ($redis->exists('allowed_ips_' . $groupID)) {
     $foundIP = false;
     foreach(json_decode($redis->get('group_ips_' . $groupID), true) as $range) {
-        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
-            $foundIP = true;
-            break;
-        }
-    }
-    if (!$foundIP) return404('IP Address not supported');
-}
-if ($redis->exists('corporate_ips_' . $corporateID)) {
-    $foundIP = false;
-    foreach(json_decode($redis->get('corporate_ips_' . $corporateID), true) as $range) {
-        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
-            $foundIP = true;
-            break;
-        }
-    }
-    if (!$foundIP) return404('IP Address not supported');
-}
-if ($redis->exists('company_ips_' . $companyID)) {
-    $foundIP = false;
-    foreach(json_decode($redis->get('company_ips_' . $companyID), true) as $range) {
-        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
-            $foundIP = true;
-            break;
-        }
-    }
-    if (!$foundIP) return404('IP Address not supported');
-}
-if ($redis->exists('application_ips_' . $applicationID)) {
-    $foundIP = false;
-    foreach(json_decode($redis->get('application_ips_' . $applicationID), true) as $range) {
-        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
-            $foundIP = true;
-            break;
-        }
-    }
-    if (!$foundIP) return404('IP Address not supported');
-}
-if ($redis->exists('module_ips_' . $moduleID)) {
-    $foundIP = false;
-    foreach(json_decode($redis->get('module_ips_' . $moduleID), true) as $range) {
-        if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
-            $foundIP = true;
-            break;
-        }
-    }
-    if (!$foundIP) return404('IP Address not supported');
-}
-if ($redis->exists('client_ips_' . $clientID)) {
-    $foundIP = false;
-    foreach(json_decode($redis->get('client_ips_' . $clientID), true) as $range) {
         if ($remoteIpNumber >= $range['start'] && $remoteIpNumber <= $range['end']) {
             $foundIP = true;
             break;

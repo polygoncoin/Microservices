@@ -1,7 +1,7 @@
 <?php
 // Available variables $uriParameters,
-$query = "SELECT * FROM {$uriParameters['table']} __WHERE__ __ORDER__;";
-//$query = "SELECT * FROM link_crud_http __WHERE__ __ORDER__;";
+//$query = "SELECT * FROM {$uriParameters['table']} __WHERE__ __ORDER__;";
+$query = "SELECT * FROM link_crud_http __WHERE__ __ORDER__;";
 
 if (!empty($uriParameters['id'])) {
     $config = [
