@@ -61,7 +61,12 @@ if (!empty($_GET['ids'])) {
 
 try {
     $redis = new Redis();
+    //Connecting to Redis
     $redis->connect(REDIS_HOST, REDIS_PORT, 1, NULL, 100);
+//    $redis->auth('password');
+//    if ($redis->ping()) {
+//        echo "PONG";
+//    }
     $redis->ping();
 } catch (Exception $e) {
     return501('Unable to connect to cache server');
