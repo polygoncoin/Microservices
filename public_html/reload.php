@@ -6,7 +6,7 @@ define('EXPIRY_TIME',3600);
 define('MYSQL_READ_HOSTNAME', '127.0.0.1');
 define('MYSQL_READ_USERNAME', 'root');
 define('MYSQL_READ_PASSWORD', '');
-define('MYSQL_READ_DATABASE', 'product_global');
+define('MYSQL_READ_DATABASE', 'global');
 
 function return404($errMessage)
 {

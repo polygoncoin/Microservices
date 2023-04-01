@@ -87,7 +87,7 @@ if (password_verify($_POST['password'], $userDetails['password_hash']))) { // ge
             define('MYSQL_READ_HOSTNAME', '127.0.0.1');
             define('MYSQL_READ_USERNAME', 'root');
             define('MYSQL_READ_PASSWORD', '');
-            define('MYSQL_READ_DATABASE', 'product_global');
+            define('MYSQL_READ_DATABASE', 'global');
             $connection = new PDO('mysql:host='.MYSQL_READ_HOSTNAME.';dbname='.MYSQL_READ_DATABASE, MYSQL_READ_USERNAME, MYSQL_READ_PASSWORD, [PDO::ATTR_EMULATE_PREPARES => false]);
         } catch (PDOException $e) {
             return501('Unable to connect to database server');

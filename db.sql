@@ -1,201 +1,190 @@
--- Adminer 4.8.1 MySQL 5.5.5-10.4.21-MariaDB-log dump
+-- phpMyAdmin SQL Dump
+-- version 5.1.3
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: Apr 01, 2023 at 09:37 AM
+-- Server version: 8.0.28
+-- PHP Version: 7.4.30
 
-SET NAMES utf8;
-SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-DROP TABLE IF EXISTS `l001_link_allowed_crud`;
-CREATE TABLE `l001_link_allowed_crud` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `group_id` int(11) NOT NULL,
-  `crud_id` int(11) DEFAULT NULL,
-  `module_id` int(11) DEFAULT NULL,
-  `http_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`group_id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `crud_id` (`crud_id`),
-  CONSTRAINT `l001_link_allowed_crud_ibfk_1` FOREIGN KEY (`crud_id`) REFERENCES `l003_link_allowed_crud_details` (`corporate_id`)
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `global`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `l001_link_allowed_route`
+--
+
+CREATE TABLE `l001_link_allowed_route` (
+  `id` int NOT NULL,
+  `group_id` int NOT NULL,
+  `client_id` int NOT NULL,
+  `module_id` int DEFAULT NULL,
+  `route_id` int DEFAULT NULL,
+  `http_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
 
-DROP TABLE IF EXISTS `l002_link_allowed_route`;
-CREATE TABLE `l002_link_allowed_route` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `group_id` int(11) NOT NULL,
-  `route_id` int(11) DEFAULT NULL,
-  `module_id` int(11) DEFAULT NULL,
-  `http_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`group_id`),
-  UNIQUE KEY `id` (`id`),
-  KEY `crud_id` (`route_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Table structure for table `m001_master_group`
+--
 
-
-DROP TABLE IF EXISTS `l003_link_allowed_crud_details`;
-CREATE TABLE `l003_link_allowed_crud_details` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `corporate_id` int(11) NOT NULL,
-  PRIMARY KEY (`corporate_id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
-DROP TABLE IF EXISTS `m000_master_group`;
-CREATE TABLE `m000_master_group` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `m001_master_group` (
+  `id` int NOT NULL,
   `name` varchar(100) NOT NULL,
   `comment` text NOT NULL,
-  `group_allowed_ips` text DEFAULT NULL,
-  `corporate_id` int(11) NOT NULL,
-  `corporate_allowed_ips` text DEFAULT NULL,
-  `company_id` int(11) NOT NULL,
-  `company_allowed_ips` text DEFAULT NULL,
-  `application_id` int(11) NOT NULL,
-  `application_allowed_ips` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `allowed_ips` text,
+  `client_ids` json DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `m000_master_group` (`id`, `name`, `comment`, `group_allowed_ips`, `corporate_id`, `corporate_allowed_ips`, `company_id`, `company_allowed_ips`, `application_id`, `application_allowed_ips`) VALUES
-(1,	'Polygon Super Admin',	'',	NULL,	0,	NULL,	0,	NULL,	0,	NULL);
+--
+-- Dumping data for table `m001_master_group`
+--
 
-DROP TABLE IF EXISTS `m001_master_corporate`;
-CREATE TABLE `m001_master_corporate` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `comment` text NOT NULL,
-  `allowed_ips` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+INSERT INTO `m001_master_group` (`id`, `name`, `comment`, `allowed_ips`, `client_ids`) VALUES
+(1, 'Polygon Super Admin', '', NULL, 'null');
 
-INSERT INTO `m001_master_corporate` (`id`, `name`, `comment`, `allowed_ips`) VALUES
-(1,	'polygon',	'',	'');
+-- --------------------------------------------------------
 
-DROP TABLE IF EXISTS `m002_master_company`;
-CREATE TABLE `m002_master_company` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `corporate_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `comment` text NOT NULL,
-  `allowed_ips` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Table structure for table `m002_master_client`
+--
 
-INSERT INTO `m002_master_company` (`id`, `corporate_id`, `name`, `comment`, `allowed_ips`) VALUES
-(1,	0,	'polygon.co.in',	'',	'');
-
-DROP TABLE IF EXISTS `m003_master_application`;
-CREATE TABLE `m003_master_application` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `company_id` int(11) NOT NULL,
+CREATE TABLE `m002_master_client` (
+  `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
-  `comment` text NOT NULL,
-  `allowed_ips` text DEFAULT NULL,
-  `db_id` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `comment` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `m003_master_application` (`id`, `company_id`, `name`, `comment`, `allowed_ips`, `db_id`) VALUES
-(1,	0,	'PolygonMicroservices',	'',	'',	NULL);
+--
+-- Dumping data for table `m002_master_client`
+--
 
-DROP TABLE IF EXISTS `m004_master_client`;
-CREATE TABLE `m004_master_client` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `application_id` int(11) NOT NULL,
+INSERT INTO `m002_master_client` (`id`, `name`, `comment`) VALUES
+(1, 'All', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m003_master_module`
+--
+
+CREATE TABLE `m003_master_module` (
+  `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
-  `comment` text NOT NULL,
-  `database` varchar(255) NOT NULL,
-  `allowed_ips` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `comment` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `m004_master_client` (`id`, `application_id`, `name`, `comment`, `database`, `allowed_ips`) VALUES
-(1,	0,	'All',	'',	'',	'');
+--
+-- Dumping data for table `m003_master_module`
+--
 
-DROP TABLE IF EXISTS `m005_master_module`;
-CREATE TABLE `m005_master_module` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `client_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `comment` text NOT NULL,
-  `allowed_ips` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+INSERT INTO `m003_master_module` (`id`, `name`, `comment`) VALUES
+(1, 'All', '');
 
-INSERT INTO `m005_master_module` (`id`, `client_id`, `name`, `comment`, `allowed_ips`) VALUES
-(1,	0,	'All',	'',	'');
+-- --------------------------------------------------------
 
-DROP TABLE IF EXISTS `m006_master_crud`;
-CREATE TABLE `m006_master_crud` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `table` varchar(255) NOT NULL,
-  `application_id` int(11) DEFAULT NULL,
-  `db_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Table structure for table `m004_master_route`
+--
 
-INSERT INTO `m006_master_crud` (`id`, `name`, `table`, `application_id`, `db_id`) VALUES
-(1,	'user',	'/crud/m008_master_user',	NULL,	NULL);
-
-DROP TABLE IF EXISTS `m007_master_http`;
-CREATE TABLE `m007_master_http` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-INSERT INTO `m007_master_http` (`id`, `name`, `description`) VALUES
-(1,	'GET',	''),
-(2,	'POST',	''),
-(3,	'PUT',	''),
-(4,	'DELETE',	'');
-
-DROP TABLE IF EXISTS `m008_master_db`;
-CREATE TABLE `m008_master_db` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `hostname` varchar(255) NOT NULL,
-  `database` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-INSERT INTO `m008_master_db` (`id`, `hostname`, `database`, `description`) VALUES
-(1,	'localhost',	'product_global',	'');
-
-DROP TABLE IF EXISTS `m009_master_route`;
-CREATE TABLE `m009_master_route` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `m004_master_route` (
+  `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `route` varchar(255) NOT NULL,
-  `application_id` int(11) NOT NULL,
-  `db_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  `db_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `m009_master_route` (`id`, `name`, `route`, `application_id`, `db_id`) VALUES
-(1,	'user',	'/crud/m008_master_user',	0,	0);
+--
+-- Dumping data for table `m004_master_route`
+--
 
-SET NAMES utf8mb4;
+INSERT INTO `m004_master_route` (`id`, `name`, `route`, `db_id`) VALUES
+(1, 'user', '/m008_master_user', 0);
 
-DROP TABLE IF EXISTS `m010_master_user`;
-CREATE TABLE `m010_master_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m005_master_db`
+--
+
+CREATE TABLE `m005_master_db` (
+  `id` int NOT NULL,
+  `hostname` varchar(255) NOT NULL,
+  `database` varchar(255) NOT NULL,
+  `description` text
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `m005_master_db`
+--
+
+INSERT INTO `m005_master_db` (`id`, `hostname`, `database`, `description`) VALUES
+(1, 'localhost', 'product_global', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m006_master_http`
+--
+
+CREATE TABLE `m006_master_http` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Dumping data for table `m006_master_http`
+--
+
+INSERT INTO `m006_master_http` (`id`, `name`, `description`) VALUES
+(1, 'GET', ''),
+(2, 'POST', ''),
+(3, 'PUT', ''),
+(4, 'DELETE', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `m007_master_user`
+--
+
+CREATE TABLE `m007_master_user` (
+  `id` int NOT NULL,
   `username` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `group_ids` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`group_ids`)),
-  `allowed_ips` text DEFAULT NULL,
-  `updated_by` int(11) NOT NULL DEFAULT 0,
-  `created_by` int(11) NOT NULL DEFAULT 0,
-  `updated_on` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `created_on` timestamp NOT NULL DEFAULT current_timestamp(),
+  `group_ids` json DEFAULT NULL,
+  `allowed_ips` text,
+  `updated_by` int NOT NULL DEFAULT '0',
+  `created_by` int NOT NULL DEFAULT '0',
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `m010_master_user` (`id`, `username`, `password_hash`, `group_ids`, `allowed_ips`, `updated_by`, `created_by`, `updated_on`, `created_on`, `is_disabled`, `is_deleted`) VALUES
-(1,	'shames11@rediffmail.com',	'$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',	'1',	NULL,	0,	0,	'2023-03-01 08:31:57',	'2023-02-22 09:42:50',	'No',	'No');
+--
+-- Dumping data for table `m007_master_user`
+--
 
--- 2023-03-31 06:59:23
+INSERT INTO `m007_master_user` (`id`, `username`, `password_hash`, `group_ids`, `allowed_ips`, `updated_by`, `created_by`, `updated_on`, `created_on`, `is_disabled`, `is_deleted`) VALUES
+(1, 'shames11@rediffmail.com', '$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6', '1', '', 0, 0, '2023-03-01 03:01:57', '2023-02-22 04:12:50', 'No', 'No');
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

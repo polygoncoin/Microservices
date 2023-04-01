@@ -228,18 +228,20 @@ switch ($method) {
                 break;
             }
         }
-        foreach ($queries as $key => &$value) {
-            if ($key === 'default') continue;
-            $sth = $connection->prepare($value[0], array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-            $sth->execute($value[1]);
-            $result[$key] = $sth->fetchAll(PDO::FETCH_ASSOC);
-            if ($queries[$key][2] === 'singleRowFormat') {
-                $result[$key] = $sth->fetch(PDO::FETCH_ASSOC);
-            }
-            if ($queries[$key][2] === 'multipleRowFormat') {
+        if (isset($queries['default'][2]) && $queries['default'][2] === 'singleRowFormat') {
+            foreach ($queries as $key => &$value) {
+                if ($key === 'default') continue;
+                $sth = $connection->prepare($value[0], array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+                $sth->execute($value[1]);
                 $result[$key] = $sth->fetchAll(PDO::FETCH_ASSOC);
+                if ($queries[$key][2] === 'singleRowFormat') {
+                    $result[$key] = $sth->fetch(PDO::FETCH_ASSOC);
+                }
+                if ($queries[$key][2] === 'multipleRowFormat') {
+                    $result[$key] = $sth->fetchAll(PDO::FETCH_ASSOC);
+                }
+                $sth->closeCursor();
             }
-            $sth->closeCursor();
         }
         break;
     case 'POST':
