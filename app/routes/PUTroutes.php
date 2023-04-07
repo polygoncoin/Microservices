@@ -1,5 +1,5 @@
 <?php
-$routes = [
+return [
     'crud' => [
         '{table:string}' => [
             '{id:int}'  => [
