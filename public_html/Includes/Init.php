@@ -69,6 +69,9 @@ class Init extends Authorize
         // Load uriParams
         $uriParams = $this->routeParams;
 
+        // Load Read Only Session
+        $readOnlySession = $this->readOnlySession;
+
         // Load Queries
         $queries = include $this->__file__;
 
@@ -123,6 +126,9 @@ class Init extends Authorize
         // Load uriParams
         $uriParams = $this->routeParams;
 
+        // Load Read Only Session
+        $readOnlySession = $this->readOnlySession;
+
         // Load Queries
         $queries = include $this->__file__;
 
@@ -143,6 +149,9 @@ class Init extends Authorize
     {
         // Load uriParams
         $uriParams = $this->routeParams;
+
+        // Load Read Only Session
+        $readOnlySession = $this->readOnlySession;
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payload);
@@ -168,6 +177,9 @@ class Init extends Authorize
         // Load uriParams
         $uriParams = $this->routeParams;
 
+        // Load Read Only Session
+        $readOnlySession = $this->readOnlySession;
+
         // Load Payload
         parse_str(file_get_contents('php://input'), $payload);
 
@@ -191,6 +203,9 @@ class Init extends Authorize
     {
         // Load uriParams
         $uriParams = $this->routeParams;
+
+        // Load Read Only Session
+        $readOnlySession = $this->readOnlySession;
 
         // Load Queries
         $queries = include $this->__file__;

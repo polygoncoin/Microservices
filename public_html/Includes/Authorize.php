@@ -47,6 +47,27 @@ class Authorize extends HttpRequest
     public $conn = null;
 
     /**
+     * Read only Session
+     *
+     * @var array
+     */
+    public $readOnlySession = null;
+
+    /**
+     * Global DB
+     *
+     * @var string
+     */
+    public $globalDB = null;
+
+    /**
+     * Client DB
+     *
+     * @var string
+     */
+    public $clientDB = null;
+
+    /**
      * Logged-in User ID
      *
      * @var int
@@ -112,13 +133,15 @@ class Authorize extends HttpRequest
      */
     private function loadTokenSession($token)
     {
-        $_SESSION = json_decode($this->conn->getCache($token), true);
+        $this->readOnlySession = json_decode($this->conn->getCache($token), true);
 
-        if (empty($_SESSION['id']) || empty($_SESSION['group_id'])) {
+        if (empty($this->readOnlySession['id']) || empty($this->readOnlySession['group_id'])) {
             HttpErrorResponse::return404('Invalid session');
         } else {
-            $this->userId = $_SESSION['id'];
-            $this->groupId = $_SESSION['group_id'];
+            $this->userId = $this->readOnlySession['id'];
+            $this->groupId = $this->readOnlySession['group_id'];
+            $this->globalDB = $this->readOnlySession['global_db'];
+            $this->clientDB = $this->readOnlySession['client_db'];
         }
     }
 
