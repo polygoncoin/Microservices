@@ -21,29 +21,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE. 
-*/ 
-//include method route file.
+*/
 define('__DOC_ROOT__', realpath(__DIR__ . '/../'));
+
+require_once __DOC_ROOT__ . '/public_html/Includes/HttpRequest.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/HttpErrorResponse.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Servers/Cache.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Servers/Database.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Connection.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Authorize.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Init.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/JsonEncode.php';
+
 define('__REQUEST_URI__', trim($_GET['REQUEST_URI'], '/'));
+
 header('Content-Type: application/json; charset=utf-8');
 
-//validate payload params
-if (in_array($method, ['POST', 'PUT'])) {
-    $payloadKeys = array_keys($payload['required']);
-    if (isset($config['payload'])) {
-        foreach (array_merge($config['payload']['required'], $config['payload']['optional']) as $value) {
-            if (!in_array($value, $payloadKeys)) {
-                HttpErrorResponse::return404("Missing required param '$value' in payload");
-            } elseif (isset($payload[$value])) {
-                $params[':'.$value] = $payload[$value];
-            }
-        }
-    }
-}
-
-Init::api();
-
-class validateRequest
-{
-
-}
+Init::api($authirizationHeader, $httpMethod, $requestIP);

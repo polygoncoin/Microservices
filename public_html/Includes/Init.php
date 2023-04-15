@@ -36,30 +36,38 @@ SOFTWARE.
  */
 class Init extends Authorize
 {
-    private $result = [];
-
     public static function api()
     {
         parent::init();
 
         switch ($method) {
             case 'GET':
-                self::httpGET();
+                self::processHttpGET();
                 break;
             case 'POST':
-                self::httpPOST();
+                self::processHttpPOST();
                 break;
             case 'PUT':
-                self::httpPUT();
+                self::processHttpPUT();
+                break;
+            case 'PATCH':
+                self::processHttpPATCH();
                 break;
             case 'DELETE':
-                self::httpDELETE();
+                self::processHttpDELETE();
                 break;
         }
     }
 
-    function httpGET()
+    /**
+     * Process HTTP GET request
+     *
+     * @return void
+     */
+    function processHttpGET()
     {
+        include $this->__file__;
+
         $jsonEncode = new JsonEncode();
         if (isset($queries['default'])) {
             $sth = $this->conn->select($queries['default'][0]);
@@ -100,8 +108,16 @@ class Init extends Authorize
         }
         $jsonEncode = null;
     }
-    function httpPOST()
+
+    /**
+     * Process HTTP POST request
+     *
+     * @return void
+     */
+    function processHttpPOST()
     {
+        include $this->__file__;
+
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->insert($value[0]);
             $sth->execute($value[1]);
@@ -109,8 +125,16 @@ class Init extends Authorize
             $sth->closeCursor();
         }
     }
-    function httpPUT()
+
+    /**
+     * Process HTTP PUT request
+     *
+     * @return void
+     */
+    function processHttpPUT()
     {
+        include $this->__file__;
+
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->update($value[0]);
             $sth->execute($value[1]);
@@ -118,8 +142,33 @@ class Init extends Authorize
             $sth->closeCursor();
         }
     }
-    function httpDELETE()
+
+    /**
+     * Process HTTP PATCH request
+     *
+     * @return void
+     */
+    function processHttpPATCH()
     {
+        include $this->__file__;
+
+        foreach ($queries as $key => &$value) {
+            $sth = $this->conn->update($value[0]);
+            $sth->execute($value[1]);
+            $result[$key] = $sth->rowCount();
+            $sth->closeCursor();
+        }
+    }
+
+    /**
+     * Process HTTP DELETE request
+     *
+     * @return void
+     */
+    function processHttpDELETE()
+    {
+        include $this->__file__;
+
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->update($value[0]);
             $sth->execute($value[1]);

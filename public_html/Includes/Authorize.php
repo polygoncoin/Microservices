@@ -36,17 +36,50 @@ SOFTWARE.
  */
 class Authorize extends HttpRequest
 {
+    public $authirizationHeader = null;
+    public $httpMethod = null;
+    public $requestIP = null;
+    /**
+     * Server connection object
+     *
+     * @var object
+     */
     public $conn = null;
 
+    /**
+     * Logged-in User ID
+     *
+     * @var int
+     */
     public $userId = null;
+
+    /**
+     * Logged-in user Group ID
+     *
+     * @var int
+     */
     public $groupId = null;
 
-    public static function init()
+    /**
+     * Initialize authorization
+     *
+     * @return void
+     */
+    public static function init($authirizationHeader, $httpMethod, $requestIP)
     {
+        $this->authirizationHeader = $authirizationHeader;
+        $this->httpMethod = $httpMethod;
+        $this->requestIP = $requestIP;
+
         $this->conn = new Connection();
         $this->process();
     }
 
+    /**
+     * Process authorization
+     *
+     * @return void
+     */
     function process()
     {
         $this->setToken($_SERVER['HTTP_AUTHORIZATION']);
@@ -60,11 +93,23 @@ class Authorize extends HttpRequest
         }
     }
 
+    /**
+     * Check token exist.
+     *
+     * @param string $token Bearer token
+     * @return void
+     */
     private function tokenExists($token)
     {
         return $this->conn->cacheExists($token);
     }
 
+    /**
+     * Load session with help of token
+     *
+     * @param string $token Bearer token
+     * @return void
+     */
     private function loadTokenSession($token)
     {
         $_SESSION = json_decode($this->conn->getCache($token), true);
@@ -77,6 +122,12 @@ class Authorize extends HttpRequest
         }
     }
 
+    /**
+     * Validate request IP
+     *
+     * @param string $ip IP Address (V4).
+     * @return void
+     */
     private function checkSourceIp($ip)
     {
         $foundIP = null;
@@ -102,18 +153,24 @@ class Authorize extends HttpRequest
         if (!is_null($foundIP) && !$foundIP) HttpErrorResponse::return404('IP Address not supported');
     }
 
+    /**
+     * Check Requested route privilage
+     *
+     * @param int    $groupId Group ID
+     * @param string $route   Raw route configured in Routes folder.
+     * @return void
+     */
     private function checkRoutePrivilage($groupId, $route)
     {
-        if ($this->conn->cacheExists('group_routes_' . $groupId)) {
-            $supportedGroupRoutes = json_decode($this->conn->getCache('group_routes_' . $groupID), true);
-            if (!in_array($route, $supportedGroupRoutes[$this->httpMethod])) {
-                HttpErrorResponse::return404('Route not supported');
-            }
-        } else {
-            HttpErrorResponse::return404('Route details are missing for group');
+        $key = "group:{$groupId}:routes";
+        if (!$this->conn->cacheSetValueExists($key, $route)) {
+            HttpErrorResponse::return404('Route not supported');
         }
     }
     
+    /**
+     * Destructor
+     */
     public function __destruct()
     {
         
