@@ -66,7 +66,11 @@ class Init extends Authorize
      */
     function processHttpGET()
     {
-        include $this->__file__;
+        // Load uriParams
+        $uriParams = $this->routeParams;
+
+        // Load Queries
+        $queries = include $this->__file__;
 
         $jsonEncode = new JsonEncode();
         if (isset($queries['default'])) {
@@ -116,7 +120,11 @@ class Init extends Authorize
      */
     function processHttpPOST()
     {
-        include $this->__file__;
+        // Load uriParams
+        $uriParams = $this->routeParams;
+
+        // Load Queries
+        $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->insert($value[0]);
@@ -133,7 +141,14 @@ class Init extends Authorize
      */
     function processHttpPUT()
     {
-        include $this->__file__;
+        // Load uriParams
+        $uriParams = $this->routeParams;
+
+        // Load Payload
+        parse_str(file_get_contents('php://input'), $payload);
+
+        // Load Queries
+        $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->update($value[0]);
@@ -150,7 +165,14 @@ class Init extends Authorize
      */
     function processHttpPATCH()
     {
-        include $this->__file__;
+        // Load uriParams
+        $uriParams = $this->routeParams;
+
+        // Load Payload
+        parse_str(file_get_contents('php://input'), $payload);
+
+        // Load Queries
+        $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->update($value[0]);
@@ -167,7 +189,11 @@ class Init extends Authorize
      */
     function processHttpDELETE()
     {
-        include $this->__file__;
+        // Load uriParams
+        $uriParams = $this->routeParams;
+
+        // Load Queries
+        $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
             $sth = $this->conn->update($value[0]);
