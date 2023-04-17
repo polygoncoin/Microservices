@@ -22,33 +22,79 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE. 
 */
-define('__DOC_ROOT__', realpath(__DIR__ . '/../'));
-require_once __DOC_ROOT__ . '/public_html/Includes/Reload.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/HttpRequest.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/HttpErrorResponse.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Connection.php';
+/**
+ * Updates cache
+ *
+ * This class is Reloads the Cache values of respective keys
+ *
+ * @category   Reload
+ * @package    Microservices
+ * @author     Ramesh Narayan Jangid
+ * @copyright  Ramesh Narayan Jangid
+ * @version    Release: @1.0.0@
+ * @since      Class available since Release 1.0.0
+ */
+class Reload extends HttpRequest
+{
+    /**
+     * Server connection object
+     *
+     * @var object
+     */
+    public $conn = null;
 
-header('Content-Type: application/json; charset=utf-8');
+    /**
+     * Global DB
+     *
+     * @var string
+     */
+    public $db = 'global';
 
-if (!empty($_GET['ids'])) {
-    $idsArray = explode(',', $_GET['ids']);
-    foreach ($idsArray as &$value) {
-        if (ctype_digit($$value)) {
-            $value = (int)$value;
-        } else {
-            return404('Only integer values supported for ids.');
+    /**
+     * Initialize authorization
+     *
+     * @return void
+     */
+    public static function init()
+    {
+        $this->conn = new Connection();
+        $this->process();
+    }
+
+    /**
+     * Process authorization
+     *
+     * @return void
+     */
+    function process($refresh)
+    {
+        $ids = null;
+        foreach (explode(',', trim($_GET['ids'])) as $value) {
+            if (ctype_digit($value = trim($value))) {
+                $ids[] = (int)$value;
+            } else {
+                HttpErrorResponse::return404('Only integer values supported for ids.');
+            }
+        }
+        
+        switch ($refresh) {
+            case 'user':
+                $this->processUser($ids);
+                break;
+            case 'group':
+                $this->processGroupMethodRoute($ids);
+                break;
         }
     }
-}
 
-$where = '';
-if ($_GET['load'] !== 'all' && count($idsArray) > 0) {
-    $where = ' WHERE id IN (' . implode($idsArray) . ');';
-} else {
-    $where = ';';
-}
+    function processUser($ids = null)
+    {
+        $whereClause = $ids ? 'WHERE id IN (' . implode(', ', $ids) . ');' : ';';
 
-switch ($_GET['load']) {
-    case 'all':
-    case 'user':
-        $sth = $connection->prepare('SELECT * FROM ' . MYSQL_USER_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth = $this->conn->select('SELECT * FROM ' . MYSQL_USER_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
             $allowedIpsArray = [];
@@ -68,10 +114,13 @@ switch ($_GET['load']) {
             $redis->set($row['username'], $row);
         }
         $sth->closeCursor();
-        if ($_GET['load'] !== 'all') break;
-    case 'all':
-    case 'group':
-        $sth = $connection->prepare('SELECT id, allowed_ips FROM ' . MYSQL_GROUP_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    }
+
+    function processGroupIps($ids = null)
+    {
+        $whereClause = $ids ? 'WHERE id IN (' . implode(', ', $ids) . ');' : ';';
+
+        $sth = $this->conn->select('SELECT id, allowed_ips FROM ' . MYSQL_GROUP_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
             $allowedIpsArray = [];
@@ -89,10 +138,13 @@ switch ($_GET['load']) {
             }
         }
         $sth->closeCursor();
-        if ($_GET['load'] !== 'all') break;
-    case 'all':
-    case 'route':
-        $sth = $connection->prepare('SELECT * FROM ' . MYSQL_ROUTE_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+    }
+
+    function processGroupMethodRoute($ids = null)
+    {
+        $whereClause = $ids ? 'WHERE id IN (' . implode(', ', $ids) . ');' : ';';
+
+        $sth = $this->conn->select('SELECT * FROM ' . MYSQL_ROUTE_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute();
         $routeArr = [];
         while ($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
@@ -104,9 +156,27 @@ switch ($_GET['load']) {
                 $redis->set($groupID . '_' . base64_encode($route), json_encode($routeDetails));
             }
         }
-        if ($_GET['load'] !== 'all') break;
-}
+    }
 
-$connection = null;
-$redis = null;
-echo 'done';
+    private function getIpRange($cidr)
+    {
+        $range = [];
+        $cidr = explode('/', trim($cidr));
+        if (count($cidr)===1) {
+            $range['start'] = ip2long($cidr[0]);
+            $range['end'] = ip2long($cidr[0]);
+        } elseif (count($cidr)===2) {
+            $range['start'] = ((ip2long($cidr[0])) & ((-1 << (32 - (int)$cidr[1]))));
+            $range['end'] = ((ip2long($range[0])) + pow(2, (32 - (int)$cidr[1])) - 1);
+        }
+        return $range;
+    }
+
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        
+    }
+}

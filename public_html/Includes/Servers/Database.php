@@ -37,108 +37,63 @@ SOFTWARE.
 class Database
 {
     /**
-     * Database master hostname
+     * Database hostname
      *
      * @var string
      */
-    private $masterHostname = null;
+    private $hostname = null;
 
     /**
-     * Database master username
+     * Database username
      *
      * @var string
      */
-    private $masterUsername = null;
+    private $username = null;
 
     /**
-     * Database master password
+     * Database password
      *
      * @var string
      */
-    private $masterPassword = null;
+    private $password = null;
 
     /**
-     * Database master database
+     * Database database
      *
      * @var string
      */
-    private $masterDatabase = null;
+    private $database = null;
 
     /**
-     * Database slave hostname
-     *
-     * @var string
-     */
-    private $slaveHostname = null;
-
-    /**
-     * Database slave username
-     *
-     * @var string
-     */
-    private $slaveUsername = null;
-
-    /**
-     * Database slave password
-     *
-     * @var string
-     */
-    private $slavePassword = null;
-
-    /**
-     * Database slave database
-     *
-     * @var string
-     */
-    private $slaveDatabase = null;
-
-    /**
-     * Database master object
+     * Database connection
      *
      * @var object
      */
-    public $master = null;
-
-    /**
-     * Database slave object
-     *
-     * @var object
-     */
-    public $slave = null;
+    private $pdo = null;
 
     /**
      * Database constructor
      */
-    function __construct()
+    function __construct($hostname, $username, $password, $database = NULL)
     {
-        $this->masterHostname = $_SESSION['DbMasterHostname'];
-        $this->masterUsername = $_SESSION['DbMasterUsername'];
-        $this->masterPassword = $_SESSION['DbMasterPassword'];
-        $this->masterDatabase = $_SESSION['DbMasterDatabase'];
-
-        $this->slaveHostname = $_SESSION['DbSlaveHostname'];
-        $this->slaveUsername = $_SESSION['DbSlaveUsername'];
-        $this->slavePassword = $_SESSION['DbSlavePassword'];
-        $this->slaveDatabase = $_SESSION['DbSlaveDatabase'];
+        $this->hostname = getenv($hostname);
+        $this->username = getenv($username);
+        $this->password = getenv($password);
+        if (!empty($database)) {
+            $this->database = getenv($database);
+        }
     }
 
     /**
      * Database connection
      *
-     * @param string $mode Can be one of string among master/slave
      * @return void
      */
-    function connect($mode)
+    function connect()
     {
-        if (!is_null($this->$mode)) return;
-
-        $hostname = $mode.'Hostname';
-        $username = $mode.'Username';
-        $password = $mode.'Password';
-        $database = $mode.'Database';
-
+        if (!is_null($this->pdo)) return;
         try {
-            $this->$mode = new \PDO(
+            $this->pdo = new \PDO(
                 "mysql:host={$this->hostname};dbname={$this->database}",
                 $this->username,
                 $this->password,

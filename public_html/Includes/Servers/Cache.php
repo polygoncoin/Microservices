@@ -38,73 +38,51 @@ SOFTWARE.
 class Cache
 {
     /**
-     * Cache master hostname
+     * Cache hostname
      *
      * @var string
      */
-    private $masterHostname = null;
+    private $hostname = null;
 
     /**
-     * Cache master password
-     *
-     * @var string
-     */
-    private $masterPassword = null;
-
-    /**
-     * Cache master port
+     * Cache port
      *
      * @var int
      */
-    private $masterPort = null;
+    private $port = null;
 
     /**
-     * Cache slave hostname
+     * Cache password
      *
      * @var string
      */
-    private $slaveHostname = null;
+    private $password = null;
 
     /**
-     * Cache slave password
+     * Cache database
      *
      * @var string
      */
-    private $slavePassword = null;
+    private $database = null;
 
     /**
-     * Cache slave port
-     *
-     * @var int
-     */
-    private $slavePort = null;
-
-    /**
-     * Cache master object
+     * Cache connection
      *
      * @var object
      */
-    public $master = null;
-
-    /**
-     * Cache slave object
-     *
-     * @var object
-     */
-    public $slave = null;
+    private $redis = null;
 
     /**
      * Cache constructor
      */
-    function __construct()
+    public function __construct($hostname, $port, $password, $database = NULL)
     {
-        $this->masterHostname = $_SESSION['CacheMasterHostname'];
-        $this->masterPassword = $_SESSION['CacheMasterPassword'];
-        $this->masterPort = $_SESSION['CacheMasterPort'];
-
-        $this->slaveHostname = $_SESSION['CacheSlaveHostname'];
-        $this->slavePassword = $_SESSION['CacheSlavePassword'];
-        $this->slavePort = $_SESSION['CacheSlavePort'];
+        $this->hostname = getenv($hostname);
+        $this->port = getenv($port);
+        $this->password = getenv($password);
+        if (!empty($database)) {
+            $this->database = getenv($database);
+        }
     }
 
     /**
@@ -113,20 +91,22 @@ class Cache
      * @param string $mode Can be one of string among master/slave
      * @return void
      */
-    function connect($mode)
+    function connect()
     {
-        if (!is_null($this->$mode)) return;
-
-        $hostname = $mode.'Hostname';
-        $password = $mode.'Password';
-        $port = $mode.'Port';
-
+        if (!is_null($this->redis)) return;
         try {
-            $this->$mode = new Redis();
-            $this->$mode->connect($this->$hostname, $this->$port, 1, NULL, 100);
-            $this->$mode->ping();
-        } catch (\Exception $e) {
-            HttpErrorResponse::return501('Unable to connect to token cache server');
+            $this->redis = new Redis();
+            //Connecting to Redis
+            $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
+            $this->redis->auth($this->password);
+            if (!empty($this->database)) {
+                $this->redis->select($this->database);
+            }
+            if (!$this->redis->ping()) {
+                HttpErrorResponse::return501('Unable to ping to cache server');
+            }
+        } catch (Exception $e) {
+            HttpErrorResponse::return501('Unable to connect to cache server');
         }
     }
 }

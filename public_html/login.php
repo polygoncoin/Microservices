@@ -31,18 +31,20 @@ define('REDIS_LOCAL_PORT_NUMBER', '6379');
 define('EXPIRY_TIME', 3600);
 
 try {
-    $redisLocal = new Redis();
-    $redisLocal->pconnect(REDIS_LOCAL_HOSTNAME, REDIS_LOCAL_PORT_NUMBER, 1, REDIS_LOCAL_DATABASE, 100);
-    $redisLocal->ping();
+    $redis = new Redis() or die("Cannot load Redis module.");;
+    $redis->pconnect(REDIS_LOCAL_HOSTNAME, REDIS_LOCAL_PORT_NUMBER, 1, REDIS_LOCAL_DATABASE, 100);
+    $redis->auth('foobared');
+    //$r->select($db);
+    $redis->ping();
 } catch (Exception $e) {
     return501('Unable to connect to cache server');
 }
 
 // Redis - one can find the userID from username.
-if ($redisLocal->exists($_POST['username'])) {
-    $userDetails = json_decode($redisLocal->get($_POST['username']), true);
-    if ($redisLocal->exists($_POST['username'])) {
-        $allowedIps = $redisLocal->get('allowed_ips_' . $userDetails['group_id']);
+if ($redis->exists($_POST['username'])) {
+    $userDetails = json_decode($redis->get($_POST['username']), true);
+    if ($redis->exists($_POST['username'])) {
+        $allowedIps = $redis->get('allowed_ips_' . $userDetails['group_id']);
         
     }
 } else {
@@ -56,13 +58,13 @@ if (empty($userDetails['id']) || empty($userDetails['group_id'])) {
 // Compare password with hash stored in redis.
 // The hash and userIDs are cached in Redis with no expiry.
 // Redis stores the hash to handle the load if attack occurs.
-if (password_verify($_POST['password'], $userDetails['password_hash']))) { // get hash from redis and compares with password
+if (password_verify($_POST['password'], $userDetails['password_hash'])) { // get hash from redis and compares with password
     $timestamp = time();
     // Redis - Check if token was already generated.
     // Token details are stored in token_ and userID combination.
     // This is to avoid(/ have a control) of multiple token generation for same user account.
-    if ($redisLocal->exists('token_' . $userDetails['id'])) {
-        $redisToken = $redisLocal->get('token_' . $userDetails['id']);
+    if ($redis->exists('token_' . $userDetails['id'])) {
+        $redisToken = $redis->get('token_' . $userDetails['id']);
     } else {
         try {
             $redisToken = new Redis();
@@ -81,7 +83,7 @@ if (password_verify($_POST['password'], $userDetails['password_hash']))) { // ge
             }
         }
         // We set this to have a check first if multiple request/attack occurs.
-        $redisLocal->set('token_' . $userDetails['id'], $redisToken, EXPIRY_TIME);
+        $redis->set('token_' . $userDetails['id'], $redisToken, EXPIRY_TIME);
 
         try {
             define('MYSQL_READ_HOSTNAME', '127.0.0.1');

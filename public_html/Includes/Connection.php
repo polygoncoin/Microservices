@@ -22,6 +22,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE. 
 */
+require_once __DOC_ROOT__ . '/public_html/Includes/Servers/Cache.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Servers/Database.php';
 /**
  * Class maintaining connection for cache and database.
  *
@@ -68,8 +70,8 @@ class Connection
      */
     public function cacheExists($key)
     {
-        $this->cache->connect('slave');
-        return $this->cache->slave->exists($key);
+        $this->cache->redis->connect();
+        return $this->cache->redis->exists($key);
     }
 
     /**
@@ -80,8 +82,8 @@ class Connection
      */
     public function getCache($key)
     {
-        $this->cache->connect('slave');
-        return $this->cache->slave->get($key);
+        $this->cache->redis->connect();
+        return $this->cache->redis->get($key);
     }
 
     /**
@@ -92,8 +94,8 @@ class Connection
      */
     public function select($sql)
     {
-        $this->db->connect('slave');
-        return $this->db->slave->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $this->db->pdo->connect();
+        return $this->db->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
     }
 
     /**
@@ -104,8 +106,8 @@ class Connection
      */
     public function insert($sql)
     {
-        $this->db->connect('master');
-        return $this->db->master->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $this->db->pdo->connect();
+        return $this->db->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
     }
 
     /**
@@ -116,7 +118,7 @@ class Connection
      */
     public function update($sql)
     {
-        $this->db->connect('master');
-        return $this->db->master->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        $this->db->pdo->connect();
+        return $this->db->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
     }
 }

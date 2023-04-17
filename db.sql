@@ -1,190 +1,244 @@
--- phpMyAdmin SQL Dump
--- version 5.1.3
--- https://www.phpmyadmin.net/
+CREATE DATABASE  IF NOT EXISTS `global` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `global`;
+-- MySQL dump 10.13  Distrib 8.0.32, for macos13 (x86_64)
 --
--- Host: localhost
--- Generation Time: Apr 01, 2023 at 09:37 AM
--- Server version: 8.0.28
--- PHP Version: 7.4.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
+-- Host: localhost    Database: global
+-- ------------------------------------------------------
+-- Server version	8.0.32
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `global`
---
-
--- --------------------------------------------------------
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
 -- Table structure for table `l001_link_allowed_route`
 --
 
+DROP TABLE IF EXISTS `l001_link_allowed_route`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `l001_link_allowed_route` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `group_id` int NOT NULL,
-  `client_id` int NOT NULL,
-  `module_id` int DEFAULT NULL,
   `route_id` int DEFAULT NULL,
-  `http_id` int DEFAULT NULL
+  `http_id` int DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `l001_link_allowed_route`
+--
+
+LOCK TABLES `l001_link_allowed_route` WRITE;
+/*!40000 ALTER TABLE `l001_link_allowed_route` DISABLE KEYS */;
+/*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `m001_master_group`
 --
 
+DROP TABLE IF EXISTS `m001_master_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m001_master_group` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  `comment` text NOT NULL,
+  `client_db_id` int NOT NULL,
   `allowed_ips` text,
-  `client_ids` json DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `comments` varchar(255) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `m001_master_group`
 --
 
-INSERT INTO `m001_master_group` (`id`, `name`, `comment`, `allowed_ips`, `client_ids`) VALUES
-(1, 'Polygon Super Admin', '', NULL, 'null');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m002_master_client`
---
-
-CREATE TABLE `m002_master_client` (
-  `id` int NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `comment` text
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+LOCK TABLES `m001_master_group` WRITE;
+/*!40000 ALTER TABLE `m001_master_group` DISABLE KEYS */;
+INSERT INTO `m001_master_group` VALUES (1,'Super Admin',0,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No');
+/*!40000 ALTER TABLE `m001_master_group` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Dumping data for table `m002_master_client`
+-- Table structure for table `m002_master_user`
 --
 
-INSERT INTO `m002_master_client` (`id`, `name`, `comment`) VALUES
-(1, 'All', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m003_master_module`
---
-
-CREATE TABLE `m003_master_module` (
-  `id` int NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `comment` text
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `m003_master_module`
---
-
-INSERT INTO `m003_master_module` (`id`, `name`, `comment`) VALUES
-(1, 'All', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m004_master_route`
---
-
-CREATE TABLE `m004_master_route` (
-  `id` int NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `route` varchar(255) NOT NULL,
-  `db_id` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `m004_master_route`
---
-
-INSERT INTO `m004_master_route` (`id`, `name`, `route`, `db_id`) VALUES
-(1, 'user', '/m008_master_user', 0);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m005_master_db`
---
-
-CREATE TABLE `m005_master_db` (
-  `id` int NOT NULL,
-  `hostname` varchar(255) NOT NULL,
-  `database` varchar(255) NOT NULL,
-  `description` text
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `m005_master_db`
---
-
-INSERT INTO `m005_master_db` (`id`, `hostname`, `database`, `description`) VALUES
-(1, 'localhost', 'product_global', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m006_master_http`
---
-
-CREATE TABLE `m006_master_http` (
-  `id` int NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `description` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
---
--- Dumping data for table `m006_master_http`
---
-
-INSERT INTO `m006_master_http` (`id`, `name`, `description`) VALUES
-(1, 'GET', ''),
-(2, 'POST', ''),
-(3, 'PUT', ''),
-(4, 'DELETE', '');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `m007_master_user`
---
-
-CREATE TABLE `m007_master_user` (
-  `id` int NOT NULL,
+DROP TABLE IF EXISTS `m002_master_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `m002_master_user` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `group_ids` json DEFAULT NULL,
-  `allowed_ips` text,
-  `updated_by` int NOT NULL DEFAULT '0',
-  `created_by` int NOT NULL DEFAULT '0',
-  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `group_id` int NOT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
-  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `m007_master_user`
+-- Dumping data for table `m002_master_user`
 --
 
-INSERT INTO `m007_master_user` (`id`, `username`, `password_hash`, `group_ids`, `allowed_ips`, `updated_by`, `created_by`, `updated_on`, `created_on`, `is_disabled`, `is_deleted`) VALUES
-(1, 'shames11@rediffmail.com', '$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6', '1', '', 0, 0, '2023-03-01 03:01:57', '2023-02-22 04:12:50', 'No', 'No');
-COMMIT;
+LOCK TABLES `m002_master_user` WRITE;
+/*!40000 ALTER TABLE `m002_master_user` DISABLE KEYS */;
+INSERT INTO `m002_master_user` VALUES (1,'shames11@rediffmail.com','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-03-01 03:01:57','No','No','No');
+/*!40000 ALTER TABLE `m002_master_user` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `m003_master_route`
+--
+
+DROP TABLE IF EXISTS `m003_master_route`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `m003_master_route` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `route` varchar(255) NOT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `m003_master_route`
+--
+
+LOCK TABLES `m003_master_route` WRITE;
+/*!40000 ALTER TABLE `m003_master_route` DISABLE KEYS */;
+INSERT INTO `m003_master_route` VALUES (1,'/m008_master_user',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No');
+/*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `m004_master_client_db`
+--
+
+DROP TABLE IF EXISTS `m004_master_client_db`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `m004_master_client_db` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `db_hostname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `db_username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `db_password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `db_database` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `cache_hostname` varchar(255) NOT NULL,
+  `cache_port` varchar(255) NOT NULL,
+  `cache_password` varchar(255) NOT NULL,
+  `cache_database` varchar(255) NOT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `m004_master_client_db`
+--
+
+LOCK TABLES `m004_master_client_db` WRITE;
+/*!40000 ALTER TABLE `m004_master_client_db` DISABLE KEYS */;
+INSERT INTO `m004_master_client_db` VALUES (1,'localhost','','','product_global','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No');
+/*!40000 ALTER TABLE `m004_master_client_db` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `m005_master_http`
+--
+
+DROP TABLE IF EXISTS `m005_master_http`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `m005_master_http` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `m005_master_http`
+--
+
+LOCK TABLES `m005_master_http` WRITE;
+/*!40000 ALTER TABLE `m005_master_http` DISABLE KEYS */;
+INSERT INTO `m005_master_http` VALUES (1,'GET','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),(2,'POST','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),(3,'PUT','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),(4,'PATCH','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 09:15:58','No','No','No'),(5,'DELETE',NULL,NULL,'2023-04-15 09:16:22',NULL,NULL,NULL,'2023-04-15 09:16:22','No','No','No');
+/*!40000 ALTER TABLE `m005_master_http` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-04-18  0:01:18

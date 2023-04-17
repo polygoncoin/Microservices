@@ -22,6 +22,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE. 
 */
+require_once __DOC_ROOT__ . '/public_html/Includes/HttpRequest.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/HttpErrorResponse.php';
+require_once __DOC_ROOT__ . '/public_html/Includes/Connection.php';
 /**
  * Class handles Authorization
  *
