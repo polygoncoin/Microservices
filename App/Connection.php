@@ -1,8 +1,8 @@
 <?php
-namespace Includes;
+namespace App;
 
-use Includes\Servers\Cache;
-use Includes\Servers\Database;
+use App\Servers\Cache;
+use App\Servers\Database;
 /*
 MIT License 
 

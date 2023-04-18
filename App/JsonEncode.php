@@ -1,5 +1,5 @@
 <?php
-namespace Includes;
+namespace App;
 /*
 MIT License 
 

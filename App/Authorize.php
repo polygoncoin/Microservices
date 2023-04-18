@@ -1,9 +1,9 @@
 <?php
-namespace Includes;
+namespace App;
 
-use Includes\HttpRequest;
-use Includes\HttpErrorResponse;
-use Includes\Connection;
+use App\HttpRequest;
+use App\HttpErrorResponse;
+use App\Connection;
 /*
 MIT License 
 
