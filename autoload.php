@@ -22,8 +22,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE. 
 */
-spl_autoload_register(function ($class) {
+spl_autoload_register(function ($className) {
     // Adapt this depending on your directory structure
     $className = str_replace("\\", DIRECTORY_SEPARATOR, $className);
-	include_once __DIR__ . $className . '.php';
+	$file = __DIR__ . $className . '.php';
+    if (!file_exists($file)) {
+        die(json_encode(['Status' => 501, 'Message' => "Class File '{$className}' missing"]));
+    }
+    require_once $file;
+    if (!class_exists($class = end(explode(DIRECTORY_SEPARATOR, $className)))) {
+        die(json_encode(['Status' => 501, 'Message' => "Class '{$class}' missing"]));
+    }
 });

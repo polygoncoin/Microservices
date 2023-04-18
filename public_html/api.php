@@ -23,11 +23,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
 */
 define('__DOC_ROOT__', dirname(__DIR__));
-require_once __DOC_ROOT__ . '/main.php';
-require_once __DOC_ROOT__ . '/Includes/Init.php';
+require_once __DOC_ROOT__ . '/autoload.php';
 
 define('__REQUEST_URI__', trim($_GET['REQUEST_URI'], '/'));
 
 header('Content-Type: application/json; charset=utf-8');
 
-Init::api($authirizationHeader, $httpMethod, $requestIP);
+App/Init::api($authirizationHeader, $httpMethod, $requestIP);
