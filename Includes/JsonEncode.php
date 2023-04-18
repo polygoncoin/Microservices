@@ -1,4 +1,5 @@
 <?php
+namespace Includes;
 /*
 MIT License 
 

@@ -1,4 +1,8 @@
 <?php
+namespace Includes;
+
+use Includes\Servers\Cache;
+use Includes\Servers\Database;
 /*
 MIT License 
 
@@ -22,8 +26,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE. 
 */
-require_once __DOC_ROOT__ . '/public_html/Includes/Servers/Cache.php';
-require_once __DOC_ROOT__ . '/public_html/Includes/Servers/Database.php';
 /**
  * Class maintaining connection for cache and database.
  *

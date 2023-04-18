@@ -1,4 +1,7 @@
 <?php
+namespace Includes;
+
+use Includes\JsonEncode;
 /*
 MIT License 
 

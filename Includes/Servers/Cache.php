@@ -1,4 +1,5 @@
 <?php
+namespace Includes\Servers;
 /*
 MIT License 
 
@@ -23,61 +24,62 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
 */
 /**
- * Loading database server
+ * Loading cache server
  *
- * This class is built to handle loading the database server.
+ * This class is built to handle loading the cache server.
  *
  * @category   Cache
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
+ * @license    http://www.php.net/license/3_01.txt  PHP License 3.01
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Database
+class Cache
 {
     /**
-     * Database hostname
+     * Cache hostname
      *
      * @var string
      */
     private $hostname = null;
 
     /**
-     * Database username
+     * Cache port
      *
-     * @var string
+     * @var int
      */
-    private $username = null;
+    private $port = null;
 
     /**
-     * Database password
+     * Cache password
      *
      * @var string
      */
     private $password = null;
 
     /**
-     * Database database
+     * Cache database
      *
      * @var string
      */
     private $database = null;
 
     /**
-     * Database connection
+     * Cache connection
      *
      * @var object
      */
-    private $pdo = null;
+    private $redis = null;
 
     /**
-     * Database constructor
+     * Cache constructor
      */
-    function __construct($hostname, $username, $password, $database = NULL)
+    public function __construct($hostname, $port, $password, $database = NULL)
     {
         $this->hostname = getenv($hostname);
-        $this->username = getenv($username);
+        $this->port = getenv($port);
         $this->password = getenv($password);
         if (!empty($database)) {
             $this->database = getenv($database);
@@ -85,25 +87,27 @@ class Database
     }
 
     /**
-     * Database connection
+     * Cache connection
      *
+     * @param string $mode Can be one of string among master/slave
      * @return void
      */
     function connect()
     {
-        if (!is_null($this->pdo)) return;
+        if (!is_null($this->redis)) return;
         try {
-            $this->pdo = new \PDO(
-                "mysql:host={$this->hostname};dbname={$this->database}",
-                $this->username,
-                $this->password,
-                [
-                    \PDO::ATTR_EMULATE_PREPARES => false,
-                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
-                ]
-            );
-        } catch (\PDOException $e) {
-            HttpErrorResponse::return501('Unable to connect to database server');
+            $this->redis = new Redis();
+            //Connecting to Redis
+            $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
+            $this->redis->auth($this->password);
+            if (!empty($this->database)) {
+                $this->redis->select($this->database);
+            }
+            if (!$this->redis->ping()) {
+                HttpErrorResponse::return501('Unable to ping to cache server');
+            }
+        } catch (Exception $e) {
+            HttpErrorResponse::return501('Unable to connect to cache server');
         }
     }
 }
