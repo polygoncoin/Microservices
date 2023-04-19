@@ -3,7 +3,7 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpErrorResponse;
-use App\Connection;
+use App\Servers\Cache;
 
 /**
  * Login
@@ -20,11 +20,11 @@ use App\Connection;
 class Login
 {
     /**
-     * Server connection object
+     * Cache Server cacheection object
      *
      * @var object
      */
-    private $conn = null;
+    private $cache = null;
 
     /**
      * Username for login
@@ -82,7 +82,7 @@ class Login
      */
     public static function init()
     {
-        $this->conn = new Connection();
+        $this->cache = new Cache();
         $this->performBasicCheck();
         $this->loadUser();
         $this->validateRequestIp();
@@ -126,11 +126,11 @@ class Login
     private function loadUser()
     {
         // Redis - one can find the userID from username.
-        if ($this->conn->cacheExists("user:{$_POST['username']}")) {
-            $this->userDetails = json_decode($this->conn->getCache("user:{$_POST['username']}"), true);
-            $this->userid = $this->userDetails['id'];
+        if ($this->cache->cacheExists("user:{$_POST['username']}")) {
+            $this->userDetails = json_decode($this->cache->getCache("user:{$_POST['username']}"), true);
+            $this->userId = $this->userDetails['id'];
             $this->groupId = $this->userDetails['group_id'];
-            if (empty($this->userid[) || empty($this->groupId)) {
+            if (empty($this->userId) || empty($this->groupId)) {
                 HttpErrorResponse::return404('Invalid credentials');
             }            
         } else {
@@ -147,8 +147,8 @@ class Login
     {
         // Redis - one can find the userID from username.
         if (
-            $this->conn->cacheExists("group:{$this->groupId}:ips")
-            && !$this->conn->isSetMember("group:{$this->groupId}:ips", $this->requestIp)
+            $this->cache->cacheExists("group:{$this->groupId}:ips")
+            && !$this->cache->isSetMember("group:{$this->groupId}:ips", $this->requestIp)
         )
         {
             HttpErrorResponse::return404('Invalid credentials.');
@@ -177,8 +177,8 @@ class Login
         //generates a crypto-secure 64 characters long
         while (true) {
             $token = bin2hex(random_bytes(32));
-            if (!$this->conn->caheExists($token)) {
-                $$this->conn->setCache($token, '{}', EXPIRY_TIME);
+            if (!$this->cache->caheExists($token)) {
+                $$this->cache->setCache($token, '{}', EXPIRY_TIME);
                 $tokenDetails = json_encode(['token' => $token, 'timestamp' => $this->timestamp]);
                 break;
             }
@@ -194,13 +194,13 @@ class Login
     private function outputTokenDetails()
     {
         $this->timestamp = time();
-        if ($this->conn->cacheExists("user:{$this->userId}:token")) {
-            $tokenDetails = $this->conn->getCache("user:{$this->userId}:token");
+        if ($this->cache->cacheExists("user:{$this->userId}:token")) {
+            $tokenDetails = $this->cache->getCache("user:{$this->userId}:token");
         } else {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->conn->setCache("user:{$this->userId}:token", $tokenDetails, EXPIRY_TIME);
-            $this->conn->setCache($token, json_encode($this->userDetails), EXPIRY_TIME);
+            $this->cache->setCache("user:{$this->userId}:token", $tokenDetails, EXPIRY_TIME);
+            $this->cache->setCache($token, json_encode($this->userDetails), EXPIRY_TIME);
         }
         $tokenDetails = json_decode($redisToken, true);
         $jsonEncode = new JsonEncode();
