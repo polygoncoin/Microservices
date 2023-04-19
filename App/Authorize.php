@@ -3,7 +3,7 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpErrorResponse;
-use App\Connection;
+use App\Servers\Cache;
 
 /**
  * Class handles Authorization
@@ -28,7 +28,7 @@ class Authorize extends HttpRequest
      *
      * @var object
      */
-    public $conn = null;
+    public $cache = null;
 
     /**
      * Read only Session
@@ -76,7 +76,7 @@ class Authorize extends HttpRequest
         $this->httpMethod = $httpMethod;
         $this->requestIP = $requestIP;
 
-        $this->conn = new Connection();
+        $this->cache = new Cache();
         $this->process();
     }
 
@@ -106,7 +106,7 @@ class Authorize extends HttpRequest
      */
     private function tokenExists($token)
     {
-        return $this->conn->cacheExists($token);
+        return $this->cache->cacheExists($token);
     }
 
     /**
@@ -139,7 +139,7 @@ class Authorize extends HttpRequest
     {
         $foundIP = null;
         $ipNumber = ip2long($ip);
-        if ($this->conn->cacheExists("group:{$this->groupId}:ips")) {
+        if ($this->cache->cacheExists("group:{$this->groupId}:ips")) {
             $foundIP = false;
             foreach(json_decode($this->conn->getCache("group:{$this->groupId}:ips"), true) as list($start, $end)) {
                 if ($ipNumber >= $start && $ipNumber <= $end) {
@@ -163,7 +163,7 @@ class Authorize extends HttpRequest
     private function checkRoutePrivilage($groupId, $route)
     {
         $key = "group:{$groupId}:routes";
-        if (!$this->conn->cacheSetValueExists($key, $route)) {
+        if (!$this->cache->cacheSetValueExists($key, $route)) {
             HttpErrorResponse::return404('Route not supported');
         }
     }

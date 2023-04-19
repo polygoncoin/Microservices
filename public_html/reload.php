@@ -8,4 +8,4 @@ header('Content-Type: application/json; charset=utf-8');
 
 header('Content-Type: application/json; charset=utf-8');
 
-App/Reload::api($authirizationHeader, $httpMethod, $requestIP);
+App/Reload::init($authirizationHeader, $httpMethod, $requestIP);

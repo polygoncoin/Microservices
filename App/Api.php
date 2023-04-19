@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Authorize;
+use App\Servers\Database;
 use App\JsonEncode;
 
 /**
@@ -16,11 +17,20 @@ use App\JsonEncode;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Init extends Authorize
+class Api extends Authorize
 {
+    /**
+     * DB Server connection object
+     *
+     * @var object
+     */
+    public $db = null;
+
     public static function api()
     {
         parent::init();
+
+        $this->db = new Database();
 
         switch ($method) {
             case 'GET':
@@ -59,7 +69,7 @@ class Init extends Authorize
 
         $jsonEncode = new JsonEncode();
         if (isset($queries['default'])) {
-            $sth = $this->conn->select($queries['default'][0]);
+            $sth = $this->db->select($queries['default'][0]);
             $sth->execute($queries['default'][1]);
             if ($queries['default'][2] === 'singleRowFormat') {
                 $jsonEncode->startAssoc();
@@ -81,7 +91,7 @@ class Init extends Authorize
         if (isset($queries['default'][2]) && $queries['default'][2] === 'singleRowFormat') {
             foreach ($queries as $key => &$value) {
                 if ($key === 'default') continue;
-                $sth = $this->conn->select($value[0]);
+                $sth = $this->db->select($value[0]);
                 $sth->execute($value[1]);
                 if ($queries[$key][2] === 'singleRowFormat') {
                     $jsonEncode->addKeyValue($key, $sth->fetch(PDO::FETCH_ASSOC));
@@ -115,7 +125,7 @@ class Init extends Authorize
         $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
-            $sth = $this->conn->insert($value[0]);
+            $sth = $this->db->insert($value[0]);
             $sth->execute($value[1]);
             $result[$key] = $connection->lastInsertId();
             $sth->closeCursor();
@@ -142,7 +152,7 @@ class Init extends Authorize
         $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
-            $sth = $this->conn->update($value[0]);
+            $sth = $this->db->update($value[0]);
             $sth->execute($value[1]);
             $result[$key] = $sth->rowCount();
             $sth->closeCursor();
@@ -169,7 +179,7 @@ class Init extends Authorize
         $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
-            $sth = $this->conn->update($value[0]);
+            $sth = $this->db->update($value[0]);
             $sth->execute($value[1]);
             $result[$key] = $sth->rowCount();
             $sth->closeCursor();
@@ -193,7 +203,7 @@ class Init extends Authorize
         $queries = include $this->__file__;
 
         foreach ($queries as $key => &$value) {
-            $sth = $this->conn->update($value[0]);
+            $sth = $this->db->update($value[0]);
             $sth->execute($value[1]);
             $result[$key] = $sth->rowCount();
             $sth->closeCursor();

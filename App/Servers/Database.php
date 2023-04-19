@@ -53,7 +53,7 @@ class Database
     /**
      * Database constructor
      */
-    function __construct($hostname, $username, $password, $database = NULL)
+    function __construct($hostname, $username, $password, $database = null)
     {
         $this->hostname = getenv($hostname);
         $this->username = getenv($username);
@@ -84,5 +84,41 @@ class Database
         } catch (\PDOException $e) {
             HttpErrorResponse::return501('Unable to connect to database server');
         }
+    }
+
+    /**
+     * Prepare select SQL and return statement object
+     *
+     * @param string $sql SQL statement
+     * @return object
+     */
+    public function select($sql)
+    {
+        $this->connect();
+        return $this->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+    }
+
+    /**
+     * Prepare insert SQL and return statement object
+     *
+     * @param string $sql SQL statement
+     * @return object
+     */
+    public function insert($sql)
+    {
+        $this->connect();
+        return $this->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+    }
+
+    /**
+     * Prepare update SQL and return statement object
+     *
+     * @param string $sql SQL statement
+     * @return object
+     */
+    public function update($sql)
+    {
+        $this->connect();
+        return $this->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
     }
 }

@@ -10,4 +10,4 @@ header('Content-Type: application/json; charset=utf-8');
 
 header('Content-Type: application/json; charset=utf-8');
 
-App/Init::api($authirizationHeader, $httpMethod, $requestIP);
+App/Api::init($authirizationHeader, $httpMethod, $requestIP);

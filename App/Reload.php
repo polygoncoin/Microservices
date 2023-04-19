@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Authorize;
+use App\Servers\Database;
 use App\JsonEncode;
 
 /**
@@ -19,18 +20,18 @@ use App\JsonEncode;
 class Reload extends Authorize
 {
     /**
-     * Server connection object
+     * Database Server connection object
      *
      * @var object
      */
-    public $conn = null;
+    public $db = null;
 
     /**
      * Global DB
      *
      * @var string
      */
-    public $db = 'global';
+    public $globalDb = 'global';
 
     /**
      * Global DB user table
@@ -53,7 +54,7 @@ class Reload extends Authorize
      */
     public static function init()
     {
-        $this->conn = new Connection();
+        $this->db = new Database();
         $this->process();
     }
 
@@ -94,10 +95,10 @@ class Reload extends Authorize
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->conn->select("SELECT * FROM {$this->db}.{$this->$tableUser} {$where}", array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth = $this->db->select("SELECT * FROM {$this->db}.{$this->$tableUser} {$where}", array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute($ids);
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $redis->set('user:'.$row['username'], $row);
+            $this->cache->set('user:'.$row['username'], $row);
         }
         $sth->closeCursor();
     }
@@ -112,7 +113,7 @@ class Reload extends Authorize
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->conn->select(
+        $sth = $this->db->select(
             "SELECT id, allowed_ips FROM {$this->db}.{$this->$tableGroup} {$whereClause}",
             array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)
         );
@@ -133,7 +134,7 @@ class Reload extends Authorize
                 }
             }
             if (count($allowedIpsArray) !== 0) {
-                $this->conn->setCache("group:{$row['id']}:ips", $allowedIpsArray);
+                $this->cache->setCache("group:{$row['id']}:ips", $allowedIpsArray);
             }
         }
         $sth->closeCursor();
@@ -149,7 +150,7 @@ class Reload extends Authorize
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->conn->select(
+        $sth = $this->db->select(
             "
                 SELECT
                     L.group_id, R.route, 
@@ -169,7 +170,7 @@ class Reload extends Authorize
         }
         $sth->closeCursor();
         foreach ($routeArr as $groupId => &$routes) {
-            $redis->setSetMembers("group:{$groupId}:routes", $routes);
+            $this->cache->setSetMembers("group:{$groupId}:routes", $routes);
         }
     }
 
