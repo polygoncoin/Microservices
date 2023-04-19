@@ -33,6 +33,20 @@ class Reload extends Authorize
     public $db = 'global';
 
     /**
+     * Global DB user table
+     *
+     * @var string
+     */
+    public $tableUser = 'm002_master_user';
+
+    /**
+     * Global DB group table
+     *
+     * @var string
+     */
+    public $tableGroup = 'm001_master_group';
+
+    /**
      * Initialize authorization
      *
      * @return void
@@ -70,71 +84,74 @@ class Reload extends Authorize
         }
     }
 
-    function processUser($ids = null)
+    function processUser($ids = [])
     {
-        $whereClause = $ids ? 'WHERE id IN (' . implode(', ', $ids) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->conn->select('SELECT * FROM ' . MYSQL_USER_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
+        $sth = $this->conn->select("SELECT * FROM {$this->db}.{$this->$tableUser} {$where}", array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $sth->execute($ids);
         while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $allowedIpsArray = [];
+            $redis->set('user:'.$row['username'], $row);
+        }
+        $sth->closeCursor();
+    }
+
+    function processGroupIps($ids = [])
+    {
+        $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+
+        $sth = $this->conn->select(
+            "SELECT id, allowed_ips FROM {$this->db}.{$this->$tableGroup} {$whereClause}",
+            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)
+        );
+        $sth->execute($ids);
+        $allowedIpsArray = [];
+        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
             $count = 0;
             if (!empty(trim($row['allowed_ips']))) {
                 foreach (explode(',', $row['allowed_ips']) as $cidr) {
                     $cidr = str_replace(' ', '', trim($cidr));
                     if (!empty(trim($cidr))) {
-                        $allowedIpsArray[$count++] = ipRange($cidr);
+                        $allowedIps = $this->getIpRange($cidr);
+                        $allowedIpsArray = array_merge(
+                            $allowedIpsArray,
+                            range($allowedIps['start'], $allowedIps['end'])
+                        );
                     }
                 }
             }
             if (count($allowedIpsArray) !== 0) {
-                $row['allowed_ips'] = json_encode($allowedIpsArray);
-                $redis->set('user_ips_' . $row['id'], json_encode($allowedIpsArray));
-            }
-            $redis->set($row['username'], $row);
-        }
-        $sth->closeCursor();
-    }
-
-    function processGroupIps($ids = null)
-    {
-        $whereClause = $ids ? 'WHERE id IN (' . implode(', ', $ids) . ');' : ';';
-
-        $sth = $this->conn->select('SELECT id, allowed_ips FROM ' . MYSQL_GROUP_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $allowedIpsArray = [];
-            $count = 0;
-            if (!empty(trim($row['allowed_ips']))) {
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
-                    $cidr = str_replace(' ', '', trim($cidr));
-                    if (!empty(trim($cidr))) {
-                        $allowedIpsArray[$count++] = ipRange($cidr);
-                    }
-                }
-            }
-            if (count($allowedIpsArray) !== 0) {
-                $redis->set('group_ips_' . $row['id'], json_encode($allowedIpsArray));
+                $this->conn->setCache("group:{$row['id']}:ips", $allowedIpsArray);
             }
         }
         $sth->closeCursor();
     }
 
-    function processGroupMethodRoute($ids = null)
+    function processGroupMethodRoute($ids = [])
     {
-        $whereClause = $ids ? 'WHERE id IN (' . implode(', ', $ids) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->conn->select('SELECT * FROM ' . MYSQL_ROUTE_TABLE . $where, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-        $sth->execute();
+        $sth = $this->conn->select(
+            "
+                SELECT
+                    L.group_id, R.route, 
+                FROM 
+                    l001_link_allowed_route L
+                LEFT JOIN
+                    m003_master_route R ON L.route_id = R.id
+                $whereClause
+            ",
+            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)
+        );
+        $sth->execute($ids);
         $routeArr = [];
         while ($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $routeArr[$row['group_id']][$row['route']][$row['method']] = $row;
+            if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];
+            $routeArr[$row['group_id']][] = $row['route'];
         }
         $sth->closeCursor();
-        foreach ($routeArr as $groupID => &$arr) {
-            foreach ($arr as $route => &$routeDetails) {
-                $redis->set($groupID . '_' . base64_encode($route), json_encode($routeDetails));
-            }
+        foreach ($routeArr as $groupId => &$routes) {
+            $redis->setSetMembers("group:{$groupId}:routes", $routes);
         }
     }
 

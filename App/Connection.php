@@ -67,6 +67,61 @@ class Connection
     }
 
     /**
+     * Set cache on basis of key
+     *
+     * @param string $key    Cache key
+     * @param string $value  Cache value
+     * @param int    $expire Seconds to expire. Default 0 - doesnt expire
+     * @return int
+     */
+    public function setCache($key, $value, $expire = 0)
+    {
+        $this->cache->redis->connect();
+        return $this->cache->redis->set($key, $value);
+    }
+
+    /**
+     * Delete basis of key
+     *
+     * @param string $key Cache key
+     * @return int
+     */
+    public function deleteCache($key)
+    {
+        $this->cache->redis->connect();
+        return $redis->cache->redis->delete($key);
+    }
+    
+    /**
+     * Checks member is present in set
+     *
+     * @param string $set    Cache Set
+     * @param string $member Cache Set member
+     * @return bool
+     */
+    public function isSetMember($set, $member)
+    {
+        $this->cache->redis->connect();
+        return $this->cache->redis->sIsMember($set, $member);
+    }
+
+    /**
+     * Set Set values
+     *
+     * @param string $key        Cache Set key
+     * @param array  $valueArray Cache values for Set
+     * @return void
+     */
+    public function setSetMembers($key, $valueArray)
+    {
+        $this->cache->redis->connect();
+        $this->deleteCache($key);
+        foreach ($valueArray as $value) {
+            $this->cache->redis->sAdd($key, $value);
+        }
+    }
+
+    /**
      * Prepare select SQL and return statement object
      *
      * @param string $sql SQL statement

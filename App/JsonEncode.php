@@ -182,6 +182,7 @@ namespace App;
         if ($this->currentObject || count($this->objects)>0) {
             die('Mismatch in JsonEncode function calls');
         }
+        die();
     }
 
     /**

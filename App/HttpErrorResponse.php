@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\JsonEncode;
 /**
  * HTTP Error Response
  *
@@ -82,6 +83,8 @@ class HttpErrorResponse
      */
     private function returnResponse(&$arr)
     {
-        die(json_encode($arr));
+        $jsonEncode = new JsonEncode();
+        $jsonEncode->encode($arr);
+        $jsonEncode = null;
     }
 }

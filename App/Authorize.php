@@ -138,25 +138,18 @@ class Authorize extends HttpRequest
     {
         $foundIP = null;
         $ipNumber = ip2long($ip);
-        if ($this->conn->cacheExists('user_ips_' . $this->userId)) {
+        if ($this->conn->cacheExists("group:{$this->groupId}:ips")) {
             $foundIP = false;
-            foreach(json_decode($this->conn->getCache('user_ips_' . $this->userId), true) as list($start, $end)) {
+            foreach(json_decode($this->conn->getCache("group:{$this->groupId}:ips"), true) as list($start, $end)) {
                 if ($ipNumber >= $start && $ipNumber <= $end) {
                     $foundIP = true;
                     break;
                 }
             }
         }
-        if ($this->conn->cacheExists('allowed_ips_' . $this->groupId)) {
-            $foundIP = false;
-            foreach(json_decode($this->conn->getCache('group_ips_' . $this->groupId), true) as list($start, $end)) {
-                if ($ipNumber >= $start && $ipNumber <= $end) {
-                    $foundIP = true;
-                    break;
-                }
-            }
+        if (!is_null($foundIP) && !$foundIP) {
+            HttpErrorResponse::return404('IP Address not supported');
         }
-        if (!is_null($foundIP) && !$foundIP) HttpErrorResponse::return404('IP Address not supported');
     }
 
     /**
