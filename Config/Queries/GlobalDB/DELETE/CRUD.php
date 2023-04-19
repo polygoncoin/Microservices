@@ -1,11 +1,21 @@
 <?php
 return [
     'm001_master_group' => [
-        'default' => [
-            'query' => "UPDATE {$this->globalDB}.m001_master_group SET is_deleted = 1 WHERE id = ?",
-            'payload' => [
-                $uriParams['id']
+        'queries' => [
+            [
+                'query' => "UPDATE {$this->clientDB}.m001_master_group SET {$payload['column_name']} = ? WHERE id = ?",
+                'payload' => [
+                    $payload['column_value'],
+                    $uriParams['id']
+                ]
             ]
+        ],
+        'validate' => [
+            [
+                'fn' => 'validateRequired',
+                'payloadKey' => 'username',
+                'errorMessage' => ''
+            ],
         ]
     ]
 ][$uriParams['table']];

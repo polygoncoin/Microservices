@@ -10,10 +10,10 @@ header('Content-Type: application/json; charset=utf-8');
 
 switch (__REQUEST_URI__) {
     case '/login':
-        App/Login::init($authirizationHeader, $httpMethod, $requestIP);
+        App/Login::init();
         break;
     case '/reload':
-        App/Reload::init($authirizationHeader, $httpMethod, $requestIP);
+        App/Reload::init();
         break;
     default:
         App/Api::init($authirizationHeader, $httpMethod, $requestIP);

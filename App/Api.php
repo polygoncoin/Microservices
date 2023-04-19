@@ -121,14 +121,36 @@ class Api extends Authorize
         // Load Read Only Session
         $readOnlySession = $this->readOnlySession;
 
-        // Load Queries
-        $queries = include $this->__file__;
+        // Load Payload
+        parse_str(file_get_contents('php://input'), $payload);
+        $dataCount = ($this->isAssoc($payload['data'])) ? 1 : count($payload['data']);
 
-        foreach ($queries as $key => &$value) {
-            $sth = $this->db->insert($value[0]);
-            $sth->execute($value[1]);
-            $result[$key] = $connection->lastInsertId();
-            $sth->closeCursor();
+        // Load Config
+        $config = include $this->__file__;
+
+        // Required validations.
+        for ($i = 0; $i < $dataCount; $i++) {
+            $data = &$payload['data'];
+            if (isset($config['validate'])) {
+                foreach ($config['validate'] as &$v) {
+                    if (!App\Validation\Validate::$v['fn']($v['val'])) {
+                        HttpErrorResponse::return404($v['errorMessage']);
+                    }
+                }
+            }
+        }
+
+        // Perform action
+        for ($i = 0; $i < $dataCount; $i++) {
+            $data = &$payload['data'];
+            foreach ($config['queries'] as $key => &$value) {
+                $sth = $this->db->insert($value['query']);
+                $sth->execute($value['payload']);
+                if ($key === 0) {
+                    $result[$key] = $connection->lastInsertId();
+                }
+                $sth->closeCursor();
+            }
         }
     }
 
@@ -139,24 +161,7 @@ class Api extends Authorize
      */
     function processHttpPUT()
     {
-        // Load uriParams
-        $uriParams = $this->routeParams;
-
-        // Load Read Only Session
-        $readOnlySession = $this->readOnlySession;
-
-        // Load Payload
-        parse_str(file_get_contents('php://input'), $payload);
-
-        // Load Queries
-        $queries = include $this->__file__;
-
-        foreach ($queries as $key => &$value) {
-            $sth = $this->db->update($value[0]);
-            $sth->execute($value[1]);
-            $result[$key] = $sth->rowCount();
-            $sth->closeCursor();
-        }
+        $this->processHttpUpdate();
     }
 
     /**
@@ -166,24 +171,7 @@ class Api extends Authorize
      */
     function processHttpPATCH()
     {
-        // Load uriParams
-        $uriParams = $this->routeParams;
-
-        // Load Read Only Session
-        $readOnlySession = $this->readOnlySession;
-
-        // Load Payload
-        parse_str(file_get_contents('php://input'), $payload);
-
-        // Load Queries
-        $queries = include $this->__file__;
-
-        foreach ($queries as $key => &$value) {
-            $sth = $this->db->update($value[0]);
-            $sth->execute($value[1]);
-            $result[$key] = $sth->rowCount();
-            $sth->closeCursor();
-        }
+        $this->processHttpUpdate();
     }
 
     /**
@@ -193,20 +181,60 @@ class Api extends Authorize
      */
     function processHttpDELETE()
     {
+        $this->processHttpUpdate();
+    }
+    
+    function processHttpUpdate()
+    {
         // Load uriParams
         $uriParams = $this->routeParams;
 
         // Load Read Only Session
         $readOnlySession = $this->readOnlySession;
 
-        // Load Queries
-        $queries = include $this->__file__;
+        // Load Payload
+        parse_str(file_get_contents('php://input'), $payload);
+        $dataCount = ($this->isAssoc($payload['data'])) ? 1 : count($payload['data']);
 
-        foreach ($queries as $key => &$value) {
-            $sth = $this->db->update($value[0]);
-            $sth->execute($value[1]);
-            $result[$key] = $sth->rowCount();
-            $sth->closeCursor();
+        // Load Config
+        $config = include $this->__file__;
+
+        // Required validations.
+        for ($i = 0; $i < $dataCount; $i++) {
+            $data = &$payload['data'];
+            if (isset($config['validate'])) {
+                foreach ($config['validate'] as &$v) {
+                    if (!App\Validation\Validate::$v['fn']($v['val'])) {
+                        HttpErrorResponse::return404($v['errorMessage']);
+                    }
+                }
+            }
         }
+
+        // Perform action
+        for ($i = 0; $i < $dataCount; $i++) {
+            $data = &$payload['data'];
+            foreach ($config['queries'] as $key => &$value) {
+                $sth = $this->db->insert($value['query']);
+                $sth->execute($value['payload']);
+                if ($key === 0) {
+                    $result[$key] = $sth->rowCount();
+                }
+                $sth->closeCursor();
+            }
+        }
+    }
+
+    private function isAssoc($arr)
+    {
+        $assoc = false;
+        $i = 0;
+        foreach ($arr as $k => &$v) {
+            if ($k !== $i++) {
+                $assoc = true;
+                break;
+            }
+        }
+        return $assoc;
     }
 }
