@@ -22,6 +22,7 @@ class Authorize extends HttpRequest
     public $authirizationHeader = null;
     public $httpMethod = null;
     public $requestIP = null;
+
     /**
      * Server connection object
      *

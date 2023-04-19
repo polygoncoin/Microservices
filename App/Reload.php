@@ -84,6 +84,12 @@ class Reload extends Authorize
         }
     }
 
+    /**
+     * Adds user details to cache.
+     *
+     * @param array $ids Optional - privide ids are specific reload.
+     * @return void
+     */
     function processUser($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
@@ -96,6 +102,12 @@ class Reload extends Authorize
         $sth->closeCursor();
     }
 
+    /**
+     * Adds restricted ips for group members to cache.
+     *
+     * @param array $ids Optional - privide ids are specific reload.
+     * @return void
+     */
     function processGroupIps($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
@@ -127,6 +139,12 @@ class Reload extends Authorize
         $sth->closeCursor();
     }
 
+    /**
+     * Adds group allowed routes to cache.
+     *
+     * @param array $ids Optional - privide ids are specific reload.
+     * @return void
+     */
     function processGroupMethodRoute($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
@@ -155,6 +173,12 @@ class Reload extends Authorize
         }
     }
 
+    /**
+     * Get Ip range from cidr
+     *
+     * @param string $cidr Eg. 127.0.0.0/24 OR 127.0.0.1
+     * @return void
+     */
     private function getIpRange($cidr)
     {
         $range = [];
