@@ -8,6 +8,14 @@ define('__REQUEST_URI__', trim($_GET['REQUEST_URI'], '/'));
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json; charset=utf-8');
 
-header('Content-Type: application/json; charset=utf-8');
-
-App/Api::init($authirizationHeader, $httpMethod, $requestIP);
+switch (__REQUEST_URI__) {
+    case '/login':
+        App/Login::init($authirizationHeader, $httpMethod, $requestIP);
+        break;
+    case '/reload':
+        App/Reload::init($authirizationHeader, $httpMethod, $requestIP);
+        break;
+    default:
+        App/Api::init($authirizationHeader, $httpMethod, $requestIP);
+        break;
+}
