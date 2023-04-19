@@ -34,3 +34,8 @@ spl_autoload_register(function ($className) {
         die(json_encode(['Status' => 501, 'Message' => "Class '{$class}' missing"]));
     }
 });
+
+$env = parse_ini_file(__DIR__ . '.env');
+foreach ($env as $key =>$value) {
+    putenv("{$key}={$value}");
+}

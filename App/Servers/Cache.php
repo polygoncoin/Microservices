@@ -54,8 +54,13 @@ class Cache
     /**
      * Cache constructor
      */
-    public function __construct($hostname, $port, $password, $database = 0)
-    {
+    public function __construct(
+        $hostname = 'defaultCacheHostname',
+        $port = 'defaultCachePort',
+        $password = 'defaultCachePassword',
+        $database = 'defaultCacheDatabase'
+    )
+    {   
         $this->hostname = getenv($hostname);
         $this->port = getenv($port);
         $this->password = getenv($password);

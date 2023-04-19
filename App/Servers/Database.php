@@ -53,7 +53,12 @@ class Database
     /**
      * Database constructor
      */
-    function __construct($hostname, $username, $password, $database = null)
+    function __construct(
+        $hostname = 'defaultDbHostname',
+        $username = 'defaultDbUsername',
+        $password = 'defaultDbPassword',
+        $database = 'defaultDbDatabase'
+    )
     {
         $this->hostname = getenv($hostname);
         $this->username = getenv($username);
