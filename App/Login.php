@@ -3,6 +3,7 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpErrorResponse;
+use App\JsonEncode;
 use App\Servers\Cache;
 
 /**
@@ -81,6 +82,16 @@ class Login
      * @return void
      */
     public static function init()
+    {
+        (new self)->process();
+    }
+
+    /**
+     * Process authorization
+     *
+     * @return void
+     */
+    private function process()
     {
         $this->cache = new Cache();
         $this->performBasicCheck();
@@ -177,8 +188,8 @@ class Login
         //generates a crypto-secure 64 characters long
         while (true) {
             $token = bin2hex(random_bytes(32));
-            if (!$this->cache->caheExists($token)) {
-                $$this->cache->setCache($token, '{}', EXPIRY_TIME);
+            if (!$this->cache->cacheExists($token)) {
+                $this->cache->setCache($token, '{}', EXPIRY_TIME);
                 $tokenDetails = json_encode(['token' => $token, 'timestamp' => $this->timestamp]);
                 break;
             }
@@ -200,9 +211,9 @@ class Login
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
             $this->cache->setCache("user:{$this->userId}:token", $tokenDetails, EXPIRY_TIME);
-            $this->cache->setCache($token, json_encode($this->userDetails), EXPIRY_TIME);
+            $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
         }
-        $tokenDetails = json_decode($redisToken, true);
+        $tokenDetails = json_decode($tokenDetails, true);
         $jsonEncode = new JsonEncode();
         $jsonEncode->encode(
             [

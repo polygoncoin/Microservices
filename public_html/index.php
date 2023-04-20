@@ -1,4 +1,5 @@
 <?php
+define('EXPIRY_TIME', 3600);
 define('__DOC_ROOT__', dirname(__DIR__));
 
 require_once __DOC_ROOT__ . '/autoload.php';

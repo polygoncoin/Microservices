@@ -65,9 +65,9 @@ class HttpErrorResponse
      * @param array $arr        Array containing details for HTTP Response
      * @return void
      */
-    private function returnHttpStatus($statusCode, &$arr)
+    public static function returnHttpStatus($statusCode, $arr)
     {
-        $this->returnResponse(
+        self::returnResponse(
             array_merge(
                 ['status' => $statusCode],
                 $arr
@@ -81,7 +81,7 @@ class HttpErrorResponse
      * @param array $arr Array containing details of HTTP response
      * @return void
      */
-    private function returnResponse(&$arr)
+    public static function returnResponse($arr)
     {
         $jsonEncode = new JsonEncode();
         $jsonEncode->encode($arr);

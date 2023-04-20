@@ -230,7 +230,7 @@ class Reload
         $sth = $this->db->select(
             "
                 SELECT
-                    L.group_id, L.client_id, R.route, 
+                    L.group_id, L.client_id, R.route
                 FROM 
                     {$this->globalDb}.l001_link_allowed_route L
                 LEFT JOIN

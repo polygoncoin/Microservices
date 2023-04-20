@@ -38,7 +38,7 @@ namespace App;
      */
     public function __construct()
     {
-
+        
     }
 
     /**
@@ -61,13 +61,13 @@ namespace App;
      * @param $arr string value escaped and array value json_encode function is applied.  
      * @return void
      */
-    private function encode(&$arr)
+    public function encode($arr)
     {
-        if (!is_array($arr)) {
+        if (is_array($arr)) {
+            echo json_encode($arr);
+        } else {
             echo $this->escape($arr);
-            return;
         }
-        echo json_encode($arr);
     }
 
     /**
@@ -100,7 +100,7 @@ namespace App;
         }
         echo $this->currentObject->comma;
         echo $this->escape($key) . ':';
-        echo $this->encode($value);
+        $this->encode($value);
         $this->currentObject->comma = ',';
     }
 
