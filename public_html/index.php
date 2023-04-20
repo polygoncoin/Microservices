@@ -13,7 +13,9 @@ switch (__REQUEST_URI__) {
         App\Login::init();
         break;
     case '/reload':
-        App\Reload::init();
+        if (httpAuthentication()) {
+            App\Reload::init();
+        }
         break;
     default:
         App\Api::init();
