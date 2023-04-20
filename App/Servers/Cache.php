@@ -79,7 +79,7 @@ class Cache
     {
         if (!is_null($this->redis)) return;
         try {
-            $this->redis = new Redis();
+            $this->redis = new \Redis();
             //Connecting to Redis
             $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
             $this->redis->auth($this->password);

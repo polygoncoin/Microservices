@@ -73,14 +73,14 @@ class Api extends Authorize
             $sth->execute($queries['default'][1]);
             if ($queries['default'][2] === 'singleRowFormat') {
                 $jsonEncode->startAssoc();
-                foreach($sth->fetch(PDO::FETCH_ASSOC) as $key => $value) {
+                foreach($sth->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
                     $jsonEncode->addKeyValue($key, $value);
                 }
                 $sth->closeCursor();
             }
             if ($queries['default'][2] === 'multipleRowFormat') {
                 $jsonEncode->startArray();
-                for (;$row=$sth->fetch(PDO::FETCH_ASSOC);) {
+                for (;$row=$sth->fetch(\PDO::FETCH_ASSOC);) {
                     $jsonEncode->encode($row);
                 }
                 $jsonEncode->endArray();
@@ -94,11 +94,11 @@ class Api extends Authorize
                 $sth = $this->db->select($value[0]);
                 $sth->execute($value[1]);
                 if ($queries[$key][2] === 'singleRowFormat') {
-                    $jsonEncode->addKeyValue($key, $sth->fetch(PDO::FETCH_ASSOC));
+                    $jsonEncode->addKeyValue($key, $sth->fetch(\PDO::FETCH_ASSOC));
                 }
                 if ($queries[$key][2] === 'multipleRowFormat') {
                     $jsonEncode->startArray($key);
-                    $jsonEncode->addValue($sth->fetch(PDO::FETCH_ASSOC));
+                    $jsonEncode->addValue($sth->fetch(\PDO::FETCH_ASSOC));
                     $jsonEncode->endArray($key);
                 }
                 $sth->closeCursor();

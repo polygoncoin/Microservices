@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\Authorize;
+use App\Servers\Cache;
 use App\Servers\Database;
 use App\JsonEncode;
 
@@ -17,35 +17,42 @@ use App\JsonEncode;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Reload extends Authorize
+class Reload
 {
+    /**
+     * Cache Server connection object
+     *
+     * @var object
+     */
+    private $cache = null;
+
     /**
      * Database Server connection object
      *
      * @var object
      */
-    public $db = null;
+    private $db = null;
 
     /**
      * Global DB
      *
      * @var string
      */
-    public $globalDb = 'global';
-
-    /**
-     * Global DB user table
-     *
-     * @var string
-     */
-    public $tableUser = 'm002_master_user';
+    private $globalDb = 'global';
 
     /**
      * Global DB group table
      *
      * @var string
      */
-    public $tableGroup = 'm001_master_group';
+    private $tableGroup = 'm001_master_group';
+
+    /**
+     * Global DB user table
+     *
+     * @var string
+     */
+    private $tableUser = 'm002_master_user';
 
     /**
      * Initialize authorization
@@ -54,8 +61,7 @@ class Reload extends Authorize
      */
     public static function init()
     {
-        $this->db = new Database();
-        $this->process();
+        (new self)->process();
     }
 
     /**
@@ -63,8 +69,11 @@ class Reload extends Authorize
      *
      * @return void
      */
-    function process($refresh = 'all', $idsString = null)
+    private function process($refresh = 'all', $idsString = null)
     {
+        $this->cache = new Cache();
+        $this->db = new Database();
+
         $ids = [];
         if (!is_null($idsString)) {
             foreach (explode(',', trim($idsString)) as $value) {
@@ -104,7 +113,7 @@ class Reload extends Authorize
      * @param array $ids Optional - privide ids are specific reload.
      * @return void
      */
-    function processUser($ids = [])
+    private function processUser($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
@@ -116,13 +125,13 @@ class Reload extends Authorize
                 group_id
             FROM
                 {$this->globalDb}.{$this->tableUser}
-            {$where}",
-            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+            {$whereClause}",
+            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
         $sth->execute($ids);
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
-            $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDb}.{$this->tableUser} WHERE group_id = ?", array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
+            $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDb}.{$this->tableUser} WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $sth1->execute($row['group_id']);
-            $clientIds =  array_column($sth1->fetchAll(PDO::FETCH_ASSOC), 'client_id');
+            $clientIds =  array_column($sth1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
             $sth1->closeCursor();
             $row = array_merge($row, ['client_ids' => $clientIds]);
             $this->cache->set("user:{$row['username']}", $row);
@@ -136,7 +145,7 @@ class Reload extends Authorize
      * @param array $ids Optional - privide ids are specific reload.
      * @return void
      */
-    function processGroup($ids = [])
+    private function processGroup($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE G.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
@@ -152,11 +161,11 @@ class Reload extends Authorize
                 {$this->globalDb}.{$this->tableGroup} G
             LEFT JOIN
                 {$this->globalDb}.m004_master_connection C on g.connection_id = C.id
-            {$where}",
-            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)
+            {$whereClause}",
+            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         $sth->execute($ids);
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
+        while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->set("group:{$row['id']}", $row);
         }
         $sth->closeCursor();
@@ -168,17 +177,17 @@ class Reload extends Authorize
      * @param array $ids Optional - privide ids are specific reload.
      * @return void
      */
-    function processGroupIps($ids = [])
+    private function processGroupIps($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
         $sth = $this->db->select(
             "SELECT id, allowed_ips FROM {$this->globalDb}.{$this->tableGroup} {$whereClause}",
-            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)
+            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         $sth->execute($ids);
         $allowedIpsArray = [];
-        while($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
+        while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
             $count = 0;
             if (!empty(trim($row['allowed_ips']))) {
                 foreach (explode(',', $row['allowed_ips']) as $cidr) {
@@ -205,7 +214,7 @@ class Reload extends Authorize
      * @param array $ids Optional - privide ids are specific reload.
      * @return void
      */
-    function processGroupClientRoutes($ids = [])
+    private function processGroupClientRoutes($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
@@ -217,13 +226,13 @@ class Reload extends Authorize
                     {$this->globalDb}.l001_link_allowed_route L
                 LEFT JOIN
                     {$this->globalDb}.m003_master_route R ON L.route_id = R.id
-                $whereClause
+                {$whereClause}
             ",
-            array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY)
+            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         $sth->execute($ids);
         $routeArr = [];
-        while ($row =  $sth->fetch(PDO::FETCH_ASSOC)) {
+        while ($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
             if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];
             $routeArr[$row['group_id']][$row['client_id']][] = $row['route'];
         }
@@ -261,6 +270,13 @@ class Reload extends Authorize
      */
     public function __destruct()
     {
-        
+        $jsonEncode = new JsonEncode();
+        $jsonEncode->encode(
+            [
+                'Status' => 200,
+                'Message' => 'Successfully added details to Cache Server.'
+            ]
+        );
+        $jsonEncode = null;
     }
 }

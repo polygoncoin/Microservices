@@ -53,7 +53,7 @@ class Database
     /**
      * Database constructor
      */
-    function __construct(
+    public function __construct(
         $hostname = 'defaultDbHostname',
         $username = 'defaultDbUsername',
         $password = 'defaultDbPassword',
@@ -73,7 +73,7 @@ class Database
      *
      * @return void
      */
-    function connect()
+    private function connect()
     {
         if (!is_null($this->pdo)) return;
         try {
@@ -100,7 +100,7 @@ class Database
     public function select($sql)
     {
         $this->connect();
-        return $this->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
     }
 
     /**
@@ -112,7 +112,7 @@ class Database
     public function insert($sql)
     {
         $this->connect();
-        return $this->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
     }
 
     /**
@@ -124,6 +124,6 @@ class Database
     public function update($sql)
     {
         $this->connect();
-        return $this->pdo->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+        return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
     }
 }
