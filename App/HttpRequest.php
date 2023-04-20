@@ -1,12 +1,14 @@
 <?php
 namespace App;
 
-/**
+use App\HttpErrorResponse;
+
+/*
  * Class handling details of HTTP request
  *
  * This class is built to process and handle HTTP request
  *
- * @category   Cache
+ * @category   HTTP Request
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -46,11 +48,11 @@ class HttpRequest
     /**
      * Locaton of File containing code for route
      *
-     * @var array
+     * @var string
      */
     public $__file__ = null;
 
-    protected function setToken($authHeader)
+    public function checkToken($authHeader)
     {
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $this->token = $matches[1];
@@ -69,7 +71,7 @@ class HttpRequest
      * @param string $requestUri    Requested URI
      * @return void
      */
-    protected function parseRoute($requestMethod, $requestUri)
+    public function parseRoute($requestMethod, $requestUri)
     {
         $this->requestMethod = $requestMethod;
 

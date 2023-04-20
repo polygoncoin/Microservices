@@ -19,10 +19,6 @@ use App\Servers\Cache;
  */
 class Authorize extends HttpRequest
 {
-    public $authirizationHeader = null;
-    public $httpMethod = null;
-    public $requestIP = null;
-
     /**
      * Server connection object
      *
@@ -87,7 +83,7 @@ class Authorize extends HttpRequest
      */
     function process()
     {
-        $this->setToken($_SERVER['HTTP_AUTHORIZATION']);
+        $this->checkToken($_SERVER['HTTP_AUTHORIZATION']);
         if ($this->tokenExists($this->token)) {
             $this->parseRoute($_SERVER['REQUEST_METHOD'],$requestUri);
             $this->loadTokenSession($this->token);
