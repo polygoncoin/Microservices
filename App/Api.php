@@ -124,32 +124,31 @@ class Api extends Authorize
         // Load Payload
         parse_str(file_get_contents('php://input'), $payload);
         $dataCount = ($this->isAssoc($payload['data'])) ? 1 : count($payload['data']);
+        if ($dataCount === 1) {
+            $payload['data'] = [$payload['data']];
+        }
 
         // Load Config
         $config = include $this->__file__;
 
         // Required validations.
-        for ($i = 0; $i < $dataCount; $i++) {
-            $data = &$payload['data'];
-            if (isset($config['validate'])) {
-                foreach ($config['validate'] as &$v) {
-                    if (!App\Validation\Validate::$v['fn']($v['val'])) {
-                        HttpErrorResponse::return404($v['errorMessage']);
-                    }
-                }
-            }
+        if (isset($config['validate'])) {
+            $this->validate($dataCount, $payload['data'], $config['validate']);
         }
 
         // Perform action
         for ($i = 0; $i < $dataCount; $i++) {
-            $data = &$payload['data'];
             foreach ($config['queries'] as $key => &$value) {
                 $sth = $this->db->insert($value['query']);
                 $sth->execute($value['payload']);
-                if ($key === 0) {
-                    $result[$key] = $connection->lastInsertId();
+                $insertId = $connection->lastInsertId();
+                if (isset($config['queries']['insertId'])) {
+                    $params[$config['queries']['insertId']] = $insertId;
                 }
                 $sth->closeCursor();
+                if (isset($config['queries'][$key]['subQuery'])) {
+                    $this->insertSubQuery($params, $config['queries'][$key]['subQuery']);
+                }
             }
         }
     }
@@ -195,36 +194,102 @@ class Api extends Authorize
         // Load Payload
         parse_str(file_get_contents('php://input'), $payload);
         $dataCount = ($this->isAssoc($payload['data'])) ? 1 : count($payload['data']);
+        if ($dataCount === 1) {
+            $payload['data'] = [$payload['data']];
+        }
 
         // Load Config
         $config = include $this->__file__;
 
         // Required validations.
-        for ($i = 0; $i < $dataCount; $i++) {
-            $data = &$payload['data'];
-            if (isset($config['validate'])) {
-                foreach ($config['validate'] as &$v) {
-                    if (!App\Validation\Validate::$v['fn']($v['val'])) {
-                        HttpErrorResponse::return404($v['errorMessage']);
-                    }
-                }
-            }
+        if (isset($config['validate'])) {
+            $this->validate($dataCount, $payload['data'], $config['validate']);
         }
 
         // Perform action
         for ($i = 0; $i < $dataCount; $i++) {
-            $data = &$payload['data'];
             foreach ($config['queries'] as $key => &$value) {
-                $sth = $this->db->insert($value['query']);
+                $sth = $this->db->update($value['query']);
                 $sth->execute($value['payload']);
-                if ($key === 0) {
-                    $result[$key] = $sth->rowCount();
-                }
                 $sth->closeCursor();
+                if (isset($config['queries'][$key]['subQuery'])) {
+                    $this->updateSubQuery($params, $config['queries'][$key]['subQuery']);
+                }
             }
         }
     }
 
+    /**
+     * Validate payload
+     *
+     * @param int   $dataCount        Number of records to validate as received in payload
+     * @param array $data             Payload data
+     * @param array $validationConfig Validation configuration.
+     * @return void
+     */
+    private function validate($dataCount, $data, $validationConfig)
+    {
+        for ($i = 0; $i < $dataCount; $i++) {
+            foreach ($validationConfig as &$v) {
+                if (!App\Validation\Validate::$v['fn']($data[$i][$v['dataKey']])) {
+                    HttpErrorResponse::return404($v['errorMessage']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to insert sub queries recursively.
+     *
+     * @param array $params   Dynamic params values like insert ids
+     * @param array $subQuery N level Sub Query array.
+     * @return void
+     */
+    private function insertSubQuery(&$params, &$subQuery)
+    {
+        foreach ($subQuery as $key => &$value) {
+            $sth = $this->db->insert($value['query']);
+            foreach ($value['payload'] as $k => $v) {
+                if (isset($params[$v])) {
+                    $value['payload'][$k] = $params[$v];
+                }
+            }
+            $sth->execute($value['payload']);
+            $insertId = $connection->lastInsertId();
+            if (isset($subQuery['insertId'])) {
+                $params[$subQuery['insertId']] = $insertId;
+            }
+            $sth->closeCursor();
+            if (isset($params[$key]['subQuery'])) {
+                $this->insertSubQuery($params, $params[$key]['subQuery']);
+            }
+        }
+    }
+
+    /**
+     * Function to update sub queries recursively.
+     *
+     * @param array $subQuery N level Sub Query array.
+     * @return void
+     */
+    private function updateSubQuery(&$subQuery)
+    {
+        foreach ($subQuery as $key => &$value) {
+            $sth = $this->db->insert($value['query']);
+            $sth->execute($value['payload']);
+            $sth->closeCursor();
+            if (isset($params[$key]['subQuery'])) {
+                $this->updateSubQuery($params[$key]['subQuery']);
+            }
+        }
+    }
+
+    /**
+     * Function to find wether privider array is associative/simple array
+     *
+     * @param array $arr Array to search for associative/simple array
+     * @return boolean
+     */
     private function isAssoc($arr)
     {
         $assoc = false;

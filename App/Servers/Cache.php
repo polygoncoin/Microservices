@@ -149,7 +149,7 @@ class Cache
      *
      * @param string $set    Cache Set
      * @param string $member Cache Set member
-     * @return bool
+     * @return boolean
      */
     public function isSetMember($set, $member)
     {
