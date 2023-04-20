@@ -16,8 +16,8 @@ namespace App;
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
- */ 
- class JsonEncode
+ */
+class JsonEncode
 {
     /**
      * Array of JsonEncodeObject objects
