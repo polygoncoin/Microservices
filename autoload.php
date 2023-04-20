@@ -45,3 +45,4 @@ $env = parse_ini_file(__DIR__ . '/.env');
 foreach ($env as $key =>$value) {
     putenv("{$key}={$value}");
 }
+ini_set('display_errors', true); error_reporting(E_ALL);

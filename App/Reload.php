@@ -117,26 +117,35 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->db->select("
-            SELECT
-                id,
-                username,
-                password_hash,
-                group_id
-            FROM
-                {$this->globalDb}.{$this->tableUser}
-            {$whereClause}",
-            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-        $sth->execute($ids);
-        while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
-            $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDb}.{$this->tableUser} WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-            $sth1->execute($row['group_id']);
-            $clientIds =  array_column($sth1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
-            $sth1->closeCursor();
-            $row = array_merge($row, ['client_ids' => $clientIds]);
-            $this->cache->set("user:{$row['username']}", $row);
+        try {
+            $sth = $this->db->select("
+                SELECT
+                    id,
+                    username,
+                    password_hash,
+                    group_id
+                FROM
+                    {$this->globalDb}.{$this->tableUser}
+                {$whereClause}",
+                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+            $sth->execute($ids);
+            $rows = $sth->fetchAll(\PDO::FETCH_ASSOC);
+            $sth->closeCursor();
+        } catch (\Exception $e) {
+            echo __FUNCTION__ . ' : ' . $e->getMessage();
         }
-        $sth->closeCursor();
+        foreach ($rows as &$row) {
+            try {
+                $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDb}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                $sth1->execute([$row['group_id']]);
+                $clientIds =  array_column($sth1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
+                $sth1->closeCursor();
+            } catch (\Exception $e) {
+                echo __FUNCTION__ . ':' . $e->getMessage();
+            }
+            $row = array_merge($row, ['client_ids' => $clientIds]);
+            $this->cache->setCache("user:{$row['username']}", json_encode($row));
+        }
     }
 
     /**
@@ -166,7 +175,7 @@ class Reload
         );
         $sth->execute($ids);
         while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
-            $this->cache->set("group:{$row['id']}", $row);
+            $this->cache->setCache("group:{$row['id']}", json_encode($row));
         }
         $sth->closeCursor();
     }
@@ -189,8 +198,8 @@ class Reload
         $allowedIpsArray = [];
         while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
             $count = 0;
-            if (!empty(trim($row['allowed_ips']))) {
-                foreach (explode(',', $row['allowed_ips']) as $cidr) {
+            if (!empty($row['allowed_ips'])) {
+                foreach (explode(',', trim($row['allowed_ips'])) as $cidr) {
                     $cidr = str_replace(' ', '', trim($cidr));
                     if (!empty(trim($cidr))) {
                         $allowedIps = $this->getIpRange($cidr);
@@ -202,7 +211,7 @@ class Reload
                 }
             }
             if (count($allowedIpsArray) !== 0) {
-                $this->cache->setCache("group:{$row['id']}:ips", $allowedIpsArray);
+                $this->cache->setSetMembers("group:{$row['id']}:ips", $allowedIpsArray);
             }
         }
         $sth->closeCursor();
@@ -252,7 +261,7 @@ class Reload
      * @return void
      */
     private function getIpRange($cidr)
-    {
+    {echo __FUNCTION__;
         $range = [];
         $cidr = explode('/', trim($cidr));
         if (count($cidr)===1) {
@@ -270,13 +279,5 @@ class Reload
      */
     public function __destruct()
     {
-        $jsonEncode = new JsonEncode();
-        $jsonEncode->encode(
-            [
-                'Status' => 200,
-                'Message' => 'Successfully added details to Cache Server.'
-            ]
-        );
-        $jsonEncode = null;
     }
 }
