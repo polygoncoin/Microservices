@@ -206,7 +206,7 @@ class Api
             $input['payload'] = &$payloadArr[$i];
             // Required validations.
             if (isset($config['validate'])) {
-                $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
+                $isValidData = $this->validate($input['payload'], $config['validate']);
             }
             if ($isValidData) {
                 foreach ($config as &$queryDetails) {
@@ -223,14 +223,15 @@ class Api
      * @param array $subQuery Config from file
      * @return void
      */
-    private function selectSubQuery(&$input, &$subQuery)
+    private function selectSubQuery(&$input, &$subQuery, $start = true)
     {
+        $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
                 list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
                 $stmt = $this->db->getStatement($query);
                 $stmt->execute(array_values($params));
-                switch ($config['mode']) {
+                switch ($queryDetails['mode']) {
                     case 'singleRowFormat':
                         if (!isset($queryDetails['subQuery'])) {
                             $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
@@ -241,7 +242,11 @@ class Api
                                     HttpErrorResponse::return501('Invalid configuration: Conflicting column names');
                                 }
                             }
-                            $this->jsonEncodeObj->startAssoc($key);
+                            if ($start) {
+                                $this->jsonEncodeObj->startAssoc();
+                            } else {
+                                $this->jsonEncodeObj->startAssoc($key);
+                            }
                             foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
                                 $jsonthis->jsonEncodeObjEncode->addKeyValue($key, $value);
                             }
@@ -251,7 +256,11 @@ class Api
                         if (isset($queryDetails['subQuery'])) {
                             HttpErrorResponse::return501('Invalid Configuration: multipleRowFormat can\'t have sub query');
                         }
-                        $this->jsonEncodeObj->startArray($key);
+                        if ($start) {
+                            $this->jsonEncodeObj->startArray();
+                        } else {
+                            $this->jsonEncodeObj->startArray($key);
+                        }
                         for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
                             $this->jsonEncodeObj->encode($row);
                         }
@@ -263,7 +272,7 @@ class Api
                     if (!$this->isAssoc($config['subQuery'])) {
                         HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
                     }
-                    $this->selectSubQuery($input, $queryDetails['subQuery']);
+                    $this->selectSubQuery($input, $queryDetails['subQuery'], false);
                 }
                 if ($queryDetails['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
                     $this->jsonEncodeObj->endAssoc();
