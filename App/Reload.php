@@ -121,7 +121,7 @@ class Reload
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
         try {
-            $sth = $this->db->select("
+            $stmt = $this->db->select("
                 SELECT
                     U.id,
                     U.username,
@@ -134,18 +134,18 @@ class Reload
                     {$this->globalDB}.{$this->tableGroup} G ON U.group_id = G.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-            $sth->execute($ids);
-            $rows = $sth->fetchAll(\PDO::FETCH_ASSOC);
-            $sth->closeCursor();
+            $stmt->execute($ids);
+            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $stmt->closeCursor();
         } catch (\Exception $e) {
             echo __FUNCTION__ . ' : ' . $e->getMessage();
         }
         foreach ($rows as &$row) {
             try {
-                $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDB}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-                $sth1->execute([$row['group_id']]);
-                $clientIds =  array_column($sth1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
-                $sth1->closeCursor();
+                $stmt1 = $this->db->select("SELECT client_id FROM {$this->globalDB}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                $stmt1->execute([$row['group_id']]);
+                $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
+                $stmt1->closeCursor();
             } catch (\Exception $e) {
                 echo __FUNCTION__ . ':' . $e->getMessage();
             }
@@ -164,7 +164,7 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE G.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->db->select("
+        $stmt = $this->db->select("
             SELECT
                 G.id,
                 G.name,
@@ -180,11 +180,11 @@ class Reload
             {$whereClause}",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
-        $sth->execute($ids);
-        while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
+        $stmt->execute($ids);
+        while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("group:{$row['id']}", json_encode($row));
         }
-        $sth->closeCursor();
+        $stmt->closeCursor();
     }
 
     /**
@@ -197,13 +197,13 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->db->select(
+        $stmt = $this->db->select(
             "SELECT id, allowed_ips FROM {$this->globalDB}.{$this->tableGroup} {$whereClause}",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
-        $sth->execute($ids);
+        $stmt->execute($ids);
         $allowedIpsArray = [];
-        while($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $count = 0;
             if (!empty($row['allowed_ips'])) {
                 foreach (explode(',', trim($row['allowed_ips'])) as $cidr) {
@@ -221,7 +221,7 @@ class Reload
                 $this->cache->setSetMembers("group:{$row['id']}:ips", $allowedIpsArray);
             }
         }
-        $sth->closeCursor();
+        $stmt->closeCursor();
     }
 
     /**
@@ -234,10 +234,10 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $sth = $this->db->select(
+        $stmt = $this->db->select(
             "
                 SELECT
-                    L.group_id, L.client_id, R.route
+                    L.group_id, L.client_id, L.http_id, R.route
                 FROM 
                     {$this->globalDB}.l001_link_allowed_route L
                 LEFT JOIN
@@ -246,17 +246,21 @@ class Reload
             ",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
-        $sth->execute($ids);
+        $stmt->execute($ids);
         $routeArr = [];
-        while ($row =  $sth->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];
-            $routeArr[$row['group_id']][$row['client_id']][] = $row['route'];
+            if (!isset($routeArr[$row['group_id']][$row['client_id']])) $routeArr[$row['group_id']][$row['client_id']] = [];
+            if (!isset($routeArr[$row['group_id']][$row['client_id']][$row['http_id']])) $routeArr[$row['group_id']][$row['client_id']][$row['http_id']] = [];
+            $routeArr[$row['group_id']][$row['client_id']][$row['http_id']][] = $row['route'];
         }
-        $sth->closeCursor();
-        foreach ($routeArr as $groupId => &$arr) {
-            foreach ($arr as $clientId => &$routes) {
-                $key = "group:{$groupId}:client:{$clientId}:routes";
-                $this->cache->setSetMembers($key, $routes);
+        $stmt->closeCursor();
+        foreach ($routeArr as $groupId => &$clientArr) {
+            foreach ($clientArr as $clientId => &$httpArr) {
+                foreach ($httpArr as $httpId => &$routes) {
+                    $key = "group:{$groupId}:client:{$clientId}:http:{$httpId}:routes";
+                    $this->cache->setSetMembers($key, $routes);
+                }
             }
         }
     }

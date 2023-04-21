@@ -92,6 +92,16 @@ class Database
     }
 
     /**
+     * Last Insert Id by PDO
+     *
+     * @return int
+     */
+    public function lastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
+
+    /**
      * Prepare select SQL and return statement object
      *
      * @param string $sql SQL statement

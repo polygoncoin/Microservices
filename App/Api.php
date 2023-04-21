@@ -2,8 +2,9 @@
 namespace App;
 
 use App\Authorize;
-use App\Servers\Database;
 use App\JsonEncode;
+use App\Servers\Database;
+use App\Validation\Validate;
 
 /**
  * Class to initialize api HTTP request
@@ -56,7 +57,7 @@ class Api
     {
         $this->authorize = new Authorize();
         $this->authorize->init();
-        $this->clientDB = $this->authorize->clientDatabase;
+        $this->clientDB = getenv($this->authorize->clientDatabase);
 
         $this->db = new Database(
             $this->authorize->clientHostname,
@@ -98,44 +99,49 @@ class Api
 
         // Load Queries
         $queries = include $this->authorize->__file__;
-
         $jsonEncode = new JsonEncode();
         if (isset($queries['default'])) {
-            $sth = $this->db->select($queries['default'][0]);
-            $sth->execute($queries['default'][1]);
-            if ($queries['default'][2] === 'singleRowFormat') {
-                $jsonEncode->startAssoc();
-                foreach($sth->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
-                    $jsonEncode->addKeyValue($key, $value);
+            $stmt = $this->db->select($queries['default']['query']);
+            $stmt->execute($queries['default']['payload']);
+            if ($queries['default']['mode'] === 'singleRowFormat') {
+                if (count($queries) === 1) {
+                    $jsonEncode->encode($stmt->fetch(\PDO::FETCH_ASSOC));
+                } else {
+                    $jsonEncode->startAssoc();
+                    foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
+                        $jsonEncode->addKeyValue($key, $value);
+                    }
                 }
-                $sth->closeCursor();
+                $stmt->closeCursor();
             }
-            if ($queries['default'][2] === 'multipleRowFormat') {
+            if ($queries['default']['mode'] === 'multipleRowFormat') {
                 $jsonEncode->startArray();
-                for (;$row=$sth->fetch(\PDO::FETCH_ASSOC);) {
+                for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
                     $jsonEncode->encode($row);
                 }
                 $jsonEncode->endArray();
-                $sth->closeCursor();
+                $stmt->closeCursor();
                 return;
             }
         }
-        if (isset($queries['default'][2]) && $queries['default'][2] === 'singleRowFormat') {
+        if (isset($queries['default']['mode']) && $queries['default']['mode'] === 'singleRowFormat') {
             foreach ($queries as $key => &$value) {
                 if ($key === 'default') continue;
-                $sth = $this->db->select($value[0]);
-                $sth->execute($value[1]);
-                if ($queries[$key][2] === 'singleRowFormat') {
-                    $jsonEncode->addKeyValue($key, $sth->fetch(\PDO::FETCH_ASSOC));
+                $stmt = $this->db->select($value['query']);
+                $stmt->execute($value['payload']);
+                if ($queries[$key]['mode'] === 'singleRowFormat') {
+                    $jsonEncode->addKeyValue($key, $stmt->fetch(\PDO::FETCH_ASSOC));
                 }
-                if ($queries[$key][2] === 'multipleRowFormat') {
+                if ($queries[$key]['mode'] === 'multipleRowFormat') {
                     $jsonEncode->startArray($key);
-                    $jsonEncode->addValue($sth->fetch(\PDO::FETCH_ASSOC));
+                    $jsonEncode->addValue($stmt->fetch(\PDO::FETCH_ASSOC));
                     $jsonEncode->endArray($key);
                 }
-                $sth->closeCursor();
+                $stmt->closeCursor();
             }
-            $jsonEncode->endAssoc();
+            if (count($queries) > 1) {
+                $jsonEncode->endAssoc();
+            }
         }
         $jsonEncode = null;
     }
@@ -148,20 +154,22 @@ class Api
     function processHttpPOST()
     {
         // Load uriParams
-        $uriParams = $this->routeParams;
+        $uriParams = $this->authorize->routeParams;
 
         // Load Read Only Session
-        $readOnlySession = $this->readOnlySession;
+        $readOnlySession = $this->authorize->readOnlySession;
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payload);
-        $dataCount = ($this->isAssoc($payload['data'])) ? 1 : count($payload['data']);
-        if ($dataCount === 1) {
+        $payload['data'] = json_decode($payload['data'], true);
+        $isAssoc = $this->isAssoc($payload['data']);
+        if ($isAssoc) {
             $payload['data'] = [$payload['data']];
         }
+        $dataCount = count($payload['data']);
 
         // Load Config
-        $config = include $this->__file__;
+        $config = include $this->authorize->__file__;
 
         // Required validations.
         if (isset($config['validate'])) {
@@ -171,13 +179,17 @@ class Api
         // Perform action
         for ($i = 0; $i < $dataCount; $i++) {
             foreach ($config['queries'] as $key => &$value) {
-                $sth = $this->db->insert($value['query']);
-                $sth->execute($value['payload']);
-                $insertId = $connection->lastInsertId();
+                $stmt = $this->db->insert($value['query']);
+                $payloadParamValues = [];
+                foreach ($value['payload'] as $p) {
+                    $payloadParamValues[] = $payload['data'][$i][$p];
+                }
+                $stmt->execute($payloadParamValues);
+                $insertId = $this->db->lastInsertId();
                 if (isset($config['queries']['insertId'])) {
                     $params[$config['queries']['insertId']] = $insertId;
                 }
-                $sth->closeCursor();
+                $stmt->closeCursor();
                 if (isset($config['queries'][$key]['subQuery'])) {
                     $this->insertSubQuery($params, $config['queries'][$key]['subQuery']);
                 }
@@ -218,20 +230,21 @@ class Api
     function processHttpUpdate()
     {
         // Load uriParams
-        $uriParams = $this->routeParams;
+        $uriParams = $this->authorize->routeParams;
 
         // Load Read Only Session
-        $readOnlySession = $this->readOnlySession;
+        $readOnlySession = $this->authorize->readOnlySession;
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payload);
-        $dataCount = ($this->isAssoc($payload['data'])) ? 1 : count($payload['data']);
-        if ($dataCount === 1) {
+        $isAssoc = $this->isAssoc($payload['data']);
+        if ($isAssoc) {
             $payload['data'] = [$payload['data']];
         }
+        $dataCount = count($payload['data']);
 
         // Load Config
-        $config = include $this->__file__;
+        $config = include $this->authorize->__file__;
 
         // Required validations.
         if (isset($config['validate'])) {
@@ -241,9 +254,9 @@ class Api
         // Perform action
         for ($i = 0; $i < $dataCount; $i++) {
             foreach ($config['queries'] as $key => &$value) {
-                $sth = $this->db->update($value['query']);
-                $sth->execute($value['payload']);
-                $sth->closeCursor();
+                $stmt = $this->db->update($value['query']);
+                $stmt->execute($value['payload']);
+                $stmt->closeCursor();
                 if (isset($config['queries'][$key]['subQuery'])) {
                     $this->updateSubQuery($params, $config['queries'][$key]['subQuery']);
                 }
@@ -261,13 +274,15 @@ class Api
      */
     private function validate($dataCount, $data, $validationConfig)
     {
+        $validate = new Validate();
         for ($i = 0; $i < $dataCount; $i++) {
             foreach ($validationConfig as &$v) {
-                if (!App\Validation\Validate::$v['fn']($data[$i][$v['dataKey']])) {
+                if (!$validate->$v['fn']($data[$i][$v['dataKey']])) {
                     HttpErrorResponse::return404($v['errorMessage']);
                 }
             }
         }
+        $validate = null;
     }
 
     /**
@@ -280,18 +295,18 @@ class Api
     private function insertSubQuery(&$params, &$subQuery)
     {
         foreach ($subQuery as $key => &$value) {
-            $sth = $this->db->insert($value['query']);
+            $stmt = $this->db->insert($value['query']);
             foreach ($value['payload'] as $k => $v) {
                 if (isset($params[$v])) {
                     $value['payload'][$k] = $params[$v];
                 }
             }
-            $sth->execute($value['payload']);
+            $stmt->execute($value['payload']);
             $insertId = $connection->lastInsertId();
             if (isset($subQuery['insertId'])) {
                 $params[$subQuery['insertId']] = $insertId;
             }
-            $sth->closeCursor();
+            $stmt->closeCursor();
             if (isset($params[$key]['subQuery'])) {
                 $this->insertSubQuery($params, $params[$key]['subQuery']);
             }
@@ -307,9 +322,9 @@ class Api
     private function updateSubQuery(&$subQuery)
     {
         foreach ($subQuery as $key => &$value) {
-            $sth = $this->db->insert($value['query']);
-            $sth->execute($value['payload']);
-            $sth->closeCursor();
+            $stmt = $this->db->insert($value['query']);
+            $stmt->execute($value['payload']);
+            $stmt->closeCursor();
             if (isset($params[$key]['subQuery'])) {
                 $this->updateSubQuery($params[$key]['subQuery']);
             }

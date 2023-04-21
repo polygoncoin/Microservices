@@ -32,6 +32,13 @@ class HttpRequest
     public $requestMethod = null;
 
     /**
+     * Logged-in user request method ID
+     *
+     * @var int
+     */
+    public $httpId = null;
+
+    /**
      * Raw route / Configured Uri
      *
      * @var string
@@ -74,6 +81,14 @@ class HttpRequest
     public function parseRoute($requestMethod, $requestUri)
     {
         $this->requestMethod = $requestMethod;
+
+        $this->httpId = [
+            'GET' => 1,
+            'POST' => 2,
+            'PUT' => 3,
+            'PATCH' => 4,
+            'DELETE' => 5
+        ][$this->requestMethod];
 
         $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . $this->requestMethod . 'routes.php';
         if (file_exists($routeFileLocation)) {

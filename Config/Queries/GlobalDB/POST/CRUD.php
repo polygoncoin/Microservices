@@ -1,21 +1,20 @@
 <?php
 return [
-    'm001_master_group' => [
+    'm006_master_client' => [
         'queries' => [
             [
-                'query' => "INSERT INTO {$this->clientDB}.{$uriParams['table']} SET " . implode(', ',array_map(function ($value) { return '`' . str_replace('`','',$value) . '` = ?';}, array_keys($_POST))) . ';',
-                'payload' => array_merge(
-                    array_values($_POST),
-                    []
-                )
+                'query' => "INSERT INTO {$this->clientDB}.m006_master_client SET name = ?;",
+                'payload' => [
+                    'name'
+                ]
             ]
         ],
         'validate' => [
-            [
-                'fn' => 'validateRequired',
+            /*[
+                'fn' => 'validateFunction',
                 'val' => 'username',
                 'errorMessage' => ''
-            ],
+            ],*/
         ]
     ]
 ][$uriParams['table']];

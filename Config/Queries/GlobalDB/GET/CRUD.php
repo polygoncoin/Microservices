@@ -9,8 +9,8 @@ return [
     ],
     "single" => [
         'default' => [
-            'query' => "SELECT id, name FROM `{$this->globalDB}`.`{$uriParams['table']}` WHERE id = ?",
-            'payload' => [$uriParams['id']],
+            'query' => "SELECT * FROM `{$this->globalDB}`.`{$uriParams['table']}` WHERE id = ?",
+            'payload' => [isset($uriParams['id'])?$uriParams['id']:0],
             'mode' => 'singleRowFormat'//Single row returned.
         ],
     ]

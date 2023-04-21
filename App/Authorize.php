@@ -196,7 +196,7 @@ class Authorize extends HttpRequest
      */
     private function checkRoutePrivilage($route)
     {
-        $key = "group:{$this->groupId}:client:{$this->clientId}:routes";
+        $key = "group:{$this->groupId}:client:{$this->clientId}:http:{$this->httpId}:routes";
         if (!$this->cache->isSetMember($key, $route)) {
             HttpErrorResponse::return404('Route not supported');
         }
