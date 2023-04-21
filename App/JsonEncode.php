@@ -63,13 +63,17 @@ class JsonEncode
      */
     public function encode($arr)
     {
-        echo $this->currentObject->comma;
+        if ($this->currentObject) {
+            echo $this->currentObject->comma;
+        }
         if (is_array($arr)) {
             echo json_encode($arr);
         } else {
             echo $this->escape($arr);
         }
-        $this->currentObject->comma = ',';
+        if ($this->currentObject) {
+            $this->currentObject->comma = ',';
+        }
     }
 
     /**

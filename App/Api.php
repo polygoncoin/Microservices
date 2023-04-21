@@ -288,8 +288,9 @@ class Api
      * @param array $subQuery Config from file
      * @return void
      */
-    private function insertUpdateSubQuery(&$input, &$subQuery)
+    private function insertUpdateSubQuery(&$input, &$subQuery, $start = true)
     {
+        $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
             $stmt = $this->db->getStatement($query);
@@ -300,7 +301,7 @@ class Api
             }
             $stmt->closeCursor();
             if (isset($queryDetails['subQuery'])) {
-                $this->insertUpdateSubQuery($input, $queryDetails['subQuery']);
+                $this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false);
             }
         }
     }
