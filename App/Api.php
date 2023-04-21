@@ -17,7 +17,7 @@ use App\JsonEncode;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Api extends Authorize
+class Api
 {
     /**
      * DB Server connection object
@@ -26,27 +26,59 @@ class Api extends Authorize
      */
     public $db = null;
 
-    public static function api()
+    /**
+     * Global DB
+     *
+     * @var string
+     */
+    public $globalDB = 'global';
+
+    /**
+     * Client database
+     *
+     * @var string
+     */
+    public $clientDB = null;
+
+    /**
+     * Authorize class object
+     *
+     * @var object
+     */
+    public $authorize = null;
+
+    public static function init()
     {
-        parent::init();
+        (new self)->process();
+    }
 
-        $this->db = new Database();
+    public function process()
+    {
+        $this->authorize = new Authorize();
+        $this->authorize->init();
+        $this->clientDB = $this->authorize->clientDatabase;
 
-        switch ($method) {
+        $this->db = new Database(
+            $this->authorize->clientHostname,
+            $this->authorize->clientUsername,
+            $this->authorize->clientPassword,
+            $this->authorize->clientDatabase
+        );
+        switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET':
-                self::processHttpGET();
+                $this->processHttpGET();
                 break;
             case 'POST':
-                self::processHttpPOST();
+                $this->processHttpPOST();
                 break;
             case 'PUT':
-                self::processHttpPUT();
+                $this->processHttpPUT();
                 break;
             case 'PATCH':
-                self::processHttpPATCH();
+                $this->processHttpPATCH();
                 break;
             case 'DELETE':
-                self::processHttpDELETE();
+                $this->processHttpDELETE();
                 break;
         }
     }
@@ -59,13 +91,13 @@ class Api extends Authorize
     function processHttpGET()
     {
         // Load uriParams
-        $uriParams = $this->routeParams;
+        $uriParams = $this->authorize->routeParams;
 
         // Load Read Only Session
-        $readOnlySession = $this->readOnlySession;
+        $readOnlySession = $this->authorize->readOnlySession;
 
         // Load Queries
-        $queries = include $this->__file__;
+        $queries = include $this->authorize->__file__;
 
         $jsonEncode = new JsonEncode();
         if (isset($queries['default'])) {

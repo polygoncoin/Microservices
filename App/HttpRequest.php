@@ -75,14 +75,14 @@ class HttpRequest
     {
         $this->requestMethod = $requestMethod;
 
-        $routeFileLocation = __DOC_ROOT__ . '/app/routes/' . $this->requestMethod . 'routes.php';
+        $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . $this->requestMethod . 'routes.php';
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
             HttpErrorResponse::return501('Missing' . ' route file for' . " $this->requestMethod " . 'method');
         }
         $configuredUri = [];
-        foreach(explode('/', $requestUri) as $key => $providedUriElementValue) {
+        foreach(explode('/', trim($requestUri, '/')) as $key => $providedUriElementValue) {
             $pos = false;
             if (isset($routes[$providedUriElementValue])) {
                 $configuredUri[] = $providedUriElementValue;
@@ -94,7 +94,7 @@ class HttpRequest
                     $uriElementConfiguredDetailsArr = [];
                     foreach (array_keys($routes) as $uriElementConfigured) {
                         // Is a dynamic URI element
-                        if (strpos($uriElementConfigured, '{')) {
+                        if (strpos($uriElementConfigured, '{') === 0) {
                             // Check for compulsary values
                             $uriElementConfiguredArr = explode('|', $uriElementConfigured);
                             $uriElementConfiguredParamString = $uriElementConfiguredArr[0];
@@ -138,6 +138,7 @@ class HttpRequest
                                 break;
                         }
                     } else {
+                        echo 'Hi...1!';
                         HttpErrorResponse::return404('Route not supported');
                     }
                 } else {

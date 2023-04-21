@@ -20,7 +20,7 @@ use App\Servers\Cache;
 class Authorize extends HttpRequest
 {
     /**
-     * Server connection object
+     * Cache Server connection object
      *
      * @var object
      */
@@ -38,14 +38,35 @@ class Authorize extends HttpRequest
      *
      * @var string
      */
-    public $globalDB = null;
+    public $globalDB = 'global';
 
     /**
-     * Client DB
+     * Client database hostname
      *
      * @var string
      */
-    public $clientDB = null;
+    public $clientHostname = null;
+
+    /**
+     * Client database username
+     *
+     * @var string
+     */
+    public $clientUsername = null;
+
+    /**
+     * Client database password
+     *
+     * @var string
+     */
+    public $clientPassword = null;
+
+    /**
+     * Client database
+     *
+     * @var string
+     */
+    public $clientDatabase = null;
 
     /**
      * Logged-in User ID
@@ -62,17 +83,29 @@ class Authorize extends HttpRequest
     public $groupId = null;
 
     /**
+     * Logged-in user Client ID
+     *
+     * @var int
+     */
+    public $clientId = null;
+
+    /**
+     * Constructor
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+
+    }
+
+    /**
      * Initialize authorization
      *
      * @return void
      */
-    public static function init($authirizationHeader, $httpMethod, $requestIP)
+    public function init()
     {
-        $this->authirizationHeader = $authirizationHeader;
-        $this->httpMethod = $httpMethod;
-        $this->requestIP = $requestIP;
-
-        $this->cache = new Cache();
         $this->process();
     }
 
@@ -81,14 +114,15 @@ class Authorize extends HttpRequest
      *
      * @return void
      */
-    function process()
+    private function process()
     {
+        $this->cache = new Cache();
         $this->checkToken($_SERVER['HTTP_AUTHORIZATION']);
         if ($this->tokenExists($this->token)) {
-            $this->parseRoute($_SERVER['REQUEST_METHOD'],$requestUri);
+            $this->parseRoute($_SERVER['REQUEST_METHOD'], __REQUEST_URI__);
             $this->loadTokenSession($this->token);
             $this->checkSourceIp($_SERVER['REMOTE_ADDR']);
-            $this->checkRoutePrivilage($this->groupId, $this->configuredUri);
+            $this->checkRoutePrivilage($this->configuredUri);
         } else {
             HttpErrorResponse::return404('Token expired');
         }
@@ -113,15 +147,19 @@ class Authorize extends HttpRequest
      */
     private function loadTokenSession($token)
     {
-        $this->readOnlySession = json_decode($this->conn->getCache($token), true);
+        $this->readOnlySession = json_decode($this->cache->getCache($token), true);
 
         if (empty($this->readOnlySession['id']) || empty($this->readOnlySession['group_id'])) {
             HttpErrorResponse::return404('Invalid session');
         } else {
             $this->userId = $this->readOnlySession['id'];
             $this->groupId = $this->readOnlySession['group_id'];
-            $this->globalDB = $this->readOnlySession['global_db'];
-            $this->clientDB = $this->readOnlySession['client_db'];
+            $this->clientId = $this->readOnlySession['client_id'];
+            $groupInfoArr = json_decode($this->cache->getCache("group:{$this->groupId}"), true);
+            $this->clientHostname = $groupInfoArr['db_hostname'];
+            $this->clientUsername = $groupInfoArr['db_username'];
+            $this->clientPassword = $groupInfoArr['db_password'];
+            $this->clientDatabase = $groupInfoArr['db_database'];
         }
     }
 
@@ -137,7 +175,7 @@ class Authorize extends HttpRequest
         $ipNumber = ip2long($ip);
         if ($this->cache->cacheExists("group:{$this->groupId}:ips")) {
             $foundIP = false;
-            foreach(json_decode($this->conn->getCache("group:{$this->groupId}:ips"), true) as list($start, $end)) {
+            foreach(json_decode($this->cache->getCache("group:{$this->groupId}:ips"), true) as list($start, $end)) {
                 if ($ipNumber >= $start && $ipNumber <= $end) {
                     $foundIP = true;
                     break;
@@ -156,10 +194,10 @@ class Authorize extends HttpRequest
      * @param string $route   Raw route configured in Routes folder.
      * @return void
      */
-    private function checkRoutePrivilage($groupId, $route)
+    private function checkRoutePrivilage($route)
     {
-        $key = "group:{$groupId}:routes";
-        if (!$this->cache->cacheSetValueExists($key, $route)) {
+        $key = "group:{$this->groupId}:client:{$this->clientId}:routes";
+        if (!$this->cache->isSetMember($key, $route)) {
             HttpErrorResponse::return404('Route not supported');
         }
     }

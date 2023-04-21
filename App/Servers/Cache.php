@@ -141,7 +141,7 @@ class Cache
     public function deleteCache($key)
     {
         $this->connect();
-        return $redis->redis->delete($key);
+        return $this->redis->del($key);
     }
     
     /**

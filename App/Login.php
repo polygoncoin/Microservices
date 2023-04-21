@@ -190,7 +190,7 @@ class Login
             $token = bin2hex(random_bytes(32));
             if (!$this->cache->cacheExists($token)) {
                 $this->cache->setCache($token, '{}', EXPIRY_TIME);
-                $tokenDetails = json_encode(['token' => $token, 'timestamp' => $this->timestamp]);
+                $tokenDetails = ['token' => $token, 'timestamp' => $this->timestamp];
                 break;
             }
         }
@@ -205,15 +205,19 @@ class Login
     private function outputTokenDetails()
     {
         $this->timestamp = time();
+        $tokenFound = false;
         if ($this->cache->cacheExists("user:{$this->userId}:token")) {
-            $tokenDetails = $this->cache->getCache("user:{$this->userId}:token");
-        } else {
+            $tokenDetails = json_decode($this->cache->getCache("user:{$this->userId}:token"), true);
+            if ($this->cache->cacheExists($tokenDetails['token'])) {
+                $tokenFound = true;
+            }
+        }
+        if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->cache->setCache("user:{$this->userId}:token", $tokenDetails, EXPIRY_TIME);
+            $this->cache->setCache("user:{$this->userId}:token", json_encode($tokenDetails), EXPIRY_TIME);
             $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
         }
-        $tokenDetails = json_decode($tokenDetails, true);
         $jsonEncode = new JsonEncode();
         $jsonEncode->encode(
             [

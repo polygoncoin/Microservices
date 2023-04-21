@@ -38,7 +38,7 @@ class Reload
      *
      * @var string
      */
-    private $globalDb = 'global';
+    private $globalDB = 'global';
 
     /**
      * Global DB group table
@@ -103,6 +103,9 @@ class Reload
                 case 'groupRoute':
                     $this->processGroupClientRoutes($ids);
                     break;
+                case 'token':
+                    $this->processToken($idsString);
+                    break;
             }
         }
     }
@@ -120,12 +123,15 @@ class Reload
         try {
             $sth = $this->db->select("
                 SELECT
-                    id,
-                    username,
-                    password_hash,
-                    group_id
+                    U.id,
+                    U.username,
+                    U.password_hash,
+                    U.group_id,
+                    G.default_client_id as client_id
                 FROM
-                    {$this->globalDb}.{$this->tableUser}
+                    {$this->globalDB}.{$this->tableUser} U
+                LEFT JOIN
+                    {$this->globalDB}.{$this->tableGroup} G ON U.group_id = G.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $sth->execute($ids);
@@ -136,7 +142,7 @@ class Reload
         }
         foreach ($rows as &$row) {
             try {
-                $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDb}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                $sth1 = $this->db->select("SELECT client_id FROM {$this->globalDB}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
                 $sth1->execute([$row['group_id']]);
                 $clientIds =  array_column($sth1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
                 $sth1->closeCursor();
@@ -162,14 +168,15 @@ class Reload
             SELECT
                 G.id,
                 G.name,
+                G.default_client_id,
                 C.db_hostname,
                 C.db_username,
                 C.db_password,
                 C.db_database                
             FROM
-                {$this->globalDb}.{$this->tableGroup} G
+                {$this->globalDB}.{$this->tableGroup} G
             LEFT JOIN
-                {$this->globalDb}.m004_master_connection C on g.connection_id = C.id
+                {$this->globalDB}.m004_master_connection C on g.connection_id = C.id
             {$whereClause}",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
@@ -191,7 +198,7 @@ class Reload
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
         $sth = $this->db->select(
-            "SELECT id, allowed_ips FROM {$this->globalDb}.{$this->tableGroup} {$whereClause}",
+            "SELECT id, allowed_ips FROM {$this->globalDB}.{$this->tableGroup} {$whereClause}",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
         $sth->execute($ids);
@@ -232,9 +239,9 @@ class Reload
                 SELECT
                     L.group_id, L.client_id, R.route
                 FROM 
-                    {$this->globalDb}.l001_link_allowed_route L
+                    {$this->globalDB}.l001_link_allowed_route L
                 LEFT JOIN
-                    {$this->globalDb}.m003_master_route R ON L.route_id = R.id
+                    {$this->globalDB}.m003_master_route R ON L.route_id = R.id
                 {$whereClause}
             ",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
@@ -252,6 +259,17 @@ class Reload
                 $this->cache->setSetMembers($key, $routes);
             }
         }
+    }
+
+    /**
+     * Remove token from cache.
+     *
+     * @param string $token Token to be delete from cache.
+     * @return void
+     */
+    private function processToken($token)
+    {
+        $this->cache->deleteCache($token);
     }
 
     /**
