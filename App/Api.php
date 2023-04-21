@@ -370,7 +370,7 @@ class Api
     private function validate($data, $validationConfig)
     {
         if (is_null($this->validationObj)) {
-            $this->validationObj = new Validate();
+            $this->validationObj = new Validate($this->db);
         }
         foreach ($validationConfig as &$v) {
             if (!$validationObj->$v['fn']($data[$v['dataKey']])) {
