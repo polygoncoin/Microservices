@@ -181,6 +181,140 @@ class Api
     }
 
     /**
+     * Process HTTP POST request
+     *
+     * @return void
+     */
+    private function processHttpPOST()
+    {
+        // input details
+        $input = [];
+
+        // Load uriParams
+        $input['uriParams'] = $this->authorizeObj->routeParams;
+
+        // Load Read Only Session
+        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
+
+        // Load Payload
+        parse_str(file_get_contents('php://input'), $payloadArr);
+        $payloadArr = json_decode($payloadArr['data'], true)['data'];
+        $isAssoc = $this->isAssoc($payloadArr);
+        if ($isAssoc) {
+            $payloadArr = [$payloadArr];
+        }
+        $dataCount = count($payloadArr);
+
+        // Load Config
+        $config = include $this->authorizeObj->__file__;
+
+        // Perform action
+        for ($i = 0; $i < $dataCount; $i++) {
+            $isValidData = true;
+            $input['payload'] = &$payloadArr[$i];
+            // Required validations.
+            if (isset($config['validate'])) {
+                $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
+            }
+            if ($isValidData) {
+                foreach ($config['queries'] as $key => &$queryDetails) {
+                    list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
+                    $stmt = $this->db->insert($query);
+                    $stmt->execute($params);
+                    if (isset($config['queries']['insertId'])) {
+                        $insertId = $this->db->lastInsertId();
+                        $input['insertIdParams'][$config['queries']['insertId']] = $insertId;
+                    }
+                    $stmt->closeCursor();
+                    if (isset($config['queries'][$key]['subQuery'])) {
+                        $this->insertSubQuery($input, $config['queries'][$key]['subQuery']);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Process HTTP PUT request
+     *
+     * @return void
+     */
+    private function processHttpPUT()
+    {
+        $this->processHttpUpdate();
+    }
+
+    /**
+     * Process HTTP PATCH request
+     *
+     * @return void
+     */
+    private function processHttpPATCH()
+    {
+        $this->processHttpUpdate();
+    }
+
+    /**
+     * Process HTTP DELETE request
+     *
+     * @return void
+     */
+    private function processHttpDELETE()
+    {
+        $this->processHttpUpdate();
+    }
+    
+    /**
+     * Process update request
+     *
+     * @return void
+     */
+    private function processHttpUpdate()
+    {
+        // input details
+        $input = [];
+
+        // Load uriParams
+        $input['uriParams'] = $this->authorizeObj->routeParams;
+
+        // Load Read Only Session
+        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
+
+        // Load Payload
+        parse_str(file_get_contents('php://input'), $payloadArr);
+        $payloadArr = json_decode($payloadArr['data'], true)['data'];
+        $isAssoc = $this->isAssoc($payloadArr);
+        if ($isAssoc) {
+            $payloadArr = [$payloadArr];
+        }
+        $dataCount = count($payloadArr);
+
+        // Load Config
+        $config = include $this->authorizeObj->__file__;
+
+        // Perform action
+        for ($i = 0; $i < $dataCount; $i++) {
+            $isValidData = true;
+            $input['payload'] = &$payloadArr[$i];
+            // Required validations.
+            if (isset($config['validate'])) {
+                $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
+            }
+            if ($isValidData) {
+                foreach ($config['queries'] as $key => &$queryDetails) {
+                    list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
+                    $stmt = $this->db->update($query);
+                    $stmt->execute($params);
+                    $stmt->closeCursor();
+                    if (isset($config['queries'][$key]['subQuery'])) {
+                        $this->updateSubQuery($input, $config['queries'][$key]['subQuery']);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Function to select sub queries recursively.
      *
      * @param array $input    Inputs
@@ -243,60 +377,6 @@ class Api
     }
 
     /**
-     * Process HTTP POST request
-     *
-     * @return void
-     */
-    private function processHttpPOST()
-    {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = $this->authorizeObj->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
-
-        // Load Payload
-        parse_str(file_get_contents('php://input'), $payloadArr);
-        $payloadArr = json_decode($payloadArr['data'], true)['data'];
-        $isAssoc = $this->isAssoc($payloadArr);
-        if ($isAssoc) {
-            $payloadArr = [$payloadArr];
-        }
-        $dataCount = count($payloadArr);
-
-        // Load Config
-        $config = include $this->authorizeObj->__file__;
-
-        // Perform action
-        for ($i = 0; $i < $dataCount; $i++) {
-            $isValidData = true;
-            $input['payload'] = &$payloadArr[$i];
-            // Required validations.
-            if (isset($config['validate'])) {
-                $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
-            }
-            if ($isValidData) {
-                foreach ($config['queries'] as $key => &$queryDetails) {
-                    list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
-                    $stmt = $this->db->insert($query);
-                    $stmt->execute($params);
-                    if (isset($config['queries']['insertId'])) {
-                        $insertId = $this->db->lastInsertId();
-                        $input['insertIdParams'][$config['queries']['insertId']] = $insertId;
-                    }
-                    $stmt->closeCursor();
-                    if (isset($config['queries'][$key]['subQuery'])) {
-                        $this->insertSubQuery($input, $config['queries'][$key]['subQuery']);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Function to insert sub queries recursively.
      *
      * @param array $input    Inputs
@@ -306,7 +386,7 @@ class Api
     private function insertSubQuery(&$input, &$subQuery)
     {
         foreach ($subQuery as $key => &$queryDetails) {
-            list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
+            list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
             $stmt = $this->db->insert($query);
             $stmt->execute($params);
             $stmt = $this->db->insert($query);
@@ -323,81 +403,6 @@ class Api
     }
 
     /**
-     * Process HTTP PUT request
-     *
-     * @return void
-     */
-    private function processHttpPUT()
-    {
-        $this->processHttpUpdate();
-    }
-
-    /**
-     * Process HTTP PATCH request
-     *
-     * @return void
-     */
-    private function processHttpPATCH()
-    {
-        $this->processHttpUpdate();
-    }
-
-    /**
-     * Process HTTP DELETE request
-     *
-     * @return void
-     */
-    private function processHttpDELETE()
-    {
-        $this->processHttpUpdate();
-    }
-    
-    private function processHttpUpdate()
-    {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = $this->authorizeObj->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
-
-        // Load Payload
-        parse_str(file_get_contents('php://input'), $payloadArr);
-        $payloadArr = json_decode($payloadArr['data'], true)['data'];
-        $isAssoc = $this->isAssoc($payloadArr);
-        if ($isAssoc) {
-            $payloadArr = [$payloadArr];
-        }
-        $dataCount = count($payloadArr);
-
-        // Load Config
-        $config = include $this->authorizeObj->__file__;
-
-        // Perform action
-        for ($i = 0; $i < $dataCount; $i++) {
-            $isValidData = true;
-            $input['payload'] = &$payloadArr[$i];
-            // Required validations.
-            if (isset($config['validate'])) {
-                $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
-            }
-            if ($isValidData) {
-                foreach ($config['queries'] as $key => &$queryDetails) {
-                    list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
-                    $stmt = $this->db->update($query);
-                    $stmt->execute($params);
-                    $stmt->closeCursor();
-                    if (isset($config['queries'][$key]['subQuery'])) {
-                        $this->updateSubQuery($input, $config['queries'][$key]['subQuery']);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Function to update sub queries recursively.
      *
      * @param array $input    Inputs
@@ -407,7 +412,7 @@ class Api
     private function updateSubQuery(&$input, &$subQuery)
     {
         foreach ($subQuery as $key => &$queryDetails) {
-            list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
+            list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
             $stmt = $this->db->update($query);
             $stmt->execute($params);
             $stmt->closeCursor();
@@ -420,11 +425,11 @@ class Api
     /**
      * Returns Query and Params for execution.
      *
-     * @param array $queryDetails
-     * @param array $input
+     * @param array $input        Inputs
+     * @param array $queryDetails Config from file
      * @return array
      */
-    private function getQueryAndParams(&$queryDetails, &$input)
+    private function getQueryAndParams(&$input, &$queryDetails)
     {
         $query = $queryDetails['query'];
         $stmtParams = [];
