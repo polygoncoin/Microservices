@@ -280,14 +280,11 @@ class Api
             }
             if ($isValidData) {
                 foreach ($config['queries'] as $key => &$queryDetails) {
-                    $stmtParams = [];
-                    $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
-                    $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-                    $query = str_replace('__SET__', 'SET ' . $__SET__, $queryDetails['query']);
+                    list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
                     $stmt = $this->db->insert($query);
-                    $stmt->execute(array_values($stmtParams));
-                    $insertId = $this->db->lastInsertId();
+                    $stmt->execute($params);
                     if (isset($config['queries']['insertId'])) {
+                        $insertId = $this->db->lastInsertId();
                         $input['insertIdParams'][$config['queries']['insertId']] = $insertId;
                     }
                     $stmt->closeCursor();
@@ -309,13 +306,13 @@ class Api
     private function insertSubQuery(&$input, &$subQuery)
     {
         foreach ($subQuery as $key => &$queryDetails) {
-            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
-            $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-            $query = str_replace('__SET__', $__SET__, $queryDetails['query']);
+            list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
             $stmt = $this->db->insert($query);
-            $stmt->execute(array_values($stmtParams));
-            $insertId = $this->db->lastInsertId();
+            $stmt->execute($params);
+            $stmt = $this->db->insert($query);
+            $stmt->execute($params);
             if (isset($queryDetails['insertId'])) {
+                $insertId = $this->db->lastInsertId();
                 $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
             }
             $stmt->closeCursor();
@@ -388,21 +385,8 @@ class Api
             }
             if ($isValidData) {
                 foreach ($config['queries'] as $key => &$queryDetails) {
-                    $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
-                    $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-                    $stmtWhereParams = $this->getStmtParams($queryDetails['where'], $input);
-                    $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
-                    $query = $queryDetails['query'];
-                    $query = str_replace('__SET__', $__SET__, $query);
-                    $query = str_replace('__WHERE__', $__WHERE__, $query);
+                    list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
                     $stmt = $this->db->update($query);
-                    $params = [];
-                    foreach ($stmtParams as $v) {
-                        $params[] = $v;
-                    }
-                    foreach ($stmtWhereParams as $v) {
-                        $params[] = $v;
-                    }
                     $stmt->execute($params);
                     $stmt->closeCursor();
                     if (isset($config['queries'][$key]['subQuery'])) {
@@ -423,27 +407,46 @@ class Api
     private function updateSubQuery(&$input, &$subQuery)
     {
         foreach ($subQuery as $key => &$queryDetails) {
-            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
-            $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-            $stmtWhereParams = $this->getStmtParams($queryDetails['where'], $input);
-            $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
-            $query = $queryDetails['query'];
-            $query = str_replace('__SET__', $__SET__, $query);
-            $query = str_replace('__WHERE__', $__WHERE__, $query);
+            list($query, $params) = $this->getQueryAndParams($queryDetails, $input);
             $stmt = $this->db->update($query);
-            $params = [];
-            foreach ($stmtParams as $v) {
-                $params[] = $v;
-            }
-            foreach ($stmtWhereParams as $v) {
-                $params[] = $v;
-            }
             $stmt->execute($params);
             $stmt->closeCursor();
             if (isset($queryDetails['subQuery'])) {
                 $this->updateSubQuery($input, $queryDetails['subQuery']);
             }
         }
+    }
+
+    /**
+     * Returns Query and Params for execution.
+     *
+     * @param array $queryDetails
+     * @param array $input
+     * @return array
+     */
+    private function getQueryAndParams(&$queryDetails, &$input)
+    {
+        $query = $queryDetails['query'];
+        $stmtParams = [];
+        $stmtWhereParams = [];
+        if (isset($queryDetails['payload'])) {
+            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
+            $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
+            $query = str_replace('__SET__', $__SET__, $query);
+        }
+        if (isset($queryDetails['where'])) {
+            $stmtWhereParams = $this->getStmtParams($queryDetails['where'], $input);
+            $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
+            $query = str_replace('__WHERE__', $__WHERE__, $query);
+        }
+        $params = [];
+        foreach ($stmtParams as $v) {
+            $params[] = $v;
+        }
+        foreach ($stmtWhereParams as $v) {
+            $params[] = $v;
+        }
+        return [$query, $params];
     }
 
     /**
