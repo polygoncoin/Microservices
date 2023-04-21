@@ -126,58 +126,10 @@ class Api
 
         // Load Queries
         $config = include $this->authorizeObj->__file__;
-
-        if ($this->isAssoc($config)) {
-            $this->jsonEncodeObj = new JsonEncode();
-            $query = $config['query'];
-            $stmtWhereParams = [];
-            if (isset($config['where'])) {
-                $stmtWhereParams = $this->getStmtParams($config['where'], $input);
-                $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
-                $query = str_replace('__WHERE__', $__WHERE__, $query);    
-            }
-            $stmt = $this->db->select($query);
-            $stmt->execute(array_values($stmtWhereParams));
-            switch ($config['mode']) {
-                case 'singleRowFormat':
-                    if (!isset($config['subQuery'])) {
-                        $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
-                    } else {
-                        $resultColums = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-                        foreach (array_keys($subQueryCols) as $cols) {
-                            if (in_array($cols, $resultColums)) {
-                                HttpErrorResponse::return501('Invalid configuration: Conflicting column names');
-                            }
-                        }
-                        $this->jsonEncodeObj->startAssoc();
-                        foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
-                            $jsonthis->jsonEncodeObjEncode->addKeyValue($key, $value);
-                        }
-                    }
-                    break;
-                case 'multipleRowFormat':
-                    if (isset($config['subQuery'])) {
-                        HttpErrorResponse::return501('Invalid Configuration: multipleRowFormat can\'t have sub query');
-                    }
-                    $this->jsonEncodeObj->startArray();
-                    for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
-                        $this->jsonEncodeObj->encode($row);
-                    }
-                    $this->jsonEncodeObj->endArray();
-                    break;
-            }
-            $stmt->closeCursor();
-            if (isset($config['subQuery'])) {
-                if (!$this->isAssoc($config['subQuery'])) {
-                    HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
-                }
-                $this->selectSubQuery($input, $config['subQuery']);
-            }
-            if ($config['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
-                $this->jsonEncodeObj->endAssoc();
-            }
-            $this->jsonEncodeObj = null;
-        }
+        
+        $this->jsonEncodeObj = new JsonEncode();
+        $this->selectSubQuery($input, $config);
+        $this->jsonEncodeObj = null;
     }
 
     /**
@@ -187,51 +139,7 @@ class Api
      */
     private function processHttpPOST()
     {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = $this->authorizeObj->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
-
-        // Load Payload
-        parse_str(file_get_contents('php://input'), $payloadArr);
-        $payloadArr = json_decode($payloadArr['data'], true)['data'];
-        $isAssoc = $this->isAssoc($payloadArr);
-        if ($isAssoc) {
-            $payloadArr = [$payloadArr];
-        }
-        $dataCount = count($payloadArr);
-
-        // Load Config
-        $config = include $this->authorizeObj->__file__;
-
-        // Perform action
-        for ($i = 0; $i < $dataCount; $i++) {
-            $isValidData = true;
-            $input['payload'] = &$payloadArr[$i];
-            // Required validations.
-            if (isset($config['validate'])) {
-                $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
-            }
-            if ($isValidData) {
-                foreach ($config['queries'] as $key => &$queryDetails) {
-                    list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-                    $stmt = $this->db->insert($query);
-                    $stmt->execute($params);
-                    if (isset($config['queries']['insertId'])) {
-                        $insertId = $this->db->lastInsertId();
-                        $input['insertIdParams'][$config['queries']['insertId']] = $insertId;
-                    }
-                    $stmt->closeCursor();
-                    if (isset($config['queries'][$key]['subQuery'])) {
-                        $this->insertSubQuery($input, $config['queries'][$key]['subQuery']);
-                    }
-                }
-            }
-        }
+        $this->processHttpInsertUpdate();
     }
 
     /**
@@ -241,7 +149,7 @@ class Api
      */
     private function processHttpPUT()
     {
-        $this->processHttpUpdate();
+        $this->processHttpInsertUpdate();
     }
 
     /**
@@ -251,7 +159,7 @@ class Api
      */
     private function processHttpPATCH()
     {
-        $this->processHttpUpdate();
+        $this->processHttpInsertUpdate();
     }
 
     /**
@@ -261,7 +169,7 @@ class Api
      */
     private function processHttpDELETE()
     {
-        $this->processHttpUpdate();
+        $this->processHttpInsertUpdate();
     }
     
     /**
@@ -269,7 +177,7 @@ class Api
      *
      * @return void
      */
-    private function processHttpUpdate()
+    private function processHttpInsertUpdate()
     {
         // input details
         $input = [];
@@ -301,14 +209,8 @@ class Api
                 $isValidData = $this->validate($dataCount, $payloadArr, $config['validate']);
             }
             if ($isValidData) {
-                foreach ($config['queries'] as $key => &$queryDetails) {
-                    list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-                    $stmt = $this->db->update($query);
-                    $stmt->execute($params);
-                    $stmt->closeCursor();
-                    if (isset($config['queries'][$key]['subQuery'])) {
-                        $this->updateSubQuery($input, $config['queries'][$key]['subQuery']);
-                    }
+                foreach ($config as &$queryDetails) {
+                    $this->insertUpdateSubQuery($input, $queryDetails);
                 }
             }
         }
@@ -321,22 +223,16 @@ class Api
      * @param array $subQuery Config from file
      * @return void
      */
-    private function selectSubQuery($input, $subQuery)
+    private function selectSubQuery(&$input, &$subQuery)
     {
-        foreach ($subQuery as $key => $config) {
-            if (isAssoc($config)) {
-                $query = $config['query'];
-                $stmtWhereParams = [];
-                if (isset($config['where'])) {
-                    $stmtWhereParams = $this->getStmtParams($config['where'], $input);
-                    $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
-                    $query = str_replace('__WHERE__', $__WHERE__, $query);    
-                }
-                $stmt = $this->db->select($query);
-                $stmt->execute(array_values($stmtWhereParams));
+        foreach ($subQuery as $key => &$queryDetails) {
+            if ($this->isAssoc($queryDetails)) {
+                list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
+                $stmt = $this->db->getStatement($query);
+                $stmt->execute(array_values($params));
                 switch ($config['mode']) {
                     case 'singleRowFormat':
-                        if (!isset($config['subQuery'])) {
+                        if (!isset($queryDetails['subQuery'])) {
                             $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
                         } else {
                             $resultColums = $stmt->fetchAll(\PDO::FETCH_COLUMN);
@@ -352,7 +248,7 @@ class Api
                         }
                         break;
                     case 'multipleRowFormat':
-                        if (isset($config['subQuery'])) {
+                        if (isset($queryDetails['subQuery'])) {
                             HttpErrorResponse::return501('Invalid Configuration: multipleRowFormat can\'t have sub query');
                         }
                         $this->jsonEncodeObj->startArray($key);
@@ -363,13 +259,13 @@ class Api
                         break;
                 }
                 $stmt->closeCursor();
-                if (isset($config['subQuery'])) {
+                if (isset($queryDetails['subQuery'])) {
                     if (!$this->isAssoc($config['subQuery'])) {
                         HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
                     }
-                    $this->selectSubQuery($input, $config['subQuery']);
+                    $this->selectSubQuery($input, $queryDetails['subQuery']);
                 }
-                if ($config['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
+                if ($queryDetails['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
                     $this->jsonEncodeObj->endAssoc();
                 }
             }
@@ -377,19 +273,17 @@ class Api
     }
 
     /**
-     * Function to insert sub queries recursively.
+     * Function to insert/update sub queries recursively.
      *
      * @param array $input    Inputs
      * @param array $subQuery Config from file
      * @return void
      */
-    private function insertSubQuery(&$input, &$subQuery)
+    private function insertUpdateSubQuery(&$input, &$subQuery)
     {
-        foreach ($subQuery as $key => &$queryDetails) {
+        foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-            $stmt = $this->db->insert($query);
-            $stmt->execute($params);
-            $stmt = $this->db->insert($query);
+            $stmt = $this->db->getStatement($query);
             $stmt->execute($params);
             if (isset($queryDetails['insertId'])) {
                 $insertId = $this->db->lastInsertId();
@@ -397,27 +291,7 @@ class Api
             }
             $stmt->closeCursor();
             if (isset($queryDetails['subQuery'])) {
-                $this->insertSubQuery($input, $queryDetails['subQuery']);
-            }
-        }
-    }
-
-    /**
-     * Function to update sub queries recursively.
-     *
-     * @param array $input    Inputs
-     * @param array $subQuery Config from file
-     * @return void
-     */
-    private function updateSubQuery(&$input, &$subQuery)
-    {
-        foreach ($subQuery as $key => &$queryDetails) {
-            list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-            $stmt = $this->db->update($query);
-            $stmt->execute($params);
-            $stmt->closeCursor();
-            if (isset($queryDetails['subQuery'])) {
-                $this->updateSubQuery($input, $queryDetails['subQuery']);
+                $this->insertUpdateSubQuery($input, $queryDetails['subQuery']);
             }
         }
     }
@@ -435,12 +309,12 @@ class Api
         $stmtParams = [];
         $stmtWhereParams = [];
         if (isset($queryDetails['payload'])) {
-            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
+            $stmtParams = $this->getStmtParams($input, $queryDetails['payload']);
             $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
             $query = str_replace('__SET__', $__SET__, $query);
         }
         if (isset($queryDetails['where'])) {
-            $stmtWhereParams = $this->getStmtParams($queryDetails['where'], $input);
+            $stmtWhereParams = $this->getStmtParams($input, $queryDetails['where']);
             $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
             $query = str_replace('__WHERE__', $__WHERE__, $query);
         }
@@ -457,11 +331,11 @@ class Api
     /**
      * Generates Params for statement to execute.
      *
-     * @param array $queryPayload
-     * @param array $input
+     * @param array $input        Inputs
+     * @param array $queryPayload Config from file
      * @return array
      */
-    private function getStmtParams($queryPayload, $input)
+    private function getStmtParams($input, $queryPayload)
     {
         $stmtParams = [];
         foreach ($queryPayload as $var => [$type, $typeKey]) {

@@ -102,36 +102,12 @@ class Database
     }
 
     /**
-     * Prepare select SQL and return statement object
+     * Process SQL and return statement object
      *
-     * @param string $sql SQL statement
+     * @param string $sql SQL query
      * @return object
      */
-    public function select($sql)
-    {
-        $this->connect();
-        return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-    }
-
-    /**
-     * Prepare insert SQL and return statement object
-     *
-     * @param string $sql SQL statement
-     * @return object
-     */
-    public function insert($sql)
-    {
-        $this->connect();
-        return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-    }
-
-    /**
-     * Prepare update SQL and return statement object
-     *
-     * @param string $sql SQL statement
-     * @return object
-     */
-    public function update($sql)
+    public function getStatement($sql)
     {
         $this->connect();
         return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);

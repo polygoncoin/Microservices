@@ -84,7 +84,7 @@ class Cache
             $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
             $this->redis->auth($this->password);
             if (!empty($this->database)) {
-                $this->redis->select($this->database);
+                $this->redis->getStatement($this->database);
             }
             if (!$this->redis->ping()) {
                 HttpErrorResponse::return501('Unable to ping to cache server');

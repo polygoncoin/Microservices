@@ -121,7 +121,7 @@ class Reload
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
         try {
-            $stmt = $this->db->select("
+            $stmt = $this->db->getStatement("
                 SELECT
                     U.id,
                     U.username,
@@ -142,7 +142,7 @@ class Reload
         }
         foreach ($rows as &$row) {
             try {
-                $stmt1 = $this->db->select("SELECT client_id FROM {$this->globalDB}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                $stmt1 = $this->db->getStatement("SELECT client_id FROM {$this->globalDB}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
                 $stmt1->execute([$row['group_id']]);
                 $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
                 $stmt1->closeCursor();
@@ -164,7 +164,7 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE G.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $stmt = $this->db->select("
+        $stmt = $this->db->getStatement("
             SELECT
                 G.id,
                 G.name,
@@ -197,7 +197,7 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $stmt = $this->db->select(
+        $stmt = $this->db->getStatement(
             "SELECT id, allowed_ips FROM {$this->globalDB}.{$this->tableGroup} {$whereClause}",
             array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
         );
@@ -234,7 +234,7 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $stmt = $this->db->select(
+        $stmt = $this->db->getStatement(
             "
                 SELECT
                     L.group_id, L.client_id, L.http_id, R.route
