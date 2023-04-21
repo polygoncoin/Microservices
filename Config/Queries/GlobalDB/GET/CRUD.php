@@ -1,17 +1,13 @@
 <?php
 return [
     'all' => [
-        'default' => [
-            'query' => "SELECT * FROM `{$this->globalDB}`.`{$uriParams['table']}`",
-            'payload' => [],
-            'mode' => 'multipleRowFormat'
-        ],
+        'query' => "SELECT * FROM `{$this->globalDB}`.`{$input['uriParams']['table']}`",
+        'where' => [],
+        'mode' => 'multipleRowFormat'
     ],
     "single" => [
-        'default' => [
-            'query' => "SELECT * FROM `{$this->globalDB}`.`{$uriParams['table']}` WHERE id = ?",
-            'payload' => [isset($uriParams['id'])?$uriParams['id']:0],
-            'mode' => 'singleRowFormat'//Single row returned.
-        ],
+        'query' => "SELECT * FROM `{$this->globalDB}`.`{$input['uriParams']['table']}` WHERE id = ?",
+        'where' => ['id' => ['uriParams','id']],
+        'mode' => 'singleRowFormat'//Single row returned.
     ]
-][isset($uriParams['id'])?'single':'all'];
+][isset($input['uriParams']['id'])?'single':'all'];

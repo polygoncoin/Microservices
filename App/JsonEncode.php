@@ -63,11 +63,13 @@ class JsonEncode
      */
     public function encode($arr)
     {
+        echo $this->currentObject->comma;
         if (is_array($arr)) {
             echo json_encode($arr);
         } else {
             echo $this->escape($arr);
         }
+        $this->currentObject->comma = ',';
     }
 
     /**
@@ -81,9 +83,7 @@ class JsonEncode
         if ($this->currentObject->mode !== 'Array') {
             throw new Exception('Mode should be Array');
         }
-        echo $this->currentObject->comma;
         $this->encode($value);
-        $this->currentObject->comma = ',';
     }
 
     /**
@@ -100,8 +100,8 @@ class JsonEncode
         }
         echo $this->currentObject->comma;
         echo $this->escape($key) . ':';
+        $this->currentObject->comma = '';
         $this->encode($value);
-        $this->currentObject->comma = ',';
     }
 
     /**

@@ -56,6 +56,13 @@ class Api
     public $validationObj = null;
 
     /**
+     * JsonEncode class object
+     *
+     * @var object
+     */
+    public $jsonEncodeObj = null;
+
+    /**
      * Initialize
      *
      * @return void
@@ -108,59 +115,131 @@ class Api
      */
     private function processHttpGET()
     {
+        // input details
+        $input = [];
+
         // Load uriParams
-        $uriParams = $this->authorizeObj->routeParams;
+        $input['uriParams'] = $this->authorizeObj->routeParams;
 
         // Load Read Only Session
-        $readOnlySession = $this->authorizeObj->readOnlySession;
+        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
 
         // Load Queries
-        $queries = include $this->authorizeObj->__file__;
-        $jsonEncode = new JsonEncode();
-        if (isset($queries['default'])) {
-            $stmt = $this->db->select($queries['default']['query']);
-            $stmt->execute($queries['default']['payload']);
-            if ($queries['default']['mode'] === 'singleRowFormat') {
-                if (count($queries) === 1) {
-                    $jsonEncode->encode($stmt->fetch(\PDO::FETCH_ASSOC));
-                } else {
-                    $jsonEncode->startAssoc();
-                    foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
-                        $jsonEncode->addKeyValue($key, $value);
+        $config = include $this->authorizeObj->__file__;
+
+        if ($this->isAssoc($config)) {
+            $this->jsonEncodeObj = new JsonEncode();
+            $query = $config['query'];
+            $stmtWhereParams = [];
+            if (isset($config['where'])) {
+                $stmtWhereParams = $this->getStmtParams($config['where'], $input);
+                $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
+                $query = str_replace('__WHERE__', $__WHERE__, $query);    
+            }
+            $stmt = $this->db->select($query);
+            $stmt->execute(array_values($stmtWhereParams));
+            switch ($config['mode']) {
+                case 'singleRowFormat':
+                    if (!isset($config['subQuery'])) {
+                        $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
+                    } else {
+                        $resultColums = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+                        foreach (array_keys($subQueryCols) as $cols) {
+                            if (in_array($cols, $resultColums)) {
+                                HttpErrorResponse::return501('Invalid configuration: Conflicting column names');
+                            }
+                        }
+                        $this->jsonEncodeObj->startAssoc();
+                        foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
+                            $jsonthis->jsonEncodeObjEncode->addKeyValue($key, $value);
+                        }
                     }
-                }
-                $stmt->closeCursor();
+                    break;
+                case 'multipleRowFormat':
+                    if (isset($config['subQuery'])) {
+                        HttpErrorResponse::return501('Invalid Configuration: multipleRowFormat can\'t have sub query');
+                    }
+                    $this->jsonEncodeObj->startArray();
+                    for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
+                        $this->jsonEncodeObj->encode($row);
+                    }
+                    $this->jsonEncodeObj->endArray();
+                    break;
             }
-            if ($queries['default']['mode'] === 'multipleRowFormat') {
-                $jsonEncode->startArray();
-                for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
-                    $jsonEncode->encode($row);
+            $stmt->closeCursor();
+            if (isset($config['subQuery'])) {
+                if (!$this->isAssoc($config['subQuery'])) {
+                    HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
                 }
-                $jsonEncode->endArray();
+                $this->selectSubQuery($input, $config['subQuery']);
+            }
+            if ($config['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
+                $this->jsonEncodeObj->endAssoc();
+            }
+            $this->jsonEncodeObj = null;
+        }
+    }
+
+    /**
+     * Function to select sub queries recursively.
+     *
+     * @param array $input    Inputs
+     * @param array $subQuery Config from file
+     * @return void
+     */
+    private function selectSubQuery($input, $subQuery)
+    {
+        foreach ($subQuery as $key => $config) {
+            if (isAssoc($config)) {
+                $query = $config['query'];
+                $stmtWhereParams = [];
+                if (isset($config['where'])) {
+                    $stmtWhereParams = $this->getStmtParams($config['where'], $input);
+                    $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
+                    $query = str_replace('__WHERE__', $__WHERE__, $query);    
+                }
+                $stmt = $this->db->select($query);
+                $stmt->execute(array_values($stmtWhereParams));
+                switch ($config['mode']) {
+                    case 'singleRowFormat':
+                        if (!isset($config['subQuery'])) {
+                            $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
+                        } else {
+                            $resultColums = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+                            foreach (array_keys($subQueryCols) as $cols) {
+                                if (in_array($cols, $resultColums)) {
+                                    HttpErrorResponse::return501('Invalid configuration: Conflicting column names');
+                                }
+                            }
+                            $this->jsonEncodeObj->startAssoc($key);
+                            foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
+                                $jsonthis->jsonEncodeObjEncode->addKeyValue($key, $value);
+                            }
+                        }
+                        break;
+                    case 'multipleRowFormat':
+                        if (isset($config['subQuery'])) {
+                            HttpErrorResponse::return501('Invalid Configuration: multipleRowFormat can\'t have sub query');
+                        }
+                        $this->jsonEncodeObj->startArray($key);
+                        for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
+                            $this->jsonEncodeObj->encode($row);
+                        }
+                        $this->jsonEncodeObj->endArray();
+                        break;
+                }
                 $stmt->closeCursor();
-                return;
+                if (isset($config['subQuery'])) {
+                    if (!$this->isAssoc($config['subQuery'])) {
+                        HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
+                    }
+                    $this->selectSubQuery($input, $config['subQuery']);
+                }
+                if ($config['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
+                    $this->jsonEncodeObj->endAssoc();
+                }
             }
         }
-        if (isset($queries['default']['mode']) && $queries['default']['mode'] === 'singleRowFormat') {
-            foreach ($queries as $key => &$value) {
-                if ($key === 'default') continue;
-                $stmt = $this->db->select($value['query']);
-                $stmt->execute($value['payload']);
-                if ($queries[$key]['mode'] === 'singleRowFormat') {
-                    $jsonEncode->addKeyValue($key, $stmt->fetch(\PDO::FETCH_ASSOC));
-                }
-                if ($queries[$key]['mode'] === 'multipleRowFormat') {
-                    $jsonEncode->startArray($key);
-                    $jsonEncode->addValue($stmt->fetch(\PDO::FETCH_ASSOC));
-                    $jsonEncode->endArray($key);
-                }
-                $stmt->closeCursor();
-            }
-            if (count($queries) > 1) {
-                $jsonEncode->endAssoc();
-            }
-        }
-        $jsonEncode = null;
     }
 
     /**
@@ -216,6 +295,32 @@ class Api
                         $this->insertSubQuery($input, $config['queries'][$key]['subQuery']);
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Function to insert sub queries recursively.
+     *
+     * @param array $input    Inputs
+     * @param array $subQuery Config from file
+     * @return void
+     */
+    private function insertSubQuery(&$input, &$subQuery)
+    {
+        foreach ($subQuery as $key => &$queryDetails) {
+            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
+            $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
+            $query = str_replace('__SET__', $__SET__, $queryDetails['query']);
+            $stmt = $this->db->insert($query);
+            $stmt->execute(array_values($stmtParams));
+            $insertId = $this->db->lastInsertId();
+            if (isset($queryDetails['insertId'])) {
+                $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
+            }
+            $stmt->closeCursor();
+            if (isset($queryDetails['subQuery'])) {
+                $this->insertSubQuery($input, $queryDetails['subQuery']);
             }
         }
     }
@@ -309,56 +414,10 @@ class Api
     }
 
     /**
-     * Validate payload
-     *
-     * @param int   $dataCount        Number of records to validate as received in payload
-     * @param array $data             Payload data
-     * @param array $validationConfig Validation configuration.
-     * @return void
-     */
-    private function validate($data, $validationConfig)
-    {
-        if (is_null($this->validationObj)) {
-            $this->validationObj = new Validate();
-        }
-        foreach ($validationConfig as &$v) {
-            if (!$validationObj->$v['fn']($data[$v['dataKey']])) {
-                return ['data' => $data, 'Error' => $v['errorMessage']];
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Function to insert sub queries recursively.
-     *
-     * @param array $params   Dynamic params values like insert ids
-     * @param array $subQuery N level Sub Query array.
-     * @return void
-     */
-    private function insertSubQuery(&$input, &$subQuery)
-    {
-        foreach ($subQuery as $key => &$queryDetails) {
-            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
-            $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-            $query = str_replace('__SET__', $__SET__, $queryDetails['query']);
-            $stmt = $this->db->insert($query);
-            $stmt->execute(array_values($stmtParams));
-            $insertId = $this->db->lastInsertId();
-            if (isset($queryDetails['insertId'])) {
-                $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
-            }
-            $stmt->closeCursor();
-            if (isset($queryDetails['subQuery'])) {
-                $this->insertSubQuery($input, $queryDetails['subQuery']);
-            }
-        }
-    }
-
-    /**
      * Function to update sub queries recursively.
      *
-     * @param array $subQuery N level Sub Query array.
+     * @param array $input    Inputs
+     * @param array $subQuery Config from file
      * @return void
      */
     private function updateSubQuery(&$input, &$subQuery)
@@ -407,6 +466,28 @@ class Api
         }
         return $stmtParams;
     }
+
+    /**
+     * Validate payload
+     *
+     * @param int   $dataCount        Number of records to validate as received in payload
+     * @param array $data             Payload data
+     * @param array $validationConfig Validation configuration.
+     * @return void
+     */
+    private function validate($data, $validationConfig)
+    {
+        if (is_null($this->validationObj)) {
+            $this->validationObj = new Validate();
+        }
+        foreach ($validationConfig as &$v) {
+            if (!$validationObj->$v['fn']($data[$v['dataKey']])) {
+                return ['data' => $data, 'Error' => $v['errorMessage']];
+            }
+        }
+        return true;
+    }
+
     /**
      * Function to find wether privider array is associative/simple array
      *

@@ -18,5 +18,8 @@ return [
                 '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
             ],
         ]
+    ],
+    'groupInfo' => [
+        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/GroupInfo.php',
     ]
 ];

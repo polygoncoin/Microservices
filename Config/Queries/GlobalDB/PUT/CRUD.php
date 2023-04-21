@@ -3,10 +3,16 @@ return [
     'm001_master_group' => [
         'queries' => [
             [
-                'query' => "UPDATE {$this->clientDB}.m001_master_group SET {$payload['column_name']} = ? WHERE id = ?",
+                'query' => "UPDATE {$this->clientDB}.m001_master_group SET __SET__ WHERE __WHERE__;",
                 'payload' => [
-                    $payload['column_value'],
-                    $uriParams['id']
+                    'group_id' => ['payload' => 'group_id'],
+                    'client_id' => ['payload' => 'client_id'],
+                    'route_id' => ['payload' => 'route_id'],
+                    'http_id' => ['payload' => 'http_id'],
+                    'updated_by' => ['readOnlySession' => 'id']
+                ],
+                'where' => [
+                    'id' => ['payload' => 'id'],
                 ]
             ]
         ],
