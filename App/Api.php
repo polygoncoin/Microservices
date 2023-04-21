@@ -202,9 +202,7 @@ class Api
             if ($isValidData) {
                 foreach ($config['queries'] as $key => &$queryDetails) {
                     $stmtParams = [];
-                    foreach ($queryDetails['payload'] as $var => [$type, $typeKey]) {
-                        $stmtParams[$var] = $input[$type][$typeKey];
-                    }
+                    $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
                     $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
                     $query = str_replace('__SET__', 'SET ' . $__SET__, $queryDetails['query']);
                     $stmt = $this->db->insert($query);
@@ -285,14 +283,22 @@ class Api
             }
             if ($isValidData) {
                 foreach ($config['queries'] as $key => &$queryDetails) {
-                    $stmtParams = [];
-                    foreach ($queryDetails['payload'] as $var => [$type, $typeKey]) {
-                        $stmtParams[$var] = $input[$type][$typeKey];
-                    }
+                    $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
                     $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-                    $query = str_replace('__SET__', 'SET ' . $__SET__, $queryDetails['query']);
-                    $stmt = $this->db->insert($query);
-                    $stmt->execute(array_values($stmtParams));
+                    $stmtWhereParams = $this->getStmtParams($queryDetails['where'], $input);
+                    $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
+                    $query = $queryDetails['query'];
+                    $query = str_replace('__SET__', $__SET__, $query);
+                    $query = str_replace('__WHERE__', $__WHERE__, $query);
+                    $stmt = $this->db->update($query);
+                    $params = [];
+                    foreach ($stmtParams as $v) {
+                        $params[] = $v;
+                    }
+                    foreach ($stmtWhereParams as $v) {
+                        $params[] = $v;
+                    }
+                    $stmt->execute($params);
                     $stmt->closeCursor();
                     if (isset($config['queries'][$key]['subQuery'])) {
                         $this->updateSubQuery($input, $config['queries'][$key]['subQuery']);
@@ -333,12 +339,9 @@ class Api
     private function insertSubQuery(&$input, &$subQuery)
     {
         foreach ($subQuery as $key => &$queryDetails) {
-            $stmtParams = [];
-            foreach ($queryDetails['payload'] as $var => [$type, $typeKey]) {
-                $stmtParams[$var] = $input[$type][$typeKey];
-            }
+            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
             $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-            $query = str_replace('__SET__', 'SET ' . $__SET__, $queryDetails['query']);
+            $query = str_replace('__SET__', $__SET__, $queryDetails['query']);
             $stmt = $this->db->insert($query);
             $stmt->execute(array_values($stmtParams));
             $insertId = $this->db->lastInsertId();
@@ -361,14 +364,22 @@ class Api
     private function updateSubQuery(&$input, &$subQuery)
     {
         foreach ($subQuery as $key => &$queryDetails) {
-            $stmtParams = [];
-            foreach ($queryDetails['payload'] as $var => [$type, $typeKey]) {
-                $stmtParams[$var] = $input[$type][$typeKey];
-            }
+            $stmtParams = $this->getStmtParams($queryDetails['payload'], $input);
             $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
-            $query = str_replace('__SET__', 'SET ' . $__SET__, $queryDetails['query']);
-            $stmt = $this->db->insert($query);
-            $stmt->execute(array_values($stmtParams));
+            $stmtWhereParams = $this->getStmtParams($queryDetails['where'], $input);
+            $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
+            $query = $queryDetails['query'];
+            $query = str_replace('__SET__', $__SET__, $query);
+            $query = str_replace('__WHERE__', $__WHERE__, $query);
+            $stmt = $this->db->update($query);
+            $params = [];
+            foreach ($stmtParams as $v) {
+                $params[] = $v;
+            }
+            foreach ($stmtWhereParams as $v) {
+                $params[] = $v;
+            }
+            $stmt->execute($params);
             $stmt->closeCursor();
             if (isset($queryDetails['subQuery'])) {
                 $this->updateSubQuery($input, $queryDetails['subQuery']);
@@ -376,6 +387,26 @@ class Api
         }
     }
 
+    /**
+     * Generates Params for statement to execute.
+     *
+     * @param array $queryPayload
+     * @param array $input
+     * @return array
+     */
+    private function getStmtParams($queryPayload, $input)
+    {
+        $stmtParams = [];
+        foreach ($queryPayload as $var => [$type, $typeKey]) {
+            if ($type === 'custom') {
+                $typeValue = $typeKey;
+            } else {
+                $typeValue = $input[$type][$typeKey];
+            }
+            $stmtParams[$var] = $typeValue;
+        }
+        return $stmtParams;
+    }
     /**
      * Function to find wether privider array is associative/simple array
      *

@@ -13,12 +13,16 @@ return [
     'l001_link_allowed_route' => [
         'queries' => [
             [
-                'query' => "INSERT INTO {$this->clientDB}.{$uriParams['table']} SET __PARAMS__;",
+                'query' => "INSERT INTO {$this->clientDB}.{$uriParams['table']} SET __SET__;",
                 'payload' => [
-                    'group_id' => 'payload',
-                    'client_id' => 'payload',
-                    'route_id' => 'payload',
-                    'http_id' => 'payload',
+                    'group_id' => ['payload' => 'group_id'],
+                    'client_id' => ['payload' => 'client_id'],
+                    'route_id' => ['payload' => 'route_id'],
+                    'http_id' => ['payload' => 'http_id'],
+                    'created_by' => []
+                ],
+                'where' => [
+                    'id' => ['payload' => 'id'],
                 ]
             ]
         ],
