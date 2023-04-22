@@ -108,9 +108,9 @@ Suppose we want to configure the below 2 routes for our application.
 
 Lets discuss the process for each
 - **/global/{table:string}** where **table** is the dynamic string
-```
-INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}');
-```
+
+	    INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}');
+
 After inserting one needs to configure this route for use.
 To configure for GET, and POST methods.
 ```
@@ -135,9 +135,9 @@ SET
 ```
 So route /global/{table:string} can be used for adding and fetching table records
 - **/global/{table:string}/{id:int}** where **table** is the dynamic string and **id** is a dynamic integer
-```
-INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}/{id:int}');
-```
+
+	    INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}/{id:int}');
+
 After inserting one needs to configure this route for use.
 To configure for GET/PUT/PATCH/DELETE method.
 ```
