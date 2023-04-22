@@ -195,25 +195,30 @@ class Api
         if ($isAssoc) {
             $payloadArr = [$payloadArr];
         }
-        $dataCount = count($payloadArr);
 
         // Load Config
         $config = include $this->authorizeObj->__file__;
 
+        $response = [];
         // Perform action
-        for ($i = 0; $i < $dataCount; $i++) {
+        foreach ($payloadArr as &$payload) {
             $isValidData = true;
-            $input['payload'] = &$payloadArr[$i];
+            $input['payload'] = &$payload;
             // Required validations.
             if (isset($config['validate'])) {
                 $isValidData = $this->validate($input['payload'], $config['validate']);
             }
-            if ($isValidData) {
-                foreach ($config as &$queryDetails) {
-                    $this->insertUpdateSubQuery($input, $queryDetails);
-                }
+            if ($isValidData!==true) {
+                $response[] = ['data' => $payload, 'Error' => $isValidData];
+            }
+            $res = $this->insertUpdateSubQuery($input, $config);
+            if (!isset($payload['id'])) {
+                $response[] = $res;
             }
         }
+        $this->jsonEncodeObj = new JsonEncode();
+        $this->jsonEncodeObj->encode($response);
+        $this->jsonEncodeObj = null;
     }
 
     /**
@@ -291,6 +296,7 @@ class Api
     private function insertUpdateSubQuery(&$input, &$subQuery, $start = true)
     {
         $subQuery = ($start) ? [$subQuery] : $subQuery;
+        $insertId = false;
         foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
             $stmt = $this->db->getStatement($query);
@@ -303,6 +309,9 @@ class Api
             if (isset($queryDetails['subQuery'])) {
                 $this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false);
             }
+        }
+        if ($start && $insertId!==false) {
+             return $insertId;
         }
     }
 
@@ -374,7 +383,7 @@ class Api
         }
         foreach ($validationConfig as &$v) {
             if (!$validationObj->$v['fn']($data[$v['dataKey']])) {
-                return ['data' => $data, 'Error' => $v['errorMessage']];
+                return $v['errorMessage'];
             }
         }
         return true;
