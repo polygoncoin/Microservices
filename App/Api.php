@@ -206,8 +206,13 @@ class Api
         // Perform action
         foreach ($payloadArr as &$payload) {
             $isValidData = true;
+            if ($this->authorizeObj->requestMethod === 'PATCH') {
+                if (count($payload) !== 1) {
+                    HttpErrorResponse::return404('Invalid payload: PATCH can update only one field');
+                }
+            }
             if (isset($payload['password'])) {
-                $payload['password'] = password_hash($payload['password'])
+                $payload['password'] = password_hash($payload['password']);
             }
             $input['payload'] = &$payload;
             // Required validations.

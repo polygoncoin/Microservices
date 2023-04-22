@@ -254,3 +254,31 @@ One can clean the URL by making the required changes in the web server .conf fil
 	]
 };
 ```
+**Note:** For the PATCH method one can update a single field at a time.
+```
+{ "data":
+	{
+		"key1": "value1"
+	}
+};
+```
+- For performing the updation of multiple fields one can change the payload as an array of entries for the same {id}.
+
+```
+{ "data": 
+	[
+		{
+			"key1": "value1"
+		},
+		{
+			"key2": "value2",
+		},
+		{
+			"key3": "value3",
+		},
+		{
+			"key4": "value4",
+		}
+	]
+};
+```
