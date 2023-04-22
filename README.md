@@ -98,6 +98,10 @@ This can extend to any number of databases on the default host or to any number 
 ## Configuring Route in Database
 Suppose we want to configure the below 2 routes for our application.
 - /global/{table:string}
+- /global/{table:string}/{id:int}
+
+Lets discuss the process for each
+- **/global/{table:string}**
  	> **table** is the dynamic string
 ```
 INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}');
@@ -125,7 +129,7 @@ SET
 ;
 ```
 So route /global/{table:string} can be used for adding and fetching table records
-- /global/{table:string}/{id:int}
+- **/global/{table:string}/{id:int}**
  	> **table** is the dynamic string
  	> **id** is the dynamic integer
 ```
