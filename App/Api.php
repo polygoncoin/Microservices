@@ -193,7 +193,7 @@ class Api
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payloadArr);
-        $payloadArr = json_decode($payloadArr['data'], true)['data'];
+        $payloadArr = json_decode($payloadArr['data'], true);
         $isAssoc = $this->isAssoc($payloadArr);
         if ($isAssoc) {
             $payloadArr = [$payloadArr];
@@ -228,7 +228,11 @@ class Api
             }
         }
         $this->jsonEncodeObj = new JsonEncode();
-        $this->jsonEncodeObj->encode($response);
+        if ($this->authorizeObj->requestMethod === 'POST') {
+            $this->jsonEncodeObj->encode($response);
+        } else {
+            $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
+        }
         $this->jsonEncodeObj = null;
     }
 

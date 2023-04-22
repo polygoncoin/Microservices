@@ -1,14 +1,11 @@
 <?php
 return [
-    'm001_master_group' => [
-        'query' => "INSERT INTO {$this->clientDB}.{$uriParams['table']} SET __SET__",
-        'payload' => [],
-        'validate' => [
-            [
-                'fn' => 'validateRequired',
-                'payloadKey' => 'username',
-                'errorMessage' => ''
-            ],
-        ]
+    'm006_master_client' => [
+        'query' => "INSERT INTO {$this->clientDB}.{$input['uriParams']['table']} SET __SET__",
+        'payload' => [
+            //column => [payload|readOnlySession|insertIdParams|{custom} => key|{value}],
+            'name' => ['payload', 'name']
+        ],
+        'insertId' => 'm006_master_client:id',
     ]
-][$uriParams['table']];
+][$input['uriParams']['table']];

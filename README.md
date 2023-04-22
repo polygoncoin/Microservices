@@ -213,10 +213,10 @@ The supported SQL format are as below
 return [
 	'query' => "SELECT  *  FROM {$this->globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
 	'where' => [
-		//column => [uriParams|payload|readOnlySession|{custom} => key|{value}],
-		'id' => ['uriParams' => 'id'],
-		'group_id' => ['payload' => 'group_id'],
-		'client_id' => ['readOnlySession' => 'client_id']
+		//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
+		'id' => ['uriParams', 'id'],
+		'group_id' => ['payload', 'group_id'],
+		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'mode' => 'singleRowFormat',//Single row returned.
 	'subQuery' => [
@@ -234,12 +234,12 @@ return [
 	'validate' => [
 		[
 			'fn' => 'validateGroupId',
-			'val' => ['payload' => 'group_id'],
+			'val' => ['payload', 'group_id'],
 			'errorMessage' => 'Invalid Group Id'
 		],
 		[
 			'fn' => 'validateClientId',
-			'val' => ['payload' => 'client_id'],
+			'val' => ['payload', 'client_id'],
 			'errorMessage' => 'Invalid Client Id'
 		],
 	]
@@ -254,19 +254,19 @@ return [
 	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
 	'payload' => [// for __SET__
 		//column => [uriParams|payload|readOnlySession|insertIdParams|{custom} => key|{value}],
-		'group_id' => ['payload' => 'group_id'],
-		'client_id' => ['readOnlySession' => 'client_id']
+		'group_id' => ['payload', 'group_id'],
+		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'where' => [// for __WHERE__
 		//column => [uriParams|payload|readOnlySession|{custom} => key|{value}],
-		'id' => ['uriParams' => 'id']
+		'id' => ['uriParams', 'id']
 	],
 	'insertId' => 'm001_master_group:id',// Last insert id key name in $input['insertIdParams'][key name];
 	'subQuery' => [
 		[
 			'query' => "MySQL Query here",
 			'payload' => [
-				'previous_table_id' => ['insertIdParams' => 'm001_master_group:id'],
+				'previous_table_id' => ['insertIdParams', 'm001_master_group:id'],
 			],
 			'where' => [],
 		],
@@ -291,7 +291,7 @@ return [
 	'validate' => [
 		[
 			'fn' => 'validateGroupId',
-			'val' => ['payload' => 'group_id'],
+			'val' => ['payload', 'group_id'],
 			'errorMessage' => 'Invalid Group Id'
 		],
 	]
