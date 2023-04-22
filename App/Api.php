@@ -124,6 +124,9 @@ class Api
         // Load Read Only Session
         $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
 
+        // Load $_GET as payload
+        $input['payload'] = $_GET;
+
         // Load Queries
         $config = include $this->authorizeObj->__file__;
         

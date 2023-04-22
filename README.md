@@ -162,6 +162,7 @@ return [
 ];
 ```
 Here **query & mode** keys are required keys
+**Note:** For GET method **payload** is query string parameters; basically **$_GET**.
 - For POST/PUT/PATCH/DELETE method.
 ```
 <?php
@@ -214,3 +215,4 @@ return [
 ```
 Here **query & payload** keys are required keys for the POST method.
 Here **query, payload & where** keys are required keys for PUT, PATCH, and DELETE methods.
+**Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
