@@ -206,6 +206,9 @@ class Api
         // Perform action
         foreach ($payloadArr as &$payload) {
             $isValidData = true;
+            if (isset($payload['password'])) {
+                $payload['password'] = password_hash($payload['password'])
+            }
             $input['payload'] = &$payload;
             // Required validations.
             if (isset($config['validate'])) {

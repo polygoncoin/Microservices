@@ -216,3 +216,41 @@ return [
 Here **query & payload** keys are required keys for the POST method.
 Here **query, payload & where** keys are required keys for PUT, PATCH, and DELETE methods.
 **Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
+
+## HTTP Request
+### For HTTP GET request.
+- http://localhost/Microservices/public_html/index.php?REQUEST_URI=/reload
+- http://localhost/Microservices/public_html/index.php?REQUEST_URI=/routes
+
+One can clean the URL by making the required changes in the web server .conf file.
+### For HTTP POST, PUT, PATCH, and DELETE request.
+- The JSON payload should be as below.
+```
+{ "data":
+	{
+		"key1": "value1",
+		"key2": "value2",
+		"key3": "value3",
+		"key4": "value4",
+	}
+};
+```
+- For performing processing of multiple entries one can change to the payload as an array of entries.
+```
+{ "data": 
+	[
+		{
+			"key1": "value1",
+			"key2": "value2",
+			"key3": "value3",
+			"key4": "value4",
+		},
+		{
+			"key1": "value1",
+			"key2": "value2",
+			"key3": "value3",
+			"key4": "value4",
+		}
+	]
+};
+```
