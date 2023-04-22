@@ -95,6 +95,86 @@ This can extend to any number of databases on the default host or to any number 
 		]
 	];
 ```
+## Configuring Route in Database
+Suppose we want to configure the below 2 routes for our application.
+- /global/{table:string}
+ 	> **table** is the dynamic string
+```
+INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}');
+```
+After inserting one needs to configure this route for use.
+To configure for GET, and POST methods.
+```
+INSERT INTO
+	`l001_link_allowed_route`
+SET
+	`group_id` = 1,
+	`client_id` = 1,
+	`route_id` = 1, -- Insert id of route query
+	`http_id` = 1 -- 1 is for GET method
+;
+```
+```
+INSERT INTO
+	`l001_link_allowed_route`
+SET
+	`group_id` = 1,
+	`client_id` = 1,
+	`route_id` = 1, -- Insert id of route query
+	`http_id` = 2 -- 2 is for POST method
+;
+```
+So route /global/{table:string} can be used for adding and fetching table records
+- /global/{table:string}/{id:int}
+ 	> **table** is the dynamic string
+ 	> **id** is the dynamic integer
+```
+INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}/{id:int}');
+```
+After inserting one needs to configure this route for use.
+To configure for PUT/PATCH/DELETE method.
+```
+INSERT INTO
+	`l001_link_allowed_route`
+SET
+	`group_id` = 1,
+	`client_id` = 1,
+	`route_id` = 2, -- Insert id of route query.
+	`http_id` = 1 -- 1 is for GET method
+;
+```
+```
+INSERT INTO
+	`l001_link_allowed_route`
+SET
+	`group_id` = 1,
+	`client_id` = 1,
+	`route_id` = 2, -- Insert id of route query.
+	`http_id` = 3 -- 3 is for PUT method
+;
+```
+```
+INSERT INTO
+	`l001_link_allowed_route`
+SET
+	`group_id` = 1,
+	`client_id` = 1,
+	`route_id` = 2, -- Insert id of route query.
+	`http_id` = 4 -- 4 is for PATCH method
+;
+```
+```
+INSERT INTO
+	`l001_link_allowed_route`
+SET
+	`group_id` = 1,
+	`client_id` = 1,
+	`route_id` = 2, -- Insert id of route query.
+	`http_id` = 5 -- 5 is for DELETE method
+;
+```
+So route /global/{table:string}/{id:int} can be used for updating and fetching a specific record of a table.
+
 ## Configuring SQL's
 ### Folder
 - **/Config/Queries/GlobalDB** for global database.
@@ -282,3 +362,4 @@ One can clean the URL by making the required changes in the web server .conf fil
 	]
 };
 ```
+
