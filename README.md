@@ -1,6 +1,6 @@
 # Microservices!
 
-Hi! This is the first very light and easy **Microservices** package that can be configured very easily and your API is up in few minutes.
+Hi! This is the first very light and easy **Microservices** package that can be configured very easily and your API is up in a few minutes.
 
 ## Folders
 - **/App** Basic Microservices application folder
@@ -9,30 +9,34 @@ Hi! This is the first very light and easy **Microservices** package that can be 
 
 ## Files
 - **/.env.example** Create a copy of this file as **.env**
-- **/db.sql** Import this SQL on **MySQL** Server
+- **/db.sql** Import this SQL file on your **MySQL** instance
 - **/public_html/index.php** This is the file to be accessed for the API's
 
 ## .env
 
 - One needs to set the configurations in the **.env** file. The configurations include Cache/Database creds and other credentials.
 - Below are the default server configuration parameters.
-	> defaultCacheHostname='127.0.0.1'
-	> defaultCachePort=6379
-	> defaultCachePassword=''
-	> defaultCacheDatabase=0
-	> defaultDbHostname='127.0.0.1'
-	> defaultDbUsername='username'
-	> defaultDbPassword='password'
-	> defaultDbDatabase='Database'
+
+		defaultCacheHostname='127.0.0.1'
+		defaultCachePort=6379
+		defaultCachePassword=''
+		defaultCacheDatabase=0
+		defaultDbHostname='127.0.0.1'
+		defaultDbUsername='username'
+		defaultDbPassword='password'
+		defaultDbDatabase='Database'
 
 If there is a requirement from your client for a **Separate DB or Host** for saving his data, just set these settings here and configure these **.env variables in the global.m004_master_connection table**
 - For a different DB on default Host
-	> defaultDbDatabase007='DatabaseName007'
+
+	    defaultDbDatabase007='DatabaseName007'
+
 - For a different Host/DB instance
-	> newDbHostname='hostname'
-	> newDbUsername='username'
-	> newDbPassword='password'
-	> newDbDatabase='Database'
+
+		newDbHostname='hostname'
+		newDbUsername='username'
+		newDbPassword='password'
+		newDbDatabase='Database'
 
 This can extend to any number of databases on the default host or to any number of dedicated hosts for respective clients.
 
@@ -41,18 +45,20 @@ This can extend to any number of databases on the default host or to any number 
 - All the configuration here is with respect to the group. Users, Routes & Connections are configured and grouped inside a **GROUP**
 
 - Any change made to the global database needs to be updated in the cache server. This can be done by accessing **/reload** route. This is restricted by HTTP Authentication and configuration for same can be found in .env as below.
-	> HttpAuthenticationRestrictedIp='127.0.0.1'
-	> HttpAuthenticationUser='username'
-	> HttpAuthenticationPassword='password'
+
+	    HttpAuthenticationRestrictedIp='127.0.0.1'
+	    HttpAuthenticationUser='username'
+	    HttpAuthenticationPassword='password'
 
 ## Configuring route
 ### Files
-- **/Config/Routes/GETroutes.php** GET method routes.
-- **/Config/Routes/POSTroutes.php** POST method routes.
-- **/Config/Routes/PUTroutes.php** PUT method routes.
-- **/Config/Routes/PATCHroutes.php** PATCH method routes.
-- **/Config/Routes/DELETEroutes.php** DELETE method routes.
-- For configuring route **/global/tableName/parts** GET method
+- **/Config/Routes/GETroutes.php** for all GET method routes configuration.
+- **/Config/Routes/POSTroutes.php** for all POST method routes configuration.
+- **/Config/Routes/PUTroutes.php** for all PUT method routes configuration.
+- **/Config/Routes/PATCHroutes.php** for all PATCH method routes configuration.
+- **/Config/Routes/DELETEroutes.php** for all DELETE method routes configuration.
+
+ For configuring route **/global/tableName/parts** GET method
 ```
 	'global' => [
 		'tableName' => [
@@ -101,8 +107,7 @@ Suppose we want to configure the below 2 routes for our application.
 - /global/{table:string}/{id:int}
 
 Lets discuss the process for each
-- **/global/{table:string}**
- 	> **table** is the dynamic string
+- **/global/{table:string}** where **table** is the dynamic string
 ```
 INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}');
 ```
@@ -129,14 +134,12 @@ SET
 ;
 ```
 So route /global/{table:string} can be used for adding and fetching table records
-- **/global/{table:string}/{id:int}**
- 	> **table** is the dynamic string
- 	> **id** is the dynamic integer
+- **/global/{table:string}/{id:int}** where **table** is the dynamic string and **id** is a dynamic integer
 ```
 INSERT INTO  `m003_master_route`(`route`)  VALUES ('/global/{table:string}/{id:int}');
 ```
 After inserting one needs to configure this route for use.
-To configure for PUT/PATCH/DELETE method.
+To configure for GET/PUT/PATCH/DELETE method.
 ```
 INSERT INTO
 	`l001_link_allowed_route`
@@ -182,7 +185,7 @@ So route /global/{table:string}/{id:int} can be used for updating and fetching a
 ## Configuring SQL's
 ### Folder
 - **/Config/Queries/GlobalDB** for global database.
-- **/Config/Queries/ClientDB** for all client databases including all hosts.
+- **/Config/Queries/ClientDB** for all client including all databases  & hosts.
 
 
 ### Files - GlobalDB
@@ -192,18 +195,12 @@ So route /global/{table:string}/{id:int} can be used for updating and fetching a
 - **/Config/Queries/GlobalDB/PATCH/filename.php** PATCH method SQL.
 - **/Config/Queries/GlobalDB/DELETE/filename.php** DELETE method SQL.
 
-- **/Config/Queries/GlobalDB/** for global database.
-hosts.
-
 ### Files - ClientDB
 - **/Config/Queries/ClientDB/GET/filename.php** GET method SQL.
 - **/Config/Queries/ClientDB/POST/filename.php** POST method SQL.
 - **/Config/Queries/ClientDB/PUT/filename.php** PUT method SQL.
 - **/Config/Queries/ClientDB/PATCH/filename.php** PATCH method SQL.
 - **/Config/Queries/ClientDB/DELETE/filename.php** DELETE method SQL.
-
-- **/Config/Queries/ClientDB/** for global database.
-hosts.
 
 ### SQL's
 The supported SQL format are as below
@@ -253,12 +250,12 @@ Here **query & mode** keys are required keys
 return [
 	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
 	'payload' => [// for __SET__
-		//column => [uriParams|payload|readOnlySession|insertIdParams|{custom} => key|{value}],
+		//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
 		'group_id' => ['payload', 'group_id'],
 		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'where' => [// for __WHERE__
-		//column => [uriParams|payload|readOnlySession|{custom} => key|{value}],
+		//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
 		'id' => ['uriParams', 'id']
 	],
 	'insertId' => 'm001_master_group:id',// Last insert id key name in $input['insertIdParams'][key name];
@@ -299,7 +296,14 @@ return [
 ```
 Here **query & payload** keys are required keys for the POST method.
 Here **query, payload & where** keys are required keys for PUT, PATCH, and DELETE methods.
-**Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
+**Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries. **Also for these methods usage of \_\_SET__ and \_\_WHERE__ is necessary**
+Example Queries can be like
+```
+INSERT INTO {$this->globalDB}.TableName SET __SET__;
+```
+```
+UPDATE {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__;
+```
 
 ## HTTP Request
 ### For HTTP GET request.
@@ -307,7 +311,7 @@ Here **query, payload & where** keys are required keys for PUT, PATCH, and DELET
 - http://localhost/Microservices/public_html/index.php?REQUEST_URI=/routes
 
 One can clean the URL by making the required changes in the web server .conf file.
-### For HTTP POST, PUT, PATCH, and DELETE request.
+### For HTTP POST, PUT, PATCH, and DELETE requests.
 - The JSON payload should be as below.
 ```
 { "data":
@@ -366,4 +370,3 @@ One can clean the URL by making the required changes in the web server .conf fil
 	]
 };
 ```
-
