@@ -49,6 +49,7 @@ class JsonEncode
      */
     private function escape($str)
     {
+        if (is_null($str)) return 'null';
         $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
         $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
         $str = str_replace($escapers, $replacements, $str);
@@ -82,7 +83,7 @@ class JsonEncode
      * @param $value data type is string/array. This is used to add value/array in the current Array.
      * @return void
      */
-    public function addValue(&$value)
+    public function addValue($value)
     {
         if ($this->currentObject->mode !== 'Array') {
             throw new Exception('Mode should be Array');
@@ -97,7 +98,7 @@ class JsonEncode
      * @param        $value data type is string/array. This is used to add value/array in the current Array.
      * @return void
      */
-    public function addKeyValue(&$key, &$value)
+    public function addKeyValue($key, $value)
     {
         if ($this->currentObject->mode !== 'Assoc') {
             throw new Exception('Mode should be Assoc');

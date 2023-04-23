@@ -214,9 +214,10 @@ class Api
                         if (!isset($queryDetails['subQuery'])) {
                             $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
                         } else {
-                            $resultColums = $stmt->fetchAll(\PDO::FETCH_COLUMN);
-                            foreach (array_keys($subQueryCols) as $cols) {
-                                if (in_array($cols, $resultColums)) {
+                            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                            $resultColumns = array_keys($row);
+                            foreach (array_keys($subQuery) as $col) {
+                                if (in_array($col, $resultColumns)) {
                                     HttpErrorResponse::return501('Invalid configuration: Conflicting column names');
                                 }
                             }
@@ -225,8 +226,8 @@ class Api
                             } else {
                                 $this->jsonEncodeObj->startAssoc($key);
                             }
-                            foreach($stmt->fetch(\PDO::FETCH_ASSOC) as $key => $value) {
-                                $jsonthis->jsonEncodeObjEncode->addKeyValue($key, $value);
+                            foreach($row as $key => $value) {
+                                $this->jsonEncodeObj->addKeyValue($key, $value);
                             }
                         }
                         break;
@@ -247,12 +248,12 @@ class Api
                 }
                 $stmt->closeCursor();
                 if (isset($queryDetails['subQuery'])) {
-                    if (!$this->isAssoc($config['subQuery'])) {
+                    if (!$this->isAssoc($queryDetails['subQuery'])) {
                         HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
                     }
                     $this->selectSubQuery($input, $queryDetails['subQuery'], false);
                 }
-                if ($queryDetails['mode'] === 'singleRowFormat' && isset($config['subQuery'])) {
+                if ($queryDetails['mode'] === 'singleRowFormat' && isset($queryDetails['subQuery'])) {
                     $this->jsonEncodeObj->endAssoc();
                 }
             }
@@ -366,7 +367,7 @@ class Api
      * @param array $arr Array to search for associative/simple array
      * @return boolean
      */
-    private function isAssoc(&$arr)
+    private function isAssoc($arr)
     {
         $assoc = false;
         $i = 0;
