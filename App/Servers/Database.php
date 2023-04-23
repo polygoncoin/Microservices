@@ -1,6 +1,8 @@
 <?php
 namespace App\Servers;
 
+use App\HttpErrorResponse;
+
 /**
  * Loading database server
  *
@@ -60,11 +62,11 @@ class Database
         $database = 'defaultDbDatabase'
     )
     {
-        $this->hostname = getenv($hostname);
-        $this->username = getenv($username);
-        $this->password = getenv($password);
+        $this->hostname = $hostname;
+        $this->username = $username;
+        $this->password = $password;
         if (!empty($database)) {
-            $this->database = getenv($database);
+            $this->database = $database;
         }
     }
 
@@ -78,9 +80,9 @@ class Database
         if (!is_null($this->pdo)) return;
         try {
             $this->pdo = new \PDO(
-                "mysql:host={$this->hostname};dbname={$this->database}",
-                $this->username,
-                $this->password,
+                "mysql:host=".getenv($this->hostname).";dbname=".getenv($this->database),
+                getenv($this->username),
+                getenv($this->password),
                 [
                     \PDO::ATTR_EMULATE_PREPARES => false,
                     \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false

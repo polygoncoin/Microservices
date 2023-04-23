@@ -4,7 +4,7 @@ namespace App;
 use App\Authorize;
 use App\JsonEncode;
 use App\Servers\Database;
-use App\Validation\Validate;
+use App\Validation\Validator;
 
 /**
  * Class to initialize api HTTP request
@@ -49,11 +49,11 @@ class Api
     public $authorizeObj = null;
 
     /**
-     * Validation class object
+     * Validator class object
      *
      * @var object
      */
-    public $validationObj = null;
+    public $validatorObj = null;
 
     /**
      * JsonEncode class object
@@ -94,16 +94,10 @@ class Api
                 $this->processHttpGET();
                 break;
             case 'POST':
-                $this->processHttpPOST();
-                break;
             case 'PUT':
-                $this->processHttpPUT();
-                break;
             case 'PATCH':
-                $this->processHttpPATCH();
-                break;
             case 'DELETE':
-                $this->processHttpDELETE();
+                $this->processHttpInsertUpdate();
                 break;
         }
     }
@@ -119,13 +113,13 @@ class Api
         $input = [];
 
         // Load uriParams
-        $input['uriParams'] = $this->authorizeObj->routeParams;
+        $input['uriParams'] = &$this->authorizeObj->routeParams;
 
         // Load Read Only Session
-        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
+        $input['readOnlySession'] = &$this->authorizeObj->readOnlySession;
 
         // Load $_GET as payload
-        $input['payload'] = $_GET;
+        $input['payload'] = &$_GET;
 
         // Load Queries
         $config = include $this->authorizeObj->__file__;
@@ -133,46 +127,6 @@ class Api
         $this->jsonEncodeObj = new JsonEncode();
         $this->selectSubQuery($input, $config);
         $this->jsonEncodeObj = null;
-    }
-
-    /**
-     * Process HTTP POST request
-     *
-     * @return void
-     */
-    private function processHttpPOST()
-    {
-        $this->processHttpInsertUpdate();
-    }
-
-    /**
-     * Process HTTP PUT request
-     *
-     * @return void
-     */
-    private function processHttpPUT()
-    {
-        $this->processHttpInsertUpdate();
-    }
-
-    /**
-     * Process HTTP PATCH request
-     *
-     * @return void
-     */
-    private function processHttpPATCH()
-    {
-        $this->processHttpInsertUpdate();
-    }
-
-    /**
-     * Process HTTP DELETE request
-     *
-     * @return void
-     */
-    private function processHttpDELETE()
-    {
-        $this->processHttpInsertUpdate();
     }
     
     /**
@@ -249,8 +203,12 @@ class Api
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
                 list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-                $stmt = $this->db->getStatement($query);
-                $stmt->execute(array_values($params));
+                try {
+                    $stmt = $this->db->getStatement($query);
+                    $stmt->execute(array_values($params));
+                } catch(\PDOException $e) {
+                    HttpErrorResponse::return501('Database error: ' . $e->getMessage());
+                }
                 switch ($queryDetails['mode']) {
                     case 'singleRowFormat':
                         if (!isset($queryDetails['subQuery'])) {
@@ -314,8 +272,12 @@ class Api
         $insertId = false;
         foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-            $stmt = $this->db->getStatement($query);
-            $stmt->execute($params);
+            try {
+                $stmt = $this->db->getStatement($query);
+                $stmt->execute($params);
+            } catch(\PDOException $e) {
+                HttpErrorResponse::return501('Database error: ' . $e->getMessage());
+            }
             if (isset($queryDetails['insertId'])) {
                 $insertId = $this->db->lastInsertId();
                 $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
@@ -369,7 +331,7 @@ class Api
      * @param array $queryPayload Config from file
      * @return array
      */
-    private function getStmtParams($input, $queryPayload)
+    private function getStmtParams(&$input, &$queryPayload)
     {
         $stmtParams = [];
         foreach ($queryPayload as $var => [$type, $typeKey]) {
@@ -386,22 +348,16 @@ class Api
     /**
      * Validate payload
      *
-     * @param int   $dataCount        Number of records to validate as received in payload
      * @param array $data             Payload data
      * @param array $validationConfig Validation configuration.
-     * @return void
+     * @return array
      */
-    private function validate($data, $validationConfig)
+    private function validate(&$data, &$validationConfig)
     {
-        if (is_null($this->validationObj)) {
-            $this->validationObj = new Validate($this->db);
+        if (is_null($this->validatorObj)) {
+            $this->validatorObj = new Validator($this->db);
         }
-        foreach ($validationConfig as &$v) {
-            if (!$validationObj->$v['fn']($data[$v['dataKey']])) {
-                return $v['errorMessage'];
-            }
-        }
-        return true;
+        return $this->validatorObj->validate($data, $validationConfig);
     }
 
     /**
@@ -410,7 +366,7 @@ class Api
      * @param array $arr Array to search for associative/simple array
      * @return boolean
      */
-    private function isAssoc($arr)
+    private function isAssoc(&$arr)
     {
         $assoc = false;
         $i = 0;

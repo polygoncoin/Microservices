@@ -137,8 +137,8 @@ class Reload
             $stmt->execute($ids);
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $stmt->closeCursor();
-        } catch (\Exception $e) {
-            echo __FUNCTION__ . ' : ' . $e->getMessage();
+        } catch(\PDOException $e) {
+            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
         }
         foreach ($rows as &$row) {
             try {
@@ -146,8 +146,8 @@ class Reload
                 $stmt1->execute([$row['group_id']]);
                 $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
                 $stmt1->closeCursor();
-            } catch (\Exception $e) {
-                echo __FUNCTION__ . ':' . $e->getMessage();
+            } catch(\PDOException $e) {
+                HttpErrorResponse::return501('Database error. ' . $e->getMessage());
             }
             $row = array_merge($row, ['client_ids' => $clientIds]);
             $this->cache->setCache("user:{$row['username']}", json_encode($row));
@@ -163,24 +163,27 @@ class Reload
     private function processGroup($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE G.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-
-        $stmt = $this->db->getStatement("
-            SELECT
-                G.id,
-                G.name,
-                G.default_client_id,
-                C.db_hostname,
-                C.db_username,
-                C.db_password,
-                C.db_database                
-            FROM
-                {$this->globalDB}.{$this->tableGroup} G
-            LEFT JOIN
-                {$this->globalDB}.m004_master_connection C on g.connection_id = C.id
-            {$whereClause}",
-            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
-        );
-        $stmt->execute($ids);
+        try {
+            $stmt = $this->db->getStatement("
+                SELECT
+                    G.id,
+                    G.name,
+                    G.default_client_id,
+                    C.db_hostname,
+                    C.db_username,
+                    C.db_password,
+                    C.db_database                
+                FROM
+                    {$this->globalDB}.{$this->tableGroup} G
+                LEFT JOIN
+                    {$this->globalDB}.m004_master_connection C on g.connection_id = C.id
+                {$whereClause}",
+                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
+            );
+            $stmt->execute($ids);
+        } catch(\PDOException $e) {
+            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+        }
         while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("group:{$row['id']}", json_encode($row));
         }
@@ -196,12 +199,15 @@ class Reload
     private function processGroupIps($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-
-        $stmt = $this->db->getStatement(
-            "SELECT id, allowed_ips FROM {$this->globalDB}.{$this->tableGroup} {$whereClause}",
-            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
-        );
-        $stmt->execute($ids);
+        try {
+            $stmt = $this->db->getStatement(
+                "SELECT id, allowed_ips FROM {$this->globalDB}.{$this->tableGroup} {$whereClause}",
+                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
+            );
+            $stmt->execute($ids);
+        } catch(\PDOException $e) {
+            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+        }
         $allowedIpsArray = [];
         while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $count = 0;
@@ -233,20 +239,23 @@ class Reload
     private function processGroupClientRoutes($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-
-        $stmt = $this->db->getStatement(
-            "
-                SELECT
-                    L.group_id, L.client_id, L.http_id, R.route
-                FROM 
-                    {$this->globalDB}.l001_link_allowed_route L
-                LEFT JOIN
-                    {$this->globalDB}.m003_master_route R ON L.route_id = R.id
-                {$whereClause}
-            ",
-            array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
-        );
-        $stmt->execute($ids);
+        try {
+            $stmt = $this->db->getStatement(
+                "
+                    SELECT
+                        L.group_id, L.client_id, L.http_id, R.route
+                    FROM 
+                        {$this->globalDB}.l001_link_allowed_route L
+                    LEFT JOIN
+                        {$this->globalDB}.m003_master_route R ON L.route_id = R.id
+                    {$whereClause}
+                ",
+                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
+            );
+            $stmt->execute($ids);
+        } catch(\PDOException $e) {
+            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+        }
         $routeArr = [];
         while ($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];

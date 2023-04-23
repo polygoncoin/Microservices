@@ -1,6 +1,8 @@
 <?php
 namespace App\Servers;
 
+use App\HttpErrorResponse;
+
 /**
  * Loading cache server
  *
@@ -61,11 +63,11 @@ class Cache
         $database = 'defaultCacheDatabase'
     )
     {   
-        $this->hostname = getenv($hostname);
-        $this->port = getenv($port);
-        $this->password = getenv($password);
+        $this->hostname = $hostname;
+        $this->port = $port;
+        $this->password = $password;
         if (!empty($database)) {
-            $this->database = getenv($database);
+            $this->database = $database;
         }
     }
 
@@ -81,15 +83,15 @@ class Cache
         try {
             $this->redis = new \Redis();
             //Connecting to Redis
-            $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
-            $this->redis->auth($this->password);
+            $this->redis->connect(getenv($this->hostname), getenv($this->port), 1, NULL, 100);
+            $this->redis->auth(getenv($this->password));
             if (!empty($this->database)) {
-                $this->redis->getStatement($this->database);
+                $this->redis->select(getenv($this->database));
             }
             if (!$this->redis->ping()) {
                 HttpErrorResponse::return501('Unable to ping to cache server');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             HttpErrorResponse::return501('Unable to connect to cache server');
         }
     }
@@ -129,7 +131,7 @@ class Cache
     public function setCache($key, $value, $expire = 0)
     {
         $this->connect();
-        return $this->redis->set($key, $value);
+        return $this->redis->set($key, $value, $expire);
     }
 
     /**
@@ -164,7 +166,7 @@ class Cache
      * @param array  $valueArray Cache values for Set
      * @return void
      */
-    public function setSetMembers($key, $valueArray)
+    public function setSetMembers($key, &$valueArray)
     {
         $this->connect();
         $this->deleteCache($key);
