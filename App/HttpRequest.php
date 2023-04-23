@@ -153,7 +153,6 @@ class HttpRequest
                                 break;
                         }
                     } else {
-                        echo 'Hi...1!';
                         HttpErrorResponse::return404('Route not supported');
                     }
                 } else {

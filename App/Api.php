@@ -197,7 +197,7 @@ class Api
      * @param array $subQuery Config from file
      * @return void
      */
-    private function selectSubQuery(&$input, &$subQuery, $start = true)
+    private function selectSubQuery(&$input, $subQuery, $start = true)
     {
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as $key => &$queryDetails) {
@@ -267,10 +267,10 @@ class Api
      * @param array $subQuery Config from file
      * @return void
      */
-    private function insertUpdateSubQuery(&$input, &$subQuery, $start = true)
+    private function insertUpdateSubQuery(&$input, $subQuery, $start = true)
     {
+        $insertIds = [];
         $subQuery = ($start) ? [$subQuery] : $subQuery;
-        $insertId = false;
         foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
             try {
@@ -280,17 +280,15 @@ class Api
                 HttpErrorResponse::return501('Database error: ' . $e->getMessage());
             }
             if (isset($queryDetails['insertId'])) {
-                $insertId = $this->db->lastInsertId();
+                $insertIds[] = $insertId = $this->db->lastInsertId();
                 $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
             }
             $stmt->closeCursor();
             if (isset($queryDetails['subQuery'])) {
-                $this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false);
+                $insertIds = array_merge($insertIds,$this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false));
             }
         }
-        if ($start && $insertId!==false) {
-             return $insertId;
-        }
+        return $insertIds;
     }
 
     /**
