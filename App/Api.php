@@ -337,7 +337,7 @@ class Api
             if ($type === 'custom') {
                 $typeValue = $typeKey;
             } else {
-                $typeValue = $input[$type][$typeKey];
+                $typeValue = $input[$type][$typeKey] ?? '';
             }
             $stmtParams[$var] = $typeValue;
         }
