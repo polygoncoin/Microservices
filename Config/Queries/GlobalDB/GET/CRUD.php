@@ -3,7 +3,7 @@ return [
     'all' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$input['uriParams']['table']}`",
         'where' => [],
-        'mode' => 'multipleRowFormat'
+        'mode' => 'multipleRowFormat'//Multiple rows returned.
     ],
     "single" => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$input['uriParams']['table']}` WHERE id = ?",
