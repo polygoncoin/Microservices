@@ -337,7 +337,10 @@ class Api
             if ($type === 'custom') {
                 $typeValue = $typeKey;
             } else {
-                $typeValue = $input[$type][$typeKey] ?? '';
+                if (!isset($input[$type][$typeKey])) {
+                    HttpErrorResponse::return501("Invalid configuration of '{$type}' for '{$typeKey}'");
+                }
+                $typeValue = $input[$type][$typeKey];
             }
             $stmtParams[$var] = $typeValue;
         }
