@@ -198,6 +198,7 @@ CREATE TABLE `m004_master_connection` (
 LOCK TABLES `m004_master_connection` WRITE;
 /*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
 INSERT INTO `m004_master_connection` VALUES (1,'defaultDbHostname','defaultDbUsername','defaultDbPassword','defaultDbDatabase','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
+INSERT INTO `m004_master_connection` VALUES (2,'defaultDbHostname','defaultDbUsername','defaultDbPassword','clientDbDatabase001','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
 /*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -246,6 +247,15 @@ CREATE TABLE `m006_master_client` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `comments` varchar(255) DEFAULT NULL,
+  `created_by` int DEFAULT NULL,
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `approved_by` int DEFAULT NULL,
+  `approved_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int DEFAULT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -256,7 +266,7 @@ CREATE TABLE `m006_master_client` (
 
 LOCK TABLES `m006_master_client` WRITE;
 /*!40000 ALTER TABLE `m006_master_client` DISABLE KEYS */;
-INSERT INTO `m006_master_client` VALUES (1,'test',NULL);
+INSERT INTO `m006_master_client` VALUES (1,'test','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No');
 /*!40000 ALTER TABLE `m006_master_client` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
