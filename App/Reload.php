@@ -34,27 +34,6 @@ class Reload
     private $db = null;
 
     /**
-     * Global DB
-     *
-     * @var string
-     */
-    private $globalDB = 'global';
-
-    /**
-     * Global DB group table
-     *
-     * @var string
-     */
-    private $tableGroup = 'm001_master_group';
-
-    /**
-     * Global DB user table
-     *
-     * @var string
-     */
-    private $tableUser = 'm002_master_user';
-
-    /**
      * Initialize authorization
      *
      * @return void
@@ -71,8 +50,17 @@ class Reload
      */
     private function process($refresh = 'all', $idsString = null)
     {
-        $this->cache = new Cache();
-        $this->db = new Database();
+        $this->cache = new Cache(
+            'cacheHostname',
+            'cachePort',
+            'cachePassword'
+        );
+        $this->db = new Database(
+            'dbHostnameDefault',
+            'dbUsernameDefault',
+            'dbPasswordDefault',
+            'globalDbName'
+        );
 
         $ids = [];
         if (!is_null($idsString)) {
@@ -129,9 +117,9 @@ class Reload
                     U.group_id,
                     G.default_client_id as client_id
                 FROM
-                    {$this->globalDB}.{$this->tableUser} U
+                    `{${getenv('users')}}` U
                 LEFT JOIN
-                    {$this->globalDB}.{$this->tableGroup} G ON U.group_id = G.id
+                    `{${getenv('groups')}}` G ON U.group_id = G.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $stmt->execute($ids);
@@ -142,7 +130,7 @@ class Reload
         }
         foreach ($rows as &$row) {
             try {
-                $stmt1 = $this->db->getStatement("SELECT client_id FROM {$this->globalDB}.l001_link_allowed_route WHERE group_id = ?", array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                $stmt1 = $this->db->getStatement("SELECT client_id FROM `{${getenv('links')}}` WHERE group_id = ?");
                 $stmt1->execute([$row['group_id']]);
                 $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
                 $stmt1->closeCursor();
@@ -174,9 +162,9 @@ class Reload
                     C.db_password,
                     C.db_database                
                 FROM
-                    {$this->globalDB}.{$this->tableGroup} G
+                    `{${getenv('groups')}}` G
                 LEFT JOIN
-                    {$this->globalDB}.m004_master_connection C on g.connection_id = C.id
+                    `{${getenv('connections')}}` C on g.connection_id = C.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
             );
@@ -201,7 +189,7 @@ class Reload
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
         try {
             $stmt = $this->db->getStatement(
-                "SELECT id, allowed_ips FROM {$this->globalDB}.{$this->tableGroup} {$whereClause}",
+                "SELECT id, allowed_ips FROM `{${getenv('groups')}}` {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
             );
             $stmt->execute($ids);
@@ -245,9 +233,9 @@ class Reload
                     SELECT
                         L.group_id, L.client_id, L.http_id, R.route
                     FROM 
-                        {$this->globalDB}.l001_link_allowed_route L
+                        `{${getenv('links')}}` L
                     LEFT JOIN
-                        {$this->globalDB}.m003_master_route R ON L.route_id = R.id
+                        `{${getenv('routes')}}` R ON L.route_id = R.id
                     {$whereClause}
                 ",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)

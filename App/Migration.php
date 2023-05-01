@@ -19,20 +19,6 @@ use App\Servers\Database;
 class Migration
 {
     /**
-     * Global Database
-     *
-     * @var string
-     */
-    const globalDbName = 'global';
-
-    /**
-     * Client master Database
-     *
-     * @var string
-     */
-    const clientMasterDbName = 'client_master';
-
-    /**
      * DB Server connection object
      *
      * @var object
@@ -77,9 +63,6 @@ class Migration
      */
     public function process()
     {
-        $this->authorizeObj = new Authorize();
-        $this->authorizeObj->init();
-
         $this->processMigration();
     }
 
@@ -96,11 +79,11 @@ class Migration
             'defaultDbHostname',
             'defaultDbUsername',
             'defaultDbPassword',
-            'defaultDbDatabase'
+            'globalDbName'
         );
 
         try {
-            $query = "SELECT * from `m004_master_connection` WHERE id = ? and is_deleted = 'No'";
+            $query = "SELECT * from `{${getenv('connections')}}` WHERE id = ? AND is_deleted = 'No'";
             $stmt = $this->db->getStatement($query);
             $stmt->execute([$destinationDbId]);
             $dbDetails = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -112,16 +95,16 @@ class Migration
         $this->newDbObj = new Database(
             $dbDetails['db_hostname'],
             $dbDetails['db_username'],
-            $dbDetails['db_password'],
-            null
+            $dbDetails['db_password']
         );
-        $this->newDb = getenv($dbDetails['db_database']);
+        $this->newDb = $dbDetails['db_database'];
+
         $result = [];
         $this->createDatabase($result);
         $this->newDbObj->useDatabase($this->newDb);
         $tables = $this->createTables($result);
         foreach ($tables as $tableName) {
-            $result[] = $this->copyTableData($tableName);
+            $this->copyTableData($tableName, $result);
         }
         $this->createViews($result);
         $this->createFunctions($result);
@@ -134,28 +117,37 @@ class Migration
     
     function createDatabase(&$result)
     {
-        $this->newDbObj->pdo->exec("CREATE DATABASE IF NOT EXISTS `{$this->newDb}`");
+        $stmt = $this->newDbObj->getStatement("CREATE DATABASE IF NOT EXISTS `?`");
+        $stmt->execute([getenv($this->newDb)]);
+        $stmt->closeCursor();
         $result[] = "Database `{$this->newDb}` created";
     }
     
     function createTables(&$result)
     {
-        $tables = array_column($this->db->pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN), 0);
+        $stmt = $this->db->getStatement("SHOW TABLES");
+        $stmt->execute();
+        $tables = array_column($stmt->fetchAll(\PDO::FETCH_COLUMN), 0);
+        $stmt->closeCursor();
         foreach ($tables as $tableName) {
-            $createCommand = $this->db->pdo->query("SHOW CREATE TABLE `{$sourceDbName}`.`{$tableName}`")->fetchColumn(1);
-            
-            $this->newDbObj->exec($createCommand);
+            $stmt = $this->db->getStatement("SHOW CREATE TABLE `?`");
+            $stmt->execute([$tableName]);
+            $command = $stmt->fetchColumn(1);
+            $stmt->closeCursor();
+            $stmt = $this->newDbObj->getStatement($command);
+            $stmt->execute();
+            $stmt->closeCursor();
             $result[] = "Table `{$tableName}` created";
         }
         return $tables;
     }
 
-    function copyTableData($tableName)
+    function copyTableData($tableName, &$result)
     {
         try {
-            $query = 'SELECT * FROM `'.self::$clientMasterDbName."`.`{$tableName}`";
+            $query = "SELECT * FROM `{$tableName}`";
             $stmt = $this->db->getStatement($query);
-            $stmt->execute([$destinationDbId]);
+            $stmt->execute();
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $stmt->closeCursor();
             $sql = null;
@@ -172,7 +164,7 @@ class Migration
                 $S->execute(array_values($row));
             }
             $s->closeCursor();
-            return "Data for table `{$tableName}` copied";
+            $result[] = "Data for table `{$tableName}` copied";
         } catch(\PDOException $e) {
             HttpErrorResponse::return501('Database error: ' . $e->getMessage());
         }
@@ -180,11 +172,18 @@ class Migration
 
     function createViews(&$result)
     {
-        $views = array_column(
-            $this->db->pdo->query("SHOW FULL TABLES WHERE table_type = 'VIEW'")->fetchAll(PDO::FETCH_NUM), 0);
+        $stmt = $this->db->getStatement("SHOW FULL TABLES WHERE table_type = 'VIEW'");
+        $stmt->execute();
+        $views = array_column($stmt->fetchAll(PDO::FETCH_NUM), 0);
+        $stmt->closeCursor();
         foreach ($views as $view) {
-            $viewCreateCommand = $this->db->pdo->query("SHOW CREATE VIEW `{$view}`")->fetchColumn(1);
-            $this->newDbObj->pdo->exec($viewCreateCommand);
+            $stmt = $this->db->getStatement("SHOW CREATE VIEW `?`");
+            $stmt->execute([$view]);
+            $command = $stmt->fetchColumn(1);
+            $stmt->closeCursor();
+            $stmt = $this->newDbObj->getStatement($command);
+            $stmt->execute();
+            $stmt->closeCursor();
             $result[] = "View `{$view}` created";
         }
     }
@@ -202,13 +201,18 @@ class Migration
             ORDER BY
                 routine_name;";
         $stmt = $this->db->getStatement($query);
-        $stmt->execute([self::$clientMasterDbName]);
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt->execute([getenv('clientMasterDbName')]);
+        $functions = array_column($stmt->fetchAll(PDO::FETCH_NUM), 0);
         $stmt->closeCursor();
-        foreach ($rows as $row) {
-            $functionCreateCommand = $this->db->pdo->query("SHOW CREATE FUNCTION `{$row['routine_name']}`")->fetchColumn(1);
-            $this->newDbObj->pdo->exec($functionCreateCommand);
-            $result[] = "Function `{$row['routine_name']}` created";
+        foreach ($functions as $function) {
+            $stmt = $this->db->getStatement("SHOW CREATE FUNCTION ?");
+            $stmt->execute([$function]);
+            $command = $stmt->fetchColumn(1);
+            $stmt->closeCursor();
+            $stmt = $this->newDbObj->getStatement($command);
+            $stmt->execute();
+            $stmt->closeCursor();
+            $result[] = "Function `{$function}` created";
         }
     }
 
@@ -223,13 +227,19 @@ class Migration
                 routine_type = 'PROCEDURE'
             ORDER BY
                 routine_name;";
-        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $this->db->getStatement($query);
+        $stmt->execute([getenv('clientMasterDbName')]);
+        $sps = array_column($stmt->fetchAll(PDO::FETCH_NUM), 0);
         $stmt->closeCursor();
-        foreach ($rows as $row) {
-            $functionCreateCommand = $this->db->pdo->query("SHOW CREATE PROCEDURE `{$row['routine_name']}`")->fetchColumn(1);
-            $this->newDbObj->pdo->exec($functionCreateCommand);
-            $result[] = "Procedure `{$row['routine_name']}` created";
+        foreach ($sps as $sp) {
+            $stmt = $this->db->getStatement("SHOW CREATE PROCEDURE ?");
+            $stmt->execute([$sp]);
+            $command = $stmt->fetchColumn(1);
+            $stmt->closeCursor();
+            $stmt = $this->newDbObj->getStatement($command);
+            $stmt->execute();
+            $stmt->closeCursor();
+            $result[] = "Procedure `{$sp}` created";
         }
     }
-
 }

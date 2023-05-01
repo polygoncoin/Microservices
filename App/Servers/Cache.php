@@ -57,16 +57,16 @@ class Cache
      * Cache constructor
      */
     public function __construct(
-        $hostname = 'defaultCacheHostname',
-        $port = 'defaultCachePort',
-        $password = 'defaultCachePassword',
-        $database = 'defaultCacheDatabase'
+        $hostname,
+        $port,
+        $password,
+        $database = null
     )
     {   
         $this->hostname = $hostname;
         $this->port = $port;
         $this->password = $password;
-        if (!empty($database)) {
+        if (!is_null($database)) {
             $this->database = $database;
         }
     }
@@ -85,8 +85,8 @@ class Cache
             //Connecting to Redis
             $this->redis->connect(getenv($this->hostname), getenv($this->port), 1, NULL, 100);
             $this->redis->auth(getenv($this->password));
-            if (!empty($this->database)) {
-                $this->redis->select(getenv($this->database));
+            if (!is_null($this->database)) {
+                $this->useDatabase($this->database);
             }
             if (!$this->redis->ping()) {
                 HttpErrorResponse::return501('Unable to ping to cache server');
@@ -94,6 +94,18 @@ class Cache
         } catch (\Exception $e) {
             HttpErrorResponse::return501('Unable to connect to cache server');
         }
+    }
+
+    /**
+     * Use Database
+     *
+     * @param string $database Database .env string
+     * @return void
+     */
+    public function useDatabase($database)
+    {
+        $this->connect();
+        $this->redis->select(getenv($this->database));
     }
 
     /**

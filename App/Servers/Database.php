@@ -54,10 +54,10 @@ class Database
      * Database constructor
      */
     public function __construct(
-        $hostname = 'defaultDbHostname',
-        $username = 'defaultDbUsername',
-        $password = 'defaultDbPassword',
-        $database = 'defaultDbDatabase'
+        $hostname,
+        $username,
+        $password,
+        $database = null
     )
     {
         $this->hostname = $hostname;
@@ -87,7 +87,7 @@ class Database
                 ]
             );
             if (!is_null($this->database)) {
-                $this->useDatabase(getenv($this->database));
+                $this->useDatabase($this->database);
             }
         } catch (\PDOException $e) {
             HttpErrorResponse::return501('Unable to connect to database server');
@@ -95,13 +95,15 @@ class Database
     }
 
     /**
-     * Last Insert Id by PDO
+     * Use Database
      *
-     * @return int
+     * @param string $database Database .env string
+     * @return void
      */
     public function useDatabase($database)
     {
-        return $this->pdo->exec("USE `{$database}`");
+        $this->connect();
+        $this->pdo->exec("USE `{${getenv($database)}}`");
     }
 
     /**
