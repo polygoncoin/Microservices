@@ -162,7 +162,7 @@ class Api
             $isValidData = true;
             if ($this->authorizeObj->requestMethod === 'PATCH') {
                 if (count($payload) !== 1) {
-                    HttpErrorResponse::return404('Invalid payload: PATCH can update only one field');
+                    HttpErrorResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
                 }
             }
             if (isset($payload['password'])) {
@@ -207,7 +207,7 @@ class Api
                     $stmt = $this->db->getStatement($query);
                     $stmt->execute(array_values($params));
                 } catch(\PDOException $e) {
-                    HttpErrorResponse::return501('Database error: ' . $e->getMessage());
+                    HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
                 }
                 switch ($queryDetails['mode']) {
                     case 'singleRowFormat':
@@ -218,7 +218,7 @@ class Api
                             $resultColumns = array_keys($row);
                             foreach (array_keys($subQuery) as $col) {
                                 if (in_array($col, $resultColumns)) {
-                                    HttpErrorResponse::return501('Invalid configuration: Conflicting column names');
+                                    HttpErrorResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
                                 }
                             }
                             if ($start) {
@@ -233,7 +233,7 @@ class Api
                         break;
                     case 'multipleRowFormat':
                         if (isset($queryDetails['subQuery'])) {
-                            HttpErrorResponse::return501('Invalid Configuration: multipleRowFormat can\'t have sub query');
+                            HttpErrorResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
                         }
                         if ($start) {
                             $this->jsonEncodeObj->startArray();
@@ -249,7 +249,7 @@ class Api
                 $stmt->closeCursor();
                 if (isset($queryDetails['subQuery'])) {
                     if (!$this->isAssoc($queryDetails['subQuery'])) {
-                        HttpErrorResponse::return501('Invalid Configuration: subQuery should be associative array');
+                        HttpErrorResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
                     }
                     $this->selectSubQuery($input, $queryDetails['subQuery'], false);
                 }
@@ -277,7 +277,7 @@ class Api
                 $stmt = $this->db->getStatement($query);
                 $stmt->execute($params);
             } catch(\PDOException $e) {
-                HttpErrorResponse::return501('Database error: ' . $e->getMessage());
+                HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
             }
             if (isset($queryDetails['insertId'])) {
                 $insertIds[] = $insertId = $this->db->lastInsertId();
@@ -338,7 +338,7 @@ class Api
                 $typeValue = $typeKey;
             } else {
                 if (!isset($input[$type][$typeKey])) {
-                    HttpErrorResponse::return501("Invalid configuration of '{$type}' for '{$typeKey}'");
+                    HttpErrorResponse::return5xx(501, "Invalid configuration of '{$type}' for '{$typeKey}'");
                 }
                 $typeValue = $input[$type][$typeKey];
             }

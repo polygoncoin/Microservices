@@ -124,7 +124,7 @@ class Authorize extends HttpRequest
             $this->checkSourceIp($_SERVER['REMOTE_ADDR']);
             $this->checkRoutePrivilage($this->configuredUri);
         } else {
-            HttpErrorResponse::return404('Token expired');
+            HttpErrorResponse::return4xx(404, 'Token expired');
         }
     }
 
@@ -150,7 +150,7 @@ class Authorize extends HttpRequest
         $this->readOnlySession = json_decode($this->cache->getCache($token), true);
 
         if (empty($this->readOnlySession['id']) || empty($this->readOnlySession['group_id'])) {
-            HttpErrorResponse::return404('Invalid session');
+            HttpErrorResponse::return4xx(404, 'Invalid session');
         } else {
             $this->userId = $this->readOnlySession['id'];
             $this->groupId = $this->readOnlySession['group_id'];
@@ -183,7 +183,7 @@ class Authorize extends HttpRequest
             }
         }
         if (!is_null($foundIP) && !$foundIP) {
-            HttpErrorResponse::return404('IP Address not supported');
+            HttpErrorResponse::return4xx(404, 'IP Address not supported');
         }
     }
 
@@ -198,7 +198,7 @@ class Authorize extends HttpRequest
     {
         $key = "group:{$this->groupId}:client:{$this->clientId}:http:{$this->httpId}:routes";
         if (!$this->cache->isSetMember($key, $route)) {
-            HttpErrorResponse::return404('Route not supported');
+            HttpErrorResponse::return4xx(404, 'Route not supported');
         }
     }
     

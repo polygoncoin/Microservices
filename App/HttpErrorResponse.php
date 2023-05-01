@@ -17,18 +17,49 @@ use App\JsonEncode;
 class HttpErrorResponse
 {
     /**
-     * Return 404 response
+     * Return 2xx response
      *
+     * @param string $errorCode  Error code
+     * @param string $errMessage Error message in 501 response
+     * @return void
+     */
+    public static function return2xx($errorCode, $errMessage)
+    {
+        self::returnHttpStatus(
+            $errorCode,
+            ['message' => $errMessage]
+        );
+    }
+
+    /**
+     * Return 3xx response
+     *
+     * @param string $errorCode  Error code
+     * @param string $errMessage Error message in 501 response
+     * @return void
+     */
+    public static function return3xx($errorCode, $errMessage)
+    {
+        self::returnHttpStatus(
+            $errorCode,
+            ['message' => $errMessage]
+        );
+    }
+
+    /**
+     * Return 4xx response
+     *
+     * @param string  $errorCode  Error code
      * @param string  $errMessage Error message in 404 response
      * @param boolean $customise  Customise message on basis of parameter validation
      * @return void
      */
-    public static function return404($errMessage, $customise = false)
+    public static function return4xx($errorCode, $errMessage, $customise = false)
     {
         if ($customise) {
             $arr = explode('|', $errMessage);
             self::returnHttpStatus(
-                404,
+                $errorCode,
                 [
                     'Error' => [
                         'Parameter' => $arr[0],
@@ -38,22 +69,23 @@ class HttpErrorResponse
             );
         } else {
             self::returnHttpStatus(
-                404,
+                $errorCode,
                 ['message' => $errMessage]
             );
         }
     }
 
     /**
-     * Return 501 response
+     * Return 5xx response
      *
+     * @param string $errorCode  Error code
      * @param string $errMessage Error message in 501 response
      * @return void
      */
-    public static function return501($errMessage)
+    public static function return5xx($errorCode, $errMessage)
     {
         self::returnHttpStatus(
-            501,
+            $errorCode,
             ['message' => $errMessage]
         );
     }

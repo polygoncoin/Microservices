@@ -89,10 +89,10 @@ class Cache
                 $this->useDatabase($this->database);
             }
             if (!$this->redis->ping()) {
-                HttpErrorResponse::return501('Unable to ping to cache server');
+                HttpErrorResponse::return5xx(501, 'Unable to ping to cache server');
             }
         } catch (\Exception $e) {
-            HttpErrorResponse::return501('Unable to connect to cache server');
+            HttpErrorResponse::return5xx(501, 'Unable to connect to cache server');
         }
     }
 

@@ -68,7 +68,7 @@ class Reload
                 if (ctype_digit($value = trim($value))) {
                     $ids[] = (int)$value;
                 } else {
-                    HttpErrorResponse::return404('Only integer values supported for ids.');
+                    HttpErrorResponse::return4xx(404, 'Only integer values supported for ids.');
                 }
             }
         }
@@ -106,7 +106,7 @@ class Reload
      */
     private function processUser($ids = [])
     {
-        $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE U.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
         try {
             $stmt = $this->db->getStatement("
@@ -126,7 +126,7 @@ class Reload
             $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $stmt->closeCursor();
         } catch(\PDOException $e) {
-            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
         }
         foreach ($rows as &$row) {
             try {
@@ -135,7 +135,7 @@ class Reload
                 $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
                 $stmt1->closeCursor();
             } catch(\PDOException $e) {
-                HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+                HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
             }
             $row = array_merge($row, ['client_ids' => $clientIds]);
             $this->cache->setCache("user:{$row['username']}", json_encode($row));
@@ -170,7 +170,7 @@ class Reload
             );
             $stmt->execute($ids);
         } catch(\PDOException $e) {
-            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
         }
         while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("group:{$row['id']}", json_encode($row));
@@ -194,7 +194,7 @@ class Reload
             );
             $stmt->execute($ids);
         } catch(\PDOException $e) {
-            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
         }
         $allowedIpsArray = [];
         while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
@@ -242,7 +242,7 @@ class Reload
             );
             $stmt->execute($ids);
         } catch(\PDOException $e) {
-            HttpErrorResponse::return501('Database error. ' . $e->getMessage());
+            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
         }
         $routeArr = [];
         while ($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {

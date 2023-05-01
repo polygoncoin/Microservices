@@ -116,13 +116,13 @@ class Login
 
         // Check request method is POST.
         if ('POST' !== $_SERVER['REQUEST_METHOD']) {
-            HttpErrorResponse::return404('Invalid request method');
+            HttpErrorResponse::return4xx(404, 'Invalid request method');
         }
 
         // Check for required input variables
         foreach (array('username','password') as $value) {
             if (!isset($_POST[$value]) || empty($_POST[$value])) {
-                HttpErrorResponse::return404('Missing required parameters');
+                HttpErrorResponse::return4xx(404, 'Missing required parameters');
             } else {
                 $this->$value = $_POST[$value];
             }
@@ -142,10 +142,10 @@ class Login
             $this->userId = $this->userDetails['id'];
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
-                HttpErrorResponse::return404('Invalid credentials');
+                HttpErrorResponse::return4xx(404, 'Invalid credentials');
             }            
         } else {
-            HttpErrorResponse::return404('Invalid credentials.');
+            HttpErrorResponse::return4xx(404, 'Invalid credentials.');
         }
     }
 
@@ -162,7 +162,7 @@ class Login
             && !$this->cache->isSetMember("group:{$this->groupId}:ips", $this->requestIp)
         )
         {
-            HttpErrorResponse::return404('Invalid credentials.');
+            HttpErrorResponse::return4xx(404, 'Invalid credentials.');
         }
     }
 
@@ -174,7 +174,7 @@ class Login
     private function validatePassword()
     {
         if (!password_verify($this->password, $this->userDetails['password_hash'])) { // get hash from redis and compares with password
-            HttpErrorResponse::return404('Invalid credentials');
+            HttpErrorResponse::return4xx(404, 'Invalid credentials');
         }
     }
 

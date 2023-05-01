@@ -89,7 +89,7 @@ class Migration
             $dbDetails = $stmt->fetch(\PDO::FETCH_ASSOC);
             $stmt->closeCursor();
         } catch(\PDOException $e) {
-            HttpErrorResponse::return501('Database error: ' . $e->getMessage());
+            HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
         }
 
         $this->newDbObj = new Database(
@@ -166,7 +166,7 @@ class Migration
             $s->closeCursor();
             $result[] = "Data for table `{$tableName}` copied";
         } catch(\PDOException $e) {
-            HttpErrorResponse::return501('Database error: ' . $e->getMessage());
+            HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
         }
     }
 

@@ -90,7 +90,7 @@ class Database
                 $this->useDatabase($this->database);
             }
         } catch (\PDOException $e) {
-            HttpErrorResponse::return501('Unable to connect to database server');
+            HttpErrorResponse::return5xx(501, 'Unable to connect to database server');
         }
     }
 

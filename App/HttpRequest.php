@@ -64,10 +64,10 @@ class HttpRequest
         if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             $this->token = $matches[1];
         } else {
-            HttpErrorResponse::return404('Missing token in authorization header');    
+            HttpErrorResponse::return4xx(404, 'Missing token in authorization header');    
         }
         if (empty($this->token)) {
-            HttpErrorResponse::return404('Missing token');
+            HttpErrorResponse::return4xx(404, 'Missing token');
         }
     }
 
@@ -94,7 +94,7 @@ class HttpRequest
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
-            HttpErrorResponse::return501('Missing' . ' route file for' . " $this->requestMethod " . 'method');
+            HttpErrorResponse::return5xx(501, 'Missing route file for' . " $this->requestMethod " . 'method');
         }
         $configuredUri = [];
         foreach(explode('/', trim($requestUri, '/')) as $key => $providedUriElementValue) {
@@ -122,7 +122,7 @@ class HttpRequest
                             $paramName = $uriElementConfiguredDetails[0];
                             $paramDataType = $uriElementConfiguredDetails[1];
                             if (!in_array($paramDataType, ['int','string'])) {
-                                HttpErrorResponse::return501('Invalid datatype set for Route');
+                                HttpErrorResponse::return5xx(501, 'Invalid datatype set for Route');
                             }
                             $uriElementConfiguredDetailsArr[$paramDataType] = [
                                 'configuredCompleteRouteUri' => $uriElementConfigured,
@@ -137,7 +137,7 @@ class HttpRequest
                         switch (true) {
                             case isset($uriElementConfiguredDetailsArr['int']) && ctype_digit($providedUriElementValue):
                                 if (count($uriElementConfiguredDetailsArr['int']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $uriElementConfiguredDetailsArr['int']['configuredRequiredValues'])) {
-                                    HttpErrorResponse::return404($uriElementConfiguredDetailsArr['int']['configuredCompleteRouteUri'], true);
+                                    HttpErrorResponse::return4xx(404, $uriElementConfiguredDetailsArr['int']['configuredCompleteRouteUri'], true);
                                 }
                                 $configuredUri[] = $uriElementConfiguredDetailsArr['int']['configuredCompleteRouteUri'];
                                 $this->routeParams[$uriElementConfiguredDetailsArr['int']['configuredParamName']] = (int)$providedUriElementValue;
@@ -145,7 +145,7 @@ class HttpRequest
                                 break;
                             case isset($uriElementConfiguredDetailsArr['string']):
                                 if (count($uriElementConfiguredDetailsArr['string']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $uriElementConfiguredDetailsArr['string']['configuredRequiredValues'])) {
-                                    HttpErrorResponse::return404($uriElementConfiguredDetailsArr['string']['configuredCompleteRouteUri'], true);
+                                    HttpErrorResponse::return4xx(404, $uriElementConfiguredDetailsArr['string']['configuredCompleteRouteUri'], true);
                                 }
                                 $configuredUri[] = $uriElementConfiguredDetailsArr['string']['configuredCompleteRouteUri'];
                                 $this->routeParams[$uriElementConfiguredDetailsArr['string']['configuredParamName']] = $providedUriElementValue;
@@ -153,10 +153,10 @@ class HttpRequest
                                 break;
                         }
                     } else {
-                        HttpErrorResponse::return404('Route not supported');
+                        HttpErrorResponse::return4xx(404, 'Route not supported');
                     }
                 } else {
-                    HttpErrorResponse::return404('Route not supported');
+                    HttpErrorResponse::return4xx(404, 'Route not supported');
                 }
             }
         }
@@ -166,7 +166,7 @@ class HttpRequest
         if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
             $this->__file__ = $routes['__file__'];
         } else {
-            HttpErrorResponse::return501('Missing route configuration file for' . " $method " . 'method');
+            HttpErrorResponse::return5xx(501, 'Missing route configuration file for' . " {$method} " . 'method');
         }
     }
 }
