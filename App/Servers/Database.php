@@ -48,7 +48,7 @@ class Database
      *
      * @var object
      */
-    private $pdo = null;
+    public $pdo = null;
 
     /**
      * Database constructor
@@ -63,7 +63,7 @@ class Database
         $this->hostname = $hostname;
         $this->username = $username;
         $this->password = $password;
-        if (!empty($database)) {
+        if (!is_null($database)) {
             $this->database = $database;
         }
     }
@@ -78,7 +78,7 @@ class Database
         if (!is_null($this->pdo)) return;
         try {
             $this->pdo = new \PDO(
-                "mysql:host=".getenv($this->hostname).";dbname=".getenv($this->database),
+                "mysql:host=".getenv($this->hostname),
                 getenv($this->username),
                 getenv($this->password),
                 [
@@ -86,9 +86,22 @@ class Database
                     \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
                 ]
             );
+            if (!is_null($this->database)) {
+                $this->useDatabase(getenv($this->database));
+            }
         } catch (\PDOException $e) {
             HttpErrorResponse::return501('Unable to connect to database server');
         }
+    }
+
+    /**
+     * Last Insert Id by PDO
+     *
+     * @return int
+     */
+    public function useDatabase($database)
+    {
+        return $this->pdo->exec("USE `{$database}`");
     }
 
     /**
