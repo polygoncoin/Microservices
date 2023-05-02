@@ -214,7 +214,11 @@ class Login
         if ($this->cache->cacheExists("user:{$this->userId}:token")) {
             $tokenDetails = json_decode($this->cache->getCache("user:{$this->userId}:token"), true);
             if ($this->cache->cacheExists($tokenDetails['token'])) {
-                $tokenFound = true;
+                if((EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
+                    $tokenFound = true;
+                } else {
+                    $this->cache->deleteCache($tokenDetails['token']);
+                }
             }
         }
         if (!$tokenFound) {
