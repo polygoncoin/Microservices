@@ -19,7 +19,19 @@ return [
             ],
         ]
     ],
-    'groupInfo' => [
-        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/GroupInfo.php',
+    'thirdParty' => [
+        'Google' => [
+            '__file__' => ''
+        ]
+    ],
+    'cache' => [
+        '{clientId:int}' => [
+            '__file__' => ''
+        ]
+    ],
+    'migrate' => [
+        '{connectionId:int}' => [
+            '__file__' => ''
+        ]
     ]
 ];
