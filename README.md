@@ -6,6 +6,7 @@ Hi! This is the first very light and easy **Microservices** package that can be 
 - **/App** Basic Microservices application folder
 - **/Config** Basic Microservices configuration folder
 - **/public_html** Microservices doc root folder
+- **/ThirdParty** Folder containing Classes for performing cURL operation for Third Parties
 
 ## Files
 - **/.env.example** Create a copy of this file as **.env**
@@ -16,28 +17,36 @@ Hi! This is the first very light and easy **Microservices** package that can be 
 
 - One needs to set the configurations in the **.env** file. The configurations include Cache/Database creds and other credentials.
 - Below are the default server configuration parameters.
+```
+; Default Database Server Details (MySQL)
+dbHostnameDefault='127.0.0.1'
+dbUsernameDefault='root'
+dbPasswordDefault='shames11'
 
-		defaultCacheHostname='127.0.0.1'
-		defaultCachePort=6379
-		defaultCachePassword=''
-		defaultCacheDatabase=0
-		defaultDbHostname='127.0.0.1'
-		defaultDbUsername='username'
-		defaultDbPassword='password'
-		defaultDbDatabase='Database'
-
+; Database details on default MySQL server
+globalDbName='global' ;contains all details to run this application.
+clientMasterDbName='client_master' ;contains all entities required for a new client.
+```
 If there is a requirement from your client for a **Separate DB or Host** for saving his data, just set these settings here and configure these **.env variables in the global.m004_master_connection table**
 - For a different DB on default Host
-
-	    defaultDbDatabase007='DatabaseName007'
-
+```
+dbDatabaseClient001='client_001'
+```
 - For a different Host/DB instance
+```
+; Database Server Details (MySQL) for client id 001
+; These needs to be configured in globalDbName database and m004_master_connection table.
+dbHostnameClient001='127.0.0.1'
+dbUsernameClient001='root'
+dbPasswordClient001='shames11'
+dbDatabaseClient001='client_001'
 
-		newDbHostname='hostname'
-		newDbUsername='username'
-		newDbPassword='password'
-		newDbDatabase='Database'
-
+; Database Server Details (MySQL) for client id 002
+dbHostnameClient002='127.0.0.1'
+dbUsernameClient002='root'
+dbPasswordClient002='shames11'
+dbDatabaseClient002='client_002'
+```
 This can extend to any number of databases on the default host or to any number of dedicated hosts for respective clients.
 
 **Note:** 

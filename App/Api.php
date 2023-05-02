@@ -384,7 +384,7 @@ class Api
     {
         switch ($this->authorize->routeElements[0]) {
             case 'thirdParty':
-                eval('App\\ThirdParty\\' . $this->authorize->routeElements[1] . '::init($input, $this->authorize);');
+                eval('ThirdParty\\' . $this->authorize->routeElements[1] . '::init($input, $this->authorize);');
                 break;
             case 'cache':
                 App\CacheApi::init($input, $this->authorize);

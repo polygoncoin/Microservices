@@ -1,5 +1,5 @@
 <?php
-namespace App\ThirdParty;
+namespace ThirdParty;
 
 use App\JsonEncode;
 
