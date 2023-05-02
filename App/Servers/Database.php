@@ -48,7 +48,7 @@ class Database
      *
      * @var object
      */
-    public $pdo = null;
+    private $pdo = null;
 
     /**
      * Database constructor

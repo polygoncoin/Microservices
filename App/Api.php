@@ -3,7 +3,6 @@ namespace App;
 
 use App\Authorize;
 use App\JsonEncode;
-use App\Servers\Database;
 use App\Validation\Validator;
 
 /**
@@ -21,18 +20,11 @@ use App\Validation\Validator;
 class Api
 {
     /**
-     * DB Server connection object
-     *
-     * @var object
-     */
-    public $db = null;
-
-    /**
      * Global DB
      *
      * @var string
      */
-    public $globalDB = 'global';
+    public $globalDB = null;
 
     /**
      * Client database
@@ -46,14 +38,14 @@ class Api
      *
      * @var object
      */
-    public $authorizeObj = null;
+    public $authorize = null;
 
     /**
      * Validator class object
      *
      * @var object
      */
-    public $validatorObj = null;
+    public $validator = null;
 
     /**
      * JsonEncode class object
@@ -79,16 +71,11 @@ class Api
      */
     public function process()
     {
-        $this->authorizeObj = new Authorize();
-        $this->authorizeObj->init();
-        $this->clientDB = getenv($this->authorizeObj->clientDatabase);
+        $this->authorize = new Authorize();
+        $this->authorize->init();
+        $this->globalDB = $this->authorize->globalDB;
+        $this->clientDB = getenv($this->authorize->clientDatabase);
 
-        $this->db = new Database(
-            $this->authorizeObj->clientHostname,
-            $this->authorizeObj->clientUsername,
-            $this->authorizeObj->clientPassword,
-            $this->authorizeObj->clientDatabase
-        );
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET':
                 $this->processHttpGET();
@@ -113,16 +100,18 @@ class Api
         $input = [];
 
         // Load uriParams
-        $input['uriParams'] = &$this->authorizeObj->routeParams;
+        $input['uriParams'] = &$this->authorize->routeParams;
 
         // Load Read Only Session
-        $input['readOnlySession'] = &$this->authorizeObj->readOnlySession;
+        $input['readOnlySession'] = &$this->authorize->readOnlySession;
+
+        $this->miscellaneousFunctionality(array_merge($input, ['payloadArr' => [$_GET]]));
 
         // Load $_GET as payload
         $input['payload'] = &$_GET;
 
         // Load Queries
-        $config = include $this->authorizeObj->__file__;
+        $config = include $this->authorize->__file__;
         
         $this->jsonEncodeObj = new JsonEncode();
         $this->selectSubQuery($input, $config);
@@ -140,10 +129,10 @@ class Api
         $input = [];
 
         // Load uriParams
-        $input['uriParams'] = $this->authorizeObj->routeParams;
+        $input['uriParams'] = $this->authorize->routeParams;
 
         // Load Read Only Session
-        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
+        $input['readOnlySession'] = $this->authorize->readOnlySession;
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payloadArr);
@@ -152,15 +141,16 @@ class Api
         if ($isAssoc) {
             $payloadArr = [$payloadArr];
         }
+        $this->miscellaneousFunctionality(array_merge($input, ['payloadArr' => $payloadArr]));
 
         // Load Config
-        $config = include $this->authorizeObj->__file__;
+        $config = include $this->authorize->__file__;
 
         $response = [];
         // Perform action
         foreach ($payloadArr as &$payload) {
             $isValidData = true;
-            if ($this->authorizeObj->requestMethod === 'PATCH') {
+            if ($this->authorize->requestMethod === 'PATCH') {
                 if (count($payload) !== 1) {
                     HttpErrorResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
                 }
@@ -182,7 +172,7 @@ class Api
             }
         }
         $this->jsonEncodeObj = new JsonEncode();
-        if ($this->authorizeObj->requestMethod === 'POST') {
+        if ($this->authorize->requestMethod === 'POST') {
             $this->jsonEncodeObj->encode($response);
         } else {
             $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
@@ -199,12 +189,13 @@ class Api
      */
     private function selectSubQuery(&$input, $subQuery, $start = true)
     {
+        $this->authorize->connectClientDB();
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
                 list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
                 try {
-                    $stmt = $this->db->getStatement($query);
+                    $stmt = $this->authorize->db->getStatement($query);
                     $stmt->execute(array_values($params));
                 } catch(\PDOException $e) {
                     HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
@@ -269,23 +260,25 @@ class Api
      */
     private function insertUpdateSubQuery(&$input, $subQuery, $start = true)
     {
+        $this->authorize->connectClientDB();
         $insertIds = [];
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
             try {
-                $stmt = $this->db->getStatement($query);
+                $stmt = $this->authorize->db->getStatement($query);
                 $stmt->execute($params);
             } catch(\PDOException $e) {
                 HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
             }
             if (isset($queryDetails['insertId'])) {
-                $insertIds[] = $insertId = $this->db->lastInsertId();
+                $insertId = $this->authorize->db->lastInsertId();
+                $insertIds[] = [$queryDetails['insertId'] => $insertId];
                 $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
             }
             $stmt->closeCursor();
             if (isset($queryDetails['subQuery'])) {
-                $insertIds = array_merge($insertIds,$this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false));
+                $insertIds = array_merge($insertIds, $this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false));
             }
         }
         return $insertIds;
@@ -356,10 +349,10 @@ class Api
      */
     private function validate(&$data, &$validationConfig)
     {
-        if (is_null($this->validatorObj)) {
-            $this->validatorObj = new Validator($this->db);
+        if (is_null($this->validator)) {
+            $this->validator = new Validator($this->authorize);
         }
-        return $this->validatorObj->validate($data, $validationConfig);
+        return $this->validator->validate($data, $validationConfig);
     }
 
     /**
@@ -379,5 +372,24 @@ class Api
             }
         }
         return $assoc;
+    }
+
+    /**
+     * Miscellaneous route functionality
+     *
+     * @param array $input Payload
+     * @return void
+     */
+    function miscellaneousFunctionality($input)
+    {
+        if ($this->routeElements[0] === 'thirdParty') {
+            eval('App\\ThirdParty\\' . $this->routeElements[1] . '::init($input, $this->authorize);');
+        }
+        if ($this->routeElements[0] === 'cache') {
+            App\CacheApi::init($input, $this->authorize);
+        }
+        if ($this->routeElements[0] === 'migrate') {
+            App\Migration::init($input, $this->authorize);
+        }
     }
 }

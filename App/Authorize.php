@@ -27,6 +27,13 @@ class Authorize extends HttpRequest
     public $cache = null;
 
     /**
+     * DB Server connection object
+     *
+     * @var object
+     */
+    public $db = null;
+
+    /**
      * Read only Session
      *
      * @var array
@@ -38,7 +45,7 @@ class Authorize extends HttpRequest
      *
      * @var string
      */
-    public $globalDB = 'global';
+    public $globalDB = null;
 
     /**
      * Client database hostname
@@ -116,6 +123,7 @@ class Authorize extends HttpRequest
      */
     private function process()
     {
+        $this->globalDB = getenv('globalDbName');
         $this->cache = new Cache();
         $this->checkToken($_SERVER['HTTP_AUTHORIZATION']);
         if ($this->tokenExists($this->token)) {
@@ -202,6 +210,22 @@ class Authorize extends HttpRequest
         }
     }
     
+    /**
+     * Function to connect to client database
+     *
+     * @return void
+     */
+    private function connectClientDB()
+    {
+        if (!is_null($this->db)) return;
+        $this->db = new Database(
+            $this->clientHostname,
+            $this->clientUsername,
+            $this->clientPassword,
+            $this->clientDatabase
+        );
+    }
+
     /**
      * Destructor
      */

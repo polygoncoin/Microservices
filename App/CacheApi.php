@@ -23,15 +23,26 @@ class CacheApi
      *
      * @var object
      */
-    public $authorizeObj = null;
+    public $authorize = null;
+
+    /**
+     * Inputs
+     *
+     * @var array
+     */
+    public $input = null;
 
     /**
      * Initialize
      *
+     * @param array  $input     Inputs
+     * @param object $authorize Authorize object
      * @return void
      */
-    public static function init()
+    public static function init(&$input, &$authorize)
     {
+        self::$input = $input;
+        self::$authorize = $authorize
         (new self)->process();
     }
 
@@ -42,9 +53,6 @@ class CacheApi
      */
     public function process()
     {
-        $this->authorizeObj = new Authorize();
-        $this->authorizeObj->init();
-
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'PUT':
                 $this->processCacheUpdate();
@@ -63,10 +71,10 @@ class CacheApi
         $input = [];
 
         // Load uriParams
-        $input['uriParams'] = $this->authorizeObj->routeParams;
+        $input['uriParams'] = $this->authorize->routeParams;
 
         // Load Read Only Session
-        $input['readOnlySession'] = $this->authorizeObj->readOnlySession;
+        $input['readOnlySession'] = $this->authorize->readOnlySession;
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payloadArr);
@@ -77,16 +85,16 @@ class CacheApi
         if (!in_array($payload['client_id'], $input['readOnlySession']['client_ids'])) {
             HttpErrorResponse::return4xx(404, 'Invalid client id');
         }
-        if (!$this->cache->cacheExists($this->authorizeObj->token)) {
+        if (!$this->cache->cacheExists($this->authorize->token)) {
             HttpErrorResponse::return4xx(404, 'Invalid token');
         }
-        $userInfoArr = json_decode($this->cache->getCache($this->authorizeObj->token), true);
+        $userInfoArr = json_decode($this->cache->getCache($this->authorize->token), true);
         if (!isset($userInfoArr['id'])) {
             HttpErrorResponse::return4xx(404, 'Invalid token');
         }
         $userInfoArr['client_id'] = $payload['client_id'];
         $tokenDetails = json_decode($this->cache->getCache("user:{$userInfoArr['id']}:token"), true);
-        $this->cache->setCache($this->authorizeObj->token, json_encode($userInfoArr), (EXPIRY_TIME - (time() - $tokenDetails['timestamp'])));
+        $this->cache->setCache($this->authorize->token, json_encode($userInfoArr), (EXPIRY_TIME - (time() - $tokenDetails['timestamp'])));
         $this->jsonEncodeObj = new JsonEncode();
         $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
         $this->jsonEncodeObj = null;

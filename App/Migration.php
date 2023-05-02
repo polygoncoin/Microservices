@@ -44,15 +44,26 @@ class Migration
      *
      * @var object
      */
-    public $authorizeObj = null;
+    public $authorize = null;
+
+    /**
+     * Inputs
+     *
+     * @var array
+     */
+    public $input = null;
 
     /**
      * Initialize
      *
+     * @param array  $input     Inputs
+     * @param object $authorize Authorize object
      * @return void
      */
-    public static function init()
+    public static function init(&$input, &$authorize)
     {
+        self::$input = $input;
+        self::$authorize = $authorize
         (new self)->process();
     }
 

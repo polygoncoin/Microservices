@@ -53,6 +53,13 @@ class HttpRequest
     public $routeParams = [];
 
     /**
+     * Array containing details of received route elements
+     *
+     * @var array
+     */
+    public $routeElements = [];
+
+    /**
      * Locaton of File containing code for route
      *
      * @var string
@@ -96,8 +103,9 @@ class HttpRequest
         } else {
             HttpErrorResponse::return5xx(501, 'Missing route file for' . " $this->requestMethod " . 'method');
         }
+        $this->routeElements = explode('/', trim($requestUri, '/'));
         $configuredUri = [];
-        foreach(explode('/', trim($requestUri, '/')) as $key => $providedUriElementValue) {
+        foreach($this->routeElements as $key => $providedUriElementValue) {
             $pos = false;
             if (isset($routes[$providedUriElementValue])) {
                 $configuredUri[] = $providedUriElementValue;
@@ -161,7 +169,7 @@ class HttpRequest
             }
         }
         $this->configuredUri = '/' . implode('/', $configuredUri);
-        
+
         // Set route code file.
         if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
             $this->__file__ = $routes['__file__'];
