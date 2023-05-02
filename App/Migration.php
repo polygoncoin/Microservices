@@ -2,6 +2,7 @@
 namespace App;
 
 use App\JsonEncode;
+use App\PHPTrait;
 use App\Servers\Database;
 
 /**
@@ -18,6 +19,8 @@ use App\Servers\Database;
  */
 class Migration
 {
+    use PHPTrait;
+    
     /**
      * DB Server connection object
      *
@@ -94,7 +97,7 @@ class Migration
         );
 
         try {
-            $query = "SELECT * from `{${getenv('connections')}}` WHERE id = ? AND is_deleted = 'No'";
+            $query = "SELECT * from `{$this->execPhpFunc(getenv('connections'))}` WHERE id = ? AND is_deleted = 'No'";
             $stmt = $this->db->getStatement($query);
             $stmt->execute([$destinationDbId]);
             $dbDetails = $stmt->fetch(\PDO::FETCH_ASSOC);

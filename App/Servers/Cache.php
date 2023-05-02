@@ -140,10 +140,14 @@ class Cache
      * @param int    $expire Seconds to expire. Default 0 - doesnt expire
      * @return int
      */
-    public function setCache($key, $value, $expire = 0)
+    public function setCache($key, $value, $expire = null)
     {
         $this->connect();
-        return $this->redis->set($key, $value, $expire);
+        if (is_null($expire)) {
+            return $this->redis->set($key, $value);
+        } else {
+            return $this->redis->set($key, $value, $expire);
+        }
     }
 
     /**

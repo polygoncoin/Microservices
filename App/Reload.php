@@ -4,6 +4,7 @@ namespace App;
 use App\Servers\Cache;
 use App\Servers\Database;
 use App\JsonEncode;
+use App\PHPTrait;
 
 /**
  * Updates cache
@@ -19,6 +20,8 @@ use App\JsonEncode;
  */
 class Reload
 {
+    use PHPTrait;
+    
     /**
      * Cache Server connection object
      *
@@ -117,9 +120,9 @@ class Reload
                     U.group_id,
                     G.default_client_id as client_id
                 FROM
-                    `{${getenv('users')}}` U
+                    `{$this->execPhpFunc(getenv('users'))}` U
                 LEFT JOIN
-                    `{${getenv('groups')}}` G ON U.group_id = G.id
+                    `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $stmt->execute($ids);
@@ -130,7 +133,7 @@ class Reload
         }
         foreach ($rows as &$row) {
             try {
-                $stmt1 = $this->db->getStatement("SELECT client_id FROM `{${getenv('links')}}` WHERE group_id = ?");
+                $stmt1 = $this->db->getStatement("SELECT client_id FROM `{$this->execPhpFunc(getenv('links'))}` WHERE group_id = ?");
                 $stmt1->execute([$row['group_id']]);
                 $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
                 $stmt1->closeCursor();
@@ -162,9 +165,9 @@ class Reload
                     C.db_password,
                     C.db_database                
                 FROM
-                    `{${getenv('groups')}}` G
+                    `{$this->execPhpFunc(getenv('groups'))}` G
                 LEFT JOIN
-                    `{${getenv('connections')}}` C on g.connection_id = C.id
+                    `{$this->execPhpFunc(getenv('connections'))}` C on g.connection_id = C.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
             );
@@ -189,7 +192,7 @@ class Reload
         $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
         try {
             $stmt = $this->db->getStatement(
-                "SELECT id, allowed_ips FROM `{${getenv('groups')}}` {$whereClause}",
+                "SELECT id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
             );
             $stmt->execute($ids);
@@ -233,9 +236,9 @@ class Reload
                     SELECT
                         L.group_id, L.client_id, L.http_id, R.route
                     FROM 
-                        `{${getenv('links')}}` L
+                        `{$this->execPhpFunc(getenv('links'))}` L
                     LEFT JOIN
-                        `{${getenv('routes')}}` R ON L.route_id = R.id
+                        `{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.id
                     {$whereClause}
                 ",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)

@@ -1,6 +1,9 @@
 <?php
 namespace App\Servers;
 
+use App\HttpErrorResponse;
+use App\PHPTrait;
+
 /**
  * Loading database server
  *
@@ -15,6 +18,8 @@ namespace App\Servers;
  */
 class Database
 {
+    use PHPTrait;
+
     /**
      * Database hostname
      *
@@ -90,6 +95,7 @@ class Database
                 $this->useDatabase($this->database);
             }
         } catch (\PDOException $e) {
+            echo $e->getMessage();die;
             HttpErrorResponse::return5xx(501, 'Unable to connect to database server');
         }
     }
@@ -103,7 +109,7 @@ class Database
     public function useDatabase($database)
     {
         $this->connect();
-        $this->pdo->exec("USE `{${getenv($database)}}`");
+        $this->pdo->exec("USE `{$this->execPhpFunc(getenv($database))}`");
     }
 
     /**

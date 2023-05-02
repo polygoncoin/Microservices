@@ -382,14 +382,16 @@ class Api
      */
     function miscellaneousFunctionality($input)
     {
-        if ($this->routeElements[0] === 'thirdParty') {
-            eval('App\\ThirdParty\\' . $this->routeElements[1] . '::init($input, $this->authorize);');
-        }
-        if ($this->routeElements[0] === 'cache') {
-            App\CacheApi::init($input, $this->authorize);
-        }
-        if ($this->routeElements[0] === 'migrate') {
-            App\Migration::init($input, $this->authorize);
+        switch ($this->authorize->routeElements[0]) {
+            case 'thirdParty':
+                eval('App\\ThirdParty\\' . $this->authorize->routeElements[1] . '::init($input, $this->authorize);');
+                break;
+            case 'cache':
+                App\CacheApi::init($input, $this->authorize);
+                break;
+            case 'migrate':
+                App\Migration::init($input, $this->authorize);
+                break;
         }
     }
 }

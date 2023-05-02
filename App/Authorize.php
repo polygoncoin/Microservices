@@ -4,6 +4,7 @@ namespace App;
 use App\HttpRequest;
 use App\HttpErrorResponse;
 use App\Servers\Cache;
+use App\Servers\Database;
 
 /**
  * Class handles Authorization
@@ -124,7 +125,12 @@ class Authorize extends HttpRequest
     private function process()
     {
         $this->globalDB = getenv('globalDbName');
-        $this->cache = new Cache();
+        $this->cache = new Cache(
+            'cacheHostname',
+            'cachePort',
+            'cachePassword',
+            'cacheDatabase'
+        );
         $this->checkToken($_SERVER['HTTP_AUTHORIZATION']);
         if ($this->tokenExists($this->token)) {
             $this->parseRoute($_SERVER['REQUEST_METHOD'], __REQUEST_URI__);
@@ -215,7 +221,7 @@ class Authorize extends HttpRequest
      *
      * @return void
      */
-    private function connectClientDB()
+    public function connectClientDB()
     {
         if (!is_null($this->db)) return;
         $this->db = new Database(

@@ -93,7 +93,12 @@ class Login
      */
     private function process()
     {
-        $this->cache = new Cache();
+        $this->cache = new Cache(
+            'cacheHostname',
+            'cachePort',
+            'cachePassword',
+            'cacheDatabase'
+        );
         $this->performBasicCheck();
         $this->loadUser();
         $this->validateRequestIp();
