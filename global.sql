@@ -197,8 +197,8 @@ CREATE TABLE `m004_master_connection` (
 
 LOCK TABLES `m004_master_connection` WRITE;
 /*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
-INSERT INTO `m004_master_connection` VALUES (1,'defaultDbHostname','defaultDbUsername','defaultDbPassword','defaultDbDatabase','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
-INSERT INTO `m004_master_connection` VALUES (2,'defaultDbHostname','defaultDbUsername','defaultDbPassword','clientDbDatabase001','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
+INSERT INTO `m004_master_connection` VALUES (1,'dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
+INSERT INTO `m004_master_connection` VALUES (2,'dbHostnameClient001','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
 /*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 
