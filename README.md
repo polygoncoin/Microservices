@@ -22,7 +22,8 @@ Hi! This is the first very light and easy **Microservices** package that can be 
 dbHostnameDefault='127.0.0.1'
 dbUsernameDefault='root'
 dbPasswordDefault='shames11'
-
+```
+```
 ; Database details on default MySQL server
 globalDbName='global' ;contains all details to run this application.
 clientMasterDbName='client_master' ;contains all entities required for a new client.
@@ -40,7 +41,8 @@ dbHostnameClient001='127.0.0.1'
 dbUsernameClient001='root'
 dbPasswordClient001='shames11'
 dbDatabaseClient001='client_001'
-
+```
+```
 ; Database Server Details (MySQL) for client id 002
 dbHostnameClient002='127.0.0.1'
 dbUsernameClient002='root'
@@ -54,11 +56,11 @@ This can extend to any number of databases on the default host or to any number 
 - All the configuration here is with respect to the group. Users, Routes & Connections are configured and grouped inside a **GROUP**
 
 - Any change made to the global database needs to be updated in the cache server. This can be done by accessing **/reload** route. This is restricted by HTTP Authentication and configuration for same can be found in .env as below.
-
-	    HttpAuthenticationRestrictedIp='127.0.0.1'
-	    HttpAuthenticationUser='username'
-	    HttpAuthenticationPassword='password'
-
+```
+HttpAuthenticationRestrictedIp='127.0.0.1'
+HttpAuthenticationUser='username'
+HttpAuthenticationPassword='password'
+```
 ## Configuring route
 ### Files
 - **/Config/Routes/GETroutes.php** for all GET method routes configuration.
