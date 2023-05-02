@@ -18,38 +18,35 @@ Hi! This is the first very light and easy **Microservices** package that can be 
 - One needs to set the configurations in the **.env** file. The configurations include Cache/Database creds and other credentials.
 - Below are the default server configuration parameters.
 ```
-; Default Database Server Details (MySQL)
 dbHostnameDefault='127.0.0.1'
 dbUsernameDefault='root'
 dbPasswordDefault='shames11'
 ```
+- Database details on default MySQL server
 ```
-; Database details on default MySQL server
 globalDbName='global' ;contains all details to run this application.
 clientMasterDbName='client_master' ;contains all entities required for a new client.
 ```
-If there is a requirement from your client for a **Separate DB or Host** for saving his data, just set these settings here and configure these **.env variables in the global.m004_master_connection table**
+- If there is a requirement from your client for a **Separate DB or Host** for saving his data, just set these settings here and configure these **.env variables in the global.m004_master_connection table**
 - For a different DB on default Host
 ```
 dbDatabaseClient001='client_001'
 ```
-- For a different Host/DB instance
+- For a different Host/DB instance client 1
 ```
-; Database Server Details (MySQL) for client id 001
-; These needs to be configured in globalDbName database and m004_master_connection table.
 dbHostnameClient001='127.0.0.1'
 dbUsernameClient001='root'
 dbPasswordClient001='shames11'
 dbDatabaseClient001='client_001'
 ```
+- For a different Host/DB instance client 2
 ```
-; Database Server Details (MySQL) for client id 002
 dbHostnameClient002='127.0.0.1'
 dbUsernameClient002='root'
 dbPasswordClient002='shames11'
 dbDatabaseClient002='client_002'
 ```
-This can extend to any number of databases on the default host or to any number of dedicated hosts for respective clients.
+- This can extend to any number of databases on the default host or to any number of dedicated hosts for respective clients.
 
 **Note:** 
 - The connection configuration used for an API is limited to the respective group. One group access is limited to one connection configuration.
