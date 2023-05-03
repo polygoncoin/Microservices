@@ -96,7 +96,7 @@ HttpAuthenticationPassword='password'
 
 -  **/Config/Routes/DELETEroutes.php** for all DELETE method routes configuration.
 
-For configuring route **/global/tableName/parts** GET method
+- For configuring route **/global/tableName/parts** GET method
 
 ```
 'global' => [
@@ -277,6 +277,7 @@ So route /global/{table:string}/{id:int} can be used for updating and fetching a
 The supported SQL format are as below
 
 - For GET method.
+
 ```
 <?php
 return [
@@ -315,10 +316,10 @@ return [
 ];
 ```
 Here **query & mode** keys are required keys
-
 **Note:** For GET method **payload** is query string parameters; basically **$_GET**.
 
 - For POST/PUT/PATCH/DELETE method.
+
 ```
 <?php
 return [
@@ -369,11 +370,8 @@ return [
 ];
 ```
 Here **query & payload** keys are required keys for the POST method.
-
-Here **query, payload & where** keys are required keys for PUT, PATCH, and DELETE methods.
-
+For PUT, PATCH, and DELETE methods **query, payload & where** keys are required keys.
 **Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries. **Also for these methods usage of \_\_SET__ and \_\_WHERE__ is necessary**
-
 Example Queries can be like
 ```
 INSERT INTO {$this->globalDB}.TableName SET __SET__;
@@ -406,6 +404,7 @@ One can clean the URL by making the required changes in the web server .conf fil
 };
 ```
 - For performing processing of multiple entries one can change to the payload as an array of entries.
+
 ```
 {"data":
 	[
@@ -425,12 +424,14 @@ One can clean the URL by making the required changes in the web server .conf fil
 };
 ```
 **Note:** For the PATCH method one can update a single field at a time.
+
 ```
 {"data":
 	{"key1": "value1"}
 };
 ```
 - For performing the updation of multiple fields one can change the payload as an array of entries for the same {id}.
+
 ```
 {"data":
 	[
@@ -452,6 +453,7 @@ $input variable has following keys available.
 
 **$input['uriParams']** contains the dynamically resolved values.
 Suppose our configured route is **/global/{table:string}/{id:int}** and we make an HTTP request for **/global/tableName/1** then $input['uriParams'] will hold these dynamic values as below.
+
 ```
 $input['uriParams'] = [
 	'table' => 'tableName'
@@ -466,6 +468,7 @@ $input['uriParams'] = [
 This is not dependent on route accessed. This remains same for every request and is dependent on **Authorization Bearer Token**.
 
 To list a sample of available data one can access.
+
 ```
 $input['readOnlySession'] = {
 	"id": 1,
@@ -486,6 +489,7 @@ If you want to add more fields to be made available just change the logic in **R
 For **GET** method, the **$_GET** is made available.
 
 For **POST/PUT/PATCH/DELETE** as discussed above we send request as 
+
 ```
 {"data":
 	{
@@ -497,6 +501,7 @@ For **POST/PUT/PATCH/DELETE** as discussed above we send request as
 };
 ```
 This will make **$input['payload']** data available as for each iteration.
+
 ```
 $input['payload'] = {
 	"key1": "value1",
@@ -515,12 +520,14 @@ $input['payload'] = {
 For **POST/PUT/PATCH/DELETE** as discussed we can perform both INSERT as well as UPDATE operation. The  insertIdParams contains the insert ids of the executed INSERT queries. 
 
 As we have seen a configuration
+
 ```
 'insertId' => 'm001_master_group:id'
 ```
 This means the insertId needs to be collected as key **m001_master_group:id**.
 
 This will make **$input['insertIdParams']** data available as below for each iteration.
+
 ```
 $input['insertIdParams'] = {
 	"m001_master_group:id": 123
@@ -532,6 +539,7 @@ The variable $input['insertIdParams'] will append all the values with respective
 #### custom
 
 For any HTTP requests we want to use a custom value. For example a where clause or setting a payload
+
 ```
 	'where' => [// for __WHERE__
 		'id' => ['uriParams', 'id'],
@@ -542,6 +550,7 @@ For any HTTP requests we want to use a custom value. For example a where clause 
 Here is_approved will change to Yes in the database.
 
 Similarly, we can use this in payload as well to set a static values instead of dynamic values from layload.
+
 ```
 'payload' => [
 	'client_id' => ['insertIdParams', 'm001_master_group:id'],
