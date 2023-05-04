@@ -383,6 +383,9 @@ class Api
     function miscellaneousFunctionality($input)
     {
         switch ($this->authorize->routeElements[0]) {
+            case 'crons':
+                eval('crons\\' . $this->authorize->routeElements[1] . '::init($input, $this->authorize);');
+                break;
             case 'thirdParty':
                 eval('ThirdParty\\' . $this->authorize->routeElements[1] . '::init($input, $this->authorize);');
                 break;

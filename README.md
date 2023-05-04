@@ -13,11 +13,13 @@ Hi! This is the first very light and easy **Microservices Framework** package wh
 
 -  **/ThirdParty** Folder containing Classes to perform HTTP request via cURL to the Third Parties
 
+-  **/Crons** Crons classes folder
+
 ## Files
 
 -  **/.env.example** Create a copy of this file as **.env**
 
--  **/db.sql** Import this SQL file on your **MySQL** instance
+-  **/global.sql** Import this SQL file on your **MySQL** instance
 
 -  **/public_html/index.php** This is the file to be accessed for the API's
 

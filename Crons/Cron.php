@@ -1,24 +1,24 @@
 <?php
-namespace ThirdParty;
+namespace Crons;
 
 use App\JsonEncode;
 
 /**
- * Class for third party - Google.
+ * Class for a particular cron.
  *
- * This class perform third party - Google operations.
- * One can initiate third party calls via access to URL
- * https://domain.tld/thirdParty/className?queryString
+ * This class is meant for cron
+ * One can initiate cron via access URL to this class
+ * https://domain.tld/crons/className?queryString
  * All HTTP methods are supported
  *
- * @category   Third party
+ * @category   Crons
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Google
+class Cron
 {
     /**
      * Authorize class object
@@ -35,7 +35,7 @@ class Google
     public $input = null;
 
     /**
-     * Initialize
+     * Initialize cron
      *
      * @param array  $input     Inputs
      * @param object $authorize Authorize object
@@ -55,7 +55,7 @@ class Google
      */
     public function process()
     {
-        // Create and call functions to manage third party cURL calls here.
+        // Create and call functions to manage cron functionality here.
         // In functions one can also perform DB operations with $this->authorize object
         // $this->authorize->connectClientDB();
 
