@@ -8,11 +8,29 @@ define('__REQUEST_URI__', '/' . trim($_GET['REQUEST_URI'], '/'));
 
 header('Content-Type: application/json; charset=utf-8');
 
-switch (__REQUEST_URI__) {
-    case '/login':
+switch (true) {
+    case __REQUEST_URI__ === '/login':
         App\Login::init();
         break;
-    case '/reload':
+    case strpos(__REQUEST_URI__, '/crons') === 0:
+        // Check request not from proxy.
+        if (!isset($_SERVER['REMOTE_ADDR'])) {
+            die('Proxy requests are not supported.');
+        }
+        if ($_SERVER['REMOTE_ADDR'] !== getenv('cronRestrictedIp')) {
+            die('Source IP is not supported.');
+        }
+        $__REQUEST_URI__ = explode('/', __REQUEST_URI__);
+        if (
+            isset($__REQUEST_URI__[2]) &&
+            file_exists(__DOC_ROOT__ . "/Crons/{$__REQUEST_URI__[2]}.php")
+        ) {
+            eval('Crons\\' . $__REQUEST_URI__[2] . '::init($_SERVER[\'REQUEST_METHOD\'], __REQUEST_URI__);');
+        } else {
+            die('Invalid request.');
+        }
+        break;
+    case __REQUEST_URI__ === '/reload':
         if (httpAuthentication()) {
             App\Reload::init();
         }

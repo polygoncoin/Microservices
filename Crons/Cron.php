@@ -1,7 +1,10 @@
 <?php
 namespace Crons;
 
+use App\HttpRequest;
+use App\HttpErrorResponse;
 use App\JsonEncode;
+use App\Servers\Database;
 
 /**
  * Class for a particular cron.
@@ -21,30 +24,15 @@ use App\JsonEncode;
 class Cron
 {
     /**
-     * Authorize class object
-     *
-     * @var object
-     */
-    public $authorize = null;
-
-    /**
-     * Inputs
-     *
-     * @var array
-     */
-    public $input = null;
-
-    /**
      * Initialize cron
      *
-     * @param array  $input     Inputs
-     * @param object $authorize Authorize object
+     * @param string $requestMethod HTTP method
+     * @param string $requestUri    Route
      * @return void
      */
-    public static function init(&$input, &$authorize)
+    public static function init($requestMethod, $requestUri)
     {
-        self::$input = $input;
-        self::$authorize = $authorize
+        (new HttpRequest)->parseRoute($requestMethod, $requestUri);
         (new self)->process();
     }
 

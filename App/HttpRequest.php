@@ -173,8 +173,8 @@ class HttpRequest
         // Set route code file.
         if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
             $this->__file__ = $routes['__file__'];
-        } else {
-            HttpErrorResponse::return5xx(501, 'Missing route configuration file for' . " {$method} " . 'method');
+        } elseif ($routes['__file__'] != '') {
+            HttpErrorResponse::return5xx(501, 'Missing route configuration file for' . " {$requestMethod} " . 'method');
         }
     }
 }
