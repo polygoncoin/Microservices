@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\HttpErrorResponse;
 use App\JsonEncode;
 use App\PHPTrait;
 use App\Servers\Database;
@@ -77,13 +78,25 @@ class Migration
      */
     public function process()
     {
-        $this->processMigration();
+        $result = $this->processMigration();
+        $this->endProcess($result);
+    }
+
+    /**
+     * Function to end process which outputs the results.
+     *
+     * @param array $result Success/Error response
+     * @return void
+     */
+    private function endProcess($result)
+    {
+        HttpErrorResponse::return2xx(200, $result);
     }
 
     /**
      * Process update request
      *
-     * @return void
+     * @return array
      */
     private function processMigration()
     {
@@ -124,9 +137,7 @@ class Migration
         $this->createFunctions($result);
         $this->createSps($result);
 
-        $this->jsonEncodeObj = new JsonEncode();
-        $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => $result]);
-        $this->jsonEncodeObj = null;
+        return $result;
     }
     
     function createDatabase(&$result)

@@ -1,7 +1,7 @@
 <?php
 namespace ThirdParty;
 
-use App\JsonEncode;
+use App\HttpErrorResponse;
 
 /**
  * Class for third party - Google.
@@ -62,9 +62,16 @@ class Google
         // ...
 
         // End the calls with json response with jsonEncode Object.
-        $response = ['Status' => 200, 'Message' => 'message as desited.'];
-        $this->jsonEncodeObj = new JsonEncode();
-        $this->jsonEncodeObj->encode($response);
-        $this->jsonEncodeObj = null;
+        $this->endProcess();
+    }
+
+    /**
+     * Function to end process which outputs the results.
+     *
+     * @return void
+     */
+    private function endProcess()
+    {
+        HttpErrorResponse::return2xx(200, 'Success');
     }
 }

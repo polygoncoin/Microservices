@@ -50,9 +50,16 @@ class Cron
         // ...
 
         // End the calls with json response with jsonEncode Object.
-        $response = ['Status' => 200, 'Message' => 'message as desited.'];
-        $this->jsonEncodeObj = new JsonEncode();
-        $this->jsonEncodeObj->encode($response);
-        $this->jsonEncodeObj = null;
+        $this->endProcess($result);
+    }
+
+    /**
+     * Function to end process which outputs the results.
+     *
+     * @return void
+     */
+    private function endProcess()
+    {
+        HttpErrorResponse::return2xx(200, 'message as desired.');
     }
 }

@@ -105,7 +105,8 @@ class Api
         // Load Read Only Session
         $input['readOnlySession'] = &$this->authorize->readOnlySession;
 
-        $this->miscellaneousFunctionality(array_merge($input, ['payloadArr' => [$_GET]]));
+        // Check & Process Upload
+        $this->miscFunctionalityBeforeCollectingPayload($input);
 
         // Load $_GET as payload
         $input['payload'] = &$_GET;
@@ -134,6 +135,9 @@ class Api
         // Load Read Only Session
         $input['readOnlySession'] = $this->authorize->readOnlySession;
 
+        // Check & Process Upload
+        $this->miscFunctionalityBeforeCollectingPayload($input);
+
         // Load Payload
         parse_str(file_get_contents('php://input'), $payloadArr);
         $payloadArr = json_decode($payloadArr['data'], true);
@@ -141,7 +145,9 @@ class Api
         if ($isAssoc) {
             $payloadArr = [$payloadArr];
         }
-        $this->miscellaneousFunctionality(array_merge($input, ['payloadArr' => $payloadArr]));
+
+        // Check & Process Cron / ThirdParty calls.
+        $this->miscFunctionalityAfterCollectingPayload(array_merge($input, ['payloadArr' => $payloadArr]));
 
         // Load Config
         $config = include $this->authorize->__file__;
@@ -374,17 +380,33 @@ class Api
         return $assoc;
     }
 
+    
     /**
-     * Miscellaneous route functionality
+     * Miscellaneous Functionality Before Collecting Payload
      *
-     * @param array $input Payload
+     * @param array $input without Payload
      * @return void
      */
-    function miscellaneousFunctionality($input)
+    function miscFunctionalityBeforeCollectingPayload($input)
+    {
+        switch ($this->authorize->routeElements[0]) {
+            case 'upload':
+                App\Upload::init($input, $this->authorize);
+                break;
+        }
+    }
+
+    /**
+     * Miscellaneous Functionality After Collecting Payload
+     *
+     * @param array $input with Payload
+     * @return void
+     */
+    function miscFunctionalityAfterCollectingPayload($input)
     {
         switch ($this->authorize->routeElements[0]) {
             case 'thirdParty':
-                eval('ThirdParty\\' . $this->authorize->routeElements[1] . '::init($input, $this->authorize);');
+                eval('ThirdParty\\' . ucfirst($this->authorize->routeElements[1]) . '::init($input, $this->authorize);');
                 break;
             case 'cache':
                 App\CacheApi::init($input, $this->authorize);

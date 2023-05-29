@@ -2,6 +2,7 @@
 namespace App;
 
 use App\JsonEncode;
+
 /**
  * HTTP Error Response
  *
@@ -27,7 +28,7 @@ class HttpErrorResponse
     {
         self::returnHttpStatus(
             $errorCode,
-            ['message' => $errMessage]
+            ['Message' => $errMessage]
         );
     }
 
@@ -42,7 +43,7 @@ class HttpErrorResponse
     {
         self::returnHttpStatus(
             $errorCode,
-            ['message' => $errMessage]
+            ['Message' => $errMessage]
         );
     }
 
@@ -70,7 +71,7 @@ class HttpErrorResponse
         } else {
             self::returnHttpStatus(
                 $errorCode,
-                ['message' => $errMessage]
+                ['Message' => $errMessage]
             );
         }
     }
@@ -86,7 +87,7 @@ class HttpErrorResponse
     {
         self::returnHttpStatus(
             $errorCode,
-            ['message' => $errMessage]
+            ['Message' => $errMessage]
         );
     }
 

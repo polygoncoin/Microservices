@@ -15,11 +15,6 @@ return [
             '__file__' => ''
         ]
     ],
-    'cache' => [
-        '{clientId:int}' => [
-            '__file__' => ''
-        ]
-    ],
     'migrate' => [
         '{connectionId:int}' => [
             '__file__' => ''
