@@ -114,15 +114,12 @@ class Reload
         try {
             $stmt = $this->db->getStatement("
                 SELECT
-                    U.id,
-                    U.username,
-                    U.password_hash,
-                    U.group_id,
-                    G.default_client_id as client_id
+                    id,
+                    username,
+                    password_hash,
+                    group_id
                 FROM
                     `{$this->execPhpFunc(getenv('users'))}` U
-                LEFT JOIN
-                    `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $stmt->execute($ids);
@@ -132,15 +129,6 @@ class Reload
             HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
         }
         foreach ($rows as &$row) {
-            try {
-                $stmt1 = $this->db->getStatement("SELECT client_id FROM `{$this->execPhpFunc(getenv('links'))}` WHERE group_id = ?");
-                $stmt1->execute([$row['group_id']]);
-                $clientIds =  array_column($stmt1->fetchAll(\PDO::FETCH_ASSOC), 'client_id');
-                $stmt1->closeCursor();
-            } catch(\PDOException $e) {
-                HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
-            }
-            $row = array_merge($row, ['client_ids' => $clientIds]);
             $this->cache->setCache("user:{$row['username']}", json_encode($row));
         }
     }
@@ -159,7 +147,7 @@ class Reload
                 SELECT
                     G.id,
                     G.name,
-                    G.default_client_id,
+                    G.client_id,
                     C.db_hostname,
                     C.db_username,
                     C.db_password,
@@ -234,7 +222,7 @@ class Reload
             $stmt = $this->db->getStatement(
                 "
                     SELECT
-                        L.group_id, L.client_id, L.http_id, R.route
+                        L.group_id, L.http_id, R.route
                     FROM 
                         `{$this->execPhpFunc(getenv('links'))}` L
                     LEFT JOIN
@@ -250,15 +238,14 @@ class Reload
         $routeArr = [];
         while ($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
             if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];
-            if (!isset($routeArr[$row['group_id']][$row['client_id']])) $routeArr[$row['group_id']][$row['client_id']] = [];
-            if (!isset($routeArr[$row['group_id']][$row['client_id']][$row['http_id']])) $routeArr[$row['group_id']][$row['client_id']][$row['http_id']] = [];
-            $routeArr[$row['group_id']][$row['client_id']][$row['http_id']][] = $row['route'];
+            if (!isset($routeArr[$row['group_id']][$row['http_id']])) $routeArr[$row['group_id']][$row['http_id']] = [];
+            $routeArr[$row['group_id']][$row['http_id']][] = $row['route'];
         }
         $stmt->closeCursor();
         foreach ($routeArr as $groupId => &$clientArr) {
             foreach ($clientArr as $clientId => &$httpArr) {
                 foreach ($httpArr as $httpId => &$routes) {
-                    $key = "group:{$groupId}:client:{$clientId}:http:{$httpId}:routes";
+                    $key = "group:{$groupId}:http:{$httpId}:routes";
                     $this->cache->setSetMembers($key, $routes);
                 }
             }

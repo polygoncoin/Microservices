@@ -26,8 +26,7 @@ DROP TABLE IF EXISTS `l001_link_allowed_route`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `l001_link_allowed_route` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `group_id` int NOT NULL,
-  `client_id` int DEFAULT NULL,
+  `group_id` int NOT NULL
   `route_id` int DEFAULT NULL,
   `http_id` int DEFAULT NULL,
   `created_by` int DEFAULT NULL,
@@ -49,7 +48,7 @@ CREATE TABLE `l001_link_allowed_route` (
 
 LOCK TABLES `l001_link_allowed_route` WRITE;
 /*!40000 ALTER TABLE `l001_link_allowed_route` DISABLE KEYS */;
-INSERT INTO `l001_link_allowed_route` VALUES (1,1,1,1,1,NULL,'2023-04-21 06:44:48',NULL,NULL,NULL,'2023-04-21 06:44:48','No','No','No'),(2,1,1,1,2,NULL,'2023-04-21 08:11:59',NULL,NULL,NULL,'2023-04-21 08:11:59','No','No','No'),(3,1,1,1,3,NULL,'2023-04-21 08:12:01',NULL,NULL,NULL,'2023-04-21 08:12:01','No','No','No'),(4,1,1,1,4,NULL,'2023-04-21 08:12:03',NULL,NULL,NULL,'2023-04-21 08:12:03','No','No','No'),(5,1,1,1,5,NULL,'2023-04-21 08:12:06',NULL,NULL,NULL,'2023-04-21 08:12:06','No','No','No'),(6,1,1,2,1,NULL,'2023-04-21 08:12:13',NULL,NULL,NULL,'2023-04-21 08:12:13','No','No','No'),(7,1,1,2,2,NULL,'2023-04-21 08:12:17',NULL,NULL,NULL,'2023-04-21 08:12:17','No','No','No'),(8,1,1,2,3,NULL,'2023-04-21 08:12:19',NULL,NULL,NULL,'2023-04-21 08:12:19','No','No','No'),(9,1,1,2,4,NULL,'2023-04-21 08:12:22',NULL,NULL,NULL,'2023-04-21 08:12:22','No','No','No'),(10,1,1,2,5,NULL,'2023-04-21 08:12:24',NULL,NULL,NULL,'2023-04-21 08:12:24','No','No','No');
+INSERT INTO `l001_link_allowed_route` VALUES (1,1,1,1,NULL,'2023-04-21 06:44:48',NULL,NULL,NULL,'2023-04-21 06:44:48','No','No','No'),(2,1,1,2,NULL,'2023-04-21 08:11:59',NULL,NULL,NULL,'2023-04-21 08:11:59','No','No','No'),(3,1,1,3,NULL,'2023-04-21 08:12:01',NULL,NULL,NULL,'2023-04-21 08:12:01','No','No','No'),(4,1,1,4,NULL,'2023-04-21 08:12:03',NULL,NULL,NULL,'2023-04-21 08:12:03','No','No','No'),(5,1,1,5,NULL,'2023-04-21 08:12:06',NULL,NULL,NULL,'2023-04-21 08:12:06','No','No','No'),(6,1,2,1,NULL,'2023-04-21 08:12:13',NULL,NULL,NULL,'2023-04-21 08:12:13','No','No','No'),(7,1,2,2,NULL,'2023-04-21 08:12:17',NULL,NULL,NULL,'2023-04-21 08:12:17','No','No','No'),(8,1,2,3,NULL,'2023-04-21 08:12:19',NULL,NULL,NULL,'2023-04-21 08:12:19','No','No','No'),(9,1,2,4,NULL,'2023-04-21 08:12:22',NULL,NULL,NULL,'2023-04-21 08:12:22','No','No','No'),(10,1,2,5,NULL,'2023-04-21 08:12:24',NULL,NULL,NULL,'2023-04-21 08:12:24','No','No','No');
 /*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +62,7 @@ DROP TABLE IF EXISTS `m001_master_group`;
 CREATE TABLE `m001_master_group` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  `default_client_id` int DEFAULT NULL,
+  `client_id` int DEFAULT NULL,
   `connection_id` int NOT NULL,
   `allowed_ips` text,
   `comments` varchar(255) DEFAULT NULL,

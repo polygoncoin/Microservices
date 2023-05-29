@@ -91,13 +91,6 @@ class Authorize extends HttpRequest
     public $groupId = null;
 
     /**
-     * Logged-in user Client ID
-     *
-     * @var int
-     */
-    public $clientId = null;
-
-    /**
      * Constructor
      *
      * @return void
@@ -168,7 +161,6 @@ class Authorize extends HttpRequest
         } else {
             $this->userId = $this->readOnlySession['id'];
             $this->groupId = $this->readOnlySession['group_id'];
-            $this->clientId = $this->readOnlySession['client_id'];
             $groupInfoArr = json_decode($this->cache->getCache("group:{$this->groupId}"), true);
             $this->clientHostname = $groupInfoArr['db_hostname'];
             $this->clientUsername = $groupInfoArr['db_username'];
@@ -210,7 +202,7 @@ class Authorize extends HttpRequest
      */
     private function checkRoutePrivilage($route)
     {
-        $key = "group:{$this->groupId}:client:{$this->clientId}:http:{$this->httpId}:routes";
+        $key = "group:{$this->groupId}:http:{$this->httpId}:routes";
         if (!$this->cache->isSetMember($key, $route)) {
             HttpErrorResponse::return4xx(404, 'Route not supported');
         }
