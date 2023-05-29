@@ -67,15 +67,6 @@ class CacheApi
      */
     private function processCacheUpdate()
     {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = $this->authorize->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = $this->authorize->readOnlySession;
-
         // Load Payload
         parse_str(file_get_contents('php://input'), $payloadArr);
         $payload = json_decode($payloadArr['data'], true);

@@ -90,11 +90,11 @@ class Api
     }
 
     /**
-     * Process HTTP GET request
+     * Return inputs
      *
-     * @return void
+     * @return array
      */
-    private function processHttpGET()
+    private function getInputs()
     {
         // input details
         $input = [];
@@ -105,6 +105,18 @@ class Api
         // Load Read Only Session
         $input['readOnlySession'] = &$this->authorize->readOnlySession;
 
+        return $input;
+    }
+    /**
+     * Process HTTP GET request
+     *
+     * @return void
+     */
+    private function processHttpGET()
+    {
+        // Get Inputs
+        $input = $this->getInputs();
+
         // Check & Process Upload
         $this->miscFunctionalityBeforeCollectingPayload($input);
 
@@ -112,6 +124,9 @@ class Api
         $input['payload'] = &$_GET;
 
         // Load Queries
+        if (empty($this->authorize->__file__) || !file_exists($this->authorize->__file__)) {
+            HttpErrorResponse::return5xx(501, 'Path cannot be empty');
+        }
         $config = include $this->authorize->__file__;
         
         $this->jsonEncodeObj = new JsonEncode();
@@ -126,14 +141,8 @@ class Api
      */
     private function processHttpInsertUpdate()
     {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = $this->authorize->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = $this->authorize->readOnlySession;
+        // Get Inputs
+        $input = $this->getInputs();
 
         // Check & Process Upload
         $this->miscFunctionalityBeforeCollectingPayload($input);
@@ -150,6 +159,9 @@ class Api
         $this->miscFunctionalityAfterCollectingPayload(array_merge($input, ['payloadArr' => $payloadArr]));
 
         // Load Config
+        if (empty($this->authorize->__file__) || !file_exists($this->authorize->__file__)) {
+            HttpErrorResponse::return5xx(501, 'Path cannot be empty');
+        }
         $config = include $this->authorize->__file__;
 
         $response = [];
@@ -391,8 +403,11 @@ class Api
     {
         switch ($this->authorize->routeElements[0]) {
             case 'upload':
-                App\Upload::init($input, $this->authorize);
-                break;
+                eval('App\\Upload::init($input);');
+                die;
+            case 'thirdParty':
+                eval('ThirdParty\\' . ucfirst($this->authorize->routeElements[1]) . '::init($input);');
+                die;
         }
     }
 
@@ -405,15 +420,12 @@ class Api
     function miscFunctionalityAfterCollectingPayload($input)
     {
         switch ($this->authorize->routeElements[0]) {
-            case 'thirdParty':
-                eval('ThirdParty\\' . ucfirst($this->authorize->routeElements[1]) . '::init($input, $this->authorize);');
-                break;
             case 'cache':
-                App\CacheApi::init($input, $this->authorize);
-                break;
+                eval('App\\CacheApi::init($input);');
+                die;
             case 'migrate':
-                App\Migration::init($input, $this->authorize);
-                break;
+                eval('App\\Migration::init($input);');
+                die;
         }
     }
 }

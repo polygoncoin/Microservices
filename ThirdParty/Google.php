@@ -21,30 +21,21 @@ use App\HttpErrorResponse;
 class Google
 {
     /**
-     * Authorize class object
-     *
-     * @var object
-     */
-    public $authorize = null;
-
-    /**
      * Inputs
      *
      * @var array
      */
-    public $input = null;
+    private static $input = null;
 
     /**
      * Initialize
      *
      * @param array  $input     Inputs
-     * @param object $authorize Authorize object
      * @return void
      */
-    public static function init(&$input, &$authorize)
+    public static function init(&$input)
     {
         self::$input = $input;
-        self::$authorize = $authorize
         (new self)->process();
     }
 
@@ -56,22 +47,29 @@ class Google
     public function process()
     {
         // Create and call functions to manage third party cURL calls here.
-        // In functions one can also perform DB operations with $this->authorize object
-        // $this->authorize->connectClientDB();
 
-        // ...
+        $curl_handle=curl_init();
+        curl_setopt($curl_handle,CURLOPT_URL,'http://polygon.co.in');
+        curl_setopt($curl_handle,CURLOPT_CONNECTTIMEOUT,2);
+        curl_setopt($curl_handle,CURLOPT_RETURNTRANSFER,1);
+        $buffer = curl_exec($curl_handle);
+        curl_close($curl_handle);
+        if (empty($buffer)){
+            $buffer = "Nothing returned from url";
+        }
 
         // End the calls with json response with jsonEncode Object.
-        $this->endProcess();
+        $this->endProcess($buffer);
     }
 
     /**
      * Function to end process which outputs the results.
      *
+     * @param string $result
      * @return void
      */
-    private function endProcess()
+    private function endProcess($result)
     {
-        HttpErrorResponse::return2xx(200, 'Success');
+        HttpErrorResponse::return2xx(200, $result);
     }
 }

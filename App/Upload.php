@@ -19,37 +19,21 @@ use App\HttpErrorResponse;
 class Upload
 {
     /**
-     * JsonEncode class object
-     *
-     * @var object
-     */
-    public $jsonEncodeObj = null;
-
-    /**
-     * Authorize class object
-     *
-     * @var object
-     */
-    public $authorize = null;
-
-    /**
      * Inputs
      *
      * @var array
      */
-    public $input = null;
+    private static $input = null;
 
     /**
      * Initialize
      *
-     * @param array  $input     Inputs
-     * @param object $authorize Authorize object
+     * @param array  $input Inputs
      * @return void
      */
-    public static function init(&$input, &$authorize)
+    public static function init(&$input)
     {
         self::$input = $input;
-        self::$authorize = $authorize
         (new self)->process();
     }
 
@@ -60,9 +44,6 @@ class Upload
      */
     public function process()
     {
-        $this->authorize = new Authorize();
-        $this->authorize->init();
-
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'POST':
             case 'PUT':
@@ -89,19 +70,7 @@ class Upload
      */
     private function processUpload()
     {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = &$this->authorize->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = &$this->authorize->readOnlySession;
-
-        // Load $_GET as payload
-        $input['payload'] = &$_GET;
-
-        $fileLocation = $this->getLocation($input);
+        $fileLocation = $this->getLocation();
 
         $src = fopen("php://input", "rb");
         $dest = fopen($fileLocation, 'w+b');
@@ -115,11 +84,10 @@ class Upload
     /**
      * Function to get filename with location depending uplon $input
      *
-     * @param array $input Inputs
      * @return string
      */
-    private function getLocation($input)
+    private function getLocation()
     {
-        return '';
+        return __DOC_ROOT__ . '/Dropbox/' . 'test.txt';
     }
 }

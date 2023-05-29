@@ -19,5 +19,8 @@ return [
         '{connectionId:int}' => [
             '__file__' => ''
         ]
+    ],
+    'upload' => [
+        '__file__' => ''
     ]
 ];

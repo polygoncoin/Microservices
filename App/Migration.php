@@ -44,30 +44,21 @@ class Migration
     public $newDb = null;
 
     /**
-     * Authorize class object
-     *
-     * @var object
-     */
-    public $authorize = null;
-
-    /**
      * Inputs
      *
      * @var array
      */
-    public $input = null;
+    private static $input = null;
 
     /**
      * Initialize
      *
-     * @param array  $input     Inputs
-     * @param object $authorize Authorize object
+     * @param array  $input Inputs
      * @return void
      */
-    public static function init(&$input, &$authorize)
+    public static function init(&$input)
     {
         self::$input = $input;
-        self::$authorize = $authorize
         (new self)->process();
     }
 
