@@ -419,13 +419,6 @@ class Api
      */
     function miscFunctionalityAfterCollectingPayload($input)
     {
-        switch ($this->authorize->routeElements[0]) {
-            case 'cache':
-                eval('App\\CacheApi::init($input);');
-                die;
-            case 'migrate':
-                eval('App\\Migration::init($input);');
-                die;
-        }
+
     }
 }

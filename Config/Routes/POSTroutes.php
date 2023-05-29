@@ -15,11 +15,6 @@ return [
             '__file__' => ''
         ]
     ],
-    'migrate' => [
-        '{connectionId:int}' => [
-            '__file__' => ''
-        ]
-    ],
     'upload' => [
         '__file__' => ''
     ]

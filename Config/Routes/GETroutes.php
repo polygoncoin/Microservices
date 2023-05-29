@@ -20,8 +20,5 @@ return [
         'Google' => [
             '__file__' => ''
         ]
-    ],
-    'cache' => [
-        '__file__' => ''
     ]
 ];

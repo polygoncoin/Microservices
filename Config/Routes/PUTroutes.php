@@ -13,10 +13,5 @@ return [
                 '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/PUT/CRUD.php',
             ],
         ]
-    ],
-    'cache' => [
-        '{clientId:int}' => [
-            '__file__' => ''
-        ]
     ]
 ];
