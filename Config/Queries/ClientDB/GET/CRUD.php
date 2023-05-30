@@ -5,7 +5,7 @@ return [
         'where' => [],
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ],
-    "single" => [
+    'single' => [
         'query' => "SELECT * FROM `{$this->clientDB}`.`{$input['uriParams']['table']}` WHERE id = ?",
         'where' => ['id' => ['uriParams','id']],
         'mode' => 'singleRowFormat'//Single row returned.
