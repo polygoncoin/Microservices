@@ -1,6 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `global` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `global`;
--- MySQL dump 10.13  Distrib 8.0.32, for macos13 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.32, for macos12.6 (x86_64)
 --
 -- Host: localhost    Database: global
 -- ------------------------------------------------------
@@ -9,7 +7,7 @@ USE `global`;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -26,7 +24,7 @@ DROP TABLE IF EXISTS `l001_link_allowed_route`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `l001_link_allowed_route` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `group_id` int NOT NULL
+  `group_id` int NOT NULL,
   `route_id` int DEFAULT NULL,
   `http_id` int DEFAULT NULL,
   `created_by` int DEFAULT NULL,
@@ -39,7 +37,7 @@ CREATE TABLE `l001_link_allowed_route` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +46,7 @@ CREATE TABLE `l001_link_allowed_route` (
 
 LOCK TABLES `l001_link_allowed_route` WRITE;
 /*!40000 ALTER TABLE `l001_link_allowed_route` DISABLE KEYS */;
-INSERT INTO `l001_link_allowed_route` VALUES (1,1,1,1,NULL,'2023-04-21 06:44:48',NULL,NULL,NULL,'2023-04-21 06:44:48','No','No','No'),(2,1,1,2,NULL,'2023-04-21 08:11:59',NULL,NULL,NULL,'2023-04-21 08:11:59','No','No','No'),(3,1,1,3,NULL,'2023-04-21 08:12:01',NULL,NULL,NULL,'2023-04-21 08:12:01','No','No','No'),(4,1,1,4,NULL,'2023-04-21 08:12:03',NULL,NULL,NULL,'2023-04-21 08:12:03','No','No','No'),(5,1,1,5,NULL,'2023-04-21 08:12:06',NULL,NULL,NULL,'2023-04-21 08:12:06','No','No','No'),(6,1,2,1,NULL,'2023-04-21 08:12:13',NULL,NULL,NULL,'2023-04-21 08:12:13','No','No','No'),(7,1,2,2,NULL,'2023-04-21 08:12:17',NULL,NULL,NULL,'2023-04-21 08:12:17','No','No','No'),(8,1,2,3,NULL,'2023-04-21 08:12:19',NULL,NULL,NULL,'2023-04-21 08:12:19','No','No','No'),(9,1,2,4,NULL,'2023-04-21 08:12:22',NULL,NULL,NULL,'2023-04-21 08:12:22','No','No','No'),(10,1,2,5,NULL,'2023-04-21 08:12:24',NULL,NULL,NULL,'2023-04-21 08:12:24','No','No','No');
+INSERT INTO `l001_link_allowed_route` VALUES (1,1,1,1,NULL,'2023-04-21 06:44:48',NULL,NULL,NULL,'2023-04-21 06:44:48','No','No','No'),(2,1,1,2,NULL,'2023-04-21 08:11:59',NULL,NULL,NULL,'2023-04-21 08:11:59','No','No','No'),(3,1,1,3,NULL,'2023-04-21 08:12:01',NULL,NULL,NULL,'2023-04-21 08:12:01','No','No','No'),(4,1,1,4,NULL,'2023-04-21 08:12:03',NULL,NULL,NULL,'2023-04-21 08:12:03','No','No','No'),(5,1,1,5,NULL,'2023-04-21 08:12:06',NULL,NULL,NULL,'2023-04-21 08:12:06','No','No','No'),(6,1,2,1,NULL,'2023-04-21 08:12:13',NULL,NULL,NULL,'2023-04-21 08:12:13','No','No','No'),(7,1,2,2,NULL,'2023-04-21 08:12:17',NULL,NULL,NULL,'2023-04-21 08:12:17','No','No','No'),(8,1,2,3,NULL,'2023-04-21 08:12:19',NULL,NULL,NULL,'2023-04-21 08:12:19','No','No','No'),(9,1,2,4,NULL,'2023-04-21 08:12:22',NULL,NULL,NULL,'2023-04-21 08:12:22','No','No','No'),(10,1,2,5,NULL,'2023-04-21 08:12:24',NULL,NULL,NULL,'2023-04-21 08:12:24','No','No','No'),(11,1,3,2,NULL,'2023-05-29 13:08:15',NULL,NULL,NULL,'2023-05-29 13:08:15','No','No','No'),(12,1,4,1,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No');
 /*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -76,7 +74,7 @@ CREATE TABLE `m001_master_group` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -112,7 +110,7 @@ CREATE TABLE `m002_master_user` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,7 +144,7 @@ CREATE TABLE `m003_master_route` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +153,7 @@ CREATE TABLE `m003_master_route` (
 
 LOCK TABLES `m003_master_route` WRITE;
 /*!40000 ALTER TABLE `m003_master_route` DISABLE KEYS */;
-INSERT INTO `m003_master_route` VALUES (1,'/global/{table:string}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','No','No','No'),(2,'/global/{table:string}/{id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No');
+INSERT INTO `m003_master_route` VALUES (1,'/global/{table:string}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','No','No','No'),(2,'/global/{table:string}/{id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No'),(3,'/upload',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),(4,'/thirdParty/Google',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
 /*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,7 +185,7 @@ CREATE TABLE `m004_master_connection` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,8 +194,7 @@ CREATE TABLE `m004_master_connection` (
 
 LOCK TABLES `m004_master_connection` WRITE;
 /*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
-INSERT INTO `m004_master_connection` VALUES (1,'dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
-INSERT INTO `m004_master_connection` VALUES (2,'dbHostnameClient001','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-20 16:57:35','No','No','No');
+INSERT INTO `m004_master_connection` VALUES (1,'dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),(2,'dbHostnameClient001','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
 /*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -256,7 +253,7 @@ CREATE TABLE `m006_master_client` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -265,7 +262,7 @@ CREATE TABLE `m006_master_client` (
 
 LOCK TABLES `m006_master_client` WRITE;
 /*!40000 ALTER TABLE `m006_master_client` DISABLE KEYS */;
-INSERT INTO `m006_master_client` VALUES (1,'test','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No');
+INSERT INTO `m006_master_client` VALUES (1,'test333','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','No','No','Yes');
 /*!40000 ALTER TABLE `m006_master_client` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -278,4 +275,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-21 15:17:09
+-- Dump completed on 2023-05-30 11:57:58
