@@ -242,12 +242,10 @@ class Reload
             $routeArr[$row['group_id']][$row['http_id']][] = $row['route'];
         }
         $stmt->closeCursor();
-        foreach ($routeArr as $groupId => &$clientArr) {
-            foreach ($clientArr as $clientId => &$httpArr) {
-                foreach ($httpArr as $httpId => &$routes) {
-                    $key = "group:{$groupId}:http:{$httpId}:routes";
-                    $this->cache->setSetMembers($key, $routes);
-                }
+        foreach ($routeArr as $groupId => &$httpArr) {
+            foreach ($httpArr as $httpId => &$routes) {
+                $key = "group:{$groupId}:http:{$httpId}:routes";
+                $this->cache->setSetMembers($key, $routes);
             }
         }
     }
