@@ -15,6 +15,8 @@ Hi! This is the first very light and easy **Microservices Framework** package wh
 
 -  **/Crons** Crons classes folder
 
+-  **/Dropbox** Folder for uploaded files.
+
 ## Files
 
 -  **/.env.example** Create a copy of this file as **.env**
@@ -175,7 +177,6 @@ INSERT INTO
 	`l001_link_allowed_route`
 SET
 	`group_id` = 1,
-	`client_id` = 1,
 	`route_id` = 1, -- Insert id of route query
 	`http_id` = 1 -- 1 is for GET method
 ;
@@ -185,7 +186,6 @@ INSERT INTO
 	`l001_link_allowed_route`
 SET
 	`group_id` = 1,
-	`client_id` = 1,
 	`route_id` = 1, -- Insert id of route query
 	`http_id` = 2 -- 2 is for POST method
 ;
@@ -205,7 +205,6 @@ INSERT INTO
 	`l001_link_allowed_route`
 SET
 	`group_id` = 1,
-	`client_id` = 1,
 	`route_id` = 2, -- Insert id of route query.
 	`http_id` = 1 -- 1 is for GET method
 ;
@@ -215,7 +214,6 @@ INSERT INTO
 	`l001_link_allowed_route`
 SET
 	`group_id` = 1,
-	`client_id` = 1,
 	`route_id` = 2, -- Insert id of route query.
 	`http_id` = 3 -- 3 is for PUT method
 ;
@@ -225,7 +223,6 @@ INSERT INTO
 	`l001_link_allowed_route`
 SET
 	`group_id` = 1,
-	`client_id` = 1,
 	`route_id` = 2, -- Insert id of route query.
 	`http_id` = 4 -- 4 is for PATCH method
 ;
@@ -235,7 +232,6 @@ INSERT INTO
 	`l001_link_allowed_route`
 SET
 	`group_id` = 1,
-	`client_id` = 1,
 	`route_id` = 2, -- Insert id of route query.
 	`http_id` = 5 -- 5 is for DELETE method
 ;
@@ -252,27 +248,27 @@ So route /global/{table:string}/{id:int} can be used for updating and fetching a
 
 ### Files - GlobalDB
 
--  **/Config/Queries/GlobalDB/GET/filename.php** GET method SQL.
+-  **/Config/Queries/GlobalDB/GET/<filename>.php** GET method SQL.
 
--  **/Config/Queries/GlobalDB/POST/filename.php** POST method SQL.
+-  **/Config/Queries/GlobalDB/POST/<filename>.php** POST method SQL.
 
--  **/Config/Queries/GlobalDB/PUT/filename.php** PUT method SQL.
+-  **/Config/Queries/GlobalDB/PUT/<filename>.php** PUT method SQL.
 
--  **/Config/Queries/GlobalDB/PATCH/filename.php** PATCH method SQL.
+-  **/Config/Queries/GlobalDB/PATCH/<filename>.php** PATCH method SQL.
 
--  **/Config/Queries/GlobalDB/DELETE/filename.php** DELETE method SQL.
+-  **/Config/Queries/GlobalDB/DELETE/<filename>.php** DELETE method SQL.
 
 ### Files - ClientDB
 
--  **/Config/Queries/ClientDB/GET/filename.php** GET method SQL.
+-  **/Config/Queries/ClientDB/GET/<filename>.php** GET method SQL.
 
--  **/Config/Queries/ClientDB/POST/filename.php** POST method SQL.
+-  **/Config/Queries/ClientDB/POST/<filename>.php** POST method SQL.
 
--  **/Config/Queries/ClientDB/PUT/filename.php** PUT method SQL.
+-  **/Config/Queries/ClientDB/PUT/<filename>.php** PUT method SQL.
 
--  **/Config/Queries/ClientDB/PATCH/filename.php** PATCH method SQL.
+-  **/Config/Queries/ClientDB/PATCH/<filename>.php** PATCH method SQL.
 
--  **/Config/Queries/ClientDB/DELETE/filename.php** DELETE method SQL.
+-  **/Config/Queries/ClientDB/DELETE/<filename>.php** DELETE method SQL.
 
 ### SQL's
 
