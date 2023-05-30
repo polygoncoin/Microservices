@@ -11,7 +11,7 @@ return [
         ]
     ],
     'thirdParty' => [
-        'Google' => [
+        '{party}' => [
             '__file__' => ''
         ]
     ],

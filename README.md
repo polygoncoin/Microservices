@@ -270,6 +270,8 @@ So route /global/{table:string}/{id:int} can be used for updating and fetching a
 
 -  **/Config/Queries/ClientDB/DELETE/<filename>.php** DELETE method SQL.
 
+Where **<filename>.php** are different file names for respective functionality.
+
 ### SQL's
 
 The supported SQL format are as below
@@ -473,8 +475,7 @@ $input['readOnlySession'] = {
 	"username": "shames11@rediffmail.com",
 	"password_hash": "$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6",
 	"group_id": 1,
-	"client_id": 1,
-	"client_ids": [1]
+	"client_id": 1
 };
 ```
 This is made available through Cache server i.e. **Redis**.

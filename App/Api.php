@@ -406,8 +406,15 @@ class Api
                 eval('App\\Upload::init($input);');
                 die;
             case 'thirdParty':
-                eval('ThirdParty\\' . ucfirst($this->authorize->routeElements[1]) . '::init($input);');
-                die;
+                if (
+                    isset($input['uriParams']['party']) &&
+                    file_exists(__DOC_ROOT__ . '/ThirdParty/' . ucfirst($input['uriParams']['party']) . '.php')
+                ) {
+                    eval('ThirdParty\\' . ucfirst($input['uriParams']['party']) . '::init($input);');
+                    die;
+                } else {
+                    HttpErrorResponse::return4xx(404, "Invalid third party call");
+                }
         }
     }
 
