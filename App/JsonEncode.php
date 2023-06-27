@@ -10,7 +10,7 @@ namespace App;
  * create JSON in parts for what ever smallest part of data
  * we have of the large data set which are yet to be fetched.
  *
- * @category   JSON
+ * @category   JSON Encode
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid

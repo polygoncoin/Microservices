@@ -4,7 +4,7 @@ namespace App\Servers\Database;
 /**
  * Loading database server
  *
- * This class is built to handle loading the database server.
+ * This abstract class is built to handle the database server.
  *
  * @category   Abstract Database Class
  * @package    Microservices

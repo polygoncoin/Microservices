@@ -4,9 +4,9 @@ namespace App\Servers\Cache;
 use App\HttpErrorResponse;
 
 /**
- * Loading cache server
+ * Loading Redis server
  *
- * This class is built to handle loading the cache server.
+ * This class is built to handle redis cache operation.
  *
  * @category   Cache - Redis
  * @package    Microservices

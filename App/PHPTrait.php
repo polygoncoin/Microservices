@@ -7,7 +7,7 @@ namespace App;
  * This trait constains only one function so that one can execute inbuilt PHP
  * functions in strings enclosed with double quotes
  *
- * @category   PHP Functions
+ * @category   PHP Trait
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid

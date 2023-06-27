@@ -8,9 +8,9 @@ use App\PHPTrait;
 /**
  * Loading database server
  *
- * This class is built to handle loading the database server.
+ * This class is built to handle MySQL database operation.
  *
- * @category   Cache
+ * @category   Database - MySQL
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
