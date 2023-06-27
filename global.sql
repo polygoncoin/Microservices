@@ -126,6 +126,7 @@ DROP TABLE IF EXISTS `m004_master_connection`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m004_master_connection` (
   `connection_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255),
   `db_hostname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
@@ -245,8 +246,8 @@ LOCK TABLES `m003_master_route` WRITE;
 INSERT INTO `m003_master_route` VALUES
 (1,'/global/{table:string}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','No','No','No'),
 (2,'/global/{table:string}/{id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No'),
-(3,'/upload',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),
-(4,'/thirdParty/{thirdParty}:string',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
+(3,'/upload/{module:string}',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),
+(4,'/thirdParty/{thirdParty:string}',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
 /*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -257,8 +258,9 @@ UNLOCK TABLES;
 LOCK TABLES `m004_master_connection` WRITE;
 /*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
 INSERT INTO `m004_master_connection` VALUES
-(1,'dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),
-(2,'dbHostnameClient001','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
+(1,'global','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),
+(2,'clientOneConnectionName','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No'),
+(3,'clientTwoConnectionName','dbHostnameClient002','dbUsernameClient002','dbPasswordClient002','dbDatabaseClient002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
 /*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 

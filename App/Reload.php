@@ -111,26 +111,20 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE U.user_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        try {
-            $stmt = $this->db->getStatement("
-                SELECT
-                    U.user_id,
-                    U.username,
-                    U.password_hash,
-                    G.client_id,
-                    U.group_id
-                FROM
-                    `{$this->execPhpFunc(getenv('users'))}` U
-                LEFT JOIN
-                    `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.group_id
-                {$whereClause}",
-                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
-            $stmt->execute($ids);
-            $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            $stmt->closeCursor();
-        } catch(\PDOException $e) {
-            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
-        }
+        $this->db->execDbQuery("
+            SELECT
+                U.user_id,
+                U.username,
+                U.password_hash,
+                G.client_id,
+                U.group_id
+            FROM
+                `{$this->execPhpFunc(getenv('users'))}` U
+            LEFT JOIN
+                `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.group_id
+            {$whereClause}", $ids);
+        $rows = $this->db->fetchAll(\PDO::FETCH_ASSOC);
+        $this->db->closeCursor();
         foreach ($rows as &$row) {
             $this->cache->setCache("user:{$row['username']}", json_encode($row));
         }
@@ -145,31 +139,24 @@ class Reload
     private function processGroup($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE G.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-        try {
-            $stmt = $this->db->getStatement("
-                SELECT
-                    G.group_id,
-                    G.name,
-                    G.client_id,
-                    C.db_hostname,
-                    C.db_username,
-                    C.db_password,
-                    C.db_database                
-                FROM
-                    `{$this->execPhpFunc(getenv('groups'))}` G
-                LEFT JOIN
-                    `{$this->execPhpFunc(getenv('connections'))}` C on G.connection_id = C.connection_id
-                {$whereClause}",
-                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
-            );
-            $stmt->execute($ids);
-        } catch(\PDOException $e) {
-            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
-        }
-        while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        $this->db->execDbQuery("
+            SELECT
+                G.group_id,
+                G.name,
+                G.client_id,
+                C.db_hostname,
+                C.db_username,
+                C.db_password,
+                C.db_database                
+            FROM
+                `{$this->execPhpFunc(getenv('groups'))}` G
+            LEFT JOIN
+                `{$this->execPhpFunc(getenv('connections'))}` C on G.connection_id = C.connection_id
+            {$whereClause}", $ids);
+        while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("group:{$row['group_id']}", json_encode($row));
         }
-        $stmt->closeCursor();
+        $this->db->closeCursor();
     }
 
     /**
@@ -181,17 +168,12 @@ class Reload
     private function processGroupIps($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-        try {
-            $stmt = $this->db->getStatement(
-                "SELECT group_id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
-                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
-            );
-            $stmt->execute($ids);
-        } catch(\PDOException $e) {
-            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
-        }
+        $this->db->execDbQuery(
+            "SELECT group_id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
+            $ids
+        );
         $allowedIpsArray = [];
-        while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $count = 0;
             if (!empty($row['allowed_ips'])) {
                 foreach (explode(',', trim($row['allowed_ips'])) as $cidr) {
@@ -209,7 +191,7 @@ class Reload
                 $this->cache->setSetMembers("group:{$row['group_id']}:ips", $allowedIpsArray);
             }
         }
-        $stmt->closeCursor();
+        $this->db->closeCursor();
     }
 
     /**
@@ -221,30 +203,23 @@ class Reload
     private function processGroupClientRoutes($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-        try {
-            $stmt = $this->db->getStatement(
-                "
-                    SELECT
-                        L.group_id, L.http_id, R.route
-                    FROM 
-                        `{$this->execPhpFunc(getenv('links'))}` L
-                    LEFT JOIN
-                        `{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                    {$whereClause}
-                ",
-                array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
-            );
-            $stmt->execute($ids);
-        } catch(\PDOException $e) {
-            HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
-        }
+        $this->db->execDbQuery("
+            SELECT
+                L.group_id, L.http_id, R.route
+            FROM 
+                `{$this->execPhpFunc(getenv('links'))}` L
+            LEFT JOIN
+                `{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
+            {$whereClause}",
+            $ids
+        );
         $routeArr = [];
-        while ($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];
             if (!isset($routeArr[$row['group_id']][$row['http_id']])) $routeArr[$row['group_id']][$row['http_id']] = [];
             $routeArr[$row['group_id']][$row['http_id']][] = $row['route'];
         }
-        $stmt->closeCursor();
+        $this->db->closeCursor();
         foreach ($routeArr as $groupId => &$httpArr) {
             foreach ($httpArr as $httpId => &$routes) {
                 $key = "group:{$groupId}:http:{$httpId}:routes";

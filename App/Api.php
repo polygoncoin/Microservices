@@ -213,18 +213,13 @@ class Api
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
                 list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-                try {
-                    $stmt = $this->authorize->db->getStatement($query);
-                    $stmt->execute(array_values($params));
-                } catch(\PDOException $e) {
-                    HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
-                }
+                $this->authorize->db->execDbQuery($query, array_values($params));
                 switch ($queryDetails['mode']) {
                     case 'singleRowFormat':
                         if (!isset($queryDetails['subQuery'])) {
-                            $this->jsonEncodeObj->encode($stmt->fetch(\PDO::FETCH_ASSOC));
+                            $this->jsonEncodeObj->encode($this->authorize->db->fetch());
                         } else {
-                            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+                            $row = $this->authorize->db->fetch();
                             $resultColumns = array_keys($row);
                             foreach (array_keys($subQuery) as $col) {
                                 if (in_array($col, $resultColumns)) {
@@ -250,13 +245,13 @@ class Api
                         } else {
                             $this->jsonEncodeObj->startArray($key);
                         }
-                        for (;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
+                        for (;$row=$this->authorize->db->fetch();) {
                             $this->jsonEncodeObj->encode($row);
                         }
                         $this->jsonEncodeObj->endArray();
                         break;
                 }
-                $stmt->closeCursor();
+                $this->authorize->db->closeCursor();
                 if (isset($queryDetails['subQuery'])) {
                     if (!$this->isAssoc($queryDetails['subQuery'])) {
                         HttpErrorResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
@@ -284,18 +279,13 @@ class Api
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as &$queryDetails) {
             list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-            try {
-                $stmt = $this->authorize->db->getStatement($query);
-                $stmt->execute($params);
-            } catch(\PDOException $e) {
-                HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
-            }
+            $this->authorize->db->execDbQuery($query, $params);
             if (isset($queryDetails['insertId'])) {
                 $insertId = $this->authorize->db->lastInsertId();
                 $insertIds[] = [$queryDetails['insertId'] => $insertId];
                 $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
             }
-            $stmt->closeCursor();
+            $this->authorize->db->closeCursor();
             if (isset($queryDetails['subQuery'])) {
                 $insertIds = array_merge($insertIds, $this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false));
             }

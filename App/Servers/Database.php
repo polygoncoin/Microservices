@@ -56,6 +56,13 @@ class Database
     private $pdo = null;
 
     /**
+     * Database connection
+     *
+     * @var object
+     */
+    private $stmt = null;
+
+    /**
      * Database constructor
      */
     public function __construct(
@@ -123,14 +130,51 @@ class Database
     }
 
     /**
-     * Process SQL and return statement object
+     * Execute parameterised query
      *
-     * @param string $sql SQL query
+     * @param string $query  Parameterised query
+     * @param array  $params Parameterised query params
      * @return object
      */
-    public function getStatement($sql)
+    public function execDbQuery($query, $params = [])
     {
         $this->connect();
-        return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+        try {
+            $this->stmt = $this->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $this->stmt->execute($params);
+        } catch(\PDOException $e) {
+            HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
+        }
     }
+
+    /**
+     * Fetch row from statement
+     *
+     * @return array
+     */
+    public function fetch()
+    {
+        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Fetch all rows from statement
+     *
+     * @return array
+     */
+    public function fetchAll()
+    {
+        return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Close statement cursor
+     *
+     * @return void
+     */
+    public function closeCursor()
+    {
+        $this->stmt->closeCursor();
+    }
+
 }
