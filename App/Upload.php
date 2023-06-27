@@ -5,7 +5,6 @@ use App\HttpErrorResponse;
 
 /**
  * Class is used for file uploads
- * 
  *
  * This class supports POST & PUT HTTP request
  *
