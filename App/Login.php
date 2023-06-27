@@ -144,7 +144,7 @@ class Login
         // Redis - one can find the userID from username.
         if ($this->cache->cacheExists("user:{$_POST['username']}")) {
             $this->userDetails = json_decode($this->cache->getCache("user:{$_POST['username']}"), true);
-            $this->userId = $this->userDetails['id'];
+            $this->userId = $this->userDetails['user_id'];
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
                 HttpErrorResponse::return4xx(404, 'Invalid credentials');

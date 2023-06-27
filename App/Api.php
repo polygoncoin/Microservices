@@ -183,10 +183,11 @@ class Api
             }
             if ($isValidData!==true) {
                 $response[] = ['data' => $payload, 'Error' => $isValidData];
-            }
-            $res = $this->insertUpdateSubQuery($input, $config);
-            if (!isset($payload['id'])) {
-                $response[] = $res;
+            } else {
+                $res = $this->insertUpdateSubQuery($input, $config);
+                if ('POST' === $_SERVER['REQUEST_METHOD']) {
+                    $response[] = $res;
+                }
             }
         }
         $this->jsonEncodeObj = new JsonEncode();

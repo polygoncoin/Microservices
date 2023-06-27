@@ -11,11 +11,13 @@ return [
         ]
     ],
     'thirdParty' => [
-        '{party}' => [
+        '{thirdParty}' => [
             '__file__' => ''
         ]
     ],
     'upload' => [
-        '__file__' => ''
+        '{module}:string' => [
+            '__file__' => ''
+        ]
     ]
 ];

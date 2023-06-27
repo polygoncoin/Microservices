@@ -154,19 +154,24 @@ class Authorize extends HttpRequest
      */
     private function loadTokenSession($token)
     {
+        if (!$this->cache->cacheExists($token)) {
+            HttpErrorResponse::return5xx(501, "Cache token missing.");
+        }
         $this->readOnlySession = json_decode($this->cache->getCache($token), true);
 
-        if (empty($this->readOnlySession['id']) || empty($this->readOnlySession['group_id'])) {
+        if (empty($this->readOnlySession['user_id']) || empty($this->readOnlySession['group_id'])) {
             HttpErrorResponse::return4xx(404, 'Invalid session');
-        } else {
-            $this->userId = $this->readOnlySession['id'];
-            $this->groupId = $this->readOnlySession['group_id'];
-            $groupInfoArr = json_decode($this->cache->getCache("group:{$this->groupId}"), true);
-            $this->clientHostname = $groupInfoArr['db_hostname'];
-            $this->clientUsername = $groupInfoArr['db_username'];
-            $this->clientPassword = $groupInfoArr['db_password'];
-            $this->clientDatabase = $groupInfoArr['db_database'];
         }
+        $this->userId = $this->readOnlySession['user_id'];
+        $this->groupId = $this->readOnlySession['group_id'];
+        if (!$this->cache->cacheExists("group:{$this->groupId}")) {
+            HttpErrorResponse::return5xx(501, "Cache 'group:{$this->groupId}' missing.");
+        }
+        $groupInfoArr = json_decode($this->cache->getCache("group:{$this->groupId}"), true);
+        $this->clientHostname = $groupInfoArr['db_hostname'];
+        $this->clientUsername = $groupInfoArr['db_username'];
+        $this->clientPassword = $groupInfoArr['db_password'];
+        $this->clientDatabase = $groupInfoArr['db_database'];
     }
 
     /**

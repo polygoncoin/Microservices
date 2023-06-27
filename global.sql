@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `l001_link_allowed_route`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `l001_link_allowed_route` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `link_id` int NOT NULL AUTO_INCREMENT,
   `group_id` int NOT NULL,
   `route_id` int DEFAULT NULL,
   `http_id` int DEFAULT NULL,
@@ -36,19 +36,9 @@ CREATE TABLE `l001_link_allowed_route` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`link_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `l001_link_allowed_route`
---
-
-LOCK TABLES `l001_link_allowed_route` WRITE;
-/*!40000 ALTER TABLE `l001_link_allowed_route` DISABLE KEYS */;
-INSERT INTO `l001_link_allowed_route` VALUES (1,1,1,1,NULL,'2023-04-21 06:44:48',NULL,NULL,NULL,'2023-04-21 06:44:48','No','No','No'),(2,1,1,2,NULL,'2023-04-21 08:11:59',NULL,NULL,NULL,'2023-04-21 08:11:59','No','No','No'),(3,1,1,3,NULL,'2023-04-21 08:12:01',NULL,NULL,NULL,'2023-04-21 08:12:01','No','No','No'),(4,1,1,4,NULL,'2023-04-21 08:12:03',NULL,NULL,NULL,'2023-04-21 08:12:03','No','No','No'),(5,1,1,5,NULL,'2023-04-21 08:12:06',NULL,NULL,NULL,'2023-04-21 08:12:06','No','No','No'),(6,1,2,1,NULL,'2023-04-21 08:12:13',NULL,NULL,NULL,'2023-04-21 08:12:13','No','No','No'),(7,1,2,2,NULL,'2023-04-21 08:12:17',NULL,NULL,NULL,'2023-04-21 08:12:17','No','No','No'),(8,1,2,3,NULL,'2023-04-21 08:12:19',NULL,NULL,NULL,'2023-04-21 08:12:19','No','No','No'),(9,1,2,4,NULL,'2023-04-21 08:12:22',NULL,NULL,NULL,'2023-04-21 08:12:22','No','No','No'),(10,1,2,5,NULL,'2023-04-21 08:12:24',NULL,NULL,NULL,'2023-04-21 08:12:24','No','No','No'),(11,1,3,2,NULL,'2023-05-29 13:08:15',NULL,NULL,NULL,'2023-05-29 13:08:15','No','No','No'),(12,1,4,1,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No');
-/*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `m001_master_group`
@@ -58,7 +48,7 @@ DROP TABLE IF EXISTS `m001_master_group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m001_master_group` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `group_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `client_id` int DEFAULT NULL,
   `connection_id` int NOT NULL,
@@ -73,19 +63,9 @@ CREATE TABLE `m001_master_group` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`group_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `m001_master_group`
---
-
-LOCK TABLES `m001_master_group` WRITE;
-/*!40000 ALTER TABLE `m001_master_group` DISABLE KEYS */;
-INSERT INTO `m001_master_group` VALUES (1,'Super Admin',1,1,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','No','No','No');
-/*!40000 ALTER TABLE `m001_master_group` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `m002_master_user`
@@ -95,7 +75,7 @@ DROP TABLE IF EXISTS `m002_master_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m002_master_user` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `group_id` int NOT NULL,
@@ -109,19 +89,9 @@ CREATE TABLE `m002_master_user` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `m002_master_user`
---
-
-LOCK TABLES `m002_master_user` WRITE;
-/*!40000 ALTER TABLE `m002_master_user` DISABLE KEYS */;
-INSERT INTO `m002_master_user` VALUES (1,'shames11@rediffmail.com','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',1,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','No','No','No');
-/*!40000 ALTER TABLE `m002_master_user` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `m003_master_route`
@@ -131,7 +101,7 @@ DROP TABLE IF EXISTS `m003_master_route`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m003_master_route` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `route_id` int NOT NULL AUTO_INCREMENT,
   `route` varchar(255) NOT NULL,
   `comments` varchar(255) DEFAULT NULL,
   `created_by` int DEFAULT NULL,
@@ -143,19 +113,9 @@ CREATE TABLE `m003_master_route` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`route_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `m003_master_route`
---
-
-LOCK TABLES `m003_master_route` WRITE;
-/*!40000 ALTER TABLE `m003_master_route` DISABLE KEYS */;
-INSERT INTO `m003_master_route` VALUES (1,'/global/{table:string}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','No','No','No'),(2,'/global/{table:string}/{id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No'),(3,'/upload',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),(4,'/thirdParty/Google',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
-/*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `m004_master_connection`
@@ -165,15 +125,11 @@ DROP TABLE IF EXISTS `m004_master_connection`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m004_master_connection` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `connection_id` int NOT NULL AUTO_INCREMENT,
   `db_hostname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_database` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `cache_hostname` varchar(255) NOT NULL,
-  `cache_port` varchar(255) NOT NULL,
-  `cache_password` varchar(255) NOT NULL,
-  `cache_database` varchar(255) NOT NULL,
   `comments` varchar(255) DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -184,19 +140,9 @@ CREATE TABLE `m004_master_connection` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`connection_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `m004_master_connection`
---
-
-LOCK TABLES `m004_master_connection` WRITE;
-/*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
-INSERT INTO `m004_master_connection` VALUES (1,'dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),(2,'dbHostnameClient001','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','','','','','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
-/*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `m005_master_http`
@@ -206,7 +152,7 @@ DROP TABLE IF EXISTS `m005_master_http`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m005_master_http` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `http_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `comments` varchar(255) DEFAULT NULL,
   `created_by` int DEFAULT NULL,
@@ -218,19 +164,9 @@ CREATE TABLE `m005_master_http` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`http_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `m005_master_http`
---
-
-LOCK TABLES `m005_master_http` WRITE;
-/*!40000 ALTER TABLE `m005_master_http` DISABLE KEYS */;
-INSERT INTO `m005_master_http` VALUES (1,'GET','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),(2,'POST','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),(3,'PUT','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),(4,'PATCH','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 09:15:58','No','No','No'),(5,'DELETE',NULL,NULL,'2023-04-15 09:16:22',NULL,NULL,NULL,'2023-04-15 09:16:22','No','No','No');
-/*!40000 ALTER TABLE `m005_master_http` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `m006_master_client`
@@ -240,7 +176,7 @@ DROP TABLE IF EXISTS `m006_master_client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `m006_master_client` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `client_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `comments` varchar(255) DEFAULT NULL,
   `created_by` int DEFAULT NULL,
@@ -252,9 +188,94 @@ CREATE TABLE `m006_master_client` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`client_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `l001_link_allowed_route`
+--
+
+LOCK TABLES `l001_link_allowed_route` WRITE;
+/*!40000 ALTER TABLE `l001_link_allowed_route` DISABLE KEYS */;
+INSERT INTO `l001_link_allowed_route` VALUES 
+(1,1,1,1,NULL,'2023-04-21 06:44:48',NULL,NULL,NULL,'2023-04-21 06:44:48','No','No','No'),
+(2,1,1,2,NULL,'2023-04-21 08:11:59',NULL,NULL,NULL,'2023-04-21 08:11:59','No','No','No'),
+(3,1,1,3,NULL,'2023-04-21 08:12:01',NULL,NULL,NULL,'2023-04-21 08:12:01','No','No','No'),
+(4,1,1,4,NULL,'2023-04-21 08:12:03',NULL,NULL,NULL,'2023-04-21 08:12:03','No','No','No'),
+(5,1,1,5,NULL,'2023-04-21 08:12:06',NULL,NULL,NULL,'2023-04-21 08:12:06','No','No','No'),
+(6,1,2,1,NULL,'2023-04-21 08:12:13',NULL,NULL,NULL,'2023-04-21 08:12:13','No','No','No'),
+(7,1,2,2,NULL,'2023-04-21 08:12:17',NULL,NULL,NULL,'2023-04-21 08:12:17','No','No','No'),
+(8,1,2,3,NULL,'2023-04-21 08:12:19',NULL,NULL,NULL,'2023-04-21 08:12:19','No','No','No'),
+(9,1,2,4,NULL,'2023-04-21 08:12:22',NULL,NULL,NULL,'2023-04-21 08:12:22','No','No','No'),
+(10,1,2,5,NULL,'2023-04-21 08:12:24',NULL,NULL,NULL,'2023-04-21 08:12:24','No','No','No'),
+(11,1,3,2,NULL,'2023-05-29 13:08:15',NULL,NULL,NULL,'2023-05-29 13:08:15','No','No','No'),
+(12,1,4,1,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No');
+/*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `m001_master_group`
+--
+
+LOCK TABLES `m001_master_group` WRITE;
+/*!40000 ALTER TABLE `m001_master_group` DISABLE KEYS */;
+INSERT INTO `m001_master_group` VALUES
+(1,'Super Admins',1,1,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','No','No','No');
+/*!40000 ALTER TABLE `m001_master_group` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `m002_master_user`
+--
+
+LOCK TABLES `m002_master_user` WRITE;
+/*!40000 ALTER TABLE `m002_master_user` DISABLE KEYS */;
+INSERT INTO `m002_master_user` VALUES
+(1,'shames11@rediffmail.com','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',1,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','No','No','No');
+/*!40000 ALTER TABLE `m002_master_user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `m003_master_route`
+--
+
+LOCK TABLES `m003_master_route` WRITE;
+/*!40000 ALTER TABLE `m003_master_route` DISABLE KEYS */;
+INSERT INTO `m003_master_route` VALUES
+(1,'/global/{table:string}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','No','No','No'),
+(2,'/global/{table:string}/{id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No'),
+(3,'/upload',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),
+(4,'/thirdParty/{thirdParty}:string',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
+/*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `m004_master_connection`
+--
+
+LOCK TABLES `m004_master_connection` WRITE;
+/*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
+INSERT INTO `m004_master_connection` VALUES
+(1,'dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),
+(2,'dbHostnameClient001','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
+/*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping data for table `m005_master_http`
+--
+
+LOCK TABLES `m005_master_http` WRITE;
+/*!40000 ALTER TABLE `m005_master_http` DISABLE KEYS */;
+INSERT INTO `m005_master_http` VALUES
+(1,'GET','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),
+(2,'POST','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),
+(3,'PUT','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 08:54:50','No','No','No'),
+(4,'PATCH','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-15 09:15:58','No','No','No'),
+(5,'DELETE',NULL,NULL,'2023-04-15 09:16:22',NULL,NULL,NULL,'2023-04-15 09:16:22','No','No','No');
+/*!40000 ALTER TABLE `m005_master_http` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Dumping data for table `m006_master_client`
@@ -262,7 +283,8 @@ CREATE TABLE `m006_master_client` (
 
 LOCK TABLES `m006_master_client` WRITE;
 /*!40000 ALTER TABLE `m006_master_client` DISABLE KEYS */;
-INSERT INTO `m006_master_client` VALUES (1,'test333','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','No','No','Yes');
+INSERT INTO `m006_master_client` VALUES
+(1,'sahar.guru','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','No','No','Yes');
 /*!40000 ALTER TABLE `m006_master_client` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

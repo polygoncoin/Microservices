@@ -109,17 +109,20 @@ class Reload
      */
     private function processUser($ids = [])
     {
-        $whereClause = count($ids) ? 'WHERE U.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE U.user_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
         try {
             $stmt = $this->db->getStatement("
                 SELECT
-                    id,
-                    username,
-                    password_hash,
-                    group_id
+                    U.user_id,
+                    U.username,
+                    U.password_hash,
+                    G.client_id,
+                    U.group_id
                 FROM
                     `{$this->execPhpFunc(getenv('users'))}` U
+                LEFT JOIN
+                    `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.group_id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             $stmt->execute($ids);
@@ -141,11 +144,11 @@ class Reload
      */
     private function processGroup($ids = [])
     {
-        $whereClause = count($ids) ? 'WHERE G.id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE G.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
         try {
             $stmt = $this->db->getStatement("
                 SELECT
-                    G.id,
+                    G.group_id,
                     G.name,
                     G.client_id,
                     C.db_hostname,
@@ -155,7 +158,7 @@ class Reload
                 FROM
                     `{$this->execPhpFunc(getenv('groups'))}` G
                 LEFT JOIN
-                    `{$this->execPhpFunc(getenv('connections'))}` C on g.connection_id = C.id
+                    `{$this->execPhpFunc(getenv('connections'))}` C on G.connection_id = C.connection_id
                 {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
             );
@@ -164,7 +167,7 @@ class Reload
             HttpErrorResponse::return5xx(501, 'Database error. ' . $e->getMessage());
         }
         while($row =  $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $this->cache->setCache("group:{$row['id']}", json_encode($row));
+            $this->cache->setCache("group:{$row['group_id']}", json_encode($row));
         }
         $stmt->closeCursor();
     }
@@ -177,10 +180,10 @@ class Reload
      */
     private function processGroupIps($ids = [])
     {
-        $whereClause = count($ids) ? 'WHERE id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
         try {
             $stmt = $this->db->getStatement(
-                "SELECT id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
+                "SELECT group_id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
             );
             $stmt->execute($ids);
@@ -203,7 +206,7 @@ class Reload
                 }
             }
             if (count($allowedIpsArray) !== 0) {
-                $this->cache->setSetMembers("group:{$row['id']}:ips", $allowedIpsArray);
+                $this->cache->setSetMembers("group:{$row['group_id']}:ips", $allowedIpsArray);
             }
         }
         $stmt->closeCursor();
@@ -226,7 +229,7 @@ class Reload
                     FROM 
                         `{$this->execPhpFunc(getenv('links'))}` L
                     LEFT JOIN
-                        `{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.id
+                        `{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
                     {$whereClause}
                 ",
                 array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY)
