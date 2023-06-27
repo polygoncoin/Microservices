@@ -56,7 +56,7 @@ class Database
     private $pdo = null;
 
     /**
-     * Database connection
+     * Executed query statement
      *
      * @var object
      */
