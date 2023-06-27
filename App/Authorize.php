@@ -3,15 +3,14 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpErrorResponse;
-use App\Servers\Cache;
-use App\Servers\Database;
+use App\Servers\Cache\Redis;
 
 /**
  * Class handles Authorization
  *
  * This class is built to process and handle Authorization
  *
- * @category   Cache
+ * @category   Authorize
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -47,6 +46,13 @@ class Authorize extends HttpRequest
      * @var string
      */
     public $globalDB = null;
+
+    /**
+     * Client database server type
+     *
+     * @var string
+     */
+    public $clientServerType = null;
 
     /**
      * Client database hostname
@@ -118,7 +124,7 @@ class Authorize extends HttpRequest
     private function process()
     {
         $this->globalDB = getenv('globalDbName');
-        $this->cache = new Cache(
+        $this->cache = new Redis(
             'cacheHostname',
             'cachePort',
             'cachePassword',
@@ -168,6 +174,7 @@ class Authorize extends HttpRequest
             HttpErrorResponse::return5xx(501, "Cache 'group:{$this->groupId}' missing.");
         }
         $groupInfoArr = json_decode($this->cache->getCache("group:{$this->groupId}"), true);
+        $this->clientServerType = 'App\\Servers\\Database\\'.$groupInfoArr['db_server_type'];
         $this->clientHostname = $groupInfoArr['db_hostname'];
         $this->clientUsername = $groupInfoArr['db_username'];
         $this->clientPassword = $groupInfoArr['db_password'];
@@ -221,7 +228,7 @@ class Authorize extends HttpRequest
     public function connectClientDB()
     {
         if (!is_null($this->db)) return;
-        $this->db = new Database(
+        $this->db = new $this->clientServerType(
             $this->clientHostname,
             $this->clientUsername,
             $this->clientPassword,

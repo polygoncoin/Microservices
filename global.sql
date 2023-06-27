@@ -127,6 +127,7 @@ DROP TABLE IF EXISTS `m004_master_connection`;
 CREATE TABLE `m004_master_connection` (
   `connection_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255),
+  `db_server_type` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_hostname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
@@ -258,9 +259,9 @@ UNLOCK TABLES;
 LOCK TABLES `m004_master_connection` WRITE;
 /*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
 INSERT INTO `m004_master_connection` VALUES
-(1,'global','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),
-(2,'clientOneConnectionName','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No'),
-(3,'clientTwoConnectionName','dbHostnameClient002','dbUsernameClient002','dbPasswordClient002','dbDatabaseClient002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
+(1,'global','MySQL','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','No','No','No'),
+(2,'clientOneConnectionName','MySQL','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No'),
+(3,'clientTwoConnectionName','MySQL','dbHostnameClient002','dbUsernameClient002','dbPasswordClient002','dbDatabaseClient002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','No','No','No');
 /*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 

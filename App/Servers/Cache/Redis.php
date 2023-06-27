@@ -1,5 +1,5 @@
 <?php
-namespace App\Servers;
+namespace App\Servers\Cache;
 
 use App\HttpErrorResponse;
 
@@ -8,7 +8,7 @@ use App\HttpErrorResponse;
  *
  * This class is built to handle loading the cache server.
  *
- * @category   Cache
+ * @category   Cache - Redis
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -16,7 +16,7 @@ use App\HttpErrorResponse;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Cache
+class Redis
 {
     /**
      * Cache hostname

@@ -1,6 +1,7 @@
 <?php
-namespace App\Servers;
+namespace App\Servers\Database;
 
+use App\Servers\Database\AbstractDatabase;
 use App\HttpErrorResponse;
 use App\PHPTrait;
 
@@ -16,7 +17,7 @@ use App\PHPTrait;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Database
+class MySQL extends AbstractDatabase
 {
     use PHPTrait;
 
@@ -85,7 +86,7 @@ class Database
      *
      * @return void
      */
-    private function connect()
+    public function connect()
     {
         if (!is_null($this->pdo)) return;
         try {
@@ -176,5 +177,4 @@ class Database
     {
         $this->stmt->closeCursor();
     }
-
 }

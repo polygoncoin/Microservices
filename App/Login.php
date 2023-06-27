@@ -4,7 +4,7 @@ namespace App;
 use App\HttpRequest;
 use App\HttpErrorResponse;
 use App\JsonEncode;
-use App\Servers\Cache;
+use App\Servers\Cache\Redis;
 
 /**
  * Login
@@ -93,7 +93,7 @@ class Login
      */
     private function process()
     {
-        $this->cache = new Cache(
+        $this->cache = new Redis(
             'cacheHostname',
             'cachePort',
             'cachePassword',

@@ -1,8 +1,8 @@
 <?php
 namespace App;
 
-use App\Servers\Cache;
-use App\Servers\Database;
+use App\Servers\Cache\Redis;
+use App\Servers\Database\MySQL;
 use App\JsonEncode;
 use App\PHPTrait;
 
@@ -53,12 +53,12 @@ class Reload
      */
     private function process($refresh = 'all', $idsString = null)
     {
-        $this->cache = new Cache(
+        $this->cache = new Redis(
             'cacheHostname',
             'cachePort',
             'cachePassword'
         );
-        $this->db = new Database(
+        $this->db = new MySQL(
             'dbHostnameDefault',
             'dbUsernameDefault',
             'dbPasswordDefault',
@@ -144,6 +144,7 @@ class Reload
                 G.group_id,
                 G.name,
                 G.client_id,
+                C.db_server_type,
                 C.db_hostname,
                 C.db_username,
                 C.db_password,
