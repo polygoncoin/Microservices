@@ -19,23 +19,33 @@ use App\HttpErrorResponse;
 class Database
 {
     /**
+     * Database object
+     */
+    public static $db = null;
+
+    /**
      * Database constructor
      */
     public static function getDbObject(
-        $serverType,
-        $hostname,
-        $username,
-        $password,
+        $serverType = null,
+        $hostname = null,
+        $username = null,
+        $password = null,
         $database = null
     )
     {
+        if (!is_null(self::$db)) {
+            return self::$db;
+        }
+
         if($serverType === 'MySQL') {
-            return new MySQL(
+            self::$db = new MySQL(
                 $hostname,
                 $username,
                 $password,
                 $database
             );
         }
+        return self::$db;
     }
 }
