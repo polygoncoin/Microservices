@@ -2,7 +2,7 @@
 namespace App;
 
 use App\Servers\Cache\Redis;
-use App\Servers\Database\MySQL;
+use App\Servers\Database\Database;
 use App\JsonEncode;
 use App\PHPTrait;
 
@@ -58,7 +58,8 @@ class Reload
             'cachePort',
             'cachePassword'
         );
-        $this->db = new MySQL(
+        $this->db = Database::getDbObject(
+            'MySQL',
             'dbHostnameDefault',
             'dbUsernameDefault',
             'dbPasswordDefault',
