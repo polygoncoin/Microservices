@@ -27,17 +27,13 @@ class Database
      * Database constructor
      */
     public static function getDbObject(
-        $serverType = null,
-        $hostname = null,
-        $username = null,
-        $password = null,
+        $serverType,
+        $hostname,
+        $username,
+        $password,
         $database = null
     )
     {
-        if (!is_null(self::$db)) {
-            return self::$db;
-        }
-
         if($serverType === 'MySQL') {
             self::$db = new MySQL(
                 $hostname,
@@ -47,5 +43,16 @@ class Database
             );
         }
         return self::$db;
+    }
+
+    /**
+     * Database constructor
+     */
+    public static function getDb()
+    {
+        if (!is_null(self::$db)) {
+            return self::$db;
+        }
+
     }
 }
