@@ -190,19 +190,19 @@ class Authorize extends HttpRequest
      */
     private function checkSourceIp($ip)
     {
-        $foundIP = null;
-        $ipNumber = ip2long($ip);
-        if ($this->cache->cacheExists("group:{$this->groupId}:ips")) {
-            $foundIP = false;
-            foreach(json_decode($this->cache->getCache("group:{$this->groupId}:ips"), true) as list($start, $end)) {
-                if ($ipNumber >= $start && $ipNumber <= $end) {
-                    $foundIP = true;
+        // Redis - one can find the userID from username.
+        if ($this->cache->cacheExists("group:{$this->groupId}:cidr")) {
+            $cidrs = json_decode($this->cache->getCache("group:{$this->groupId}:cidr"), true);
+            $isValidIp = false;
+            foreach ($cidrs as $cidr) {
+                if (cidr_match($ip, $cidr)) {
+                    $isValidIp = true;
                     break;
                 }
             }
-        }
-        if (!is_null($foundIP) && !$foundIP) {
-            HttpErrorResponse::return4xx(404, 'IP Address not supported');
+            if (!$isValidIp) {
+                HttpErrorResponse::return4xx(404, 'Invalid request.');
+            }
         }
     }
 

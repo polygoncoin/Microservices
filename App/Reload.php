@@ -43,7 +43,17 @@ class Reload
      */
     public static function init()
     {
-        (new self)->process();
+        switch (true) {
+            case isset($_GET['refresh']) && isset($_GET['ids']):
+                (new self)->process($_GET['refresh'], $_GET['ids']);
+                break;        
+            case isset($_GET['refresh']):
+                (new self)->process($_GET['refresh']);
+                break;        
+            default:
+                (new self)->process();
+                break;        
+        }
     }
 
     /**
@@ -174,23 +184,14 @@ class Reload
             "SELECT group_id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
             $ids
         );
-        $allowedIpsArray = [];
+        $cidrArray = [];
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
-            $count = 0;
             if (!empty($row['allowed_ips'])) {
-                foreach (explode(',', trim($row['allowed_ips'])) as $cidr) {
-                    $cidr = str_replace(' ', '', trim($cidr));
-                    if (!empty(trim($cidr))) {
-                        $allowedIps = $this->getIpRange($cidr);
-                        $allowedIpsArray = array_merge(
-                            $allowedIpsArray,
-                            range($allowedIps['start'], $allowedIps['end'])
-                        );
-                    }
+                $cidr = json_decode(trim($cidr), true);
+                if (count($cidr)>0) {
+                    $this->cache->setCache("group:{$row['group_id']}:cidr", json_encode($cidr));
+
                 }
-            }
-            if (count($allowedIpsArray) !== 0) {
-                $this->cache->setSetMembers("group:{$row['group_id']}:ips", $allowedIpsArray);
             }
         }
         $this->db->closeCursor();
@@ -204,7 +205,7 @@ class Reload
      */
     private function processGroupClientRoutes($ids = [])
     {
-        $whereClause = count($ids) ? 'WHERE L.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+        $whereClause = count($ids) ? 'WHERE L.link_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
         $this->db->execDbQuery("
             SELECT
                 L.group_id, L.http_id, R.route
@@ -239,26 +240,6 @@ class Reload
     private function processToken($token)
     {
         $this->cache->deleteCache($token);
-    }
-
-    /**
-     * Get Ip range from cidr
-     *
-     * @param string $cidr Eg. 127.0.0.0/24 OR 127.0.0.1
-     * @return void
-     */
-    private function getIpRange($cidr)
-    {echo __FUNCTION__;
-        $range = [];
-        $cidr = explode('/', trim($cidr));
-        if (count($cidr)===1) {
-            $range['start'] = ip2long($cidr[0]);
-            $range['end'] = ip2long($cidr[0]);
-        } elseif (count($cidr)===2) {
-            $range['start'] = ((ip2long($cidr[0])) & ((-1 << (32 - (int)$cidr[1]))));
-            $range['end'] = ((ip2long($range[0])) + pow(2, (32 - (int)$cidr[1])) - 1);
-        }
-        return $range;
     }
 
     /**

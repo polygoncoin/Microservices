@@ -4,6 +4,7 @@ namespace App;
 use App\Authorize;
 use App\JsonEncode;
 use App\Validation\Validator;
+use App\PHPTrait;
 
 /**
  * Class to initialize api HTTP request
@@ -19,6 +20,8 @@ use App\Validation\Validator;
  */
 class Api
 {
+    use PHPTrait;
+
     /**
      * Global DB
      *

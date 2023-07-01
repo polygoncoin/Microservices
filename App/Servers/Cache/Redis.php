@@ -182,7 +182,7 @@ class Redis
      * @param array  $valueArray Cache values for Set
      * @return void
      */
-    public function setSetMembers($key, &$valueArray)
+    public function setSetMembers($key, $valueArray)
     {
         $this->connect();
         $this->deleteCache($key);

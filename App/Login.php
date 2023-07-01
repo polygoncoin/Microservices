@@ -162,12 +162,18 @@ class Login
     private function validateRequestIp()
     {
         // Redis - one can find the userID from username.
-        if (
-            $this->cache->cacheExists("group:{$this->groupId}:ips")
-            && !$this->cache->isSetMember("group:{$this->groupId}:ips", $this->requestIp)
-        )
-        {
-            HttpErrorResponse::return4xx(404, 'Invalid credentials.');
+        if ($this->cache->cacheExists("group:{$this->groupId}:cidr")) {
+            $cidrs = json_decode($this->cache->getCache("group:{$this->groupId}:cidr"), true);
+            $isValidIp = false;
+            foreach ($cidrs as $cidr) {
+                if (cidr_match($this->requestIp, $cidr)) {
+                    $isValidIp = true;
+                    break;
+                }
+            }
+            if (!$isValidIp) {
+                HttpErrorResponse::return4xx(404, 'Invalid credentials.');
+            }
         }
     }
 
