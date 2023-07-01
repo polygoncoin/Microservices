@@ -43,6 +43,12 @@ return [
                 '__file__' => __DOC_ROOT__ . '/Config/Queries/GlobalDB/GET/clients.php',
             ],
         ],
+        'httproutes' => [
+            '__file__' => __DOC_ROOT__ . '/Config/Queries/GlobalDB/GET/custom/httproutes.php',
+            '{http:string|GET,POST,PUT,PATCH,DELETE}'  => [
+                '__file__' => __DOC_ROOT__ . '/Config/Queries/GlobalDB/GET/custom/httproutes.php',
+            ],
+        ]
     ],
     'client' => [
         '{table:string}' => [

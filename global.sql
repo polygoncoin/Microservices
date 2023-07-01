@@ -242,7 +242,9 @@ INSERT INTO `l001_link_allowed_route` VALUES
 (39,1,8,5,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No'),
 (40,1,10,5,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No'),
 (41,1,12,5,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No'),
-(42,1,14,5,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No');
+(42,1,14,5,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No'),
+(43,1,15,1,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No'),
+(44,1,16,1,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','No','No','No');
 /*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -289,8 +291,10 @@ INSERT INTO `m003_master_route` VALUES
 (12,'/global/https/{http_id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No'),
 (13,'/global/clients',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','No','No','No'),
 (14,'/global/clients/{client_id:int}',NULL,NULL,'2023-04-21 08:11:25',NULL,NULL,NULL,'2023-04-21 08:11:25','No','No','No'),
-(15,'/upload/{module:string}',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),
-(16,'/thirdParty/{thirdParty:string}',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
+(15,'/global/httproutes',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No'),
+(16,'/global/httproutes/{http:string|GET,POST,PUT,PATCH,DELETE}',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No'),
+(17,'/upload/{module:string}',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','No','No','No'),
+(18,'/thirdParty/{thirdParty:string}',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','No','No','No');
 /*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
 UNLOCK TABLES;
 

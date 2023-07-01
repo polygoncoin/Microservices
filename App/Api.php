@@ -249,7 +249,13 @@ class Api
                             $this->jsonEncodeObj->startArray($key);
                         }
                         for (;$row=$this->authorize->db->fetch();) {
-                            $this->jsonEncodeObj->encode($row);
+                            if (count($row) === 1) {
+                                foreach ($row as $onlyValue) {
+                                    $this->jsonEncodeObj->encode($onlyValue);
+                                }
+                            } else {
+                                $this->jsonEncodeObj->encode($row);
+                            }
                         }
                         $this->jsonEncodeObj->endArray();
                         break;
@@ -310,12 +316,12 @@ class Api
         $stmtWhereParams = [];
         if (isset($queryDetails['payload'])) {
             $stmtParams = $this->getStmtParams($input, $queryDetails['payload']);
-            $__SET__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtParams)));
+            $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtParams)));
             $query = str_replace('__SET__', $__SET__, $query);
         }
         if (isset($queryDetails['where'])) {
             $stmtWhereParams = $this->getStmtParams($input, $queryDetails['where']);
-            $__WHERE__ = implode(', ',array_map(function ($v) { return '`' . str_replace('`','',$v) . '` = ?';}, array_keys($stmtWhereParams)));
+            $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
             $query = str_replace('__WHERE__', $__WHERE__, $query);
         }
         $params = [];
