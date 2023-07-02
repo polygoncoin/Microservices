@@ -8,6 +8,7 @@ return [
         'updated_on' => ['custom', date('Y-m-d H:i:s')]
     ],
     'where' => [
+        'is_deleted' => ['custom', 'No'],
         'client_id' => ['uriParams', 'client_id']
     ]
 ];

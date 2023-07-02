@@ -9,6 +9,8 @@ return [
         'updated_on' => ['custom', date('Y-m-d H:i:s')]
     ],
     'where' => [
+        'is_approved' => ['custom', 'Yes'],
+        'is_deleted' => ['custom', 'No'],
         'http_id' => ['uriParams', 'http_id']
     ]
 ];

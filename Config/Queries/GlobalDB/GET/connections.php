@@ -7,7 +7,11 @@ return [
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` WHERE __WHERE__",
-        'where' => ['connection_id' => ['uriParams','connection_id']],
+        'where' => [
+            'is_approved' => ['custom', 'Yes'],
+            'is_deleted' => ['custom', 'No'],
+            'connection_id' => ['uriParams','connection_id']
+        ],
         'mode' => 'singleRowFormat'//Single row returned.
     ]
 ][isset($input['uriParams']['connection_id'])?'single':'all'];

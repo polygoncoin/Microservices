@@ -7,7 +7,11 @@ return [
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('users'))}` WHERE __WHERE__",
-        'where' => ['user_id' => ['uriParams','user_id']],
+        'where' => [
+            'is_approved' => ['custom', 'Yes'],
+            'is_deleted' => ['custom', 'No'],
+            'user_id' => ['uriParams','user_id']
+        ],
         'mode' => 'singleRowFormat'//Single row returned.
     ]
 ][isset($input['uriParams']['user_id'])?'single':'all'];
