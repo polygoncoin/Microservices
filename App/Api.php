@@ -195,6 +195,9 @@ class Api
         }
         $this->jsonEncodeObj = new JsonEncode();
         if ($this->authorize->requestMethod === 'POST') {
+            if (count($response) === 1) {
+                $response = $response[0];
+            }
             $this->jsonEncodeObj->encode($response);
         } else {
             $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
@@ -291,7 +294,7 @@ class Api
             $this->authorize->db->execDbQuery($query, $params);
             if (isset($queryDetails['insertId'])) {
                 $insertId = $this->authorize->db->lastInsertId();
-                $insertIds[] = [$queryDetails['insertId'] => $insertId];
+                $insertIds = array_merge($insertIds, [$queryDetails['insertId'] => $insertId]);
                 $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
             }
             $this->authorize->db->closeCursor();

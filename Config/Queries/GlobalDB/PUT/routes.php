@@ -2,7 +2,7 @@
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` SET __SET__ WHERE __WHERE__",
     'payload' => [
-        //column => [payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+        //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'route' => ['payload', 'route'],
         'comments' => ['payload', 'comments'],
         'updated_by' => ['readOnlySession', 'user_id'],

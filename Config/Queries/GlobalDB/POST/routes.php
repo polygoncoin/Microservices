@@ -2,7 +2,7 @@
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` SET __SET__",
     'payload' => [
-        //column => [payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+        //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'route' => ['payload', 'route'],
         'comments' => ['payload', 'comments'],
         'created_by' => ['readOnlySession', 'user_id'],
