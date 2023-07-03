@@ -251,11 +251,16 @@ class Api
                         } else {
                             $this->jsonEncodeObj->startArray($key);
                         }
-                        for (;$row=$this->authorize->db->fetch();) {
-                            if (count($row) === 1) {
-                                foreach ($row as $onlyValue) {
-                                    $this->jsonEncodeObj->encode($onlyValue);
+                        $singleColumn = false;
+                        for ($i=0;$row=$this->authorize->db->fetch();) {
+                            if ($i===0) {
+                                if(count($row) === 1) {
+                                    $singleColumn = true;
                                 }
+                                $i++;
+                            }
+                            if ($singleColumn) {
+                                $this->jsonEncodeObj->encode($row[key($row)]);
                             } else {
                                 $this->jsonEncodeObj->encode($row);
                             }
