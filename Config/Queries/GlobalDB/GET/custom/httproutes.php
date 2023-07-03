@@ -1,7 +1,7 @@
 <?php
 return [
     'all' => [
-        'query' => "SELECT '' as 'GET', '' as 'POST', '' as 'PUT', '' as 'PATCH', '' as 'DELETE'",
+        'query' => "SELECT count FROM (SELECT '' as count) as temp WHERE count = 1",
         'where' => [],
         'mode' => 'singleRowFormat',//Multiple rows returned.
         'subQuery' => [

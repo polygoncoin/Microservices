@@ -225,7 +225,11 @@ class Api
                         if (!isset($queryDetails['subQuery'])) {
                             $this->jsonEncodeObj->encode($this->authorize->db->fetch());
                         } else {
-                            $row = $this->authorize->db->fetch();
+                            if ($row = $this->authorize->db->fetch()) {
+                                ;
+                            } else {
+                                $row = [];
+                            }
                             $resultColumns = array_keys($row);
                             foreach (array_keys($subQuery) as $col) {
                                 if (in_array($col, $resultColumns)) {
