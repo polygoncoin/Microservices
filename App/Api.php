@@ -241,7 +241,14 @@ class Api
                             } else {
                                 $this->jsonEncodeObj->startAssoc($key);
                             }
+                            $subQueryKeys = [];
+                            if (isset($queryDetails['subQuery'])) {
+                                $subQueryKeys = array_keys($queryDetails['subQuery']);
+                            }
                             foreach($row as $key => $value) {
+                                if (in_array($key, $subQueryKeys)) {
+                                    continue;
+                                }
                                 $this->jsonEncodeObj->addKeyValue($key, $value);
                             }
                         }
