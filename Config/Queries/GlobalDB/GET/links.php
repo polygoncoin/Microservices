@@ -1,14 +1,19 @@
 <?php
 return [
     'all' => [
-        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}`",
-        'where' => [],
+        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` WHERE __WHERE__",
+        'where' => [
+            'is_approved' => ['custom', 'Yes'],
+            'is_disabled' => ['custom', 'No'],
+            'is_deleted' => ['custom', 'No'],
+        ],
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` WHERE __WHERE__",
         'where' => [
             'is_approved' => ['custom', 'Yes'],
+            'is_disabled' => ['custom', 'No'],
             'is_deleted' => ['custom', 'No'],
             'link_id' => ['uriParams','link_id']
         ],

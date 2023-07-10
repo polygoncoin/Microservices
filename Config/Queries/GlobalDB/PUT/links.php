@@ -12,6 +12,7 @@ return [
     ],
     'where' => [
         'is_approved' => ['custom', 'Yes'],
+        'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'link_id' => ['uriParams', 'link_id']
     ]

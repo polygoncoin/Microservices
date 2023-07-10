@@ -15,8 +15,12 @@ return [
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
                         WHERE __WHERE__",
                 'where' => [
-                    'L.http_id' => ['custom', '1'],
-                    'L.group_id' => ['readOnlySession', 'group_id']
+                    'L.http_id' => ['custom', 1],
+                    'L.group_id' => ['readOnlySession', 'group_id'],
+                    'L.is_disabled' => ['custom', 'No'],
+                    'L.is_deleted' => ['custom', 'No'],
+                    'R.is_disabled' => ['custom', 'No'],
+                    'R.is_deleted' => ['custom', 'No'],
                 ],
                 'mode' => 'multipleRowFormat'//Multiple rows returned.
             ],
@@ -31,7 +35,11 @@ return [
                         WHERE __WHERE__",
                 'where' => [
                     'L.http_id' => ['custom', '2'],
-                    'L.group_id' => ['readOnlySession', 'group_id']
+                    'L.group_id' => ['readOnlySession', 'group_id'],
+                    'L.is_disabled' => ['custom', 'No'],
+                    'L.is_deleted' => ['custom', 'No'],
+                    'R.is_disabled' => ['custom', 'No'],
+                    'R.is_deleted' => ['custom', 'No'],
                 ],
                 'mode' => 'multipleRowFormat'//Multiple rows returned.
             ],
@@ -46,7 +54,11 @@ return [
                         WHERE __WHERE__",
                 'where' => [
                     'L.http_id' => ['custom', '3'],
-                    'L.group_id' => ['readOnlySession', 'group_id']
+                    'L.group_id' => ['readOnlySession', 'group_id'],
+                    'L.is_disabled' => ['custom', 'No'],
+                    'L.is_deleted' => ['custom', 'No'],
+                    'R.is_disabled' => ['custom', 'No'],
+                    'R.is_deleted' => ['custom', 'No'],
                 ],
                 'mode' => 'multipleRowFormat'//Multiple rows returned.
             ],
@@ -61,7 +73,11 @@ return [
                         WHERE __WHERE__",
                 'where' => [
                     'L.http_id' => ['custom', '4'],
-                    'L.group_id' => ['readOnlySession', 'group_id']
+                    'L.group_id' => ['readOnlySession', 'group_id'],
+                    'L.is_disabled' => ['custom', 'No'],
+                    'L.is_deleted' => ['custom', 'No'],
+                    'R.is_disabled' => ['custom', 'No'],
+                    'R.is_deleted' => ['custom', 'No'],
                 ],
                 'mode' => 'multipleRowFormat'//Multiple rows returned.
             ],
@@ -76,7 +92,11 @@ return [
                         WHERE __WHERE__",
                 'where' => [
                     'L.http_id' => ['custom', '5'],
-                    'L.group_id' => ['readOnlySession', 'group_id']
+                    'L.group_id' => ['readOnlySession', 'group_id'],
+                    'L.is_disabled' => ['custom', 'No'],
+                    'L.is_deleted' => ['custom', 'No'],
+                    'R.is_disabled' => ['custom', 'No'],
+                    'R.is_deleted' => ['custom', 'No'],
                 ],
                 'mode' => 'multipleRowFormat'//Multiple rows returned.
             ],
@@ -93,7 +113,11 @@ return [
                 WHERE __WHERE__",
         'where' => [
             'L.http_id' => ['custom', isset($input['uriParams']['http'])?['GET'=>1,'POST'=>2,'PUT'=>3,'PATCH'=>4,'DELETE'=>5,][$input['uriParams']['http']]:0],
-            'L.group_id' => ['readOnlySession', 'group_id']
+            'L.group_id' => ['readOnlySession', 'group_id'],
+            'L.is_disabled' => ['custom', 'No'],
+            'L.is_deleted' => ['custom', 'No'],
+            'R.is_disabled' => ['custom', 'No'],
+            'R.is_deleted' => ['custom', 'No'],
         ],
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ]

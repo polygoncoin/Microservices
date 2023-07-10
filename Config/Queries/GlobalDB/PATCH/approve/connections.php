@@ -9,6 +9,7 @@ return [
     ],
     'where' => [
         'is_approved' => ['custom', 'No'],
+        'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'connection_id' => ['payload', 'connection_id']
     ]

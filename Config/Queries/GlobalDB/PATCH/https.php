@@ -9,6 +9,7 @@ return [
     ],
     'where' => [
         'is_approved' => ['custom', 'Yes'],
+        'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'http_id' => ['uriParams', 'http_id']
     ]

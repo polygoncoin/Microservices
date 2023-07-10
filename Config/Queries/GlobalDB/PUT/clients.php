@@ -10,6 +10,7 @@ return [
     ],
     'where' => [
         'is_approved' => ['custom', 'Yes'],
+        'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'client_id' => ['uriParams', 'client_id']
     ]

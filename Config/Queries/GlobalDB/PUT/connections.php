@@ -15,6 +15,7 @@ return [
     ],
     'where' => [
         'is_approved' => ['custom', 'Yes'],
+        'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'connection_id' => ['uriParams', 'connection_id']
     ]
