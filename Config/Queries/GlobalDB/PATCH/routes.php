@@ -12,5 +12,16 @@ return [
         'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'route_id' => ['uriParams', 'route_id']
-    ]
+    ],
+    'validate' => [
+		[
+			'fn' => 'primaryKeyExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('routes')],
+                'primary' => ['custom', 'route_id'],
+                'id' => ['payload', 'route_id']
+            ],
+			'errorMessage' => 'Invalid Route Id'
+		],
+	]
 ];

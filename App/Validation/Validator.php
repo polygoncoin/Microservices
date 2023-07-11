@@ -1,6 +1,11 @@
 <?php
 namespace App\Validation;
 
+use App\HttpErrorResponse;
+use App\Servers\Database\Database;
+use App\Validation\ClientValidator;
+use App\Validation\GlobalValidator;
+
 /**
  * Validator
  *
@@ -15,11 +20,18 @@ namespace App\Validation;
  */
 class Validator
 {
-    private $authorize = null;
+    /**
+     * Validator object
+     */
+    private $v = null;
 
-    public function __construct(&$authorize)
+    public function __construct()
     {
-        $this->authorize = $authorize;
+        if (Database::$database === 'globalDbName') {
+            $this->v = new GlobalValidator();
+        } else {
+            $this->v = new ClientValidator();
+        }
     }
 
     /**
@@ -29,36 +41,8 @@ class Validator
      * @param array $validationConfig Validation configuration.
      * @return array
      */
-    public function validate(&$data, &$validationConfig)
+    public function validate($input, $validationConfig)
     {
-        $error = [];
-        foreach ($validationConfig as &$v) {
-            if (!$this->$v['fn']($data[$v['dataKey']])) {
-                return $v['errorMessage'];
-            }
-        }
-        return $error;
-    }
-
-    /**
-     * Validate string is alphanumeric
-     *
-     * @param string $v
-     * @return boolean
-     */
-    private function isAlphanumeric(&$v)
-    {
-        return preg_match('/^[a-z0-9 .\-]+$/i', $v);
-    }
-
-    /**
-     * Validate string is an email
-     *
-     * @param string $v email address
-     * @return boolean
-     */
-    private function isEmail(&$v)
-    {
-        return filter_var($v, FILTER_VALIDATE_EMAIL);
+        return $this->v->validate($input, $validationConfig);
     }
 }

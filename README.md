@@ -304,12 +304,18 @@ return [
 	'validate' => [
 		[
 			'fn' => 'validateGroupId',
-			'val' => ['payload', 'group_id'],
+			'fnArgs' => [
+				//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+				'group_id' => ['payload', 'group_id']
+			],
 			'errorMessage' => 'Invalid Group Id'
 		],
 		[
 			'fn' => 'validateClientId',
-			'val' => ['payload', 'client_id'],
+			'fnArgs' => [
+				//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+				'client_id' => ['payload', 'client_id']
+			],
 			'errorMessage' => 'Invalid Client Id'
 		],
 	]
@@ -363,7 +369,10 @@ return [
 	'validate' => [
 		[
 			'fn' => 'validateGroupId',
-			'val' => ['payload', 'group_id'],
+			'fnArgs' => [
+				//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+				'group_id' => ['payload', 'group_id']
+			],
 			'errorMessage' => 'Invalid Group Id'
 		],
 	]

@@ -76,6 +76,7 @@ class Api
     {
         $this->authorize = new Authorize();
         $this->authorize->init();
+        $this->authorize->connectClientDB();
         $this->globalDB = $this->authorize->globalDB;
         $this->clientDB = getenv($this->authorize->clientDatabase);
 
@@ -182,10 +183,10 @@ class Api
             $input['payload'] = &$payload;
             // Required validations.
             if (isset($config['validate'])) {
-                $isValidData = $this->validate($input['payload'], $config['validate']);
+                list($isValidData, $errors) = $this->validate($input, $config['validate']);
             }
             if ($isValidData!==true) {
-                $response[] = ['data' => $payload, 'Error' => $isValidData];
+                $response[] = ['data' => $payload, 'Error' => $errors];
             } else {
                 $res = $this->insertUpdateSubQuery($input, $config);
                 if ('POST' === $_SERVER['REQUEST_METHOD']) {
@@ -198,6 +199,8 @@ class Api
             if (count($response) === 1) {
                 $response = $response[0];
             }
+            $this->jsonEncodeObj->encode($response);
+        } else if (count($response) > 0) {
             $this->jsonEncodeObj->encode($response);
         } else {
             $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
@@ -214,7 +217,6 @@ class Api
      */
     private function selectSubQuery(&$input, $subQuery, $start = true)
     {
-        $this->authorize->connectClientDB();
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
@@ -302,7 +304,6 @@ class Api
      */
     private function insertUpdateSubQuery(&$input, $subQuery, $start = true)
     {
-        $this->authorize->connectClientDB();
         $insertIds = [];
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as &$queryDetails) {
@@ -387,7 +388,7 @@ class Api
     private function validate(&$data, &$validationConfig)
     {
         if (is_null($this->validator)) {
-            $this->validator = new Validator($this->authorize);
+            $this->validator = new Validator();
         }
         return $this->validator->validate($data, $validationConfig);
     }

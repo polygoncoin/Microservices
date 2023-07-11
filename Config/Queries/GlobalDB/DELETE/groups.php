@@ -10,5 +10,16 @@ return [
     'where' => [
         'is_deleted' => ['custom', 'No'],
         'group_id' => ['uriParams', 'group_id']
-    ]
+    ],
+    'validate' => [
+		[
+			'fn' => 'primaryKeyExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('groups')],
+                'primary' => ['custom', 'group_id'],
+                'id' => ['payload', 'group_id']
+            ],
+			'errorMessage' => 'Invalid Group Id'
+		],
+	]
 ];

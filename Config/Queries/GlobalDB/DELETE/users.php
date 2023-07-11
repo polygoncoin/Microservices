@@ -10,5 +10,16 @@ return [
     'where' => [
         'is_deleted' => ['custom', 'No'],
         'user_id' => ['uriParams', 'user_id']
-    ]
+    ],
+    'validate' => [
+		[
+			'fn' => 'primaryKeyExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('users')],
+                'primary' => ['custom', 'user_id'],
+                'id' => ['payload', 'user_id']
+            ],
+			'errorMessage' => 'Invalid User Id'
+		],
+	]
 ];

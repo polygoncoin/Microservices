@@ -12,5 +12,16 @@ return [
         'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],
         'link_id' => ['uriParams', 'link_id']
-    ]
+    ],
+    'validate' => [
+		[
+			'fn' => 'primaryKeyExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('links')],
+                'primary' => ['custom', 'link_id'],
+                'id' => ['payload', 'link_id']
+            ],
+			'errorMessage' => 'Invalid Link Id'
+		],
+	]
 ];

@@ -11,5 +11,16 @@ return [
         'is_disabled' => ['custom', 'Yes'],
         'is_deleted' => ['custom', 'No'],
         'http_id' => ['payload', 'http_id']
-    ]
+    ],
+    'validate' => [
+		[
+			'fn' => 'primaryKeyExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('https')],
+                'primary' => ['custom', 'http_id'],
+                'id' => ['payload', 'http_id']
+            ],
+			'errorMessage' => 'Invalid Http Id'
+		],
+	]
 ];

@@ -1,8 +1,8 @@
 <?php
 namespace App\Servers\Database;
 
-use App\Servers\Database\MySQL;
 use App\HttpErrorResponse;
+use App\Servers\Database\MySQL;
 
 /**
  * Loading database class
@@ -19,6 +19,41 @@ use App\HttpErrorResponse;
 class Database
 {
     /**
+     * Server Type
+     *
+     * @var string
+     */
+    public static $serverType = null;
+
+    /**
+     * Database hostname
+     *
+     * @var string
+     */
+    public static $hostname = null;
+
+    /**
+     * Database username
+     *
+     * @var string
+     */
+    public static $username = null;
+
+    /**
+     * Database password
+     *
+     * @var string
+     */
+    public static $password = null;
+
+    /**
+     * Database database
+     *
+     * @var string
+     */
+    public static $database = null;
+
+    /**
      * Database object
      */
     public static $db = null;
@@ -34,6 +69,12 @@ class Database
         $database = null
     )
     {
+        self::$serverType = $serverType;
+        self::$hostname = $hostname;
+        self::$username = $username;
+        self::$password = $password;
+        self::$database = $database;
+
         if($serverType === 'MySQL') {
             self::$db = new MySQL(
                 $hostname,

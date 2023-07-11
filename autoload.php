@@ -13,9 +13,9 @@ spl_autoload_register(function ($className) {
  * a '/' character and a decimal number specifying the length, in bits, of the subnet
  * mask or routing prefix (number from 0 to 32).
  *
- * @param  $ip   IP address to check
- * @param  $cidr IP address range in CIDR notation for check
- * @return bool  true match found otherwise false
+ * @param  $ip     IP address to check
+ * @param  $cidr   IP address range in CIDR notation for check
+ * @return boolean true match found otherwise false
  */
 function cidr_match($ip, $cidr) {
     $outcome = false;

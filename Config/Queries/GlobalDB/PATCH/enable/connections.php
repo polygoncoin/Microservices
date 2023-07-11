@@ -11,5 +11,16 @@ return [
         'is_disabled' => ['custom', 'Yes'],
         'is_deleted' => ['custom', 'No'],
         'connection_id' => ['payload', 'connection_id']
-    ]
+    ],
+    'validate' => [
+		[
+			'fn' => 'primaryKeyExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('connections')],
+                'primary' => ['custom', 'connection_id'],
+                'id' => ['payload', 'connection_id']
+            ],
+			'errorMessage' => 'Invalid Connection Id'
+		],
+	]
 ];
