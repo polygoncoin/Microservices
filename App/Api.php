@@ -278,6 +278,7 @@ class Api
                                 $this->jsonEncodeObj->addKeyValue('page', $input['payload']['page']);
                                 $this->jsonEncodeObj->addKeyValue('perpage', $input['payload']['perpage']);
                                 $this->jsonEncodeObj->addKeyValue('totalPages', $totalPages);
+                                $this->jsonEncodeObj->addKeyValue('totalRecords', $totalRowsCount);
                                 $this->jsonEncodeObj->startArray('data');
                             } else {
                                 $this->jsonEncodeObj->startArray();
