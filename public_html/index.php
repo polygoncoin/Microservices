@@ -4,7 +4,10 @@ define('__DOC_ROOT__', dirname(__DIR__));
 
 require_once __DOC_ROOT__ . '/autoload.php';
 
-define('__REQUEST_URI__', '/' . trim($_GET['REQUEST_URI'], '/'));
+// REQUEST_URI key in URL
+define('REQUEST_URI', 'REQUEST_URI');
+
+define('__REQUEST_URI__', '/' . trim($_GET[REQUEST_URI], '/'));
 
 header('Content-Type: application/json; charset=utf-8');
 

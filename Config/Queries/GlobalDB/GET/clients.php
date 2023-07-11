@@ -1,10 +1,11 @@
 <?php
 return [
     'all' => [
+        'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
         'where' => [
-            'is_approved' => ['custom', 'Yes'],
-            'is_disabled' => ['custom', 'No'],
+            // 'is_approved' => ['custom', 'Yes'],
+            // 'is_disabled' => ['custom', 'No'],
             'is_deleted' => ['custom', 'No'],
         ],
         'mode' => 'multipleRowFormat'//Multiple rows returned.

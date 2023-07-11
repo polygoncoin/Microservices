@@ -220,10 +220,10 @@ class Api
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
-                list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-                $this->authorize->db->execDbQuery($query, array_values($params));
                 switch ($queryDetails['mode']) {
                     case 'singleRowFormat':
+                        list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
+                        $this->authorize->db->execDbQuery($query, array_values($params));
                         if (!isset($queryDetails['subQuery'])) {
                             $this->jsonEncodeObj->encode($this->authorize->db->fetch());
                         } else {
@@ -254,16 +254,44 @@ class Api
                                 $this->jsonEncodeObj->addKeyValue($key, $value);
                             }
                         }
+                        $this->authorize->db->closeCursor();
                         break;
                     case 'multipleRowFormat':
                         if (isset($queryDetails['subQuery'])) {
                             HttpErrorResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
                         }
                         if ($start) {
-                            $this->jsonEncodeObj->startArray();
+                            if (isset($queryDetails['countQuery'])) {
+                                $queryDetailsCount = $queryDetails;
+                                $queryDetailsCount['query'] = $queryDetailsCount['countQuery'];
+                                unset($queryDetailsCount['countQuery']);
+                                $input['payload']['page']  = $_GET['page'] ?? 1;
+                                $input['payload']['perpage']  = $_GET['perpage'] ?? 10;
+                                $input['payload']['start']  = ($input['payload']['page'] - 1) * $input['payload']['perpage'];
+                                list($query, $params) = $this->getQueryAndParams($input, $queryDetailsCount);
+                                $this->authorize->db->execDbQuery($query, array_values($params));
+                                $row = $this->authorize->db->fetch();
+                                $this->authorize->db->closeCursor();
+                                $totalRowsCount = $row['count'];
+                                $totalPages = ceil($totalRowsCount/$input['payload']['perpage']);
+                                $this->jsonEncodeObj->startAssoc();
+                                $this->jsonEncodeObj->addKeyValue('page', $input['payload']['page']);
+                                $this->jsonEncodeObj->addKeyValue('perpage', $input['payload']['perpage']);
+                                $this->jsonEncodeObj->addKeyValue('totalPages', $totalPages);
+                                $this->jsonEncodeObj->startArray('data');
+                            } else {
+                                $this->jsonEncodeObj->startArray();
+                            }
                         } else {
                             $this->jsonEncodeObj->startArray($key);
                         }
+                        list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
+                        if ($start) {
+                            if (isset($queryDetails['countQuery'])) {
+                                $query .= " LIMIT {$input['payload']['start']}, {$input['payload']['perpage']}";
+                            }
+                        }
+                        $this->authorize->db->execDbQuery($query, array_values($params));
                         $singleColumn = false;
                         for ($i=0;$row=$this->authorize->db->fetch();) {
                             if ($i===0) {
@@ -279,9 +307,14 @@ class Api
                             }
                         }
                         $this->jsonEncodeObj->endArray();
+                        if ($start) {
+                            if (isset($queryDetails['countQuery'])) {
+                                $this->jsonEncodeObj->endAssoc();
+                            }
+                        }
+                        $this->authorize->db->closeCursor();
                         break;
                 }
-                $this->authorize->db->closeCursor();
                 if (isset($queryDetails['subQuery'])) {
                     if (!$this->isAssoc($queryDetails['subQuery'])) {
                         HttpErrorResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
