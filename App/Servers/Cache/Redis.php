@@ -60,7 +60,7 @@ class Redis
         $hostname,
         $port,
         $password,
-        $database = null
+        $database = 'cacheDatabase'
     )
     {   
         $this->hostname = $hostname;
