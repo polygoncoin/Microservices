@@ -76,4 +76,21 @@ class GlobalValidator
         $this->db->closeCursor();
         return ($row['count'] === 0) ? false : true;
     }
+
+    /**
+     * Checks column value exist
+     *
+     * @param array $args Arguments
+     * @return integer 0/1
+     */
+    private function checkColumnValueExist($args)
+    {
+        extract($args);
+        $query = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$column}` = ? AND`{$primary}` = ?";
+        $params = [$columnValue, $id];
+        $this->db->execDbQuery($query, $params);
+        $row = $this->db->fetch();
+        $this->db->closeCursor();
+        return ($row['count'] === 0) ? false : true;
+    }
 }

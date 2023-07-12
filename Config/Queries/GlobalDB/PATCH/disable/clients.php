@@ -22,5 +22,27 @@ return [
             ],
 			'errorMessage' => 'Invalid Client Id'
 		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('clients')],
+                'column' => ['custom', 'is_deleted'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'client_id'],
+                'id' => ['payload', 'client_id'],
+            ],
+			'errorMessage' => 'Record is deleted'
+		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('clients')],
+                'column' => ['custom', 'is_disabled'],
+                'columnValue' => ['custom', 'Yes'],
+                'primary' => ['custom', 'client_id'],
+                'id' => ['payload', 'client_id'],
+            ],
+			'errorMessage' => 'Record is already disabled'
+		]
 	]
 ];

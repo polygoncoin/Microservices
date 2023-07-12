@@ -22,5 +22,27 @@ return [
             ],
 			'errorMessage' => 'Invalid User Id'
 		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('users')],
+                'column' => ['custom', 'is_deleted'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'user_id'],
+                'id' => ['payload', 'user_id'],
+            ],
+			'errorMessage' => 'Record is deleted'
+		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('users')],
+                'column' => ['custom', 'is_disabled'],
+                'columnValue' => ['custom', 'Yes'],
+                'primary' => ['custom', 'user_id'],
+                'id' => ['payload', 'user_id'],
+            ],
+			'errorMessage' => 'Record is already disabled'
+		]
 	]
 ];

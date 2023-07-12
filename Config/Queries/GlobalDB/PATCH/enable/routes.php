@@ -22,5 +22,27 @@ return [
             ],
 			'errorMessage' => 'Invalid Route Id'
 		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('routes')],
+                'column' => ['custom', 'is_deleted'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'route_id'],
+                'id' => ['payload', 'route_id'],
+            ],
+			'errorMessage' => 'Record is deleted'
+		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('routes')],
+                'column' => ['custom', 'is_disabled'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'route_id'],
+                'id' => ['payload', 'route_id'],
+            ],
+			'errorMessage' => 'Record is already enabled'
+		]
 	]
 ];

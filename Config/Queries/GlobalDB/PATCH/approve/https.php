@@ -23,5 +23,27 @@ return [
             ],
 			'errorMessage' => 'Invalid Http Id'
 		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('https')],
+                'column' => ['custom', 'is_deleted'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'http_id'],
+                'id' => ['payload', 'http_id'],
+            ],
+			'errorMessage' => 'Record is deleted'
+		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('https')],
+                'column' => ['custom', 'is_approved'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'http_id'],
+                'id' => ['payload', 'http_id'],
+            ],
+			'errorMessage' => 'Record is already approved'
+		]
 	]
 ];

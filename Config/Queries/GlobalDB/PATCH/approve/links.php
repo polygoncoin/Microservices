@@ -23,5 +23,27 @@ return [
             ],
 			'errorMessage' => 'Invalid Link Id'
 		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('links')],
+                'column' => ['custom', 'is_deleted'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'link_id'],
+                'id' => ['payload', 'link_id'],
+            ],
+			'errorMessage' => 'Record is deleted'
+		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('links')],
+                'column' => ['custom', 'is_approved'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'link_id'],
+                'id' => ['payload', 'link_id'],
+            ],
+			'errorMessage' => 'Record is already approved'
+		]
 	]
 ];

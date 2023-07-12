@@ -21,5 +21,16 @@ return [
             ],
 			'errorMessage' => 'Invalid Group Id'
 		],
+		[
+			'fn' => 'checkColumnValueExist',
+			'fnArgs' => [
+                'table' => ['custom', getenv('groups')],
+                'column' => ['custom', 'is_deleted'],
+                'columnValue' => ['custom', 'No'],
+                'primary' => ['custom', 'group_id'],
+                'id' => ['payload', 'group_id'],
+            ],
+			'errorMessage' => 'Record is already deleted'
+		]
 	]
 ];
