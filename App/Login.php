@@ -4,7 +4,7 @@ namespace App;
 use App\HttpRequest;
 use App\HttpErrorResponse;
 use App\JsonEncode;
-use App\Servers\Cache\Redis;
+use App\Servers\Cache\Cache;
 
 /**
  * Login
@@ -93,12 +93,14 @@ class Login
      */
     private function process()
     {
-        $this->cache = new Redis(
+        Cache::connect(
+            'Redis',
             'cacheHostname',
             'cachePort',
             'cachePassword',
             'cacheDatabase'
         );
+        $this->cache = Cache::getObject();
         $this->performBasicCheck();
         $this->loadUser();
         $this->validateRequestIp();

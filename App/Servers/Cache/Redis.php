@@ -2,7 +2,7 @@
 namespace App\Servers\Cache;
 
 use App\HttpErrorResponse;
-
+use App\Servers\Cache\AbstractCache;
 /**
  * Loading Redis server
  *
@@ -16,7 +16,7 @@ use App\HttpErrorResponse;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Redis
+class Redis extends AbstractCache
 {
     /**
      * Cache hostname
@@ -77,7 +77,7 @@ class Redis
      * @param string $mode Can be one of string among master/slave
      * @return void
      */
-    function connect()
+    public function connect()
     {
         if (!is_null($this->redis)) return;
         try {

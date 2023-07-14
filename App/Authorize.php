@@ -3,7 +3,7 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpErrorResponse;
-use App\Servers\Cache\Redis;
+use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
 
 /**
@@ -125,12 +125,14 @@ class Authorize extends HttpRequest
     private function process()
     {
         $this->globalDB = getenv('globalDbName');
-        $this->cache = new Redis(
+        Cache::connect(
+            'Redis',
             'cacheHostname',
             'cachePort',
             'cachePassword',
             'cacheDatabase'
         );
+        $this->cache = Cache::getObject();
         $this->checkToken($_SERVER['HTTP_AUTHORIZATION']);
         if ($this->tokenExists($this->token)) {
             $this->parseRoute($_SERVER['REQUEST_METHOD'], __REQUEST_URI__);
@@ -229,13 +231,14 @@ class Authorize extends HttpRequest
     public function connectClientDB()
     {
         if (!is_null($this->db)) return;
-        $this->db = Database::getDbObject(
+        Database::connect(
             $this->clientServerType,
             $this->clientHostname,
             $this->clientUsername,
             $this->clientPassword,
             $this->clientDatabase
         );
+        $this->db = Database::getObject();
     }
 
     /**

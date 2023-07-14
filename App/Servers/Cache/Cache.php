@@ -1,84 +1,86 @@
 <?php
-namespace App\Servers\Database;
+namespace App\Servers\Cache;
 
 use App\HttpErrorResponse;
-use App\Servers\Database\MySQL;
+use App\Servers\Cache\Redis;
 
 /**
  * Loading database class
  *
  * This class is built to handle MySQL database operation.
  *
- * @category   Database
+ * @category   Cache
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Database
+class Cache
 {
     /**
-     * Server Type
+     * Cache Server Type
      *
      * @var string
      */
-    public static $dbType = null;
+    public static $cacheType = null;
 
     /**
-     * Database hostname
+     * Cache hostname
      *
      * @var string
      */
     public static $hostname = null;
 
     /**
-     * Database username
+     * Cache port
      *
-     * @var string
+     * @var int
      */
-    public static $username = null;
+    public static $port = null;
 
     /**
-     * Database password
+     * Cache password
      *
      * @var string
      */
     public static $password = null;
 
     /**
-     * Database database
+     * Cache database
      *
      * @var string
      */
     public static $database = null;
 
     /**
-     * Database object
+     * Cache connection
+     *
+     * @var object
      */
-    public static $db = null;
+    private static $cache = null;
 
     /**
      * Database constructor
      */
     public static function connect(
-        $dbType,
+        $cacheType,
         $hostname,
-        $username,
+        $port,
         $password,
-        $database = null
+        $database
     )
     {
-        self::$dbType = $dbType;
+        self::$cacheType = $cacheType;
         self::$hostname = $hostname;
-        self::$username = $username;
+        self::$port = $port;
         self::$password = $password;
         self::$database = $database;
 
-        if($dbType === 'MySQL') {
-            self::$db = new MySQL(
+        if($cacheType === 'Redis') {
+            self::$cache = new Redis(
                 $hostname,
-                $username,
+                $port,
                 $password,
                 $database
             );
@@ -90,9 +92,8 @@ class Database
      */
     public static function getObject()
     {
-        if (!is_null(self::$db)) {
-            return self::$db;
+        if (!is_null(self::$cache)) {
+            return self::$cache;
         }
-
     }
 }

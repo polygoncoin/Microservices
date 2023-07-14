@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\Servers\Cache\Redis;
+use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
 use App\JsonEncode;
 use App\PHPTrait;
@@ -63,19 +63,22 @@ class Reload
      */
     private function process($refresh = 'all', $idsString = null)
     {
-        $this->cache = new Redis(
+        Cache::connect(
+            'Redis',
             'cacheHostname',
             'cachePort',
-            'cachePassword'
+            'cachePassword',
+            'cacheDatabase'
         );
-        $this->db = Database::getDbObject(
+        $this->cache = Cache::getObject();
+        Database::connect(
             'MySQL',
             'dbHostnameDefault',
             'dbUsernameDefault',
             'dbPasswordDefault',
             'globalDbName'
         );
-
+        $this->db = Database::getObject();
         $ids = [];
         if (!is_null($idsString)) {
             foreach (explode(',', trim($idsString)) as $value) {

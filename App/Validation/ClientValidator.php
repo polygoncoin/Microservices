@@ -28,7 +28,7 @@ class ClientValidator
 
     public function __construct()
     {
-        $this->db = Database::getDb();
+        $this->db = Database::getObject();
     }
 
     /**
