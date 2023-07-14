@@ -42,8 +42,6 @@ class Cron
     public function process()
     {
         // Create and call functions to manage cron functionality here.
-        // In functions one can also perform DB operations with $this->authorize object
-        // $this->authorize->connectClientDB();
 
         // ...
 

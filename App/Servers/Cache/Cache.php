@@ -62,6 +62,13 @@ class Cache
 
     /**
      * Database constructor
+     * 
+     * @param string $cacheType Cache Type
+     * @param string $hostname  Hostname .env string
+     * @param string $port      Port .env string
+     * @param string $password  Password .env string
+     * @param string $database  Database .env string
+     * @return void
      */
     public static function connect(
         $cacheType,
@@ -88,7 +95,9 @@ class Cache
     }
 
     /**
-     * Database constructor
+     * Get Cache Object
+     *
+     * @return object
      */
     public static function getObject()
     {

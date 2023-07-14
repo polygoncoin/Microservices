@@ -6,7 +6,7 @@ namespace App\Servers\Cache;
  *
  * This abstract class is built to handle the database server.
  *
- * @category   Abstract Database Class
+ * @category   Abstract Cache Class
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -16,14 +16,14 @@ namespace App\Servers\Cache;
 abstract class AbstractCache
 {
     /**
-     * Database connection
+     * Cache connection
      *
      * @return void
      */
     abstract public function connect();
 
     /**
-     * Use Database
+     * Use Cache Database
      *
      * @param string $database Database .env string
      * @return void
@@ -57,7 +57,7 @@ abstract class AbstractCache
     abstract public function setCache($key, $value, $expire = null);
 
     /**
-     * Delete basis of key
+     * Delete cache on basis of key
      *
      * @param string $key Cache key
      * @return int
@@ -74,7 +74,7 @@ abstract class AbstractCache
     abstract public function isSetMember($set, $member);
 
     /**
-     * Set Set values
+     * Set Set members
      *
      * @param string $key        Cache Set key
      * @param array  $valueArray Cache values for Set

@@ -54,7 +54,13 @@ class Redis extends AbstractCache
     private $redis = null;
 
     /**
-     * Cache constructor
+     * Cache connection
+     *
+     * @param string $hostname  Hostname .env string
+     * @param string $port      Port .env string
+     * @param string $password  Password .env string
+     * @param string $database  Database .env string
+     * @return void
      */
     public function __construct(
         $hostname,
@@ -74,7 +80,6 @@ class Redis extends AbstractCache
     /**
      * Cache connection
      *
-     * @param string $mode Can be one of string among master/slave
      * @return void
      */
     public function connect()

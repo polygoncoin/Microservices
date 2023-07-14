@@ -65,6 +65,12 @@ class MySQL extends AbstractDatabase
 
     /**
      * Database constructor
+     *
+     * @param string $hostname  Hostname .env string
+     * @param string $username  Username .env string
+     * @param string $password  Password .env string
+     * @param string $database  Database .env string
+     * @return void
      */
     public function __construct(
         $hostname,

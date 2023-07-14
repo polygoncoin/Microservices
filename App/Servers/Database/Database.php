@@ -60,6 +60,13 @@ class Database
 
     /**
      * Database constructor
+     *
+     * @param string $dbType    Database Type
+     * @param string $hostname  Hostname .env string
+     * @param string $username  Username .env string
+     * @param string $password  Password .env string
+     * @param string $database  Database .env string
+     * @return void
      */
     public static function connect(
         $dbType,
@@ -87,6 +94,8 @@ class Database
 
     /**
      * Database constructor
+     *
+     * @return object
      */
     public static function getObject()
     {
