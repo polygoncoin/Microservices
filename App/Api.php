@@ -153,6 +153,9 @@ class Api
 
         // Load Payload
         parse_str(file_get_contents('php://input'), $payloadArr);
+        if (!isset($payloadArr['data'])) {
+            HttpErrorResponse::return4xx(404, 'Invalid data payload');
+        }
         $payloadArr = json_decode($payloadArr['data'], true);
         $isAssoc = $this->isAssoc($payloadArr);
         if ($isAssoc) {
