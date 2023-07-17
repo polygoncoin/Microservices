@@ -38,7 +38,7 @@ return [
 			'fnArgs' => [
                 'table' => ['custom', getenv('routes')],
                 'column' => ['custom', 'is_disabled'],
-                'columnValue' => ['custom', 'Yes'],
+                'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'route_id'],
                 'id' => ['payload', 'route_id'],
             ],

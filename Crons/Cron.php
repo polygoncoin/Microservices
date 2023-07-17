@@ -2,7 +2,8 @@
 namespace Crons;
 
 use App\HttpErrorResponse;
-use App\Servers\Database;
+use App\Servers\Cache\Cache;
+use App\Servers\Database\Database;
 
 /**
  * Class for a particular cron.

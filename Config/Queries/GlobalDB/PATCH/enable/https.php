@@ -38,7 +38,7 @@ return [
 			'fnArgs' => [
                 'table' => ['custom', getenv('https')],
                 'column' => ['custom', 'is_disabled'],
-                'columnValue' => ['custom', 'No'],
+                'columnValue' => ['custom', 'Yes'],
                 'primary' => ['custom', 'http_id'],
                 'id' => ['payload', 'http_id'],
             ],

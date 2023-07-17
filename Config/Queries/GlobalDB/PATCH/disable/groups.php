@@ -38,7 +38,7 @@ return [
 			'fnArgs' => [
                 'table' => ['custom', getenv('groups')],
                 'column' => ['custom', 'is_disabled'],
-                'columnValue' => ['custom', 'Yes'],
+                'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'group_id'],
                 'id' => ['payload', 'group_id'],
             ],

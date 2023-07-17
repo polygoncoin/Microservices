@@ -38,7 +38,7 @@ return [
 			'fnArgs' => [
                 'table' => ['custom', getenv('clients')],
                 'column' => ['custom', 'is_disabled'],
-                'columnValue' => ['custom', 'Yes'],
+                'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'client_id'],
                 'id' => ['payload', 'client_id'],
             ],

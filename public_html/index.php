@@ -10,6 +10,8 @@ define('REQUEST_URI', 'REQUEST_URI');
 define('__REQUEST_URI__', '/' . trim($_GET[REQUEST_URI], '/'));
 
 header('Content-Type: application/json; charset=utf-8');
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
 
 switch (true) {
     case __REQUEST_URI__ === '/login':
