@@ -189,7 +189,11 @@ class Api
                 list($isValidData, $errors) = $this->validate($input, $config['validate']);
             }
             if ($isValidData!==true) {
-                $response[] = ['data' => $payload, 'Error' => $errors];
+                if ($isAssoc) {
+                    $response = ['data' => $payload, 'Error' => $errors];
+                } else {
+                    $response[] = ['data' => $payload, 'Error' => $errors];
+                }
             } else {
                 $res = $this->insertUpdateSubQuery($input, $config);
                 if ('POST' === $_SERVER['REQUEST_METHOD']) {
