@@ -13,7 +13,7 @@ return [
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` L
                         LEFT JOIN 
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                        WHERE __WHERE__",
+                        WHERE __WHERE__ ORDER BY R.route ASC",
                 'where' => [
                     'L.http_id' => ['custom', 1],
                     'L.group_id' => ['readOnlySession', 'group_id'],
@@ -32,7 +32,7 @@ return [
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` L
                         LEFT JOIN 
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                        WHERE __WHERE__",
+                        WHERE __WHERE__ ORDER BY R.route ASC",
                 'where' => [
                     'L.http_id' => ['custom', '2'],
                     'L.group_id' => ['readOnlySession', 'group_id'],
@@ -51,7 +51,7 @@ return [
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` L
                         LEFT JOIN 
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                        WHERE __WHERE__",
+                        WHERE __WHERE__ ORDER BY R.route ASC",
                 'where' => [
                     'L.http_id' => ['custom', '3'],
                     'L.group_id' => ['readOnlySession', 'group_id'],
@@ -70,7 +70,7 @@ return [
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` L
                         LEFT JOIN 
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                        WHERE __WHERE__",
+                        WHERE __WHERE__ ORDER BY R.route ASC",
                 'where' => [
                     'L.http_id' => ['custom', '4'],
                     'L.group_id' => ['readOnlySession', 'group_id'],
@@ -89,7 +89,7 @@ return [
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` L
                         LEFT JOIN 
                             `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                        WHERE __WHERE__",
+                        WHERE __WHERE__ ORDER BY R.route ASC",
                 'where' => [
                     'L.http_id' => ['custom', '5'],
                     'L.group_id' => ['readOnlySession', 'group_id'],
@@ -110,7 +110,7 @@ return [
                     `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` L
                 LEFT JOIN 
                     `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-                WHERE __WHERE__",
+                WHERE __WHERE__ ORDER BY R.route ASC",
         'where' => [
             'L.http_id' => ['custom', isset($input['uriParams']['http'])?['GET'=>1,'POST'=>2,'PUT'=>3,'PATCH'=>4,'DELETE'=>5,][$input['uriParams']['http']]:0],
             'L.group_id' => ['readOnlySession', 'group_id'],

@@ -1,7 +1,7 @@
 <?php
 return [
     'all' => [
-        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` WHERE __WHERE__",
+        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` WHERE __WHERE__ ORDER BY link_id ASC",
         'where' => [
             'is_approved' => ['custom', 'Yes'],
             'is_disabled' => ['custom', 'No'],

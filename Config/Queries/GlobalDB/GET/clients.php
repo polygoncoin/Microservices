@@ -1,7 +1,7 @@
 <?php
 return [
     'all' => [
-        'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
+        'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__ ORDER BY client_id ASC",
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
         'where' => [
             // 'is_approved' => ['custom', 'Yes'],
