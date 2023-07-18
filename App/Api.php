@@ -173,8 +173,8 @@ class Api
         $requiredPayloadFields = $this->getRequiredPayloadFields($config);
 
         $response = [];
+        // Required payload validation
         foreach ($payloadArr as $key => &$payload) {
-            // Required validation
             if (count($payload) == count($requiredPayloadFields)) {
                 foreach ($payload as $column => $value) {
                     if (!in_array($column, $requiredPayloadFields)) {
@@ -186,11 +186,15 @@ class Api
                     }
                 }
             } else {
-                HttpErrorResponse::return4xx(404, 'Invalid payload');
+                if ($isAssoc) {
+                    $response[] = 'Invalid payload';
+                } else {
+                    $response[$key][] = 'Invalid payload';
+                }
             }
         }
+        // Perform action
         if (count($response) === 0) {
-            // Perform action
             foreach ($payloadArr as &$payload) {
                 $isValidData = true;
                 if ($this->authorize->requestMethod === 'PATCH') {
