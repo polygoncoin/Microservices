@@ -233,14 +233,22 @@ class Api
                     case 'singleRowFormat':
                         list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
                         $this->authorize->db->execDbQuery($query, array_values($params));
-                        if (!isset($queryDetails['subQuery'])) {
-                            $this->jsonEncodeObj->encode($this->authorize->db->fetch());
+                        if ($row = $this->authorize->db->fetch()) {
+                            ;
                         } else {
-                            if ($row = $this->authorize->db->fetch()) {
-                                ;
+                            $row = [];
+                        }
+                        if (!isset($queryDetails['subQuery'])) {
+                            if ($start) {
+                                $this->jsonEncodeObj->startAssoc();
                             } else {
-                                $row = [];
+                                $this->jsonEncodeObj->startAssoc($key);
                             }
+                            foreach($row as $key => $value) {
+                                $this->jsonEncodeObj->addKeyValue($key, $value);
+                            }
+                            $this->jsonEncodeObj->endAssoc();
+                        } else {
                             $resultColumns = array_keys($row);
                             foreach (array_keys($subQuery) as $col) {
                                 if (in_array($col, $resultColumns)) {
