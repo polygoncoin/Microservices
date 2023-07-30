@@ -175,9 +175,9 @@ class Api
         $response = [];
         // Required payload validation
         foreach ($payloadArr as $key => &$payload) {
-            if (count($payload) == count($requiredPayloadFields)) {
-                foreach ($payload as $column => $value) {
-                    if (!in_array($column, $requiredPayloadFields)) {
+            if (count($payload) >= count($requiredPayloadFields)) {
+                foreach ($requiredPayloadFields as $column) {
+                    if (!isset($payload[$column])) {
                         if ($isAssoc) {
                             $response[] = 'Invalid payload: '.$column;
                         } else {
@@ -405,8 +405,18 @@ class Api
         foreach ($subQuery as &$queryDetails) {
             if (isset($queryDetails['payload'])) {
                 $queryPayload = &$queryDetails['payload'];
-                foreach ($queryPayload as $var => [$type, $typeKey]) {
-                    if ($type === 'payload') {
+                foreach ($queryPayload as $var => $payload) {
+                    $required = false;
+                    $count = count($payload);
+                    switch ($count) {
+                        case 3:
+                            list($type, $typeKey, $required) = $payload;
+                            break;
+                        case 2: 
+                            list($type, $typeKey) = $payload;
+                            break;
+                    }
+                    if ($required && $type === 'payload') {
                         if (!in_array($typeKey, $requiredPayloadFields)) {
                             $requiredPayloadFields[] = $typeKey;
                         }
@@ -415,8 +425,18 @@ class Api
             }
             if (isset($queryDetails['where'])) {
                 $queryWhere = &$queryDetails['where'];
-                foreach ($queryWhere as $var => [$type, $typeKey]) {
-                    if ($type === 'payload') {
+                foreach ($queryWhere as $var => $payload) {
+                    $required = false;
+                    $count = count($payload);
+                    switch ($count) {
+                        case 3:
+                            list($type, $typeKey, $required) = $payload;
+                            break;
+                        case 2: 
+                            list($type, $typeKey) = $payload;
+                            break;
+                    }
+                    if ($required && $type === 'payload') {
                         if (!in_array($typeKey, $requiredPayloadFields)) {
                             $requiredPayloadFields[] = $typeKey;
                         }

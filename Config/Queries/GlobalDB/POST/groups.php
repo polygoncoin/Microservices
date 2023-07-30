@@ -3,7 +3,7 @@ return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` SET __SET__",
     'payload' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name'],
+        'name' => ['payload', 'name', REQUIRED],
         'client_id' => ['payload', 'client_id'],
         'connection_id' => ['payload', 'connection_id'],
         'allowed_ips' => ['payload', 'allowed_ips'],

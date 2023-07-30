@@ -3,7 +3,7 @@ return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` SET __SET__ WHERE __WHERE__",
     'payload' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name'],
+        'name' => ['payload', 'name', REQUIRED],
         'group_id' => ['payload', 'group_id'],
         'route_id' => ['payload', 'route_id'],
         'http_id' => ['payload', 'http_id'],
