@@ -114,28 +114,24 @@ class HttpRequest
             } else {
                 if (is_array($routes)) {
                     $foundDynamicValues = false;
-                    $uriElementConfiguredDetailsArr = [];
-                    foreach (array_keys($routes) as $uriElementConfigured) {
+                    $foundDynamicValuesArr = [];
+                    foreach (array_keys($routes) as $r) {
                         // Is a dynamic URI element
-                        if (strpos($uriElementConfigured, '{') === 0) {
+                        if (strpos($r, '{') === 0) {
                             // Check for compulsary values
-                            $uriElementConfiguredArr = explode('|', $uriElementConfigured);
-                            $uriElementConfiguredParamString = $uriElementConfiguredArr[0];
-                            $uriElementConfiguredRequiredValuesArr = [];
-                            if (isset($uriElementConfiguredArr[1])) {
-                                $uriElementConfiguredParamRequiredString = $uriElementConfiguredArr[1];
-                                $uriElementConfiguredRequiredValuesArr = explode(',', $uriElementConfiguredParamRequiredString);
+                            $dynamicRoute = trim($r, '{}');
+                            $preferredValues = '';
+                            if (strpos($r, '|') !== false) {
+                                list($dynamicRoute, $preferredValues) = explode('|', $dynamicRoute);
                             }
-                            $uriElementConfiguredDetails = explode(':', trim($uriElementConfiguredParamString, '{}'));
-                            $paramName = $uriElementConfiguredDetails[0];
-                            $paramDataType = $uriElementConfiguredDetails[1];
+                            list($paramName, $paramDataType) = explode(':', $dynamicRoute);
                             if (!in_array($paramDataType, ['int','string'])) {
                                 HttpErrorResponse::return5xx(501, 'Invalid datatype set for Route');
                             }
-                            $uriElementConfiguredDetailsArr[$paramDataType] = [
-                                'configuredCompleteRouteUri' => $uriElementConfigured,
+                            $foundDynamicValuesArr[$paramDataType] = [
+                                'configuredCompleteRouteUri' => $r,
                                 'configuredParamName' =>$paramName,
-                                'configuredRequiredValues' => $uriElementConfiguredRequiredValuesArr
+                                'configuredRequiredValues' => ((strlen($preferredValues) > 0) ? explode(',', $preferredValues) : [])
                             ];
                             $foundDynamicValues = true;
                         }
@@ -143,21 +139,25 @@ class HttpRequest
                     // Check for dynamic value datatype.
                     if ($foundDynamicValues) {
                         switch (true) {
-                            case isset($uriElementConfiguredDetailsArr['int']) && ctype_digit($providedUriElementValue):
-                                if (count($uriElementConfiguredDetailsArr['int']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $uriElementConfiguredDetailsArr['int']['configuredRequiredValues'])) {
-                                    HttpErrorResponse::return4xx(404, $uriElementConfiguredDetailsArr['int']['configuredCompleteRouteUri'], true);
+                            case isset($foundDynamicValuesArr['int']):
+                                if (ctype_digit($providedUriElementValue)) {
+                                    if (count($foundDynamicValuesArr['int']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $foundDynamicValuesArr['int']['configuredRequiredValues'])) {
+                                        HttpErrorResponse::return4xx(404, $foundDynamicValuesArr['int']['configuredCompleteRouteUri'], true);
+                                    }
+                                    $configuredUri[] = $foundDynamicValuesArr['int']['configuredCompleteRouteUri'];
+                                    $this->routeParams[$foundDynamicValuesArr['int']['configuredParamName']] = (int)$providedUriElementValue;
+                                    $routes = &$routes[$foundDynamicValuesArr['int']['configuredCompleteRouteUri']];
+                                } else {
+                                    HttpErrorResponse::return4xx(404, "Invalid {$foundDynamicValuesArr['int']['configuredParamName']}");
                                 }
-                                $configuredUri[] = $uriElementConfiguredDetailsArr['int']['configuredCompleteRouteUri'];
-                                $this->routeParams[$uriElementConfiguredDetailsArr['int']['configuredParamName']] = (int)$providedUriElementValue;
-                                $routes = &$routes[$uriElementConfiguredDetailsArr['int']['configuredCompleteRouteUri']];
                                 break;
-                            case isset($uriElementConfiguredDetailsArr['string']):
-                                if (count($uriElementConfiguredDetailsArr['string']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $uriElementConfiguredDetailsArr['string']['configuredRequiredValues'])) {
-                                    HttpErrorResponse::return4xx(404, $uriElementConfiguredDetailsArr['string']['configuredCompleteRouteUri'], true);
+                            case isset($foundDynamicValuesArr['string']):
+                                if (count($foundDynamicValuesArr['string']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $foundDynamicValuesArr['string']['configuredRequiredValues'])) {
+                                    HttpErrorResponse::return4xx(404, $foundDynamicValuesArr['string']['configuredCompleteRouteUri'], true);
                                 }
-                                $configuredUri[] = $uriElementConfiguredDetailsArr['string']['configuredCompleteRouteUri'];
-                                $this->routeParams[$uriElementConfiguredDetailsArr['string']['configuredParamName']] = $providedUriElementValue;
-                                $routes = &$routes[$uriElementConfiguredDetailsArr['string']['configuredCompleteRouteUri']];
+                                $configuredUri[] = $foundDynamicValuesArr['string']['configuredCompleteRouteUri'];
+                                $this->routeParams[$foundDynamicValuesArr['string']['configuredParamName']] = $providedUriElementValue;
+                                $routes = &$routes[$foundDynamicValuesArr['string']['configuredCompleteRouteUri']];
                                 break;
                         }
                     } else {
