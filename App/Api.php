@@ -476,6 +476,11 @@ class Api
             if ($type === 'custom') {
                 $typeValue = $typeKey;
             } else {
+            if ($type === 'payload') {
+                if (!isset($input[$type][$typeKey])) {
+                    continue;
+                }
+            } else {
                 if (!isset($input[$type][$typeKey])) {
                     HttpErrorResponse::return5xx(501, "Invalid configuration of '{$type}' for '{$typeKey}'");
                 }
