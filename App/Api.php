@@ -483,7 +483,7 @@ class Api
         foreach ($queryPayload as $var => [$type, $typeKey]) {
             if ($type === 'custom') {
                 $stmtParams[$var] = $typeKey;
-            } else if ($type === 'payload' && !isset($input[$type][$typeKey])) {
+            } else if ($type === 'payload' && !in_array($typeKey, $input['required']) && !isset($input[$type][$typeKey])) {
                 continue;
             } else {
                 if (!isset($input[$type][$typeKey])) {
