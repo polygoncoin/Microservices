@@ -105,67 +105,57 @@ class HttpRequest
         }
         $this->routeElements = explode('/', trim($requestUri, '/'));
         $configuredUri = [];
-        foreach($this->routeElements as $key => $providedUriElementValue) {
+        foreach($this->routeElements as $key => $e) {
             $pos = false;
-            if (isset($routes[$providedUriElementValue])) {
-                $configuredUri[] = $providedUriElementValue;
-                $routes = &$routes[$providedUriElementValue];
+            if (isset($routes[$e])) {
+                $configuredUri[] = $e;
+                $routes = &$routes[$e];
                 continue;
             } else {
                 if (is_array($routes)) {
-                    $foundDynamicValues = false;
-                    $foundDynamicValuesArr = [];
+                    $foundIntRoute = false;
+                    $foundStringRoute = false;
                     foreach (array_keys($routes) as $r) {
                         // Is a dynamic URI element
                         if (strpos($r, '{') === 0) {
                             // Check for compulsary values
                             $dynamicRoute = trim($r, '{}');
-                            $preferredValues = '';
+                            $preferredValues = [];
                             if (strpos($r, '|') !== false) {
-                                list($dynamicRoute, $preferredValues) = explode('|', $dynamicRoute);
+                                list($dynamicRoute, $preferredValuesString) = explode('|', $dynamicRoute);
+                                $preferredValues = ((strlen($preferredValuesString) > 0) ? explode(',', $preferredValuesString) : []);
                             }
                             list($paramName, $paramDataType) = explode(':', $dynamicRoute);
                             if (!in_array($paramDataType, ['int','string'])) {
                                 HttpErrorResponse::return5xx(501, 'Invalid datatype set for Route');
                             }
-                            $foundDynamicValuesArr[$paramDataType] = [
-                                'configuredCompleteRouteUri' => $r,
-                                'configuredParamName' =>$paramName,
-                                'configuredRequiredValues' => ((strlen($preferredValues) > 0) ? explode(',', $preferredValues) : [])
-                            ];
-                            $foundDynamicValues = true;
+                            if (count($preferredValues) > 0 && !in_array($e, $preferredValues)) {
+                                HttpErrorResponse::return4xx(404, $r);
+                            }
+                            if ($paramDataType === 'int') {
+                                if (!ctype_digit($e)) {
+                                    HttpErrorResponse::return4xx(404, "Invalid {$paramName}");
+                                } else {
+                                    $foundIntRoute = $r;
+                                }
+                            } else {
+                                $foundStringRoute = $r;
+                            }
                         }
                     }
-                    // Check for dynamic value datatype.
-                    if ($foundDynamicValues) {
-                        switch (true) {
-                            case isset($foundDynamicValuesArr['int']):
-                                if (ctype_digit($providedUriElementValue)) {
-                                    if (count($foundDynamicValuesArr['int']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $foundDynamicValuesArr['int']['configuredRequiredValues'])) {
-                                        HttpErrorResponse::return4xx(404, $foundDynamicValuesArr['int']['configuredCompleteRouteUri'], true);
-                                    }
-                                    $configuredUri[] = $foundDynamicValuesArr['int']['configuredCompleteRouteUri'];
-                                    $this->routeParams[$foundDynamicValuesArr['int']['configuredParamName']] = (int)$providedUriElementValue;
-                                    $routes = &$routes[$foundDynamicValuesArr['int']['configuredCompleteRouteUri']];
-                                } else {
-                                    HttpErrorResponse::return4xx(404, "Invalid {$foundDynamicValuesArr['int']['configuredParamName']}");
-                                }
-                                break;
-                            case isset($foundDynamicValuesArr['string']):
-                                if (count($foundDynamicValuesArr['string']['configuredRequiredValues'])>0 && !in_array($providedUriElementValue, $foundDynamicValuesArr['string']['configuredRequiredValues'])) {
-                                    HttpErrorResponse::return4xx(404, $foundDynamicValuesArr['string']['configuredCompleteRouteUri'], true);
-                                }
-                                $configuredUri[] = $foundDynamicValuesArr['string']['configuredCompleteRouteUri'];
-                                $this->routeParams[$foundDynamicValuesArr['string']['configuredParamName']] = $providedUriElementValue;
-                                $routes = &$routes[$foundDynamicValuesArr['string']['configuredCompleteRouteUri']];
-                                break;
-                        }
+                    if ($foundIntRoute) {
+                        $configuredUri[] = $foundIntRoute;
+                        $this->routeParams[$paramName] = (int)$e;
+                    } else if ($foundStringRoute) {
+                        $configuredUri[] = $foundStringRoute;
+                        $this->routeParams[$paramName] = $e;
                     } else {
                         HttpErrorResponse::return4xx(404, 'Route not supported');
                     }
                 } else {
                     HttpErrorResponse::return4xx(404, 'Route not supported');
                 }
+                $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
         }
         $this->configuredUri = '/' . implode('/', $configuredUri);
