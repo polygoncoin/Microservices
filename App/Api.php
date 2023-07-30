@@ -170,62 +170,36 @@ class Api
             HttpErrorResponse::return5xx(501, 'Path cannot be empty');
         }
         $config = include $this->authorize->__file__;
-        $requiredPayloadFields = $this->getRequiredPayloadFields($config);
+        $input['required'] = $this->getRequiredPayloadFields($config);
 
+        // Perform action
         $response = [];
-        // Required payload validation
-        foreach ($payloadArr as $key => &$payload) {
-            if (count($payload) >= count($requiredPayloadFields)) {
-                foreach ($requiredPayloadFields as $column) {
-                    if (!isset($payload[$column])) {
-                        if ($isAssoc) {
-                            $response[] = 'Invalid payload: '.$column;
-                        } else {
-                            $response[$key][] = 'Invalid payload: '.$column;
-                        }
-                    }
-                }
-            } else {
-                if ($isAssoc) {
-                    $response[] = 'Invalid payload';
-                } else {
-                    $response[$key][] = 'Invalid payload';
+        foreach ($payloadArr as &$payload) {
+            $isValidData = true;
+            if ($this->authorize->requestMethod === 'PATCH') {
+                if (count($payload) !== 1) {
+                    HttpErrorResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
                 }
             }
-        }
-        // Perform action
-        if (count($response) === 0) {
-            foreach ($payloadArr as &$payload) {
-                $isValidData = true;
-                if ($this->authorize->requestMethod === 'PATCH') {
-                    if (count($payload) !== 1) {
-                        HttpErrorResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
-                    }
-                }
-                if (isset($payload['password'])) {
-                    $payload['password'] = password_hash($payload['password']);
-                }
-                $input['payload'] = &$payload;
+            if (isset($payload['password'])) {
+                $payload['password'] = password_hash($payload['password']);
+            }
+            $input['payload'] = &$payload;
 
-                if (isset($config['validate'])) {
-                    list($isValidData, $errors) = $this->validate($input, $config['validate']);
-                }
-                
-                // Configured Validation
-                if (isset($config['validate'])) {
-                    list($isValidData, $errors) = $this->validate($input, $config['validate']);
-                }
-                if ($isValidData!==true) {
-                    if ($isAssoc) {
-                        $response = ['data' => $payload, 'Error' => $errors];
-                    } else {
-                        $response[] = ['data' => $payload, 'Error' => $errors];
-                    }
+            // Configured Validation
+            if (isset($config['validate']) || (count($input['required']) > 0)) {
+                list($isValidData, $errors) = $this->validate($input, $config['validate']);
+            }
+            if ($isValidData!==true) {
+                if ($isAssoc) {
+                    $response = ['data' => $payload, 'Error' => $errors];
                 } else {
-                    $res = $this->insertUpdateSubQuery($input, $config);
-                    if ('POST' === $_SERVER['REQUEST_METHOD']) {
-                        $response[] = $res;
-                    }
+                    $response[] = ['data' => $payload, 'Error' => $errors];
+                }
+            } else {
+                $res = $this->insertUpdateSubQuery($input, $config);
+                if ('POST' === $_SERVER['REQUEST_METHOD']) {
+                    $response[] = $res;
                 }
             }
         }

@@ -43,6 +43,32 @@ class Validator
      */
     public function validate($input, $validationConfig)
     {
+        if (count($input['required']) > 0) {
+            if ((list($isValidData, $errors) = $this->v->validateRequired($input)) && !$isValidData) {
+                return [$isValidData, $errors];
+            }
+        }
         return $this->v->validate($input, $validationConfig);
+    }
+
+    private function validateRequired($input)
+    {
+        $isValidData = true;
+        $errors = [];
+        // Required fields payload validation
+        $payload = $input['payload'];
+        $required = $input['required'];
+        if (count($payload) >= count($required)) {
+            foreach ($required as $column) {
+                if (!isset($payload[$column])) {
+                    $errors[] = 'Invalid payload: '.$column;
+                    $isValidData = false;
+                }
+            }
+        } else {
+            $errors[] = 'Invalid payload';
+            $isValidData = false;
+        }
+        return [$isValidData, $errors];
     }
 }
