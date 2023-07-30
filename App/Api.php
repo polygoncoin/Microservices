@@ -474,19 +474,15 @@ class Api
         $stmtParams = [];
         foreach ($queryPayload as $var => [$type, $typeKey]) {
             if ($type === 'custom') {
-                $typeValue = $typeKey;
-            } else {
-            if ($type === 'payload') {
-                if (!isset($input[$type][$typeKey])) {
-                    continue;
-                }
+                $stmtParams[$var] = $typeKey;
+            } else if ($type === 'payload' && !isset($input[$type][$typeKey])) {
+                continue;
             } else {
                 if (!isset($input[$type][$typeKey])) {
                     HttpErrorResponse::return5xx(501, "Invalid configuration of '{$type}' for '{$typeKey}'");
                 }
-                $typeValue = $input[$type][$typeKey];
+                $stmtParams[$var] = $input[$type][$typeKey];
             }
-            $stmtParams[$var] = $typeValue;
         }
         return $stmtParams;
     }
