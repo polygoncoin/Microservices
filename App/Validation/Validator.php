@@ -37,20 +37,26 @@ class Validator
     /**
      * Validate payload
      *
-     * @param array $data             Payload data
+     * @param array $input            Inputs
      * @param array $validationConfig Validation configuration.
      * @return array
      */
     public function validate($input, $validationConfig)
     {
         if (count($input['required']) > 0) {
-            if ((list($isValidData, $errors) = $this->v->validateRequired($input)) && !$isValidData) {
+            if ((list($isValidData, $errors) = $this->validateRequired($input)) && !$isValidData) {
                 return [$isValidData, $errors];
             }
         }
         return $this->v->validate($input, $validationConfig);
     }
 
+    /**
+     * Validate required payload
+     *
+     * @param array $input Inputs
+     * @return array
+     */
     private function validateRequired($input)
     {
         $isValidData = true;
