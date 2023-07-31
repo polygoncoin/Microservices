@@ -203,13 +203,11 @@ class Api
                 }
             }
         }
+        if (count($response) === 1) {
+            $response = $response[0];
+        }
         $this->jsonEncodeObj = new JsonEncode();
-        if ($this->authorize->requestMethod === 'POST') {
-            if (count($response) === 1) {
-                $response = $response[0];
-            }
-            $this->jsonEncodeObj->encode($response);
-        } else if (count($response) > 0) {
+        if (count($response) > 0) {
             $this->jsonEncodeObj->encode($response);
         } else {
             $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
@@ -528,7 +526,6 @@ class Api
         }
         return $assoc;
     }
-
     
     /**
      * Miscellaneous Functionality Before Collecting Payload
