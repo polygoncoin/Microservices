@@ -2,6 +2,7 @@
 namespace App;
 
 use App\HttpErrorResponse;
+use App\JsonEncode;
 
 /**
  * Class is used for file uploads

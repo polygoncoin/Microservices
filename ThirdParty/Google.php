@@ -2,6 +2,7 @@
 namespace ThirdParty;
 
 use App\HttpErrorResponse;
+use App\JsonEncode;
 
 /**
  * Class for third party - Google.
