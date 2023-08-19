@@ -64,6 +64,13 @@ class MySQL extends AbstractDatabase
     private $stmt = null;
 
     /**
+     * Transaction started flag
+     *
+     * @var boolean
+     */
+    private $beganTransaction = false;
+
+    /**
      * Database constructor
      *
      * @param string $hostname  Hostname .env string
@@ -102,14 +109,13 @@ class MySQL extends AbstractDatabase
                 getenv($this->password),
                 [
                     \PDO::ATTR_EMULATE_PREPARES => false,
-                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
+//                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
                 ]
             );
             if (!is_null($this->database)) {
                 $this->useDatabase($this->database);
             }
         } catch (\PDOException $e) {
-            echo $e->getMessage();die;
             HttpErrorResponse::return5xx(501, 'Unable to connect to database server');
         }
     }
@@ -123,9 +129,50 @@ class MySQL extends AbstractDatabase
     public function useDatabase($database)
     {
         $this->connect();
-        $this->pdo->exec("USE `{$this->execPhpFunc(getenv($database))}`");
+        try {
+            $this->pdo->exec("USE `{$this->execPhpFunc(getenv($database))}`");
+        } catch (\PDOException $e) {
+            HttpErrorResponse::return5xx(501, 'Unable to change database');
+        }
     }
 
+    /**
+     * Begin transaction
+     *
+     * @return void
+     */
+    public function begin()
+    {
+        $this->beganTransaction = true;
+        $this->pdo->beginTransaction();
+    }
+    
+    /**
+     * Commit transaction
+     *
+     * @return void
+     */
+    public function commit()
+    {
+        if ($this->beganTransaction) {
+            $this->beganTransaction = false;
+            $this->pdo->commit();
+        }
+    }
+    
+    /**
+     * Rollback transaction
+     *
+     * @return void
+     */
+    public function rollback()
+    {
+        if ($this->beganTransaction) {
+            $this->beganTransaction = false;
+            $this->pdo->rollback();
+        }
+    }
+    
     /**
      * Last Insert Id by PDO
      *
@@ -149,6 +196,11 @@ class MySQL extends AbstractDatabase
         try {
             $this->stmt = $this->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             $this->stmt->execute($params);
+            // Check for warnings.
+            if ((int)$this->pdo->errorCode()) {
+                $this->rollback();
+                HttpErrorResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
+            }
         } catch(\PDOException $e) {
             HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
         }

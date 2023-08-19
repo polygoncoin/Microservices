@@ -90,7 +90,7 @@ CREATE TABLE `m002_master_user` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -191,7 +191,7 @@ CREATE TABLE `m006_master_client` (
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
   PRIMARY KEY (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

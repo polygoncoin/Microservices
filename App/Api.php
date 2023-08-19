@@ -197,7 +197,9 @@ class Api
                     $response[] = ['data' => $payload, 'Error' => $errors];
                 }
             } else {
+                $this->authorize->db->begin();
                 $res = $this->insertUpdateSubQuery($input, $config);
+                $this->authorize->db->commit();
                 if ('POST' === $_SERVER['REQUEST_METHOD']) {
                     $response[] = $res;
                 }

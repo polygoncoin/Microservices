@@ -1,8 +1,6 @@
 <?php
 namespace App;
 
-use App\JsonEncode;
-
 /**
  * HTTP Error Response
  *
@@ -18,6 +16,16 @@ use App\JsonEncode;
 class HttpErrorResponse
 {
     /**
+     * Clean (erase) the output buffer
+     *
+     * @return void
+     */
+    private static function clean()
+    {
+        ob_clean();
+    }
+
+    /**
      * Return 2xx response
      *
      * @param string $errorCode  Error code
@@ -26,6 +34,7 @@ class HttpErrorResponse
      */
     public static function return2xx($errorCode, $errMessage)
     {
+        self::clean();
         self::returnHttpStatus(
             $errorCode,
             ['Message' => $errMessage]
@@ -41,6 +50,7 @@ class HttpErrorResponse
      */
     public static function return3xx($errorCode, $errMessage)
     {
+        self::clean();
         self::returnHttpStatus(
             $errorCode,
             ['Message' => $errMessage]
@@ -57,6 +67,7 @@ class HttpErrorResponse
      */
     public static function return4xx($errorCode, $errMessage, $customise = false)
     {
+        self::clean();
         if ($customise) {
             $arr = explode('|', $errMessage);
             self::returnHttpStatus(
@@ -85,6 +96,7 @@ class HttpErrorResponse
      */
     public static function return5xx($errorCode, $errMessage)
     {
+        self::clean();
         self::returnHttpStatus(
             $errorCode,
             ['Message' => $errMessage]
@@ -116,8 +128,6 @@ class HttpErrorResponse
      */
     public static function returnResponse($arr)
     {
-        $jsonEncode = new JsonEncode();
-        $jsonEncode->encode($arr);
-        $jsonEncode = null;
+        die(json_encode($arr));
     }
 }

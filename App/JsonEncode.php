@@ -189,14 +189,6 @@ class JsonEncode
         }
         die();
     }
-
-    /**
-     * destruct functipn
-     */
-    public function __destruct()
-    {
-        $this->end();
-    }
 }
 
 /**
