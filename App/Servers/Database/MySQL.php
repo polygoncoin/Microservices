@@ -109,7 +109,7 @@ class MySQL extends AbstractDatabase
                 getenv($this->password),
                 [
                     \PDO::ATTR_EMULATE_PREPARES => false,
-//                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
+                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
                 ]
             );
             if (!is_null($this->database)) {
