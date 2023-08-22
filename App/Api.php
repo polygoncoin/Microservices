@@ -284,6 +284,9 @@ class Api
                                 unset($queryDetailsCount['countQuery']);
                                 $input['payload']['page']  = $_GET['page'] ?? 1;
                                 $input['payload']['perpage']  = $_GET['perpage'] ?? 10;
+                                if ($input['payload']['perpage'] > getenv('maxPerpage')) {
+                                    HttpErrorResponse::return4xx(403, 'perpage exceeds max perpage value of '.getenv('maxPerpage'));
+                                }
                                 $input['payload']['start']  = ($input['payload']['page'] - 1) * $input['payload']['perpage'];
                                 list($query, $params) = $this->getQueryAndParams($input, $queryDetailsCount);
                                 $this->authorize->db->execDbQuery($query, array_values($params));
