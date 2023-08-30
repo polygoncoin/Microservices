@@ -161,7 +161,7 @@ class Api
 
         // Perform action
         $response = [];
-        foreach ($payloadArr as &$payload) {
+        foreach (HttpRequest::$input['payloadArr'] as &$payload) {
             $isValidData = true;
             if (HttpRequest::$REQUEST_METHOD === 'PATCH') {
                 if (count($payload) !== 1) {
