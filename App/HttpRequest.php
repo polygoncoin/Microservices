@@ -69,13 +69,6 @@ class HttpRequest
     public static $REMOTE_ADDR = null;
 
     /**
-     * Requested route
-     *
-     * @var string
-     */
-    public static $REQUEST_URI = null;
-
-    /**
      * Inputs detials of a request
      *
      * @var array
@@ -92,7 +85,6 @@ class HttpRequest
         self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
         self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
-        self::$REQUEST_URI = ROUTE;
         
         eval('self::$httpId = App\Constants::'.self::$REQUEST_METHOD.';');
 
@@ -129,7 +121,7 @@ class HttpRequest
         } else {
             HttpErrorResponse::return5xx(501, 'Missing route file for' . " {self::$REQUEST_METHOD} " . 'method');
         }
-        self::$routeElements = explode('/', trim(self::$REQUEST_URI, '/'));
+        self::$routeElements = explode('/', trim(ROUTE, '/'));
         $configuredUri = [];
         foreach(self::$routeElements as $key => $e) {
             $pos = false;
