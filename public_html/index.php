@@ -6,9 +6,9 @@ define('REQUIRED', true);
 require_once __DOC_ROOT__ . '/autoload.php';
 
 // REQUEST_URI key in URL
-define('REQUEST_URI', 'REQUEST_URI');
+define('ROUTE_URL_PARAM', 'REQUEST_URI');
 
-define('__REQUEST_URI__', '/' . trim($_GET[REQUEST_URI], '/'));
+define('ROUTE', '/' . trim($_GET[ROUTE_URL_PARAM], '/'));
 
 header('Content-Type: application/json; charset=utf-8');
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
@@ -17,10 +17,10 @@ header("Pragma: no-cache");
 ob_start();
 
 switch (true) {
-    case __REQUEST_URI__ === '/login':
+    case ROUTE === '/login':
         App\Login::init();
         break;
-    case strpos(__REQUEST_URI__, '/crons') === 0:
+    case strpos(ROUTE, '/crons') === 0:
         // Check request not from proxy.
         if (!isset($_SERVER['REMOTE_ADDR'])) {
             die('Proxy requests are not supported.');
@@ -28,17 +28,17 @@ switch (true) {
         if ($_SERVER['REMOTE_ADDR'] !== getenv('cronRestrictedIp')) {
             die('Source IP is not supported.');
         }
-        $__REQUEST_URI__ = explode('/', __REQUEST_URI__);
+        $routeArr = explode('/', ROUTE);
         if (
-            isset($__REQUEST_URI__[2]) &&
-            file_exists(__DOC_ROOT__ . "/Crons/{$__REQUEST_URI__[2]}.php")
+            isset($routeArr[2]) &&
+            file_exists(__DOC_ROOT__ . "/Crons/{$routeArr[2]}.php")
         ) {
-            eval('Crons\\' . $__REQUEST_URI__[2] . '::init($_SERVER[\'REQUEST_METHOD\'], __REQUEST_URI__);');
+            eval('Crons\\' . $routeArr[2] . '::init(ROUTE);');
         } else {
             die('Invalid request.');
         }
         break;
-    case __REQUEST_URI__ === '/reload':
+    case ROUTE === '/reload':
         if (httpAuthentication()) {
             App\Reload::init();
         }

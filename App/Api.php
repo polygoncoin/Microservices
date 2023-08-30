@@ -1,14 +1,14 @@
 <?php
 namespace App;
 
+use App\Authorize;
 use App\HttpRequest;
+use App\JsonEncode;
+use App\Logs;
+use App\AppTrait;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
-use App\Authorize;
-use App\JsonEncode;
 use App\Validation\Validator;
-use App\PHPTrait;
-use App\Logs;
 
 /**
  * Class to initialize api HTTP request
@@ -24,7 +24,7 @@ use App\Logs;
  */
 class Api
 {
-    use PHPTrait;
+    use AppTrait;
 
     /**
      * Cache Server connection object
@@ -187,7 +187,7 @@ class Api
                 $this->db->begin();
                 $res = $this->insertUpdateSubQuery($config);
                 $this->db->commit();
-                if ('POST' === $_SERVER['REQUEST_METHOD']) {
+                if ('POST' === HttpRequest::$REQUEST_METHOD) {
                     $response[] = $res;
                 }
             }

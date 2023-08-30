@@ -1,11 +1,11 @@
 <?php
 namespace App;
 
-use App\HttpRequest;
 use App\HttpErrorResponse;
+use App\HttpRequest;
+use App\Logs;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
-use App\Logs;
 
 /**
  * Class handles Authorization

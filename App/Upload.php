@@ -2,7 +2,9 @@
 namespace App;
 
 use App\HttpErrorResponse;
+use App\HttpRequest;
 use App\JsonEncode;
+use App\Logs;
 
 /**
  * Class is used for file uploads
@@ -44,7 +46,7 @@ class Upload
      */
     public function process()
     {
-        switch ($_SERVER['REQUEST_METHOD']) {
+        switch (HttpRequest::$REQUEST_METHOD) {
             case 'POST':
             case 'PUT':
                 $this->processUpload();

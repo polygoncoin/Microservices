@@ -14,7 +14,7 @@ namespace App;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-trait PHPTrait
+trait AppTrait
 {
     /**
      * Function to help execute PHP functions enclosed with double quotes.

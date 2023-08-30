@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\HttpRequest;
 use App\Logs;
 
 /**

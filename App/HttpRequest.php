@@ -92,7 +92,7 @@ class HttpRequest
         self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
         self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
-        self::$REQUEST_URI = __REQUEST_URI__;
+        self::$REQUEST_URI = ROUTE;
         
         eval('self::$httpId = App\Constants::'.self::$REQUEST_METHOD.';');
 

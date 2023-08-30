@@ -2,8 +2,9 @@
 namespace App\Servers\Cache;
 
 use App\HttpErrorResponse;
-use App\Servers\Cache\AbstractCache;
+use App\HttpRequest;
 use App\Logs;
+use App\Servers\Cache\AbstractCache;
 
 /**
  * Loading Redis server

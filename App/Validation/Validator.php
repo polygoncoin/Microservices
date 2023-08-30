@@ -2,6 +2,8 @@
 namespace App\Validation;
 
 use App\HttpErrorResponse;
+use App\HttpRequest;
+use App\Logs;
 use App\Servers\Database\Database;
 use App\Validation\ClientValidator;
 use App\Validation\GlobalValidator;

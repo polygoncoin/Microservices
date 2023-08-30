@@ -4,7 +4,7 @@ namespace App;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
 use App\JsonEncode;
-use App\PHPTrait;
+use App\AppTrait;
 
 /**
  * Updates cache
@@ -20,7 +20,7 @@ use App\PHPTrait;
  */
 class Reload
 {
-    use PHPTrait;
+    use AppTrait;
     
     /**
      * Cache Server connection object

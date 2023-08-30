@@ -1,11 +1,11 @@
 <?php
 namespace App\Servers\Database;
 
-use App\Servers\Database\AbstractDatabase;
-use App\HttpRequest;
 use App\HttpErrorResponse;
-use App\PHPTrait;
+use App\HttpRequest;
 use App\Logs;
+use App\AppTrait;
+use App\Servers\Database\AbstractDatabase;
 
 /**
  * Loading database server
@@ -21,7 +21,7 @@ use App\Logs;
  */
 class MySQL extends AbstractDatabase
 {
-    use PHPTrait;
+    use AppTrait;
 
     /**
      * Database hostname

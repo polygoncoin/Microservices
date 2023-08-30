@@ -1,9 +1,10 @@
 <?php
 namespace App;
 
-use App\HttpRequest;
 use App\HttpErrorResponse;
+use App\HttpRequest;
 use App\JsonEncode;
+use App\Logs;
 use App\Servers\Cache\Cache;
 
 /**

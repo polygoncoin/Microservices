@@ -2,6 +2,8 @@
 namespace App\Servers\Cache;
 
 use App\HttpErrorResponse;
+use App\HttpRequest;
+use App\Logs;
 use App\Servers\Cache\Redis;
 
 /**
