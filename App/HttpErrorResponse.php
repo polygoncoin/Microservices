@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use App\Logs;
+
 /**
  * HTTP Error Response
  *

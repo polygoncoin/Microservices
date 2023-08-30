@@ -15,5 +15,9 @@ namespace App;
  */
 class Constants
 {
-
+    public const GET       = 1;
+    public const POST      = 2;
+    public const PUT       = 3;
+    public const PATCH     = 4;
+    public const DELETE    = 5;
 }

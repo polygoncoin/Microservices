@@ -3,6 +3,8 @@ namespace App\Servers\Cache;
 
 use App\HttpErrorResponse;
 use App\Servers\Cache\AbstractCache;
+use App\Logs;
+
 /**
  * Loading Redis server
  *
@@ -97,6 +99,12 @@ class Redis extends AbstractCache
                 HttpErrorResponse::return5xx(501, 'Unable to ping to cache server');
             }
         } catch (\Exception $e) {
+            $log = [
+                'datetime' => date('Y-m-d H:i:s'),
+                'input' => HttpRequest::$input,
+                'error' => 'Unable to connect to cache server'
+            ];
+            Logs::log('error', json_encode($log));
             HttpErrorResponse::return5xx(501, 'Unable to connect to cache server');
         }
     }

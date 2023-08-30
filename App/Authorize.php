@@ -5,6 +5,7 @@ use App\HttpRequest;
 use App\HttpErrorResponse;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
+use App\Logs;
 
 /**
  * Class handles Authorization
@@ -18,7 +19,7 @@ use App\Servers\Database\Database;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Authorize extends HttpRequest
+class Authorize
 {
     /**
      * Cache Server connection object
@@ -40,13 +41,6 @@ class Authorize extends HttpRequest
      * @var array
      */
     public $readOnlySession = null;
-
-    /**
-     * Global DB
-     *
-     * @var string
-     */
-    public $globalDB = null;
 
     /**
      * Client database server type
@@ -104,16 +98,7 @@ class Authorize extends HttpRequest
      */
     public function __construct()
     {
-
-    }
-
-    /**
-     * Initialize authorization
-     *
-     * @return void
-     */
-    public function init()
-    {
+        HttpRequest::init();
         $this->process();
     }
 
@@ -124,7 +109,6 @@ class Authorize extends HttpRequest
      */
     private function process()
     {
-        $this->globalDB = getenv('globalDbName');
         Cache::connect(
             'Redis',
             'cacheHostname',
@@ -133,12 +117,11 @@ class Authorize extends HttpRequest
             'cacheDatabase'
         );
         $this->cache = Cache::getObject();
-        $this->checkToken($_SERVER['HTTP_AUTHORIZATION']);
-        if ($this->tokenExists($this->token)) {
-            $this->parseRoute($_SERVER['REQUEST_METHOD'], __REQUEST_URI__);
-            $this->loadTokenSession($this->token);
-            $this->checkSourceIp($_SERVER['REMOTE_ADDR']);
-            $this->checkRoutePrivilage($this->configuredUri);
+        if ($this->tokenExists(HttpRequest::$input['token'])) {
+            HttpRequest::parseRoute();
+            $this->loadTokenSession(HttpRequest::$input['token']);
+            $this->checkRemoteIp(HttpRequest::$REMOTE_ADDR);
+            $this->checkRoutePrivilage(HttpRequest::$configuredUri);
         } else {
             HttpErrorResponse::return4xx(404, 'Token expired');
         }
@@ -166,13 +149,13 @@ class Authorize extends HttpRequest
         if (!$this->cache->cacheExists($token)) {
             HttpErrorResponse::return5xx(501, "Cache token missing.");
         }
-        $this->readOnlySession = json_decode($this->cache->getCache($token), true);
+        HttpRequest::$input['readOnlySession'] = json_decode($this->cache->getCache($token), true);
 
-        if (empty($this->readOnlySession['user_id']) || empty($this->readOnlySession['group_id'])) {
+        if (empty(HttpRequest::$input['readOnlySession']['user_id']) || empty(HttpRequest::$input['readOnlySession']['group_id'])) {
             HttpErrorResponse::return4xx(404, 'Invalid session');
         }
-        $this->userId = $this->readOnlySession['user_id'];
-        $this->groupId = $this->readOnlySession['group_id'];
+        $this->userId = HttpRequest::$input['readOnlySession']['user_id'];
+        $this->groupId = HttpRequest::$input['readOnlySession']['group_id'];
         if (!$this->cache->cacheExists("group:{$this->groupId}")) {
             HttpErrorResponse::return5xx(501, "Cache 'group:{$this->groupId}' missing.");
         }
@@ -190,7 +173,7 @@ class Authorize extends HttpRequest
      * @param string $ip IP Address (V4).
      * @return void
      */
-    private function checkSourceIp($ip)
+    private function checkRemoteIp($ip)
     {
         // Redis - one can find the userID from username.
         if ($this->cache->cacheExists("group:{$this->groupId}:cidr")) {
@@ -217,7 +200,7 @@ class Authorize extends HttpRequest
      */
     private function checkRoutePrivilage($route)
     {
-        $key = "group:{$this->groupId}:http:{$this->httpId}:routes";
+        $key = "group:{$this->groupId}:http:".HttpRequest::$httpId.':routes';
         if (!$this->cache->isSetMember($key, $route)) {
             HttpErrorResponse::return4xx(404, 'Route not supported');
         }

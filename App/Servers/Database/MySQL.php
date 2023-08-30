@@ -2,8 +2,10 @@
 namespace App\Servers\Database;
 
 use App\Servers\Database\AbstractDatabase;
+use App\HttpRequest;
 use App\HttpErrorResponse;
 use App\PHPTrait;
+use App\Logs;
 
 /**
  * Loading database server
@@ -132,6 +134,15 @@ class MySQL extends AbstractDatabase
         try {
             $this->pdo->exec("USE `{$this->execPhpFunc(getenv($database))}`");
         } catch (\PDOException $e) {
+            if ((int)$this->pdo->errorCode()) {
+                $log = [
+                    'datetime' => date('Y-m-d H:i:s'),
+                    'input' => HttpRequest::$input,
+                    'error' => $this->pdo->errorInfo()
+                ];
+                Logs::log('error', json_encode($log));
+                $this->rollback();
+            }
             HttpErrorResponse::return5xx(501, 'Unable to change database');
         }
     }
@@ -196,13 +207,17 @@ class MySQL extends AbstractDatabase
         try {
             $this->stmt = $this->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             $this->stmt->execute($params);
-            // Check for warnings.
+        } catch(\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {
+                $log = [
+                    'datetime' => date('Y-m-d H:i:s'),
+                    'input' => HttpRequest::$input,
+                    'error' => $this->pdo->errorInfo()
+                ];
+                Logs::log('error', json_encode($log));
                 $this->rollback();
                 HttpErrorResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
             }
-        } catch(\PDOException $e) {
-            HttpErrorResponse::return5xx(501, 'Database error: ' . $e->getMessage());
         }
     }
 

@@ -1,7 +1,9 @@
 <?php
 namespace App;
 
+use App\Constants;
 use App\HttpErrorResponse;
+use App\Logs;
 
 /*
  * Class handling details of HTTP request
@@ -18,62 +20,65 @@ use App\HttpErrorResponse;
 class HttpRequest
 {
     /**
-     * Bearer token
-     *
-     * @var string
-     */
-    public $token = null;
-
-    /**
-     * HTTP request method
-     *
-     * @var string
-     */
-    public $requestMethod = null;
-
-    /**
      * Logged-in user request method ID
      *
      * @var int
      */
-    public $httpId = null;
+    public static $httpId = null;
 
     /**
      * Raw route / Configured Uri
      *
      * @var string
      */
-    public $configuredUri = '';
-
-    /**
-     * Array containing details of route dynamic params
-     *
-     * @var array
-     */
-    public $routeParams = [];
+    public static $configuredUri = '';
 
     /**
      * Array containing details of received route elements
      *
      * @var array
      */
-    public $routeElements = [];
+    public static $routeElements = [];
 
     /**
      * Locaton of File containing code for route
      *
      * @var string
      */
-    public $__file__ = null;
+    public static $__file__ = null;
 
-    public function checkToken($authHeader)
+    /**
+     * HTTP request method
+     *
+     * @var string
+     */
+    public static $REQUEST_METHOD = null;
+    public static $HTTP_AUTHORIZATION = null;
+    public static $REMOTE_ADDR = null;
+    public static $REQUEST_URI = null;
+
+    public static $input = null;
+
+    public static function init()
     {
-        if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            $this->token = $matches[1];
+        self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
+        self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
+        self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
+        self::$REQUEST_URI = __REQUEST_URI__;
+        
+        eval('self::$httpId = App\Constants::'.self::$REQUEST_METHOD.';');
+
+        self::loadToken();
+    }
+
+    public static function loadToken()
+    {
+        if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
+            self::$input['token'] = $matches[1];
         } else {
             HttpErrorResponse::return4xx(404, 'Missing token in authorization header');    
         }
-        if (empty($this->token)) {
+        if (empty(self::$input['token'])) {
             HttpErrorResponse::return4xx(404, 'Missing token');
         }
     }
@@ -81,31 +86,19 @@ class HttpRequest
     /**
      * Parse route as per method
      *
-     * @param string $requestMethod HTTP method
-     * @param string $requestUri    Requested URI
      * @return void
      */
-    public function parseRoute($requestMethod, $requestUri)
+    public static function parseRoute()
     {
-        $this->requestMethod = $requestMethod;
-
-        $this->httpId = [
-            'GET' => 1,
-            'POST' => 2,
-            'PUT' => 3,
-            'PATCH' => 4,
-            'DELETE' => 5
-        ][$this->requestMethod];
-
-        $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . $this->requestMethod . 'routes.php';
+        $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . self::$REQUEST_METHOD . 'routes.php';
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
-            HttpErrorResponse::return5xx(501, 'Missing route file for' . " $this->requestMethod " . 'method');
+            HttpErrorResponse::return5xx(501, 'Missing route file for' . " {self::$REQUEST_METHOD} " . 'method');
         }
-        $this->routeElements = explode('/', trim($requestUri, '/'));
+        self::$routeElements = explode('/', trim(self::$REQUEST_URI, '/'));
         $configuredUri = [];
-        foreach($this->routeElements as $key => $e) {
+        foreach(self::$routeElements as $key => $e) {
             $pos = false;
             if (isset($routes[$e])) {
                 $configuredUri[] = $e;
@@ -145,10 +138,10 @@ class HttpRequest
                     }
                     if ($foundIntRoute) {
                         $configuredUri[] = $foundIntRoute;
-                        $this->routeParams[$paramName] = (int)$e;
+                        self::$input['uriParams'][$paramName] = (int)$e;
                     } else if ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        $this->routeParams[$paramName] = $e;
+                        self::$input['uriParams'][$paramName] = $e;
                     } else {
                         HttpErrorResponse::return4xx(404, 'Route not supported');
                     }
@@ -158,13 +151,68 @@ class HttpRequest
                 $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
         }
-        $this->configuredUri = '/' . implode('/', $configuredUri);
+        self::$configuredUri = '/' . implode('/', $configuredUri);
 
         // Set route code file.
         if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
-            $this->__file__ = $routes['__file__'];
+            self::$__file__ = $routes['__file__'];
         } elseif ($routes['__file__'] != '') {
-            HttpErrorResponse::return5xx(501, 'Missing route configuration file for' . " {$requestMethod} " . 'method');
+            HttpErrorResponse::return5xx(501, 'Missing route configuration file for' . " {$REQUEST_METHOD} " . 'method');
         }
+    }
+
+    public static function loadPayload()
+    {
+        if (self::$REQUEST_METHOD === 'GET') {
+            self::$input['payloadArr'] = $_GET;
+        } else {
+            // Load Payload
+            parse_str(file_get_contents('php://input'), $payloadArr);
+            if (!isset($payloadArr['data'])) {
+                HttpErrorResponse::return4xx(404, 'Invalid data payload');
+            }
+            self::$input['payloadArr'] = json_decode($payloadArr['data'], true);
+        }
+        self::$input['payloadType'] = self::payloadType(self::$input['payloadArr']);
+        if (self::$input['payloadType']) {
+            self::$input['payloadArr'] = [self::$input['payloadArr']];
+        }
+    }
+
+    /**
+     * Return inputs
+     *
+     * @return array
+     */
+    public static function getInputs()
+    {
+        // input details
+        self::$input = [
+            'uriParams' => self::$input['uriParams'],
+            'readOnlySession' => self::$input['readOnlySession'],
+            'payloadArr' => self::$input['payloadArr'],
+            'payloadType' => self::$input['payloadType'],
+        ];
+
+        return self::$input;
+    }
+
+    /**
+     * Function to find payload is an object/array
+     *
+     * @param array $payload
+     * @return boolean
+     */
+    public static function payloadType($payload)
+    {
+        $payloadType = 'Array';
+        $i = 0;
+        foreach ($payload as $k => &$v) {
+            if ($k !== $i++) {
+                $payloadType = 'Object';
+                break;
+            }
+        }
+        return $payloadType;
     }
 }

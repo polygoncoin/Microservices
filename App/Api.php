@@ -1,10 +1,14 @@
 <?php
 namespace App;
 
+use App\HttpRequest;
+use App\Servers\Cache\Cache;
+use App\Servers\Database\Database;
 use App\Authorize;
 use App\JsonEncode;
 use App\Validation\Validator;
 use App\PHPTrait;
+use App\Logs;
 
 /**
  * Class to initialize api HTTP request
@@ -21,6 +25,20 @@ use App\PHPTrait;
 class Api
 {
     use PHPTrait;
+
+    /**
+     * Cache Server connection object
+     *
+     * @var object
+     */
+    public $cache = null;
+
+    /**
+     * DB Server connection object
+     *
+     * @var object
+     */
+    public $db = null;
 
     /**
      * Global DB
@@ -75,12 +93,13 @@ class Api
     public function process()
     {
         $this->authorize = new Authorize();
-        $this->authorize->init();
         $this->authorize->connectClientDB();
-        $this->globalDB = $this->authorize->globalDB;
+        $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv($this->authorize->clientDatabase);
+        $this->cache = Cache::getObject();
+        $this->db = Database::getObject();
 
-        switch ($_SERVER['REQUEST_METHOD']) {
+        switch (HttpRequest::$REQUEST_METHOD) {
             case 'GET':
                 $this->processHttpGET();
                 break;
@@ -94,47 +113,26 @@ class Api
     }
 
     /**
-     * Return inputs
-     *
-     * @return array
-     */
-    private function getInputs()
-    {
-        // input details
-        $input = [];
-
-        // Load uriParams
-        $input['uriParams'] = &$this->authorize->routeParams;
-
-        // Load Read Only Session
-        $input['readOnlySession'] = &$this->authorize->readOnlySession;
-
-        return $input;
-    }
-    /**
      * Process HTTP GET request
      *
      * @return void
      */
     private function processHttpGET()
     {
-        // Get Inputs
-        $input = $this->getInputs();
-
         // Check & Process Upload
-        $this->miscFunctionalityBeforeCollectingPayload($input);
+        $this->miscFunctionalityBeforeCollectingPayload();
 
-        // Load $_GET as payload
-        $input['payload'] = &$_GET;
+        // Load Payloads
+        HttpRequest::loadPayload();
 
         // Load Queries
-        if (empty($this->authorize->__file__) || !file_exists($this->authorize->__file__)) {
+        if (empty(HttpRequest::$__file__) || !file_exists(HttpRequest::$__file__)) {
             HttpErrorResponse::return5xx(501, 'Path cannot be empty');
         }
-        $config = include $this->authorize->__file__;
+        $config = include HttpRequest::$__file__;
         
         $this->jsonEncodeObj = new JsonEncode();
-        $this->selectSubQuery($input, $config);
+        $this->selectSubQuery($config);
         $this->jsonEncodeObj = null;
     }
 
@@ -145,38 +143,27 @@ class Api
      */
     private function processHttpInsertUpdate()
     {
-        // Get Inputs
-        $input = $this->getInputs();
-
         // Check & Process Upload
-        $this->miscFunctionalityBeforeCollectingPayload($input);
+        $this->miscFunctionalityBeforeCollectingPayload();
 
-        // Load Payload
-        parse_str(file_get_contents('php://input'), $payloadArr);
-        if (!isset($payloadArr['data'])) {
-            HttpErrorResponse::return4xx(404, 'Invalid data payload');
-        }
-        $payloadArr = json_decode($payloadArr['data'], true);
-        $isAssoc = $this->isAssoc($payloadArr);
-        if ($isAssoc) {
-            $payloadArr = [$payloadArr];
-        }
+        // Load Payloads
+        HttpRequest::loadPayload();
 
         // Check & Process Cron / ThirdParty calls.
-        $this->miscFunctionalityAfterCollectingPayload(array_merge($input, ['payloadArr' => $payloadArr]));
+        $this->miscFunctionalityAfterCollectingPayload();
 
         // Load Config
-        if (empty($this->authorize->__file__) || !file_exists($this->authorize->__file__)) {
+        if (empty(HttpRequest::$__file__) || !file_exists(HttpRequest::$__file__)) {
             HttpErrorResponse::return5xx(501, 'Path cannot be empty');
         }
-        $config = include $this->authorize->__file__;
-        $input['required'] = $this->getRequiredPayloadFields($config);
+        $config = include HttpRequest::$__file__;
+        HttpRequest::$input['required'] = $this->getRequiredPayloadFields($config);
 
         // Perform action
         $response = [];
         foreach ($payloadArr as &$payload) {
             $isValidData = true;
-            if ($this->authorize->requestMethod === 'PATCH') {
+            if (HttpRequest::$REQUEST_METHOD === 'PATCH') {
                 if (count($payload) !== 1) {
                     HttpErrorResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
                 }
@@ -184,11 +171,11 @@ class Api
             if (isset($payload['password'])) {
                 $payload['password'] = password_hash($payload['password']);
             }
-            $input['payload'] = &$payload;
+            HttpRequest::$input['payload'] = &$payload;
 
             // Configured Validation
-            if (isset($config['validate']) || (count($input['required']) > 0)) {
-                list($isValidData, $errors) = $this->validate($input, $config['validate']);
+            if (isset($config['validate']) || (count(HttpRequest::$input['required']) > 0)) {
+                list($isValidData, $errors) = $this->validate(HttpRequest::$input, $config['validate']);
             }
             if ($isValidData!==true) {
                 if ($isAssoc) {
@@ -197,9 +184,9 @@ class Api
                     $response[] = ['data' => $payload, 'Error' => $errors];
                 }
             } else {
-                $this->authorize->db->begin();
-                $res = $this->insertUpdateSubQuery($input, $config);
-                $this->authorize->db->commit();
+                $this->db->begin();
+                $res = $this->insertUpdateSubQuery($config);
+                $this->db->commit();
                 if ('POST' === $_SERVER['REQUEST_METHOD']) {
                     $response[] = $res;
                 }
@@ -220,20 +207,19 @@ class Api
     /**
      * Function to select sub queries recursively.
      *
-     * @param array $input    Inputs
      * @param array $subQuery Config from file
      * @return void
      */
-    private function selectSubQuery(&$input, $subQuery, $start = true)
+    private function selectSubQuery($subQuery, $start = true)
     {
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as $key => &$queryDetails) {
             if ($this->isAssoc($queryDetails)) {
                 switch ($queryDetails['mode']) {
                     case 'singleRowFormat':
-                        list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-                        $this->authorize->db->execDbQuery($query, array_values($params));
-                        if ($row = $this->authorize->db->fetch()) {
+                        list($query, $params) = $this->getQueryAndParams($queryDetails);
+                        $this->db->execDbQuery($query, array_values($params));
+                        if ($row = $this->db->fetch()) {
                             ;
                         } else {
                             $row = [];
@@ -271,7 +257,7 @@ class Api
                                 $this->jsonEncodeObj->addKeyValue($key, $value);
                             }
                         }
-                        $this->authorize->db->closeCursor();
+                        $this->db->closeCursor();
                         break;
                     case 'multipleRowFormat':
                         if (isset($queryDetails['subQuery'])) {
@@ -282,21 +268,21 @@ class Api
                                 $queryDetailsCount = $queryDetails;
                                 $queryDetailsCount['query'] = $queryDetailsCount['countQuery'];
                                 unset($queryDetailsCount['countQuery']);
-                                $input['payload']['page']  = $_GET['page'] ?? 1;
-                                $input['payload']['perpage']  = $_GET['perpage'] ?? 10;
-                                if ($input['payload']['perpage'] > getenv('maxPerpage')) {
+                                HttpRequest::$input['payload']['page']  = $_GET['page'] ?? 1;
+                                HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
+                                if (HttpRequest::$input['payload']['perpage'] > getenv('maxPerpage')) {
                                     HttpErrorResponse::return4xx(403, 'perpage exceeds max perpage value of '.getenv('maxPerpage'));
                                 }
-                                $input['payload']['start']  = ($input['payload']['page'] - 1) * $input['payload']['perpage'];
-                                list($query, $params) = $this->getQueryAndParams($input, $queryDetailsCount);
-                                $this->authorize->db->execDbQuery($query, array_values($params));
-                                $row = $this->authorize->db->fetch();
-                                $this->authorize->db->closeCursor();
+                                HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
+                                list($query, $params) = $this->getQueryAndParams($queryDetailsCount);
+                                $this->db->execDbQuery($query, array_values($params));
+                                $row = $this->db->fetch();
+                                $this->db->closeCursor();
                                 $totalRowsCount = $row['count'];
-                                $totalPages = ceil($totalRowsCount/$input['payload']['perpage']);
+                                $totalPages = ceil($totalRowsCount/HttpRequest::$input['payload']['perpage']);
                                 $this->jsonEncodeObj->startAssoc();
-                                $this->jsonEncodeObj->addKeyValue('page', $input['payload']['page']);
-                                $this->jsonEncodeObj->addKeyValue('perpage', $input['payload']['perpage']);
+                                $this->jsonEncodeObj->addKeyValue('page', HttpRequest::$input['payload']['page']);
+                                $this->jsonEncodeObj->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
                                 $this->jsonEncodeObj->addKeyValue('totalPages', $totalPages);
                                 $this->jsonEncodeObj->addKeyValue('totalRecords', $totalRowsCount);
                                 $this->jsonEncodeObj->startArray('data');
@@ -306,15 +292,17 @@ class Api
                         } else {
                             $this->jsonEncodeObj->startArray($key);
                         }
-                        list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
+                        list($query, $params) = $this->getQueryAndParams($queryDetails);
                         if ($start) {
                             if (isset($queryDetails['countQuery'])) {
-                                $query .= " LIMIT {$input['payload']['start']}, {$input['payload']['perpage']}";
+                                $start = HttpRequest::$input['payload']['start'];
+                                $offset = HttpRequest::$input['payload']['perpage'];
+                                $query .= " LIMIT {$start}, {$offset}";
                             }
                         }
-                        $this->authorize->db->execDbQuery($query, array_values($params));
+                        $this->db->execDbQuery($query, array_values($params));
                         $singleColumn = false;
-                        for ($i=0;$row=$this->authorize->db->fetch();) {
+                        for ($i=0;$row=$this->db->fetch();) {
                             if ($i===0) {
                                 if(count($row) === 1) {
                                     $singleColumn = true;
@@ -333,14 +321,14 @@ class Api
                                 $this->jsonEncodeObj->endAssoc();
                             }
                         }
-                        $this->authorize->db->closeCursor();
+                        $this->db->closeCursor();
                         break;
                 }
                 if (isset($queryDetails['subQuery'])) {
                     if (!$this->isAssoc($queryDetails['subQuery'])) {
                         HttpErrorResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
                     }
-                    $this->selectSubQuery($input, $queryDetails['subQuery'], false);
+                    $this->selectSubQuery($queryDetails['subQuery'], false);
                 }
                 if ($queryDetails['mode'] === 'singleRowFormat' && isset($queryDetails['subQuery'])) {
                     $this->jsonEncodeObj->endAssoc();
@@ -352,25 +340,24 @@ class Api
     /**
      * Function to insert/update sub queries recursively.
      *
-     * @param array $input    Inputs
      * @param array $subQuery Config from file
      * @return void
      */
-    private function insertUpdateSubQuery(&$input, $subQuery, $start = true)
+    private function insertUpdateSubQuery($subQuery, $start = true)
     {
         $insertIds = [];
         $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as &$queryDetails) {
-            list($query, $params) = $this->getQueryAndParams($input, $queryDetails);
-            $this->authorize->db->execDbQuery($query, $params);
+            list($query, $params) = $this->getQueryAndParams($queryDetails);
+            $this->db->execDbQuery($query, $params);
             if (isset($queryDetails['insertId'])) {
-                $insertId = $this->authorize->db->lastInsertId();
+                $insertId = $this->db->lastInsertId();
                 $insertIds = array_merge($insertIds, [$queryDetails['insertId'] => $insertId]);
-                $input['insertIdParams'][$queryDetails['insertId']] = $insertId;
+                HttpRequest::$input['insertIdParams'][$queryDetails['insertId']] = $insertId;
             }
-            $this->authorize->db->closeCursor();
+            $this->db->closeCursor();
             if (isset($queryDetails['subQuery'])) {
-                $insertIds = array_merge($insertIds, $this->insertUpdateSubQuery($input, $queryDetails['subQuery'], false));
+                $insertIds = array_merge($insertIds, $this->insertUpdateSubQuery($queryDetails['subQuery'], false));
             }
         }
         return $insertIds;
@@ -444,22 +431,21 @@ class Api
     /**
      * Returns Query and Params for execution.
      *
-     * @param array $input        Inputs
      * @param array $queryDetails Config from file
      * @return array
      */
-    private function getQueryAndParams(&$input, &$queryDetails)
+    private function getQueryAndParams(&$queryDetails)
     {
         $query = $queryDetails['query'];
         $stmtParams = [];
         $stmtWhereParams = [];
         if (isset($queryDetails['payload'])) {
-            $stmtParams = $this->getStmtParams($input, $queryDetails['payload']);
+            $stmtParams = $this->getStmtParams($queryDetails['payload']);
             $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtParams)));
             $query = str_replace('__SET__', $__SET__, $query);
         }
         if (isset($queryDetails['where'])) {
-            $stmtWhereParams = $this->getStmtParams($input, $queryDetails['where']);
+            $stmtWhereParams = $this->getStmtParams($queryDetails['where']);
             $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
             $query = str_replace('__WHERE__', $__WHERE__, $query);
         }
@@ -476,23 +462,22 @@ class Api
     /**
      * Generates Params for statement to execute.
      *
-     * @param array $input        Inputs
      * @param array $queryPayload Config from file
      * @return array
      */
-    private function getStmtParams(&$input, &$queryPayload)
+    private function getStmtParams(&$queryPayload)
     {
         $stmtParams = [];
         foreach ($queryPayload as $var => [$type, $typeKey]) {
             if ($type === 'custom') {
                 $stmtParams[$var] = $typeKey;
-            } else if ($type === 'payload' && !in_array($typeKey, $input['required']) && !isset($input[$type][$typeKey])) {
+            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset(HttpRequest::$input[$type][$typeKey])) {
                 continue;
             } else {
-                if (!isset($input[$type][$typeKey])) {
+                if (!isset(HttpRequest::$input[$type][$typeKey])) {
                     HttpErrorResponse::return5xx(501, "Invalid configuration of '{$type}' for '{$typeKey}'");
                 }
-                $stmtParams[$var] = $input[$type][$typeKey];
+                $stmtParams[$var] = HttpRequest::$input[$type][$typeKey];
             }
         }
         return $stmtParams;
@@ -535,21 +520,20 @@ class Api
     /**
      * Miscellaneous Functionality Before Collecting Payload
      *
-     * @param array $input without Payload
      * @return void
      */
-    function miscFunctionalityBeforeCollectingPayload($input)
+    function miscFunctionalityBeforeCollectingPayload()
     {
-        switch ($this->authorize->routeElements[0]) {
+        switch (HttpRequest::$routeElements[0]) {
             case 'upload':
-                eval('App\\Upload::init($input);');
+                eval('App\\Upload::init();');
                 die;
             case 'thirdParty':
                 if (
-                    isset($input['uriParams']['party']) &&
-                    file_exists(__DOC_ROOT__ . '/ThirdParty/' . ucfirst($input['uriParams']['party']) . '.php')
+                    isset(HttpRequest::$input['uriParams']['thirdParty']) &&
+                    file_exists(__DOC_ROOT__ . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
                 ) {
-                    eval('ThirdParty\\' . ucfirst($input['uriParams']['party']) . '::init($input);');
+                    eval('ThirdParty\\' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '::init();');
                     die;
                 } else {
                     HttpErrorResponse::return4xx(404, "Invalid third party call");
@@ -560,10 +544,9 @@ class Api
     /**
      * Miscellaneous Functionality After Collecting Payload
      *
-     * @param array $input with Payload
      * @return void
      */
-    function miscFunctionalityAfterCollectingPayload($input)
+    function miscFunctionalityAfterCollectingPayload()
     {
 
     }
