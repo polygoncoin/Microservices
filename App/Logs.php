@@ -36,6 +36,6 @@ class Logs
             // create directory/folder uploads.
             mkdir($log_filename, 0644, true);
         }
-        file_put_contents($logFile, $logContent . PHP_EOL, FILE_APPEND);
+        file_put_contents($logFile.'-'.date('Y-m'), $logContent . PHP_EOL, FILE_APPEND);
     }
 }

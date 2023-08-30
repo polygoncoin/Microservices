@@ -53,12 +53,40 @@ class HttpRequest
      * @var string
      */
     public static $REQUEST_METHOD = null;
+
+    /**
+     * HTTP_AUTHORIZATION header
+     *
+     * @var string
+     */
     public static $HTTP_AUTHORIZATION = null;
+
+    /**
+     * Remote IP
+     *
+     * @var string
+     */
     public static $REMOTE_ADDR = null;
+
+    /**
+     * Requested route
+     *
+     * @var string
+     */
     public static $REQUEST_URI = null;
 
+    /**
+     * Inputs detials of a request
+     *
+     * @var array
+     */
     public static $input = null;
 
+    /**
+     * Initialization
+     *
+     * @return void
+     */
     public static function init()
     {
         self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
@@ -71,6 +99,11 @@ class HttpRequest
         self::loadToken();
     }
 
+    /**
+     * Loads token from HTTP_AUTHORIZATION header
+     *
+     * @return void
+     */
     public static function loadToken()
     {
         if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
@@ -161,6 +194,11 @@ class HttpRequest
         }
     }
 
+    /**
+     * Loads request payoad
+     *
+     * @return void
+     */
     public static function loadPayload()
     {
         if (self::$REQUEST_METHOD === 'GET') {
@@ -177,24 +215,6 @@ class HttpRequest
         if (self::$input['payloadType']) {
             self::$input['payloadArr'] = [self::$input['payloadArr']];
         }
-    }
-
-    /**
-     * Return inputs
-     *
-     * @return array
-     */
-    public static function getInputs()
-    {
-        // input details
-        self::$input = [
-            'uriParams' => self::$input['uriParams'],
-            'readOnlySession' => self::$input['readOnlySession'],
-            'payloadArr' => self::$input['payloadArr'],
-            'payloadType' => self::$input['payloadType'],
-        ];
-
-        return self::$input;
     }
 
     /**

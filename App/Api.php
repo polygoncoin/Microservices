@@ -178,7 +178,7 @@ class Api
                 list($isValidData, $errors) = $this->validate(HttpRequest::$input, $config['validate']);
             }
             if ($isValidData!==true) {
-                if ($isAssoc) {
+                if (HttpRequest::$input['payloadType'] === 'Object') {
                     $response = ['data' => $payload, 'Error' => $errors];
                 } else {
                     $response[] = ['data' => $payload, 'Error' => $errors];

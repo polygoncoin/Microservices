@@ -285,7 +285,7 @@ return [
 	'where' => [
 		//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
 		'id' => ['uriParams', 'id'],
-		'group_id' => ['payload', 'group_id'],
+		'group_id' => ['payload', 'group_id', REQUIRED], // REQUIRED constant is optional
 		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'mode' => 'singleRowFormat',//Single row returned.
@@ -332,7 +332,7 @@ return [
 	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
 	'payload' => [// for __SET__
 		//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
-		'group_id' => ['payload', 'group_id'],
+		'group_id' => ['payload', 'group_id', REQUIRED],
 		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'where' => [// for __WHERE__
