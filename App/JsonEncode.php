@@ -184,10 +184,25 @@ class JsonEncode
      */
     public function end()
     {
-        if ($this->currentObject || count($this->objects)>0) {
-            die('Mismatch in JsonEncode function calls');
+        while ($this->currentObject && $this->currentObject->mode) {
+            switch ($this->currentObject->mode) {
+                case 'Array':
+                    $this->endArray();
+                    break;
+                case 'Assoc':
+                    $this->endAssoc();
+                    break;
+            }    
         }
         die();
+    }
+
+    /** 
+     * destruct functipn 
+     */ 
+    public function __destruct() 
+    { 
+        $this->end(); 
     }
 }
 
