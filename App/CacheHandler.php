@@ -14,7 +14,7 @@ use App\Logs;
  * which are cached on client browser.
  * The headers in class helps fetch only the modified content.
  * 
- * @category   PHP Cache handler
+ * @category   PHP File Cache handler
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid

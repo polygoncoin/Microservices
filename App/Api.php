@@ -4,6 +4,7 @@ namespace App;
 use App\AppTrait;
 use App\Authorize;
 use App\CacheHandler;
+use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\JsonEncode;
@@ -103,13 +104,13 @@ class Api
         $this->db = Database::getObject();
 
         switch (HttpRequest::$REQUEST_METHOD) {
-            case 'GET':
+            case Constants::GET_METHOD:
                 $this->processHttpGET();
                 break;
-            case 'POST':
-            case 'PUT':
-            case 'PATCH':
-            case 'DELETE':
+            case Constants::POST_METHOD:
+            case Constants::PUT_METHOD:
+            case Constants::PATCH_METHOD:
+            case Constants::DELETE_METHOD:
                 $this->processHttpInsertUpdate();
                 break;
         }
@@ -166,7 +167,7 @@ class Api
         $response = [];
         foreach (HttpRequest::$input['payloadArr'] as &$payload) {
             $isValidData = true;
-            if (HttpRequest::$REQUEST_METHOD === 'PATCH') {
+            if (HttpRequest::$REQUEST_METHOD === Constants::PATCH_METHOD) {
                 if (count($payload) !== 1) {
                     HttpResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
                 }
@@ -190,7 +191,7 @@ class Api
                 $this->db->begin();
                 $res = $this->insertUpdateSubQuery($config);
                 $this->db->commit();
-                if ('POST' === HttpRequest::$REQUEST_METHOD) {
+                if (HttpRequest::$REQUEST_METHOD === Constants::POST_METHOD) {
                     $response[] = $res;
                 }
             }

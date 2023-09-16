@@ -1,8 +1,8 @@
 <?php
 namespace App\Servers\Cache;
 
-use App\HttpResponse;
 use App\HttpRequest;
+use App\HttpResponse;
 use App\Logs;
 use App\Servers\Cache\Redis;
 

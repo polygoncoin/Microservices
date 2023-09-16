@@ -1,8 +1,9 @@
 <?php
 namespace App;
 
-use App\HttpResponse;
+use App\Constants;
 use App\HttpRequest;
+use App\HttpResponse;
 use App\JsonEncode;
 use App\Logs;
 use App\Servers\Cache\Cache;
@@ -123,7 +124,7 @@ class Login
         $this->requestIp = $_SERVER['REMOTE_ADDR'];
 
         // Check request method is POST.
-        if ('POST' !== $_SERVER['REQUEST_METHOD']) {
+        if ($_SERVER['REQUEST_METHOD'] !== Constants::POST_METHOD) {
             HttpResponse::return4xx(404, 'Invalid request method');
         }
 

@@ -1,8 +1,9 @@
 <?php
 namespace App;
 
-use App\HttpResponse;
+use App\Constants;
 use App\HttpRequest;
+use App\HttpResponse;
 use App\JsonEncode;
 use App\Logs;
 
@@ -47,8 +48,8 @@ class Upload
     public function process()
     {
         switch (HttpRequest::$REQUEST_METHOD) {
-            case 'POST':
-            case 'PUT':
+            case Constants::POST_METHOD:
+            case Constants::PUT_METHOD:
                 $this->processUpload();
                 break;
         }

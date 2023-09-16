@@ -1,8 +1,8 @@
 <?php
 namespace App;
 
-use App\HttpResponse;
 use App\HttpRequest;
+use App\HttpResponse;
 
 /**
  * Constants

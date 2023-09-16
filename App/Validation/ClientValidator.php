@@ -1,8 +1,8 @@
 <?php
 namespace App\Validation;
 
-use App\HttpResponse;
 use App\HttpRequest;
+use App\HttpResponse;
 use App\Logs;
 use App\Servers\Database\Database;
 use App\Validation\ValidatorTrait;

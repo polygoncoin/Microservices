@@ -1,8 +1,8 @@
 <?php
 namespace ThirdParty;
 
-use App\HttpResponse;
 use App\HttpRequest;
+use App\HttpResponse;
 use App\JsonEncode;
 
 /**

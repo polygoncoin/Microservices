@@ -193,7 +193,7 @@ class HttpRequest
      */
     public static function loadPayload()
     {
-        if (self::$REQUEST_METHOD === 'GET') {
+        if (self::$REQUEST_METHOD === Constants::GET_METHOD) {
             self::$input['payloadArr'] = $_GET;
         } else {
             // Load Payload
