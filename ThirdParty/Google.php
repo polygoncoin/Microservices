@@ -1,7 +1,8 @@
 <?php
 namespace ThirdParty;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
+use App\HttpRequest;
 use App\JsonEncode;
 
 /**
@@ -9,10 +10,10 @@ use App\JsonEncode;
  *
  * This class perform third party - Google operations.
  * One can initiate third party calls via access to URL
- * https://domain.tld/thirdParty/className?queryString
+ * https://domain.tld/client/thirdParty/className?queryString
  * All HTTP methods are supported
  *
- * @category   Third party
+ * @category   Third party sample
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -22,21 +23,13 @@ use App\JsonEncode;
 class Google
 {
     /**
-     * Inputs
-     *
-     * @var array
-     */
-    private static $input = null;
-
-    /**
      * Initialize
      *
      * @param array  $input     Inputs
      * @return void
      */
-    public static function init(&$input)
+    public static function init()
     {
-        self::$input = $input;
         (new self)->process();
     }
 
@@ -71,6 +64,6 @@ class Google
      */
     private function endProcess($result)
     {
-        HttpErrorResponse::return2xx(200, $result);
+        HttpResponse::return2xx(200, $result);
     }
 }

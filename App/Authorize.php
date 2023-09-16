@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 use App\Logs;
 use App\Servers\Cache\Cache;
@@ -123,7 +123,7 @@ class Authorize
             $this->checkRemoteIp(HttpRequest::$REMOTE_ADDR);
             $this->checkRoutePrivilage(HttpRequest::$configuredUri);
         } else {
-            HttpErrorResponse::return4xx(404, 'Token expired');
+            HttpResponse::return4xx(404, 'Token expired');
         }
     }
 
@@ -147,17 +147,17 @@ class Authorize
     private function loadTokenSession($token)
     {
         if (!$this->cache->cacheExists($token)) {
-            HttpErrorResponse::return5xx(501, "Cache token missing.");
+            HttpResponse::return5xx(501, "Cache token missing.");
         }
         HttpRequest::$input['readOnlySession'] = json_decode($this->cache->getCache($token), true);
 
         if (empty(HttpRequest::$input['readOnlySession']['user_id']) || empty(HttpRequest::$input['readOnlySession']['group_id'])) {
-            HttpErrorResponse::return4xx(404, 'Invalid session');
+            HttpResponse::return4xx(404, 'Invalid session');
         }
         $this->userId = HttpRequest::$input['readOnlySession']['user_id'];
         $this->groupId = HttpRequest::$input['readOnlySession']['group_id'];
         if (!$this->cache->cacheExists("group:{$this->groupId}")) {
-            HttpErrorResponse::return5xx(501, "Cache 'group:{$this->groupId}' missing.");
+            HttpResponse::return5xx(501, "Cache 'group:{$this->groupId}' missing.");
         }
         $groupInfoArr = json_decode($this->cache->getCache("group:{$this->groupId}"), true);
         $this->clientServerType = $groupInfoArr['db_server_type'];
@@ -186,7 +186,7 @@ class Authorize
                 }
             }
             if (!$isValidIp) {
-                HttpErrorResponse::return4xx(404, 'Invalid request.');
+                HttpResponse::return4xx(404, 'Invalid request.');
             }
         }
     }
@@ -202,7 +202,7 @@ class Authorize
     {
         $key = "group:{$this->groupId}:http:".HttpRequest::$httpId.':routes';
         if (!$this->cache->isSetMember($key, $route)) {
-            HttpErrorResponse::return4xx(404, 'Route not supported');
+            HttpResponse::return4xx(404, 'Route not supported');
         }
     }
     

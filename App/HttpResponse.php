@@ -16,7 +16,7 @@ use App\Logs;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class HttpErrorResponse
+class HttpResponse
 {
     /**
      * Clean (erase) the output buffer

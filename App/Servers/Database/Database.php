@@ -1,7 +1,7 @@
 <?php
 namespace App\Servers\Database;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 use App\Logs;
 use App\Servers\Database\MySQL;

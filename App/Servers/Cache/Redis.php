@@ -1,7 +1,7 @@
 <?php
 namespace App\Servers\Cache;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 use App\Logs;
 use App\Servers\Cache\AbstractCache;
@@ -97,7 +97,7 @@ class Redis extends AbstractCache
                 $this->useDatabase($this->database);
             }
             if (!$this->redis->ping()) {
-                HttpErrorResponse::return5xx(501, 'Unable to ping to cache server');
+                HttpResponse::return5xx(501, 'Unable to ping to cache server');
             }
         } catch (\Exception $e) {
             $log = [
@@ -106,7 +106,7 @@ class Redis extends AbstractCache
                 'error' => 'Unable to connect to cache server'
             ];
             Logs::log('error', json_encode($log));
-            HttpErrorResponse::return5xx(501, 'Unable to connect to cache server');
+            HttpResponse::return5xx(501, 'Unable to connect to cache server');
         }
     }
 

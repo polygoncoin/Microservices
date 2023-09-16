@@ -2,7 +2,7 @@
 namespace App;
 
 use App\Constants;
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\Logs;
 
 /*
@@ -101,10 +101,10 @@ class HttpRequest
         if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
             self::$input['token'] = $matches[1];
         } else {
-            HttpErrorResponse::return4xx(404, 'Missing token in authorization header');    
+            HttpResponse::return4xx(404, 'Missing token in authorization header');    
         }
         if (empty(self::$input['token'])) {
-            HttpErrorResponse::return4xx(404, 'Missing token');
+            HttpResponse::return4xx(404, 'Missing token');
         }
     }
 
@@ -119,7 +119,7 @@ class HttpRequest
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
-            HttpErrorResponse::return5xx(501, 'Missing route file for' . " {self::$REQUEST_METHOD} " . 'method');
+            HttpResponse::return5xx(501, 'Missing route file for' . " {self::$REQUEST_METHOD} " . 'method');
         }
         self::$routeElements = explode('/', trim(ROUTE, '/'));
         $configuredUri = [];
@@ -145,14 +145,14 @@ class HttpRequest
                             }
                             list($paramName, $paramDataType) = explode(':', $dynamicRoute);
                             if (!in_array($paramDataType, ['int','string'])) {
-                                HttpErrorResponse::return5xx(501, 'Invalid datatype set for Route');
+                                HttpResponse::return5xx(501, 'Invalid datatype set for Route');
                             }
                             if (count($preferredValues) > 0 && !in_array($e, $preferredValues)) {
-                                HttpErrorResponse::return4xx(404, $r);
+                                HttpResponse::return4xx(404, $r);
                             }
                             if ($paramDataType === 'int') {
                                 if (!ctype_digit($e)) {
-                                    HttpErrorResponse::return4xx(404, "Invalid {$paramName}");
+                                    HttpResponse::return4xx(404, "Invalid {$paramName}");
                                 } else {
                                     $foundIntRoute = $r;
                                 }
@@ -168,10 +168,10 @@ class HttpRequest
                         $configuredUri[] = $foundStringRoute;
                         self::$input['uriParams'][$paramName] = $e;
                     } else {
-                        HttpErrorResponse::return4xx(404, 'Route not supported');
+                        HttpResponse::return4xx(404, 'Route not supported');
                     }
                 } else {
-                    HttpErrorResponse::return4xx(404, 'Route not supported');
+                    HttpResponse::return4xx(404, 'Route not supported');
                 }
                 $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
@@ -182,7 +182,7 @@ class HttpRequest
         if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
             self::$__file__ = $routes['__file__'];
         } elseif ($routes['__file__'] != '') {
-            HttpErrorResponse::return5xx(501, 'Missing route configuration file for' . " {$REQUEST_METHOD} " . 'method');
+            HttpResponse::return5xx(501, 'Missing route configuration file for' . " {$REQUEST_METHOD} " . 'method');
         }
     }
 
@@ -199,7 +199,7 @@ class HttpRequest
             // Load Payload
             parse_str(file_get_contents('php://input'), $payloadArr);
             if (!isset($payloadArr['data'])) {
-                HttpErrorResponse::return4xx(404, 'Invalid data payload');
+                HttpResponse::return4xx(404, 'Invalid data payload');
             }
             self::$input['payloadArr'] = json_decode($payloadArr['data'], true);
         }

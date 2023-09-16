@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 use App\JsonEncode;
 use App\Logs;
@@ -124,13 +124,13 @@ class Login
 
         // Check request method is POST.
         if ('POST' !== $_SERVER['REQUEST_METHOD']) {
-            HttpErrorResponse::return4xx(404, 'Invalid request method');
+            HttpResponse::return4xx(404, 'Invalid request method');
         }
 
         // Check for required input variables
         foreach (array('username','password') as $value) {
             if (!isset($_POST[$value]) || empty($_POST[$value])) {
-                HttpErrorResponse::return4xx(404, 'Missing required parameters');
+                HttpResponse::return4xx(404, 'Missing required parameters');
             } else {
                 $this->$value = $_POST[$value];
             }
@@ -150,10 +150,10 @@ class Login
             $this->userId = $this->userDetails['user_id'];
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
-                HttpErrorResponse::return4xx(404, 'Invalid credentials');
+                HttpResponse::return4xx(404, 'Invalid credentials');
             }            
         } else {
-            HttpErrorResponse::return4xx(404, 'Invalid credentials.');
+            HttpResponse::return4xx(404, 'Invalid credentials.');
         }
     }
 
@@ -175,7 +175,7 @@ class Login
                 }
             }
             if (!$isValidIp) {
-                HttpErrorResponse::return4xx(404, 'Invalid credentials.');
+                HttpResponse::return4xx(404, 'Invalid credentials.');
             }
         }
     }
@@ -188,7 +188,7 @@ class Login
     private function validatePassword()
     {
         if (!password_verify($this->password, $this->userDetails['password_hash'])) { // get hash from redis and compares with password
-            HttpErrorResponse::return4xx(404, 'Invalid credentials');
+            HttpResponse::return4xx(404, 'Invalid credentials');
         }
     }
 

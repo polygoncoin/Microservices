@@ -1,11 +1,16 @@
 <?php
+namespace Config\Queries\ClientDB\PATCH;
+
+use App\HttpRequest;
+
 return [
     'm006_master_client' => [
-        'query' => "UPDATE `{$this->clientDB}`.`{$input['uriParams']['table']}` SET __SET__ WHERE __WHERE__",
+        'query' => "UPDATE `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` SET __SET__ WHERE __WHERE__",
         'payload' => [
             'name' => ['payload', 'name']
         ],
         'where' => [
+            'is_deleted' => ['custom', 'No'],
             'id' => ['uriParams', 'id']
         ]
     ]

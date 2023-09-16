@@ -1,7 +1,8 @@
 <?php
 namespace Crons;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
+use App\HttpRequest;
 use App\JsonEncode;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
@@ -26,13 +27,10 @@ class Cron
     /**
      * Initialize cron
      *
-     * @param string $requestMethod HTTP method
-     * @param string $requestUri    Route
      * @return void
      */
-    public static function init($requestMethod, $requestUri)
+    public static function init()
     {
-        (new HttpRequest)->parseRoute($requestMethod, $requestUri);
         (new self)->process();
     }
 
@@ -58,6 +56,6 @@ class Cron
      */
     private function endProcess()
     {
-        HttpErrorResponse::return2xx(200, 'message as desired.');
+        HttpResponse::return2xx(200, 'message as desired.');
     }
 }

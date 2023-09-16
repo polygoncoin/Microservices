@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 
 /**
@@ -30,7 +30,7 @@ class Logs
     public static function log($logType, $logContent)
     {
         if (!in_array($logType, ['debug', 'info', 'error', 'notice', 'warning', 'critical', 'alert', 'emergency'])) {
-            HttpErrorResponse::return5xx(501, 'Invalid logType');
+            HttpResponse::return5xx(501, 'Invalid logType');
         }
         eval('$logFile = App\Logs::'.$logType.';');
         if (!file_exists($logFile)) {

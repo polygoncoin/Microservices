@@ -127,7 +127,7 @@ class Api
 
         // Load Queries
         if (empty(HttpRequest::$__file__) || !file_exists(HttpRequest::$__file__)) {
-            HttpErrorResponse::return5xx(501, 'Path cannot be empty');
+            HttpResponse::return5xx(501, 'Path cannot be empty');
         }
         $config = include HttpRequest::$__file__;
         
@@ -154,7 +154,7 @@ class Api
 
         // Load Config
         if (empty(HttpRequest::$__file__) || !file_exists(HttpRequest::$__file__)) {
-            HttpErrorResponse::return5xx(501, 'Path cannot be empty');
+            HttpResponse::return5xx(501, 'Path cannot be empty');
         }
         $config = include HttpRequest::$__file__;
         HttpRequest::$input['required'] = $this->getRequiredPayloadFields($config);
@@ -165,7 +165,7 @@ class Api
             $isValidData = true;
             if (HttpRequest::$REQUEST_METHOD === 'PATCH') {
                 if (count($payload) !== 1) {
-                    HttpErrorResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
+                    HttpResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
                 }
             }
             if (isset($payload['password'])) {
@@ -238,7 +238,7 @@ class Api
                             $resultColumns = array_keys($row);
                             foreach (array_keys($subQuery) as $col) {
                                 if (in_array($col, $resultColumns)) {
-                                    HttpErrorResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
+                                    HttpResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
                                 }
                             }
                             if ($start) {
@@ -261,7 +261,7 @@ class Api
                         break;
                     case 'multipleRowFormat':
                         if (isset($queryDetails['subQuery'])) {
-                            HttpErrorResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
+                            HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
                         }
                         if ($start) {
                             if (isset($queryDetails['countQuery'])) {
@@ -271,7 +271,7 @@ class Api
                                 HttpRequest::$input['payload']['page']  = $_GET['page'] ?? 1;
                                 HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
                                 if (HttpRequest::$input['payload']['perpage'] > getenv('maxPerpage')) {
-                                    HttpErrorResponse::return4xx(403, 'perpage exceeds max perpage value of '.getenv('maxPerpage'));
+                                    HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.getenv('maxPerpage'));
                                 }
                                 HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
                                 list($query, $params) = $this->getQueryAndParams($queryDetailsCount);
@@ -326,7 +326,7 @@ class Api
                 }
                 if (isset($queryDetails['subQuery'])) {
                     if (!$this->isAssoc($queryDetails['subQuery'])) {
-                        HttpErrorResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
+                        HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
                     }
                     $this->selectSubQuery($queryDetails['subQuery'], false);
                 }
@@ -440,14 +440,32 @@ class Api
         $stmtParams = [];
         $stmtWhereParams = [];
         if (isset($queryDetails['payload'])) {
-            $stmtParams = $this->getStmtParams($queryDetails['payload']);
-            $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtParams)));
-            $query = str_replace('__SET__', $__SET__, $query);
+            if (count($queryDetails['payload']) === 0) {
+                $query = str_replace('SET', '', $query);
+                $query = str_replace('__SET__', '', $query);
+            } else {
+                if (strpos($query, '__SET__') !== false) {
+                    $stmtParams = $this->getStmtParams($queryDetails['payload']);
+                    $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtParams)));
+                    $query = str_replace('__SET__', $__SET__, $query);
+                } else {
+                    HttpResponse::return5xx(501, 'Invalid query: Missing __SET__');
+                }
+            }
         }
         if (isset($queryDetails['where'])) {
-            $stmtWhereParams = $this->getStmtParams($queryDetails['where']);
-            $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
-            $query = str_replace('__WHERE__', $__WHERE__, $query);
+            if (count($queryDetails['where']) === 0) {
+                $query = str_replace('WHERE', '', $query);
+                $query = str_replace('__WHERE__', '', $query);
+            } else {
+                if (strpos($query, '__WHERE__') !== false) {
+                    $stmtWhereParams = $this->getStmtParams($queryDetails['where']);
+                    $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
+                    $query = str_replace('__WHERE__', $__WHERE__, $query);        
+                } else {
+                    HttpResponse::return5xx(501, 'Invalid query: Missing __WHERE__');
+                }
+            }
         }
         $params = [];
         foreach ($stmtParams as $v) {
@@ -475,7 +493,7 @@ class Api
                 continue;
             } else {
                 if (!isset(HttpRequest::$input[$type][$typeKey])) {
-                    HttpErrorResponse::return5xx(501, "Invalid configuration of '{$type}' for '{$typeKey}'");
+                    HttpResponse::return5xx(501, "Invalid configuration of '{$type}' for '{$typeKey}'");
                 }
                 $stmtParams[$var] = HttpRequest::$input[$type][$typeKey];
             }
@@ -524,7 +542,7 @@ class Api
      */
     function miscFunctionalityBeforeCollectingPayload()
     {
-        switch (HttpRequest::$routeElements[0]) {
+        switch (HttpRequest::$routeElements[1]) {
             case 'upload':
                 eval('App\\Upload::init();');
                 die;
@@ -536,7 +554,7 @@ class Api
                     eval('ThirdParty\\' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '::init();');
                     die;
                 } else {
-                    HttpErrorResponse::return4xx(404, "Invalid third party call");
+                    HttpResponse::return4xx(404, "Invalid third party call");
                 }
         }
     }

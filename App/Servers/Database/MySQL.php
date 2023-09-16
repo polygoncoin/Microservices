@@ -1,7 +1,7 @@
 <?php
 namespace App\Servers\Database;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 use App\Logs;
 use App\AppTrait;
@@ -118,7 +118,7 @@ class MySQL extends AbstractDatabase
                 $this->useDatabase($this->database);
             }
         } catch (\PDOException $e) {
-            HttpErrorResponse::return5xx(501, 'Unable to connect to database server');
+            HttpResponse::return5xx(501, 'Unable to connect to database server');
         }
     }
 
@@ -143,7 +143,7 @@ class MySQL extends AbstractDatabase
                 Logs::log('error', json_encode($log));
                 $this->rollback();
             }
-            HttpErrorResponse::return5xx(501, 'Unable to change database');
+            HttpResponse::return5xx(501, 'Unable to change database');
         }
     }
 
@@ -216,7 +216,7 @@ class MySQL extends AbstractDatabase
                 ];
                 Logs::log('error', json_encode($log));
                 $this->rollback();
-                HttpErrorResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
+                HttpResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
             }
         }
     }

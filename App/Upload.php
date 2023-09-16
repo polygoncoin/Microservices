@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\HttpErrorResponse;
+use App\HttpResponse;
 use App\HttpRequest;
 use App\JsonEncode;
 use App\Logs;
@@ -62,7 +62,7 @@ class Upload
      */
     private function endProcess()
     {
-        HttpErrorResponse::return2xx(200, 'Success');
+        HttpResponse::return2xx(200, 'Success');
     }
     
     /**

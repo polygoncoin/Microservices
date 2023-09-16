@@ -85,7 +85,7 @@ class Reload
                 if (ctype_digit($value = trim($value))) {
                     $ids[] = (int)$value;
                 } else {
-                    HttpErrorResponse::return4xx(404, 'Only integer values supported for ids.');
+                    HttpResponse::return4xx(404, 'Only integer values supported for ids.');
                 }
             }
         }
