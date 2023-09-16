@@ -19,16 +19,6 @@ use App\Logs;
 class HttpResponse
 {
     /**
-     * Clean (erase) the output buffer
-     *
-     * @return void
-     */
-    private static function clean()
-    {
-        ob_clean();
-    }
-
-    /**
      * Return 2xx response
      *
      * @param string $errorCode  Error code
@@ -37,10 +27,11 @@ class HttpResponse
      */
     public static function return2xx($errorCode, $errMessage)
     {
-        self::clean();
-        self::returnHttpStatus(
-            $errorCode,
-            ['Message' => $errMessage]
+        self::returnResponse(
+            [
+                'Status' => $errorCode,
+                'Message' => $errMessage
+            ]
         );
     }
 
@@ -53,10 +44,11 @@ class HttpResponse
      */
     public static function return3xx($errorCode, $errMessage)
     {
-        self::clean();
-        self::returnHttpStatus(
-            $errorCode,
-            ['Message' => $errMessage]
+        self::returnResponse(
+            [
+                'Status' => $errorCode,
+                'Message' => $errMessage
+            ]
         );
     }
 
@@ -65,29 +57,16 @@ class HttpResponse
      *
      * @param string  $errorCode  Error code
      * @param string  $errMessage Error message in 404 response
-     * @param boolean $customise  Customise message on basis of parameter validation
      * @return void
      */
-    public static function return4xx($errorCode, $errMessage, $customise = false)
+    public static function return4xx($errorCode, $errMessage)
     {
-        self::clean();
-        if ($customise) {
-            $arr = explode('|', $errMessage);
-            self::returnHttpStatus(
-                $errorCode,
-                [
-                    'Error' => [
-                        'Parameter' => $arr[0],
-                        'Supported Values' => explode(',', $arr[1])
-                    ]
-                ]
-            );
-        } else {
-            self::returnHttpStatus(
-                $errorCode,
-                ['Message' => $errMessage]
-            );
-        }
+        self::returnResponse(
+            [
+                'Status' => $errorCode,
+                'Message' => $errMessage
+            ]
+        );
     }
 
     /**
@@ -99,27 +78,11 @@ class HttpResponse
      */
     public static function return5xx($errorCode, $errMessage)
     {
-        self::clean();
-        self::returnHttpStatus(
-            $errorCode,
-            ['Message' => $errMessage]
-        );
-    }
-
-    /**
-     * Returns HTTP response
-     *
-     * @param int   $statusCode Status code of HTTP response
-     * @param array $arr        Array containing details for HTTP Response
-     * @return void
-     */
-    public static function returnHttpStatus($statusCode, $arr)
-    {
         self::returnResponse(
-            array_merge(
-                ['status' => $statusCode],
-                $arr
-            )
+            [
+                'Status' => $errorCode,
+                'Message' => $errMessage
+            ]
         );
     }
 
@@ -131,6 +94,7 @@ class HttpResponse
      */
     public static function returnResponse($arr)
     {
+        ob_clean();
         die(json_encode($arr));
     }
 }
