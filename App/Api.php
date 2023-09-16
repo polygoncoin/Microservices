@@ -441,8 +441,7 @@ class Api
         $stmtWhereParams = [];
         if (isset($queryDetails['payload'])) {
             if (count($queryDetails['payload']) === 0) {
-                $query = str_replace('SET', '', $query);
-                $query = str_replace('__SET__', '', $query);
+                HttpResponse::return5xx(501, 'Invalid config: Missing payload configuration');
             } else {
                 if (strpos($query, '__SET__') !== false) {
                     $stmtParams = $this->getStmtParams($queryDetails['payload']);
@@ -455,8 +454,7 @@ class Api
         }
         if (isset($queryDetails['where'])) {
             if (count($queryDetails['where']) === 0) {
-                $query = str_replace('WHERE', '', $query);
-                $query = str_replace('__WHERE__', '', $query);
+                HttpResponse::return5xx(501, 'Invalid config: Missing where configuration');
             } else {
                 if (strpos($query, '__WHERE__') !== false) {
                     $stmtWhereParams = $this->getStmtParams($queryDetails['where']);
