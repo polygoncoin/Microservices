@@ -1,13 +1,16 @@
 <?php
 namespace App;
 
+use App\AppTrait;
 use App\Authorize;
+use App\CacheHandler;
 use App\HttpRequest;
+use App\HttpResponse;
 use App\JsonEncode;
 use App\Logs;
-use App\AppTrait;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
+use App\Upload;
 use App\Validation\Validator;
 
 /**
@@ -459,7 +462,7 @@ class Api
                 if (strpos($query, '__WHERE__') !== false) {
                     $stmtWhereParams = $this->getStmtParams($queryDetails['where']);
                     $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
-                    $query = str_replace('__WHERE__', $__WHERE__, $query);        
+                    $query = str_replace('__WHERE__', $__WHERE__, $query);
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __WHERE__');
                 }
@@ -542,7 +545,7 @@ class Api
     {
         switch (HttpRequest::$routeElements[1]) {
             case 'upload':
-                eval('App\\Upload::init();');
+                Upload::init();
                 die;
             case 'thirdParty':
                 if (
@@ -554,6 +557,9 @@ class Api
                 } else {
                     HttpResponse::return4xx(404, "Invalid third party call");
                 }
+            case 'cache':
+                CacheHandler::init();
+                die;
         }
     }
 

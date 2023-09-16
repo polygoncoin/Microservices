@@ -21,5 +21,5 @@ trait AppTrait
      *
      * @param $param Returned values by PHP inbuilt functions.
      */
-    function execPhpFunc($param) { return $param; }
+    function execPhpFunc($param) { return $param;}
 }

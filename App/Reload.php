@@ -46,13 +46,13 @@ class Reload
         switch (true) {
             case isset($_GET['refresh']) && isset($_GET['ids']):
                 (new self)->process($_GET['refresh'], $_GET['ids']);
-                break;        
+                break;       
             case isset($_GET['refresh']):
                 (new self)->process($_GET['refresh']);
-                break;        
+                break;       
             default:
                 (new self)->process();
-                break;        
+                break;       
         }
     }
 

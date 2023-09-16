@@ -202,7 +202,7 @@ class JsonEncode
      */ 
     public function __destruct() 
     { 
-        $this->end(); 
+        $this->end();
     }
 }
 

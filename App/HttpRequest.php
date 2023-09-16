@@ -101,7 +101,7 @@ class HttpRequest
         if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
             self::$input['token'] = $matches[1];
         } else {
-            HttpResponse::return4xx(404, 'Missing token in authorization header');    
+            HttpResponse::return4xx(404, 'Missing token in authorization header');   
         }
         if (empty(self::$input['token'])) {
             HttpResponse::return4xx(404, 'Missing token');

@@ -322,7 +322,7 @@ return [
 ];
 ```
 Here **query & mode** keys are required keys
-**Note:** For GET method **payload** is query string parameters; basically **$_GET**.
+**Note:** For GET method **payload** is query string parameters;basically **$_GET**.
 
 - For POST/PUT/PATCH/DELETE method.
 
