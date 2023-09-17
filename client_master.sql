@@ -35,7 +35,7 @@ CREATE TABLE `table1` (
   `is_approved` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_disabled` enum('Yes','No') NOT NULL DEFAULT 'No',
   `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No',
-  PRIMARY KEY (`client_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
