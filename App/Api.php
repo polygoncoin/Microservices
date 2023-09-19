@@ -447,8 +447,10 @@ class Api
             } else {
                 if (strpos($query, '__SET__') !== false) {
                     $stmtParams = $this->getStmtParams($queryDetails['payload']);
-                    $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtParams)));
-                    $query = str_replace('__SET__', $__SET__, $query);
+                    if (!empty($stmtParams)) {
+                        $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtParams)));
+                        $query = str_replace('__SET__', $__SET__, $query);
+                    }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __SET__');
                 }
@@ -460,8 +462,10 @@ class Api
             } else {
                 if (strpos($query, '__WHERE__') !== false) {
                     $stmtWhereParams = $this->getStmtParams($queryDetails['where']);
-                    $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
-                    $query = str_replace('__WHERE__', $__WHERE__, $query);
+                    if (!empty($stmtWhereParams)) {
+                        $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($stmtWhereParams)));
+                        $query = str_replace('__WHERE__', $__WHERE__, $query);
+                    }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __WHERE__');
                 }
