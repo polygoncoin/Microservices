@@ -24,9 +24,6 @@ return [
         ],
     ],
     'client' => [
-        'registration' => [
-            '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/POST/registration.php',
-        ],
         '{table:string}' => [
             '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/POST/CRUD.php',
         ],

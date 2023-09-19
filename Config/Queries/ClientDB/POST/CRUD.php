@@ -4,12 +4,31 @@ namespace Config\Queries\ClientDB\POST;
 use App\HttpRequest;
 
 return [
-    'm006_master_client' => [
-        'query' => "INSERT INTO `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` SET __SET__",
+    'registration' => [
+        'query' => "INSERT INTO `{$this->clientDB}`.`registration` SET __SET__",
         'payload' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-            'name' => ['payload', 'name']
+            'username' => ['payload', 'username', REQUIRED],
+            'password' => ['payload', 'password', REQUIRED],
+            'email' => ['custom', date('Y-m-d H:i:s')]
         ],
-        'insertId' => 'clientId',
+        'insertId' => 'registration:id',
+        'subQuery' => [
+            [
+                'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
+                'payload' => [
+                    'registration_id' => ['insertIdParams', 'registration:id'],
+                    'address' => ['payload', 'address', REQUIRED]
+                ]
+            ]
+        ]
+    ],
+    'address' => [
+        'query' => "INSERT INTO `{$this->clientDB}`.`registration` SET __SET__",
+        'payload' => [
+            //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
+            'address' => ['payload', 'username', REQUIRED],
+        ],
+        'insertId' => 'address:id'
     ]
-][$input['uriParams']['table']];
+][HttpRequest::$input['uriParams']['table']];

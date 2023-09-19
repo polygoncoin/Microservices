@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\GET;
+
+use App\HttpRequest;
+
 return [
     'all' => [
         'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__ ORDER BY client_id ASC",
@@ -20,4 +24,4 @@ return [
         ],
         'mode' => 'singleRowFormat'//Single row returned.
     ]
-][isset($input['uriParams']['client_id'])?'single':'all'];
+][isset(HttpRequest::$input['uriParams']['client_id'])?'single':'all'];

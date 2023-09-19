@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\GET;
+
+use App\HttpRequest;
+
 return [
     'all' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('links'))}` WHERE __WHERE__ ORDER BY link_id ASC",
@@ -19,4 +23,4 @@ return [
         ],
         'mode' => 'singleRowFormat'//Single row returned.
     ]
-][isset($input['uriParams']['link_id'])?'single':'all'];
+][isset(HttpRequest::$input['uriParams']['link_id'])?'single':'all'];

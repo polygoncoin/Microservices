@@ -4,14 +4,14 @@ namespace Config\Queries\ClientDB\PATCH;
 use App\HttpRequest;
 
 return [
-    'm006_master_client' => [
+    'registration' => [
         'query' => "UPDATE `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` SET __SET__ WHERE __WHERE__",
         'payload' => [
-            'name' => ['payload', 'name']
+            'username' => ['payload', 'username']
         ],
         'where' => [
             'is_deleted' => ['custom', 'No'],
             'id' => ['uriParams', 'id']
         ]
     ]
-][$input['uriParams']['table']];
+][HttpRequest::$input['uriParams']['table']];

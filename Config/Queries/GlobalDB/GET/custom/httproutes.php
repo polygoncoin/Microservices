@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\GET\custom;
+
+use App\HttpRequest;
+
 return [
     'all' => [
         'query' => "SELECT count FROM (SELECT 0 as count) as temp WHERE count = 1",
@@ -112,7 +116,7 @@ return [
                     `{$this->globalDB}`.`{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
                 WHERE __WHERE__ ORDER BY R.route ASC",
         'where' => [
-            'L.http_id' => ['custom', isset($input['uriParams']['http'])?['GET'=>1,'POST'=>2,'PUT'=>3,'PATCH'=>4,'DELETE'=>5,][$input['uriParams']['http']]:0],
+            'L.http_id' => ['custom', isset(HttpRequest::$input['uriParams']['http'])?['GET'=>1,'POST'=>2,'PUT'=>3,'PATCH'=>4,'DELETE'=>5,][HttpRequest::$input['uriParams']['http']]:0],
             'L.group_id' => ['readOnlySession', 'group_id'],
             'L.is_disabled' => ['custom', 'No'],
             'L.is_deleted' => ['custom', 'No'],
@@ -121,4 +125,4 @@ return [
         ],
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ]
-][isset($input['uriParams']['http'])?'single':'all'];
+][isset(HttpRequest::$input['uriParams']['http'])?'single':'all'];
