@@ -161,7 +161,7 @@ class Api
             HttpResponse::return5xx(501, 'Path cannot be empty');
         }
         $config = include HttpRequest::$__file__;
-        HttpRequest::$input['required'] = $this->getRequiredPayloadFields($config);
+        $this->setRequiredPayloadFields($config);
 
         // Perform action
         $response = [];
@@ -173,12 +173,12 @@ class Api
                 }
             }
             if (isset($payload['password'])) {
-                $payload['password'] = password_hash($payload['password']);
+                $payload['password'] = password_hash($payload['password'], PASSWORD_DEFAULT);
             }
             HttpRequest::$input['payload'] = &$payload;
 
             // Configured Validation
-            if (isset($config['validate']) || (count(HttpRequest::$input['required']) > 0)) {
+            if (isset($config['validate'])) {
                 list($isValidData, $errors) = $this->validate(HttpRequest::$input, $config['validate']);
             }
             if ($isValidData!==true) {
@@ -368,16 +368,14 @@ class Api
     }
 
     /**
-     * Returns Query and Params for execution.
+     * Sets required payload.
      *
      * @param array $subQuery Config from file
-     * @param bool  $start    Flag to know start for recursive calls.
      * @return array
      */
-    private function getRequiredPayloadFields($subQuery, $start = true)
+    private function setRequiredPayloadFields($subQuery)
     {
         $requiredPayloadFields = [];
-        $subQuery = ($start) ? [$subQuery] : $subQuery;
         foreach ($subQuery as &$queryDetails) {
             if (isset($queryDetails['payload'])) {
                 $queryPayload = &$queryDetails['payload'];
@@ -429,7 +427,7 @@ class Api
                 }
             }
         }
-        return $requiredPayloadFields;
+        HttpRequest::$input['required'] = $requiredPayloadFields;
     }
 
     /**

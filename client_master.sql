@@ -16,7 +16,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `m006_master_client`
+-- Table structure for table `table1`
 --
 
 DROP TABLE IF EXISTS `table1`;
@@ -40,16 +40,16 @@ CREATE TABLE `table1` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `m006_master_client`
+-- Dumping data for table `table1`
 --
 
 LOCK TABLES `table1` WRITE;
-/*!40000 ALTER TABLE `m006_master_client` DISABLE KEYS */;
+/*!40000 ALTER TABLE `table1` DISABLE KEYS */;
 INSERT INTO `table1` VALUES
 (1,'Name 1','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No'),
 (2,'Name 2','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No'),
 (3,'Name 3','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No');
-/*!40000 ALTER TABLE `m006_master_client` ENABLE KEYS */;
+/*!40000 ALTER TABLE `table1` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -62,3 +62,35 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2023-05-30 11:57:58
+
+--
+-- Table structure for table `registration`
+--
+
+CREATE TABLE `registration` (
+  `id` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `is_deleted` enum('Yes','No') NOT NULL DEFAULT 'No'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `registration`
+--
+ALTER TABLE `registration`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `registration`
+--
+ALTER TABLE `registration`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

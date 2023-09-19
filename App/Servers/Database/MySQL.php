@@ -154,6 +154,7 @@ class MySQL extends AbstractDatabase
      */
     public function begin()
     {
+        $this->connect();
         $this->beganTransaction = true;
         $this->pdo->beginTransaction();
     }

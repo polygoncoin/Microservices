@@ -283,7 +283,8 @@ INSERT INTO `l001_link_allowed_route` VALUES
 (80,3,38,5,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','Yes','No','No'),
 (81,3,40,2,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','Yes','No','No'),
 (82,3,41,1,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','Yes','No','No'),
-(83,3,41,2,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','Yes','No','No');
+(83,3,41,2,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','Yes','No','No'),
+(84,2,42,2,NULL,'2023-05-29 13:41:53',NULL,NULL,NULL,'2023-05-29 13:41:53','Yes','No','No');
 
 /*!40000 ALTER TABLE `l001_link_allowed_route` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -361,7 +362,9 @@ INSERT INTO `m003_master_route` VALUES
 (38,'/client/{table:string}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','Yes','No','No'),
 (39,'/client/{table:string}/{id:int}',NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 07:02:34','Yes','No','No'),
 (40,'/client/upload/{module:string}',NULL,NULL,'2023-05-29 13:06:45',NULL,NULL,NULL,'2023-05-29 13:06:45','Yes','No','No'),
-(41,'/client/thirdParty/{thirdParty:string}',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','Yes','No','No');
+(41,'/client/thirdParty/{thirdParty:string}',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','Yes','No','No'),
+(42,'/client/registration',NULL,NULL,'2023-05-29 13:41:05',NULL,NULL,NULL,'2023-05-29 13:41:05','Yes','No','No');
+
 /*!40000 ALTER TABLE `m003_master_route` ENABLE KEYS */;
 UNLOCK TABLES;
 
