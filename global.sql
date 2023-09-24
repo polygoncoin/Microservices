@@ -69,13 +69,13 @@ CREATE TABLE `m002_master_user` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `m004_master_connection`
+-- Table structure for table `m003_master_connection`
 --
 
-DROP TABLE IF EXISTS `m004_master_connection`;
+DROP TABLE IF EXISTS `m003_master_connection`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `m004_master_connection` (
+CREATE TABLE `m003_master_connection` (
   `connection_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255),
   `db_server_type` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
@@ -98,13 +98,13 @@ CREATE TABLE `m004_master_connection` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `m006_master_client`
+-- Table structure for table `m004_master_client`
 --
 
-DROP TABLE IF EXISTS `m006_master_client`;
+DROP TABLE IF EXISTS `m004_master_client`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `m006_master_client` (
+CREATE TABLE `m004_master_client` (
   `client_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `comments` varchar(255) DEFAULT NULL,
@@ -148,29 +148,29 @@ INSERT INTO `m002_master_user` VALUES
 UNLOCK TABLES;
 
 --
--- Dumping data for table `m004_master_connection`
+-- Dumping data for table `m003_master_connection`
 --
 
-LOCK TABLES `m004_master_connection` WRITE;
-/*!40000 ALTER TABLE `m004_master_connection` DISABLE KEYS */;
-INSERT INTO `m004_master_connection` VALUES
+LOCK TABLES `m003_master_connection` WRITE;
+/*!40000 ALTER TABLE `m003_master_connection` DISABLE KEYS */;
+INSERT INTO `m003_master_connection` VALUES
 (1,'global','MySQL','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','Yes','No','No'),
 (2,'clientOneConnectionName','MySQL','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','Yes','No','No'),
 (3,'clientTwoConnectionName','MySQL','dbHostnameClient002','dbUsernameClient002','dbPasswordClient002','dbDatabaseClient002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','Yes','No','No');
-/*!40000 ALTER TABLE `m004_master_connection` ENABLE KEYS */;
+/*!40000 ALTER TABLE `m003_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Dumping data for table `m006_master_client`
+-- Dumping data for table `m004_master_client`
 --
 
-LOCK TABLES `m006_master_client` WRITE;
-/*!40000 ALTER TABLE `m006_master_client` DISABLE KEYS */;
-INSERT INTO `m006_master_client` VALUES
+LOCK TABLES `m004_master_client` WRITE;
+/*!40000 ALTER TABLE `m004_master_client` DISABLE KEYS */;
+INSERT INTO `m004_master_client` VALUES
 (1,'Admins','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No'),
 (2,'Client 001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No'),
 (3,'Client 002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No');
-/*!40000 ALTER TABLE `m006_master_client` ENABLE KEYS */;
+/*!40000 ALTER TABLE `m004_master_client` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
