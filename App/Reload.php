@@ -93,7 +93,6 @@ class Reload
             $this->processUser();
             $this->processGroup();
             $this->processGroupIps();
-            $this->processGroupClientRoutes();
         } else {
             switch ($refresh) {
                 case 'user':
@@ -104,9 +103,6 @@ class Reload
                     break;
                 case 'groupIp':
                     $this->processGroupIps($ids);
-                    break;
-                case 'groupRoute':
-                    $this->processGroupClientRoutes($ids);
                     break;
                 case 'token':
                     $this->processToken($idsString);
@@ -131,6 +127,7 @@ class Reload
                 U.username,
                 U.password_hash,
                 G.client_id,
+                G.name as group_name,
                 U.group_id
             FROM
                 `{$this->execPhpFunc(getenv('users'))}` U
@@ -198,40 +195,6 @@ class Reload
             }
         }
         $this->db->closeCursor();
-    }
-
-    /**
-     * Adds group allowed routes to cache.
-     *
-     * @param array $ids Optional - privide ids are specific reload.
-     * @return void
-     */
-    private function processGroupClientRoutes($ids = [])
-    {
-        $whereClause = count($ids) ? 'WHERE L.link_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
-        $this->db->execDbQuery("
-            SELECT
-                L.group_id, L.http_id, R.route
-            FROM 
-                `{$this->execPhpFunc(getenv('links'))}` L
-            LEFT JOIN
-                `{$this->execPhpFunc(getenv('routes'))}` R ON L.route_id = R.route_id
-            {$whereClause}",
-            $ids
-        );
-        $routeArr = [];
-        while ($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
-            if (!isset($routeArr[$row['group_id']])) $routeArr[$row['group_id']] = [];
-            if (!isset($routeArr[$row['group_id']][$row['http_id']])) $routeArr[$row['group_id']][$row['http_id']] = [];
-            $routeArr[$row['group_id']][$row['http_id']][] = $row['route'];
-        }
-        $this->db->closeCursor();
-        foreach ($routeArr as $groupId => &$httpArr) {
-            foreach ($httpArr as $httpId => &$routes) {
-                $key = "group:{$groupId}:http:{$httpId}:routes";
-                $this->cache->setSetMembers($key, $routes);
-            }
-        }
     }
 
     /**

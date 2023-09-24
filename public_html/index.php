@@ -6,7 +6,7 @@ define('REQUIRED', true);
 require_once __DOC_ROOT__ . '/autoload.php';
 
 // REQUEST_URI key in URL
-define('ROUTE_URL_PARAM', 'REQUEST_URI');
+define('ROUTE_URL_PARAM', 'r');
 
 define('ROUTE', '/' . trim($_GET[ROUTE_URL_PARAM], '/'));
 

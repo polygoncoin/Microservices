@@ -60,7 +60,7 @@ class Cache
      *
      * @var object
      */
-    private static $cache = null;
+    public static $cache = null;
 
     /**
      * Database constructor

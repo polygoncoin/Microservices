@@ -4,6 +4,8 @@ namespace App;
 use App\Constants;
 use App\HttpResponse;
 use App\Logs;
+use App\Servers\Cache\Cache;
+use App\Servers\Database\Database;
 
 /*
  * Class handling details of HTTP request
@@ -19,13 +21,6 @@ use App\Logs;
  */
 class HttpRequest
 {
-    /**
-     * Logged-in user request method ID
-     *
-     * @var int
-     */
-    public static $httpId = null;
-
     /**
      * Raw route / Configured Uri
      *
@@ -76,6 +71,55 @@ class HttpRequest
     public static $input = null;
 
     /**
+     * Client database server type
+     *
+     * @var string
+     */
+    public static $clientServerType = null;
+
+    /**
+     * Client database hostname
+     *
+     * @var string
+     */
+    public static $clientHostname = null;
+
+    /**
+     * Client database username
+     *
+     * @var string
+     */
+    public static $clientUsername = null;
+
+    /**
+     * Client database password
+     *
+     * @var string
+     */
+    public static $clientPassword = null;
+
+    /**
+     * Client database
+     *
+     * @var string
+     */
+    public static $clientDatabase = null;
+
+    /**
+     * Logged-in User ID
+     *
+     * @var int
+     */
+    public static $userId = null;
+
+    /**
+     * Logged-in user Group ID
+     *
+     * @var int
+     */
+    public static $groupId = null;
+
+    /**
      * Initialization
      *
      * @return void
@@ -86,9 +130,17 @@ class HttpRequest
         self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
         
-        eval('self::$httpId = App\Constants::'.self::$REQUEST_METHOD.';');
+        Cache::connect(
+            'Redis',
+            'cacheHostname',
+            'cachePort',
+            'cachePassword',
+            'cacheDatabase'
+        );
 
         self::loadToken();
+        self::initSession();
+        self::parseRoute();
     }
 
     /**
@@ -100,11 +152,72 @@ class HttpRequest
     {
         if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
             self::$input['token'] = $matches[1];
+            $token = self::$input['token'];
+            if (!Cache::$cache->cacheExists($token)) {
+                HttpResponse::return5xx(501, "Cache token missing.");
+            }
+            self::$input['readOnlySession'] = json_decode(Cache::$cache->getCache($token), true);
+            self::checkRemoteIp();
         } else {
             HttpResponse::return4xx(404, 'Missing token in authorization header');   
         }
         if (empty(self::$input['token'])) {
             HttpResponse::return4xx(404, 'Missing token');
+        }
+    }
+
+    /**
+     * Load session with help of token
+     *
+     * @return void
+     */
+    private static function initSession()
+    {
+        if (empty(self::$input['readOnlySession']['user_id']) || empty(self::$input['readOnlySession']['group_id'])) {
+            HttpResponse::return4xx(404, 'Invalid session');
+        }
+        self::$userId = self::$input['readOnlySession']['user_id'];
+        self::$groupId = self::$input['readOnlySession']['group_id'];
+        $key = "group:".self::$groupId;
+        if (!Cache::$cache->cacheExists($key)) {
+            HttpResponse::return5xx(501, "Cache '{$key}' missing.");
+        }
+        $groupInfoArr = json_decode(Cache::$cache->getCache($key), true);
+        self::$clientServerType = $groupInfoArr['db_server_type'];
+        self::$clientHostname = $groupInfoArr['db_hostname'];
+        self::$clientUsername = $groupInfoArr['db_username'];
+        self::$clientPassword = $groupInfoArr['db_password'];
+        self::$clientDatabase = $groupInfoArr['db_database'];
+        Database::connect(
+            self::$clientServerType,
+            self::$clientHostname,
+            self::$clientUsername,
+            self::$clientPassword,
+            self::$clientDatabase
+        );
+    }
+
+    /**
+     * Validate request IP
+     *
+     * @return void
+     */
+    private static function checkRemoteIp()
+    {
+        $groupId = self::$input['readOnlySession']['group_id'];
+        $key = "group:".self::$groupId.":cidr";
+        if (Cache::$cache->cacheExists($key)) {
+            $cidrs = json_decode(Cache::$cache->getCache($key), true);
+            $isValidIp = false;
+            foreach ($cidrs as $cidr) {
+                if (cidr_match(self::$REMOTE_ADDR, $cidr)) {
+                    $isValidIp = true;
+                    break;
+                }
+            }
+            if (!$isValidIp) {
+                HttpResponse::return4xx(404, 'Invalid request.');
+            }
         }
     }
 
@@ -115,11 +228,11 @@ class HttpRequest
      */
     public static function parseRoute()
     {
-        $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . self::$REQUEST_METHOD . 'routes.php';
+        $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . self::$REQUEST_METHOD . 'routes.php';
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
-            HttpResponse::return5xx(501, 'Missing route file for' . " {self::$REQUEST_METHOD} " . 'method');
+            HttpResponse::return5xx(501, 'Missing route file for ' . self::$REQUEST_METHOD . ' method');
         }
         self::$routeElements = explode('/', trim(ROUTE, '/'));
         $configuredUri = [];

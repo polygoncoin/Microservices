@@ -13,7 +13,7 @@ return [
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ],
     'single' => [
-        'query' => "SELECT * FROM `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` WHERE id = ?",
+        'query' => "SELECT * FROM `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` WHERE __WHERE__",
         'where' => [
             'is_deleted' => ['custom', 'No'],
             'id' => ['uriParams','id']

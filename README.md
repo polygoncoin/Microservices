@@ -90,20 +90,22 @@ HttpAuthenticationPassword='password'
 
 ### Files
 
--  **/Config/Routes/GETroutes.php** for all GET method routes configuration.
+-  **/Config/Routes/<GroupName>/GETroutes.php** for all GET method routes configuration.
 
--  **/Config/Routes/POSTroutes.php** for all POST method routes configuration.
+-  **/Config/Routes/<GroupName>/POSTroutes.php** for all POST method routes configuration.
 
--  **/Config/Routes/PUTroutes.php** for all PUT method routes configuration.
+-  **/Config/Routes/<GroupName>/PUTroutes.php** for all PUT method routes configuration.
 
--  **/Config/Routes/PATCHroutes.php** for all PATCH method routes configuration.
+-  **/Config/Routes/<GroupName>/PATCHroutes.php** for all PATCH method routes configuration.
 
--  **/Config/Routes/DELETEroutes.php** for all DELETE method routes configuration.
+-  **/Config/Routes/<GroupName>/DELETEroutes.php** for all DELETE method routes configuration.
 
-- For configuring route **/global/tableName/parts** GET method
+**<GroupName>** The assigned group to a user accessing the api's
+
+- For configuring route **/tableName/parts** GET method
 
 ```
-'global' => [
+return [
 	'tableName' => [
 		'parts' => [
 			'__file__' => 'SQL file location'
@@ -112,10 +114,10 @@ HttpAuthenticationPassword='password'
 ];
 ```
 
-- For configuring route **/global/tableName/{id}** where id is dynamic **integer** value to be collected.
+- For configuring route **/tableName/{id}** where id is dynamic **integer** value to be collected.
 
 ```
-'global' => [
+return [
 	'tableName' => [
 		'{id:int}' => [
 			'__file__' => 'SQL file location'
@@ -127,7 +129,7 @@ HttpAuthenticationPassword='password'
 - Same dynamic variable but with a different data type, for e.g. **{id}** will be treated differently for **string** and **integer** values to be collected.
 
 ```
-'global' => [
+return [
 	'tableName' => [
 		'{id:int}' => [
 			'__file__' => 'SQL file location for integer data type'
@@ -142,7 +144,7 @@ HttpAuthenticationPassword='password'
 - Suppose you want to restrict dynamic values to a certain set of values. One can do the same by appending comma-separated values after OR key.
 
 ```
-'global' => [
+return [
 	'{tableName:string|admin,group,client,routes}' => [
 		'{id:int}' => [
 			'__file__' => 'SQL file location'
@@ -150,93 +152,6 @@ HttpAuthenticationPassword='password'
 	]
 ];
 ```
-
-## Configuring Route in Database
-
-Suppose we want to configure the below 2 routes for our application.
-
-- /global/{table:string}
-
-- /global/{table:string}/{id:int}
-
-  
-
-Lets discuss the process for each
-
--  **/global/{table:string}** where **table** is the dynamic string
-
-```
-INSERT INTO `m003_master_route`(`route`) VALUES ('/global/{table:string}');
-```
-After inserting one needs to configure this route for use.
-
-To configure for GET, and POST methods.
-
-```
-INSERT INTO
-	`l001_link_allowed_route`
-SET
-	`group_id` = 1,
-	`route_id` = 1, -- Insert id of route query
-	`http_id` = 1 -- 1 is for GET method
-;
-```
-```
-INSERT INTO
-	`l001_link_allowed_route`
-SET
-	`group_id` = 1,
-	`route_id` = 1, -- Insert id of route query
-	`http_id` = 2 -- 2 is for POST method
-;
-```
-
-So route /global/{table:string} can be used for adding and fetching table records
-
--  **/global/{table:string}/{id:int}** where **table** is the dynamic string and **id** is a dynamic integer
-```
-INSERT INTO `m003_master_route`(`route`) VALUES ('/global/{table:string}/{id:int}');
-```
-After inserting one needs to configure this route for use.
-
-To configure for GET/PUT/PATCH/DELETE method.
-```
-INSERT INTO
-	`l001_link_allowed_route`
-SET
-	`group_id` = 1,
-	`route_id` = 2, -- Insert id of route query.
-	`http_id` = 1 -- 1 is for GET method
-;
-```
-```
-INSERT INTO
-	`l001_link_allowed_route`
-SET
-	`group_id` = 1,
-	`route_id` = 2, -- Insert id of route query.
-	`http_id` = 3 -- 3 is for PUT method
-;
-```
-```
-INSERT INTO
-	`l001_link_allowed_route`
-SET
-	`group_id` = 1,
-	`route_id` = 2, -- Insert id of route query.
-	`http_id` = 4 -- 4 is for PATCH method
-;
-```
-```
-INSERT INTO
-	`l001_link_allowed_route`
-SET
-	`group_id` = 1,
-	`route_id` = 2, -- Insert id of route query.
-	`http_id` = 5 -- 5 is for DELETE method
-;
-```
-So route /global/{table:string}/{id:int} can be used for updating and fetching a specific record of a table.
 
 ## Configuring SQL's
 
@@ -336,15 +251,15 @@ return [
 		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'where' => [// for __WHERE__
-	//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
+		//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
 		'id' => ['uriParams', 'id']
 	],
-	'insertId' => 'm001_master_group:id',// Last insert id key name in $input['insertIdParams'][key name];
+	'insertId' => 'm001_master_group:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
 	'subQuery' => [
 		[
 			'query' => "MySQL Query here",
 			'payload' => [
-				'previous_table_id' => ['insertIdParams', 'm001_master_group:id'],
+				'previous_table_id' => ['insertIdParams', '<tableName>:id'],
 			],
 			'where' => [],
 		],
@@ -370,7 +285,7 @@ return [
 		[
 			'fn' => 'validateGroupId',
 			'fnArgs' => [
-				//variable => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+				//variableName => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
 				'group_id' => ['payload', 'group_id']
 			],
 			'errorMessage' => 'Invalid Group Id'
@@ -392,9 +307,9 @@ UPDATE {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__;
 
 ### For HTTP GET request.
 
-- http://localhost/Microservices/public_html/index.php?REQUEST_URI=/reload
+- http://localhost/Microservices/public_html/index.php?r=/reload
 
-- http://localhost/Microservices/public_html/index.php?REQUEST_URI=/global/tableName/1
+- http://localhost/Microservices/public_html/index.php?r=/tableName/1
 
 One can clean the URL by making the required changes in the web server .conf file.
 
@@ -461,7 +376,7 @@ $input variable has following keys available.
 #### uriParams
 
 **$input['uriParams']** contains the dynamically resolved values.
-Suppose our configured route is **/global/{table:string}/{id:int}** and we make an HTTP request for **/global/tableName/1** then $input['uriParams'] will hold these dynamic values as below.
+Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $input['uriParams'] will hold these dynamic values as below.
 
 ```
 $input['uriParams'] = [

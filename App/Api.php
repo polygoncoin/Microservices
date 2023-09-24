@@ -2,7 +2,6 @@
 namespace App;
 
 use App\AppTrait;
-use App\Authorize;
 use App\CacheHandler;
 use App\Constants;
 use App\HttpRequest;
@@ -15,7 +14,7 @@ use App\Upload;
 use App\Validation\Validator;
 
 /**
- * Class to initialize api HTTP request
+ * Class to initialize api HTTP requestG
  *
  * This class process the api request
  *
@@ -59,13 +58,6 @@ class Api
     public $clientDB = null;
 
     /**
-     * Authorize class object
-     *
-     * @var object
-     */
-    public $authorize = null;
-
-    /**
      * Validator class object
      *
      * @var object
@@ -86,6 +78,7 @@ class Api
      */
     public static function init()
     {
+        HttpRequest::init();
         (new self)->process();
     }
 
@@ -96,10 +89,8 @@ class Api
      */
     public function process()
     {
-        $this->authorize = new Authorize();
-        $this->authorize->connectClientDB();
         $this->globalDB = getenv('globalDbName');
-        $this->clientDB = getenv($this->authorize->clientDatabase);
+        $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->cache = Cache::getObject();
         $this->db = Database::getObject();
 
@@ -546,7 +537,7 @@ class Api
      */
     function miscFunctionalityBeforeCollectingPayload()
     {
-        switch (HttpRequest::$routeElements[1]) {
+        switch (HttpRequest::$routeElements[0]) {
             case 'upload':
                 Upload::init();
                 die;
