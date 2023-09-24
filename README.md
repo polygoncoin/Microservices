@@ -90,17 +90,17 @@ HttpAuthenticationPassword='password'
 
 ### Files
 
--  **/Config/Routes/<GroupName>/GETroutes.php** for all GET method routes configuration.
+-  **/Config/Routes/&lt;GroupName&gt;/GETroutes.php** for all GET method routes configuration.
 
--  **/Config/Routes/<GroupName>/POSTroutes.php** for all POST method routes configuration.
+-  **/Config/Routes/&lt;GroupName&gt;/POSTroutes.php** for all POST method routes configuration.
 
--  **/Config/Routes/<GroupName>/PUTroutes.php** for all PUT method routes configuration.
+-  **/Config/Routes/&lt;GroupName&gt;/PUTroutes.php** for all PUT method routes configuration.
 
--  **/Config/Routes/<GroupName>/PATCHroutes.php** for all PATCH method routes configuration.
+-  **/Config/Routes/&lt;GroupName&gt;/PATCHroutes.php** for all PATCH method routes configuration.
 
--  **/Config/Routes/<GroupName>/DELETEroutes.php** for all DELETE method routes configuration.
+-  **/Config/Routes/&lt;GroupName&gt;/DELETEroutes.php** for all DELETE method routes configuration.
 
-**<GroupName>** The assigned group to a user accessing the api's
+**&lt;GroupName&gt;** The assigned group to a user accessing the api's
 
 - For configuring route **/tableName/parts** GET method
 
@@ -163,29 +163,29 @@ return [
 
 ### Files - GlobalDB
 
--  **/Config/Queries/GlobalDB/GET/<filename>.php** GET method SQL.
+-  **/Config/Queries/GlobalDB/GET/&lt;filename&gt;.php** GET method SQL.
 
--  **/Config/Queries/GlobalDB/POST/<filename>.php** POST method SQL.
+-  **/Config/Queries/GlobalDB/POST/&lt;filename&gt;.php** POST method SQL.
 
--  **/Config/Queries/GlobalDB/PUT/<filename>.php** PUT method SQL.
+-  **/Config/Queries/GlobalDB/PUT/&lt;filename&gt;.php** PUT method SQL.
 
--  **/Config/Queries/GlobalDB/PATCH/<filename>.php** PATCH method SQL.
+-  **/Config/Queries/GlobalDB/PATCH/&lt;filename&gt;.php** PATCH method SQL.
 
--  **/Config/Queries/GlobalDB/DELETE/<filename>.php** DELETE method SQL.
+-  **/Config/Queries/GlobalDB/DELETE/&lt;filename&gt;.php** DELETE method SQL.
 
 ### Files - ClientDB
 
--  **/Config/Queries/ClientDB/GET/<filename>.php** GET method SQL.
+-  **/Config/Queries/ClientDB/GET/&lt;filename&gt;.php** GET method SQL.
 
--  **/Config/Queries/ClientDB/POST/<filename>.php** POST method SQL.
+-  **/Config/Queries/ClientDB/POST/&lt;filename&gt;.php** POST method SQL.
 
--  **/Config/Queries/ClientDB/PUT/<filename>.php** PUT method SQL.
+-  **/Config/Queries/ClientDB/PUT/&lt;filename&gt;.php** PUT method SQL.
 
--  **/Config/Queries/ClientDB/PATCH/<filename>.php** PATCH method SQL.
+-  **/Config/Queries/ClientDB/PATCH/&lt;filename&gt;.php** PATCH method SQL.
 
--  **/Config/Queries/ClientDB/DELETE/<filename>.php** DELETE method SQL.
+-  **/Config/Queries/ClientDB/DELETE/&lt;filename&gt;.php** DELETE method SQL.
 
-Where **<filename>.php** are different file names for respective functionality.
+Where **&lt;filename&gt;.php** are different file names for respective functionality.
 
 ### SQL's
 
