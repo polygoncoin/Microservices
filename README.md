@@ -403,6 +403,7 @@ $input['readOnlySession'] = {
 };
 ```
 This is made available through Cache server i.e. **Redis**.
+**Note:** The password used for account shames11@rediffmail.com is shames11.
 If you want to add more fields to be made available just change the logic in **Reload.php** and the tables in **global database**.
 
 #### payload
