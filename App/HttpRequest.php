@@ -314,10 +314,14 @@ class HttpRequest
             if (!isset($payloadArr['data'])) {
                 HttpResponse::return4xx(404, 'Invalid data payload');
             }
-            self::$input['payloadArr'] = json_decode($payloadArr['data'], true);
+            $payloadArr = json_decode($payloadArr['data'], true);
+            if (is_null($payloadArr)) {
+                HttpResponse::return4xx(404, 'Invalid payload JSON');
+            }
+            self::$input['payloadArr'] = $payloadArr;
         }
         self::$input['payloadType'] = self::payloadType(self::$input['payloadArr']);
-        if (self::$input['payloadType']) {
+        if (self::$input['payloadType'] === 'Object') {
             self::$input['payloadArr'] = [self::$input['payloadArr']];
         }
     }
