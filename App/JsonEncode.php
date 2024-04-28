@@ -10,14 +10,14 @@ namespace App;
  * create JSON in parts for what ever smallest part of data
  * we have of the large data set which are yet to be fetched.
  *
- * @category   JSON Encode
+ * @category   JSON Encoder
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class JsonEncode
+class JSON
 {
     /**
      * Array of JsonEncodeObject objects
@@ -231,5 +231,48 @@ class JsonEncodeObject
     public function __construct($mode)
     {
         $this->mode = $mode;
+    }
+}
+
+/**
+ * Loading JSON class
+ *
+ * This class is built to handle JSON Object.
+ *
+ * @category   Json Encode Object handler
+ * @package    Microservices
+ * @author     Ramesh Narayan Jangid
+ * @copyright  Ramesh Narayan Jangid
+ * @version    Release: @1.0.0@
+ * @since      Class available since Release 1.0.0
+ */
+class JsonEncode
+{
+    /**
+     * JSON generator object
+     */
+    public static $jsonObj = null;
+
+    /**
+     * Initialize object
+     *
+     * @return void
+     */
+    public static function init()
+    {
+        self::$jsonObj = new JSON();
+    }
+
+    /**
+     * JSON generator object
+     *
+     * @return object
+     */
+    public static function getObject()
+    {
+        if (is_null(self::$jsonObj)) {
+            self::init();
+        }
+        return self::$jsonObj;
     }
 }

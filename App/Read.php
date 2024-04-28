@@ -61,13 +61,12 @@ class Read
         $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->db = Database::getObject();
+        $this->jsonEncodeObj = JsonEncode::getObject();
 
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
         
-        $this->jsonEncodeObj = new JsonEncode();
         $this->readDB($readSqlConfig);
-        $this->jsonEncodeObj = null;
     }
 
     /**

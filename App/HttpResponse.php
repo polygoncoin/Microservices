@@ -2,6 +2,7 @@
 namespace App;
 
 use App\HttpRequest;
+use App\JsonEncode;
 use App\Logs;
 
 /**
@@ -94,6 +95,8 @@ class HttpResponse
      */
     public static function returnResponse($arr)
     {
+        $jsonEncodeObj = JsonEncode::getObject();
+        $jsonEncodeObj = null;
         ob_clean();
         die(json_encode($arr));
     }

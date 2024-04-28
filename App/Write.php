@@ -69,6 +69,7 @@ class Write
         $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->db = Database::getObject();
+        $this->jsonEncodeObj = JsonEncode::getObject();
 
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
@@ -85,13 +86,14 @@ class Write
                 $response[] = $res;
             }
         }
-        $this->jsonEncodeObj = new JsonEncode();
         if (!empty($response)) {
+            if (HttpRequest::$input['payloadType'] === 'Object') {
+                $response = $response[0];
+            }
             $this->jsonEncodeObj->encode($response);
         } else {
             $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
         }
-        $this->jsonEncodeObj = null;
     }
 
     /**
