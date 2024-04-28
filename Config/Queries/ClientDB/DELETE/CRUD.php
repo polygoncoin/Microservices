@@ -4,13 +4,32 @@ namespace Config\Queries\ClientDB\DELETE;
 use App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` SET __SET__ WHERE __WHERE__",
-    'payload' => [
-        //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'is_deleted' => ['custom', 'Yes']
-    ],
-    'where' => [
-        'is_deleted' => ['custom', 'No'],
-        'id' => ['uriParams', 'id']
-    ]
+    'registration' => array_merge(
+        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
+        [
+            'payload' => [
+                'is_deleted' => ['custom', 'Yes']
+            ],
+            'subQuery' => [
+                [
+                    'query' => "UPDATE `{$this->clientDB}`.`address` SET __SET__ WHERE __WHERE__",
+                    'payload' => [
+                        'is_deleted' => ['custom', 'Yes']
+                    ],
+                    'where' => [
+                        'is_deleted' => ['custom', 'No'],
+                        'registration_id' => ['uriParams', 'id'],
+                    ]
+                ]
+            ]
+        ]
+    ),
+    'address' => array_merge(
+        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
+        [
+            'payload' => [
+                'is_deleted' => ['custom', 'Yes']
+            ],
+        ]
+    )
 ];

@@ -4,14 +4,20 @@ namespace Config\Queries\ClientDB\PATCH;
 use App\HttpRequest;
 
 return [
-    'registration' => [
-        'query' => "UPDATE `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` SET __SET__ WHERE __WHERE__",
-        'payload' => [
-            'username' => ['payload', 'username']
-        ],
-        'where' => [
-            'is_deleted' => ['custom', 'No'],
-            'id' => ['uriParams', 'id']
+    'registration' => array_merge(
+        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
+        [
+            'payload' => [
+                'username' => ['payload', 'username']
+            ]
         ]
-    ]
+    ),
+    'address' => array_merge(
+        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
+        [
+            'payload' => [
+                'address' => ['payload', 'address']
+            ],
+        ]
+    )
 ][HttpRequest::$input['uriParams']['table']];

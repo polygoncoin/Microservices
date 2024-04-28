@@ -24,9 +24,10 @@ return [
         ]
     ],
     'address' => [
-        'query' => "INSERT INTO `{$this->clientDB}`.`registration` SET __SET__",
+        'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
         'payload' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
+            'registration' => ['payload', 'registration_id', REQUIRED],
             'address' => ['payload', 'username', REQUIRED],
         ],
         'insertId' => 'address:id'
