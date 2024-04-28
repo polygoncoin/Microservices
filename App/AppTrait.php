@@ -45,6 +45,7 @@ trait AppTrait
                     if (!empty($sqlParams)) {
                         $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($sqlParams)));
                         $sql = str_replace('__SET__', $__SET__, $sql);
+                        $sqlParams = array_values($sqlParams);
                     }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __SET__');
