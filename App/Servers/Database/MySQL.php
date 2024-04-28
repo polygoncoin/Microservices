@@ -198,15 +198,15 @@ class MySQL extends AbstractDatabase
     /**
      * Execute parameterised query
      *
-     * @param string $query  Parameterised query
+     * @param string $sql  Parameterised query
      * @param array  $params Parameterised query params
      * @return object
      */
-    public function execDbQuery($query, $params = [])
+    public function execDbQuery($sql, $params = [])
     {
         $this->connect();
         try {
-            $this->stmt = $this->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $this->stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             $this->stmt->execute($params);
         } catch(\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {

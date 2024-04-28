@@ -294,6 +294,9 @@ class HttpRequest
         // Set route code file.
         if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
             self::$__file__ = $routes['__file__'];
+            if (empty(self::$__file__) || !file_exists(self::$__file__)) {
+                HttpResponse::return5xx(501, 'Path cannot be empty');
+            }
         } elseif ($routes['__file__'] != '') {
             HttpResponse::return5xx(501, 'Missing route configuration file for' . " {$REQUEST_METHOD} " . 'method');
         }
@@ -306,7 +309,7 @@ class HttpRequest
      */
     public static function loadPayload()
     {
-        if (self::$REQUEST_METHOD === Constants::GET_METHOD) {
+        if (self::$REQUEST_METHOD === Constants::READ) {
             self::$input['payloadArr'] = $_GET;
         } else {
             // Load Payload

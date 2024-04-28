@@ -124,7 +124,7 @@ class Login
         $this->requestIp = $_SERVER['REMOTE_ADDR'];
 
         // Check request method is POST.
-        if ($_SERVER['REQUEST_METHOD'] !== Constants::POST_METHOD) {
+        if ($_SERVER['REQUEST_METHOD'] !== Constants::CREATE) {
             HttpResponse::return4xx(404, 'Invalid request method');
         }
 

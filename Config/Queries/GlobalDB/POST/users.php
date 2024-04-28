@@ -4,7 +4,9 @@ return [
     'payload' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'username' => ['payload', 'username'],
-        'password_hash' => ['payload', 'password_hash'],
+        'password_hash' => ['function', function() {
+            return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);
+         }],
         'group_id' => ['payload', 'group_id'],
         'comments' => ['payload', 'comments'],
         'created_by' => ['readOnlySession', 'user_id'],

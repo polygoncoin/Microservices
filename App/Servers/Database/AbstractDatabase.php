@@ -40,11 +40,11 @@ abstract class AbstractDatabase
     /**
      * Execute parameterised query
      *
-     * @param string $query  Parameterised query
+     * @param string $sql  Parameterised query
      * @param array  $params Parameterised query params
      * @return object
      */
-    abstract public function execDbQuery($query, $params = []);
+    abstract public function execDbQuery($sql, $params = []);
 
     /**
      * Fetch single row from statement

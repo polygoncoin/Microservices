@@ -71,9 +71,9 @@ class GlobalValidator
     private function primaryKeyExist($args)
     {
         extract($args);
-        $query = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
+        $sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
         $params = [$id];
-        $this->db->execDbQuery($query, $params);
+        $this->db->execDbQuery($sql, $params);
         $row = $this->db->fetch();
         $this->db->closeCursor();
         return ($row['count'] === 0) ? false : true;
@@ -88,9 +88,9 @@ class GlobalValidator
     private function checkColumnValueExist($args)
     {
         extract($args);
-        $query = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$column}` = ? AND`{$primary}` = ?";
+        $sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$column}` = ? AND`{$primary}` = ?";
         $params = [$columnValue, $id];
-        $this->db->execDbQuery($query, $params);
+        $this->db->execDbQuery($sql, $params);
         $row = $this->db->fetch();
         $this->db->closeCursor();
         return ($row['count'] === 0) ? false : true;

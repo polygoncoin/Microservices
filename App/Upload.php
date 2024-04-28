@@ -48,8 +48,8 @@ class Upload
     public function process()
     {
         switch (HttpRequest::$REQUEST_METHOD) {
-            case Constants::POST_METHOD:
-            case Constants::PUT_METHOD:
+            case Constants::CREATE:
+            case Constants::UPDATE:
                 $this->processUpload();
                 break;
         }
