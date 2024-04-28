@@ -237,13 +237,11 @@ class Login
             $this->cache->setCache("user:{$this->userId}:token", json_encode($tokenDetails), EXPIRY_TIME);
             $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
         }
-        $jsonEncode = new JsonEncode();
-        $jsonEncode->encode(
+        echo json_encode(
             [
                 'token' => $tokenDetails['token'],
                 'expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
             ]
         );
-        $jsonEncode = null;
     }
 }

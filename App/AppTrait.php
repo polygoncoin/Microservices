@@ -43,9 +43,8 @@ trait AppTrait
                 if (strpos($sql, '__SET__') !== false) {
                     $sqlParams = $this->getSqlParams($sqlDetails['payload']);
                     if (!empty($sqlParams)) {
-                        $__SET__ = implode(', ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($sqlParams)));
+                        $__SET__ = implode(', ',array_map(function ($v) { $v = str_replace(['`', ' '], '', $v); return "`{$v}` = :{$v}";}, array_keys($sqlParams)));
                         $sql = str_replace('__SET__', $__SET__, $sql);
-                        $sqlParams = array_values($sqlParams);
                     }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __SET__');
@@ -59,9 +58,9 @@ trait AppTrait
                 if (strpos($sql, '__WHERE__') !== false) {
                     $sqlWhereParams = $this->getSqlParams($sqlDetails['where']);
                     if (!empty($sqlWhereParams)) {
-                        $__WHERE__ = implode(' AND ',array_map(function ($v) { return '`' . implode('`.`',explode('.',str_replace('`','',$v))) . '` = ?';}, array_keys($sqlWhereParams)));
+                        $__WHERE__ = implode(' AND ',array_map(function ($v) { $v = str_replace(['`', ' '], '', $v); return "`{$v}` = :{$v}";}, array_keys($sqlWhereParams)));
                         $sql = str_replace('__WHERE__', $__WHERE__, $sql);
-                        $sqlParams = array_merge($sqlParams, array_values($sqlWhereParams));
+                        $sqlParams = array_merge($sqlParams, $sqlWhereParams);
                     }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __WHERE__');

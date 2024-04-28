@@ -131,24 +131,55 @@ class Write
      * Function to insert/update sub queries recursively.
      *
      * @param array $writeSqlConfig Config from file
-     * @param bool  $start          true to represent the first call in recursion.
+     * @param bool  $first          true to represent the first call in recursion.
      * @return void
      */
-    private function writeDB(&$writeSqlConfig)
+    private function writeDB(&$writeSqlConfig, $first = true)
     {
         $insertIds = [];
         foreach ($writeSqlConfig as &$writeSqlDetails) {
             list($sql, $params) = $this->getSqlAndParams($writeSqlDetails);
-            $this->db->execDbQuery($sql, $params);
-            if (isset($writeSqlDetails['insertId'])) {
-                $insertId = $this->db->lastInsertId();
-                $insertIds = array_merge($insertIds, [$writeSqlDetails['insertId'] => $insertId]);
-                HttpRequest::$input['insertIdParams'][$writeSqlDetails['insertId']] = $insertId;
+            $multipleCount = 1;
+            //Note can't have same param in hierarchy/subQuery for insert/update.
+            $sParams = []; //single
+            $mParams = [];//multiple
+            if (!$first) {
+                foreach($params as $param => $val) {
+                    if (is_array($val)) {
+                        $count = count($val);
+                        $multipleCount = ($multipleCount === 1 && $multipleCount !== $count) ? $count : 1;
+                        if ($multipleCount !== $count) {
+                            HttpResponse::return5xx(401, 'Invalid JSON: Multiple payloads Mismatch.');
+                        }
+                        $mParams[] = $param;
+                    } else {
+                        $sParams[$param] = $val;
+                    }
+                }
+            } else {
+                $sParams = $params;
+                $mParams = [];
             }
-            $this->db->closeCursor();
-            if (isset($writeSqlDetails['subQuery'])) {
-                $insertIds = array_merge($insertIds, $this->writeDB($writeSqlDetails['subQuery']));
-            }
+            $counter = 0;
+            do {
+                $sqlParams = $sParams;
+                if (count($mParams) > 0) {
+                    foreach ($mParams as $param) {
+                        $sqlParams[$param] = $params[$param][$counter];
+                    }
+                }
+                $this->db->execDbQuery($sql, $sqlParams);
+                if (isset($writeSqlDetails['insertId'])) {
+                    $insertId = $this->db->lastInsertId();
+                    $insertIds = array_merge($insertIds, [$writeSqlDetails['insertId'] => $insertId]);
+                    HttpRequest::$input['insertIdParams'][$writeSqlDetails['insertId']] = $insertId;
+                }
+                $this->db->closeCursor();
+                if (isset($writeSqlDetails['subQuery'])) {
+                    $insertIds = array_merge($insertIds, $this->writeDB($writeSqlDetails['subQuery']), false);
+                }
+                $counter++;
+            } while (--$multipleCount > 0);
         }
         return $insertIds;
     }
