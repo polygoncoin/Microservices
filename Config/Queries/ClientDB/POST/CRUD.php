@@ -14,7 +14,7 @@ return [
         ],
         'insertId' => 'registration:id',
         'subQuery' => [
-            [
+            'address' => [
                 'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
                 'payload' => [
                     'registration_id' => ['insertIdParams', 'registration:id'],

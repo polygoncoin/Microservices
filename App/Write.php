@@ -121,7 +121,7 @@ class Write
             $response = ['data' => $payload, 'Error' => $errors];
         } else {
             $this->db->begin();
-            $response = $this->writeDB($writeSqlConfig);
+            $response = $this->writeDB($writeSqlConfig, $payload);
             $this->db->commit();
         }
         return $response;
@@ -131,14 +131,22 @@ class Write
      * Function to insert/update sub queries recursively.
      *
      * @param array $writeSqlConfig Config from file
+     * @param array $payload        Single Payload from array.
      * @param bool  $first          true to represent the first call in recursion.
      * @return void
      */
-    private function writeDB(&$writeSqlConfig, $first = true)
+    private function writeDB(&$writeSqlConfig, &$payload, $first = true)
     {
         $insertIds = [];
-        foreach ($writeSqlConfig as &$writeSqlDetails) {
-            list($sql, $params) = $this->getSqlAndParams($writeSqlDetails);
+        foreach ($writeSqlConfig as $configKey => &$writeSqlDetails) {
+            // Get Sql and Params
+            if ($first) {
+                list($sql, $params) = $this->getSqlAndParams($writeSqlDetails, $payload);
+            } else if (isset($payload[$configKey])) {
+                list($sql, $params) = $this->getSqlAndParams($writeSqlDetails, $payload[$configKey]);
+            } else {
+                continue;
+            }
             $multipleCount = 1;
             //Note can't have same param in hierarchy/subQuery for insert/update.
             $sParams = []; //single
@@ -180,6 +188,9 @@ class Write
                 }
                 $counter++;
             } while (--$multipleCount > 0);
+            if (!$first) {
+                $insertIds = [$configKey => $insertIds];
+            }
         }
         return $insertIds;
     }

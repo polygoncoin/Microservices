@@ -30,9 +30,10 @@ trait AppTrait
      * Returns Query and Params for execution.
      *
      * @param array $sqlDetails Config from file
+     * @param array $payload    Single Payload from array.
      * @return array
      */
-    private function getSqlAndParams(&$sqlDetails)
+    private function getSqlAndParams(&$sqlDetails, $payload = [])
     {
         $sql = $sqlDetails['query'];
         $sqlParams = [];
@@ -41,10 +42,14 @@ trait AppTrait
                 HttpResponse::return5xx(501, 'Invalid config: Missing payload configuration');
             } else {
                 if (strpos($sql, '__SET__') !== false) {
-                    $sqlParams = $this->getSqlParams($sqlDetails['payload']);
+                    $sqlParams = $this->getSqlParams($sqlDetails['payload'], $payload);
                     if (!empty($sqlParams)) {
-                        $__SET__ = implode(', ',array_map(function ($v) { $v = str_replace(['`', ' '], '', $v); return "`{$v}` = :{$v}";}, array_keys($sqlParams)));
-                        $sql = str_replace('__SET__', $__SET__, $sql);
+                        $__SET__ = [];
+                        foreach ($sqlParams as $param => &$v) {
+                            $param = str_replace(['`', ' '], '', $param);
+                            $__SET__[] = "`{$param}` = :{$param}";
+                        }
+                        $sql = str_replace('__SET__', implode(', ', $__SET__), $sql);
                     }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __SET__');
@@ -56,10 +61,14 @@ trait AppTrait
                 HttpResponse::return5xx(501, 'Invalid config: Missing where configuration');
             } else {
                 if (strpos($sql, '__WHERE__') !== false) {
-                    $sqlWhereParams = $this->getSqlParams($sqlDetails['where']);
+                    $sqlWhereParams = $this->getSqlParams($sqlDetails['where'], $payload);
                     if (!empty($sqlWhereParams)) {
-                        $__WHERE__ = implode(' AND ',array_map(function ($v) { $v = str_replace(['`', ' '], '', $v); return "`{$v}` = :{$v}";}, array_keys($sqlWhereParams)));
-                        $sql = str_replace('__WHERE__', $__WHERE__, $sql);
+                        $__WHERE__ = [];
+                        foreach ($sqlWhereParams as $param => &$v) {
+                            $param = str_replace(['`', ' '], '', $param);
+                            $__WHERE__[] = "`{$param}` = :{$param}";
+                        }
+                        $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
                         $sqlParams = array_merge($sqlParams, $sqlWhereParams);
                     }
                 } else {
@@ -73,18 +82,19 @@ trait AppTrait
     /**
      * Generates Params for statement to execute.
      *
-     * @param array $sqlPayload Config from file
+     * @param array $sqlConfig Config from file
+     * @param array $payload   Single Payload from array.
      * @return array
      */
-    private function getSqlParams(&$sqlPayload)
+    private function getSqlParams(&$sqlConfig, &$payload)
     {
         $sqlParams = [];
-        foreach ($sqlPayload as $var => [$type, $typeKey]) {
+        foreach ($sqlConfig as $var => [$type, $typeKey]) {
             if ($type === 'function') {
                 $sqlParams[$var] = $typeKey();
             } else if ($type === 'custom') {
                 $sqlParams[$var] = $typeKey;
-            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset(HttpRequest::$input[$type][$typeKey])) {
+            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset($payload[$typeKey])) {
                 continue;
             } else {
                 if (!isset(HttpRequest::$input[$type][$typeKey])) {

@@ -192,7 +192,7 @@ class JSON
                 case 'Assoc':
                     $this->endAssoc();
                     break;
-            }    
+            }
         }
         die();
     }
