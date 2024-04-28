@@ -5,13 +5,13 @@ use App\HttpRequest;
 
 return [
     'all' => [
-        'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__ ORDER BY client_id ASC",
-        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
+        'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
+        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__ ORDER BY client_id ASC",
         'where' => [
-            // 'is_approved' => ['custom', 'Yes'],
-            // 'is_disabled' => ['custom', 'No'],
-            'is_deleted' => ['custom', 'No'],
-        ],
+            'is_approved' => ['custom', 'Yes'],
+            'is_disabled' => ['custom', 'No'],
+            'is_deleted' => ['custom', 'No']
+            ],
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ],
     'single' => [
@@ -23,5 +23,5 @@ return [
             'client_id' => ['uriParams','client_id']
         ],
         'mode' => 'singleRowFormat'//Single row returned.
-    ]
+    ],
 ][isset(HttpRequest::$input['uriParams']['client_id'])?'single':'all'];

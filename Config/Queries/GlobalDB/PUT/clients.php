@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\PUT;
+
+use App\HttpRequest;
+
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` SET __SET__ WHERE __WHERE__",
     'payload' => [

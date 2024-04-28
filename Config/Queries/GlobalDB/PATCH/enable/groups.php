@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\PATCH\enable;
+
+use App\HttpRequest;
+
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` SET __SET__ WHERE __WHERE__",
     'payload' => [

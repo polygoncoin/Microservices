@@ -74,7 +74,7 @@ class Write
         $writeSqlConfig = include HttpRequest::$__file__;
 
         // Set required fields.
-        $this->setRequiredPayloadFields($writeSqlConfig);
+        $this->getRequired($writeSqlConfig);
 
         // Perform action
         $response = [];
@@ -157,13 +157,12 @@ class Write
      * @param array $writeSqlConfig Config from file
      * @return void
      */
-    private function setRequiredPayloadFields(&$writeSqlConfig)
+    private function getRequired(&$writeSqlConfig)
     {
         $requiredPayloadFields = [];
         foreach ($writeSqlConfig as &$writeSqlDetails) {
             if (isset($writeSqlDetails['payload'])) {
-                $sqlPayload = &$writeSqlDetails['payload'];
-                foreach ($sqlPayload as $var => $payload) {
+                foreach ($writeSqlDetails['payload'] as $var => $payload) {
                     $required = false;
                     $count = count($payload);
                     switch ($count) {
@@ -182,8 +181,7 @@ class Write
                 }
             }
             if (isset($writeSqlDetails['where'])) {
-                $sqlWhere = &$writeSqlDetails['where'];
-                foreach ($sqlWhere as $var => $payload) {
+                foreach ($writeSqlDetails['where'] as $var => $payload) {
                     $required = false;
                     $count = count($payload);
                     switch ($count) {
@@ -202,7 +200,7 @@ class Write
                 }
             }
             if (isset($writeSqlDetails['subQuery'])) {
-                if (($rPayloadFields = $this->getRequired($writeSqlDetails['subQuery'], false)) && count($rPayloadFields) > 0) {
+                if (($rPayloadFields = $this->getRequired($writeSqlDetails['subQuery'])) && count($rPayloadFields) > 0) {
                     foreach ($rPayloadFields as $r) {
                         if (!in_array($r, $requiredPayloadFields)) {
                             $requiredPayloadFields[] = $r;

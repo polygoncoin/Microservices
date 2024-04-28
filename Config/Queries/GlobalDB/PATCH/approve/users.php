@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\PATCH\approve;
+
+use App\HttpRequest;
+
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('users'))}` SET __SET__ WHERE __WHERE__",
     'payload' => [

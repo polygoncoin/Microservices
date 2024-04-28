@@ -1,4 +1,8 @@
 <?php
+namespace Config\Queries\GlobalDB\POST;
+
+use App\HttpRequest;
+
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` SET __SET__",
     'payload' => [
