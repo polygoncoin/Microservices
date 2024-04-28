@@ -44,6 +44,7 @@ switch (true) {
         }
         break;
     default:
-        App\Api::init();
+        $api = new App\Api();
+        $api->init();
         break;
 }

@@ -30,10 +30,10 @@ class Api
      *
      * @return void
      */
-    public static function init()
+    public function init()
     {
         HttpRequest::init();
-        (new self)->process();
+        $this->process();
     }
 
     /**
