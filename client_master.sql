@@ -2,8 +2,8 @@ DROP TABLE IF EXISTS `registration`;
 
 CREATE TABLE `registration` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `created_by` int DEFAULT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

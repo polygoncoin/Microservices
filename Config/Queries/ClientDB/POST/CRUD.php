@@ -8,9 +8,9 @@ return [
         'query' => "INSERT INTO `{$this->clientDB}`.`registration` SET __SET__",
         'payload' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-            'username' => ['payload', 'username', REQUIRED],
-            'password' => ['payload', 'password', REQUIRED],
-            'email' => ['custom', date('Y-m-d H:i:s')]
+            'firstname' => ['payload', 'firstname', REQUIRED],
+            'lastname' => ['payload', 'lastname', REQUIRED],
+            'email' => ['payload', 'email', REQUIRED]
         ],
         'insertId' => 'registration:id',
         'subQuery' => [
@@ -28,7 +28,7 @@ return [
         'payload' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
             'registration' => ['payload', 'registration_id', REQUIRED],
-            'address' => ['payload', 'username', REQUIRED],
+            'address' => ['payload', 'address', REQUIRED],
         ],
         'insertId' => 'address:id'
     ]

@@ -1,5 +1,8 @@
 <?php
 return [
+    'registration' => [
+        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/POST/Registration.php',
+    ],
     '{table:string}' => [
         '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/POST/CRUD.php',
     ],

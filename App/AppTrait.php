@@ -42,12 +42,14 @@ trait AppTrait
                 HttpResponse::return5xx(501, 'Invalid config: Missing payload configuration');
             } else {
                 if (strpos($sql, '__SET__') !== false) {
-                    $sqlParams = $this->getSqlParams($sqlDetails['payload'], $payload);
-                    if (!empty($sqlParams)) {
+                    $params = $this->getSqlParams($sqlDetails['payload'], $payload);
+                    if (!empty($params)) {
                         $__SET__ = [];
-                        foreach ($sqlParams as $param => &$v) {
+                        $paramKeys = array_keys($params);
+                        foreach ($params as $param => &$v) {
                             $param = str_replace(['`', ' '], '', $param);
                             $__SET__[] = "`{$param}` = :{$param}";
+                            $sqlParams[":{$param}"] = $v;
                         }
                         $sql = str_replace('__SET__', implode(', ', $__SET__), $sql);
                     }
@@ -66,10 +68,14 @@ trait AppTrait
                         $__WHERE__ = [];
                         foreach ($sqlWhereParams as $param => &$v) {
                             $param = str_replace(['`', ' '], '', $param);
+                            while (in_array($param, $paramKeys)) {
+                                $param .= '0';
+                            }
+                            $paramKeys[] = $param;
                             $__WHERE__[] = "`{$param}` = :{$param}";
+                            $sqlParams[":{$param}"] = $v;
                         }
                         $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
-                        $sqlParams = array_merge($sqlParams, $sqlWhereParams);
                     }
                 } else {
                     HttpResponse::return5xx(501, 'Invalid query: Missing __WHERE__');
@@ -94,6 +100,8 @@ trait AppTrait
                 $sqlParams[$var] = $typeKey();
             } else if ($type === 'custom') {
                 $sqlParams[$var] = $typeKey;
+            } else if ($type === 'payload' && isset($payload[$typeKey])) {
+                $sqlParams[$var] = $payload[$typeKey];
             } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset($payload[$typeKey])) {
                 continue;
             } else {

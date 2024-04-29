@@ -134,11 +134,10 @@ class Reload
             LEFT JOIN
                 `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.group_id
             {$whereClause}", $ids);
-        $rows = $this->db->fetchAll(\PDO::FETCH_ASSOC);
-        $this->db->closeCursor();
-        foreach ($rows as &$row) {
+        while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("user:{$row['username']}", json_encode($row));
         }
+        $this->db->closeCursor();
     }
 
     /**

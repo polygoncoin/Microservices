@@ -103,7 +103,7 @@ class Write
      * @param array $payload        Single Payload from array.
      * @return void
      */
-    private function process(&$writeSqlConfig, &$payload)
+    private function process(&$writeSqlConfig, $payload)
     {
         $isValidData = true;
         if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
@@ -121,6 +121,7 @@ class Write
             $response = ['data' => $payload, 'Error' => $errors];
         } else {
             $this->db->begin();
+            $payload = [$payload];
             $response = $this->writeDB($writeSqlConfig, $payload);
             $this->db->commit();
         }
@@ -135,61 +136,34 @@ class Write
      * @param bool  $first          true to represent the first call in recursion.
      * @return void
      */
-    private function writeDB(&$writeSqlConfig, &$payload, $first = true)
+    private function writeDB($writeSqlConfig, &$payload, $first = true)
     {
         $insertIds = [];
-        foreach ($writeSqlConfig as $configKey => &$writeSqlDetails) {
-            // Get Sql and Params
-            if ($first) {
-                list($sql, $params) = $this->getSqlAndParams($writeSqlDetails, $payload);
-            } else if (isset($payload[$configKey])) {
-                list($sql, $params) = $this->getSqlAndParams($writeSqlDetails, $payload[$configKey]);
-            } else {
-                continue;
-            }
-            $multipleCount = 1;
-            //Note can't have same param in hierarchy/subQuery for insert/update.
-            $sParams = []; //single
-            $mParams = [];//multiple
-            if (!$first) {
-                foreach($params as $param => $val) {
-                    if (is_array($val)) {
-                        $count = count($val);
-                        $multipleCount = ($multipleCount === 1 && $multipleCount !== $count) ? $count : 1;
-                        if ($multipleCount !== $count) {
-                            HttpResponse::return5xx(401, 'Invalid JSON: Multiple payloads Mismatch.');
-                        }
-                        $mParams[] = $param;
-                    } else {
-                        $sParams[$param] = $val;
-                    }
-                }
-            } else {
-                $sParams = $params;
-                $mParams = [];
-            }
-            $counter = 0;
-            do {
-                $sqlParams = $sParams;
-                if (count($mParams) > 0) {
-                    foreach ($mParams as $param) {
-                        $sqlParams[$param] = $params[$param][$counter];
-                    }
-                }
+        for ($i = 0, $iCount = count($payload); $i < $iCount; $i++) {
+            foreach ($writeSqlConfig as $configKey => &$writeSqlDetails) {
+                // Get Sql and Params
+                list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlDetails, $payload[$i]);
                 $this->db->execDbQuery($sql, $sqlParams);
                 if (isset($writeSqlDetails['insertId'])) {
                     $insertId = $this->db->lastInsertId();
-                    $insertIds = array_merge($insertIds, [$writeSqlDetails['insertId'] => $insertId]);
+                    if ($first) {
+                        $insertIds = array_merge($insertIds, [$writeSqlDetails['insertId'] => $insertId]);
+                    } else {
+                        $insertIds[] = [$writeSqlDetails['insertId'] => $insertId];
+                    }
                     HttpRequest::$input['insertIdParams'][$writeSqlDetails['insertId']] = $insertId;
                 }
                 $this->db->closeCursor();
                 if (isset($writeSqlDetails['subQuery'])) {
-                    $insertIds = array_merge($insertIds, $this->writeDB($writeSqlDetails['subQuery']), false);
+                    foreach ($writeSqlDetails['subQuery'] as $k => $v) {
+                        if (isset($payload[$i][$k])) {
+                            $res = $this->writeDB([$writeSqlDetails['subQuery'][$k]], $payload[$i][$k], false);
+                            if (!empty($res)) {
+                                $insertIds = array_merge($insertIds, [$k => $res]);
+                            }
+                        }
+                    }
                 }
-                $counter++;
-            } while (--$multipleCount > 0);
-            if (!$first) {
-                $insertIds = [$configKey => $insertIds];
             }
         }
         return $insertIds;
