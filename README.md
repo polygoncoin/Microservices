@@ -246,7 +246,7 @@ Here **query & mode** keys are required keys
 return [
 	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
 	'payload' => [// for __SET__
-		//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}, REQUIRED],
 		'group_id' => ['payload', 'group_id', REQUIRED],
 		'client_id' => ['readOnlySession', 'client_id']
 	],
@@ -254,26 +254,36 @@ return [
 		//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
 		'id' => ['uriParams', 'id']
 	],
-	'insertId' => 'm001_master_group:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
+	'insertId' => 'tablename1:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
 	'subQuery' => [
-		[
+		'module1' => [
 			'query' => "MySQL Query here",
 			'payload' => [
 				'previous_table_id' => ['insertIdParams', '<tableName>:id'],
 			],
 			'where' => [],
 		],
-		[
+		'module2' => [
 			'query' => "MySQL Query here",
 			'payload' => [],
 			'where' => [],
 			'subQuery' => [
-				[
+				'module3' => [
 					'query' => "MySQL Query here",
 					'payload' => [],
 					'where' => [],
+					'validate' => [//validation also supported in subQuery modules recursively
+						[
+							'fn' => 'validateModule3Id',
+							'fnArgs' => [
+								{custom}, key|{value}],
+								'module_id' => ['payload', 'module_id']
+							],
+							'errorMessage' => 'Invalid module id'
+						],
+					]
 				],
-				[
+				'module4' => [
 					'query' => "MySQL Query here",
 					'payload' => [],
 					'where' => [],
@@ -281,7 +291,7 @@ return [
 			]
 		]
 	],
-	'validate' => [
+	'validate' => [//validation also supported in subQuery modules recursively
 		[
 			'fn' => 'validateGroupId',
 			'fnArgs' => [
@@ -473,11 +483,39 @@ For any HTTP requests we want to use a custom value. For example a where clause 
 ```
 Here is_approved will change to Yes in the database.
 
-Similarly, we can use this in payload as well to set a static values instead of dynamic values from layload.
+Similarly, we can use this in payload as well to set a static values instead of dynamic values from payload.
 
 ```
 'payload' => [
 	'client_id' => ['insertIdParams', 'm001_master_group:id'],
+	'approved_by' => ['readOnlySession', 'id'],
+	'updated_date' => ['custom', date('Y-m-d')]
+],
+```
+
+New features includes 
+
+One can reuse common query configuration. E.g;
+
+```
+/Config/Queries/ClientDB/Common/Address.php
+/Config/Queries/ClientDB/Common/Registration.php
+```
+are re-used in 
+```
+/Config/Queries/ClientDB/PUT/CRUD.php
+/Config/Queries/ClientDB/PATCH/CRUD.php
+/Config/Queries/ClientDB/DELETE/CRUD.php
+```
+
+One can use functions as below in payload manipulation.
+
+```
+'payload' => [
+	'client_id' => ['insertIdParams', 'm001_master_group:id'],
+	'password' => ['function', function() {
+		return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);
+	}],
 	'approved_by' => ['readOnlySession', 'id'],
 	'updated_date' => ['custom', date('Y-m-d')]
 ],
