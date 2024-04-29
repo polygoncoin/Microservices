@@ -37,6 +37,7 @@ trait AppTrait
     {
         $sql = $sqlDetails['query'];
         $sqlParams = [];
+        $paramKeys = [];
         if (isset($sqlDetails['payload'])) {
             if (count($sqlDetails['payload']) === 0) {
                 HttpResponse::return5xx(501, 'Invalid config: Missing payload configuration');
