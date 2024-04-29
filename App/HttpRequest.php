@@ -323,8 +323,8 @@ class HttpRequest
             }
             self::$input['payloadArr'] = $payloadArr;
         }
-        self::$input['payloadType'] = self::payloadType(self::$input['payloadArr']);
-        if (self::$input['payloadType'] === 'Object') {
+        self::$input['payloadArrType'] = self::payloadType(self::$input['payloadArr']);
+        if (self::$input['payloadArrType'] === 'Object') {
             self::$input['payloadArr'] = [self::$input['payloadArr']];
         }
     }

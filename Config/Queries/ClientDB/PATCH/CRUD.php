@@ -13,7 +13,7 @@ return [
         ]
     ),
     'address' => array_merge(
-        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
+        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Address.php',
         [
             'payload' => [
                 'address' => ['payload', 'address']

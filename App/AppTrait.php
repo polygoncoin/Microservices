@@ -68,13 +68,13 @@ trait AppTrait
                     if (!empty($sqlWhereParams)) {
                         $__WHERE__ = [];
                         foreach ($sqlWhereParams as $param => &$v) {
-                            $param = str_replace(['`', ' '], '', $param);
-                            while (in_array($param, $paramKeys)) {
-                                $param .= '0';
+                            $wparam = str_replace(['`', ' '], '', $param);
+                            while (in_array($wparam, $paramKeys)) {
+                                $wparam .= '0';
                             }
                             $paramKeys[] = $param;
-                            $__WHERE__[] = "`{$param}` = :{$param}";
-                            $sqlParams[":{$param}"] = $v;
+                            $__WHERE__[] = "`{$param}` = :{$wparam}";
+                            $sqlParams[":{$wparam}"] = $v;
                         }
                         $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
                     }

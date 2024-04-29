@@ -75,7 +75,7 @@ class Write
         $writeSqlConfig = include HttpRequest::$__file__;
 
         // Set required fields.
-        $this->getRequired($writeSqlConfig);
+        HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig);
 
         // Perform action
         $response = [];
@@ -87,7 +87,7 @@ class Write
             }
         }
         if (!empty($response)) {
-            if (HttpRequest::$input['payloadType'] === 'Object') {
+            if (HttpRequest::$input['payloadArrType'] === 'Object') {
                 $response = $response[0];
             }
             $this->jsonEncodeObj->encode($response);
@@ -111,20 +111,11 @@ class Write
                 HttpResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
             }
         }
-        HttpRequest::$input['payload'] = $payload;
 
-        // Configured Validation
-        if (isset($writeSqlConfig['validate'])) {
-            list($isValidData, $errors) = $this->validate($writeSqlConfig);
-        }
-        if ($isValidData !== true) {
-            $response = ['data' => $payload, 'Error' => $errors];
-        } else {
-            $this->db->begin();
-            $payload = [$payload];
-            $response = $this->writeDB($writeSqlConfig, $payload);
-            $this->db->commit();
-        }
+        $this->db->begin();
+        $payload = [$payload];
+        $response = $this->writeDB($writeSqlConfig, $payload);
+        $this->db->commit();
         return $response;
     }
 
@@ -136,11 +127,24 @@ class Write
      * @param bool  $first          true to represent the first call in recursion.
      * @return void
      */
-    private function writeDB($writeSqlConfig, &$payload, $first = true)
+    private function writeDB($writeSqlConfig, &$payload, $first = true, &$requiredPayload = null)
     {
         $insertIds = [];
         for ($i = 0, $iCount = count($payload); $i < $iCount; $i++) {
-            foreach ($writeSqlConfig as $configKey => &$writeSqlDetails) {
+            HttpRequest::$input['payload'] = $payload[$i];
+            if ($first) {
+                $requiredPayload = HttpRequest::$input['requiredPayload'];
+            }
+            foreach ($writeSqlConfig as &$writeSqlDetails) {
+                // Validation.
+                HttpRequest::$input['required'] = $requiredPayload['required'];
+                if (isset($writeSqlDetails['validate'])) {
+                    list($isValidData, $errors) = $this->validate($writeSqlDetails['validate']);
+                    if ($isValidData !== true) {
+                        $insertIds[] = ['data' => $payload, 'Error' => $errors];
+                        continue;
+                    }
+                }
                 // Get Sql and Params
                 list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlDetails, $payload[$i]);
                 $this->db->execDbQuery($sql, $sqlParams);
@@ -157,7 +161,7 @@ class Write
                 if (isset($writeSqlDetails['subQuery'])) {
                     foreach ($writeSqlDetails['subQuery'] as $k => $v) {
                         if (isset($payload[$i][$k])) {
-                            $res = $this->writeDB([$writeSqlDetails['subQuery'][$k]], $payload[$i][$k], false);
+                            $res = $this->writeDB([$writeSqlDetails['subQuery'][$k]], $payload[$i][$k], false, $requiredPayload[$k]);
                             if (!empty($res)) {
                                 $insertIds = array_merge($insertIds, [$k => $res]);
                             }
@@ -173,11 +177,13 @@ class Write
      * Sets required payload.
      *
      * @param array $writeSqlConfig Config from file
+     * @param bool  $first          true to represent the first call in recursion.
      * @return void
      */
-    private function getRequired(&$writeSqlConfig)
+    private function getRequired($writeSqlConfig, $first = true)
     {
         $requiredPayloadFields = [];
+        $requiredPayloadFields['required'] = [];
         foreach ($writeSqlConfig as &$writeSqlDetails) {
             if (isset($writeSqlDetails['payload'])) {
                 foreach ($writeSqlDetails['payload'] as $var => $payload) {
@@ -192,8 +198,8 @@ class Write
                             break;
                     }
                     if ($required && $type === 'payload') {
-                        if (!in_array($typeKey, $requiredPayloadFields)) {
-                            $requiredPayloadFields[] = $typeKey;
+                        if (!in_array($typeKey, $requiredPayloadFields['required'])) {
+                            $requiredPayloadFields['required'] = $typeKey;
                         }
                     }
                 }
@@ -211,36 +217,32 @@ class Write
                             break;
                     }
                     if ($required && $type === 'payload') {
-                        if (!in_array($typeKey, $requiredPayloadFields)) {
-                            $requiredPayloadFields[] = $typeKey;
+                        if (!in_array($typeKey, $requiredPayloadFields['required'])) {
+                            $requiredPayloadFields['required'] = $typeKey;
                         }
                     }
                 }
             }
             if (isset($writeSqlDetails['subQuery'])) {
-                if (($rPayloadFields = $this->getRequired($writeSqlDetails['subQuery'])) && count($rPayloadFields) > 0) {
-                    foreach ($rPayloadFields as $r) {
-                        if (!in_array($r, $requiredPayloadFields)) {
-                            $requiredPayloadFields[] = $r;
-                        }
-                    }
+                foreach ($writeSqlDetails['subQuery'] as $k => $v) {
+                    $requiredPayloadFields[$k]['required'] = $this->getRequired([$writeSqlDetails['subQuery'][$k]], false);
                 }
             }
         }
-        HttpRequest::$input['required'] = $requiredPayloadFields;
+        return $requiredPayloadFields;
     }
 
     /**
      * Validate payload
      *
-     * @param array $writeSqlConfig Config from file
+     * @param array $validationConfig Validation config from Config file.
      * @return array
      */
-    private function validate(&$writeSqlConfig)
+    private function validate(&$validationConfig)
     {
         if (is_null($this->validator)) {
             $this->validator = new Validator();
         }
-        return $this->validator->validate(HttpRequest::$input, $writeSqlConfig['validate']);
+        return $this->validator->validate(HttpRequest::$input, $validationConfig);
     }
 }

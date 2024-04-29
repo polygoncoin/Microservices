@@ -90,4 +90,21 @@ class ClientValidator
         $this->db->execDbQuery($sql, $params);
         return ($this->db->fetch())['count'];
     }
+
+    /**
+     * Checks primary key exist
+     *
+     * @param array $args Arguments
+     * @return integer 0/1
+     */
+    private function primaryKeyExist($args)
+    {
+        extract($args);
+        $sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
+        $params = [$id];
+        $this->db->execDbQuery($sql, $params);
+        $row = $this->db->fetch();
+        $this->db->closeCursor();
+        return ($row['count'] === 0) ? false : true;
+    }
 }

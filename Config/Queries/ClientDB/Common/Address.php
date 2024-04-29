@@ -4,7 +4,7 @@ namespace Config\Queries\ClientDB\Common;
 use App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$this->clientDB}`.`registration` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$this->clientDB}`.`address` SET __SET__ WHERE __WHERE__",
     'where' => [
         'is_deleted' => ['custom', 'No'],
         'id' => ['uriParams', 'id']
@@ -13,11 +13,11 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-                'table' => ['custom', 'registration'],
+                'table' => ['custom', 'address'],
                 'primary' => ['custom', 'id'],
                 'id' => ['uriParams', 'id']
             ],
-			'errorMessage' => 'Invalid registration id'
+			'errorMessage' => 'Invalid address id'
 		],
 	]
 
