@@ -48,7 +48,7 @@ class Read
      *
      * @var object
      */
-    public $jsonEncodeObj = null;
+    public $jsonObj = null;
 
     /**
      * Initialize
@@ -60,8 +60,7 @@ class Read
         $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->db = Database::getObject();
-        $this->jsonEncodeObj = HttpResponse::getJsonObject();
-        
+        $this->jsonObj = HttpResponse::getJsonObject();
 
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
@@ -96,7 +95,7 @@ class Read
                     $this->readDB($readSqlDetails['subQuery'], false);
                 }
                 if ($readSqlDetails['mode'] === 'singleRowFormat' && isset($readSqlDetails['subQuery'])) {
-                    $this->jsonEncodeObj->endAssoc();
+                    $this->jsonObj->endAssoc();
                 }
             }
         }
@@ -128,12 +127,12 @@ class Read
             }
         }
         if ($start) {
-            $this->jsonEncodeObj->startAssoc();
+            $this->jsonObj->startAssoc();
         } else {
-            $this->jsonEncodeObj->startAssoc($parentKey);
+            $this->jsonObj->startAssoc($parentKey);
         }
         foreach($row as $key => $value) {
-            $this->jsonEncodeObj->addKeyValue($key, $value);
+            $this->jsonObj->addKeyValue($key, $value);
         }
         $this->db->closeCursor();
     }
@@ -163,10 +162,10 @@ class Read
         $this->db->closeCursor();
         $totalRowsCount = $row['count'];
         $totalPages = ceil($totalRowsCount/HttpRequest::$input['payload']['perpage']);
-        $this->jsonEncodeObj->addKeyValue('page', HttpRequest::$input['payload']['page']);
-        $this->jsonEncodeObj->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
-        $this->jsonEncodeObj->addKeyValue('totalPages', $totalPages);
-        $this->jsonEncodeObj->addKeyValue('totalRecords', $totalRowsCount);
+        $this->jsonObj->addKeyValue('page', HttpRequest::$input['payload']['page']);
+        $this->jsonObj->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
+        $this->jsonObj->addKeyValue('totalPages', $totalPages);
+        $this->jsonObj->addKeyValue('totalRecords', $totalRowsCount);
     }
     
     /**
@@ -184,14 +183,14 @@ class Read
         }
         if ($start) {
             if (isset($readSqlDetails['countQuery'])) {
-                $this->jsonEncodeObj->startAssoc();
+                $this->jsonObj->startAssoc();
                 $this->fetchRowsCount($start, $parentKey, $readSqlDetails);
-                $this->jsonEncodeObj->startArray('data');
+                $this->jsonObj->startArray('data');
             } else {
-                $this->jsonEncodeObj->startArray();
+                $this->jsonObj->startArray();
             }
         } else {
-            $this->jsonEncodeObj->startArray($parentKey);
+            $this->jsonObj->startArray($parentKey);
         }
         list($sql, $sqlParams) = $this->getSqlAndParams($readSqlDetails);
         if ($start) {
@@ -211,15 +210,15 @@ class Read
                 $i++;
             }
             if ($singleColumn) {
-                $this->jsonEncodeObj->encode($row[key($row)]);
+                $this->jsonObj->encode($row[key($row)]);
             } else {
-                $this->jsonEncodeObj->encode($row);
+                $this->jsonObj->encode($row);
             }
         }
-        $this->jsonEncodeObj->endArray();
+        $this->jsonObj->endArray();
         if ($start) {
             if (isset($readSqlDetails['countQuery'])) {
-                $this->jsonEncodeObj->endAssoc();
+                $this->jsonObj->endAssoc();
             }
         }
         $this->db->closeCursor();

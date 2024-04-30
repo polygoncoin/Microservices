@@ -57,7 +57,7 @@ class Write
      *
      * @var object
      */
-    public $jsonEncodeObj = null;
+    public $jsonObj = null;
 
     /**
      * Initialize
@@ -69,7 +69,7 @@ class Write
         $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->db = Database::getObject();
-        $this->jsonEncodeObj = HttpResponse::getJsonObject();
+        $this->jsonObj = HttpResponse::getJsonObject();
 
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
@@ -90,9 +90,9 @@ class Write
             if (HttpRequest::$input['payloadArrType'] === 'Object') {
                 $response = $response[0];
             }
-            $this->jsonEncodeObj->encode($response);
+            $this->jsonObj->encode($response);
         } else {
-            $this->jsonEncodeObj->encode(['Status' => 200, 'Message' => 'Success']);
+            $this->jsonObj->encode(['Status' => 200, 'Message' => 'Success']);
         }
     }
 
