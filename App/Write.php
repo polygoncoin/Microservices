@@ -122,9 +122,10 @@ class Write
     /**
      * Function to insert/update sub queries recursively.
      *
-     * @param array $writeSqlConfig Config from file
-     * @param array $payload        Single Payload from array.
-     * @param bool  $first          true to represent the first call in recursion.
+     * @param array $writeSqlConfig  Config from file
+     * @param array $payload         Single Payload from array.
+     * @param bool  $first           true to represent the first call in recursion.
+     * @param bool  $requiredPayload Required payload fields.
      * @return void
      */
     private function writeDB($writeSqlConfig, &$payload, $first = true, &$requiredPayload = null)
@@ -176,76 +177,5 @@ class Write
             $insertIds = $insertIds[0];
         }
         return $insertIds;
-    }
-
-    /**
-     * Sets required payload.
-     *
-     * @param array $writeSqlConfig Config from file
-     * @param bool  $first          true to represent the first call in recursion.
-     * @return void
-     */
-    private function getRequired($writeSqlConfig, $first = true)
-    {
-        $requiredPayloadFields = [];
-        $requiredPayloadFields['required'] = [];
-        if (isset($writeSqlConfig['payload'])) {
-            foreach ($writeSqlConfig['payload'] as $var => $payload) {
-                $required = false;
-                $count = count($payload);
-                switch ($count) {
-                    case 3:
-                        list($type, $typeKey, $required) = $payload;
-                        break;
-                    case 2: 
-                        list($type, $typeKey) = $payload;
-                        break;
-                }
-                if ($required && $type === 'payload') {
-                    if (!in_array($typeKey, $requiredPayloadFields['required'])) {
-                        $requiredPayloadFields['required'][] = $typeKey;
-                    }
-                }
-            }
-        }
-        if (isset($writeSqlConfig['where'])) {
-            foreach ($writeSqlConfig['where'] as $var => $payload) {
-                $required = false;
-                $count = count($payload);
-                switch ($count) {
-                    case 3:
-                        list($type, $typeKey, $required) = $payload;
-                        break;
-                    case 2: 
-                        list($type, $typeKey) = $payload;
-                        break;
-                }
-                if ($required && $type === 'payload') {
-                    if (!in_array($typeKey, $requiredPayloadFields['required'])) {
-                        $requiredPayloadFields['required'][] = $typeKey;
-                    }
-                }
-            }
-        }
-        if (isset($writeSqlConfig['subQuery'])) {
-            foreach ($writeSqlConfig['subQuery'] as $k => $v) {
-                $requiredPayloadFields[$k] = $this->getRequired([$writeSqlConfig['subQuery'][$k]], false);
-            }
-        }
-        return $requiredPayloadFields;
-    }
-
-    /**
-     * Validate payload
-     *
-     * @param array $validationConfig Validation config from Config file.
-     * @return array
-     */
-    private function validate(&$validationConfig)
-    {
-        if (is_null($this->validator)) {
-            $this->validator = new Validator();
-        }
-        return $this->validator->validate(HttpRequest::$input, $validationConfig);
     }
 }
