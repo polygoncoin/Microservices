@@ -65,6 +65,10 @@ class Read
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
         
+        // Set required fields.
+        HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig);
+
+        // Start Read operation.
         $this->readDB($readSqlConfig);
     }
 
@@ -89,9 +93,6 @@ class Read
                         break;
                 }
                 if (isset($readSqlDetails['subQuery'])) {
-                    if (!$this->isAssoc($readSqlDetails['subQuery'])) {
-                        HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be associative array');
-                    }
                     $this->readDB($readSqlDetails['subQuery'], false);
                 }
                 if ($readSqlDetails['mode'] === 'singleRowFormat' && isset($readSqlDetails['subQuery'])) {

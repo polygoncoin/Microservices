@@ -108,7 +108,7 @@ class Write
         $isValidData = true;
         if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
             if (count($payload) !== 1) {
-                HttpResponse::return4xx(404, 'Invalid payload: PATCH can update only one field');
+                return ['data' => $payload, 'Error' => 'Invalid payload: PATCH can update only single field'];
             }
         }
 

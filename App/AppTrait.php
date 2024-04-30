@@ -29,16 +29,16 @@ trait AppTrait
     /**
      * Sets required payload.
      *
-     * @param array $writeSqlConfig Config from file
-     * @param bool  $first          true to represent the first call in recursion.
+     * @param array $sqlConfig Config from file
+     * @param bool  $first     true to represent the first call in recursion.
      * @return void
      */
-    private function getRequired($writeSqlConfig, $first = true)
+    private function getRequired($sqlConfig, $first = true)
     {
         $requiredPayloadFields = [];
         $requiredPayloadFields['required'] = [];
-        if (isset($writeSqlConfig['payload'])) {
-            foreach ($writeSqlConfig['payload'] as $var => $payload) {
+        if (isset($sqlConfig['payload'])) {
+            foreach ($sqlConfig['payload'] as $var => $payload) {
                 $required = false;
                 $count = count($payload);
                 switch ($count) {
@@ -56,8 +56,8 @@ trait AppTrait
                 }
             }
         }
-        if (isset($writeSqlConfig['where'])) {
-            foreach ($writeSqlConfig['where'] as $var => $payload) {
+        if (isset($sqlConfig['where'])) {
+            foreach ($sqlConfig['where'] as $var => $payload) {
                 $required = false;
                 $count = count($payload);
                 switch ($count) {
@@ -75,9 +75,12 @@ trait AppTrait
                 }
             }
         }
-        if (isset($writeSqlConfig['subQuery'])) {
-            foreach ($writeSqlConfig['subQuery'] as $k => $v) {
-                $requiredPayloadFields[$k] = $this->getRequired([$writeSqlConfig['subQuery'][$k]], false);
+        if (isset($sqlConfig['subQuery'])) {
+            if (!$this->isAssoc($sqlConfig['subQuery'])) {
+                HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
+            }
+            foreach ($sqlConfig['subQuery'] as $k => $v) {
+                $requiredPayloadFields[$k] = $this->getRequired([$sqlConfig['subQuery'][$k]], false);
             }
         }
         return $requiredPayloadFields;

@@ -279,7 +279,7 @@ class HttpRequest
                         self::$input['uriParams'][$paramName] = (int)$e;
                     } else if ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        self::$input['uriParams'][$paramName] = $e;
+                        self::$input['uriParams'][$paramName] = urldecode($e);
                     } else {
                         HttpResponse::return4xx(404, 'Route not supported');
                     }
@@ -310,7 +310,8 @@ class HttpRequest
     public static function loadPayload()
     {
         if (self::$REQUEST_METHOD === Constants::READ) {
-            self::$input['payloadArr'] = $_GET;
+            $this->urlDecode($_GET);
+            self::$input['payloadArr'] = !empty($_GET) ? $_GET : [];
         } else {
             // Load Payload
             parse_str(file_get_contents('php://input'), $payloadArr);
@@ -326,6 +327,39 @@ class HttpRequest
         self::$input['payloadArrType'] = self::payloadType(self::$input['payloadArr']);
         if (self::$input['payloadArrType'] === 'Object') {
             self::$input['payloadArr'] = [self::$input['payloadArr']];
+        }
+    }
+
+    /**
+     * Function to find payload is an object/array
+     *
+     * @param array $arr Array vales to be decoded. Basically $_GET.
+     * @return void
+     */
+    private function urlDecode(&$arr)
+    {
+        if (is_array($arr)) {
+            foreach ($arr as $key => &$value) {
+                if (is_array($value)) {
+                    $this->urlDecode($value);
+                } else {
+                    $decodedVal = urldecode($value);
+                    $array = json_decode($decodedVal, true);
+                    if (!is_null($array)) {
+                        $value = $array;
+                    } else {
+                        $value = $decodedVal;
+                    }
+                }
+            }
+        } else {
+            $decodedVal = urldecode($arr);
+            $array = json_decode($decodedVal, true);
+            if (!is_null($array)) {
+                $arr = $array;
+            } else {
+                $arr = $decodedVal;
+            }
         }
     }
 

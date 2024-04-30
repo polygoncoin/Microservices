@@ -209,10 +209,8 @@ class JSON
             $outputStream = fopen("php://output", "w+b");
             stream_copy_to_stream($this->tempStream, $outputStream);
             fclose($outputStream);
-            fclose($this->tempStream);
-        } else {
-            fclose($this->tempStream);
         }
+        fclose($this->tempStream);
     }
 
     /**
