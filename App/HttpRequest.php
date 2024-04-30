@@ -310,7 +310,7 @@ class HttpRequest
     public static function loadPayload()
     {
         if (self::$REQUEST_METHOD === Constants::READ) {
-            $this->urlDecode($_GET);
+            self::urlDecode($_GET);
             self::$input['payloadArr'] = !empty($_GET) ? $_GET : [];
         } else {
             // Load Payload
@@ -336,7 +336,7 @@ class HttpRequest
      * @param array $arr Array vales to be decoded. Basically $_GET.
      * @return void
      */
-    private function urlDecode(&$arr)
+    public static function urlDecode(&$arr)
     {
         if (is_array($arr)) {
             foreach ($arr as $key => &$value) {
