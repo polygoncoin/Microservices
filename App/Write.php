@@ -130,6 +130,8 @@ class Write
     private function writeDB($writeSqlConfig, &$payload, $first = true, &$requiredPayload = null)
     {
         $insertIds = [];
+        $isAssoc = $this->isAssoc($payload);
+        $payload = $isAssoc ? [$payload] : $payload;
         for ($i = 0, $iCount = count($payload); $i < $iCount; $i++) {
             HttpRequest::$input['payload'] = $payload[$i];
             if ($first) {
@@ -170,6 +172,9 @@ class Write
                 }
             }
         }
+        if ($isAssoc && isset($insertIds[0])) {
+            $insertIds = $insertIds[0];
+        }
         return $insertIds;
     }
 
@@ -184,49 +189,47 @@ class Write
     {
         $requiredPayloadFields = [];
         $requiredPayloadFields['required'] = [];
-        foreach ($writeSqlConfig as &$writeSqlDetails) {
-            if (isset($writeSqlDetails['payload'])) {
-                foreach ($writeSqlDetails['payload'] as $var => $payload) {
-                    $required = false;
-                    $count = count($payload);
-                    switch ($count) {
-                        case 3:
-                            list($type, $typeKey, $required) = $payload;
-                            break;
-                        case 2: 
-                            list($type, $typeKey) = $payload;
-                            break;
-                    }
-                    if ($required && $type === 'payload') {
-                        if (!in_array($typeKey, $requiredPayloadFields['required'])) {
-                            $requiredPayloadFields['required'] = $typeKey;
-                        }
+        if (isset($writeSqlConfig['payload'])) {
+            foreach ($writeSqlConfig['payload'] as $var => $payload) {
+                $required = false;
+                $count = count($payload);
+                switch ($count) {
+                    case 3:
+                        list($type, $typeKey, $required) = $payload;
+                        break;
+                    case 2: 
+                        list($type, $typeKey) = $payload;
+                        break;
+                }
+                if ($required && $type === 'payload') {
+                    if (!in_array($typeKey, $requiredPayloadFields['required'])) {
+                        $requiredPayloadFields['required'][] = $typeKey;
                     }
                 }
             }
-            if (isset($writeSqlDetails['where'])) {
-                foreach ($writeSqlDetails['where'] as $var => $payload) {
-                    $required = false;
-                    $count = count($payload);
-                    switch ($count) {
-                        case 3:
-                            list($type, $typeKey, $required) = $payload;
-                            break;
-                        case 2: 
-                            list($type, $typeKey) = $payload;
-                            break;
-                    }
-                    if ($required && $type === 'payload') {
-                        if (!in_array($typeKey, $requiredPayloadFields['required'])) {
-                            $requiredPayloadFields['required'] = $typeKey;
-                        }
+        }
+        if (isset($writeSqlConfig['where'])) {
+            foreach ($writeSqlConfig['where'] as $var => $payload) {
+                $required = false;
+                $count = count($payload);
+                switch ($count) {
+                    case 3:
+                        list($type, $typeKey, $required) = $payload;
+                        break;
+                    case 2: 
+                        list($type, $typeKey) = $payload;
+                        break;
+                }
+                if ($required && $type === 'payload') {
+                    if (!in_array($typeKey, $requiredPayloadFields['required'])) {
+                        $requiredPayloadFields['required'][] = $typeKey;
                     }
                 }
             }
-            if (isset($writeSqlDetails['subQuery'])) {
-                foreach ($writeSqlDetails['subQuery'] as $k => $v) {
-                    $requiredPayloadFields[$k]['required'] = $this->getRequired([$writeSqlDetails['subQuery'][$k]], false);
-                }
+        }
+        if (isset($writeSqlConfig['subQuery'])) {
+            foreach ($writeSqlConfig['subQuery'] as $k => $v) {
+                $requiredPayloadFields[$k] = $this->getRequired([$writeSqlConfig['subQuery'][$k]], false);
             }
         }
         return $requiredPayloadFields;
