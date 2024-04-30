@@ -3,7 +3,6 @@ namespace ThirdParty;
 
 use App\HttpRequest;
 use App\HttpResponse;
-use App\JsonEncode;
 
 /**
  * Class for third party - Google.

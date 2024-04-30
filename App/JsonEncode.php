@@ -20,6 +20,13 @@ namespace App;
 class JSON
 {
     /**
+     * Temporary Stream
+     *
+     * @var string
+     */
+    private $tempStream = '';
+
+    /**
      * Array of JsonEncodeObject objects
      *
      * @var array
@@ -38,7 +45,17 @@ class JSON
      */
     public function __construct()
     {
-        
+        $this->tempStream = fopen("php://temp", "w+b");
+    }
+
+    /**
+     * Write to temporary stream
+     * 
+     * @return void
+     */
+    public function write($str)
+    {
+        fwrite($this->tempStream, $str);
     }
 
     /**
@@ -53,7 +70,7 @@ class JSON
         $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
         $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
         $str = str_replace($escapers, $replacements, $str);
-        return '"' . $str . '"';
+        $this->write('"' . $str . '"');
     }
 
     /**
@@ -65,12 +82,12 @@ class JSON
     public function encode($arr)
     {
         if ($this->currentObject) {
-            echo $this->currentObject->comma;
+            $this->write($this->currentObject->comma);
         }
         if (is_array($arr)) {
-            echo json_encode($arr);
+            $this->write(json_encode($arr));
         } else {
-            echo $this->escape($arr);
+            $this->write($this->escape($arr));
         }
         if ($this->currentObject) {
             $this->currentObject->comma = ',';
@@ -103,8 +120,8 @@ class JSON
         if ($this->currentObject->mode !== 'Assoc') {
             throw new Exception('Mode should be Assoc');
         }
-        echo $this->currentObject->comma;
-        echo $this->escape($key) . ':';
+        $this->write($this->currentObject->comma);
+        $this->write($this->escape($key) . ':');
         $this->currentObject->comma = '';
         $this->encode($value);
     }
@@ -118,14 +135,14 @@ class JSON
     public function startArray($key = null)
     {
         if ($this->currentObject) {
-            echo $this->currentObject->comma;
+            $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
         $this->currentObject = new JsonEncodeObject('Array');
         if (!is_null($key)) {
-            echo $this->escape($key) . ':';
+            $this->write($this->escape($key) . ':');
         }
-        echo '[';
+        $this->write('[');
     }
 
     /**
@@ -135,7 +152,7 @@ class JSON
      */
     public function endArray()
     {
-        echo ']';
+        $this->write(']');
         $this->currentObject = null;
         if (count($this->objects)>0) {
             $this->currentObject = array_pop($this->objects);
@@ -152,14 +169,14 @@ class JSON
     public function startAssoc($key = null)
     {
         if ($this->currentObject) {
-            echo $this->currentObject->comma;
+            $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
         $this->currentObject = new JsonEncodeObject('Assoc');
         if (!is_null($key)) {
-            echo $this->escape($key) . ':';
+            $this->write($this->escape($key) . ':');
         }
-        echo '{';
+        $this->write('{');
     }
 
     /**
@@ -169,11 +186,32 @@ class JSON
      */
     public function endAssoc()
     {
-        echo '}';
+        $this->write('}');
         $this->currentObject = null;
         if (count($this->objects)>0) {
             $this->currentObject = array_pop($this->objects);
             $this->currentObject->comma = ',';
+        }
+    }
+
+    /**
+     * Stream Json String.
+     *
+     * @return void
+     */
+    private function streamJson()
+    {
+        if (empty(ob_get_contents())) {
+            // end the json
+            // rewind the temp stream.
+            rewind($this->tempStream);
+            // stream the temp to output
+            $outputStream = fopen("php://output", "w+b");
+            stream_copy_to_stream($this->tempStream, $outputStream);
+            fclose($outputStream);
+            fclose($this->tempStream);
+        } else {
+            fclose($this->tempStream);
         }
     }
 
@@ -194,7 +232,7 @@ class JSON
                     break;
             }
         }
-        die();
+        $this->streamJson();
     }
 
     /** 

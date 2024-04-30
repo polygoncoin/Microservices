@@ -4,7 +4,6 @@ namespace App;
 use App\AppTrait;
 use App\HttpRequest;
 use App\HttpResponse;
-use App\JsonEncode;
 use App\Servers\Database\Database;
 
 /**
@@ -61,7 +60,8 @@ class Read
         $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->db = Database::getObject();
-        $this->jsonEncodeObj = JsonEncode::getObject();
+        $this->jsonEncodeObj = HttpResponse::getJsonObject();
+        
 
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;

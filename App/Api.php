@@ -7,7 +7,6 @@ use App\CacheHandler;
 use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
-use App\JsonEncode;
 use App\Logs;
 use App\Upload;
 

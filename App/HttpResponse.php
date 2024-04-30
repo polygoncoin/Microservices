@@ -20,6 +20,14 @@ use App\Logs;
 class HttpResponse
 {
     /**
+     * Return JSON object.
+     */
+    public static function getJsonObject()
+    {
+        return JsonEncode::getObject();
+    }
+
+    /**
      * Return 2xx response
      *
      * @param string $errorCode  Error code

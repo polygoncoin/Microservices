@@ -3,7 +3,6 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpResponse;
-use App\JsonEncode;
 use App\Logs;
 
 /**

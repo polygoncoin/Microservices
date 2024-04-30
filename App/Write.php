@@ -69,7 +69,7 @@ class Write
         $this->globalDB = getenv('globalDbName');
         $this->clientDB = getenv(HttpRequest::$clientDatabase);
         $this->db = Database::getObject();
-        $this->jsonEncodeObj = JsonEncode::getObject();
+        $this->jsonEncodeObj = HttpResponse::getJsonObject();
 
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
