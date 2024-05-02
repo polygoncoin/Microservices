@@ -6,6 +6,7 @@ use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Cache\Cache;
+use App\Servers\Database\Database;
 
 /**
  * Login
@@ -27,6 +28,13 @@ class Login
      * @var object
      */
     private $cache = null;
+
+    /**
+     * DB Server connection object
+     *
+     * @var object
+     */
+    public $db = null;
 
     /**
      * Username for login
@@ -235,6 +243,7 @@ class Login
             // We set this to have a check first if multiple request/attack occurs.
             $this->cache->setCache("user:{$this->userId}:token", json_encode($tokenDetails), EXPIRY_TIME);
             $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
+            $this->updateDB($tokenDetails);
         }
         echo json_encode(
             [
@@ -242,5 +251,31 @@ class Login
                 'expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
             ]
         );
+    }
+
+    private function updateDB($tokenDetails)
+    {
+        Database::connect(
+            'MySQL',
+            'dbHostnameDefault',
+            'dbUsernameDefault',
+            'dbPasswordDefault',
+            'globalDbName'
+        );
+        $this->db = Database::getObject();
+        $userTable = getenv('users');
+        $this->db->execDbQuery("
+        UPDATE
+            `{$userTable}`
+        SET
+            `token` = :token,
+            `token_ts` = :token_ts
+        WHERE
+            user_id = :user_id",
+        [
+            ':token' => $tokenDetails['token'],
+            ':token_ts' => $tokenDetails['timestamp'],
+            ':user_id' => $this->userId
+        ]);
     }
 }

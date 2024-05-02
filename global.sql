@@ -54,6 +54,8 @@ CREATE TABLE `m002_master_user` (
   `username` varchar(255) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
   `group_id` int NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `token_ts` int UNSIGNED DEFAULT 0,
   `comments` varchar(255) DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -141,9 +143,9 @@ UNLOCK TABLES;
 LOCK TABLES `m002_master_user` WRITE;
 /*!40000 ALTER TABLE `m002_master_user` DISABLE KEYS */;
 INSERT INTO `m002_master_user` VALUES
-(1,'shames11@rediffmail.com','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',1,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
-(2,'client_1_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',2,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
-(3,'client_2_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',3,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No');
+(1,'shames11@rediffmail.com','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',1,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
+(2,'client_1_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',2,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
+(3,'client_2_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',3,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No');
 /*!40000 ALTER TABLE `m002_master_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
