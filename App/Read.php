@@ -65,6 +65,13 @@ class Read
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
         
+        // Use results in where clause of sub queries recursively.
+        if (isset($readSqlConfig['useHierarchy']) && $readSqlConfig['useHierarchy'] === true) {
+            HttpRequest::$input['useHierarchy'] = true;
+        } else {
+            HttpRequest::$input['useHierarchy'] = false;
+        }
+
         // Set required fields.
         HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig);
 
@@ -77,27 +84,44 @@ class Read
      *
      * @param array $readSqlConfig Config from file
      * @param bool  $start         true to represent the first call in recursion.
+     * @param array $keys          Keys in recursion.
      * @return void
      */
-    private function readDB(&$readSqlConfig, $start = true)
+    private function readDB($readSqlConfig, $start = true, $keys = [])
     {
-        $readSqlConfig = ($start) ? [$readSqlConfig] : $readSqlConfig;
-        foreach ($readSqlConfig as $key => &$readSqlDetails) {
-            if ($this->isAssoc($readSqlDetails)) {
-                switch ($readSqlDetails['mode']) {
-                    case 'singleRowFormat':
-                        $this->fetchSingleRow($start, $key, $readSqlDetails);
-                        break;
-                    case 'multipleRowFormat':
-                        $this->fetchMultipleRows($start, $key, $readSqlDetails);
-                        break;
-                }
-                if (isset($readSqlDetails['subQuery'])) {
-                    $this->readDB($readSqlDetails['subQuery'], false);
-                }
-                if ($readSqlDetails['mode'] === 'singleRowFormat' && isset($readSqlDetails['subQuery'])) {
+        $isAssoc = $this->isAssoc($readSqlConfig);
+        if ($isAssoc) {
+            switch ($readSqlConfig['mode']) {
+                case 'singleRowFormat':
+                    $this->jsonObj->startAssoc();
+                    $this->fetchSingleRow($readSqlConfig, $keys);
                     $this->jsonObj->endAssoc();
-                }
+                    break;
+                case 'multipleRowFormat':
+                    $keysCount = count($keys)-1;
+                    if ($start) {
+                        if (isset($readSqlConfig['countQuery'])) {
+                            $this->jsonObj->startAssoc();
+                            $this->fetchRowsCount($readSqlConfig);
+                            $this->jsonObj->startArray('data');
+                        } else {
+                            $this->jsonObj->startArray();
+                        }
+                    } else {
+                        $this->jsonObj->startArray($keys[$keysCount]);
+                    }
+                    $this->fetchMultipleRows($readSqlConfig, $keys);
+                    $this->jsonObj->endArray();
+                    if (!$start) {
+                        $this->jsonObj->endAssoc();
+                    }
+                    if (isset($readSqlConfig['countQuery'])) {
+                        $this->jsonObj->endAssoc();
+                    }            
+                    break;
+            }
+            if (!HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
+                $this->callReadDB($readSqlConfig, $keys, $row);
             }
         }
     }
@@ -105,59 +129,54 @@ class Read
     /**
      * Function to fetch single record.
      *
-     * @param bool  $start          true to represent the first call in recursion.
-     * @param bool  $parentKey      Associative array keyy.
-     * @param bool  $readSqlDetails Read SQL configuration.
+     * @param array  $readSqlConfig Read SQL configuration.
+     * @param array  $keys           Module Keys in recursion.
      * @return void
      */
-    private function fetchSingleRow(&$start, &$parentKey, &$readSqlDetails)
+    private function fetchSingleRow($readSqlConfig, $keys)
     {
-        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlDetails);
+        $isAssoc = $this->isAssoc($readSqlConfig);
+        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
         $this->db->execDbQuery($sql, $sqlParams);
         if ($row = $this->db->fetch()) {
-            ;
-        } else {
-            $row = [];
-        }
-        if (isset($readSqlDetails['subQuery'])) {
-            $subQueryKeys = array_keys($readSqlDetails['subQuery']);
-            foreach($row as $key => $value) {
-                if (in_array($key, $subQueryKeys)) {
-                    HttpResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
+            //check if selected column-name mismatches or confliects with configured module/submodule names.
+            if (isset($readSqlConfig['subQuery'])) {
+                $subQueryKeys = array_keys($readSqlConfig['subQuery']);
+                foreach($row as $key => $value) {
+                    if (in_array($key, $subQueryKeys)) {
+                        HttpResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
+                    }
                 }
             }
-        }
-        if ($start) {
-            $this->jsonObj->startAssoc();
         } else {
-            $this->jsonObj->startAssoc($parentKey);
+            $row = [];
         }
         foreach($row as $key => $value) {
             $this->jsonObj->addKeyValue($key, $value);
         }
         $this->db->closeCursor();
+        if (HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
+            $this->callReadDB($readSqlConfig, $keys, $row);
+        }
     }
 
     /**
      * Function to fetch row count.
      *
-     * @param bool  $start          true to represent the first call in recursion.
-     * @param bool  $parentKey      Associative array keyy.
-     * @param bool  $readSqlDetails Read SQL configuration.
+     * @param array  $readSqlConfig Read SQL configuration.
      * @return void
      */
-    private function fetchRowsCount(&$start, &$parentKey, &$readSqlDetails)
+    private function fetchRowsCount($readSqlConfig)
     {
-        $readSqlDetailsCount = $readSqlDetails;
-        $readSqlDetailsCount['query'] = $readSqlDetailsCount['countQuery'];
-        unset($readSqlDetailsCount['countQuery']);
+        $readSqlConfig['query'] = $readSqlConfig['countQuery'];
+        unset($readSqlConfig['countQuery']);
         HttpRequest::$input['payload']['page']  = $_GET['page'] ?? 1;
         HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
         if (HttpRequest::$input['payload']['perpage'] > getenv('maxPerpage')) {
             HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.getenv('maxPerpage'));
         }
         HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
-        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlDetailsCount);
+        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
         $this->db->execDbQuery($sql, $sqlParams);
         $row = $this->db->fetch();
         $this->db->closeCursor();
@@ -172,56 +191,95 @@ class Read
     /**
      * Function to fetch multiple record.
      *
-     * @param bool  $start          true to represent the first call in recursion.
-     * @param bool  $parentKey      Associative array keyy.
-     * @param bool  $readSqlDetails Read SQL configuration.
+     * @param array  $readSqlConfig Read SQL configuration.
+     * @param array  $keys          Module Keys in recursion.
      * @return void
      */
-    private function fetchMultipleRows(&$start, &$parentKey, &$readSqlDetails)
+    private function fetchMultipleRows($readSqlConfig, $keys)
     {
-        if (isset($readSqlDetails['subQuery'])) {
+        $isAssoc = $this->isAssoc($readSqlConfig);
+
+        if (!HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
             HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
         }
-        if ($start) {
-            if (isset($readSqlDetails['countQuery'])) {
-                $this->jsonObj->startAssoc();
-                $this->fetchRowsCount($start, $parentKey, $readSqlDetails);
-                $this->jsonObj->startArray('data');
-            } else {
-                $this->jsonObj->startArray();
-            }
-        } else {
-            $this->jsonObj->startArray($parentKey);
+        $isAssoc = $this->isAssoc($readSqlConfig);
+        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
+        if (isset($readSqlConfig['countQuery'])) {
+            $start = HttpRequest::$input['payload']['start'];
+            $offset = HttpRequest::$input['payload']['perpage'];
+            $sql .= " LIMIT {$start}, {$offset}";
         }
-        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlDetails);
-        if ($start) {
-            if (isset($readSqlDetails['countQuery'])) {
-                $start = HttpRequest::$input['payload']['start'];
-                $offset = HttpRequest::$input['payload']['perpage'];
-                $sql .= " LIMIT {$start}, {$offset}";
-            }
-        }
-        $this->db->execDbQuery($sql, $sqlParams);
         $singleColumn = false;
-        for ($i=0;$row=$this->db->fetch();) {
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($sqlParams);
+        for ($i=0;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
             if ($i===0) {
                 if(count($row) === 1) {
                     $singleColumn = true;
                 }
+                $singleColumn = $singleColumn && !isset($readSqlConfig['subQuery']);
                 $i++;
             }
             if ($singleColumn) {
                 $this->jsonObj->encode($row[key($row)]);
+            } else if (isset($readSqlConfig['subQuery'])) {
+                $this->jsonObj->startAssoc();
+                foreach($row as $key => $value) {
+                    $this->jsonObj->addKeyValue($key, $value);
+                }
             } else {
                 $this->jsonObj->encode($row);
             }
-        }
-        $this->jsonObj->endArray();
-        if ($start) {
-            if (isset($readSqlDetails['countQuery'])) {
-                $this->jsonObj->endAssoc();
+            if (HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
+                $this->callReadDB($readSqlConfig, $keys, $row);
             }
         }
-        $this->db->closeCursor();
+        $stmt->closeCursor();
     }    
+
+    /**
+     * Function to reset data for module key wise.
+     *
+     * @param array  $keys Module Keys in recursion.
+     * @param array  $row  Row data fetched from DB.
+     * @return void
+     */
+    private function resetFetchData($keys, $row)
+    {
+        if (HttpRequest::$input['useHierarchy']) {
+            if (count($keys) === 0) {
+                HttpRequest::$input['hierarchyData'] = [];
+                HttpRequest::$input['hierarchyData']['root'] = [];
+            }
+            $httpReq = &HttpRequest::$input['hierarchyData']['root'];
+            foreach ($keys as $k) {
+                if (!isset($httpReq[$k])) {
+                    $httpReq[$k] = [];
+                }
+                $httpReq = &$httpReq[$k];
+            }
+            $httpReq = $row;
+        }
+    }
+
+    /**
+     * Validate and call readDB
+     *
+     * @param array  $readSqlConfig Read SQL configuration.
+     * @param array  $keys          Module Keys in recursion.
+     * @param array  $row           Row data fetched from DB.
+     * @return void
+     */
+    private function callReadDB($readSqlConfig, $keys, $row)
+    {
+        if (HttpRequest::$input['useHierarchy']) {
+            $this->resetFetchData($keys, $row);
+        }
+        if (isset($readSqlConfig['subQuery']) && $this->isAssoc($readSqlConfig['subQuery'])) {
+            foreach ($readSqlConfig['subQuery'] as $subQuery_key => $readSqlDetails) {
+                $k = array_merge($keys, [$subQuery_key]);
+                $this->readDB($readSqlDetails, false, $k);
+            }
+        }
+    }
 }

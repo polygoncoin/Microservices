@@ -324,7 +324,7 @@ class HttpRequest
             }
             self::$input['payloadArr'] = $payloadArr;
         }
-        self::$input['payloadArrType'] = self::payloadType(self::$input['payloadArr']);
+        self::$input['payloadArrType'] = self::payloadType();
         if (self::$input['payloadArrType'] === 'Object') {
             self::$input['payloadArr'] = [self::$input['payloadArr']];
         }
@@ -366,14 +366,13 @@ class HttpRequest
     /**
      * Function to find payload is an object/array
      *
-     * @param array $payload
      * @return boolean
      */
-    public static function payloadType($payload)
+    public static function payloadType()
     {
         $payloadType = 'Array';
         $i = 0;
-        foreach ($payload as $k => &$v) {
+        foreach (self::$input['payloadArr'] as $k => &$v) {
             if ($k !== $i++) {
                 $payloadType = 'Object';
                 break;

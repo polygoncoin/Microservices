@@ -33,10 +33,9 @@ trait AppTrait
      * @param bool  $first     true to represent the first call in recursion.
      * @return void
      */
-    private function getRequired($sqlConfig, $first = true)
+    private function getRequired(&$sqlConfig, $first = true)
     {
-        $requiredPayloadFields = [];
-        $requiredPayloadFields['required'] = [];
+        $requiredFields = [];
         if (isset($sqlConfig['payload'])) {
             foreach ($sqlConfig['payload'] as $var => $payload) {
                 $required = false;
@@ -50,12 +49,13 @@ trait AppTrait
                         break;
                 }
                 if ($required && $type === 'payload') {
-                    if (!in_array($typeKey, $requiredPayloadFields['required'])) {
-                        $requiredPayloadFields['required'][] = $typeKey;
+                    if (!in_array($typeKey, $requiredFields)) {
+                        $requiredFields[] = $typeKey;
                     }
                 }
             }
         }
+        $foundHierarchy = false;
         if (isset($sqlConfig['where'])) {
             foreach ($sqlConfig['where'] as $var => $payload) {
                 $required = false;
@@ -68,22 +68,36 @@ trait AppTrait
                         list($type, $typeKey) = $payload;
                         break;
                 }
+                if ($first && $type === 'hierarchyData') {
+                    HttpResponse::return5xx(501, 'Invalid config: First query can not have hierarchyData config');
+                }
+                if ($type === 'hierarchyData') {
+                    $foundHierarchy = true;
+                }
                 if ($required && $type === 'payload') {
-                    if (!in_array($typeKey, $requiredPayloadFields['required'])) {
-                        $requiredPayloadFields['required'][] = $typeKey;
+                    if (!in_array($typeKey, $requiredFields)) {
+                        $requiredFields[] = $typeKey;
                     }
                 }
+            }
+            if (!$first && HttpRequest::$input['useHierarchy'] && !$foundHierarchy) {
+                HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
             }
         }
         if (isset($sqlConfig['subQuery'])) {
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
                 HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
             }
-            foreach ($sqlConfig['subQuery'] as $k => $v) {
-                $requiredPayloadFields[$k] = $this->getRequired([$sqlConfig['subQuery'][$k]], false);
+            foreach ($sqlConfig['subQuery'] as &$sqlDetails) {
+                $sub_requiredFields = $this->getRequired($sqlDetails, false);
+                foreach ($sub_requiredFields as $field) {
+                    if (!in_array($field, $requiredFields)) {
+                        $requiredFields[] = $field;
+                    }
+                }
             }
         }
-        return $requiredPayloadFields;
+        return $requiredFields;
     }
 
     /**
@@ -104,10 +118,9 @@ trait AppTrait
      * Returns Query and Params for execution.
      *
      * @param array $sqlDetails Config from file
-     * @param array $payload    Single Payload from array.
      * @return array
      */
-    private function getSqlAndParams(&$sqlDetails, $payload = [])
+    private function getSqlAndParams(&$sqlDetails)
     {
         $sql = $sqlDetails['query'];
         $sqlParams = [];
@@ -117,7 +130,7 @@ trait AppTrait
                 HttpResponse::return5xx(501, 'Invalid config: Missing payload configuration');
             } else {
                 if (strpos($sql, '__SET__') !== false) {
-                    $params = $this->getSqlParams($sqlDetails['payload'], $payload);
+                    $params = $this->getSqlParams($sqlDetails['payload']);
                     if (!empty($params)) {
                         $__SET__ = [];
                         $paramKeys = array_keys($params);
@@ -138,7 +151,7 @@ trait AppTrait
                 HttpResponse::return5xx(501, 'Invalid config: Missing where configuration');
             } else {
                 if (strpos($sql, '__WHERE__') !== false) {
-                    $sqlWhereParams = $this->getSqlParams($sqlDetails['where'], $payload);
+                    $sqlWhereParams = $this->getSqlParams($sqlDetails['where']);
                     if (!empty($sqlWhereParams)) {
                         $__WHERE__ = [];
                         foreach ($sqlWhereParams as $param => &$v) {
@@ -164,20 +177,29 @@ trait AppTrait
      * Generates Params for statement to execute.
      *
      * @param array $sqlConfig Config from file
-     * @param array $payload   Single Payload from array.
      * @return array
      */
-    private function getSqlParams(&$sqlConfig, &$payload)
+    private function getSqlParams(&$sqlConfig)
     {
         $sqlParams = [];
         foreach ($sqlConfig as $var => [$type, $typeKey]) {
             if ($type === 'function') {
                 $sqlParams[$var] = $typeKey();
+            } else if ($type === 'hierarchyData') {
+                $typeKeys = explode(':',$typeKey);
+                $value = HttpRequest::$input['hierarchyData'];
+                foreach($typeKeys as $key) {
+                    if (!isset($value[$key])) {
+                        HttpResponse::return5xx(501, 'Invalid hierarchy:  Missing hierarchy data');
+                    }
+                    $value = $value[$key];
+                }
+                $sqlParams[$var] = $value;
             } else if ($type === 'custom') {
                 $sqlParams[$var] = $typeKey;
-            } else if ($type === 'payload' && isset($payload[$typeKey])) {
-                $sqlParams[$var] = $payload[$typeKey];
-            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset($payload[$typeKey])) {
+            } else if ($type === 'payload' && isset(HttpRequest::$input['payload'][$typeKey])) {
+                $sqlParams[$var] = HttpRequest::$input['payload'][$typeKey];
+            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['requiredPayload']) && !isset(HttpRequest::$input['payload'][$typeKey])) {
                 continue;
             } else {
                 if (!isset(HttpRequest::$input[$type][$typeKey])) {

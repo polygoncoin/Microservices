@@ -223,6 +223,31 @@ class MySQL extends AbstractDatabase
     }
 
     /**
+     * Prepare Sql
+     *
+     * @param string $sql  SQL query
+     * @return object
+     */
+    public function prepare($sql)
+    {
+        $this->connect();
+        try {
+            return $stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+        } catch(\PDOException $e) {
+            if ((int)$this->pdo->errorCode()) {
+                $log = [
+                    'datetime' => date('Y-m-d H:i:s'),
+                    'input' => HttpRequest::$input,
+                    'error' => $this->pdo->errorInfo()
+                ];
+                Logs::log('error', json_encode($log));
+                $this->rollback();
+                HttpResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
+            }
+        }
+    }
+
+    /**
      * Fetch row from statement
      *
      * @return array

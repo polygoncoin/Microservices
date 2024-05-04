@@ -1,5 +1,8 @@
 <?php
 return [
+    'category' => [
+        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/Custom.php',
+    ],
     '{table:string}' => [
         '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
         '{id:int}'  => [

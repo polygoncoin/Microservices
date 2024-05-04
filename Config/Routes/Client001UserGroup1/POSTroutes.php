@@ -1,5 +1,8 @@
 <?php
 return [
+    'category' => [
+        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/POST/Category.php',
+    ],
     'registration' => [
         '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/POST/Registration.php',
     ],

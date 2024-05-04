@@ -74,14 +74,35 @@ class Write
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
 
+        // Use results in where clause of sub queries recursively.
+        if (isset($writeSqlConfig['useHierarchy']) && $writeSqlConfig['useHierarchy'] === true) {
+            HttpRequest::$input['useHierarchy'] = true;
+        } else {
+            HttpRequest::$input['useHierarchy'] = false;
+        }
+
         // Set required fields.
         HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig);
 
         // Perform action
         $response = [];
-        $writeSqlConfig = [$writeSqlConfig];
-        foreach (HttpRequest::$input['payloadArr'] as &$payload) {
-            $res = $this->process($writeSqlConfig, $payload);
+        foreach (HttpRequest::$input['payloadArr'] as &HttpRequest::$input['ith_payloadArr']) {
+            HttpRequest::$input['payload'] = HttpRequest::$input['ith_payloadArr'];
+            if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
+                if (count(HttpRequest::$input['payload']) !== 1) {
+                    return ['data' => HttpRequest::$input['payload'], 'Error' => 'Invalid payload: PATCH can update only single field'];
+                }
+            }
+            $isValidData = true;
+            if (isset($writeSqlConfig['validate'])) {
+                list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
+                if ($isValidData !== true) {
+                    return ['data' => HttpRequest::$input['payload'], 'Error' => $errors];
+                }
+            }
+            $this->db->begin();
+            $res = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr']);
+            $this->db->commit();
             if (!empty($res)) {
                 $response[] = $res;
             }
@@ -97,85 +118,55 @@ class Write
     }
 
     /**
-     * Process DB write operation
-     *
-     * @param array $writeSqlConfig Config from file
-     * @param array $payload        Single Payload from array.
-     * @return void
-     */
-    private function process(&$writeSqlConfig, $payload)
-    {
-        $isValidData = true;
-        if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
-            if (count($payload) !== 1) {
-                return ['data' => $payload, 'Error' => 'Invalid payload: PATCH can update only single field'];
-            }
-        }
-
-        $this->db->begin();
-        $payload = [$payload];
-        $response = $this->writeDB($writeSqlConfig, $payload);
-        $this->db->commit();
-        return $response;
-    }
-
-    /**
      * Function to insert/update sub queries recursively.
      *
      * @param array $writeSqlConfig  Config from file
-     * @param array $payload         Single Payload from array.
-     * @param bool  $first           true to represent the first call in recursion.
-     * @param bool  $requiredPayload Required payload fields.
+     * @param bool  $payload         Payload.
      * @return void
      */
-    private function writeDB($writeSqlConfig, &$payload, $first = true, &$requiredPayload = null)
+    private function writeDB(&$writeSqlConfig, &$payloads)
     {
-        $insertIds = [];
-        $isAssoc = $this->isAssoc($payload);
-        $payload = $isAssoc ? [$payload] : $payload;
-        for ($i = 0, $iCount = count($payload); $i < $iCount; $i++) {
-            HttpRequest::$input['payload'] = $payload[$i];
-            if ($first) {
-                $requiredPayload = HttpRequest::$input['requiredPayload'];
-            }
-            foreach ($writeSqlConfig as &$writeSqlDetails) {
-                // Validation.
-                HttpRequest::$input['required'] = $requiredPayload['required'];
-                if (isset($writeSqlDetails['validate'])) {
-                    list($isValidData, $errors) = $this->validate($writeSqlDetails['validate']);
-                    if ($isValidData !== true) {
-                        $insertIds[] = ['data' => $payload, 'Error' => $errors];
-                        continue;
-                    }
+        $response = [];
+        $isAssoc = $this->isAssoc($payloads);
+        foreach (($isAssoc ? [$payloads] : $payloads) as &HttpRequest::$input['payload']){
+            // Get Sql and Params
+            list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
+            $this->db->execDbQuery($sql, $sqlParams);
+            if (isset($writeSqlConfig['insertId'])) {
+                $insertId = $this->db->lastInsertId();
+                if ($isAssoc) {
+                    $response = [$writeSqlConfig['insertId'] => $insertId];
+                } else {
+                    $response[] = [$writeSqlConfig['insertId'] => $insertId];
                 }
-                // Get Sql and Params
-                list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlDetails, $payload[$i]);
-                $this->db->execDbQuery($sql, $sqlParams);
-                if (isset($writeSqlDetails['insertId'])) {
-                    $insertId = $this->db->lastInsertId();
-                    if ($first) {
-                        $insertIds = array_merge($insertIds, [$writeSqlDetails['insertId'] => $insertId]);
+                HttpRequest::$input['insertIdParams'][$writeSqlConfig['insertId']] = $insertId;
+            }
+            $this->db->closeCursor();
+        }
+        if (isset($writeSqlConfig['subQuery'])) {
+            foreach ($writeSqlConfig['subQuery'] as $module => &$writeSqlDetails) {
+                if (HttpRequest::$input['useHierarchy']) {
+                    if (isset(HttpRequest::$input['payload'][$module])) {
+                        $module_payloads = &HttpRequest::$input['payload'][$module];
                     } else {
-                        $insertIds[] = [$writeSqlDetails['insertId'] => $insertId];
+                        HttpResponse::return5xx(404, 'Invalid Configuration: Data missing in Hierarchy format.');
                     }
-                    HttpRequest::$input['insertIdParams'][$writeSqlDetails['insertId']] = $insertId;
+                } else {
+                    $module_payloads = &HttpRequest::$input['payload'];
                 }
-                $this->db->closeCursor();
-                if (isset($writeSqlDetails['subQuery'])) {
-                    foreach ($writeSqlDetails['subQuery'] as $k => $v) {
-                        if (isset($payload[$i][$k])) {
-                            $res = $this->writeDB([$writeSqlDetails['subQuery'][$k]], $payload[$i][$k], false, $requiredPayload[$k]);
-                            if (!empty($res)) {
-                                $insertIds = array_merge($insertIds, [$k => $res]);
-                            }
-                        }
+                $res = $this->writeDB($writeSqlDetails, $module_payloads);
+                if (!empty($res)) {
+                    if ($isAssoc) {
+                        $response[$module] = $res;
+                    } else {
+                        $response[] = [$module => $res];
                     }
                 }
             }
         }
-        if ($isAssoc && isset($insertIds[0])) {
-            $insertIds = $insertIds[0];
+        if ($isAssoc && isset($response[0])) {
+            $response = $response[0];
         }
-        return $insertIds;
+        return $response;
     }
 }
