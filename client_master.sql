@@ -35,7 +35,7 @@ CREATE TABLE `address` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `address`;
+DROP TABLE IF EXISTS `category`;
 
 CREATE TABLE `category` (
   `id` int NOT NULL AUTO_INCREMENT,

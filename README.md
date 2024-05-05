@@ -1,7 +1,56 @@
 
 # Microservices!
 
-Hi! This is the first very light and easy **Microservices Framework** package which can be configured very easily and your API's can be up in a few minutes.
+This very light and easy **Microservices Framework** package can be configured very easily to create your API's in a very short time if you are done with your database creation.
+
+## Files
+
+-  **/.env.example** Create a copy of this file as **.env**
+
+-  **/global.sql** Import this SQL file on your **MySQL global** instance
+
+-  **/client_master.sql** Import this SQL file on your **MySQL client** instance
+
+## .env.example
+
+- One needs to make a copy of this file as .env and make changes in this newly created file. This file will contain configurations pertaining to your APIs using Cache and DB servers.
+
+- Below are the default databse server configuration.
+
+```
+dbHostnameDefault='127.0.0.1'
+dbUsernameDefault='root'
+dbPasswordDefault='shames11'
+```
+- Database details on default MySQL server
+
+```
+globalDbName='global'
+clientMasterDbName='client_master'
+```
+Note clientMasterDbName can be set same as globalDbName if you dont want to maintain different databases for client.
+
+- For a **Dedicated DB or Host** set these settings as below and update them in **global.m003_master_connection** table
+```
+// Dedicated DB on same DB server.
+dbDatabaseClient001='client_001'
+OR
+// Dedicated DB Server.
+dbHostnameClient001='127.0.0.1'
+dbUsernameClient001='root'
+dbPasswordClient001='shames11'
+dbDatabaseClient001='client_001'
+```
+
+- Any change made to the global database needs to be updated in the cache server. This can be done by accessing **/reload** route. This is restricted by HTTP Authentication and configuration for same can be found in .env as below.
+
+```
+HttpAuthenticationRestrictedIp='127.0.0.1'
+HttpAuthenticationUser='username'
+HttpAuthenticationPassword='password'
+```
+
+- The connection configuration used for the API is limited to the respective group.
 
 ## Folders
 
@@ -17,75 +66,6 @@ Hi! This is the first very light and easy **Microservices Framework** package wh
 
 -  **/Dropbox** Folder for uploaded files.
 
-## Files
-
--  **/.env.example** Create a copy of this file as **.env**
-
--  **/global.sql** Import this SQL file on your **MySQL** instance
-
--  **/public_html/index.php** This is the file to be accessed for the API's
-
-## .env
-
-- One needs to set the configurations in the **.env** file. The configurations include Cache/Database creds and other credentials.
-
-- Below are the default server configuration parameters.
-
-```
-dbHostnameDefault='127.0.0.1'
-dbUsernameDefault='root'
-dbPasswordDefault='shames11'
-```
-
-- Database details on default MySQL server
-
-```
-globalDbName='global'
-clientMasterDbName='client_master'
-```
-
-- If there is a requirement from your client for a **Separate DB or Host** for saving his data, just set these settings here and configure these **.env variables in the global.m004_master_connection table**
-
-- For a different DB on default Host
-
-```
-dbDatabaseClient001='client_001'
-```
-
-- For a different Host/DB instance client 1
-
-```
-dbHostnameClient001='127.0.0.1'
-dbUsernameClient001='root'
-dbPasswordClient001='shames11'
-dbDatabaseClient001='client_001'
-```
-
-- For a different Host/DB instance client 2
-
-```
-dbHostnameClient002='127.0.0.1'
-dbUsernameClient002='root'
-dbPasswordClient002='shames11'
-dbDatabaseClient002='client_002'
-```
-
-- This can extend to any number of databases on the default host or to any number of dedicated hosts for respective clients.
-
-**Note:**
-
-- The connection configuration used for an API is limited to the respective group. One group access is limited to one connection configuration.
-
-- All the configuration here is with respect to the group. Users, Routes & Connections are configured and grouped inside a **GROUP**
-
-- Any change made to the global database needs to be updated in the cache server. This can be done by accessing **/reload** route. This is restricted by HTTP Authentication and configuration for same can be found in .env as below.
-
-```
-HttpAuthenticationRestrictedIp='127.0.0.1'
-HttpAuthenticationUser='username'
-HttpAuthenticationPassword='password'
-```
-
 ## Configuring route
 
 ### Files
@@ -100,7 +80,7 @@ HttpAuthenticationPassword='password'
 
 -  **/Config/Routes/&lt;GroupName&gt;/DELETEroutes.php** for all DELETE method routes configuration.
 
-**&lt;GroupName&gt;** The assigned group to a user accessing the api's
+**&lt;GroupName&gt;** These are corresponding to the assigned group to a user for accessing the API's
 
 - For configuring route **/tableName/parts** GET method
 
@@ -159,7 +139,7 @@ return [
 
 -  **/Config/Queries/GlobalDB** for global database.
 
--  **/Config/Queries/ClientDB** for all client including all databases & hosts.
+-  **/Config/Queries/ClientDB** for Clients (including all hosts and their databases).
 
 ### Files - GlobalDB
 
@@ -185,7 +165,7 @@ return [
 
 -  **/Config/Queries/ClientDB/DELETE/&lt;filename&gt;.php** DELETE method SQL.
 
-Where **&lt;filename&gt;.php** are different file names for respective functionality.
+One can replace **&lt;filename&gt;** tag with desired name as per functionality.
 
 ### SQL's
 
@@ -276,13 +256,82 @@ return [
 						[
 							'fn' => 'validateModule3Id',
 							'fnArgs' => [
-								{custom}, key|{value}],
 								'module_id' => ['payload', 'module_id']
 							],
 							'errorMessage' => 'Invalid module id'
 						],
 					]
 				],
+				'module4' => [
+					'query' => "MySQL Query here",
+					'payload' => [],
+					'where' => [],
+				]
+			]
+		]
+	],
+	'validate' => [//validation also supported in subQuery modules recursively
+		[
+			'fn' => 'validateGroupId',
+			'fnArgs' => [
+				//variableName => [uriParams|payload|readOnlySession|insertIdParams|{custom}, key|{value}],
+				'group_id' => ['payload', 'group_id']
+			],
+			'errorMessage' => 'Invalid Group Id'
+		],
+	]
+];
+```
+Note: If there are few modules or query configurations repeated or reused; one can palce them in a seperate file and include them as below.
+```
+// reusefilename.php
+return [
+	'query' => "MySQL Query here",
+	'payload' => [],
+	'where' => [],
+	'validate' => [//validation also supported in subQuery modules recursively
+		[
+			'fn' => 'validateModule3Id',
+			'fnArgs' => [
+				'module_id' => ['payload', 'module_id']
+			],
+			'errorMessage' => 'Invalid module id'
+		],
+	]
+],
+
+```
+
+The reuse version is as below.
+
+```
+<?php
+return [
+	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
+	'payload' => [// for __SET__
+		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}, REQUIRED],
+		'group_id' => ['payload', 'group_id', REQUIRED],
+		'client_id' => ['readOnlySession', 'client_id']
+	],
+	'where' => [// for __WHERE__
+		//column => [uriParams|payload|readOnlySession|{custom}, key|{value}],
+		'id' => ['uriParams', 'id']
+	],
+	'insertId' => 'tablename1:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
+	'subQuery' => [
+		'module1' => [
+			'query' => "MySQL Query here",
+			'payload' => [
+				'previous_table_id' => ['insertIdParams', '<tableName>:id'],
+			],
+			'where' => [],
+		],
+		'module2' => [
+			'query' => "MySQL Query here",
+			'payload' => [],
+			'where' => [],
+			'subQuery' => [
+				'module3' => include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/reusefilename.php',
 				'module4' => [
 					'query' => "MySQL Query here",
 					'payload' => [],
@@ -494,19 +543,6 @@ Similarly, we can use this in payload as well to set a static values instead of 
 ```
 
 New features includes 
-
-One can reuse common query configuration. E.g;
-
-```
-/Config/Queries/ClientDB/Common/Address.php
-/Config/Queries/ClientDB/Common/Registration.php
-```
-are re-used in 
-```
-/Config/Queries/ClientDB/PUT/CRUD.php
-/Config/Queries/ClientDB/PATCH/CRUD.php
-/Config/Queries/ClientDB/DELETE/CRUD.php
-```
 
 One can use functions as below in payload manipulation.
 

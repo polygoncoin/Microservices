@@ -76,7 +76,8 @@ class Read
         HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig);
 
         // Start Read operation.
-        $this->readDB($readSqlConfig);
+        $keys = [];
+        $this->readDB($readSqlConfig, true, $keys);
     }
 
     /**
@@ -87,7 +88,7 @@ class Read
      * @param array $keys          Keys in recursion.
      * @return void
      */
-    private function readDB($readSqlConfig, $start = true, $keys = [])
+    private function readDB(&$readSqlConfig, $start, &$keys)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         if ($isAssoc) {
@@ -133,7 +134,7 @@ class Read
      * @param array  $keys           Module Keys in recursion.
      * @return void
      */
-    private function fetchSingleRow($readSqlConfig, $keys)
+    private function fetchSingleRow(&$readSqlConfig, &$keys)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
@@ -195,7 +196,7 @@ class Read
      * @param array  $keys          Module Keys in recursion.
      * @return void
      */
-    private function fetchMultipleRows($readSqlConfig, $keys)
+    private function fetchMultipleRows(&$readSqlConfig, &$keys)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
 
@@ -244,7 +245,7 @@ class Read
      * @param array  $row  Row data fetched from DB.
      * @return void
      */
-    private function resetFetchData($keys, $row)
+    private function resetFetchData(&$keys, $row)
     {
         if (HttpRequest::$input['useHierarchy']) {
             if (count($keys) === 0) {
@@ -270,7 +271,7 @@ class Read
      * @param array  $row           Row data fetched from DB.
      * @return void
      */
-    private function callReadDB($readSqlConfig, $keys, $row)
+    private function callReadDB(&$readSqlConfig, &$keys, &$row)
     {
         if (HttpRequest::$input['useHierarchy']) {
             $this->resetFetchData($keys, $row);
