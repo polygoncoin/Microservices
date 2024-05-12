@@ -5,6 +5,7 @@ use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Cache\Redis;
+use App\Servers\Cache\MySQL;
 
 /**
  * Loading database class
@@ -42,6 +43,13 @@ class Cache
     public static $port = null;
 
     /**
+     * Cache username
+     *
+     * @var string
+     */
+    public static $username = null;
+
+    /**
      * Cache password
      *
      * @var string
@@ -76,20 +84,32 @@ class Cache
         $cacheType,
         $hostname,
         $port,
+        $username,
         $password,
         $database
     )
     {
-        self::$cacheType = $cacheType;
+        self::$cacheType = getenv($cacheType);
         self::$hostname = $hostname;
         self::$port = $port;
+        self::$username = $username;
         self::$password = $password;
         self::$database = $database;
 
-        if($cacheType === 'Redis') {
+        if(self::$cacheType === 'Redis') {
             self::$cache = new Redis(
                 $hostname,
                 $port,
+                $username,
+                $password,
+                $database
+            );
+        }
+        if(self::$cacheType === 'MySQL') {
+            self::$cache = new MySQL(
+                $hostname,
+                $port,
+                $username,
                 $password,
                 $database
             );

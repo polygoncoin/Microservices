@@ -85,6 +85,13 @@ class HttpRequest
     public static $clientHostname = null;
 
     /**
+     * Client database port
+     *
+     * @var string
+     */
+    public static $clientPort = null;
+
+    /**
      * Client database username
      *
      * @var string
@@ -131,9 +138,10 @@ class HttpRequest
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
         
         Cache::connect(
-            'Redis',
+            'cacheType',
             'cacheHostname',
             'cachePort',
+            'cacheUsername',
             'cachePassword',
             'cacheDatabase'
         );
@@ -185,12 +193,14 @@ class HttpRequest
         $groupInfoArr = json_decode(Cache::$cache->getCache($key), true);
         self::$clientServerType = $groupInfoArr['db_server_type'];
         self::$clientHostname = $groupInfoArr['db_hostname'];
+        self::$clientPort = $groupInfoArr['db_port'];
         self::$clientUsername = $groupInfoArr['db_username'];
         self::$clientPassword = $groupInfoArr['db_password'];
         self::$clientDatabase = $groupInfoArr['db_database'];
         Database::connect(
             self::$clientServerType,
             self::$clientHostname,
+            self::$clientPort,
             self::$clientUsername,
             self::$clientPassword,
             self::$clientDatabase
@@ -205,7 +215,7 @@ class HttpRequest
     private static function checkRemoteIp()
     {
         $groupId = self::$input['readOnlySession']['group_id'];
-        $key = "group:".self::$groupId.":cidr";
+        $key = "cidr:".self::$groupId;
         if (Cache::$cache->cacheExists($key)) {
             $cidrs = json_decode(Cache::$cache->getCache($key), true);
             $isValidIp = false;

@@ -31,6 +31,13 @@ class MySQL extends AbstractDatabase
     private $hostname = null;
 
     /**
+     * Database port
+     *
+     * @var string
+     */
+    private $port = null;
+
+    /**
      * Database username
      *
      * @var string
@@ -83,12 +90,14 @@ class MySQL extends AbstractDatabase
      */
     public function __construct(
         $hostname,
+        $port,
         $username,
         $password,
         $database = null
     )
     {
         $this->hostname = $hostname;
+        $this->port = $port;
         $this->username = $username;
         $this->password = $password;
         if (!is_null($database)) {

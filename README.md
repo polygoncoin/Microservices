@@ -10,16 +10,16 @@ This very light and easy **Microservices Framework** package can be configured v
 - One needs to make a copy of this file as .env and make changes in this newly created file. This file will contain configurations pertaining to your APIs using Cache and DB servers.
 - Below are the default databse server configuration.
 ```
-dbHostnameDefault='127.0.0.1'
-dbUsernameDefault='root'
-dbPasswordDefault='shames11'
+defaultDbHostname='127.0.0.1'
+defaultDbUsername='root'
+defaultDbPassword='shames11'
 ```
 - Database details on default MySQL server
 ```
-globalDbName='global'
+defaultDbDatabase='global'
 clientMasterDbName='client_master'
 ```
-Note clientMasterDbName can be set same as globalDbName if you dont want to maintain different databases for client.
+Note clientMasterDbName can be set same as defaultDbDatabase if you dont want to maintain different databases for client.
 
 - For a **Dedicated DB or Host** set these settings as below and update them in **global.m003_master_connection** table
 ```

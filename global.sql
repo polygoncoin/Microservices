@@ -82,6 +82,7 @@ CREATE TABLE `m003_master_connection` (
   `name` varchar(255),
   `db_server_type` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_hostname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `db_port` int NOT NULL,
   `db_username` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_password` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `db_database` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
@@ -143,7 +144,7 @@ UNLOCK TABLES;
 LOCK TABLES `m002_master_user` WRITE;
 /*!40000 ALTER TABLE `m002_master_user` DISABLE KEYS */;
 INSERT INTO `m002_master_user` VALUES
-(1,'shames11@rediffmail.com','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',1,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
+(1,'admin','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',1,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
 (2,'client_1_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',2,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No'),
 (3,'client_2_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6',3,'',0,NULL,0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','No','No');
 /*!40000 ALTER TABLE `m002_master_user` ENABLE KEYS */;
@@ -156,9 +157,9 @@ UNLOCK TABLES;
 LOCK TABLES `m003_master_connection` WRITE;
 /*!40000 ALTER TABLE `m003_master_connection` DISABLE KEYS */;
 INSERT INTO `m003_master_connection` VALUES
-(1,'global','MySQL','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','globalDbName','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','Yes','No','No'),
-(2,'clientOneConnectionName','MySQL','dbHostnameDefault','dbUsernameDefault','dbPasswordDefault','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','Yes','No','No'),
-(3,'clientTwoConnectionName','MySQL','dbHostnameClient002','dbUsernameClient002','dbPasswordClient002','dbDatabaseClient002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','Yes','No','No');
+(1,'admin','defaultDbType','defaultDbHostname','defaultDbPort','defaultDbUsername','defaultDbPassword','defaultDbDatabase','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:48:16','Yes','No','No'),
+(2,'clientOneConnectionName','defaultDbType','defaultDbHostname','defaultDbPort','defaultDbUsername','defaultDbPassword','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','Yes','No','No'),
+(3,'clientTwoConnectionName','defaultDbType','dbHostnameClient002','defaultDbPort','dbUsernameClient002','dbPasswordClient002','dbDatabaseClient002','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-05-02 14:50:41','Yes','No','No');
 /*!40000 ALTER TABLE `m003_master_connection` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -84,7 +84,7 @@ class ClientValidator
      */
     private function getPrimaryCount($table, $primary, $id)
     {
-        $db = getenv('globalDbName');
+        $db = getenv('defaultDbDatabase');
         $sql = "SELECT count(1) as `count` FROM `{$db}`.`{$table}` WHERE `{$primary}` = ?";
         $params = [$id];
         $this->db->execDbQuery($sql, $params);

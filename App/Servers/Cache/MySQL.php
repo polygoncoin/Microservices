@@ -5,13 +5,14 @@ use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Cache\AbstractCache;
+use App\Servers\Database\MySQL as DB_MySQL;
 
 /**
- * Loading Redis server
+ * Loading MySQL server
  *
  * This class is built to handle redis cache operation.
  *
- * @category   Cache - Redis
+ * @category   Cache - MySQL
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -19,7 +20,7 @@ use App\Servers\Cache\AbstractCache;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Redis extends AbstractCache
+class MySQL extends AbstractCache
 {
     /**
      * Cache hostname
@@ -64,6 +65,13 @@ class Redis extends AbstractCache
     private $redis = null;
 
     /**
+     * Current timestamp
+     *
+     * @var int
+     */
+    private $ts = null;
+
+    /**
      * Cache connection
      *
      * @param string $hostname  Hostname .env string
@@ -77,9 +85,10 @@ class Redis extends AbstractCache
         $port,
         $username,
         $password,
-        $database = 'cacheDatabase'
+        $database
     )
     {   
+        $this->ts = time();
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
@@ -98,21 +107,18 @@ class Redis extends AbstractCache
     {
         if (!is_null($this->redis)) return;
         try {
-            $this->redis = new \Redis();
-            //Connecting to Redis
-            $this->redis->connect(getenv($this->hostname), getenv($this->port), 1, NULL, 100);
-            $this->redis->auth(getenv($this->password));
-            if (!is_null($this->database)) {
-                $this->useDatabase($this->database);
-            }
-            if (!$this->redis->ping()) {
-                HttpResponse::return5xx(501, 'Unable to ping to cache server');
-            }
+            $this->redis = new DB_MySQL(
+                $this->hostname,
+                $this->port,
+                $this->username,
+                $this->password,
+                $this->database
+            );
         } catch (\Exception $e) {
             $log = [
                 'datetime' => date('Y-m-d H:i:s'),
                 'input' => HttpRequest::$input,
-                'error' => 'Unable to connect to cache server'
+                'error' => 'Unable to connect to MySQL as cache server'
             ];
             Logs::log('error', json_encode($log));
             HttpResponse::return5xx(501, 'Unable to connect to cache server');
@@ -128,7 +134,7 @@ class Redis extends AbstractCache
     public function useDatabase($database)
     {
         $this->connect();
-        $this->redis->select(getenv($this->database));
+        $this->redis->useDatabase($this->database);
     }
 
     /**
@@ -140,7 +146,8 @@ class Redis extends AbstractCache
     public function cacheExists($key)
     {
         $this->connect();
-        return $this->redis->exists($key);
+        $keyDetails = $this->getTableAndKey($key);
+        return $keyDetails['count'] === 1;
     }
 
     /**
@@ -152,7 +159,16 @@ class Redis extends AbstractCache
     public function getCache($key)
     {
         $this->connect();
-        return $this->redis->get($key);
+        $keyDetails = $this->getTableAndKey($key);
+        if ($keyDetails['count'] === 1) {
+            $sql = "SELECT `value` FROM `{$keyDetails['table']}` WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)";
+            $params = [$keyDetails['key'], $this->ts];
+            $this->redis->execDbQuery($sql, $params);
+            $row = $this->redis->fetch();
+            $this->redis->closeCursor();    
+            return $row['value'];
+        }
+        return false;
     }
 
     /**
@@ -166,11 +182,28 @@ class Redis extends AbstractCache
     public function setCache($key, $value, $expire = null)
     {
         $this->connect();
-        if (is_null($expire)) {
-            return $this->redis->set($key, $value);
+        $keyDetails = $this->getTableAndKey($key);
+        if ($keyDetails['count'] === 1) {
+            $sql = "UPDATE `{$keyDetails['table']}` SET `value` = ?, `ts` = ? WHERE `key` = ?";
+            if (is_null($expire)) {
+                $params = [$value, 0, $keyDetails['key']];
+            } else {
+                $params = [$value, $this->ts + $expire, $keyDetails['key']];
+            }
         } else {
-            return $this->redis->set($key, $value, $expire);
+            $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
+            $params = [$keyDetails['key']];
+            $this->redis->execDbQuery($sql, $params);
+            $this->redis->closeCursor();
+            $sql = "INSERT INTO `{$keyDetails['table']}` SET `value` = ?, `ts` = ?, `key` = ?";
+            if (is_null($expire)) {
+                $params = [$value, 0, $keyDetails['key']];
+            } else {
+                $params = [$value, $this->ts + $expire, $keyDetails['key']];
+            }
         }
+        $this->redis->execDbQuery($sql, $params);
+        $this->redis->closeCursor();
     }
 
     /**
@@ -182,7 +215,11 @@ class Redis extends AbstractCache
     public function deleteCache($key)
     {
         $this->connect();
-        return $this->redis->del($key);
+        $keyDetails = $this->getTableAndKey($key);
+        $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
+        $params = [$keyDetails['key']];
+        $this->redis->execDbQuery($sql, $params);
+        $this->redis->closeCursor();
     }
     
     /**
@@ -195,7 +232,7 @@ class Redis extends AbstractCache
     public function isSetMember($set, $member)
     {
         $this->connect();
-        return $this->redis->sIsMember($set, $member);
+        // return $this->redis->sIsMember($set, $member);
     }
 
     /**
@@ -208,9 +245,32 @@ class Redis extends AbstractCache
     public function setSetMembers($key, $valueArray)
     {
         $this->connect();
-        $this->deleteCache($key);
-        foreach ($valueArray as $value) {
-            $this->redis->sAdd($key, $value);
+        // $this->deleteCache($key);
+        // foreach ($valueArray as $value) {
+        //     $this->redis->sAdd($key, $value);
+        // }
+    }
+
+    public function getTableAndKey($key)
+    {
+        $keyArr = explode(':',$key);
+        if (count($keyArr) === 2) {
+            $table = $keyArr[0];
+            $key = $keyArr[1];
+        } else {
+            $table = 'token';
+            $key = $keyArr[0];
         }
+        $keyDetails = [
+            'table' => $table,
+            'key' => $key
+        ];
+        $sql = "SELECT count(1) as `count` FROM `{$keyDetails['table']}` WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)";
+        $params = [$keyDetails['key'], $this->ts];
+        $this->redis->execDbQuery($sql, $params);
+        $row = $this->redis->fetch();
+        $this->redis->closeCursor();
+        $keyDetails['count'] = $row['count'];
+        return $keyDetails;
     }
 }

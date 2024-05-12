@@ -29,7 +29,7 @@ class Validator
 
     public function __construct()
     {
-        if (Database::$database === 'globalDbName') {
+        if (Database::$database === 'defaultDbDatabase') {
             $this->v = new GlobalValidator();
         } else {
             $this->v = new ClientValidator();

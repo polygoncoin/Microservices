@@ -103,9 +103,10 @@ class Login
     private function process()
     {
         Cache::connect(
-            'Redis',
+            'cacheType',
             'cacheHostname',
             'cachePort',
+            'cacheUsername',
             'cachePassword',
             'cacheDatabase'
         );
@@ -173,8 +174,8 @@ class Login
     private function validateRequestIp()
     {
         // Redis - one can find the userID from username.
-        if ($this->cache->cacheExists("group:{$this->groupId}:cidr")) {
-            $cidrs = json_decode($this->cache->getCache("group:{$this->groupId}:cidr"), true);
+        if ($this->cache->cacheExists("cidr:{$this->groupId}")) {
+            $cidrs = json_decode($this->cache->getCache("cidr:{$this->groupId}"), true);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
                 if (cidr_match($this->requestIp, $cidr)) {
@@ -228,8 +229,8 @@ class Login
     {
         $this->timestamp = time();
         $tokenFound = false;
-        if ($this->cache->cacheExists("user:{$this->userId}:token")) {
-            $tokenDetails = json_decode($this->cache->getCache("user:{$this->userId}:token"), true);
+        if ($this->cache->cacheExists("usertoken:{$this->userId}")) {
+            $tokenDetails = json_decode($this->cache->getCache("usertoken:{$this->userId}"), true);
             if ($this->cache->cacheExists($tokenDetails['token'])) {
                 if((EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
                     $tokenFound = true;
@@ -241,7 +242,7 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->cache->setCache("user:{$this->userId}:token", json_encode($tokenDetails), EXPIRY_TIME);
+            $this->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), EXPIRY_TIME);
             $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
@@ -256,11 +257,12 @@ class Login
     private function updateDB($tokenDetails)
     {
         Database::connect(
-            'MySQL',
-            'dbHostnameDefault',
-            'dbUsernameDefault',
-            'dbPasswordDefault',
-            'globalDbName'
+            'defaultDbType',
+            'defaultDbHostname',
+            'defaultDbPort',
+            'defaultDbUsername',
+            'defaultDbPassword',
+            'defaultDbDatabase'
         );
         $this->db = Database::getObject();
         $userTable = getenv('users');

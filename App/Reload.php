@@ -63,19 +63,21 @@ class Reload
     private function process($refresh = 'all', $idsString = null)
     {
         Cache::connect(
-            'Redis',
+            'cacheType',
             'cacheHostname',
             'cachePort',
+            'cacheUsername',
             'cachePassword',
             'cacheDatabase'
         );
         $this->cache = Cache::getObject();
         Database::connect(
-            'MySQL',
-            'dbHostnameDefault',
-            'dbUsernameDefault',
-            'dbPasswordDefault',
-            'globalDbName'
+            'defaultDbType',
+            'defaultDbHostname',
+            'defaultDbPort',
+            'defaultDbUsername',
+            'defaultDbPassword',
+            'defaultDbDatabase'
         );
         $this->db = Database::getObject();
         $ids = [];
@@ -187,8 +189,7 @@ class Reload
             if (!empty($row['allowed_ips'])) {
                 $cidr = json_decode(trim($cidr), true);
                 if (count($cidr)>0) {
-                    $this->cache->setCache("group:{$row['group_id']}:cidr", json_encode($cidr));
-
+                    $this->cache->setCache("cidr:{$row['group_id']}", json_encode($cidr));
                 }
             }
         }

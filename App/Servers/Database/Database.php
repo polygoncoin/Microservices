@@ -35,6 +35,13 @@ class Database
     public static $hostname = null;
 
     /**
+     * Database port
+     *
+     * @var string
+     */
+    public static $port = null;
+
+    /**
      * Database username
      *
      * @var string
@@ -73,20 +80,23 @@ class Database
     public static function connect(
         $dbType,
         $hostname,
+        $port,
         $username,
         $password,
         $database = null
     )
     {
-        self::$dbType = $dbType;
+        self::$dbType = getenv($dbType);
         self::$hostname = $hostname;
+        self::$port = $port;
         self::$username = $username;
         self::$password = $password;
         self::$database = $database;
 
-        if($dbType === 'MySQL') {
+        if(self::$dbType === 'MySQL') {
             self::$db = new MySQL(
                 $hostname,
+                $port,
                 $username,
                 $password,
                 $database
