@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.32, for macos12.6 (x86_64)
 --
--- Host: localhost    Database: global
+-- Host: localhost    Database: cache
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
@@ -23,8 +23,8 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `key` varchar(255) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
+  `key` VARCHAR(255) NOT NULL,
+  `value` TEXT DEFAULT NULL,
   `ts` int DEFAULT 0,
   KEY (`key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
@@ -38,8 +38,8 @@ DROP TABLE IF EXISTS `group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `group` (
-  `key` varchar(255) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
+  `key` INT NOT NULL,
+  `value` TEXT DEFAULT NULL,
   `ts` int DEFAULT 0,
   KEY (`key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
@@ -53,8 +53,8 @@ DROP TABLE IF EXISTS `cidr`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cidr` (
-  `key` varchar(255) NOT NULL,
-  `value` varchar(255) DEFAULT NULL,
+  `key` INT NOT NULL,
+  `value` TEXT DEFAULT NULL,
   `ts` int DEFAULT 0,
   KEY (`key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
@@ -68,7 +68,7 @@ DROP TABLE IF EXISTS `usertoken`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `usertoken` (
-  `key` varchar(255) NOT NULL,
+  `key` INT NOT NULL,
   `value` TEXT DEFAULT NULL,
   `ts` int DEFAULT 0,
   KEY (`key`)
