@@ -157,6 +157,7 @@ class Reload
                 G.client_id,
                 C.db_server_type,
                 C.db_hostname,
+                C.db_port,
                 C.db_username,
                 C.db_password,
                 C.db_database                
