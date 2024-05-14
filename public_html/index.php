@@ -27,7 +27,8 @@ header("Pragma: no-cache");
 
 $jsonObj = App\HttpResponse::getJsonObject();
 $jsonObj->startAssoc();
-$jsonObj->startAssoc('output');
+$jsonObj->addKeyValue('Status', 200);
+$jsonObj->startAssoc('Output');
 
 switch (true) {
     case ROUTE === '/login':
@@ -69,13 +70,15 @@ if (OUTPUT_PERFORMANCE_STATS) {
     $time = ($end_time - $start_time) * 1000;
     $memory = (memory_get_peak_usage()/1000);
 
-    $jsonObj->startAssoc('perfornamce-stats');
+    $jsonObj->startAssoc('Stats');
+    $jsonObj->startAssoc('Performance');
     $jsonObj->encode(
         [
             'total-time-taken' => ceil($time) . ' ms',
             'peak-memory-usage' => ceil($memory) . ' KB'
         ]
     );
+    $jsonObj->endAssoc();
     $jsonObj->endAssoc();
 }
 
