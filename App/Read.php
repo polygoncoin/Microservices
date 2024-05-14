@@ -66,18 +66,14 @@ class Read
         $readSqlConfig = include HttpRequest::$__file__;
         
         // Use results in where clause of sub queries recursively.
-        if (isset($readSqlConfig['useHierarchy']) && $readSqlConfig['useHierarchy'] === true) {
-            HttpRequest::$input['useHierarchy'] = true;
-        } else {
-            HttpRequest::$input['useHierarchy'] = false;
-        }
+        $_useHierarchy = $this->getUseHierarchy($readSqlConfig);
 
         // Set required fields.
-        HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig);
+        HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig, true, $_useHierarchy);
 
         // Start Read operation.
         $keys = [];
-        $this->readDB($readSqlConfig, true, $keys);
+        $this->readDB($readSqlConfig, true, $keys, $_useHierarchy);
     }
 
     /**
@@ -86,9 +82,10 @@ class Read
      * @param array $readSqlConfig Config from file
      * @param bool  $start         true to represent the first call in recursion.
      * @param array $keys          Keys in recursion.
+     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function readDB(&$readSqlConfig, $start, &$keys)
+    private function readDB(&$readSqlConfig, $start, &$keys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         if ($isAssoc) {
@@ -121,8 +118,8 @@ class Read
                     }            
                     break;
             }
-            if (!HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
-                $this->callReadDB($readSqlConfig, $keys, $row);
+            if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
+                $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
             }
         }
     }
@@ -130,11 +127,12 @@ class Read
     /**
      * Function to fetch single record.
      *
-     * @param array  $readSqlConfig Read SQL configuration.
-     * @param array  $keys           Module Keys in recursion.
+     * @param array $readSqlConfig Read SQL configuration.
+     * @param array $keys          Module Keys in recursion.
+     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function fetchSingleRow(&$readSqlConfig, &$keys)
+    private function fetchSingleRow(&$readSqlConfig, &$keys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
@@ -156,8 +154,8 @@ class Read
             $this->jsonObj->addKeyValue($key, $value);
         }
         $this->db->closeCursor();
-        if (HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
-            $this->callReadDB($readSqlConfig, $keys, $row);
+        if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
+            $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
         }
     }
 
@@ -192,15 +190,16 @@ class Read
     /**
      * Function to fetch multiple record.
      *
-     * @param array  $readSqlConfig Read SQL configuration.
-     * @param array  $keys          Module Keys in recursion.
+     * @param array $readSqlConfig Read SQL configuration.
+     * @param array $keys          Module Keys in recursion.
+     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function fetchMultipleRows(&$readSqlConfig, &$keys)
+    private function fetchMultipleRows(&$readSqlConfig, &$keys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
 
-        if (!HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
+        if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
             HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
@@ -231,8 +230,8 @@ class Read
             } else {
                 $this->jsonObj->encode($row);
             }
-            if (HttpRequest::$input['useHierarchy'] && isset($readSqlConfig['subQuery'])) {
-                $this->callReadDB($readSqlConfig, $keys, $row);
+            if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
+                $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
             }
         }
         $stmt->closeCursor();
@@ -241,13 +240,14 @@ class Read
     /**
      * Function to reset data for module key wise.
      *
-     * @param array  $keys Module Keys in recursion.
-     * @param array  $row  Row data fetched from DB.
+     * @param array $keys         Module Keys in recursion.
+     * @param array $row          Row data fetched from DB.
+     * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function resetFetchData(&$keys, $row)
+    private function resetFetchData(&$keys, $row, $useHierarchy)
     {
-        if (HttpRequest::$input['useHierarchy']) {
+        if ($useHierarchy) {
             if (count($keys) === 0) {
                 HttpRequest::$input['hierarchyData'] = [];
                 HttpRequest::$input['hierarchyData']['root'] = [];
@@ -266,20 +266,22 @@ class Read
     /**
      * Validate and call readDB
      *
-     * @param array  $readSqlConfig Read SQL configuration.
-     * @param array  $keys          Module Keys in recursion.
-     * @param array  $row           Row data fetched from DB.
+     * @param array $readSqlConfig Read SQL configuration.
+     * @param array $keys          Module Keys in recursion.
+     * @param array $row           Row data fetched from DB.
+     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function callReadDB(&$readSqlConfig, &$keys, &$row)
+    private function callReadDB(&$readSqlConfig, &$keys, &$row, $useHierarchy)
     {
-        if (HttpRequest::$input['useHierarchy']) {
-            $this->resetFetchData($keys, $row);
+        if ($useHierarchy) {
+            $this->resetFetchData($keys, $row, $useHierarchy);
         }
         if (isset($readSqlConfig['subQuery']) && $this->isAssoc($readSqlConfig['subQuery'])) {
             foreach ($readSqlConfig['subQuery'] as $subQuery_key => $readSqlDetails) {
                 $k = array_merge($keys, [$subQuery_key]);
-                $this->readDB($readSqlDetails, false, $k);
+                $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($readSqlDetails);
+                $this->readDB($readSqlDetails, false, $k, $_useHierarchy);
             }
         }
     }

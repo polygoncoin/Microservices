@@ -75,14 +75,10 @@ class Write
         $writeSqlConfig = include HttpRequest::$__file__;
 
         // Use results in where clause of sub queries recursively.
-        if (isset($writeSqlConfig['useHierarchy']) && $writeSqlConfig['useHierarchy'] === true) {
-            HttpRequest::$input['useHierarchy'] = true;
-        } else {
-            HttpRequest::$input['useHierarchy'] = false;
-        }
+        $_useHierarchy = $this->getUseHierarchy($writeSqlConfig);
 
         // Set required fields.
-        HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig);
+        HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig, true, $_useHierarchy);
 
         // Perform action
         $response = [];
@@ -101,7 +97,7 @@ class Write
                 }
             }
             $this->db->begin();
-            $res = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr']);
+            $res = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr'], $_useHierarchy);
             $this->db->commit();
             if (!empty($res)) {
                 $response[] = $res;
@@ -120,11 +116,12 @@ class Write
     /**
      * Function to insert/update sub queries recursively.
      *
-     * @param array $writeSqlConfig  Config from file
-     * @param bool  $payload         Payload.
+     * @param array $writeSqlConfig Config from file
+     * @param bool  $payload        Payload.
+     * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function writeDB(&$writeSqlConfig, &$payloads)
+    private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy)
     {
         $response = [];
         $isAssoc = $this->isAssoc($payloads);
@@ -145,7 +142,7 @@ class Write
         }
         if (isset($writeSqlConfig['subQuery'])) {
             foreach ($writeSqlConfig['subQuery'] as $module => &$writeSqlDetails) {
-                if (HttpRequest::$input['useHierarchy']) {
+                if ($useHierarchy) { // use parent data of a payload.
                     if (isset(HttpRequest::$input['payload'][$module])) {
                         $module_payloads = &HttpRequest::$input['payload'][$module];
                     } else {
@@ -154,7 +151,8 @@ class Write
                 } else {
                     $module_payloads = &HttpRequest::$input['payload'];
                 }
-                $res = $this->writeDB($writeSqlDetails, $module_payloads);
+                $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($writeSqlDetails);
+                $res = $this->writeDB($writeSqlDetails, $module_payloads, $_useHierarchy);
                 if (!empty($res)) {
                     if ($isAssoc) {
                         $response[$module] = $res;

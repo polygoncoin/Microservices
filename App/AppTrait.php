@@ -29,11 +29,12 @@ trait AppTrait
     /**
      * Sets required payload.
      *
-     * @param array $sqlConfig Config from file
-     * @param bool  $first     true to represent the first call in recursion.
+     * @param array $sqlConfig    Config from file
+     * @param bool  $first        true to represent the first call in recursion.
+     * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function getRequired(&$sqlConfig, $first = true)
+    private function getRequired(&$sqlConfig, $first = true, $useHierarchy)
     {
         $requiredFields = [];
         if (isset($sqlConfig['payload'])) {
@@ -80,7 +81,7 @@ trait AppTrait
                     }
                 }
             }
-            if (!$first && HttpRequest::$input['useHierarchy'] && !$foundHierarchy) {
+            if (!$first && $useHierarchy && !$foundHierarchy) {
                 HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
             }
         }
@@ -89,7 +90,8 @@ trait AppTrait
                 HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
             }
             foreach ($sqlConfig['subQuery'] as &$sqlDetails) {
-                $sub_requiredFields = $this->getRequired($sqlDetails, false);
+                $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($sqlDetails);
+                $sub_requiredFields = $this->getRequired($sqlDetails, false, $_useHierarchy);
                 foreach ($sub_requiredFields as $field) {
                     if (!in_array($field, $requiredFields)) {
                         $requiredFields[] = $field;
@@ -228,5 +230,20 @@ trait AppTrait
             }
         }
         return $assoc;
+    }
+
+    /**
+     * Use results in where clause of sub queries recursively
+     *
+     * @param array $sqlConfig Config from file
+     * @return bool
+     */
+    private function getUseHierarchy(&$sqlConfig)
+    {
+        $useHierarchy = false;
+        if (isset($sqlConfig['useHierarchy']) && $sqlConfig['useHierarchy'] === true) {
+            $useHierarchy = true;
+        }
+        return $useHierarchy;
     }
 }
