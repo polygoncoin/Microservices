@@ -5,6 +5,7 @@ This very light and easy **Microservices Framework** package can be configured v
 -  **/.env.example** Create a copy of this file as **.env**
 -  **/global.sql** Import this SQL file on your **MySQL global** instance
 -  **/client_master.sql** Import this SQL file on your **MySQL client** instance
+-  **/cache.sql** Import this SQL file for managing cache (e.g, token details etc.) in **MySQL** instance.
  
 ## .env.example
 - One needs to make a copy of this file as .env and make changes in this newly created file. This file will contain configurations pertaining to your APIs using Cache and DB servers.

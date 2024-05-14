@@ -1,9 +1,20 @@
 <?php
+ob_start();
+define('PRODUCTION', 1);
+define('DEVELOPMENT', 0);
+
 define('EXPIRY_TIME', 3600);
 define('__DOC_ROOT__', dirname(__DIR__));
 define('REQUIRED', true);
 
 require_once __DOC_ROOT__ . '/autoload.php';
+
+define('ENVIRONMENT', getenv('ENVIRONMENT'));
+define('OUTPUT_PERFORMANCE_STATS', getenv('OUTPUT_PERFORMANCE_STATS'));
+
+if (OUTPUT_PERFORMANCE_STATS) {
+    $start_time = microtime(true);
+}
 
 // REQUEST_URI key in URL
 define('ROUTE_URL_PARAM', 'r');
@@ -14,7 +25,9 @@ header('Content-Type: application/json;charset=utf-8');
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 
-ob_start();
+$jsonObj = App\HttpResponse::getJsonObject();
+$jsonObj->startAssoc();
+$jsonObj->startAssoc('output');
 
 switch (true) {
     case ROUTE === '/login':
@@ -48,3 +61,23 @@ switch (true) {
         $api->init();
         break;
 }
+
+$jsonObj->endAssoc();
+
+if (OUTPUT_PERFORMANCE_STATS) {
+    $end_time = microtime(true);
+    $time = ($end_time - $start_time) * 1000;
+    $memory = (memory_get_peak_usage()/1000);
+
+    $jsonObj->startAssoc('perfornamce-stats');
+    $jsonObj->encode(
+        [
+            'total-time-taken' => ceil($time) . ' ms',
+            'peak-memory-usage' => ceil($memory) . ' KB'
+        ]
+    );
+    $jsonObj->endAssoc();
+}
+
+$jsonObj->endAssoc();
+$jsonObj = null;

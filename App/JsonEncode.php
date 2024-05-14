@@ -1,6 +1,9 @@
 <?php
 namespace App;
 
+use App\Logs;
+use App\HttpRequest;
+
 /**
  * Creates JSON
  *
@@ -201,7 +204,16 @@ class JSON
      */
     private function streamJson()
     {
-        if (empty(ob_get_contents())) {
+        $str = ob_get_clean();
+        if (!empty($str) && ENVIRONMENT === PRODUCTION) {
+            $log = [
+                'datetime' => date('Y-m-d H:i:s'),
+                'input' => HttpRequest::$input,
+                'error' => $str
+            ];
+            Logs::log('error', json_encode($log));
+            HttpResponse::return5xx(501, 'Error: Facing server side error with API.');
+        } else if (empty($str)) {
             // end the json
             // rewind the temp stream.
             rewind($this->tempStream);
@@ -209,8 +221,9 @@ class JSON
             $outputStream = fopen("php://output", "w+b");
             stream_copy_to_stream($this->tempStream, $outputStream);
             fclose($outputStream);
+        } else {
+            echo $str;
         }
-        fclose($this->tempStream);
     }
 
     /**
@@ -239,6 +252,7 @@ class JSON
     public function __destruct() 
     { 
         $this->end();
+        fclose($this->tempStream);
     }
 }
 
