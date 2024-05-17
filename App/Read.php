@@ -92,7 +92,7 @@ class Read
             switch ($readSqlConfig['mode']) {
                 case 'singleRowFormat':
                     $this->jsonObj->startAssoc();
-                    $this->fetchSingleRow($readSqlConfig, $keys);
+                    $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
                     $this->jsonObj->endAssoc();
                     break;
                 case 'multipleRowFormat':

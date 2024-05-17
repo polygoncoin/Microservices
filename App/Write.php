@@ -86,7 +86,10 @@ class Write
             HttpRequest::$input['payload'] = HttpRequest::$input['ith_payloadArr'];
             if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
                 if (count(HttpRequest::$input['payload']) !== 1) {
-                    $response[] = ['Payload' => HttpRequest::$input['ith_payloadArr'], 'Error' => 'Invalid payload: PATCH can update only single field'];
+                    $this->jsonObj->startAssoc();
+                    $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
+                    $this->jsonObj->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
+                    $this->jsonObj->endAssoc();
                     continue;
                 }
             }
@@ -94,28 +97,22 @@ class Write
             if (isset($writeSqlConfig['validate'])) {
                 list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
                 if ($isValidData !== true) {
-                    return ['data' => HttpRequest::$input['payload'], 'Error' => $errors];
+                    $this->jsonObj->startAssoc();
+                    $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
+                    $this->jsonObj->addKeyValue('Error', $errors);
+                    $this->jsonObj->endAssoc();
+                    continue;
                 }
             }
             $this->db->begin();
-            $res = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr'], $_useHierarchy);
+            $response = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr'], $_useHierarchy);
             $this->db->commit();
-            if (!empty($res)) {
-                $response[] = [
-                    'Payload' => HttpRequest::$input['ith_payloadArr'],
-                    'Response' => $res
-                ];
+            if (!empty($response)) {
+                $this->jsonObj->startAssoc();
+                $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
+                $this->jsonObj->addKeyValue('Response', $response);
+                $this->jsonObj->endAssoc();
             }
-        }
-        if (!empty($response)) {
-            if (HttpRequest::$input['payloadArrType'] === 'Object') {
-                $this->jsonObj->addKeyValue('Payload', $response[0]['Payload']);
-                $this->jsonObj->addKeyValue('Response', $response[0]['Response']);
-            } else {
-                $this->jsonObj->encode($response);
-            }
-        } else {
-            $this->jsonObj->encode(['Status' => 200, 'Message' => 'Success']);
         }
     }
 

@@ -27,8 +27,8 @@ header("Pragma: no-cache");
 
 $jsonObj = App\HttpResponse::getJsonObject();
 $jsonObj->startAssoc();
-$jsonObj->addKeyValue('Status', 200);
-$jsonObj->startAssoc('Output');
+//$jsonObj->addKeyValue('Status', 200);
+$jsonObj->startArray('Output');
 
 switch (true) {
     case ROUTE === '/login':
@@ -63,7 +63,7 @@ switch (true) {
         break;
 }
 
-$jsonObj->endAssoc();
+$jsonObj->endArray();
 
 if (OUTPUT_PERFORMANCE_STATS) {
     $end_time = microtime(true);
