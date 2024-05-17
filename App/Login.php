@@ -255,10 +255,10 @@ class Login
             $this->updateDB($tokenDetails);
         }
         $output = [
-            'token' => $tokenDetails['token'],
-            'expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
+            'Token' => $tokenDetails['token'],
+            'Expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
         ];
-        $this->jsonObj->encode($output);
+        $this->jsonObj->addKeyValue('Results', $output);
     }
 
     private function updateDB($tokenDetails)

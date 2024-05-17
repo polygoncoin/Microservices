@@ -91,7 +91,11 @@ class Read
         if ($isAssoc) {
             switch ($readSqlConfig['mode']) {
                 case 'singleRowFormat':
-                    $this->jsonObj->startAssoc();
+                    if ($start) {
+                        $this->jsonObj->startAssoc('Results');
+                    } else {
+                        $this->jsonObj->startAssoc();
+                    }
                     $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
                     $this->jsonObj->endAssoc();
                     break;
@@ -99,9 +103,8 @@ class Read
                     $keysCount = count($keys)-1;
                     if ($start) {
                         if (isset($readSqlConfig['countQuery'])) {
-                            $this->jsonObj->startAssoc();
                             $this->fetchRowsCount($readSqlConfig);
-                            $this->jsonObj->startArray('data');
+                            $this->jsonObj->startArray('Results');
                         } else {
                             $this->jsonObj->startArray();
                         }
@@ -113,9 +116,6 @@ class Read
                     if (!$start) {
                         $this->jsonObj->endAssoc();
                     }
-                    if (isset($readSqlConfig['countQuery'])) {
-                        $this->jsonObj->endAssoc();
-                    }            
                     break;
             }
             if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {

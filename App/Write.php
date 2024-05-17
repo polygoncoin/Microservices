@@ -80,8 +80,13 @@ class Write
         // Set required fields.
         HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig, true, $_useHierarchy);
 
+        if (HttpRequest::$input['payloadArrType'] === 'Object') {
+            $this->jsonObj->startAssoc('Results');
+        } else {
+            $this->jsonObj->startArray('Results');
+        }
+
         // Perform action
-        $response = [];
         foreach (HttpRequest::$input['payloadArr'] as &HttpRequest::$input['ith_payloadArr']) {
             HttpRequest::$input['payload'] = HttpRequest::$input['ith_payloadArr'];
             if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
@@ -108,11 +113,20 @@ class Write
             $response = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr'], $_useHierarchy);
             $this->db->commit();
             if (!empty($response)) {
-                $this->jsonObj->startAssoc();
+                if (HttpRequest::$input['payloadArrType'] !== 'Object') {
+                    $this->jsonObj->startAssoc();
+                }
                 $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
                 $this->jsonObj->addKeyValue('Response', $response);
-                $this->jsonObj->endAssoc();
+                if (HttpRequest::$input['payloadArrType'] !== 'Object') {
+                    $this->jsonObj->endAssoc();
+                }
             }
+        }
+        if (HttpRequest::$input['payloadArrType'] === 'Object') {
+            $this->jsonObj->endAssoc();
+        } else {
+            $this->jsonObj->endArray();
         }
     }
 
