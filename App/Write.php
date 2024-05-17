@@ -91,6 +91,7 @@ class Write
             HttpRequest::$input['payload'] = HttpRequest::$input['ith_payloadArr'];
             if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
                 if (count(HttpRequest::$input['payload']) !== 1) {
+                    HttpResponse::$httpStatus = 400;
                     $this->jsonObj->startAssoc();
                     $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
                     $this->jsonObj->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
@@ -102,6 +103,7 @@ class Write
             if (isset($writeSqlConfig['validate'])) {
                 list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
                 if ($isValidData !== true) {
+                    HttpResponse::$httpStatus = 400;
                     $this->jsonObj->startAssoc();
                     $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
                     $this->jsonObj->addKeyValue('Error', $errors);

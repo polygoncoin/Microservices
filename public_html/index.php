@@ -63,7 +63,7 @@ switch (true) {
 }
 
 $jsonObj->endAssoc();
-$jsonObj->addKeyValue('Status', $jsonObj->httpStatus);
+$jsonObj->addKeyValue('Status', App\HttpResponse::$httpStatus);
 
 if (OUTPUT_PERFORMANCE_STATS) {
     $end_time = microtime(true);

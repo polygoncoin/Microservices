@@ -20,6 +20,13 @@ use App\Logs;
 class HttpResponse
 {
     /**
+     * Current JsonEncodeObject object
+     *
+     * @var object
+     */
+    public static $httpStatus = 200;
+
+    /**
      * Return JSON object.
      */
     public static function getJsonObject()
