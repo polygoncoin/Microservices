@@ -27,7 +27,6 @@ header("Pragma: no-cache");
 
 $jsonObj = App\HttpResponse::getJsonObject();
 $jsonObj->startAssoc();
-//$jsonObj->addKeyValue('Status', 200);
 $jsonObj->startAssoc('Output');
 
 switch (true) {
@@ -64,6 +63,7 @@ switch (true) {
 }
 
 $jsonObj->endAssoc();
+$jsonObj->addKeyValue('Status', $jsonObj->httpStatus);
 
 if (OUTPUT_PERFORMANCE_STATS) {
     $end_time = microtime(true);
@@ -81,6 +81,5 @@ if (OUTPUT_PERFORMANCE_STATS) {
     $jsonObj->endAssoc();
     $jsonObj->endAssoc();
 }
-
 $jsonObj->endAssoc();
 $jsonObj = null;

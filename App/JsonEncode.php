@@ -44,6 +44,13 @@ class JSON
     private $currentObject = null;
 
     /**
+     * Current JsonEncodeObject object
+     *
+     * @var object
+     */
+    public $httpStatus = 200;
+
+    /**
      * JsonEncode constructor
      */
     public function __construct()
