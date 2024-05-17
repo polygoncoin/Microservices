@@ -108,7 +108,7 @@ class Read
                     } else {
                         $this->jsonObj->startArray($keys[$keysCount]);
                     }
-                    $this->fetchMultipleRows($readSqlConfig, $keys);
+                    $this->fetchMultipleRows($readSqlConfig, $keys, $useHierarchy);
                     $this->jsonObj->endArray();
                     if (!$start) {
                         $this->jsonObj->endAssoc();

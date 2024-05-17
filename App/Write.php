@@ -86,7 +86,8 @@ class Write
             HttpRequest::$input['payload'] = HttpRequest::$input['ith_payloadArr'];
             if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
                 if (count(HttpRequest::$input['payload']) !== 1) {
-                    return ['data' => HttpRequest::$input['payload'], 'Error' => 'Invalid payload: PATCH can update only single field'];
+                    $response[] = ['Payload' => HttpRequest::$input['ith_payloadArr'], 'Error' => 'Invalid payload: PATCH can update only single field'];
+                    continue;
                 }
             }
             $isValidData = true;
@@ -100,14 +101,19 @@ class Write
             $res = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr'], $_useHierarchy);
             $this->db->commit();
             if (!empty($res)) {
-                $response[] = $res;
+                $response[] = [
+                    'Payload' => HttpRequest::$input['ith_payloadArr'],
+                    'Response' => $res
+                ];
             }
         }
         if (!empty($response)) {
             if (HttpRequest::$input['payloadArrType'] === 'Object') {
-                $response = $response[0];
+                $this->jsonObj->addKeyValue('Payload', $response[0]['Payload']);
+                $this->jsonObj->addKeyValue('Response', $response[0]['Response']);
+            } else {
+                $this->jsonObj->encode($response);
             }
-            $this->jsonObj->encode($response);
         } else {
             $this->jsonObj->encode(['Status' => 200, 'Message' => 'Success']);
         }

@@ -86,6 +86,13 @@ class Login
     private $timestamp;
     
     /**
+     * JsonEncode class object
+     *
+     * @var object
+     */
+    public $jsonObj = null;
+
+    /**
      * Login Initialization
      *
      * @return void
@@ -111,6 +118,7 @@ class Login
             'cacheDatabase'
         );
         $this->cache = Cache::getObject();
+        $this->jsonObj = HttpResponse::getJsonObject();
         $this->performBasicCheck();
         $this->loadUser();
         $this->validateRequestIp();
@@ -246,12 +254,11 @@ class Login
             $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
-        echo json_encode(
-            [
-                'token' => $tokenDetails['token'],
-                'expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
-            ]
-        );
+        $output = [
+            'token' => $tokenDetails['token'],
+            'expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
+        ];
+        $this->jsonObj->encode($output);
     }
 
     private function updateDB($tokenDetails)
