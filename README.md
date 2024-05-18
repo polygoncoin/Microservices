@@ -5,7 +5,7 @@ This very light and easy **Microservices Framework** package can be configured v
 -  **/.env.example** Create a copy of this file as **.env**
 -  **/global.sql** Import this SQL file on your **MySQL global** instance
 -  **/client_master.sql** Import this SQL file on your **MySQL client** instance
--  **/cache.sql** Import this SQL file for managing cache (e.g, token details etc.) in **MySQL** instance.
+-  **/cache.sql** Import this SQL file for managing cache (e.g, token details etc.) in **MySQL** instance instead of Redis (To be configured in .env)
  
 ## .env.example
 - One needs to make a copy of this file as .env and make changes in this newly created file. This file will contain configurations pertaining to your APIs using Cache and DB servers.
@@ -320,4 +320,41 @@ Other than these, one can use keyword **custom**, **functions** as below.
 	'approved_by' => ['readOnlySession', 'id'],
 	'updated_date' => ['custom', date('Y-m-d')]
 ],
+```
+## useHierarchy in /Config/Queries/*
+### GET - READ
+- Microservices/Config/Queries/ClientDB/GET/Category.php
+In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
+```
+                'parent_id' => ['hierarchyData', 'root:id'],
+```
+### POST/PUT/PATCH/DELETE - Write
+- Microservices/Config/Queries/ClientDB/POST/Category.php
+Here one request can handle one to many hierarchy to any number of levels as per configuration.
+Sample data payload below.
+```
+{"data":
+    {
+       "name":"wewe",
+       "sub":[
+           {
+              "subname":"email1",
+              "subsub":[
+                 {"subsubname":"address11"},
+                 {"subsubname":"address12"},
+                 ...
+              ]
+           },
+           {
+              "subname":"email2",
+              "subsub":[
+                 {"subsubname":"address21"},
+                 {"subsubname":"address21"},
+                 ...
+              ]
+           },
+           ...
+        ]
+    }
+}
 ```
