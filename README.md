@@ -331,7 +331,7 @@ In this file one can confirm how previous select data is used recursively in sub
 ### POST/PUT/PATCH/DELETE - Write
 - Microservices/Config/Queries/ClientDB/POST/Category.php
 Here one request can handle one to many hierarchy to any number of levels as per configuration.
-Sample data payload below.
+Sample data payload below
 ```
 {"data":
     {

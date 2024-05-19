@@ -87,13 +87,13 @@ class Write
         }
 
         // Perform action
-        foreach (HttpRequest::$input['payloadArr'] as &HttpRequest::$input['ith_payloadArr']) {
-            HttpRequest::$input['payload'] = HttpRequest::$input['ith_payloadArr'];
+        foreach (HttpRequest::$input['payloadArr'] as &$payload) {
+            HttpRequest::$input['payload'] = $payload;
             if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
                 if (count(HttpRequest::$input['payload']) !== 1) {
                     HttpResponse::$httpStatus = 400;
                     $this->jsonObj->startAssoc();
-                    $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
+                    $this->jsonObj->addKeyValue('Payload', $payload);
                     $this->jsonObj->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
                     $this->jsonObj->endAssoc();
                     continue;
@@ -105,20 +105,20 @@ class Write
                 if ($isValidData !== true) {
                     HttpResponse::$httpStatus = 400;
                     $this->jsonObj->startAssoc();
-                    $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
+                    $this->jsonObj->addKeyValue('Payload', $payload);
                     $this->jsonObj->addKeyValue('Error', $errors);
                     $this->jsonObj->endAssoc();
                     continue;
                 }
             }
             $this->db->begin();
-            $response = $this->writeDB($writeSqlConfig, HttpRequest::$input['ith_payloadArr'], $_useHierarchy);
+            $response = $this->writeDB($writeSqlConfig, $payload, $_useHierarchy);
             $this->db->commit();
             if (!empty($response)) {
                 if (HttpRequest::$input['payloadArrType'] !== 'Object') {
                     $this->jsonObj->startAssoc();
                 }
-                $this->jsonObj->addKeyValue('Payload', HttpRequest::$input['ith_payloadArr']);
+                $this->jsonObj->addKeyValue('Payload', $payload);
                 $this->jsonObj->addKeyValue('Response', $response);
                 if (HttpRequest::$input['payloadArrType'] !== 'Object') {
                     $this->jsonObj->endAssoc();
@@ -144,7 +144,8 @@ class Write
     {
         $response = [];
         $isAssoc = $this->isAssoc($payloads);
-        foreach (($isAssoc ? [$payloads] : $payloads) as &HttpRequest::$input['payload']){
+        foreach (($isAssoc ? [$payloads] : $payloads) as &$payload){
+            HttpRequest::$input['payload'] = $payload;
             // Get Sql and Params
             list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
             $this->db->execDbQuery($sql, $sqlParams);
@@ -153,30 +154,34 @@ class Write
                 if ($isAssoc) {
                     $response = [$writeSqlConfig['insertId'] => $insertId];
                 } else {
-                    $response[] = [$writeSqlConfig['insertId'] => $insertId];
+                    if (!isset($response[$writeSqlConfig['insertId']])) {
+                        $response[$writeSqlConfig['insertId']] = [];
+                    }
+                    $response[$writeSqlConfig['insertId']][] = $insertId;
                 }
                 HttpRequest::$input['insertIdParams'][$writeSqlConfig['insertId']] = $insertId;
             }
             $this->db->closeCursor();
-        }
-        if (isset($writeSqlConfig['subQuery'])) {
-            foreach ($writeSqlConfig['subQuery'] as $module => &$writeSqlDetails) {
-                if ($useHierarchy) { // use parent data of a payload.
-                    if (isset(HttpRequest::$input['payload'][$module])) {
-                        $module_payloads = &HttpRequest::$input['payload'][$module];
+            // subQuery for payload.
+            if (isset($writeSqlConfig['subQuery'])) {
+                foreach ($writeSqlConfig['subQuery'] as $module => &$writeSqlDetails) {
+                    if ($useHierarchy) { // use parent data of a payload.
+                        if (isset($payload[$module])) {
+                            $module_payload = &$payload[$module];
+                        } else {
+                            HttpResponse::return4xx(404, "Invalid payload: Module '{$module}' not supported.");
+                        }
                     } else {
-                        HttpResponse::return5xx(404, 'Invalid Configuration: Data missing in Hierarchy format.');
+                        $module_payload = &$payload;
                     }
-                } else {
-                    $module_payloads = &HttpRequest::$input['payload'];
-                }
-                $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($writeSqlDetails);
-                $res = $this->writeDB($writeSqlDetails, $module_payloads, $_useHierarchy);
-                if (!empty($res)) {
-                    if ($isAssoc) {
-                        $response[$module] = $res;
-                    } else {
-                        $response[] = [$module => $res];
+                    $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($writeSqlDetails);
+                    $res = $this->writeDB($writeSqlDetails, $module_payload, $_useHierarchy);
+                    if (!empty($res)) {
+                        if ($isAssoc) {
+                            $response[$module] = $res;
+                        } else {
+                            $response[] = [$module => $res];
+                        }
                     }
                 }
             }
