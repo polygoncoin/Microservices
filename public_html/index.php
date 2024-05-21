@@ -79,6 +79,9 @@ if (OUTPUT_PERFORMANCE_STATS) {
         ]
     );
     $jsonObj->endAssoc();
+    $jsonObj->startAssoc('getrusage');
+    $jsonObj->encode(getrusage());
+    $jsonObj->endAssoc();
     $jsonObj->endAssoc();
 }
 $jsonObj->endAssoc();

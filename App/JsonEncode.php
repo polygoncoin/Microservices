@@ -48,7 +48,11 @@ class JSON
      */
     public function __construct()
     {
-        $this->tempStream = fopen("php://temp", "w+b");
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $this->tempStream = fopen("php://temp", "w+b");
+        } else {
+            $this->tempStream = fopen("php://memory", "w+b");
+        }
     }
 
     /**
