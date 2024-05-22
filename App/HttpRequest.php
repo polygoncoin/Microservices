@@ -304,10 +304,10 @@ class HttpRequest
         } else {
             // Load Payload
             parse_str(file_get_contents('php://input'), $payloadArr);
-            if (!isset($payloadArr['data'])) {
+            if (!isset($payloadArr['Payload'])) {
                 HttpResponse::return4xx(404, 'Invalid data payload');
             }
-            $payloadArr = json_decode($payloadArr['data'], true);
+            $payloadArr = json_decode($payloadArr['Payload'], true);
             if (is_null($payloadArr)) {
                 HttpResponse::return4xx(404, 'Invalid payload JSON');
             }

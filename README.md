@@ -256,7 +256,7 @@ One can clean the URL by making the required changes in the web server .conf fil
 ### For HTTP POST, PUT, PATCH, and DELETE requests.
 - The JSON payload should be as below.
 ```
-{"data":
+{"Payload":
 	{
 		"key1": "value1",
 		"key2": "value2",
@@ -266,7 +266,7 @@ One can clean the URL by making the required changes in the web server .conf fil
 ```
 - For performing processing of multiple entries one can change to the payload as an array of entries.
 ```
-{"data":
+{"Payload":
 	[
 		{
 			"key1": "value1",
@@ -284,13 +284,13 @@ One can clean the URL by making the required changes in the web server .conf fil
 ```
 **Note:** For the PATCH method one can update a single field at a time.
 ```
-{"data":
+{"Payload":
 	{"key1": "value1"}
 };
 ```
 - For performing the updation of multiple fields one can change the payload as an array of entries for the same {id}.
 ```
-{"data":
+{"Payload":
 	[
 		{"key1": "value1"},
 		{"key2": "value2"},
@@ -341,7 +341,7 @@ Here one request can handle one to many hierarchy to any number of levels as per
 Sample data payload below
 
 ```
-{"data":
+{"Payload":
     {
        "name":"wewe",
        "sub":[
