@@ -101,7 +101,7 @@ class Write
         $response['payload'] = $this->getConfigParams($writeSqlConfig, $useHierarchy);
         $this->jsonObj->startAssoc('Config');
         $this->jsonObj->addKeyValue('Route', $response['uri']);
-        $this->jsonObj->addKeyValue('Payload', $response['payload']);
+        $this->jsonObj->addKeyValue('Data', $response['payload']);
         $this->jsonObj->endAssoc();
     }    
 
