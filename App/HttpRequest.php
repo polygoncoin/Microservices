@@ -22,6 +22,20 @@ use App\Servers\Database\Database;
 class HttpRequest
 {
     /**
+     * Allow config request (global flag from env): 1 = true / 0 = false
+     *
+     * @var bool
+     */
+    public static $allowConfigRequest = 0;
+
+    /**
+     * Is a config request
+     *
+     * @var bool
+     */
+    public static $isConfigRequest = false;
+
+    /**
      * Raw route / Configured Uri
      *
      * @var string
@@ -133,9 +147,11 @@ class HttpRequest
      */
     public static function init()
     {
-        self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
-        self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
-        self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
+        self::$REQUEST_METHOD = REQUEST_METHOD;
+        self::$HTTP_AUTHORIZATION = HTTP_AUTHORIZATION;
+        self::$REMOTE_ADDR = REMOTE_ADDR;
+
+        self::$allowConfigRequest = getenv('allowConfigRequest');
         
         Cache::connect(
             'cacheType',
@@ -245,10 +261,20 @@ class HttpRequest
             HttpResponse::return5xx(501, 'Missing route file for ' . self::$REQUEST_METHOD . ' method');
         }
         self::$routeElements = explode('/', trim(ROUTE, '/'));
+        $routeLastElementPos = count(self::$routeElements) - 1;
+        self::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
         $configuredUri = [];
         foreach(self::$routeElements as $key => $e) {
             $pos = false;
             if (isset($routes[$e])) {
+                if (
+                    self::$allowConfigRequest == 1 &&
+                    self::$isConfigRequest && 
+                    $key === $routeLastElementPos &&
+                    $routes[$e] === true
+                ) {
+                    break;
+                }
                 $configuredUri[] = $e;
                 $routes = &$routes[$e];
                 continue;

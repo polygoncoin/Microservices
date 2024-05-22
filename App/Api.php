@@ -32,7 +32,7 @@ class Api
     public function init()
     {
         HttpRequest::init();
-        $this->process();
+        $this->processApi();
     }
 
     /**
@@ -40,9 +40,15 @@ class Api
      *
      * @return void
      */
-    public function process()
+    private function processApi()
     {
-        $this->setPayload();
+        // Check & Process Upload
+        $this->processBeforePayload();
+
+        // Load Payloads
+        if (!HttpRequest::$isConfigRequest) {
+            HttpRequest::loadPayload();
+        }
 
         switch (HttpRequest::$REQUEST_METHOD) {
             case Constants::READ:
@@ -56,26 +62,17 @@ class Api
                 break;
         }
         $request->init();
-    }
-
-    private function setPayload()
-    {
-        // Check & Process Upload
-        $this->beforePayloadHook();
-
-        // Load Payloads
-        HttpRequest::loadPayload();
 
         // Check & Process Cron / ThirdParty calls.
-        $this->afterPayloadHook();
+        $this->processAfterPayload();
     }
-    
+
     /**
      * Miscellaneous Functionality Before Collecting Payload
      *
      * @return void
      */
-    function beforePayloadHook()
+    private function processBeforePayload()
     {
         switch (HttpRequest::$routeElements[0]) {
             case 'upload':
@@ -102,7 +99,7 @@ class Api
      *
      * @return void
      */
-    function afterPayloadHook()
+    private function processAfterPayload()
     {
 
     }

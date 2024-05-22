@@ -75,10 +75,47 @@ class Write
         $writeSqlConfig = include HttpRequest::$__file__;
 
         // Use results in where clause of sub queries recursively.
-        $_useHierarchy = $this->getUseHierarchy($writeSqlConfig);
+        $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
 
+        if (
+            HttpRequest::$allowConfigRequest &&
+            HttpRequest::$isConfigRequest
+        ) {
+            $this->processWriteConfig($writeSqlConfig, $useHierarchy);
+        } else {
+            $this->processWrite($writeSqlConfig, $useHierarchy);
+        }
+    }
+
+    /**
+     * Process write function for configuration.
+     *
+     * @param array $writeSqlConfig Config from file
+     * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
+     * @return void
+     */
+    private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
+    {
+        $response = [];
+        $response['uri'] = HttpRequest::$configuredUri;
+        $response['payload'] = $this->getConfigParams($writeSqlConfig, $useHierarchy);
+        $this->jsonObj->startAssoc('Config');
+        $this->jsonObj->addKeyValue('Route', $response['uri']);
+        $this->jsonObj->addKeyValue('Payload', $response['payload']);
+        $this->jsonObj->endAssoc();
+    }    
+
+    /**
+     * Process Function to insert/update.
+     *
+     * @param array $writeSqlConfig Config from file
+     * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
+     * @return void
+     */
+    private function processWrite(&$writeSqlConfig, $useHierarchy)
+    {
         // Set required fields.
-        HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig, true, $_useHierarchy);
+        HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
         if (HttpRequest::$input['payloadArrType'] === 'Object') {
             $this->jsonObj->startAssoc('Results');
@@ -112,7 +149,7 @@ class Write
                 }
             }
             $this->db->begin();
-            $response = $this->writeDB($writeSqlConfig, $payload, $_useHierarchy);
+            $response = $this->writeDB($writeSqlConfig, $payload, $useHierarchy);
             $this->db->commit();
             if (!empty($response)) {
                 if (HttpRequest::$input['payloadArrType'] !== 'Object') {
@@ -130,7 +167,7 @@ class Write
         } else {
             $this->jsonObj->endArray();
         }
-    }
+    }    
 
     /**
      * Function to insert/update sub queries recursively.
@@ -144,7 +181,7 @@ class Write
     {
         $response = [];
         $isAssoc = $this->isAssoc($payloads);
-        foreach (($isAssoc ? [$payloads] : $payloads) as &$payload){
+        foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
             HttpRequest::$input['payload'] = $payload;
             // Get Sql and Params
             list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);

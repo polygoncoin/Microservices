@@ -3,8 +3,10 @@ ob_start();
 define('PRODUCTION', 1);
 define('DEVELOPMENT', 0);
 
-define('EXPIRY_TIME', 3600);
+define('TOKEN_EXPIRY_TIME', 3600);
 define('__DOC_ROOT__', dirname(__DIR__));
+
+// Used to flag Payload field is required.
 define('REQUIRED', true);
 
 require_once __DOC_ROOT__ . '/autoload.php';
@@ -16,9 +18,21 @@ if (OUTPUT_PERFORMANCE_STATS) {
     $start_time = microtime(true);
 }
 
-// REQUEST_URI key in URL
-define('ROUTE_URL_PARAM', 'r');
+// USED $_SERVER variables for API's;
+define('REQUEST_METHOD', $_SERVER['REQUEST_METHOD']);
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    define('HTTP_AUTHORIZATION', $_SERVER['HTTP_AUTHORIZATION']);
+} else {
+    define('HTTP_AUTHORIZATION', '');
+}
+// Check request is not from a proxy server.
+if (!isset($_SERVER['REMOTE_ADDR'])) {
+    http_response_code(404);
+}
+define('REMOTE_ADDR', $_SERVER['REMOTE_ADDR']);
 
+// ROUTE_URL_PARAM key in URL
+define('ROUTE_URL_PARAM', 'r');
 define('ROUTE', '/' . trim($_GET[ROUTE_URL_PARAM], '/'));
 
 header('Content-Type: application/json;charset=utf-8');

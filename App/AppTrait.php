@@ -246,4 +246,84 @@ trait AppTrait
         }
         return $useHierarchy;
     }
+
+    /**
+     * Return config par recursively
+     *
+     * @param array $sqlConfig    Config from file
+     * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
+     * @return array
+     */
+    private function getConfigParams(&$sqlConfig, $useHierarchy)
+    {
+        $result = [];
+        if (isset($sqlConfig['payload'])) {
+            foreach ($sqlConfig['payload'] as $var => $payload) {
+                $required = false;
+                $count = count($payload);
+                switch ($count) {
+                    case 3:
+                        list($type, $typeKey, $required) = $payload;
+                        break;
+                    case 2: 
+                        list($type, $typeKey) = $payload;
+                        break;
+                }
+                if ($type === 'payload') {
+                    if ($required && !isset($result[$typeKey])) {
+                        $result[$typeKey] = 'Required';
+                        continue;
+                    }
+                    if (!isset($result[$typeKey])) {
+                        $result[$typeKey] = 'Optional';
+                        continue;
+                    }
+                }
+            }
+        }
+        $foundHierarchy = false;
+        if (isset($sqlConfig['where'])) {
+            foreach ($sqlConfig['where'] as $var => $payload) {
+                $required = false;
+                $count = count($payload);
+                switch ($count) {
+                    case 3:
+                        list($type, $typeKey, $required) = $payload;
+                        break;
+                    case 2: 
+                        list($type, $typeKey) = $payload;
+                        break;
+                }
+                if ($type === 'hierarchyData') {
+                    $foundHierarchy = true;
+                }
+                if ($type === 'payload') {
+                    if ($required && !isset($result[$typeKey])) {
+                        $result[$typeKey] = 'Required';
+                        continue;
+                    }
+                    if (!isset($result[$typeKey])) {
+                        $result[$typeKey] = 'Optional';
+                        continue;
+                    }
+                }
+            }
+        }
+        if (isset($sqlConfig['subQuery'])) {
+            foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
+                $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($sqlDetails);
+                $sub_requiredFields = $this->getConfigParams($sqlDetails, $_useHierarchy);
+                if ($_useHierarchy && !isset($result[$module])) {
+                    $result[$module] = $sub_requiredFields;
+                } else {
+                    foreach ($sub_requiredFields as $field => $required) {
+                        if (!isset($result[$field])) {
+                            $result[$field] = $required;
+                        }    
+                    }
+                }
+            }
+        }
+        return $result;
+    }
 }

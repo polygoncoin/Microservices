@@ -134,13 +134,10 @@ class Login
     private function performBasicCheck()
     {
         // Check request not from proxy.
-        if (!isset($_SERVER['REMOTE_ADDR'])) {
-            http_response_code(404);
-        }
-        $this->requestIp = $_SERVER['REMOTE_ADDR'];
+        $this->requestIp = REMOTE_ADDR;
 
         // Check request method is POST.
-        if ($_SERVER['REQUEST_METHOD'] !== Constants::CREATE) {
+        if (REQUEST_METHOD !== Constants::CREATE) {
             HttpResponse::return4xx(404, 'Invalid request method');
         }
 
@@ -220,7 +217,7 @@ class Login
         while (true) {
             $token = bin2hex(random_bytes(32));
             if (!$this->cache->cacheExists($token)) {
-                $this->cache->setCache($token, '{}', EXPIRY_TIME);
+                $this->cache->setCache($token, '{}', TOKEN_EXPIRY_TIME);
                 $tokenDetails = ['token' => $token, 'timestamp' => $this->timestamp];
                 break;
             }
@@ -240,7 +237,7 @@ class Login
         if ($this->cache->cacheExists("usertoken:{$this->userId}")) {
             $tokenDetails = json_decode($this->cache->getCache("usertoken:{$this->userId}"), true);
             if ($this->cache->cacheExists($tokenDetails['token'])) {
-                if((EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
+                if((TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
                     $tokenFound = true;
                 } else {
                     $this->cache->deleteCache($tokenDetails['token']);
@@ -250,13 +247,13 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), EXPIRY_TIME);
-            $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), EXPIRY_TIME);
+            $this->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), TOKEN_EXPIRY_TIME);
+            $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), TOKEN_EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
         $output = [
             'Token' => $tokenDetails['token'],
-            'Expires' => (EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
+            'Expires' => (TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
         ];
         $this->jsonObj->addKeyValue('Results', $output);
     }

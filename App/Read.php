@@ -66,14 +66,45 @@ class Read
         $readSqlConfig = include HttpRequest::$__file__;
         
         // Use results in where clause of sub queries recursively.
-        $_useHierarchy = $this->getUseHierarchy($readSqlConfig);
+        $useHierarchy = $this->getUseHierarchy($readSqlConfig);
 
+        if (
+            HttpRequest::$allowConfigRequest &&
+            HttpRequest::$isConfigRequest
+        ) {
+            $this->processReadConfig($readSqlConfig, $useHierarchy);
+        } else {
+            $this->processRead($readSqlConfig, $useHierarchy);
+        }
+    }
+
+    /**
+     * Process read function for configuration.
+     *
+     * @param array $readSqlConfig Config from file
+     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @return void
+     */
+    private function processReadConfig(&$readSqlConfig, $useHierarchy)
+    {
+        ;
+    }    
+
+    /**
+     * Process Function for read operation.
+     *
+     * @param array $readSqlConfig Config from file
+     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @return void
+     */
+    private function processRead(&$readSqlConfig, $useHierarchy)
+    {
         // Set required fields.
-        HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig, true, $_useHierarchy);
+        HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
 
         // Start Read operation.
         $keys = [];
-        $this->readDB($readSqlConfig, true, $keys, $_useHierarchy);
+        $this->readDB($readSqlConfig, true, $keys, $useHierarchy);
     }
 
     /**
