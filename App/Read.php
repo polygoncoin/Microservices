@@ -58,7 +58,7 @@ class Read
     public function init()
     {
         $this->globalDB = getenv('defaultDbDatabase');
-        $this->clientDB = getenv(HttpRequest::$clientDatabase);
+        $this->clientDB = getenv(Database::$database);
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
@@ -243,7 +243,7 @@ class Read
         $stmt->execute($sqlParams);
         for ($i=0;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
             if ($i===0) {
-                if(count($row) === 1) {
+                if (count($row) === 1) {
                     $singleColumn = true;
                 }
                 $singleColumn = $singleColumn && !isset($readSqlConfig['subQuery']);

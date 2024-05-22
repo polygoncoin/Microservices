@@ -40,17 +40,17 @@ class Reload
      *
      * @return void
      */
-    public static function init()
+    public function init()
     {
         switch (true) {
             case isset($_GET['refresh']) && isset($_GET['ids']):
-                (new self)->process($_GET['refresh'], $_GET['ids']);
+                $this->process($_GET['refresh'], $_GET['ids']);
                 break;       
             case isset($_GET['refresh']):
-                (new self)->process($_GET['refresh']);
+                $this->process($_GET['refresh']);
                 break;       
             default:
-                (new self)->process();
+                $this->process();
                 break;       
         }
     }
@@ -62,24 +62,22 @@ class Reload
      */
     private function process($refresh = 'all', $idsString = null)
     {
-        Cache::connect(
-            'cacheType',
-            'cacheHostname',
-            'cachePort',
-            'cacheUsername',
-            'cachePassword',
-            'cacheDatabase'
-        );
+        Cache::$cacheType = 'cacheType';
+        Cache::$hostname = 'cacheHostname';
+        Cache::$port = 'cachePort';
+        Cache::$username = 'cacheUsername';
+        Cache::$password = 'cachePassword';
+        Cache::$database = 'cacheDatabase';
         $this->cache = Cache::getObject();
-        Database::connect(
-            'defaultDbType',
-            'defaultDbHostname',
-            'defaultDbPort',
-            'defaultDbUsername',
-            'defaultDbPassword',
-            'defaultDbDatabase'
-        );
+
+        Database::$dbType = 'defaultDbType';
+        Database::$hostname = 'defaultDbHostname';
+        Database::$port = 'defaultDbPort';
+        Database::$username = 'defaultDbUsername';
+        Database::$password = 'defaultDbPassword';
+        Database::$database = 'defaultDbDatabase';
         $this->db = Database::getObject();
+
         $ids = [];
         if (!is_null($idsString)) {
             foreach (explode(',', trim($idsString)) as $value) {

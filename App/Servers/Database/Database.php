@@ -70,36 +70,17 @@ class Database
     /**
      * Database constructor
      *
-     * @param string $dbType    Database Type
-     * @param string $hostname  Hostname .env string
-     * @param string $username  Username .env string
-     * @param string $password  Password .env string
-     * @param string $database  Database .env string
      * @return void
      */
-    public static function connect(
-        $dbType,
-        $hostname,
-        $port,
-        $username,
-        $password,
-        $database = null
-    )
+    public static function connect()
     {
-        self::$dbType = getenv($dbType);
-        self::$hostname = $hostname;
-        self::$port = $port;
-        self::$username = $username;
-        self::$password = $password;
-        self::$database = $database;
-
-        if(self::$dbType === 'MySQL') {
+        if (getenv(self::$dbType) === 'MySQL') {
             self::$db = new MySQL(
-                $hostname,
-                $port,
-                $username,
-                $password,
-                $database
+                self::$hostname,
+                self::$port,
+                self::$username,
+                self::$password,
+                self::$database
             );
         }
     }
@@ -111,9 +92,9 @@ class Database
      */
     public static function getObject()
     {
-        if (!is_null(self::$db)) {
-            return self::$db;
+        if (is_null(self::$db)) {
+            self::connect();
         }
-
+        return self::$db;
     }
 }

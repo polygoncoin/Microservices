@@ -97,9 +97,9 @@ class Login
      *
      * @return void
      */
-    public static function init()
+    public function init()
     {
-        (new self)->process();
+        $this->process();
     }
 
     /**
@@ -109,14 +109,13 @@ class Login
      */
     private function process()
     {
-        Cache::connect(
-            'cacheType',
-            'cacheHostname',
-            'cachePort',
-            'cacheUsername',
-            'cachePassword',
-            'cacheDatabase'
-        );
+        Cache::$cacheType = 'cacheType';
+        Cache::$hostname = 'cacheHostname';
+        Cache::$port = 'cachePort';
+        Cache::$username = 'cacheUsername';
+        Cache::$password = 'cachePassword';
+        Cache::$database = 'cacheDatabase';
+
         $this->cache = Cache::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
         $this->performBasicCheck();
@@ -237,7 +236,7 @@ class Login
         if ($this->cache->cacheExists("usertoken:{$this->userId}")) {
             $tokenDetails = json_decode($this->cache->getCache("usertoken:{$this->userId}"), true);
             if ($this->cache->cacheExists($tokenDetails['token'])) {
-                if((TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
+                if ((TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
                     $tokenFound = true;
                 } else {
                     $this->cache->deleteCache($tokenDetails['token']);
@@ -260,14 +259,13 @@ class Login
 
     private function updateDB($tokenDetails)
     {
-        Database::connect(
-            'defaultDbType',
-            'defaultDbHostname',
-            'defaultDbPort',
-            'defaultDbUsername',
-            'defaultDbPassword',
-            'defaultDbDatabase'
-        );
+        Database::$dbType = 'defaultDbType';
+        Database::$hostname = 'defaultDbHostname';
+        Database::$port = 'defaultDbPort';
+        Database::$username = 'defaultDbUsername';
+        Database::$password = 'defaultDbPassword';
+        Database::$database = 'defaultDbDatabase';
+
         $this->db = Database::getObject();
         $userTable = getenv('users');
         $this->db->execDbQuery("

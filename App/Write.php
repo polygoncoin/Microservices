@@ -67,7 +67,7 @@ class Write
     public function init()
     {
         $this->globalDB = getenv('defaultDbDatabase');
-        $this->clientDB = getenv(HttpRequest::$clientDatabase);
+        $this->clientDB = getenv(Database::$database);
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 

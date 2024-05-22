@@ -73,46 +73,29 @@ class Cache
     /**
      * Database constructor
      * 
-     * @param string $cacheType Cache Type
-     * @param string $hostname  Hostname .env string
-     * @param string $port      Port .env string
-     * @param string $password  Password .env string
-     * @param string $database  Database .env string
      * @return void
      */
-    public static function connect(
-        $cacheType,
-        $hostname,
-        $port,
-        $username,
-        $password,
-        $database
-    )
+    public static function connect()
     {
-        self::$cacheType = getenv($cacheType);
-        self::$hostname = $hostname;
-        self::$port = $port;
-        self::$username = $username;
-        self::$password = $password;
-        self::$database = $database;
-
-        if(self::$cacheType === 'Redis') {
-            self::$cache = new Redis(
-                $hostname,
-                $port,
-                $username,
-                $password,
-                $database
-            );
-        }
-        if(self::$cacheType === 'MySQL') {
-            self::$cache = new MySQL(
-                $hostname,
-                $port,
-                $username,
-                $password,
-                $database
-            );
+        switch (getenv(self::$cacheType)) {
+            case 'Redis':
+                self::$cache = new Redis(
+                    self::$hostname,
+                    self::$port,
+                    self::$username,
+                    self::$password,
+                    self::$database
+                );
+                break;
+            case 'MySQL':
+                self::$cache = new MySQL(
+                    self::$hostname,
+                    self::$port,
+                    self::$username,
+                    self::$password,
+                    self::$database
+                );
+                break;
         }
     }
 
@@ -123,8 +106,9 @@ class Cache
      */
     public static function getObject()
     {
-        if (!is_null(self::$cache)) {
-            return self::$cache;
+        if (is_null(self::$cache)) {
+            self::connect();
         }
+        return self::$cache;
     }
 }

@@ -36,27 +36,6 @@ class HttpRequest
     public static $isConfigRequest = false;
 
     /**
-     * Raw route / Configured Uri
-     *
-     * @var string
-     */
-    public static $configuredUri = '';
-
-    /**
-     * Array containing details of received route elements
-     *
-     * @var array
-     */
-    public static $routeElements = [];
-
-    /**
-     * Locaton of File containing code for route
-     *
-     * @var string
-     */
-    public static $__file__ = null;
-
-    /**
      * HTTP request method
      *
      * @var string
@@ -78,53 +57,39 @@ class HttpRequest
     public static $REMOTE_ADDR = null;
 
     /**
+     * Cahe Object
+     *
+     * @var string
+     */
+    public static $cache = null;
+
+    /**
+     * Raw route / Configured Uri
+     *
+     * @var string
+     */
+    public static $configuredUri = '';
+
+    /**
+     * Array containing details of received route elements
+     *
+     * @var array
+     */
+    public static $routeElements = [];
+
+    /**
+     * Locaton of File containing code for route
+     *
+     * @var string
+     */
+    public static $__file__ = null;
+
+    /**
      * Inputs detials of a request
      *
      * @var array
      */
     public static $input = null;
-
-    /**
-     * Client database server type
-     *
-     * @var string
-     */
-    public static $clientServerType = null;
-
-    /**
-     * Client database hostname
-     *
-     * @var string
-     */
-    public static $clientHostname = null;
-
-    /**
-     * Client database port
-     *
-     * @var string
-     */
-    public static $clientPort = null;
-
-    /**
-     * Client database username
-     *
-     * @var string
-     */
-    public static $clientUsername = null;
-
-    /**
-     * Client database password
-     *
-     * @var string
-     */
-    public static $clientPassword = null;
-
-    /**
-     * Client database
-     *
-     * @var string
-     */
-    public static $clientDatabase = null;
 
     /**
      * Logged-in User ID
@@ -153,18 +118,14 @@ class HttpRequest
 
         self::$allowConfigRequest = getenv('allowConfigRequest');
         
-        Cache::connect(
-            'cacheType',
-            'cacheHostname',
-            'cachePort',
-            'cacheUsername',
-            'cachePassword',
-            'cacheDatabase'
-        );
+        Cache::$cacheType = 'cacheType';
+        Cache::$hostname = 'cacheHostname';
+        Cache::$port = 'cachePort';
+        Cache::$username = 'cacheUsername';
+        Cache::$password = 'cachePassword';
+        Cache::$database = 'cacheDatabase';
 
-        self::loadToken();
-        self::initSession();
-        self::parseRoute();
+        self::$cache = Cache::getObject();
     }
 
     /**
@@ -177,10 +138,10 @@ class HttpRequest
         if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
             self::$input['token'] = $matches[1];
             $token = self::$input['token'];
-            if (!Cache::$cache->cacheExists($token)) {
+            if (!self::$cache->cacheExists($token)) {
                 HttpResponse::return5xx(501, "Cache token missing.");
             }
-            self::$input['readOnlySession'] = json_decode(Cache::$cache->getCache($token), true);
+            self::$input['readOnlySession'] = json_decode(self::$cache->getCache($token), true);
             self::checkRemoteIp();
         } else {
             HttpResponse::return4xx(404, 'Missing token in authorization header');   
@@ -195,7 +156,7 @@ class HttpRequest
      *
      * @return void
      */
-    private static function initSession()
+    public static function initSession()
     {
         if (empty(self::$input['readOnlySession']['user_id']) || empty(self::$input['readOnlySession']['group_id'])) {
             HttpResponse::return4xx(404, 'Invalid session');
@@ -203,24 +164,16 @@ class HttpRequest
         self::$userId = self::$input['readOnlySession']['user_id'];
         self::$groupId = self::$input['readOnlySession']['group_id'];
         $key = "group:".self::$groupId;
-        if (!Cache::$cache->cacheExists($key)) {
+        if (!self::$cache->cacheExists($key)) {
             HttpResponse::return5xx(501, "Cache '{$key}' missing.");
         }
-        $groupInfoArr = json_decode(Cache::$cache->getCache($key), true);
-        self::$clientServerType = $groupInfoArr['db_server_type'];
-        self::$clientHostname = $groupInfoArr['db_hostname'];
-        self::$clientPort = $groupInfoArr['db_port'];
-        self::$clientUsername = $groupInfoArr['db_username'];
-        self::$clientPassword = $groupInfoArr['db_password'];
-        self::$clientDatabase = $groupInfoArr['db_database'];
-        Database::connect(
-            self::$clientServerType,
-            self::$clientHostname,
-            self::$clientPort,
-            self::$clientUsername,
-            self::$clientPassword,
-            self::$clientDatabase
-        );
+        $groupInfoArr = json_decode(self::$cache->getCache($key), true);
+        Database::$dbType = $groupInfoArr['db_server_type'];
+        Database::$hostname = $groupInfoArr['db_hostname'];
+        Database::$port = $groupInfoArr['db_port'];
+        Database::$username = $groupInfoArr['db_username'];
+        Database::$password = $groupInfoArr['db_password'];
+        Database::$database = $groupInfoArr['db_database'];
     }
 
     /**
@@ -228,12 +181,12 @@ class HttpRequest
      *
      * @return void
      */
-    private static function checkRemoteIp()
+    public static function checkRemoteIp()
     {
         $groupId = self::$input['readOnlySession']['group_id'];
         $key = "cidr:".self::$groupId;
-        if (Cache::$cache->cacheExists($key)) {
-            $cidrs = json_decode(Cache::$cache->getCache($key), true);
+        if (self::$cache->cacheExists($key)) {
+            $cidrs = json_decode(self::$cache->getCache($key), true);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
                 if (cidr_match(self::$REMOTE_ADDR, $cidr)) {

@@ -45,7 +45,18 @@ $jsonObj->startAssoc('Output');
 
 switch (true) {
     case ROUTE === '/login':
-        App\Login::init();
+        $login = new App\Login();
+        $login->init();
+        break;
+    case ROUTE === '/routes':
+        $routes = new App\Routes();
+        $routes->init();
+        break;
+    case ROUTE === '/reload':
+        if (httpAuthentication()) {
+            $reload = new App\Reload();
+            $reload->init();
+        }
         break;
     case strpos(ROUTE, '/crons') === 0:
         // Check request not from proxy.
@@ -63,11 +74,6 @@ switch (true) {
             eval('Crons\\' . $routeArr[2] . '::init(ROUTE);');
         } else {
             die('Invalid request.');
-        }
-        break;
-    case ROUTE === '/reload':
-        if (httpAuthentication()) {
-            App\Reload::init();
         }
         break;
     default:

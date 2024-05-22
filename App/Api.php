@@ -32,6 +32,10 @@ class Api
     public function init()
     {
         HttpRequest::init();
+        HttpRequest::loadToken();
+        HttpRequest::initSession();
+        HttpRequest::parseRoute();
+
         $this->processApi();
     }
 
