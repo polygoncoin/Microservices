@@ -149,7 +149,8 @@ class Write
                 }
             }
             $this->db->begin();
-            $response = $this->writeDB($writeSqlConfig, $payload, $useHierarchy);
+            $response = [];
+            $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response);
             $this->db->commit();
             if (!empty($response)) {
                 if (HttpRequest::$input['payloadArrType'] !== 'Object') {
@@ -177,24 +178,24 @@ class Write
      * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy)
+    private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response)
     {
-        $response = [];
         $isAssoc = $this->isAssoc($payloads);
+        $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
             HttpRequest::$input['payload'] = $payload;
             // Get Sql and Params
             list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
             $this->db->execDbQuery($sql, $sqlParams);
             if (isset($writeSqlConfig['insertId'])) {
+                if (!$isAssoc && !isset($response[$counter])) {
+                    $response[$counter] = [];
+                }
                 $insertId = $this->db->lastInsertId();
                 if ($isAssoc) {
-                    $response = [$writeSqlConfig['insertId'] => $insertId];
+                    $response[$writeSqlConfig['insertId']] = $insertId;
                 } else {
-                    if (!isset($response[$writeSqlConfig['insertId']])) {
-                        $response[$writeSqlConfig['insertId']] = [];
-                    }
-                    $response[$writeSqlConfig['insertId']][] = $insertId;
+                    $response[$counter][$writeSqlConfig['insertId']] = $insertId;
                 }
                 HttpRequest::$input['insertIdParams'][$writeSqlConfig['insertId']] = $insertId;
             }
@@ -212,20 +213,19 @@ class Write
                         $module_payload = &$payload;
                     }
                     $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($writeSqlDetails);
-                    $res = $this->writeDB($writeSqlDetails, $module_payload, $_useHierarchy);
-                    if (!empty($res)) {
-                        if ($isAssoc) {
-                            $response[$module] = $res;
-                        } else {
-                            $response[] = [$module => $res];
-                        }
+                    if ($isAssoc) {
+                        $response[$module] = [];
+                        $_response = &$response[$module];
+                    } else {
+                        $response[$counter][$module] = [];
+                        $_response = &$response[$counter][$module];
                     }
+                    $this->writeDB($writeSqlDetails, $module_payload, $_useHierarchy, $_response);
                 }
             }
+            if (!$isAssoc) {
+                $counter++;
+            }
         }
-        if ($isAssoc && isset($response[0])) {
-            $response = $response[0];
-        }
-        return $response;
     }
 }
