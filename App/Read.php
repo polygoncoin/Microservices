@@ -135,10 +135,8 @@ class Read
                     if ($start) {
                         if (isset($readSqlConfig['countQuery'])) {
                             $this->fetchRowsCount($readSqlConfig);
-                            $this->jsonObj->startArray('Results');
-                        } else {
-                            $this->jsonObj->startArray();
                         }
+                        $this->jsonObj->startArray('Results');
                     } else {
                         $this->jsonObj->startArray($keys[$keysCount]);
                     }
