@@ -299,7 +299,9 @@ One can clean the URL by making the required changes in the web server .conf fil
 };
 ```
 ## Variables
+
 ### $input
+
 - **$input['uriParams']** Data passed in URI.
 Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $input['uriParams'] will hold these dynamic values as below.
 - **$input['readOnlySession']** Session Data.
@@ -321,17 +323,23 @@ Other than these, one can use keyword **custom**, **functions** as below.
 	'updated_date' => ['custom', date('Y-m-d')]
 ],
 ```
+
 ## useHierarchy in /Config/Queries/*
+
 ### GET - READ
+
 - Microservices/Config/Queries/ClientDB/GET/Category.php
 In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
 ```
                 'parent_id' => ['hierarchyData', 'root:id'],
 ```
+
 ### POST/PUT/PATCH/DELETE - Write
+
 - Microservices/Config/Queries/ClientDB/POST/Category.php
 Here one request can handle one to many hierarchy to any number of levels as per configuration.
 Sample data payload below
+
 ```
 {"data":
     {
@@ -358,3 +366,19 @@ Sample data payload below
     }
 }
 ```
+
+## route/config
+
+### /tableName/{id}**/config**
+
+- Adding keyword **config** at the end of route after a slash returns the payload information that should be supplied; both required and optional with desired format.
+
+### Examples:
+
+- http://localhost/Microservices/public_html/index.php?r=/registration/config
+- http://localhost/Microservices/public_html/index.php?r=/category/config
+
+One need to configure for same in route with a flag as **config => true**
+Only these configured routes will be supported the config feature.
+
+- For controlling globally there is a flag in env file labled **allowConfigRequest**
