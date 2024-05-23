@@ -367,18 +367,22 @@ Sample data payload below
 }
 ```
 
-## route/config
+## r=&lt;/route&gt;/config
 
-### /tableName/{id}**/config**
+### /tableName/{id}/config
 
 - Adding keyword **config** at the end of route after a slash returns the payload information that should be supplied; both required and optional with desired format.
 
 ### Examples:
 
-- http://localhost/Microservices/public_html/index.php?r=/registration/config
-- http://localhost/Microservices/public_html/index.php?r=/category/config
+- r=/registration/config
+- r=/category/config
 
 One need to configure for same in route with a flag as **config => true**
 Only these configured routes will be supported the config feature.
 
 - For controlling globally there is a flag in env file labled **allowConfigRequest**
+
+### r=/routes
+
+This lists down all allowed routes for HTTP methods respectively.

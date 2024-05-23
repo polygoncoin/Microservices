@@ -139,7 +139,7 @@ class HttpRequest
             self::$input['token'] = $matches[1];
             $token = self::$input['token'];
             if (!self::$cache->cacheExists($token)) {
-                HttpResponse::return5xx(501, "Cache token missing.");
+                HttpResponse::return5xx(501, 'Cache token missing');
             }
             self::$input['readOnlySession'] = json_decode(self::$cache->getCache($token), true);
             self::checkRemoteIp();
@@ -163,7 +163,7 @@ class HttpRequest
         }
         self::$userId = self::$input['readOnlySession']['user_id'];
         self::$groupId = self::$input['readOnlySession']['group_id'];
-        $key = "group:".self::$groupId;
+        $key = 'group:'.self::$groupId;
         if (!self::$cache->cacheExists($key)) {
             HttpResponse::return5xx(501, "Cache '{$key}' missing.");
         }
@@ -184,7 +184,7 @@ class HttpRequest
     public static function checkRemoteIp()
     {
         $groupId = self::$input['readOnlySession']['group_id'];
-        $key = "cidr:".self::$groupId;
+        $key = 'cidr:'.self::$groupId;
         if (self::$cache->cacheExists($key)) {
             $cidrs = json_decode(self::$cache->getCache($key), true);
             $isValidIp = false;
@@ -287,7 +287,7 @@ class HttpRequest
                 HttpResponse::return5xx(501, 'Path cannot be empty');
             }
         } elseif ($routes['__file__'] != '') {
-            HttpResponse::return5xx(501, 'Missing route configuration file for' . " {$REQUEST_METHOD} " . 'method');
+            HttpResponse::return5xx(501, 'Missing route configuration file for ' . self::$REQUEST_METHOD . ' method');
         }
     }
 

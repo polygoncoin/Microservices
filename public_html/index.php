@@ -36,8 +36,8 @@ define('ROUTE_URL_PARAM', 'r');
 define('ROUTE', '/' . trim($_GET[ROUTE_URL_PARAM], '/'));
 
 header('Content-Type: application/json;charset=utf-8');
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Pragma: no-cache");
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
 
 $jsonObj = App\HttpResponse::getJsonObject();
 $jsonObj->startAssoc();

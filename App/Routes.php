@@ -44,7 +44,7 @@ class Routes
      *
      * @var array
      */
-    private $reservedKeys = ['config'];
+    private $reservedKeys = [];
 
     /**
      * JsonEncode class object
@@ -99,6 +99,13 @@ class Routes
         foreach ($routes as $key => &$r) {
             if (in_array($key, $this->reservedKeys)) {
                 continue;
+            }
+            if (
+                HttpRequest::$allowConfigRequest &&
+                $key === 'config' &&
+                $r === true
+            ) {
+                $httpRoutes[] = $route . '/' . $key;
             }
             if ($key === '__file__') {
                 $httpRoutes[] = $route;

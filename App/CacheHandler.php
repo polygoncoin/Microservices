@@ -67,7 +67,7 @@ class CacheHandler
                 @strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $modifiedTime
             )
         ) { 
-            header("HTTP/1.1 304 Not Modified");
+            header('HTTP/1.1 304 Not Modified');
             exit;
         } else {
             self::serveFile($fileLocation, $modifiedTime, $eTag);

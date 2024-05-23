@@ -90,7 +90,7 @@ class Api
                     eval('ThirdParty\\' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '::init();');
                     die;
                 } else {
-                    HttpResponse::return4xx(404, "Invalid third party call");
+                    HttpResponse::return4xx(404, 'Invalid third party call');
                 }
             case 'cache':
                 CacheHandler::init();
