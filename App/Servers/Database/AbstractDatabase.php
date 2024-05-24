@@ -31,6 +31,13 @@ abstract class AbstractDatabase
     abstract public function useDatabase($database);
 
     /**
+     * Affected Rows by PDO
+     *
+     * @return int
+     */
+    abstract public function affectedRows();
+
+    /**
      * Last Insert Id by PDO
      *
      * @return int

@@ -45,7 +45,7 @@ class Validator
      */
     public function validate($input, $validationConfig)
     {
-        if (count($input['required']) > 0) {
+        if (isset(($input['required'])) && count($input['required']) > 0) {
             if ((list($isValidData, $errors) = $this->validateRequired($input)) && !$isValidData) {
                 return [$isValidData, $errors];
             }

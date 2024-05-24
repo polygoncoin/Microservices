@@ -187,10 +187,10 @@ class Write
             // Get Sql and Params
             list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
             $this->db->execDbQuery($sql, $sqlParams);
+            if (!$isAssoc && !isset($response[$counter])) {
+                $response[$counter] = [];
+            }
             if (isset($writeSqlConfig['insertId'])) {
-                if (!$isAssoc && !isset($response[$counter])) {
-                    $response[$counter] = [];
-                }
                 $insertId = $this->db->lastInsertId();
                 if ($isAssoc) {
                     $response[$writeSqlConfig['insertId']] = $insertId;
@@ -198,6 +198,13 @@ class Write
                     $response[$counter][$writeSqlConfig['insertId']] = $insertId;
                 }
                 HttpRequest::$input['insertIdParams'][$writeSqlConfig['insertId']] = $insertId;
+            } else {
+                $affectedRows = $this->db->affectedRows();
+                if ($isAssoc) {
+                    $response['affectedRows'] = $affectedRows;
+                } else {
+                    $response[$counter]['affectedRows'] = $affectedRows;
+                }
             }
             $this->db->closeCursor();
             // subQuery for payload.

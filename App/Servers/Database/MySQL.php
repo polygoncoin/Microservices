@@ -195,6 +195,16 @@ class MySQL extends AbstractDatabase
     }
     
     /**
+     * Affected Rows by PDO
+     *
+     * @return int
+     */
+    public function affectedRows()
+    {
+        return $this->stmt->rowCount();
+    }
+    
+    /**
      * Last Insert Id by PDO
      *
      * @return int
