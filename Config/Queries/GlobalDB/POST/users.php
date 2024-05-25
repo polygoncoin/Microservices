@@ -5,7 +5,11 @@ use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('users'))}` SET __SET__",
-    'payload' => [
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+        ['payload', 'name', REQUIRED],
+        ['payload', 'comments'],
+    ],
+    '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'username' => ['payload', 'username'],
         'password_hash' => ['function', function() {

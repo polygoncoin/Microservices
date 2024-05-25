@@ -134,7 +134,7 @@ The supported SQL format are as below
 <?php
 return [
 	'query' => "SELECT * FROM {$this->globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
-	'where' => [
+	'__WHERE__' => [
 		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}], REQUIRED(optional)
 		'id' => ['uriParams', 'id'],
 		'group_id' => ['payload', 'group_id', REQUIRED],
@@ -144,12 +144,12 @@ return [
 	'subQuery' => [
 		'Clients' => [
 			'query' => "MySQL Query here",
-			'where' => [],
+			'__WHERE__' => [],
 			'mode' => 'multipleRowFormat'//Multiple rows returned.
 		],
 		'Users' => [
 			'query' => "MySQL Query here",
-			'where' => [],
+			'__WHERE__' => [],
 			'mode' => 'multipleRowFormat'//Multiple rows returned.
 		],
 		'modules' => ...
@@ -181,22 +181,22 @@ Here **query & mode** keys are required keys
 <?php
 return [
 	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
-	'payload' => [// for __SET__
+	'__SET__' => [// for __SET__
 		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}, REQUIRED],
 		'group_id' => ['payload', 'group_id', REQUIRED],
 		'client_id' => ['readOnlySession', 'client_id']
 	],
-	'where' => [// for __WHERE__
+	'__WHERE__' => [// for __WHERE__
 		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}, 		'id' => ['uriParams', 'id']
 	],
 	'insertId' => 'tablename1:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
 	'subQuery' => [
 		'module1' => [
 			'query' => "MySQL Query here",
-			'payload' => [
+			'__SET__' => [
 				'previous_table_id' => ['insertIdParams', '<tableName>:id'],
 			],
-			'where' => [],
+			'__WHERE__' => [],
 		],
 		'module2' => ...
 	],
@@ -216,8 +216,8 @@ Note: If there are few modules or query configurations repeated or reused; one c
 // reusefilename.php
 return [
 	'query' => "MySQL Query here",
-	'payload' => [],
-	'where' => [],
+	'__SET__' => [],
+	'__WHERE__' => [],
 	'validate' => [
 		[
 			'fn' => 'validateModule3Id',
@@ -314,7 +314,7 @@ For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation
 Other than these, one can use keyword **custom**, **functions** as below.
 
 ```
-'payload' => [
+'__SET__' => [
 	'client_id' => ['insertIdParams', 'm001_master_group:id'],
 	'password' => ['function', function() {
 		return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);

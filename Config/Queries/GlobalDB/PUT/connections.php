@@ -5,7 +5,17 @@ use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` SET __SET__ WHERE __WHERE__",
-    'payload' => [
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+        ['payload', 'name'],
+        ['payload', 'db_server_type'],
+        ['payload', 'db_hostname'],
+        ['payload', 'db_username'],
+        ['payload', 'db_password'],
+        ['payload', 'db_database'],
+        ['payload', 'comments'],
+        ['uriParams', 'connection_id', REQUIRED]
+    ],
+    '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'name' => ['payload', 'name', REQUIRED],
         'db_server_type' => ['payload', 'db_server_type'],
@@ -17,7 +27,7 @@ return [
         'updated_by' => ['readOnlySession', 'user_id'],
         'updated_on' => ['custom', date('Y-m-d H:i:s')]
     ],
-    'where' => [
+    '__WHERE__' => [
         'is_approved' => ['custom', 'Yes'],
         'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],

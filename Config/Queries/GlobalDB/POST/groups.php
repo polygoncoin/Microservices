@@ -5,7 +5,14 @@ use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` SET __SET__",
-    'payload' => [
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+        ['payload', 'name', REQUIRED],
+        ['payload', 'client_id'],
+        ['payload', 'connection_id'],
+        ['payload', 'allowed_ips'],
+        ['payload', 'comments'],
+    ],
+    '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'name' => ['payload', 'name', REQUIRED],
         'client_id' => ['payload', 'client_id'],

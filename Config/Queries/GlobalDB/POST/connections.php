@@ -5,7 +5,16 @@ use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` SET __SET__",
-    'payload' => [
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+        ['payload', 'name', REQUIRED],
+        ['payload', 'db_server_type'],
+        ['payload', 'db_hostname'],
+        ['payload', 'db_username'],
+        ['payload', 'db_password'],
+        ['payload', 'db_database'],
+        ['payload', 'comments'],
+    ],
+    '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'name' => ['payload', 'name', REQUIRED],
         'db_server_type' => ['payload', 'db_server_type'],

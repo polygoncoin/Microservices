@@ -7,7 +7,7 @@ return [
     'registration' => array_merge(
         include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
         [
-            'payload' => [
+            '__SET__' => [
                 'username' => ['payload', 'username']
             ]
         ]
@@ -15,7 +15,7 @@ return [
     'address' => array_merge(
         include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Address.php',
         [
-            'payload' => [
+            '__SET__' => [
                 'address' => ['payload', 'address']
             ],
         ]

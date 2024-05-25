@@ -100,7 +100,8 @@ class Read
     private function processRead(&$readSqlConfig, $useHierarchy)
     {
         // Set required fields.
-        HttpRequest::$input['requiredPayload'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
+        HttpRequest::$input['requiredArr'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
+        HttpRequest::$input['required'] = HttpRequest::$input['requiredArr']['__required__'];
 
         // Start Read operation.
         $keys = [];

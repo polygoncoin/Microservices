@@ -6,7 +6,7 @@ use App\HttpRequest;
 return [
     'all' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` WHERE __WHERE__ ORDER BY group_id ASC",
-        'where' => [
+        '__WHERE__' => [
             'is_approved' => ['custom', 'Yes'],
             'is_disabled' => ['custom', 'No'],
             'is_deleted' => ['custom', 'No'],
@@ -15,7 +15,10 @@ return [
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` WHERE __WHERE__",
-        'where' => [
+        '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+            ['uriParams', 'group_id', REQUIRED],
+        ],
+        '__WHERE__' => [
             'is_approved' => ['custom', 'Yes'],
             'is_disabled' => ['custom', 'No'],
             'is_deleted' => ['custom', 'No'],

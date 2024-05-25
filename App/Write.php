@@ -97,11 +97,11 @@ class Write
     private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
     {
         $response = [];
-        $response['uri'] = HttpRequest::$configuredUri;
-        $response['payload'] = $this->getConfigParams($writeSqlConfig, $useHierarchy);
+        $response['Route'] = HttpRequest::$configuredUri;
+        $response['Payload'] = $this->getConfigParams($writeSqlConfig, true, $useHierarchy);
         $this->jsonObj->startAssoc('Config');
-        $this->jsonObj->addKeyValue('Route', $response['uri']);
-        $this->jsonObj->addKeyValue('Payload', $response['payload']);
+        $this->jsonObj->addKeyValue('Route', $response['Route']);
+        $this->jsonObj->addKeyValue('Payload', $response['Payload']);
         $this->jsonObj->endAssoc();
     }    
 
@@ -115,7 +115,7 @@ class Write
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
         // Set required fields.
-        HttpRequest::$input['requiredPayload'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
+        HttpRequest::$input['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
         if (HttpRequest::$input['payloadArrType'] === 'Object') {
             $this->jsonObj->startAssoc('Results');
@@ -127,7 +127,7 @@ class Write
         foreach (HttpRequest::$input['payloadArr'] as &$payload) {
             HttpRequest::$input['payload'] = $payload;
             if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
-                if (count(HttpRequest::$input['payload']) !== 1) {
+                if (count(HttpRequest::$input['payloadArr_ith']) !== 1) {
                     HttpResponse::$httpStatus = 400;
                     $this->jsonObj->startAssoc();
                     $this->jsonObj->addKeyValue('Payload', $payload);
@@ -150,7 +150,7 @@ class Write
             }
             $this->db->begin();
             $response = [];
-            $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response);
+            $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, HttpRequest::$input['requiredArr']);
             $this->db->commit();
             if (!empty($response)) {
                 if (HttpRequest::$input['payloadArrType'] !== 'Object') {
@@ -176,14 +176,17 @@ class Write
      * @param array $writeSqlConfig Config from file
      * @param bool  $payload        Payload.
      * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
+     * @param array $response       Response by reference.
+     * @param array $required       Required fields.
      * @return void
      */
-    private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response)
+    private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response, &$required)
     {
         $isAssoc = $this->isAssoc($payloads);
         $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
             HttpRequest::$input['payload'] = $payload;
+            HttpRequest::$input['required'] = $required['__required__'];
             // Get Sql and Params
             list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
             $this->db->execDbQuery($sql, $sqlParams);
@@ -209,17 +212,18 @@ class Write
             $this->db->closeCursor();
             // subQuery for payload.
             if (isset($writeSqlConfig['subQuery'])) {
-                foreach ($writeSqlConfig['subQuery'] as $module => &$writeSqlDetails) {
+                foreach ($writeSqlConfig['subQuery'] as $module => &$_writeSqlConfig) {
                     if ($useHierarchy) { // use parent data of a payload.
                         if (isset($payload[$module])) {
-                            $module_payload = &$payload[$module];
+                            $_payload = &$payload[$module];
+                            $_required = &$required[$module] ?? [];
                         } else {
                             HttpResponse::return4xx(404, "Invalid payload: Module '{$module}' not supported.");
                         }
                     } else {
-                        $module_payload = &$payload;
+                        $_payload = &$payload;
                     }
-                    $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($writeSqlDetails);
+                    $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($_writeSqlConfig);
                     if ($isAssoc) {
                         $response[$module] = [];
                         $_response = &$response[$module];
@@ -227,7 +231,7 @@ class Write
                         $response[$counter][$module] = [];
                         $_response = &$response[$counter][$module];
                     }
-                    $this->writeDB($writeSqlDetails, $module_payload, $_useHierarchy, $_response);
+                    $this->writeDB($_writeSqlConfig, $_payload, $_useHierarchy, $_response, $_required);
                 }
             }
             if (!$isAssoc) {

@@ -5,13 +5,17 @@ use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` SET __SET__ WHERE __WHERE__",
-    'payload' => [
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+        ['payload', 'name', REQUIRED],
+        ['uriParams', 'client_id', REQUIRED],
+    ],
+    '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'name' => ['payload', 'name', REQUIRED],
         'updated_by' => ['readOnlySession', 'user_id'],
         'updated_on' => ['custom', date('Y-m-d H:i:s')]
     ],
-    'where' => [
+    '__WHERE__' => [
         'is_approved' => ['custom', 'Yes'],
         'is_disabled' => ['custom', 'No'],
         'is_deleted' => ['custom', 'No'],

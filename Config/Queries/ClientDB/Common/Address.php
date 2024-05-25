@@ -5,7 +5,10 @@ use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->clientDB}`.`address` SET __SET__ WHERE __WHERE__",
-    'where' => [
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+        ['uriParams', 'id', REQUIRED],
+    ],
+    '__WHERE__' => [
         'is_deleted' => ['custom', 'No'],
         'id' => ['uriParams', 'id']
     ],

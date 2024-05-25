@@ -38,48 +38,36 @@ trait AppTrait
     private function getRequired(&$sqlConfig, $first = true, $useHierarchy)
     {
         $requiredFields = [];
-        if (isset($sqlConfig['payload'])) {
-            foreach ($sqlConfig['payload'] as $var => $payload) {
+        $requiredFields['__required__'] = [];
+        if (isset($sqlConfig['__CONFIG__'])) {
+            foreach ($sqlConfig['__CONFIG__'] as $config) {
                 $required = false;
-                $count = count($payload);
+                $count = count($config);
                 switch ($count) {
                     case 3:
-                        list($type, $typeKey, $required) = $payload;
+                        list($type, $typeKey, $required) = $config;
                         break;
                     case 2: 
-                        list($type, $typeKey) = $payload;
+                        list($type, $typeKey) = $config;
                         break;
                 }
-                if ($required && $type === 'payload') {
-                    if (!in_array($typeKey, $requiredFields)) {
-                        $requiredFields[] = $typeKey;
+                if ($required && $type === ['payload']) {
+                    if (!in_array($typeKey, $requiredFields['__required__'])) {
+                        $requiredFields['__required__'][] = $typeKey;
                     }
                 }
             }
         }
         $foundHierarchy = false;
-        if (isset($sqlConfig['where'])) {
-            foreach ($sqlConfig['where'] as $var => $payload) {
-                $required = false;
-                $count = count($payload);
-                switch ($count) {
-                    case 3:
-                        list($type, $typeKey, $required) = $payload;
-                        break;
-                    case 2: 
-                        list($type, $typeKey) = $payload;
-                        break;
-                }
+        if (isset($sqlConfig['__WHERE__'])) {
+            foreach ($sqlConfig['__WHERE__'] as $var => $where) {
+                list($type, $typeKey) = $where;
                 if ($first && $type === 'hierarchyData') {
                     HttpResponse::return5xx(501, 'Invalid config: First query can not have hierarchyData config');
                 }
                 if ($type === 'hierarchyData') {
                     $foundHierarchy = true;
-                }
-                if ($required && $type === 'payload') {
-                    if (!in_array($typeKey, $requiredFields)) {
-                        $requiredFields[] = $typeKey;
-                    }
+                    break;
                 }
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
@@ -90,13 +78,17 @@ trait AppTrait
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
                 HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
             }
-            foreach ($sqlConfig['subQuery'] as &$sqlDetails) {
+            foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
                 $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($sqlDetails);
                 $sub_requiredFields = $this->getRequired($sqlDetails, false, $_useHierarchy);
-                foreach ($sub_requiredFields as $field) {
-                    if (!in_array($field, $requiredFields)) {
-                        $requiredFields[] = $field;
-                    }
+                if ($_useHierarchy) {
+                    $requiredFields[$module] = $sub_requiredFields;
+                } else {
+                    foreach ($sub_requiredFields as $field) {
+                        if (!in_array($field, $requiredFields)) {
+                            $requiredFields['__required__'][] = $field;
+                        }
+                    }    
                 }
             }
         }
@@ -120,7 +112,7 @@ trait AppTrait
     /**
      * Returns Query and Params for execution.
      *
-     * @param array $sqlDetails Config from file
+     * @param array $sqlDetails   Config from file
      * @return array
      */
     private function getSqlAndParams(&$sqlDetails)
@@ -128,48 +120,40 @@ trait AppTrait
         $sql = $sqlDetails['query'];
         $sqlParams = [];
         $paramKeys = [];
-        if (isset($sqlDetails['payload'])) {
-            if (count($sqlDetails['payload']) === 0) {
+        if (strpos($sql, '__SET__') !== false) {
+            if (!isset($sqlDetails['__SET__']) || count($sqlDetails['__SET__']) === 0) {
                 HttpResponse::return5xx(501, 'Invalid config: Missing payload configuration');
             } else {
-                if (strpos($sql, '__SET__') !== false) {
-                    $params = $this->getSqlParams($sqlDetails['payload']);
-                    if (!empty($params)) {
-                        $__SET__ = [];
-                        $paramKeys = array_keys($params);
-                        foreach ($params as $param => &$v) {
-                            $param = str_replace(['`', ' '], '', $param);
-                            $__SET__[] = "`{$param}` = :{$param}";
-                            $sqlParams[":{$param}"] = $v;
-                        }
-                        $sql = str_replace('__SET__', implode(', ', $__SET__), $sql);
+                $params = $this->getSqlParams($sqlDetails['__SET__']);
+                if (!empty($params)) {
+                    $__SET__ = [];
+                    foreach ($params as $param => &$v) {
+                        $param = str_replace(['`', ' '], '', $param);
+                        $paramKeys[] = $param;
+                        $__SET__[] = "`{$param}` = :{$param}";
+                        $sqlParams[":{$param}"] = $v;
                     }
-                } else {
-                    HttpResponse::return5xx(501, 'Invalid query: Missing __SET__');
+                    $sql = str_replace('__SET__', implode(', ', $__SET__), $sql);
                 }
             }
         }
-        if (isset($sqlDetails['where'])) {
-            if (count($sqlDetails['where']) === 0) {
+        if (strpos($sql, '__WHERE__') !== false) {
+            if (!isset($sqlDetails['__WHERE__']) || count($sqlDetails['__WHERE__']) === 0) {
                 HttpResponse::return5xx(501, 'Invalid config: Missing where configuration');
             } else {
-                if (strpos($sql, '__WHERE__') !== false) {
-                    $sqlWhereParams = $this->getSqlParams($sqlDetails['where']);
-                    if (!empty($sqlWhereParams)) {
-                        $__WHERE__ = [];
-                        foreach ($sqlWhereParams as $param => &$v) {
-                            $wparam = str_replace(['`', ' '], '', $param);
-                            while (in_array($wparam, $paramKeys)) {
-                                $wparam .= '0';
-                            }
-                            $paramKeys[] = $param;
-                            $__WHERE__[] = "`{$param}` = :{$wparam}";
-                            $sqlParams[":{$wparam}"] = $v;
+                $sqlWhereParams = $this->getSqlParams($sqlDetails['__WHERE__']);
+                if (!empty($sqlWhereParams)) {
+                    $__WHERE__ = [];
+                    foreach ($sqlWhereParams as $param => &$v) {
+                        $wparam = str_replace(['`', ' '], '', $param);
+                        while (in_array($wparam, $paramKeys)) {
+                            $wparam .= '0';
                         }
-                        $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
+                        $paramKeys[] = $wparam;
+                        $__WHERE__[] = "`{$param}` = :{$wparam}";
+                        $sqlParams[":{$wparam}"] = $v;
                     }
-                } else {
-                    HttpResponse::return5xx(501, 'Invalid query: Missing __WHERE__');
+                    $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
                 }
             }
         }
@@ -179,7 +163,7 @@ trait AppTrait
     /**
      * Generates Params for statement to execute.
      *
-     * @param array $sqlConfig Config from file
+     * @param array $sqlConfig    Config from file
      * @return array
      */
     private function getSqlParams(&$sqlConfig)
@@ -202,7 +186,7 @@ trait AppTrait
                 $sqlParams[$var] = $typeKey;
             } else if ($type === 'payload' && isset(HttpRequest::$input['payload'][$typeKey])) {
                 $sqlParams[$var] = HttpRequest::$input['payload'][$typeKey];
-            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['requiredPayload']) && !isset(HttpRequest::$input['payload'][$typeKey])) {
+            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset(HttpRequest::$input['payload'][$typeKey])) {
                 continue;
             } else {
                 if (!isset(HttpRequest::$input[$type][$typeKey])) {
@@ -252,22 +236,23 @@ trait AppTrait
      * Return config par recursively
      *
      * @param array $sqlConfig    Config from file
+     * @param array $first        Flag to check if this is first request in a recursive call
      * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
      * @return array
      */
-    private function getConfigParams(&$sqlConfig, $useHierarchy)
+    private function getConfigParams(&$sqlConfig, $first, $useHierarchy)
     {
         $result = [];
-        if (isset($sqlConfig['payload'])) {
-            foreach ($sqlConfig['payload'] as $var => $payload) {
+        if (isset($sqlConfig['__CONFIG__'])) {
+            foreach ($sqlConfig['__CONFIG__'] as $config) {
                 $required = false;
-                $count = count($payload);
+                $count = count($config);
                 switch ($count) {
                     case 3:
-                        list($type, $typeKey, $required) = $payload;
+                        list($type, $typeKey, $required) = $config;
                         break;
                     case 2: 
-                        list($type, $typeKey) = $payload;
+                        list($type, $typeKey) = $config;
                         break;
                 }
                 if ($type === 'payload') {
@@ -283,38 +268,23 @@ trait AppTrait
             }
         }
         $foundHierarchy = false;
-        if (isset($sqlConfig['where'])) {
-            foreach ($sqlConfig['where'] as $var => $payload) {
-                $required = false;
-                $count = count($payload);
-                switch ($count) {
-                    case 3:
-                        list($type, $typeKey, $required) = $payload;
-                        break;
-                    case 2: 
-                        list($type, $typeKey) = $payload;
-                        break;
-                }
+        if (isset($sqlConfig['__WHERE__'])) {
+            foreach ($sqlConfig['__WHERE__'] as $var => $payload) {
+                list($type, $typeKey) = $payload;
                 if ($type === 'hierarchyData') {
                     $foundHierarchy = true;
+                    break;
                 }
-                if ($type === 'payload') {
-                    if ($required && !isset($result[$typeKey])) {
-                        $result[$typeKey] = 'Required';
-                        continue;
-                    }
-                    if (!isset($result[$typeKey])) {
-                        $result[$typeKey] = 'Optional';
-                        continue;
-                    }
-                }
+            }
+            if (!$first && $useHierarchy && !$foundHierarchy) {
+                HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
             }
         }
         if (isset($sqlConfig['subQuery'])) {
             foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
                 $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($sqlDetails);
-                $sub_requiredFields = $this->getConfigParams($sqlDetails, $_useHierarchy);
-                if ($_useHierarchy && !isset($result[$module])) {
+                $sub_requiredFields = $this->getConfigParams($sqlDetails, false, $_useHierarchy);
+                if ($_useHierarchy) {
                     $result[$module] = $sub_requiredFields;
                 } else {
                     foreach ($sub_requiredFields as $field => $required) {

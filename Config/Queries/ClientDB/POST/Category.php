@@ -5,7 +5,7 @@ use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
-    'payload' => [
+    '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'name' => ['payload', 'name', REQUIRED],
         'parent_id' => ['custom', 0],
@@ -14,7 +14,7 @@ return [
     'subQuery' => [
         'sub' => [
             'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
-            'payload' => [
+            '__SET__' => [
                 'name' => ['payload', 'subname', REQUIRED],
                 'parent_id' => ['insertIdParams', 'category:id'],
             ],
@@ -22,7 +22,7 @@ return [
             'subQuery' => [
                 'subsub' => [
                     'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
-                    'payload' => [
+                    '__SET__' => [
                         'name' => ['payload', 'subsubname', REQUIRED],
                         'parent_id' => ['insertIdParams', 'sub:id'],
                     ],

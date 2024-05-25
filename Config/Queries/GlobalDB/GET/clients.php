@@ -7,7 +7,7 @@ return [
     'all' => [
         'countQuery' => "SELECT count(1) as `count` FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__ ORDER BY client_id ASC",
-        'where' => [
+        '__WHERE__' => [
             'is_approved' => ['custom', 'Yes'],
             'is_disabled' => ['custom', 'No'],
             'is_deleted' => ['custom', 'No']
@@ -16,7 +16,10 @@ return [
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('clients'))}` WHERE __WHERE__",
-        'where' => [
+        '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+            ['uriParams', 'client_id', REQUIRED],
+        ],
+        '__WHERE__' => [
             'is_approved' => ['custom', 'Yes'],
             'is_disabled' => ['custom', 'No'],
             'is_deleted' => ['custom', 'No'],
