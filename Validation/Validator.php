@@ -1,12 +1,12 @@
 <?php
-namespace App\Validation;
+namespace Validation;
 
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Database\Database;
-use App\Validation\ClientValidator;
-use App\Validation\GlobalValidator;
+use Validation\ClientValidator;
+use Validation\GlobalValidator;
 
 /**
  * Validator

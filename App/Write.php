@@ -6,7 +6,7 @@ use App\HttpRequest;
 use App\HttpResponse;
 use App\JsonEncode;
 use App\Servers\Database\Database;
-use App\Validation\Validator;
+use Validation\Validator;
 
 /**
  * Class to initialize DB Write operation

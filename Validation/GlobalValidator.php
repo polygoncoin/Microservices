@@ -1,11 +1,11 @@
 <?php
-namespace App\Validation;
+namespace Validation;
 
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Database\Database;
-use App\Validation\ValidatorTrait;
+use Validation\ValidatorTrait;
 
 /**
  * Validator
