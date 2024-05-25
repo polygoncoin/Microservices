@@ -281,11 +281,13 @@ trait AppTrait
             }
         }
         if (isset($sqlConfig['subQuery'])) {
-            foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
-                $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($sqlDetails);
-                $sub_requiredFields = $this->getConfigParams($sqlDetails, false, $_useHierarchy);
-                if ($_useHierarchy) {
-                    $result[$module] = $sub_requiredFields;
+            foreach ($sqlConfig['subQuery'] as $module => &$_sqlConfig) {
+                $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($_sqlConfig);
+                $sub_requiredFields = $this->getConfigParams($_sqlConfig, false, $_useHierarchy);
+                if ($useHierarchy) {
+                    if (!empty($sub_requiredFields)) {
+                        $result[$module] = $sub_requiredFields;
+                    }
                 } else {
                     foreach ($sub_requiredFields as $field => $required) {
                         if (!isset($result[$field])) {
