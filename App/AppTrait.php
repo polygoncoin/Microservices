@@ -3,7 +3,7 @@ namespace App;
 
 use App\HttpRequest;
 use App\HttpResponse;
-use Validation\Validator;
+use App\Validation\Validator;
 
 /**
  * Trait for PHP functions

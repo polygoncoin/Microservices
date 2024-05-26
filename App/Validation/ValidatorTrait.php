@@ -1,5 +1,5 @@
 <?php
-namespace Validation;
+namespace App\Validation;
 
 /**
  * Trait for common validator functions

@@ -5,7 +5,7 @@ use App\AppTrait;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Servers\Database\Database;
-use Validation\Validator;
+use App\Validation\Validator;
 
 /**
  * Class to initialize DB Read operation

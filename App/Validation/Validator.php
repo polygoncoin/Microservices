@@ -1,5 +1,5 @@
 <?php
-namespace Validation;
+namespace App\Validation;
 
 use App\HttpRequest;
 use App\HttpResponse;

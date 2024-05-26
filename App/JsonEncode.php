@@ -20,7 +20,7 @@ use App\HttpRequest;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class JSON
+class JsonEncoder
 {
     /**
      * Temporary Stream
@@ -30,14 +30,14 @@ class JSON
     private $tempStream = '';
 
     /**
-     * Array of JsonEncodeObject objects
+     * Array of JsonEncoderObject objects
      *
      * @var array
      */
     private $objects = [];
 
     /**
-     * Current JsonEncodeObject object
+     * Current JsonEncoderObject object
      *
      * @var object
      */
@@ -145,7 +145,7 @@ class JSON
             $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
-        $this->currentObject = new JsonEncodeObject('Array');
+        $this->currentObject = new JsonEncoderObject('Array');
         if (!is_null($key)) {
             $this->write($this->escape($key) . ':');
         }
@@ -179,7 +179,7 @@ class JSON
             $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
-        $this->currentObject = new JsonEncodeObject('Assoc');
+        $this->currentObject = new JsonEncoderObject('Assoc');
         if (!is_null($key)) {
             $this->write($this->escape($key) . ':');
         }
@@ -265,14 +265,14 @@ class JSON
  *
  * This class is built to help maintain state of simple/associative array
  *
- * @category   JsonObject
+ * @category   Json Encoder Object
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class JsonEncodeObject
+class JsonEncoderObject
 {
     public $mode = '';
     public $comma = '';
@@ -293,7 +293,7 @@ class JsonEncodeObject
  *
  * This class is built to handle JSON Object.
  *
- * @category   Json Encode Object handler
+ * @category   Json Encoder Object handler
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -314,7 +314,7 @@ class JsonEncode
      */
     public static function init()
     {
-        self::$jsonObj = new JSON();
+        self::$jsonObj = new JsonEncoder();
     }
 
     /**

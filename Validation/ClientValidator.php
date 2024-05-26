@@ -5,7 +5,7 @@ use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Database\Database;
-use Validation\ValidatorTrait;
+use App\Validation\ValidatorTrait;
 
 /**
  * Validator
