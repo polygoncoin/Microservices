@@ -6,15 +6,15 @@ use App\HttpRequest;
 
 return [
     'category' => [
-        '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/POST/Category.php',
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/Category.php',
         'config' => true
     ],
     'registration' => [
-        '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/POST/Registration.php',
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/Registration.php',
         'config' => true
     ],
     '{table:string}' => [
-        '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/POST/CRUD.php',
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/CRUD.php',
     ],
     'thirdParty' => [
         '{thirdParty:string}' => [

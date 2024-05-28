@@ -27,7 +27,7 @@ class Constants
     public static $TOKEN_EXPIRY_TIME = 3600;    
     public static $REQUIRED = true;
 
-    public static $__DOC_ROOT__ = null;
+    public static $DOC_ROOT = null;
     public static $ENVIRONMENT = null;
     public static $OUTPUT_PERFORMANCE_STATS = null;
 
@@ -40,7 +40,7 @@ class Constants
 
     public static function init()
     {
-        self::$__DOC_ROOT__ = dirname(__DIR__ . '../');
+        self::$DOC_ROOT = dirname(__DIR__ . '../');
         self::$ENVIRONMENT = getenv('ENVIRONMENT');
         self::$OUTPUT_PERFORMANCE_STATS = getenv('OUTPUT_PERFORMANCE_STATS');
 

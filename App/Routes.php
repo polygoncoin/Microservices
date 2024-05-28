@@ -37,7 +37,7 @@ class Routes
      *
      * @var string
      */
-    private $routesFolder = Constants::$__DOC_ROOT__ . '/Config/Routes';
+    private $routesFolder = Constants::$DOC_ROOT . '/Config/Routes';
 
     /**
      * Route config ignore keys

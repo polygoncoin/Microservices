@@ -7,7 +7,7 @@ use App\HttpRequest;
 return [
     '{table:string}' => [
         '{id:int}'  => [
-            '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/PATCH/CRUD.php',
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/PATCH/CRUD.php',
         ]
     ]        
 ];

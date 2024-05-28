@@ -85,7 +85,7 @@ class Api
             case 'thirdParty':
                 if (
                     isset(HttpRequest::$input['uriParams']['thirdParty']) &&
-                    file_exists(Constants::$__DOC_ROOT__ . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
+                    file_exists(Constants::$DOC_ROOT . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
                 ) {
                     eval('ThirdParty\\' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '::init();');
                     die;

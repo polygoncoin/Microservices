@@ -182,7 +182,7 @@ class HttpRequest
      */
     public static function parseRoute()
     {
-        $routeFileLocation = Constants::$__DOC_ROOT__ . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
+        $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {

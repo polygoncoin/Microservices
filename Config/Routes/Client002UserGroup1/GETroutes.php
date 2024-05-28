@@ -6,9 +6,9 @@ use App\HttpRequest;
 
 return [
     '{table:string}' => [
-        '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
         '{id:int}'  => [
-            '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
         ],
     ],
     'thirdParty' => [

@@ -90,6 +90,6 @@ class Upload
      */
     private function getLocation()
     {
-        return Constants::$__DOC_ROOT__ . '/Dropbox/' . 'test.txt';
+        return Constants::$DOC_ROOT . '/Dropbox/' . 'test.txt';
     }
 }

@@ -74,7 +74,7 @@ class Microservices
                 $routeArr = explode('/', $this->ROUTE);
                 if (
                     isset($routeArr[2]) &&
-                    file_exists(Constants::$__DOC_ROOT__ . "/Crons/{$routeArr[2]}.php")
+                    file_exists(Constants::$DOC_ROOT . "/Crons/{$routeArr[2]}.php")
                 ) {
                     eval('Crons\\' . $routeArr[2] . '::init($this->ROUTE);');
                 } else {

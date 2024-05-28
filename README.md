@@ -234,7 +234,7 @@ The reuse version is as below.
 ```
 	'subQuery' => [
 		//Here the module1 properties are reused for write operation.
-		'module1' => include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/reusefilename.php',
+		'module1' => include DOC_ROOT . '/Config/Queries/ClientDB/Common/reusefilename.php',
 	]
 ```
 Here **query & payload** keys are required keys for the POST method.
