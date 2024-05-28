@@ -28,8 +28,6 @@ class Constants
     public static $REQUIRED = true;
 
     public static $DOC_ROOT = null;
-    public static $ENVIRONMENT = null;
-    public static $OUTPUT_PERFORMANCE_STATS = null;
 
     public static $REQUEST_METHOD = null;
     public static $HTTP_AUTHORIZATION = null;
@@ -41,20 +39,16 @@ class Constants
     public static function init()
     {
         self::$DOC_ROOT = dirname(__DIR__ . '../');
-        self::$ENVIRONMENT = getenv('ENVIRONMENT');
-        self::$OUTPUT_PERFORMANCE_STATS = getenv('OUTPUT_PERFORMANCE_STATS');
-
         self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
 
         if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
             self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
         }
-        // Check request is not from a proxy server.
         if (!isset($_SERVER['REMOTE_ADDR'])) {
+            // If from a proxy server. then 404
             http_response_code(404);
         }
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
         self::$ROUTE = '/' . trim($_GET[self::$ROUTE_URL_PARAM], '/');
     }
 }
-Constants::init();

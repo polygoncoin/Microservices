@@ -1,14 +1,15 @@
 <?php
 namespace App;
 
-use App\Read;
-use App\Write;
 use App\CacheHandler;
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
+use App\Read;
 use App\Upload;
+use App\Write;
 
 /**
  * Class to initialize api HTTP request
@@ -50,7 +51,7 @@ class Api
         $this->processBeforePayload();
 
         // Load Payloads
-        if (!HttpRequest::$isConfigRequest) {
+        if (!Env::$isConfigRequest) {
             HttpRequest::loadPayload();
         }
 

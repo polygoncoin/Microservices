@@ -2,6 +2,7 @@
 namespace ThirdParty;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 

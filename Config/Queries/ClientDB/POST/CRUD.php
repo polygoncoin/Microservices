@@ -2,11 +2,12 @@
 namespace Config\Queries\ClientDB\POST;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
     'registration' => [
-        'query' => "INSERT INTO `{$this->clientDB}`.`registration` SET __SET__",
+        'query' => "INSERT INTO `{$Env::$clientDB}`.`registration` SET __SET__",
         '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
             ['payload', 'firstname', Constants::$REQUIRED],
             ['payload', 'lastname', Constants::$REQUIRED],
@@ -21,7 +22,7 @@ return [
         'insertId' => 'registration:id',
         'subQuery' => [
             'address' => [
-                'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
+                'query' => "INSERT INTO `{$Env::$clientDB}`.`address` SET __SET__",
                 '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                     ['payload', 'address', Constants::$REQUIRED]
                 ],
@@ -33,7 +34,7 @@ return [
         ]
     ],
     'address' => [
-        'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
+        'query' => "INSERT INTO `{$Env::$clientDB}`.`address` SET __SET__",
         '__SET__' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
             'registration' => ['payload', 'registration_id', Constants::$REQUIRED],

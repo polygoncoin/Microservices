@@ -3,6 +3,7 @@ namespace App;
 
 use App\AppTrait;
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\JsonEncode;
@@ -33,20 +34,6 @@ class Write
     public $db = null;
 
     /**
-     * Global DB
-     *
-     * @var string
-     */
-    public $globalDB = null;
-
-    /**
-     * Client database
-     *
-     * @var string
-     */
-    public $clientDB = null;
-
-    /**
      * Validator class object
      *
      * @var object
@@ -67,8 +54,13 @@ class Write
      */
     public function init()
     {
-        $this->globalDB = getenv('defaultDbDatabase');
-        $this->clientDB = getenv(Database::$database);
+        Env::$globalDB = Env::$defaultDbDatabase;
+        Env::$clientDB = Env::$dbDatabase;
+
+        $Constants = 'App\\Constants';
+        $Env = 'App\\Env';
+        $HttpRequest = 'App\\HttpRequest';
+
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
@@ -79,8 +71,8 @@ class Write
         $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
 
         if (
-            HttpRequest::$allowConfigRequest &&
-            HttpRequest::$isConfigRequest
+            Env::$allowConfigRequest &&
+            Env::$isConfigRequest
         ) {
             $this->processWriteConfig($writeSqlConfig, $useHierarchy);
         } else {

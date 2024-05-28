@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Constants;
+use App\Env;
 use App\HttpResponse;
 use App\Logs;
 use App\Servers\Cache\Cache;
@@ -21,20 +22,6 @@ use App\Servers\Database\Database;
  */
 class HttpRequest
 {
-    /**
-     * Allow config request (global flag from env): 1 = true / 0 = false
-     *
-     * @var bool
-     */
-    public static $allowConfigRequest = 0;
-
-    /**
-     * Is a config request
-     *
-     * @var bool
-     */
-    public static $isConfigRequest = false;
-
     /**
      * Cahe Object
      *
@@ -91,15 +78,13 @@ class HttpRequest
      */
     public static function init()
     {
-        self::$allowConfigRequest = getenv('allowConfigRequest');
-        
-        Cache::$cacheType = 'cacheType';
-        Cache::$hostname = 'cacheHostname';
-        Cache::$port = 'cachePort';
-        Cache::$username = 'cacheUsername';
-        Cache::$password = 'cachePassword';
-        Cache::$database = 'cacheDatabase';
-
+        Env::$cacheType = getenv('cacheType');
+        Env::$cacheHostname = getenv('cacheHostname');
+        Env::$cachePort = getenv('cachePort');
+        Env::$cacheUsername = getenv('cacheUsername');
+        Env::$cachePassword = getenv('cachePassword');
+        Env::$cacheDatabase = getenv('cacheDatabase');
+    
         self::$cache = Cache::getObject();
     }
 
@@ -143,12 +128,13 @@ class HttpRequest
             HttpResponse::return5xx(501, "Cache '{$key}' missing.");
         }
         $groupInfoArr = json_decode(self::$cache->getCache($key), true);
-        Database::$dbType = $groupInfoArr['db_server_type'];
-        Database::$hostname = $groupInfoArr['db_hostname'];
-        Database::$port = $groupInfoArr['db_port'];
-        Database::$username = $groupInfoArr['db_username'];
-        Database::$password = $groupInfoArr['db_password'];
-        Database::$database = $groupInfoArr['db_database'];
+
+        Env::$dbType = getenv($groupInfoArr['db_server_type']);
+        Env::$dbHostname = getenv($groupInfoArr['db_hostname']);
+        Env::$dbPort = getenv($groupInfoArr['db_port']);
+        Env::$dbUsername = getenv($groupInfoArr['db_username']);
+        Env::$dbPassword = getenv($groupInfoArr['db_password']);
+        Env::$dbDatabase = getenv($groupInfoArr['db_database']);
     }
 
     /**
@@ -190,14 +176,14 @@ class HttpRequest
         }
         self::$routeElements = explode('/', trim(Constants::$ROUTE, '/'));
         $routeLastElementPos = count(self::$routeElements) - 1;
-        self::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
+        Env::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
         $configuredUri = [];
         foreach(self::$routeElements as $key => $e) {
             $pos = false;
             if (isset($routes[$e])) {
                 if (
-                    self::$allowConfigRequest == 1 &&
-                    self::$isConfigRequest && 
+                    Env::$allowConfigRequest == 1 &&
+                    Env::$isConfigRequest && 
                     $key === $routeLastElementPos &&
                     $routes[$e] === true
                 ) {

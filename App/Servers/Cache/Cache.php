@@ -1,9 +1,8 @@
 <?php
 namespace App\Servers\Cache;
 
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
+use App\Constants;
+use App\Env;
 use App\Servers\Cache\Redis;
 use App\Servers\Cache\MySQL;
 
@@ -22,48 +21,6 @@ use App\Servers\Cache\MySQL;
 class Cache
 {
     /**
-     * Cache Server Type
-     *
-     * @var string
-     */
-    public static $cacheType = null;
-
-    /**
-     * Cache hostname
-     *
-     * @var string
-     */
-    public static $hostname = null;
-
-    /**
-     * Cache port
-     *
-     * @var int
-     */
-    public static $port = null;
-
-    /**
-     * Cache username
-     *
-     * @var string
-     */
-    public static $username = null;
-
-    /**
-     * Cache password
-     *
-     * @var string
-     */
-    public static $password = null;
-
-    /**
-     * Cache database
-     *
-     * @var string
-     */
-    public static $database = null;
-
-    /**
      * Cache connection
      *
      * @var object
@@ -77,23 +34,23 @@ class Cache
      */
     public static function connect()
     {
-        switch (getenv(self::$cacheType)) {
+        switch (Env::$cacheType) {
             case 'Redis':
                 self::$cache = new Redis(
-                    self::$hostname,
-                    self::$port,
-                    self::$username,
-                    self::$password,
-                    self::$database
+                    Env::$cacheHostname,
+                    Env::$cachePort,
+                    Env::$cacheUsername,
+                    Env::$cachePassword,
+                    Env::$database
                 );
                 break;
             case 'MySQL':
                 self::$cache = new MySQL(
-                    self::$hostname,
-                    self::$port,
-                    self::$username,
-                    self::$password,
-                    self::$database
+                    Env::$cacheHostname,
+                    Env::$cachePort,
+                    Env::$cacheUsername,
+                    Env::$cachePassword,
+                    Env::$cacheDatabase
                 );
                 break;
         }

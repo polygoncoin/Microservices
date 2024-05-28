@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 
@@ -37,7 +38,7 @@ class Routes
      *
      * @var string
      */
-    private $routesFolder = Constants::$DOC_ROOT . '/Config/Routes';
+    private $routesFolder = '/Config/Routes';
 
     /**
      * Route config ignore keys
@@ -74,7 +75,7 @@ class Routes
     private function processRoutes()
     {
         $httpRoutes = [];
-        $userRoutesFolder = $this->routesFolder . '/' . HttpRequest::$input['readOnlySession']['group_name'];
+        $userRoutesFolder = Constants::$DOC_ROOT . $this->routesFolder . '/' . HttpRequest::$input['readOnlySession']['group_name'];
         foreach ($this->httpMethods as $method) {
             $httpRoutes[$method] = [];
             $routeFileLocation =  $userRoutesFolder . '/' . $method . 'routes.php';
@@ -101,7 +102,7 @@ class Routes
                 continue;
             }
             if (
-                HttpRequest::$allowConfigRequest &&
+                Env::$allowConfigRequest &&
                 $key === 'config' &&
                 $r === true
             ) {

@@ -2,6 +2,7 @@
 namespace Config\Queries\ClientDB\DELETE;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
@@ -13,7 +14,7 @@ return [
             ],
             'subQuery' => [
                 'address' => [
-                    'query' => "UPDATE `{$this->clientDB}`.`address` SET __SET__ WHERE __WHERE__",
+                    'query' => "UPDATE `{$Env::$clientDB}`.`address` SET __SET__ WHERE __WHERE__",
                     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                         ['uriParams', 'id', Constants::$REQUIRED],
                     ],

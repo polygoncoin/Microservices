@@ -2,6 +2,8 @@
 namespace App;
 
 use App\AppTrait;
+use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Servers\Database\Database;
@@ -31,20 +33,6 @@ class Read
     public $db = null;
 
     /**
-     * Global DB
-     *
-     * @var string
-     */
-    public $globalDB = null;
-
-    /**
-     * Client database
-     *
-     * @var string
-     */
-    public $clientDB = null;
-
-    /**
      * JsonEncode class object
      *
      * @var object
@@ -58,8 +46,13 @@ class Read
      */
     public function init()
     {
-        $this->globalDB = getenv('defaultDbDatabase');
-        $this->clientDB = getenv(Database::$database);
+        Env::$globalDB = Env::$defaultDbDatabase;
+        Env::$clientDB = Env::$dbDatabase;
+
+        $Constants = 'App\\Constants';
+        $Env = 'App\\Env';
+        $HttpRequest = 'App\\HttpRequest';
+
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
@@ -70,8 +63,8 @@ class Read
         $useHierarchy = $this->getUseHierarchy($readSqlConfig);
 
         if (
-            HttpRequest::$allowConfigRequest &&
-            HttpRequest::$isConfigRequest
+            Env::$allowConfigRequest &&
+            Env::$isConfigRequest
         ) {
             $this->processReadConfig($readSqlConfig, $useHierarchy);
         } else {
@@ -202,8 +195,8 @@ class Read
         unset($readSqlConfig['countQuery']);
         HttpRequest::$input['payload']['page']  = $_GET['page'] ?? 1;
         HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
-        if (HttpRequest::$input['payload']['perpage'] > getenv('maxPerpage')) {
-            HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.getenv('maxPerpage'));
+        if (HttpRequest::$input['payload']['perpage'] > Env::$maxPerpage) {
+            HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.Env::$maxPerpage);
         }
         HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
         list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);

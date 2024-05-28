@@ -2,6 +2,7 @@
 namespace App;
 
 use App\Constants;
+use App\Env;
 use App\Logs;
 use App\HttpRequest;
 
@@ -210,7 +211,7 @@ class JsonEncoder
     private function streamJson()
     {
         $str = ob_get_clean();
-        if (!empty($str) && Constants::$ENVIRONMENT === Constants::$PRODUCTION) {
+        if (!empty($str) && Env::$ENVIRONMENT === Constants::$PRODUCTION) {
             $log = [
                 'datetime' => date('Y-m-d H:i:s'),
                 'input' => HttpRequest::$input,

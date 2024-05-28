@@ -2,10 +2,11 @@
 namespace Config\Queries\ClientDB\Common;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$this->clientDB}`.`registration` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$Env::$clientDB}`.`registration` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['uriParams', 'id', Constants::$REQUIRED],
     ],

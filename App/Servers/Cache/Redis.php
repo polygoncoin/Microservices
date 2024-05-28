@@ -1,6 +1,8 @@
 <?php
 namespace App\Servers\Cache;
 
+use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
@@ -77,7 +79,7 @@ class Redis extends AbstractCache
         $port,
         $username,
         $password,
-        $database = 'cacheDatabase'
+        $database
     )
     {   
         $this->hostname = $hostname;
@@ -100,8 +102,8 @@ class Redis extends AbstractCache
         try {
             $this->redis = new \Redis();
             //Connecting to Redis
-            $this->redis->connect(getenv($this->hostname), getenv($this->port), 1, NULL, 100);
-            $this->redis->auth(getenv($this->password));
+            $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
+            $this->redis->auth($this->password);
             if (!is_null($this->database)) {
                 $this->useDatabase($this->database);
             }
@@ -128,7 +130,7 @@ class Redis extends AbstractCache
     public function useDatabase($database)
     {
         $this->connect();
-        $this->redis->select(getenv($this->database));
+        $this->redis->select($this->database);
     }
 
     /**

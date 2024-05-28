@@ -1,6 +1,8 @@
 <?php
 namespace App\Servers\Cache;
 
+use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;

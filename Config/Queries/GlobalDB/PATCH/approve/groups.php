@@ -2,10 +2,11 @@
 namespace Config\Queries\GlobalDB\PATCH\approve;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$groups}` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['uriParams', 'group_id', Constants::$REQUIRED],
     ],
@@ -25,7 +26,7 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('groups')],
+                'table' => ['custom', Env::$groups],
                 'primary' => ['custom', 'group_id'],
                 'id' => ['payload', 'group_id']
             ],
@@ -34,7 +35,7 @@ return [
 		[
 			'fn' => 'checkColumnValueExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('groups')],
+                'table' => ['custom', Env::$groups],
                 'column' => ['custom', 'is_deleted'],
                 'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'group_id'],
@@ -45,7 +46,7 @@ return [
 		[
 			'fn' => 'checkColumnValueExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('groups')],
+                'table' => ['custom', Env::$groups],
                 'column' => ['custom', 'is_approved'],
                 'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'group_id'],

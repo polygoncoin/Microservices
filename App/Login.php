@@ -2,9 +2,8 @@
 namespace App;
 
 use App\Constants;
-use App\HttpRequest;
+use App\Env;
 use App\HttpResponse;
-use App\Logs;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
 
@@ -102,12 +101,12 @@ class Login
      */
     private function process()
     {
-        Cache::$cacheType = 'cacheType';
-        Cache::$hostname = 'cacheHostname';
-        Cache::$port = 'cachePort';
-        Cache::$username = 'cacheUsername';
-        Cache::$password = 'cachePassword';
-        Cache::$database = 'cacheDatabase';
+        Env::$cacheType = getenv('cacheType');
+        Env::$cacheHostname = getenv('cacheHostname');
+        Env::$cachePort = getenv('cachePort');
+        Env::$cacheUsername = getenv('cacheUsername');
+        Env::$cachePassword = getenv('cachePassword');
+        Env::$cacheDatabase = getenv('cacheDatabase');
 
         $this->cache = Cache::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
@@ -249,15 +248,15 @@ class Login
 
     private function updateDB($tokenDetails)
     {
-        Database::$dbType = 'defaultDbType';
-        Database::$hostname = 'defaultDbHostname';
-        Database::$port = 'defaultDbPort';
-        Database::$username = 'defaultDbUsername';
-        Database::$password = 'defaultDbPassword';
-        Database::$database = 'defaultDbDatabase';
+        Env::$dbType = getenv('defaultDbType');
+        Env::$dbHostname = getenv('defaultDbHostname');
+        Env::$dbPort = getenv('defaultDbPort');
+        Env::$dbUsername = getenv('defaultDbUsername');
+        Env::$dbPassword = getenv('defaultDbPassword');
+        Env::$dbDatabase = getenv('defaultDbDatabase');
 
         $this->db = Database::getObject();
-        $userTable = getenv('users');
+        $userTable = Env::$users;
         $this->db->execDbQuery("
         UPDATE
             `{$userTable}`

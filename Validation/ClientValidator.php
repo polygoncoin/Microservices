@@ -2,6 +2,7 @@
 namespace Validation;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
@@ -72,7 +73,7 @@ class ClientValidator
     public function clientIdExist($args)
     {
         extract($args);
-        return $this->getPrimaryCount(getenv('clients'), 'client_id', $client_id);
+        return $this->getPrimaryCount(Env::$clients, 'client_id', $client_id);
     }
 
     /**
@@ -85,7 +86,7 @@ class ClientValidator
      */
     private function getPrimaryCount($table, $primary, $id)
     {
-        $db = getenv('defaultDbDatabase');
+        $db = Env::$defaultDbDatabase;
         $sql = "SELECT count(1) as `count` FROM `{$db}`.`{$table}` WHERE `{$primary}` = ?";
         $params = [$id];
         $this->db->execDbQuery($sql, $params);

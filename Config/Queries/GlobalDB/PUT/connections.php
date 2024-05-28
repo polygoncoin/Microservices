@@ -2,10 +2,11 @@
 namespace Config\Queries\GlobalDB\PUT;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$connections}` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name'],
         ['payload', 'db_server_type'],
@@ -38,7 +39,7 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('connections')],
+                'table' => ['custom', Env::$connections],
                 'primary' => ['custom', 'connection_id'],
                 'id' => ['payload', 'connection_id']
             ],

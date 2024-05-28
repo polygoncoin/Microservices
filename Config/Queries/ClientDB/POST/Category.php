@@ -2,10 +2,11 @@
 namespace Config\Queries\ClientDB\POST;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
-    'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
+    'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name', Constants::$REQUIRED],
     ],
@@ -17,7 +18,7 @@ return [
     'insertId' => 'category:id',
     'subQuery' => [
         'sub' => [
-            'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
+            'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
             '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                 ['payload', 'subname', Constants::$REQUIRED],
             ],
@@ -28,7 +29,7 @@ return [
             'insertId' => 'sub:id',
             'subQuery' => [
                 'subsub' => [
-                    'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
+                    'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
                     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                         ['payload', 'subsubname', Constants::$REQUIRED],
                     ],

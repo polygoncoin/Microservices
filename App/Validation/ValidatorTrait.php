@@ -1,6 +1,9 @@
 <?php
 namespace App\Validation;
 
+use App\Constants;
+use App\Env;
+
 /**
  * Trait for common validator functions
  *

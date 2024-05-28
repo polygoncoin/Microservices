@@ -2,11 +2,12 @@
 namespace Config\Queries\GlobalDB\GET;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
     'all' => [
-        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` WHERE __WHERE__ ORDER BY connection_id ASC",
+        'query' => "SELECT * FROM `{$Env::$globalDB}`.`{$Env::$connections}` WHERE __WHERE__ ORDER BY connection_id ASC",
         '__WHERE__' => [
             'is_approved' => ['custom', 'Yes'],
             'is_disabled' => ['custom', 'No'],
@@ -15,7 +16,7 @@ return [
         'mode' => 'multipleRowFormat'//Multiple rows returned.
     ],
     'single' => [
-        'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` WHERE __WHERE__",
+        'query' => "SELECT * FROM `{$Env::$globalDB}`.`{$Env::$connections}` WHERE __WHERE__",
         '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
             ['uriParams', 'connection_id', Constants::$REQUIRED],
         ],

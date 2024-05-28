@@ -2,10 +2,11 @@
 namespace Config\Queries\GlobalDB\PATCH\approve;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('users'))}` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$users}` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['uriParams', 'user_id', Constants::$REQUIRED],
     ],
@@ -25,7 +26,7 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('users')],
+                'table' => ['custom', Env::$users],
                 'primary' => ['custom', 'user_id'],
                 'id' => ['payload', 'user_id']
             ],
@@ -34,7 +35,7 @@ return [
 		[
 			'fn' => 'checkColumnValueExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('users')],
+                'table' => ['custom', Env::$users],
                 'column' => ['custom', 'is_deleted'],
                 'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'user_id'],
@@ -45,7 +46,7 @@ return [
 		[
 			'fn' => 'checkColumnValueExist',
 			'fnArgs' => [
-                'table' => ['custom', getenv('users')],
+                'table' => ['custom', Env::$users],
                 'column' => ['custom', 'is_approved'],
                 'columnValue' => ['custom', 'No'],
                 'primary' => ['custom', 'user_id'],

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../autoload.php';
 
 use App\Constants;
+use App\Env;
 
 class Microservices
 {
@@ -15,15 +16,26 @@ class Microservices
      */
     private $tsEnd = null;
 
+    /**
+     * JsonEncode class object
+     *
+     * @var object
+     */
     private $jsonObj = null;
+
+    public function __construct()
+    {
+        ob_start();
+        Constants::init();
+        Env::init();
+        $this->jsonObj = App\HttpResponse::getJsonObject();        
+    }
 
     public function init()
     {
-        ob_start();
-        if (Constants::$OUTPUT_PERFORMANCE_STATS) {
+        if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsStart = microtime(true);
         }
-        $this->jsonObj = App\HttpResponse::getJsonObject();
         $this->setHeaders();
         $this->startJson();
         $this->startOutputJson();
@@ -68,7 +80,7 @@ class Microservices
                 }
                 break;
             case strpos(Constants::$ROUTE, '/crons') === 0:
-                if (Constants::$REMOTE_ADDR !== getenv('cronRestrictedIp')) {
+                if (Constants::$REMOTE_ADDR !== Env::$cronRestrictedIp) {
                     die('Source IP is not supported.');
                 }
                 $routeArr = explode('/', $this->ROUTE);
@@ -96,7 +108,7 @@ class Microservices
 
     public function addPerformance()
     {
-        if (Constants::$OUTPUT_PERFORMANCE_STATS) {
+        if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsEnd = microtime(true);
             $time = ($this->tsEnd - $this->tsStart) * 1000;
             $memory = (memory_get_peak_usage()/1000);

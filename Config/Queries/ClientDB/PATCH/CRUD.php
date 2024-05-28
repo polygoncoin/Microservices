@@ -2,6 +2,7 @@
 namespace Config\Queries\ClientDB\PATCH;
 
 use App\Constants;
+use App\Env;
 use App\HttpRequest;
 
 return [

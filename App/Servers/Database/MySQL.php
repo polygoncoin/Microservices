@@ -1,10 +1,11 @@
 <?php
 namespace App\Servers\Database;
 
+use App\Constants;
+use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
-use App\AppTrait;
 use App\Servers\Database\AbstractDatabase;
 
 /**
@@ -21,8 +22,6 @@ use App\Servers\Database\AbstractDatabase;
  */
 class MySQL extends AbstractDatabase
 {
-    use AppTrait;
-
     /**
      * Database hostname
      *
@@ -115,9 +114,9 @@ class MySQL extends AbstractDatabase
         if (!is_null($this->pdo)) return;
         try {
             $this->pdo = new \PDO(
-                "mysql:host=".getenv($this->hostname),
-                getenv($this->username),
-                getenv($this->password),
+                "mysql:host=".$this->hostname,
+                $this->username,
+                $this->password,
                 [
                     \PDO::ATTR_EMULATE_PREPARES => false,
 //                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
@@ -141,7 +140,7 @@ class MySQL extends AbstractDatabase
     {
         $this->connect();
         try {
-            $this->pdo->exec("USE `{$this->execPhpFunc(getenv($database))}`");
+            $this->pdo->exec("USE `{$database}`");
         } catch (\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {
                 $log = [

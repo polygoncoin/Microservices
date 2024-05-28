@@ -1,9 +1,8 @@
 <?php
 namespace App\Servers\Database;
 
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
+use App\Constants;
+use App\Env;
 use App\Servers\Database\MySQL;
 
 /**
@@ -21,48 +20,6 @@ use App\Servers\Database\MySQL;
 class Database
 {
     /**
-     * Server Type
-     *
-     * @var string
-     */
-    public static $dbType = null;
-
-    /**
-     * Database hostname
-     *
-     * @var string
-     */
-    public static $hostname = null;
-
-    /**
-     * Database port
-     *
-     * @var string
-     */
-    public static $port = null;
-
-    /**
-     * Database username
-     *
-     * @var string
-     */
-    public static $username = null;
-
-    /**
-     * Database password
-     *
-     * @var string
-     */
-    public static $password = null;
-
-    /**
-     * Database database
-     *
-     * @var string
-     */
-    public static $database = null;
-
-    /**
      * Database object
      */
     public static $db = null;
@@ -74,13 +31,13 @@ class Database
      */
     public static function connect()
     {
-        if (getenv(self::$dbType) === 'MySQL') {
+        if (Env::$dbType === 'MySQL') {
             self::$db = new MySQL(
-                self::$hostname,
-                self::$port,
-                self::$username,
-                self::$password,
-                self::$database
+                Env::$dbHostname,
+                Env::$dbPort,
+                Env::$dbUsername,
+                Env::$dbPassword,
+                Env::$dbDatabase
             );
         }
     }
