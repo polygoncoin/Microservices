@@ -1,11 +1,12 @@
 <?php
 namespace Config\Queries\GlobalDB\PUT;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` SET __SET__ WHERE __WHERE__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name'],
         ['payload', 'db_server_type'],
         ['payload', 'db_hostname'],
@@ -13,11 +14,11 @@ return [
         ['payload', 'db_password'],
         ['payload', 'db_database'],
         ['payload', 'comments'],
-        ['uriParams', 'connection_id', REQUIRED]
+        ['uriParams', 'connection_id', Constants::$REQUIRED]
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name', REQUIRED],
+        'name' => ['payload', 'name', Constants::$REQUIRED],
         'db_server_type' => ['payload', 'db_server_type'],
         'db_hostname' => ['payload', 'db_hostname'],
         'db_username' => ['payload', 'db_username'],

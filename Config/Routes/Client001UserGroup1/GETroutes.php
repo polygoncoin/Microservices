@@ -1,12 +1,17 @@
 <?php
+namespace Config\Routes\Client001UserGroup1;
+
+use App\Constants;
+use App\HttpRequest;
+
 return [
     'category' => [
-        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/Category.php',
+        '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/GET/Category.php',
     ],
     '{table:string}' => [
-        '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
+        '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
         '{id:int}'  => [
-            '__file__' => __DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
+            '__file__' => Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/GET/CRUD.php',
         ],
     ],
     'thirdParty' => [

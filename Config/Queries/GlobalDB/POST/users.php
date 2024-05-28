@@ -1,12 +1,13 @@
 <?php
 namespace Config\Queries\GlobalDB\POST;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('users'))}` SET __SET__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-        ['payload', 'name', REQUIRED],
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        ['payload', 'name', Constants::$REQUIRED],
         ['payload', 'comments'],
     ],
     '__SET__' => [

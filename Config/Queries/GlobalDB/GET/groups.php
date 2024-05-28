@@ -1,6 +1,7 @@
 <?php
 namespace Config\Queries\GlobalDB\GET;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
@@ -15,8 +16,8 @@ return [
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` WHERE __WHERE__",
-        '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-            ['uriParams', 'group_id', REQUIRED],
+        '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+            ['uriParams', 'group_id', Constants::$REQUIRED],
         ],
         '__WHERE__' => [
             'is_approved' => ['custom', 'Yes'],

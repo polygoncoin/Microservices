@@ -1,12 +1,13 @@
 <?php
 namespace Config\Queries\ClientDB\Common;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->clientDB}`.`address` SET __SET__ WHERE __WHERE__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-        ['uriParams', 'id', REQUIRED],
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        ['uriParams', 'id', Constants::$REQUIRED],
     ],
     '__WHERE__' => [
         'is_deleted' => ['custom', 'No'],

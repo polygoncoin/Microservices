@@ -109,7 +109,6 @@ class JsonDecoder
         $this->tempStream = fopen("php://temp", "rw+b");
         stream_copy_to_stream( $inputStream, $this->tempStream);
         fclose($inputStream);
-        $this->indexJSON();
     }
 
     /**

@@ -1,17 +1,18 @@
 <?php
 namespace Config\Queries\GlobalDB\PUT;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('groups'))}` SET __SET__ WHERE __WHERE__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name'],
         ['payload', 'client_id'],
         ['payload', 'connection_id'],
         ['payload', 'allowed_ips'],
         ['payload', 'comments'],
-        ['uriParams', 'group_id', REQUIRED]
+        ['uriParams', 'group_id', Constants::$REQUIRED]
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],

@@ -2,6 +2,7 @@
 namespace App;
 
 use App\AppTrait;
+use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\JsonEncode;
@@ -126,7 +127,7 @@ class Write
         // Perform action
         foreach (HttpRequest::$input['payloadArr'] as &$payload) {
             HttpRequest::$input['payload'] = $payload;
-            if (HttpRequest::$REQUEST_METHOD === Constants::PATCH) {
+            if (Constants::$REQUEST_METHOD === Constants::$PATCH) {
                 if (count(HttpRequest::$input['payloadArr_ith']) !== 1) {
                     HttpResponse::$httpStatus = 400;
                     $this->jsonObj->startAssoc();

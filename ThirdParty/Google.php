@@ -1,6 +1,7 @@
 <?php
 namespace ThirdParty;
 
+use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
 

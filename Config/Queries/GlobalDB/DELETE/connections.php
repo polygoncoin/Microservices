@@ -1,12 +1,13 @@
 <?php
 namespace Config\Queries\GlobalDB\DELETE;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` SET __SET__ WHERE __WHERE__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-        ['uriParams', 'connection_id', REQUIRED],
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        ['uriParams', 'connection_id', Constants::$REQUIRED],
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],

@@ -51,13 +51,6 @@ class Login
     private $password = null;
 
     /**
-     * IP from which request originated
-     *
-     * @var string
-     */
-    private $requestIp = null;
-
-    /**
      * Details pertaining to user.
      *
      * @var array
@@ -132,11 +125,8 @@ class Login
      */
     private function performBasicCheck()
     {
-        // Check request not from proxy.
-        $this->requestIp = REMOTE_ADDR;
-
         // Check request method is POST.
-        if (REQUEST_METHOD !== Constants::CREATE) {
+        if (Constants::$REQUEST_METHOD !== Constants::$POST) {
             HttpResponse::return4xx(404, 'Invalid request method');
         }
 
@@ -182,7 +172,7 @@ class Login
             $cidrs = json_decode($this->cache->getCache("cidr:{$this->groupId}"), true);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
-                if (cidr_match($this->requestIp, $cidr)) {
+                if (cidr_match(Constants::$REMOTE_ADDR, $cidr)) {
                     $isValidIp = true;
                     break;
                 }
@@ -216,7 +206,7 @@ class Login
         while (true) {
             $token = bin2hex(random_bytes(32));
             if (!$this->cache->cacheExists($token)) {
-                $this->cache->setCache($token, '{}', TOKEN_EXPIRY_TIME);
+                $this->cache->setCache($token, '{}', Constants::$TOKEN_EXPIRY_TIME);
                 $tokenDetails = ['token' => $token, 'timestamp' => $this->timestamp];
                 break;
             }
@@ -236,7 +226,7 @@ class Login
         if ($this->cache->cacheExists("usertoken:{$this->userId}")) {
             $tokenDetails = json_decode($this->cache->getCache("usertoken:{$this->userId}"), true);
             if ($this->cache->cacheExists($tokenDetails['token'])) {
-                if ((TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
+                if ((Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
                     $tokenFound = true;
                 } else {
                     $this->cache->deleteCache($tokenDetails['token']);
@@ -246,13 +236,13 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), TOKEN_EXPIRY_TIME);
-            $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), TOKEN_EXPIRY_TIME);
+            $this->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
         $output = [
             'Token' => $tokenDetails['token'],
-            'Expires' => (TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
+            'Expires' => (Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
         ];
         $this->jsonObj->addKeyValue('Results', $output);
     }

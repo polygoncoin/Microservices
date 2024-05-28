@@ -15,9 +15,46 @@ namespace App;
  */
 class Constants
 {
-    public const READ       = 'GET';
-    public const CREATE      = 'POST';
-    public const UPDATE       = 'PUT';
-    public const PATCH     = 'PATCH';
-    public const DELETE    = 'DELETE';
+    public static $GET       = 'GET';
+    public static $POST      = 'POST';
+    public static $PUT       = 'PUT';
+    public static $PATCH     = 'PATCH';
+    public static $DELETE    = 'DELETE';
+
+    public static $PRODUCTION = 1;
+    public static $DEVELOPMENT = 0;
+
+    public static $TOKEN_EXPIRY_TIME = 3600;    
+    public static $REQUIRED = true;
+
+    public static $__DOC_ROOT__ = null;
+    public static $ENVIRONMENT = null;
+    public static $OUTPUT_PERFORMANCE_STATS = null;
+
+    public static $REQUEST_METHOD = null;
+    public static $HTTP_AUTHORIZATION = null;
+    public static $REMOTE_ADDR = null;
+
+    public static $ROUTE_URL_PARAM = 'r';
+    public static $ROUTE = null;
+
+    public static function init()
+    {
+        self::$__DOC_ROOT__ = dirname(__DIR__ . '../');
+        self::$ENVIRONMENT = getenv('ENVIRONMENT');
+        self::$OUTPUT_PERFORMANCE_STATS = getenv('OUTPUT_PERFORMANCE_STATS');
+
+        self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
+
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
+        }
+        // Check request is not from a proxy server.
+        if (!isset($_SERVER['REMOTE_ADDR'])) {
+            http_response_code(404);
+        }
+        self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
+        self::$ROUTE = '/' . trim($_GET[self::$ROUTE_URL_PARAM], '/');
+    }
 }
+Constants::init();

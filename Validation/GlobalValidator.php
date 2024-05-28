@@ -1,6 +1,7 @@
 <?php
 namespace Validation;
 
+use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;

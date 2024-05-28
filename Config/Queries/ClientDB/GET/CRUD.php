@@ -1,6 +1,7 @@
 <?php
 namespace Config\Queries\ClientDB\GET;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
@@ -14,8 +15,8 @@ return [
     ],
     'single' => [
         'query' => "SELECT * FROM `{$this->clientDB}`.`".HttpRequest::$input['uriParams']['table']."` WHERE __WHERE__",
-        '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-            ['uriParams', 'id', REQUIRED],
+        '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+            ['uriParams', 'id', Constants::$REQUIRED],
         ],
         '__WHERE__' => [
             'is_deleted' => ['custom', 'No'],

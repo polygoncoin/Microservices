@@ -1,11 +1,12 @@
 <?php
 namespace Config\Queries\ClientDB\DELETE;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'registration' => array_merge(
-        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
+        include Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Registration.php',
         [
             '__SET__' => [
                 'is_deleted' => ['custom', 'Yes']
@@ -13,8 +14,8 @@ return [
             'subQuery' => [
                 'address' => [
                     'query' => "UPDATE `{$this->clientDB}`.`address` SET __SET__ WHERE __WHERE__",
-                    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-                        ['uriParams', 'id', REQUIRED],
+                    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+                        ['uriParams', 'id', Constants::$REQUIRED],
                     ],
                     '__SET__' => [
                         'is_deleted' => ['custom', 'Yes']
@@ -28,7 +29,7 @@ return [
         ]
     ),
     'address' => array_merge(
-        include __DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Address.php',
+        include Constants::$__DOC_ROOT__ . '/Config/Queries/ClientDB/Common/Address.php',
         [
             '__SET__' => [
                 'is_deleted' => ['custom', 'Yes']

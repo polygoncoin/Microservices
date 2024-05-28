@@ -1,12 +1,13 @@
 <?php
 namespace Config\Queries\GlobalDB\POST;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->globalDB}`.`{$this->execPhpFunc(getenv('connections'))}` SET __SET__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-        ['payload', 'name', REQUIRED],
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        ['payload', 'name', Constants::$REQUIRED],
         ['payload', 'db_server_type'],
         ['payload', 'db_hostname'],
         ['payload', 'db_username'],
@@ -16,7 +17,7 @@ return [
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name', REQUIRED],
+        'name' => ['payload', 'name', Constants::$REQUIRED],
         'db_server_type' => ['payload', 'db_server_type'],
         'db_hostname' => ['payload', 'db_hostname'],
         'db_username' => ['payload', 'db_username'],

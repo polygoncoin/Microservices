@@ -46,9 +46,9 @@ class Upload
      */
     public function process()
     {
-        switch (HttpRequest::$REQUEST_METHOD) {
-            case Constants::CREATE:
-            case Constants::UPDATE:
+        switch (Constants::$REQUEST_METHOD) {
+            case Constants::$POST:
+            case Constants::$PUT:
                 $this->processUpload();
                 break;
         }
@@ -90,6 +90,6 @@ class Upload
      */
     private function getLocation()
     {
-        return __DOC_ROOT__ . '/Dropbox/' . 'test.txt';
+        return Constants::$__DOC_ROOT__ . '/Dropbox/' . 'test.txt';
     }
 }

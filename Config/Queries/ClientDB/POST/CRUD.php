@@ -1,15 +1,16 @@
 <?php
 namespace Config\Queries\ClientDB\POST;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'registration' => [
         'query' => "INSERT INTO `{$this->clientDB}`.`registration` SET __SET__",
-        '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-            ['payload', 'firstname', REQUIRED],
-            ['payload', 'lastname', REQUIRED],
-            ['payload', 'email', REQUIRED],
+        '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+            ['payload', 'firstname', Constants::$REQUIRED],
+            ['payload', 'lastname', Constants::$REQUIRED],
+            ['payload', 'email', Constants::$REQUIRED],
         ],
         '__SET__' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
@@ -21,8 +22,8 @@ return [
         'subQuery' => [
             'address' => [
                 'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
-                '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-                    ['payload', 'address', REQUIRED]
+                '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+                    ['payload', 'address', Constants::$REQUIRED]
                 ],
                 '__SET__' => [
                     'registration_id' => ['insertIdParams', 'registration:id'],
@@ -35,8 +36,8 @@ return [
         'query' => "INSERT INTO `{$this->clientDB}`.`address` SET __SET__",
         '__SET__' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-            'registration' => ['payload', 'registration_id', REQUIRED],
-            'address' => ['payload', 'address', REQUIRED],
+            'registration' => ['payload', 'registration_id', Constants::$REQUIRED],
+            'address' => ['payload', 'address', Constants::$REQUIRED],
         ],
         'insertId' => 'address:id'
     ]

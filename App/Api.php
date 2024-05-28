@@ -54,14 +54,14 @@ class Api
             HttpRequest::loadPayload();
         }
 
-        switch (HttpRequest::$REQUEST_METHOD) {
-            case Constants::READ:
+        switch (Constants::$REQUEST_METHOD) {
+            case Constants::$GET:
                 $request = new Read();
                 break;
-            case Constants::CREATE:
-            case Constants::UPDATE:
-            case Constants::PATCH:
-            case Constants::DELETE:
+            case Constants::$POST:
+            case Constants::$PUT:
+            case Constants::$PATCH:
+            case Constants::$DELETE:
                 $request = new Write();
                 break;
         }
@@ -85,7 +85,7 @@ class Api
             case 'thirdParty':
                 if (
                     isset(HttpRequest::$input['uriParams']['thirdParty']) &&
-                    file_exists(__DOC_ROOT__ . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
+                    file_exists(Constants::$__DOC_ROOT__ . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
                 ) {
                     eval('ThirdParty\\' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '::init();');
                     die;

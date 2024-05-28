@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Constants;
 use App\Logs;
 use App\HttpRequest;
 
@@ -48,7 +49,7 @@ class JsonEncoder
      */
     public function __construct()
     {
-        if (REQUEST_METHOD === 'GET') {
+        if (Constants::$REQUEST_METHOD === 'GET') {
             $this->tempStream = fopen("php://temp", "w+b");
         } else {
             $this->tempStream = fopen("php://memory", "w+b");
@@ -209,7 +210,7 @@ class JsonEncoder
     private function streamJson()
     {
         $str = ob_get_clean();
-        if (!empty($str) && ENVIRONMENT === PRODUCTION) {
+        if (!empty($str) && Constants::$ENVIRONMENT === Constants::$PRODUCTION) {
             $log = [
                 'datetime' => date('Y-m-d H:i:s'),
                 'input' => HttpRequest::$input,

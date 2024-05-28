@@ -36,27 +36,6 @@ class HttpRequest
     public static $isConfigRequest = false;
 
     /**
-     * HTTP request method
-     *
-     * @var string
-     */
-    public static $REQUEST_METHOD = null;
-
-    /**
-     * HTTP_AUTHORIZATION header
-     *
-     * @var string
-     */
-    public static $HTTP_AUTHORIZATION = null;
-
-    /**
-     * Remote IP
-     *
-     * @var string
-     */
-    public static $REMOTE_ADDR = null;
-
-    /**
      * Cahe Object
      *
      * @var string
@@ -112,10 +91,6 @@ class HttpRequest
      */
     public static function init()
     {
-        self::$REQUEST_METHOD = REQUEST_METHOD;
-        self::$HTTP_AUTHORIZATION = HTTP_AUTHORIZATION;
-        self::$REMOTE_ADDR = REMOTE_ADDR;
-
         self::$allowConfigRequest = getenv('allowConfigRequest');
         
         Cache::$cacheType = 'cacheType';
@@ -129,13 +104,13 @@ class HttpRequest
     }
 
     /**
-     * Loads token from HTTP_AUTHORIZATION header
+     * Loads token from HTTP_AUTHORIZATION
      *
      * @return void
      */
     public static function loadToken()
     {
-        if (preg_match('/Bearer\s(\S+)/', self::$HTTP_AUTHORIZATION, $matches)) {
+        if (!is_null(Constants::$HTTP_AUTHORIZATION) && preg_match('/Bearer\s(\S+)/', Constants::$HTTP_AUTHORIZATION, $matches)) {
             self::$input['token'] = $matches[1];
             $token = self::$input['token'];
             if (!self::$cache->cacheExists($token)) {
@@ -189,7 +164,7 @@ class HttpRequest
             $cidrs = json_decode(self::$cache->getCache($key), true);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
-                if (cidr_match(self::$REMOTE_ADDR, $cidr)) {
+                if (cidr_match(Constants::$REMOTE_ADDR, $cidr)) {
                     $isValidIp = true;
                     break;
                 }
@@ -207,13 +182,13 @@ class HttpRequest
      */
     public static function parseRoute()
     {
-        $routeFileLocation = __DOC_ROOT__ . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . self::$REQUEST_METHOD . 'routes.php';
+        $routeFileLocation = Constants::$__DOC_ROOT__ . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
-            HttpResponse::return5xx(501, 'Missing route file for ' . self::$REQUEST_METHOD . ' method');
+            HttpResponse::return5xx(501, 'Missing route file for ' . Constants::$REQUEST_METHOD . ' method');
         }
-        self::$routeElements = explode('/', trim(ROUTE, '/'));
+        self::$routeElements = explode('/', trim(Constants::$ROUTE, '/'));
         $routeLastElementPos = count(self::$routeElements) - 1;
         self::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
         $configuredUri = [];
@@ -287,7 +262,7 @@ class HttpRequest
                 HttpResponse::return5xx(501, 'Path cannot be empty');
             }
         } elseif ($routes['__file__'] != '') {
-            HttpResponse::return5xx(501, 'Missing route configuration file for ' . self::$REQUEST_METHOD . ' method');
+            HttpResponse::return5xx(501, 'Missing route configuration file for ' . Constants::$REQUEST_METHOD . ' method');
         }
     }
 
@@ -298,7 +273,7 @@ class HttpRequest
      */
     public static function loadPayload()
     {
-        if (self::$REQUEST_METHOD === Constants::READ) {
+        if (Constants::$REQUEST_METHOD === Constants::$GET) {
             self::urlDecode($_GET);
             self::$input['payloadArr'] = !empty($_GET) ? $_GET : [];
         } else {

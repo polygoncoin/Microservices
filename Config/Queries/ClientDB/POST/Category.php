@@ -1,12 +1,13 @@
 <?php
 namespace Config\Queries\ClientDB\POST;
 
+use App\Constants;
 use App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-        ['payload', 'name', REQUIRED],
+    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        ['payload', 'name', Constants::$REQUIRED],
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
@@ -17,8 +18,8 @@ return [
     'subQuery' => [
         'sub' => [
             'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
-            '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-                ['payload', 'subname', REQUIRED],
+            '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+                ['payload', 'subname', Constants::$REQUIRED],
             ],
             '__SET__' => [
                 'name' => ['payload', 'subname'],
@@ -28,8 +29,8 @@ return [
             'subQuery' => [
                 'subsub' => [
                     'query' => "INSERT INTO `{$this->clientDB}`.`category` SET __SET__",
-                    '__CONFIG__' => [// [{payload/uriParams}, key/index, {REQUIRED}]
-                        ['payload', 'subsubname', REQUIRED],
+                    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+                        ['payload', 'subsubname', Constants::$REQUIRED],
                     ],
                     '__SET__' => [
                         'name' => ['payload', 'subsubname'],

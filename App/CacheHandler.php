@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
@@ -46,7 +47,7 @@ class CacheHandler
      */
     public static function init()
     {
-        self::$filePath = str_replace('/cache', '', ROUTE);
+        self::$filePath = str_replace('/cache', '', Constants::$ROUTE);
         self::validateFileRequest();
         
         $filePath = self::$route;

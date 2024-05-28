@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Constants;
 use App\HttpRequest;
 use App\HttpResponse;
 
@@ -18,14 +19,14 @@ use App\HttpResponse;
  */
 class Logs
 {
-    public const debug      = __DOC_ROOT__ . '/Logs/debug';
-    public const info       = __DOC_ROOT__ . '/Logs/info';
-    public const error      = __DOC_ROOT__ . '/Logs/error';
-    public const notice     = __DOC_ROOT__ . '/Logs/notice';
-    public const warning    = __DOC_ROOT__ . '/Logs/warning';
-    public const critical   = __DOC_ROOT__ . '/Logs/critical';
-    public const alert      = __DOC_ROOT__ . '/Logs/alert';
-    public const emergency  = __DOC_ROOT__ . '/Logs/emergency';
+    public const debug      = Constants::$__DOC_ROOT__ . '/Logs/debug';
+    public const info       = Constants::$__DOC_ROOT__ . '/Logs/info';
+    public const error      = Constants::$__DOC_ROOT__ . '/Logs/error';
+    public const notice     = Constants::$__DOC_ROOT__ . '/Logs/notice';
+    public const warning    = Constants::$__DOC_ROOT__ . '/Logs/warning';
+    public const critical   = Constants::$__DOC_ROOT__ . '/Logs/critical';
+    public const alert      = Constants::$__DOC_ROOT__ . '/Logs/alert';
+    public const emergency  = Constants::$__DOC_ROOT__ . '/Logs/emergency';
 
     public static function log($logType, $logContent)
     {
