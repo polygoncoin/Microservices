@@ -127,14 +127,19 @@ trait AppTrait
             list($params, $errors) = $this->getSqlParams($sqlDetails['__SET__']);
             if (empty($errors)) {
                 if (!empty($params)) {
+                    $found = strpos($sql, '__SET__') !== false;
                     $__SET__ = [];
                     foreach ($params as $param => &$v) {
                         $param = str_replace(['`', ' '], '', $param);
                         $paramKeys[] = $param;
-                        $__SET__[] = "`{$param}` = :{$param}";
+                        if ($found) {
+                            $__SET__[] = "`{$param}` = :{$param}";
+                        }
                         $sqlParams[":{$param}"] = $v;
                     }
-                    $sql = str_replace('__SET__', implode(', ', $__SET__), $sql);
+                    if ($found) {
+                        $sql = str_replace('__SET__', implode(', ', $__SET__), $sql);
+                    }
                 }
             }
         }
@@ -142,6 +147,7 @@ trait AppTrait
             list($sqlWhereParams, $werrors) = $this->getSqlParams($sqlDetails['__WHERE__']);
             if (empty($werrors) && empty($errors)) {
                 if(!empty($sqlWhereParams)) {
+                    $wfound = strpos($sql, '__WHERE__') !== false;
                     $__WHERE__ = [];
                     foreach ($sqlWhereParams as $param => &$v) {
                         $wparam = str_replace(['`', ' '], '', $param);
@@ -149,10 +155,14 @@ trait AppTrait
                             $wparam .= '0';
                         }
                         $paramKeys[] = $wparam;
-                        $__WHERE__[] = "`{$param}` = :{$wparam}";
+                        if ($wfound) {
+                            $__WHERE__[] = "`{$param}` = :{$wparam}";
+                        }
                         $sqlParams[":{$wparam}"] = $v;
                     }
-                    $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
+                    if ($wfound) {
+                        $sql = str_replace('__WHERE__', implode(' AND ', $__WHERE__), $sql);
+                    }
                 }
             } else {
                 $errors = array_merge($errors, $werrors);
