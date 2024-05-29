@@ -159,7 +159,10 @@ class Read
     private function fetchSingleRow(&$readSqlConfig, &$keys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
-        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
+        list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
+        if (!empty($errors)) {
+            return;
+        }
         $this->db->execDbQuery($sql, $sqlParams);
         if ($row = $this->db->fetch()) {
             //check if selected column-name mismatches or confliects with configured module/submodule names.
@@ -199,7 +202,10 @@ class Read
             HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.Env::$maxPerpage);
         }
         HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
-        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
+        list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
+        if (!empty($errors)) {
+            return;
+        }
         $this->db->execDbQuery($sql, $sqlParams);
         $row = $this->db->fetch();
         $this->db->closeCursor();
@@ -227,7 +233,10 @@ class Read
             HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
-        list($sql, $sqlParams) = $this->getSqlAndParams($readSqlConfig);
+        list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
+        if (!empty($errors)) {
+            return;
+        }
         if (isset($readSqlConfig['countQuery'])) {
             $start = HttpRequest::$input['payload']['start'];
             $offset = HttpRequest::$input['payload']['perpage'];

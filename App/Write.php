@@ -148,7 +148,7 @@ class Write
                 $successTransaction  = true;
                 $this->db->commit();
             } else {
-                $response = ['Error' => 'Something went wrong.'];
+                $response['Error'] = true;
             }
             if (HttpRequest::$input['payloadArrType'] !== 'Object') {
                 $this->jsonObj->startAssoc();
@@ -181,12 +181,21 @@ class Write
         $isAssoc = $this->isAssoc($payloads);
         $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
+            if (!$this->db->beganTransaction) {
+                return;
+            }
             HttpRequest::$input['payload'] = $payload;
             HttpRequest::$input['required'] = $required['__required__'];
             // Get Sql and Params
-            list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
+            list($sql, $sqlParams, $errors) = $this->getSqlAndParams($writeSqlConfig);
+            if (!empty($errors)) {
+                $response['Error'] = $errors;
+                $this->db->rollback();
+                return;
+            }
             $this->db->execDbQuery($sql, $sqlParams);
             if (!$this->db->beganTransaction) {
+                $response['Error'] = 'Something went wrong';
                 return;
             }
             if (!$isAssoc && !isset($response[$counter])) {
