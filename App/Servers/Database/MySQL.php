@@ -227,25 +227,19 @@ class MySQL extends AbstractDatabase
     public function execDbQuery($sql, $params = [])
     {
         $this->connect();
-        try {
-            $this->stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-            if ($this->stmt) {
-                $this->stmt->execute($params);
-            } else {
-                if ($this->beganTransaction) {
-                    $this->rollback();
-                }
-            }
-        } catch(\PDOException $e) {
-            if ((int)$this->pdo->errorCode()) {
-                $log = [
-                    'datetime' => date('Y-m-d H:i:s'),
-                    'input' => HttpRequest::$input,
-                    'error' => $this->pdo->errorInfo()
-                ];
-                Logs::log('error', json_encode($log));
+        $this->stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+        if ($this->stmt) {
+            $this->stmt->execute($params);
+        } else {
+            if ($this->beganTransaction) {
                 $this->rollback();
             }
+            $log = [
+                'datetime' => date('Y-m-d H:i:s'),
+                'input' => HttpRequest::$input,
+                'error' => $this->pdo->errorInfo()
+            ];
+            Logs::log('error', json_encode($log));
         }
     }
 
@@ -258,18 +252,19 @@ class MySQL extends AbstractDatabase
     public function prepare($sql)
     {
         $this->connect();
-        try {
-            return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-        } catch(\PDOException $e) {
-            if ((int)$this->pdo->errorCode()) {
-                $log = [
-                    'datetime' => date('Y-m-d H:i:s'),
-                    'input' => HttpRequest::$input,
-                    'error' => $this->pdo->errorInfo()
-                ];
-                Logs::log('error', json_encode($log));
+        $stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+        if ($stmt) {
+            return $stmt;
+        } else {
+            if ($this->beganTransaction) {
                 $this->rollback();
             }
+            $log = [
+                'datetime' => date('Y-m-d H:i:s'),
+                'input' => HttpRequest::$input,
+                'error' => $this->pdo->errorInfo()
+            ];
+            Logs::log('error', json_encode($log));
         }
     }
 
