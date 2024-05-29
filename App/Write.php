@@ -145,7 +145,7 @@ class Write
             $response = [];
             $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, HttpRequest::$input['requiredArr']);
             if ($this->db->beganTransaction === true) {
-                $successTransaction  = true;
+                $response['Success'] = true;
                 $this->db->commit();
             } else {
                 $response['Error'] = true;

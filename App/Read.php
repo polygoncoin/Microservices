@@ -97,6 +97,8 @@ class Read
         HttpRequest::$input['requiredArr'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
         HttpRequest::$input['required'] = HttpRequest::$input['requiredArr']['__required__'];
 
+        HttpRequest::$input['payload'] = HttpRequest::$input['payloadArr'][0];
+
         // Start Read operation.
         $keys = [];
         $this->readDB($readSqlConfig, true, $keys, $useHierarchy);

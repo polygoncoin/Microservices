@@ -8,6 +8,9 @@ use App\HttpRequest;
 return [
     'category' => [
         '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category.php',
+        'search' => [
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/SearchCategory.php',
+        ],
     ],
     '{table:string}' => [
         '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
