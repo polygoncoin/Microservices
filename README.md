@@ -135,9 +135,9 @@ The supported SQL format are as below
 return [
 	'query' => "SELECT * FROM {$this->globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
 	'__WHERE__' => [
-		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}], REQUIRED(optional)
+		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
 		'id' => ['uriParams', 'id'],
-		'group_id' => ['payload', 'group_id', REQUIRED],
+		'group_id' => ['payload', 'group_id'],
 		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'mode' => 'singleRowFormat',//Single row returned.
@@ -181,9 +181,15 @@ Here **query & mode** keys are required keys
 <?php
 return [
 	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
+	// Only fields present in __CONFIG__ shall be supported. Both Required and Optional
+    '__CONFIG__' => [// Set your payload fields config here.
+		// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        ['payload', 'group_id', Constants::$REQUIRED], // Required field
+        ['payload', 'group_id'], // Optional field
+    ],
 	'__SET__' => [// for __SET__
-		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}, REQUIRED],
-		'group_id' => ['payload', 'group_id', REQUIRED],
+		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}],
+		'group_id' => ['payload', 'group_id'],
 		'client_id' => ['readOnlySession', 'client_id']
 	],
 	'__WHERE__' => [// for __WHERE__
