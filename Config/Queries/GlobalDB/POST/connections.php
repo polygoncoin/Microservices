@@ -18,7 +18,7 @@ return [
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name', Constants::$REQUIRED],
+        'name' => ['payload', 'name'],
         'db_server_type' => ['payload', 'db_server_type'],
         'db_hostname' => ['payload', 'db_hostname'],
         'db_username' => ['payload', 'db_username'],

@@ -37,8 +37,8 @@ return [
         'query' => "INSERT INTO `{$Env::$clientDB}`.`address` SET __SET__",
         '__SET__' => [
             //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-            'registration' => ['payload', 'registration_id', Constants::$REQUIRED],
-            'address' => ['payload', 'address', Constants::$REQUIRED],
+            'registration' => ['payload', 'registration_id'],
+            'address' => ['payload', 'address'],
         ],
         'insertId' => 'address:id'
     ]

@@ -13,7 +13,7 @@ return [
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name', Constants::$REQUIRED],
+        'name' => ['payload', 'name'],
         'comments' => ['payload', 'comments'],
         'created_by' => ['readOnlySession', 'user_id'],
         'created_on' => ['custom', date('Y-m-d H:i:s')],

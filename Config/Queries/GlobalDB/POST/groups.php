@@ -16,7 +16,7 @@ return [
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
-        'name' => ['payload', 'name', Constants::$REQUIRED],
+        'name' => ['payload', 'name'],
         'client_id' => ['payload', 'client_id'],
         'connection_id' => ['payload', 'connection_id'],
         'allowed_ips' => ['payload', 'allowed_ips'],
