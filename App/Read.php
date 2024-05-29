@@ -235,6 +235,9 @@ class Read
         }
         $singleColumn = false;
         $stmt = $this->db->prepare($sql);
+        if (!$stmt) {
+            HttpResponse::return5xx(501, 'Invalid database query');
+        }
         $stmt->execute($sqlParams);
         for ($i=0;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
             if ($i===0) {

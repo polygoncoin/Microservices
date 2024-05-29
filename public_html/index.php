@@ -23,6 +23,9 @@ class Microservices
      */
     private $jsonObj = null;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         ob_start();
@@ -31,6 +34,11 @@ class Microservices
         $this->jsonObj = App\HttpResponse::getJsonObject();        
     }
 
+    /**
+     * Initialize
+     *
+     * @return void
+     */
     public function init()
     {
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
@@ -45,6 +53,11 @@ class Microservices
         $this->endJson();
     }
 
+    /**
+     * Set Headers
+     *
+     * @return void
+     */
     public function setHeaders()
     {
         header('Content-Type: application/json;charset=utf-8');
@@ -52,16 +65,31 @@ class Microservices
         header('Pragma: no-cache');        
     }
 
+    /**
+     * Start Json
+     *
+     * @return void
+     */
     public function startJson()
     {
         $this->jsonObj->startAssoc();
     }
 
+    /**
+     * Start Json Output Key
+     *
+     * @return void
+     */
     public function startOutputJson()
     {
         $this->jsonObj->startAssoc('Output');        
     }
 
+    /**
+     * Process API request
+     *
+     * @return void
+     */
     public function process()
     {
         switch (true) {
@@ -100,12 +128,22 @@ class Microservices
         }        
     }
 
+    /**
+     * End Json Output Key
+     *
+     * @return void
+     */
     public function endOutputJson()
     {
         $this->jsonObj->endAssoc();
         $this->jsonObj->addKeyValue('Status', App\HttpResponse::$httpStatus);
     }
 
+    /**
+     * Add Performance details
+     *
+     * @return void
+     */
     public function addPerformance()
     {
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
@@ -129,6 +167,11 @@ class Microservices
         }
     }
 
+    /**
+     * End Json
+     *
+     * @return void
+     */
     public function endJson()
     {
         $this->jsonObj->endAssoc();

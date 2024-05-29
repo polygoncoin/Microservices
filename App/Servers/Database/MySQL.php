@@ -76,7 +76,7 @@ class MySQL extends AbstractDatabase
      *
      * @var boolean
      */
-    private $beganTransaction = false;
+    public $beganTransaction = false;
 
     /**
      * Database constructor
@@ -200,7 +200,11 @@ class MySQL extends AbstractDatabase
      */
     public function affectedRows()
     {
-        return $this->stmt->rowCount();
+        if ($this->stmt) {
+            return $this->stmt->rowCount();
+        } else {
+            return false;
+        }
     }
     
     /**
@@ -225,7 +229,13 @@ class MySQL extends AbstractDatabase
         $this->connect();
         try {
             $this->stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-            $this->stmt->execute($params);
+            if ($this->stmt) {
+                $this->stmt->execute($params);
+            } else {
+                if ($this->beganTransaction) {
+                    $this->rollback();
+                }
+            }
         } catch(\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {
                 $log = [
@@ -235,7 +245,6 @@ class MySQL extends AbstractDatabase
                 ];
                 Logs::log('error', json_encode($log));
                 $this->rollback();
-                HttpResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
             }
         }
     }
@@ -250,7 +259,7 @@ class MySQL extends AbstractDatabase
     {
         $this->connect();
         try {
-            return $stmt = $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            return $this->pdo->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
         } catch(\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {
                 $log = [
@@ -260,7 +269,6 @@ class MySQL extends AbstractDatabase
                 ];
                 Logs::log('error', json_encode($log));
                 $this->rollback();
-                HttpResponse::return5xx(501, json_encode($this->pdo->errorInfo()));
             }
         }
     }
@@ -272,7 +280,11 @@ class MySQL extends AbstractDatabase
      */
     public function fetch()
     {
-        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($this->stmt) {
+            return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -282,7 +294,11 @@ class MySQL extends AbstractDatabase
      */
     public function fetchAll()
     {
-        return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+        if ($this->stmt) {
+            return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -292,6 +308,8 @@ class MySQL extends AbstractDatabase
      */
     public function closeCursor()
     {
-        $this->stmt->closeCursor();
+        if ($this->stmt) {
+            $this->stmt->closeCursor();
+        }
     }
 }

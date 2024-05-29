@@ -144,16 +144,19 @@ class Write
             $this->db->begin();
             $response = [];
             $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, HttpRequest::$input['requiredArr']);
-            $this->db->commit();
-            if (!empty($response)) {
-                if (HttpRequest::$input['payloadArrType'] !== 'Object') {
-                    $this->jsonObj->startAssoc();
-                }
-                $this->jsonObj->addKeyValue('Payload', $payload);
-                $this->jsonObj->addKeyValue('Response', $response);
-                if (HttpRequest::$input['payloadArrType'] !== 'Object') {
-                    $this->jsonObj->endAssoc();
-                }
+            if ($this->db->beganTransaction === true) {
+                $successTransaction  = true;
+                $this->db->commit();
+            } else {
+                $response = ['Error' => 'Something went wrong.'];
+            }
+            if (HttpRequest::$input['payloadArrType'] !== 'Object') {
+                $this->jsonObj->startAssoc();
+            }
+            $this->jsonObj->addKeyValue('Payload', $payload);
+            $this->jsonObj->addKeyValue('Response', $response);
+            if (HttpRequest::$input['payloadArrType'] !== 'Object') {
+                $this->jsonObj->endAssoc();
             }
         }
         if (HttpRequest::$input['payloadArrType'] === 'Object') {
@@ -183,6 +186,9 @@ class Write
             // Get Sql and Params
             list($sql, $sqlParams) = $this->getSqlAndParams($writeSqlConfig);
             $this->db->execDbQuery($sql, $sqlParams);
+            if (!$this->db->beganTransaction) {
+                return;
+            }
             if (!$isAssoc && !isset($response[$counter])) {
                 $response[$counter] = [];
             }
