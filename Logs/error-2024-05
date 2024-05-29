@@ -20,3 +20,24 @@
 {"datetime":"2024-05-29 09:34:43","input":{"token":"67c24f1f87938fd48153d9dc9f8537052c7452b0f6290e15e84e4c985d93d55e","readOnlySession":{"user_id":2,"username":"client_1_user_1","password_hash":"$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6","client_id":2,"group_name":"Client001UserGroup1","group_id":2},"payloadArr":[{"name":"wewe","sub":[{"subname":"email","subsub":[{"subsubname":"address"},{"subsubname":"address"}]},{"subname":"email","subsub":[{"subsubname":"address"},{"subsubname":"address"}]}]},{"name":"wewe","sub":[{"subname":"email","subsub":[{"subsubname":"address"},{"subsubname":"address"}]},{"subname":"email","subsub":[{"subsubname":"address"},{"subsubname":"address"}]}]}],"payloadArrType":"Array","requiredArr":{"__required__":[],"sub":{"__required__":[],"subsub":{"__required__":[]}}},"payload":{"subsubname":"address"},"required":[],"insertIdParams":{"category:id":"515","sub:id":"516"}},"error":["42S02",1146,"Table 'client_001.1category' doesn't exist"]}
 {"datetime":"2024-05-29 09:59:08","input":{"token":"67c24f1f87938fd48153d9dc9f8537052c7452b0f6290e15e84e4c985d93d55e","readOnlySession":{"user_id":2,"username":"client_1_user_1","password_hash":"$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6","client_id":2,"group_name":"Client001UserGroup1","group_id":2},"payloadArr":[{"r":"\/category"}],"payloadArrType":"Object","requiredArr":{"__required__":[],"sub":{"__required__":[],"subsub":{"__required__":[],"subsubsub":{"__required__":[]}}}},"required":[]},"error":["42S22",1054,"Unknown column '__WHERE__' in 'where clause'"]}
 {"datetime":"2024-05-29 10:00:30","input":{"token":"67c24f1f87938fd48153d9dc9f8537052c7452b0f6290e15e84e4c985d93d55e","readOnlySession":{"user_id":2,"username":"client_1_user_1","password_hash":"$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6","client_id":2,"group_name":"Client001UserGroup1","group_id":2},"payloadArr":[{"r":"\/category"}],"payloadArrType":"Object","requiredArr":{"__required__":[],"sub":{"__required__":[],"subsub":{"__required__":[],"subsubsub":{"__required__":[]}}}},"required":[]},"error":["42S22",1054,"Unknown column '__WHERE__' in 'where clause'"]}
+{"datetime":"2024-05-29 13:02:53","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:03:33","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:03:50","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:12:45","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:17:00","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:17:17","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:17:20","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:17:47","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:18:22","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:20:15","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:21:04","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:22:22","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:22:42","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:22:48","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:23:34","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:24:07","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:24:59","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:25:28","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:26:50","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:27:14","input":null,"error":"Unable to connect to cache server"}
+{"datetime":"2024-05-29 13:27:30","input":null,"error":"Unable to connect to cache server"}

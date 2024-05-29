@@ -41,7 +41,7 @@ class Cache
                     Env::$cachePort,
                     Env::$cacheUsername,
                     Env::$cachePassword,
-                    Env::$database
+                    Env::$cacheDatabase
                 );
                 break;
             case 'MySQL':

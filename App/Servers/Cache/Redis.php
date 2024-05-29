@@ -100,15 +100,20 @@ class Redis extends AbstractCache
     {
         if (!is_null($this->redis)) return;
         try {
-            $this->redis = new \Redis();
-            //Connecting to Redis
-            $this->redis->connect($this->hostname, $this->port, 1, NULL, 100);
-            $this->redis->auth($this->password);
+            // https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
+            $this->redis = new \Redis(
+                [
+                    'host' => $this->hostname,
+                    'port' => (int)$this->port,
+                    'connectTimeout' => 2.5,
+                    'auth' => [$this->username, $this->password],
+                ]
+            );
             if (!is_null($this->database)) {
                 $this->useDatabase($this->database);
             }
             if (!$this->redis->ping()) {
-                HttpResponse::return5xx(501, 'Unable to ping to cache server');
+                HttpResponse::return5xx(501, 'Unable to ping cache server');
             }
         } catch (\Exception $e) {
             $log = [
