@@ -64,44 +64,44 @@ HttpAuthenticationPassword='password'
 - For configuring route **/tableName/parts** GET method
 ```
 return [
-	'tableName' => [
-		'parts' => [
-			'__file__' => 'SQL file location'
-		]
-	]
+    'tableName' => [
+        'parts' => [
+            '__file__' => 'SQL file location'
+        ]
+    ]
 ];
 ```
 - For configuring route **/tableName/{id}** where id is dynamic **integer** value to be collected.
 ```
 return [
-	'tableName' => [
-		'{id:int}' => [
-			'__file__' => 'SQL file location'
-		]
-	]
+    'tableName' => [
+        '{id:int}' => [
+            '__file__' => 'SQL file location'
+        ]
+    ]
 ];
 ```
 - Same dynamic variable but with a different data type, for e.g. **{id}** will be treated differently for **string** and **integer** values to be collected.
 ```
 return [
-	'tableName' => [
-		'{id:int}' => [
-			'__file__' => 'SQL file location for integer data type'
-		],
-		'{id:string}' => [
-			'__file__' => 'SQL file location for string data type'
-		]
-	]
+    'tableName' => [
+        '{id:int}' => [
+            '__file__' => 'SQL file location for integer data type'
+        ],
+        '{id:string}' => [
+            '__file__' => 'SQL file location for string data type'
+        ]
+    ]
 ];
 ```
 - Suppose you want to restrict dynamic values to a certain set of values. One can do the same by appending comma-separated values after OR key.
 ```
 return [
-	'{tableName:string|admin,group,client,routes}' => [
-		'{id:int}' => [
-			'__file__' => 'SQL file location'
-		]
-	]
+    '{tableName:string|admin,group,client,routes}' => [
+        '{id:int}' => [
+            '__file__' => 'SQL file location'
+        ]
+    ]
 ];
 ```
 
@@ -133,43 +133,43 @@ The supported SQL format are as below
 ```
 <?php
 return [
-	'query' => "SELECT * FROM {$this->globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
-	'__WHERE__' => [
-		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
-		'id' => ['uriParams', 'id'],
-		'group_id' => ['payload', 'group_id'],
-		'client_id' => ['readOnlySession', 'client_id']
-	],
-	'mode' => 'singleRowFormat',//Single row returned.
-	'subQuery' => [
-		'Clients' => [
-			'query' => "MySQL Query here",
-			'__WHERE__' => [],
-			'mode' => 'multipleRowFormat'//Multiple rows returned.
-		],
-		'Users' => [
-			'query' => "MySQL Query here",
-			'__WHERE__' => [],
-			'mode' => 'multipleRowFormat'//Multiple rows returned.
-		],
-		'modules' => ...
-	],
-	'validate' => [
-		[
-			'fn' => 'validateGroupId',
-			'fnArgs' => [
+    'query' => "SELECT * FROM {$this->globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
+    '__WHERE__' => [
+        //column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
+        'id' => ['uriParams', 'id'],
+        'group_id' => ['payload', 'group_id'],
+        'client_id' => ['readOnlySession', 'client_id']
+    ],
+    'mode' => 'singleRowFormat',//Single row returned.
+    'subQuery' => [
+        'Clients' => [
+            'query' => "MySQL Query here",
+            '__WHERE__' => [],
+            'mode' => 'multipleRowFormat'//Multiple rows returned.
+        ],
+        'Users' => [
+            'query' => "MySQL Query here",
+            '__WHERE__' => [],
+            'mode' => 'multipleRowFormat'//Multiple rows returned.
+        ],
+        'modules' => ...
+    ],
+    'validate' => [
+        [
+            'fn' => 'validateGroupId',
+            'fnArgs' => [
                 'group_id' => ['payload', 'group_id']
-			],
-			'errorMessage' => 'Invalid Group Id'
-		],
-		[
-			'fn' => 'validateClientId',
-			'fnArgs' => [
-				'client_id' => ['payload', 'client_id']
-			],
-			'errorMessage' => 'Invalid Client Id'
-		],
-	]
+            ],
+            'errorMessage' => 'Invalid Group Id'
+        ],
+        [
+            'fn' => 'validateClientId',
+            'fnArgs' => [
+                'client_id' => ['payload', 'client_id']
+            ],
+            'errorMessage' => 'Invalid Client Id'
+        ],
+    ]
 ];
 ```
 Here **query & mode** keys are required keys
@@ -180,68 +180,68 @@ Here **query & mode** keys are required keys
 ```
 <?php
 return [
-	'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
-	// Only fields present in __CONFIG__ shall be supported. Both Required and Optional
+    'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
+    // Only fields present in __CONFIG__ shall be supported. Both Required and Optional
     '__CONFIG__' => [// Set your payload fields config here.
-		// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
+        // [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'group_id', Constants::$REQUIRED], // Required field
         ['payload', 'group_id'], // Optional field
     ],
-	'__SET__' => [// for __SET__
-		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}],
-		'group_id' => ['payload', 'group_id'],
-		'client_id' => ['readOnlySession', 'client_id']
-	],
-	'__WHERE__' => [// for __WHERE__
-		//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}, 		'id' => ['uriParams', 'id']
-	],
-	'insertId' => 'tablename1:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
-	'subQuery' => [
-		'module1' => [
-			'query' => "MySQL Query here",
-			'__SET__' => [
-				'previous_table_id' => ['insertIdParams', '<tableName>:id'],
-			],
-			'__WHERE__' => [],
-		],
-		'module2' => ...
-	],
-	'validate' => [
-		[
-			'fn' => 'validateGroupId',
-			'fnArgs' => [
-				'group_id' => ['payload', 'group_id']
-			],
-			'errorMessage' => 'Invalid Group Id'
-		],
-	]
+    '__SET__' => [// for __SET__
+        //column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}],
+        'group_id' => ['payload', 'group_id'],
+        'client_id' => ['readOnlySession', 'client_id']
+    ],
+    '__WHERE__' => [// for __WHERE__
+        //column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value},         'id' => ['uriParams', 'id']
+    ],
+    'insertId' => 'tablename1:id',// Last insert id key name in $input['insertIdParams'][<tableName>:id];
+    'subQuery' => [
+        'module1' => [
+            'query' => "MySQL Query here",
+            '__SET__' => [
+                'previous_table_id' => ['insertIdParams', '<tableName>:id'],
+            ],
+            '__WHERE__' => [],
+        ],
+        'module2' => ...
+    ],
+    'validate' => [
+        [
+            'fn' => 'validateGroupId',
+            'fnArgs' => [
+                'group_id' => ['payload', 'group_id']
+            ],
+            'errorMessage' => 'Invalid Group Id'
+        ],
+    ]
 ];
 ```
 Note: If there are few modules or query configurations repeated or reused; one can palce them in a seperate file and include them as below.
 ```
 // reusefilename.php
 return [
-	'query' => "MySQL Query here",
-	'__SET__' => [],
-	'__WHERE__' => [],
-	'validate' => [
-		[
-			'fn' => 'validateModule3Id',
-			'fnArgs' => [
-				'module_id' => ['payload', 'module_id']
-			],
-			'errorMessage' => 'Invalid module id'
-		],
-	]
+    'query' => "MySQL Query here",
+    '__SET__' => [],
+    '__WHERE__' => [],
+    'validate' => [
+        [
+            'fn' => 'validateModule3Id',
+            'fnArgs' => [
+                'module_id' => ['payload', 'module_id']
+            ],
+            'errorMessage' => 'Invalid module id'
+        ],
+    ]
 ],
 
 ```
 The reuse version is as below.
 ```
-	'subQuery' => [
-		//Here the module1 properties are reused for write operation.
-		'module1' => include DOC_ROOT . '/Config/Queries/ClientDB/Common/reusefilename.php',
-	]
+    'subQuery' => [
+        //Here the module1 properties are reused for write operation.
+        'module1' => include DOC_ROOT . '/Config/Queries/ClientDB/Common/reusefilename.php',
+    ]
 ```
 Here **query & payload** keys are required keys for the POST method.
 For PUT, PATCH, and DELETE methods **query, payload & where** keys are required keys.
@@ -263,45 +263,45 @@ One can clean the URL by making the required changes in the web server .conf fil
 - The JSON payload should be as below.
 ```
 {"Payload":
-	{
-		"key1": "value1",
-		"key2": "value2",
-		...
-	}
+    {
+        "key1": "value1",
+        "key2": "value2",
+        ...
+    }
 };
 ```
 - For performing processing of multiple entries one can change to the payload as an array of entries.
 ```
 {"Payload":
-	[
-		{
-			"key1": "value1",
-			"key2": "value2",
-			...
-		},
-		{
-			"key1": "value21",
-			"key2": "value22",
-			...
-		}
-		...
-	]
+    [
+        {
+            "key1": "value1",
+            "key2": "value2",
+            ...
+        },
+        {
+            "key1": "value21",
+            "key2": "value22",
+            ...
+        }
+        ...
+    ]
 };
 ```
 **Note:** For the PATCH method one can update a single field at a time.
 ```
 {"Payload":
-	{"key1": "value1"}
+    {"key1": "value1"}
 };
 ```
 - For performing the updation of multiple fields one can change the payload as an array of entries for the same {id}.
 ```
 {"Payload":
-	[
-		{"key1": "value1"},
-		{"key2": "value2"},
-		...
-	]
+    [
+        {"key1": "value1"},
+        {"key2": "value2"},
+        ...
+    ]
 };
 ```
 ## Variables
@@ -321,12 +321,12 @@ Other than these, one can use keyword **custom**, **functions** as below.
 
 ```
 '__SET__' => [
-	'client_id' => ['insertIdParams', 'm001_master_group:id'],
-	'password' => ['function', function() {
-		return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);
-	}],
-	'approved_by' => ['readOnlySession', 'id'],
-	'updated_date' => ['custom', date('Y-m-d')]
+    'client_id' => ['insertIdParams', 'm001_master_group:id'],
+    'password' => ['function', function() {
+        return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);
+    }],
+    'approved_by' => ['readOnlySession', 'id'],
+    'updated_date' => ['custom', date('Y-m-d')]
 ],
 ```
 
