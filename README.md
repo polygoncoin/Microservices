@@ -312,7 +312,7 @@ This remains same for every request and contains keys like id, group\_id, client
  
 *    **HttpRequest::$input\['payload'\]** Request data.
  
-For **GET** method, the **$\\\_GET** is the payload.
+For **GET** method, the **$\_GET** is the payload.
  
 *    **HttpRequest::$input\['insertIdParams'\]** Insert ids Data as per configuration.
  
