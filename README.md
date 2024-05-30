@@ -322,7 +322,7 @@ For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation
 ## Hierarchy
  
 
-*   MicroservicesConfig/Queries/ClientDB/GET/Category.php
+*   Config/Queries/ClientDB/GET/Category.php
      
 
 In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
@@ -330,7 +330,7 @@ In this file one can confirm how previous select data is used recursively in sub
 ```
     'parent_id' => ['hierarchyData', 'return:id'],
 ```
-*   MicroservicesConfig/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
+*   Config/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
      
 ```
         // Configuration
