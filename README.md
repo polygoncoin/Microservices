@@ -361,10 +361,9 @@ In this file one can confirm how previous select data is used recursively in sub
         ];
     
 
-*   Hierarchy Payload ways
+*   Request - 1: Single object.
      
 
-    // Request - 1: Single object.
     {"Payload":
       {
         "name":"name",
@@ -374,7 +373,9 @@ In this file one can confirm how previous select data is used recursively in sub
       }
     }
 
-    // Request - 2: Array of module1
+*   Request - 2: Array of module1
+     
+
     {"Payload":
       {
         "name":"name",
@@ -390,7 +391,9 @@ In this file one can confirm how previous select data is used recursively in sub
       }
     }
 
-    // Request - 3: Array of paylaod
+*   Request - 3: Array of paylaod
+     
+
     {"Payload":
       [
         {
