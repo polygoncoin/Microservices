@@ -133,7 +133,7 @@ The supported SQL format are as below
 ```
 <?php
 return [
-    'query' => "SELECT * FROM {$this->globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
+    'query' => "SELECT * FROM {$Env::$globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
     '__WHERE__' => [
         //column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
         'id' => ['uriParams', 'id'],
@@ -180,7 +180,7 @@ Here **query & mode** keys are required keys
 ```
 <?php
 return [
-    'query' => "INSERT {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
+    'query' => "INSERT {$Env::$globalDB}.TableName SET __SET__ WHERE __WHERE__ ",
     // Only fields present in __CONFIG__ shall be supported. Both Required and Optional
     '__CONFIG__' => [// Set your payload fields config here.
         // [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
@@ -248,10 +248,10 @@ For PUT, PATCH, and DELETE methods **query, payload & where** keys are required 
 **Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries. **Also for these methods usage of \_\_SET__ and \_\_WHERE__ is necessary**
 Example Queries can be like
 ```
-INSERT INTO {$this->globalDB}.TableName SET __SET__;
+INSERT INTO {$Env::$globalDB}.TableName SET __SET__;
 ```
 ```
-UPDATE {$this->globalDB}.TableName SET __SET__ WHERE __WHERE__;
+UPDATE {$Env::$globalDB}.TableName SET __SET__ WHERE __WHERE__;
 ```
 ## HTTP Request
 ### For HTTP GET request.
