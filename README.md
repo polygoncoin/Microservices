@@ -337,7 +337,7 @@ Other than these, one can use keyword **custom**, **functions** as below.
 - Microservices/Config/Queries/ClientDB/GET/Category.php
 In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
 ```
-        'parent_id' => ['hierarchyData', 'root:id'],
+        'parent_id' => ['hierarchyData', 'return:id'],
 ```
 
 ### POST/PUT/PATCH/DELETE - Write

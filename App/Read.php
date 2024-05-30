@@ -288,9 +288,9 @@ class Read
         if ($useHierarchy) {
             if (count($keys) === 0) {
                 HttpRequest::$input['hierarchyData'] = [];
-                HttpRequest::$input['hierarchyData']['root'] = [];
+                HttpRequest::$input['hierarchyData']['return'] = [];
             }
-            $httpReq = &HttpRequest::$input['hierarchyData']['root'];
+            $httpReq = &HttpRequest::$input['hierarchyData']['return'];
             foreach ($keys as $k) {
                 if (!isset($httpReq[$k])) {
                     $httpReq[$k] = [];

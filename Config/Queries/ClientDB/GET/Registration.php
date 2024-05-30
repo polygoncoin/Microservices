@@ -17,7 +17,7 @@ return [
             'query' => "SELECT * FROM `{$Env::$clientDB}`.`address` WHERE __WHERE__",
             '__WHERE__' => [
                 'is_deleted' => ['custom', 'No'],
-                'registration_id' => ['hierarchyData', 'root:id'],
+                'registration_id' => ['hierarchyData', 'return:id'],
             ],
             'mode' => 'multipleRowFormat',//Multiple rows returned.
         ]

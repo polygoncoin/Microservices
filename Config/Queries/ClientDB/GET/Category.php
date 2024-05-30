@@ -18,7 +18,7 @@ return [
             'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
             '__WHERE__' => [
                 'is_deleted' => ['custom', 'No'],
-                'parent_id' => ['hierarchyData', 'root:id'],
+                'parent_id' => ['hierarchyData', 'return:id'],
             ],
             'mode' => 'multipleRowFormat',//Multiple rows returned.
             'subQuery' => [
@@ -26,7 +26,7 @@ return [
                     'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
                     '__WHERE__' => [
                         'is_deleted' => ['custom', 'No'],
-                        'parent_id' => ['hierarchyData', 'root:sub:id'],
+                        'parent_id' => ['hierarchyData', 'return:sub:id'],
                     ],
                     'mode' => 'multipleRowFormat',//Multiple rows returned.
                     'subQuery' => [
@@ -34,7 +34,7 @@ return [
                             'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
                             '__WHERE__' => [
                                 'is_deleted' => ['custom', 'No'],
-                                'parent_id' => ['hierarchyData', 'root:sub:subsub:id'],//data:address:id
+                                'parent_id' => ['hierarchyData', 'return:sub:subsub:id'],//data:address:id
                             ],
                             'mode' => 'multipleRowFormat',//Multiple rows returned.
                         ]
