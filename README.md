@@ -60,15 +60,15 @@ Below are the configuration settings details in .env
 
 ### Files
  
-*    **/Config/Routes/&lt;GroupName&gt;/GETroutes.php** for all GET method routes configuration.
+*    **Config/Routes/&lt;GroupName&gt;/GETroutes.php** for all GET method routes configuration.
  
-*    **/Config/Routes/&lt;GroupName&gt;/POSTroutes.php** for all POST method routes configuration.
+*    **Config/Routes/&lt;GroupName&gt;/POSTroutes.php** for all POST method routes configuration.
  
-*    **/Config/Routes/&lt;GroupName&gt;/PUTroutes.php** for all PUT method routes configuration.
+*    **Config/Routes/&lt;GroupName&gt;/PUTroutes.php** for all PUT method routes configuration.
  
-*    **/Config/Routes/&lt;GroupName&gt;/PATCHroutes.php** for all PATCH method routes configuration.
+*    **Config/Routes/&lt;GroupName&gt;/PATCHroutes.php** for all PATCH method routes configuration.
  
-*    **/Config/Routes/&lt;GroupName&gt;/DELETEroutes.php** for all DELETE method routes configuration.
+*    **Config/Routes/&lt;GroupName&gt;/DELETEroutes.php** for all DELETE method routes configuration.
  
 **&lt;GroupName&gt;** These are corresponding to the assigned group to a user for accessing the API's
  
@@ -127,35 +127,35 @@ Below are the configuration settings details in .env
 
 ### Folder
  
-*    **/Config/Queries/GlobalDB** for global database.
+*    **Config/Queries/GlobalDB** for global database.
  
-*    **/Config/Queries/ClientDB** for Clients (including all hosts and their databases).
+*    **Config/Queries/ClientDB** for Clients (including all hosts and their databases).
  
 
 ### Files - GlobalDB
  
-*    **/Config/Queries/GlobalDB/GET/<filenames>.php** GET method SQL.
+*    **Config/Queries/GlobalDB/GET/<filenames>.php** GET method SQL.
  
-*    **/Config/Queries/GlobalDB/POST/<filenames>;.php** POST method SQL.
+*    **Config/Queries/GlobalDB/POST/<filenames>;.php** POST method SQL.
  
-*    **/Config/Queries/GlobalDB/PUT/<filenames>.php** PUT method SQL.
+*    **Config/Queries/GlobalDB/PUT/<filenames>.php** PUT method SQL.
  
-*    **/Config/Queries/GlobalDB/PATCH/<filenames>.php** PATCH method SQL.
+*    **Config/Queries/GlobalDB/PATCH/<filenames>.php** PATCH method SQL.
  
-*    **/Config/Queries/GlobalDB/DELETE/<filenames>.php** DELETE method SQL.
+*    **Config/Queries/GlobalDB/DELETE/<filenames>.php** DELETE method SQL.
  
 
 ### Files - ClientDB
  
-*    **/Config/Queries/ClientDB/GET/<filenames>.php** GET method SQL.
+*    **Config/Queries/ClientDB/GET/<filenames>.php** GET method SQL.
  
-*    **/Config/Queries/ClientDB/POST/<filenames>.php** POST method SQL.
+*    **Config/Queries/ClientDB/POST/<filenames>.php** POST method SQL.
  
-*    **/Config/Queries/ClientDB/PUT/<filenames>.php** PUT method SQL.
+*    **Config/Queries/ClientDB/PUT/<filenames>.php** PUT method SQL.
  
-*    **/Config/Queries/ClientDB/PATCH/<filenames>.php** PATCH method SQL.
+*    **Config/Queries/ClientDB/PATCH/<filenames>.php** PATCH method SQL.
  
-*    **/Config/Queries/ClientDB/DELETE/<filenames>.php** DELETE method SQL.
+*    **Config/Queries/ClientDB/DELETE/<filenames>.php** DELETE method SQL.
  
 
 > One can replace **<filenames>** tag with desired name as per functionality.
@@ -249,7 +249,7 @@ Below are the configuration settings details in .env
 
       'subQuery' => [
         //Here the module1 properties are reused for write operation.
-        'module1' => include DOC_ROOT . '/Config/Queries/ClientDB/Common/reusefilename.php',
+        'module1' => include DOC_ROOT . 'Config/Queries/ClientDB/Common/reusefilename.php',
       ]
 
 > **Note**: For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
@@ -272,7 +272,7 @@ Below are the configuration settings details in .env
 
 *   Single
      
-
+```
     {"Payload":
       {
         "key1": "value1",
@@ -280,10 +280,10 @@ Below are the configuration settings details in .env
         ...
       }
     };
-
+```
 *   Multiple
      
-
+```
     {"Payload":
       [
         {
@@ -299,7 +299,7 @@ Below are the configuration settings details in .env
         ...
       ]
     };
-
+```
 ## Variables
  
 *    **HttpRequest::$input\['uriParams'\]** Data passed in URI.
@@ -322,17 +322,17 @@ For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation
 ## Hierarchy
  
 
-*   Microservices/Config/Queries/ClientDB/GET/Category.php
+*   MicroservicesConfig/Queries/ClientDB/GET/Category.php
      
 
 In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
  
-
+```
     'parent_id' => ['hierarchyData', 'return:id'],
-
-*   Microservices/Config/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
+```
+*   MicroservicesConfig/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
      
-    
+```
         // Configuration
         return [
           'query' => "INSERT INTO {$Env::$clientDB}.`category` SET SET",
@@ -359,11 +359,11 @@ In this file one can confirm how previous select data is used recursively in sub
           ],
           'useHierarchy' => true
         ];
-    
+```
 
 *   Request - 1: Single object.
      
-
+```
     {"Payload":
       {
         "name":"name",
@@ -372,10 +372,10 @@ In this file one can confirm how previous select data is used recursively in sub
         }
       }
     }
-
+```
 *   Request - 2: Array of module1
      
-
+```
     {"Payload":
       {
         "name":"name",
@@ -390,10 +390,10 @@ In this file one can confirm how previous select data is used recursively in sub
         ]
       }
     }
-
-*   Request - 3: Array of paylaod
+```
+*   Request - 3: Array of payload
      
-
+```
     {"Payload":
       [
         {
@@ -423,7 +423,7 @@ In this file one can confirm how previous select data is used recursively in sub
         ...
       ]
     }
-
+```
 ## Route ending with /config
  
 *    Adding keyword **config** at the end of route after a slash returns the payload information that should be supplied; both required and optional with desired format.
