@@ -12,8 +12,8 @@ This very light and easy **Microservices Framework** package can be configured v
 - Below are the default databse server configuration.
 ```
 defaultDbHostname='127.0.0.1'
-defaultDbUsername='root'
-defaultDbPassword='shames11'
+defaultDbUsername='username'
+defaultDbPassword='password'
 ```
 - Database details on default MySQL server
 ```
@@ -30,8 +30,8 @@ dbDatabaseClient001='client_001'
 ```
 // Dedicated DB Server.
 dbHostnameClient001='127.0.0.1'
-dbUsernameClient001='root'
-dbPasswordClient001='shames11'
+dbUsernameClient001='username'
+dbPasswordClient001='password'
 dbDatabaseClient001='client_001'
 ```
 - Any change made to the global database needs to be updated in the cache server. This can be done by accessing **/reload** route. This is restricted by HTTP Authentication and configuration for same can be found in .env as below.

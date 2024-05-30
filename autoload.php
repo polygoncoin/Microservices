@@ -44,9 +44,6 @@ function httpAuthentication()
         echo "You must enter a valid login ID and password to access this resource\n";
         return false;
     } else {
-        $valid_passwords = array ("shames11" => "shames11");
-        $valid_users = array_keys($valid_passwords);
-
         $user = $_SERVER['PHP_AUTH_USER'];
         $pass = $_SERVER['PHP_AUTH_PW'];
 
