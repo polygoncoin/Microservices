@@ -375,22 +375,22 @@ return [
 // Request - 1: Single object.
 {"Payload":
   {
-    "name":"wewe",
+    "name":"name",
     "module1":{
-      "subname":"email1",
+      "subname":"subname",
     }
   }
 }
 // Request - 2: Array of module1
 {"Payload":
   {
-    "name":"wewe",
+    "name":"name",
     "module1":[
       {
-        "subname":"email1",
+        "subname":"subname1",
       },
       {
-        "subname":"email1",
+        "subname":"subname2",
       },
       ...
     ]
@@ -400,13 +400,25 @@ return [
 {"Payload":
   [
     {
-      "name":"wewe",
+      "name":"name1",
       "module1":[
         {
-          "subname":"email1",
+          "subname":"subname1",
         },
         {
-          "subname":"email1",
+          "subname":"subname2",
+        },
+        ...
+      ]
+    },
+    {
+      "name":"name2",
+      "module1":[
+        {
+          "subname":"subname21",
+        },
+        {
+          "subname":"subname22",
         },
         ...
       ]
