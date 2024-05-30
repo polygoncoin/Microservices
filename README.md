@@ -262,7 +262,7 @@ UPDATE {$Env::$globalDB}.TableName SET __SET__ WHERE __WHERE__;
 One can clean the URL by making the required changes in the web server .conf file.
 
 ### For HTTP POST, PUT, PATCH, and DELETE requests.
-- The JSON payload should be as below.
+- The JSON payload should can be an Object or Array of data for Payload as below.
 ```
 {"Payload":
   {
@@ -272,7 +272,6 @@ One can clean the URL by making the required changes in the web server .conf fil
   }
 };
 ```
-- For performing processing of multiple entries one can change to the payload as an array of entries.
 ```
 {"Payload":
   [
@@ -306,17 +305,16 @@ One can clean the URL by making the required changes in the web server .conf fil
   ]
 };
 ```
+
 ## Variables
 
-### $input
-
-- **$input['uriParams']** Data passed in URI.
+- **HttpRequest::$input['uriParams']** Data passed in URI.
 Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $input['uriParams'] will hold these dynamic values as below.
-- **$input['readOnlySession']** Session Data.
+- **HttpRequest::$input['readOnlySession']** Session Data.
 This remains same for every request and contains keys like id, group_id, client_id
-- **$input['payload']** Request data.
+- **HttpRequest::$input['payload']** Request data.
 For **GET** method, the **$_GET** is the payload.
-- **$input['insertIdParams']** Insert ids Data as per configuration.
+- **HttpRequest::$input['insertIdParams']** Insert ids Data as per configuration.
 For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The  insertIdParams contains the insert ids of the executed INSERT queries.
 
 Other than these, one can use keyword **custom**, **functions** as below.
@@ -344,34 +342,77 @@ In this file one can confirm how previous select data is used recursively in sub
 
 ### POST/PUT/PATCH/DELETE - Write
 
-- Microservices/Config/Queries/ClientDB/POST/Category.php
-Here one request can handle one to many hierarchy to any number of levels as per configuration.
-Sample data payload below
+- Microservices/Config/Queries/ClientDB/POST/Category.php .Here one request can handle the hierarchy as per configuration for write operation.
 
 ```
+// Configuration
+return [
+  'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
+  '__CONFIG__' => [
+      ['payload', 'name', Constants::$REQUIRED],
+  ],
+  '__SET__' => [
+      'name' => ['payload', 'name'],
+      'parent_id' => ['custom', 0],
+  ],
+  'insertId' => 'category:id',
+  'subQuery' => [
+      'module1' => [
+        'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
+        '__CONFIG__' => [
+          ['payload', 'subname', Constants::$REQUIRED],
+        ],
+        '__SET__' => [
+          'name' => ['payload', 'subname'],
+          'parent_id' => ['insertIdParams', 'category:id'],
+        ],
+        'insertId' => 'sub:id',
+      ]
+  ],
+  'useHierarchy' => true
+];
+
+// Request - 1: Single object.
 {"Payload":
   {
-     "name":"wewe",
-     "sub":[
-       {
+    "name":"wewe",
+    "module1":{
+      "subname":"email1",
+    }
+  }
+}
+// Request - 2: Array of module1
+{"Payload":
+  {
+    "name":"wewe",
+    "module1":[
+      {
         "subname":"email1",
-        "subsub":[
-         {"subsubname":"address11"},
-         {"subsubname":"address12"},
-         ...
-        ]
-       },
-       {
-        "subname":"email2",
-        "subsub":[
-         {"subsubname":"address21"},
-         {"subsubname":"address21"},
-         ...
-        ]
-       },
-       ...
+      },
+      {
+        "subname":"email1",
+      },
+      ...
     ]
   }
+}
+// Request - 3: Array of paylaod
+{"Payload":
+  [
+    {
+      "name":"wewe",
+      "module1":[
+        {
+          "subname":"email1",
+        },
+        {
+          "subname":"email1",
+        },
+        ...
+      ]
+    },
+    ...
+  ]
 }
 ```
 
