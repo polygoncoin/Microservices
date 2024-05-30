@@ -5,11 +5,13 @@ This very light and easy **Microservices Framework** package can be configured v
 -  **/.env.example** Create a copy of this file as **.env**
 -  **/global.sql** Import this SQL file on your **MySQL global** instance
 -  **/client_master.sql** Import this SQL file on your **MySQL client** instance
--  **/cache.sql** Import this SQL file for managing cache (e.g, token details etc.) in **MySQL** instance instead of Redis (To be configured in .env)
- 
+-  **/cache.sql** Import this SQL file for managing cache (e.g, token details etc.) in **MySQL cache** instance instead of Redis (To be configured in .env)
+
+**Note**: If required one can import all three sql's in a single database to start with. Just configure the same details in your .env file.
+
 ## .env.example
 - One needs to make a copy of this file as .env and make changes in this newly created file. This file will contain configurations pertaining to your APIs using Cache and DB servers.
-- Below are the default databse server configuration.
+- Below are the default databse server configuration
 ```
 defaultDbHostname='127.0.0.1'
 defaultDbUsername='username'
@@ -20,7 +22,7 @@ defaultDbPassword='password'
 defaultDbDatabase='global'
 clientMasterDbName='client_master'
 ```
-Note clientMasterDbName can be set same as defaultDbDatabase if you dont want to maintain different databases for client.
+**Note**: clientMasterDbName can be set same as defaultDbDatabase if you dont want to maintain different databases for client.
 
 - For a **Dedicated DB or Host** set these settings as below and update them in **global.m003_master_connection** table
 ```
@@ -173,7 +175,7 @@ return [
 ];
 ```
 Here **query & mode** keys are required keys
-**Note:** For GET method **payload** is query string parameters;basically **$_GET**.
+**Note**: For GET method **payload** is query string parameters;basically **$_GET**.
 
 - For POST/PUT/PATCH/DELETE method.
 
@@ -217,7 +219,7 @@ return [
   ]
 ];
 ```
-Note: If there are few modules or query configurations repeated or reused; one can palce them in a seperate file and include them as below.
+**Note**: If there are few modules or query configurations repeated or reused; one can palce them in a seperate file and include them as below.
 ```
 // reusefilename.php
 return [
@@ -245,7 +247,7 @@ The reuse version is as below.
 ```
 Here **query & payload** keys are required keys for the POST method.
 For PUT, PATCH, and DELETE methods **query, payload & where** keys are required keys.
-**Note:** For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries. **Also for these methods usage of \_\_SET__ and \_\_WHERE__ is necessary**
+**Note**: For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries. **Also for these methods usage of \_\_SET__ and \_\_WHERE__ is necessary**
 Example Queries can be like
 ```
 INSERT INTO {$Env::$globalDB}.TableName SET __SET__;
@@ -288,7 +290,7 @@ One can clean the URL by making the required changes in the web server .conf fil
   ]
 };
 ```
-**Note:** For the PATCH method one can update a single field at a time.
+**Note**: For the PATCH method one can update a single field at a time.
 ```
 {"Payload":
   {"key1": "value1"}
