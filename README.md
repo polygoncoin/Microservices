@@ -391,7 +391,7 @@ In this file one can confirm how previous select data is used recursively in sub
       }
     }
 ```
-*   Request - 3: Array of payload
+*   Request - 3: Array of payload and arrays of module1
      
 ```
     {"Payload":
