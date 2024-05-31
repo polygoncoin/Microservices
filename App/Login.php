@@ -91,6 +91,16 @@ class Login
      */
     public function init()
     {
+        Env::$cacheType = getenv('cacheType');
+        Env::$cacheHostname = getenv('cacheHostname');
+        Env::$cachePort = getenv('cachePort');
+        Env::$cacheUsername = getenv('cacheUsername');
+        Env::$cachePassword = getenv('cachePassword');
+        Env::$cacheDatabase = getenv('cacheDatabase');
+
+        $this->cache = Cache::getObject();
+        $this->jsonObj = HttpResponse::getJsonObject();
+
         $this->process();
     }
 
@@ -101,15 +111,6 @@ class Login
      */
     private function process()
     {
-        Env::$cacheType = getenv('cacheType');
-        Env::$cacheHostname = getenv('cacheHostname');
-        Env::$cachePort = getenv('cachePort');
-        Env::$cacheUsername = getenv('cacheUsername');
-        Env::$cachePassword = getenv('cachePassword');
-        Env::$cacheDatabase = getenv('cacheDatabase');
-
-        $this->cache = Cache::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
         $this->performBasicCheck();
         $this->loadUser();
         $this->validateRequestIp();

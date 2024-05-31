@@ -42,4 +42,4 @@ return [
         ],
         'insertId' => 'address:id'
     ]
-][HttpRequest::$input['uriParams']['table']];
+];

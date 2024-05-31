@@ -16,6 +16,7 @@ return [
     ],
     '{table:string}' => [
         '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/CRUD.php',
+        'config' => true
     ],
     'thirdParty' => [
         '{thirdParty:string}' => [
