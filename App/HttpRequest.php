@@ -191,6 +191,10 @@ class HttpRequest
                 }
                 $configuredUri[] = $e;
                 $routes = &$routes[$e];
+                if (strpos($e, '{') === 0) {
+                    $param = substr($e, 1, strpos($e, ':') - 1);
+                    self::$input['uriParams'][$param] = $e;
+                }
                 continue;
             } else {
                 if (is_array($routes)) {
