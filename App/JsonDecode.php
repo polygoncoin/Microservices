@@ -102,13 +102,27 @@ class JsonDecoder
 
     /**
      * JsonEncode constructor
+     * 
+     * @return void
      */
     public function __construct($filepath = "php://input")
     {
         $inputStream = fopen($filepath, "rb");
         $this->tempStream = fopen("php://temp", "rw+b");
-        stream_copy_to_stream( $inputStream, $this->tempStream);
+        stream_copy_to_stream($inputStream, $this->tempStream);
         fclose($inputStream);
+    }
+
+    /**
+     * Validates JSON
+     * 
+     * @return void
+     */
+    public function validate()
+    {
+        foreach($this->process as $keyArr => $valueArr) {
+            ;
+        }
     }
 
     /**
@@ -116,7 +130,7 @@ class JsonDecoder
      *
      * @return bool
      */
-    private function indexJSON()
+    public function indexJSON()
     {
         $this->streamIndex = null;
         foreach ($this->process(true) as $keys => $val) {
@@ -441,21 +455,8 @@ class JsonDecoder
      */
     private function startArray($key = null)
     {
-        if ($this->currentObject) {
-            if ($this->currentObject->mode === 'Object' && empty(trim($key))) {
-                $this->isBadJson($key);
-            }
-            if ($this->currentObject->mode === 'Array' && !empty(trim($key))) {
-                $this->isBadJson($key);
-            }
-            array_push($this->objects, $this->currentObject);
-            $this->currentObject = null;
-        }
-        if (count($this->objects) > 0) {
-            $this->previousObjectIndex = count($this->objects) - 1;
-        } else {
-            $this->previousObjectIndex = null;
-        }
+        $this->pushCurrentObject($key);
+        $this->setPreviousObjectIndex();
         $this->currentObject = new JsonDecoderObject('Array', $key);
         $this->currentObject->_s_ = $this->charCounter;
     }
@@ -467,16 +468,8 @@ class JsonDecoder
      */
     private function endArray()
     {
-        if (count($this->objects) > 0) {
-            $this->currentObject = array_pop($this->objects);
-        } else {
-            $this->currentObject = null;
-        }
-        if (count($this->objects) > 0) {
-            $this->previousObjectIndex = count($this->objects) - 1;
-        } else {
-            $this->previousObjectIndex = null;
-        }
+        $this->popCurrentObject();
+        $this->setPreviousObjectIndex();
     }
 
     /**
@@ -487,21 +480,8 @@ class JsonDecoder
      */
     private function startObject($key = null)
     {
-        if ($this->currentObject) {
-            if ($this->currentObject->mode === 'Object' && empty(trim($key))) {
-                $this->isBadJson($key);
-            }
-            if ($this->currentObject->mode === 'Array' && !empty(trim($key))) {
-                $this->isBadJson($key);
-            }
-            array_push($this->objects, $this->currentObject);
-            $this->currentObject = null;
-        }
-        if (count($this->objects) > 0) {
-            $this->previousObjectIndex = count($this->objects) - 1;
-        } else {
-            $this->previousObjectIndex = null;
-        }
+        $this->pushCurrentObject($key);
+        $this->setPreviousObjectIndex();
         $this->currentObject = new JsonDecoderObject('Object', $key);
         $this->currentObject->_s_ = $this->charCounter;
     }
@@ -513,11 +493,50 @@ class JsonDecoder
      */
     private function endObject()
     {
+        $this->popCurrentObject();
+        $this->setPreviousObjectIndex();
+    }
+
+    /**
+     * Push current object
+     *
+     * @return void
+     */
+    private function pushCurrentObject($key)
+    {
+        if ($this->currentObject) {
+            if ($this->currentObject->mode === 'Object' && empty(trim($key))) {
+                $this->isBadJson($key);
+            }
+            if ($this->currentObject->mode === 'Array' && !empty(trim($key))) {
+                $this->isBadJson($key);
+            }
+            array_push($this->objects, $this->currentObject);
+            $this->currentObject = null;
+        }
+    }
+
+    /**
+     * Pop current object
+     *
+     * @return void
+     */
+    private function popCurrentObject()
+    {
         if (count($this->objects) > 0) {
             $this->currentObject = array_pop($this->objects);
         } else {
             $this->currentObject = null;
         }
+    }
+
+    /**
+     * Sets previous object index
+     *
+     * @return void
+     */
+    private function setPreviousObjectIndex()
+    {
         if (count($this->objects) > 0) {
             $this->previousObjectIndex = count($this->objects) - 1;
         } else {
