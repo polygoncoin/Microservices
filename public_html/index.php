@@ -101,6 +101,10 @@ class Microservices
                 $routes = new App\Routes();
                 $routes->init();
                 break;
+            case Constants::$ROUTE === '/check':
+                $routes = new App\Check();
+                $routes->init();
+                break;
             case Constants::$ROUTE === '/reload':
                 if (httpAuthentication()) {
                     $reload = new App\Reload();

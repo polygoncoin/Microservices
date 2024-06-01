@@ -1,20 +1,18 @@
 <?php
-namespace Config\Routes\Client002UserGroup1;
+namespace Config\Routes\Client001UserGroup1;
 
 use App\Constants;
 use App\Env;
 use App\HttpRequest;
 
 return [
-    '{table:string}' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
-        '{id:int}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
+    'category' => [
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category.php',
+        'search' => [
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/SearchCategory.php',
         ],
     ],
-    'thirdParty' => [
-        '{thirdParty:string}' => [
-            '__file__' => ''
-        ]
-    ]
+    'registration' => [
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration.php',
+    ],
 ];

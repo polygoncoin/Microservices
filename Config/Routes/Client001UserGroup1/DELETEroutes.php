@@ -6,9 +6,14 @@ use App\Env;
 use App\HttpRequest;
 
 return [
-    '{table:string}' => [
+    'registration' => [
         '{id:int}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/DELETE/CRUD.php',
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/DELETE/Registration.php',
+        ],
+    ],
+    'address' => [
+        '{id:int}'  => [
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/DELETE/Address.php',
         ],
     ]
 ];

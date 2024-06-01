@@ -14,8 +14,8 @@ return [
         '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/Registration.php',
         'config' => true
     ],
-    '{table:string}' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/CRUD.php',
+    'address' => [
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/Address.php',
         'config' => true
     ],
     'thirdParty' => [

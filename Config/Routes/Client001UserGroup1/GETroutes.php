@@ -12,10 +12,16 @@ return [
             '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/SearchCategory.php',
         ],
     ],
-    '{table:string}' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
+    'registration' => [
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration-all.php',
         '{id:int}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/CRUD.php',
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration-single.php',
+        ],
+    ],
+    'address' => [
+        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-all.php',
+        '{id:int}'  => [
+            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-single.php',
         ],
     ],
     'thirdParty' => [

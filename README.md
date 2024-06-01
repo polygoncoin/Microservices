@@ -444,3 +444,8 @@ Only these configured routes will be supported the config feature.
 ### r=/routes
  
 This lists down all allowed routes for HTTP methods respectively.
+
+
+### r=/check
+ 
+Perform basic checks on Config folder.

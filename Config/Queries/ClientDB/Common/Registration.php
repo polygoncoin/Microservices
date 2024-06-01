@@ -7,13 +7,6 @@ use App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$Env::$clientDB}`.`registration` SET __SET__ WHERE __WHERE__",
-    '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
-        ['uriParams', 'id', Constants::$REQUIRED],
-    ],
-    '__WHERE__' => [
-        'is_deleted' => ['custom', 'No'],
-        'id' => ['uriParams', 'id']
-    ],
     'validate' => [
 		[
 			'fn' => 'primaryKeyExist',
@@ -25,5 +18,4 @@ return [
 			'errorMessage' => 'Invalid registration id'
 		],
 	]
-
 ];
