@@ -71,17 +71,26 @@ class Check
         $errors = [];
         $httpRoutes = [];
         $routesFolder = Constants::$DOC_ROOT . $this->configFolder . '/Routes';
-        $groupFolders = new \DirectoryIterator($routesFolder);
-        foreach ($groupFolders as $groupFolder) {
-            if ($groupFolder->isDir() && !$groupFolder->isDot()) {
-                $_routesFolder = $routesFolder . '/' . $groupFolder->getFilename();
-                $httpRoutes[$groupFolder->getFilename()] = $this->processRoutes($_routesFolder, $errors);
-            }
-        }
+        
+        // $groupFolders = new \DirectoryIterator($routesFolder);
+        // foreach ($groupFolders as $groupFolder) {
+        //     if ($groupFolder->isDir() && !$groupFolder->isDot()) {
+        //         $_routesFolder = $routesFolder . '/' . $groupFolder->getFilename();
+        //         $httpRoutes[$groupFolder->getFilename()] = $this->processRoutes($_routesFolder, $errors);
+        //     }
+        // }
+        
+        $groupFolder = HttpRequest::$input['readOnlySession']['group_name'];
+        $_routesFolder = $routesFolder . '/' . $groupFolder;
+        $httpRoutes[$groupFolder] = $this->processRoutes($_routesFolder, $errors);
+
         if (!empty($errors)) {
             $this->jsonObj->addKeyValue('Results', $errors);
         } else {
             $this->processRoutesQueries($httpRoutes, $errors);
+            if (!empty($errors)) {
+                $this->jsonObj->addKeyValue('Results', $errors);
+            }
         }
     }
 
@@ -106,7 +115,7 @@ class Check
         return $httpRoutes;
     }
 
-    private function checkConfigQueries($method, $__file__)
+    private function checkConfigQueries($method, $__file__, &$errors)
     {
         $errors = [];
 
@@ -116,6 +125,80 @@ class Check
 
         if (file_exists($__file__)) {
             $sqlConfig = include $__file__;
+            if ($method === 'GET') {
+                $this->validateRead($sqlConfig, $errors);
+            } else {
+                $this->validateWrite($sqlConfig, $errors);
+            }
+        }
+    }
+
+    private function validateWrite(&$writeSqlConfig, &$errors, $useHierarchy = false)
+    {
+        $foundHierarchyData = false;
+        foreach ($writeSqlConfig as $key => $value) {
+            if (in_array($key, ['query', '__CONFIG__', '__WHERE__', 'insertId'])) {
+                continue;
+            }
+            if ($useHierarchy && $key === '__SET__') {
+                foreach ($value as $v) {
+                    if ($v[0] === 'insertIdParams') {
+                        $foundHierarchyData = true;
+                    }
+                }
+                if (!$foundHierarchyData) {
+                    $errors[] = 'Hierarchy usage not maintained.';
+                }
+            }
+            if ($key === 'subQuery') {
+                if (!$useHierarchy && isset($writeSqlConfig['useHierarchy'])) {
+                    $useHierarchy = $writeSqlConfig['useHierarchy'];
+                }        
+                foreach ($writeSqlConfig[$key] as $module => &$_writeSqlConfig) {
+                    $errors[$module] = [];
+                    $_errors = &$errors[$module];
+                    $this->validateWrite($_writeSqlConfig, $_errors, $useHierarchy);
+                    if (empty($_errors)) {
+                        unset($_errors);
+                        unset($errors[$module]);
+                    }
+                }
+            }
+        }
+    }
+
+    private function validateRead(&$readSqlConfig, &$errors, $useHierarchy = false)
+    {
+        $foundHierarchyData = false;
+        foreach ($readSqlConfig as $key => $value) {
+            if (in_array($key, ['countQuery', 'query', '__CONFIG__', 'mode'])) {
+                continue;
+            }
+            if ($useHierarchy && $key === '__WHERE__') {
+                foreach ($value as $v) {
+                    if ($v[0] === 'hierarchyData') {
+                        $foundHierarchyData = true;
+                        break;
+                    }
+                }
+                if (!$foundHierarchyData) {
+                    $errors[] = 'Hierarchy usage not maintained.';
+                }
+            }
+            if ($key === 'subQuery') {
+                if (!$useHierarchy && isset($readSqlConfig['useHierarchy'])) {
+                    $useHierarchy = $readSqlConfig['useHierarchy'];
+                }
+                foreach ($readSqlConfig[$key] as $module => &$_readSqlConfig) {
+                    $errors[$module] = [];
+                    $_errors = &$errors[$module];
+                    $this->validateRead($_readSqlConfig, $_errors, $useHierarchy);
+                    if (empty($_errors)) {
+                        unset($_errors);
+                        unset($errors[$module]);
+                    }
+                }
+            }
         }
     }
 
@@ -128,7 +211,13 @@ class Check
                         $routeDetails['type'] === 'route' &&
                         file_exists($routeDetails['__file__'])
                     ) {
-                        $this->checkConfigQueries($method, $routeDetails['__file__']);
+                        $errors[$routeDetails['__file__']] = [];
+                        $_errors = &$errors[$routeDetails['__file__']];
+                        $this->checkConfigQueries($method, $routeDetails['__file__'], $_errors);
+                        if (empty($_errors)) {
+                            unset($_errors);
+                            unset($errors[$routeDetails['__file__']]);
+                        }
                     }
                 }
             }
