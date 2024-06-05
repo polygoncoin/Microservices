@@ -26,7 +26,7 @@ class Upload
      *
      * @var array
      */
-    private static $input = null;
+    private $input = null;
 
     /**
      * Initialize
@@ -34,10 +34,10 @@ class Upload
      * @param array  $input Inputs
      * @return void
      */
-    public static function init(&$input)
+    public function init(&$input)
     {
-        self::$input = $input;
-        (new self)->process();
+        $this->input = $input;
+        $this->process();
     }
 
     /**

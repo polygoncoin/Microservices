@@ -24,14 +24,22 @@ use App\HttpResponse;
 class Google
 {
     /**
+     * JsonEncode class object
+     *
+     * @var object
+     */
+    private $jsonObj = null;
+
+    /**
      * Initialize
      *
      * @param array  $input     Inputs
      * @return void
      */
-    public static function init()
+    public function init()
     {
-        (new self)->process();
+        $this->jsonObj = HttpResponse::getJsonObject();        
+        $this->process();
     }
 
     /**
@@ -44,27 +52,30 @@ class Google
         // Create and call functions to manage third party cURL calls here.
 
         $curl_handle=curl_init();
-        curl_setopt($curl_handle,CURLOPT_URL,'http://polygon.co.in');
+        curl_setopt($curl_handle,CURLOPT_URL,'https://api.ipify.org?format=json');
         curl_setopt($curl_handle,CURLOPT_CONNECTTIMEOUT,2);
         curl_setopt($curl_handle,CURLOPT_RETURNTRANSFER,1);
-        $buffer = curl_exec($curl_handle);
+        $output = curl_exec($curl_handle);
         curl_close($curl_handle);
-        if (empty($buffer)){
-            $buffer = "Nothing returned from url";
+        if (empty($output)){
+            $output = ['Error' => 'Nothing returned by ipify'];
+            App\HttpResponse::$httpStatus = 501;
+        } else {
+            $output = json_decode($output, true);
         }
 
         // End the calls with json response with jsonEncode Object.
-        $this->endProcess($buffer);
+        $this->endProcess($output);
     }
 
     /**
      * Function to end process which outputs the results.
      *
-     * @param string $result
+     * @param string $output
      * @return void
      */
-    private function endProcess($result)
+    private function endProcess($output)
     {
-        HttpResponse::return2xx(200, $result);
+        $this->jsonObj->addKeyValue('Results', $output);
     }
 }

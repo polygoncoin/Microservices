@@ -1,14 +1,12 @@
 <?php
 namespace App;
 
-use App\CacheHandler;
 use App\Constants;
 use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
 use App\Read;
-use App\Upload;
 use App\Write;
 
 /**
@@ -48,7 +46,9 @@ class Api
     private function processApi()
     {
         // Check & Process Upload
-        $this->processBeforePayload();
+        if ($this->processBeforePayload()) {
+            return;
+        }
 
         // Load Payloads
         if (!Env::$isConfigRequest) {
@@ -79,24 +79,34 @@ class Api
      */
     private function processBeforePayload()
     {
+        $class = null;
         switch (HttpRequest::$routeElements[0]) {
+            case 'custom':
+                $class = 'Custom\\CustomApi';
+                break;
             case 'upload':
-                Upload::init();
-                die;
+                $class = 'App\\Upload';
+                break;
             case 'thirdParty':
                 if (
                     isset(HttpRequest::$input['uriParams']['thirdParty']) &&
                     file_exists(Constants::$DOC_ROOT . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
                 ) {
-                    eval('ThirdParty\\' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '::init();');
-                    die;
+                    $class = 'ThirdParty\\'.HttpRequest::$input['uriParams']['thirdParty'];
                 } else {
                     HttpResponse::return4xx(404, 'Invalid third party call');
                 }
+                break;
             case 'cache':
-                CacheHandler::init();
-                die;
+                $class = 'App\\CacheHandler';
+                break;
         }
+        if (!empty($class)) {
+            $api = new $class();
+            $api->init();
+            return true;
+        }
+        return false;
     }
 
     /**

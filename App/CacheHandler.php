@@ -29,7 +29,7 @@ class CacheHandler
      * 
      * @var array
      */
-    private static $filePath;
+    private $filePath;
 
     /**
      * Cache Folder
@@ -39,21 +39,21 @@ class CacheHandler
      * 
      * @var string
      */
-    private static $cacheLocation = __DOCROOT__ . '/Dropbox';
+    private $cacheLocation = __DOCROOT__ . '/Dropbox';
 
     /**
      * Initalise check and serve file
      *
      * @return void
      */
-    public static function init()
+    public function init()
     {
-        self::$filePath = str_replace('/cache', '', Constants::$ROUTE);
-        self::validateFileRequest();
+        $this->filePath = '/' . trim(str_replace('../','',urldecode(Constants::$ROUTE)), './');
+        $this->validateFileRequest();
         
-        $filePath = self::$route;
+        $filePath = $this->route;
         
-        $fileLocation = self::$cacheLocation . $filePath;
+        $fileLocation = $this->cacheLocation . $filePath;
         $modifiedTime = filemtime($fileLocation);
 
         // Let Etag be last modified timestamp of file.
@@ -72,7 +72,7 @@ class CacheHandler
             header('HTTP/1.1 304 Not Modified');
             exit;
         } else {
-            self::serveFile($fileLocation, $modifiedTime, $eTag);
+            $this->serveFile($fileLocation, $modifiedTime, $eTag);
         }
     }
 
@@ -84,7 +84,7 @@ class CacheHandler
     public static function validateFileRequest()
     {
         // check logic for user is allowed to access the file as per HttpRequest::$input
-        // self::$filePath;
+        // $this->filePath;
     }
 
     /**
