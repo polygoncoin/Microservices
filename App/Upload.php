@@ -37,7 +37,7 @@ class Upload
     public function init(&$input)
     {
         $this->input = $input;
-        $this->process();
+        return true;
     }
 
     /**
@@ -54,6 +54,7 @@ class Upload
                 break;
         }
         $this->endProcess();
+        return true;
     }
 
     /**

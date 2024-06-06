@@ -23,37 +23,13 @@ use App\Servers\Database\Database;
 class CustomApi
 {
     /**
-     * DB Server connection object
-     *
-     * @var object
-     */
-    public $db = null;
-
-    /**
-     * JsonEncode class object
-     *
-     * @var object
-     */
-    public $jsonObj = null;
-
-    /**
      * Initialize
      *
      * @return void
      */
     public function init()
     {
-        Env::$globalDB = Env::$defaultDbDatabase;
-        Env::$clientDB = Env::$dbDatabase;
-
-        $Constants = 'App\\Constants';
-        $Env = 'App\\Env';
-        $HttpRequest = 'App\\HttpRequest';
-
-        $this->db = Database::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
-
-        $this->processCustomApi();
+        return true;
     }
 
     /**
@@ -61,8 +37,17 @@ class CustomApi
      *
      * @return void
      */
-    private function processCustomApi()
+    public function process()
     {
-        return ;
+        if (file_exists(Constants::$DOC_ROOT . '/Custom/' . ucfirst(HttpRequest::$routeElements[1]) . '.php')) {
+            $class = 'Custom\\'.ucfirst(HttpRequest::$routeElements[1]);
+            $api = new $class();
+            if ($api->init()) {
+                return $api->process();
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 }

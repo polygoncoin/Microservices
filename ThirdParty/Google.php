@@ -39,7 +39,8 @@ class Google
     public function init()
     {
         $this->jsonObj = HttpResponse::getJsonObject();        
-        $this->process();
+        
+        return true;
     }
 
     /**
@@ -66,6 +67,7 @@ class Google
 
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($output);
+        return true;
     }
 
     /**

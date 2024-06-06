@@ -6,6 +6,11 @@ use App\Env;
 use App\HttpRequest;
 
 return [
+    'custom' => [
+        'category' => [
+            '__file__' => '',
+        ]
+    ],
     'category' => [
         '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category.php',
         'search' => [

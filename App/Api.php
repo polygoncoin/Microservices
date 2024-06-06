@@ -103,8 +103,11 @@ class Api
         }
         if (!empty($class)) {
             $api = new $class();
-            $api->init();
-            return true;
+            if ($api->init()) {
+                return $api->process();
+            } else {
+                return false;
+            }
         }
         return false;
     }

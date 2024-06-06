@@ -25,11 +25,11 @@ use App\Logs;
 class CacheHandler
 {
     /**
-     * File Path
+     * File Location
      * 
      * @var array
      */
-    private $filePath;
+    private $fileLocation;
 
     /**
      * Cache Folder
@@ -39,7 +39,7 @@ class CacheHandler
      * 
      * @var string
      */
-    private $cacheLocation = __DOCROOT__ . '/Dropbox';
+    private $cacheLocation = '/Dropbox';
 
     /**
      * Initalise check and serve file
@@ -48,15 +48,44 @@ class CacheHandler
      */
     public function init()
     {
+        $this->cacheLocation = Constants::$DOC_ROOT . $this->cacheLocation;
+
         $this->filePath = '/' . trim(str_replace('../','',urldecode(Constants::$ROUTE)), './');
         $this->validateFileRequest();
         
-        $filePath = $this->route;
-        
-        $fileLocation = $this->cacheLocation . $filePath;
-        $modifiedTime = filemtime($fileLocation);
+        $this->fileLocation = $this->cacheLocation . $this->filePath;
+
+        return true;
+    }
+
+    /**
+     * Checks whether access to file is allowed.
+     *
+     * @return void
+     */
+    public function validateFileRequest()
+    {
+        // check logic for user is allowed to access the file as per HttpRequest::$input
+        // $this->filePath;
+    }
+
+    /**
+     * Serve File content
+     *
+     * @return void
+     */
+    public function process()
+    {
+        // File name requested for download
+        $fileName = basename($this->fileLocation);
+
+        // Get the $fileLocation file mime
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($fileInfo, $fileLocation);
+        finfo_close($fileInfo);
 
         // Let Etag be last modified timestamp of file.
+        $modifiedTime = filemtime($this->fileLocation);
         $eTag = "{$modifiedTime}";
 
         if (
@@ -70,39 +99,8 @@ class CacheHandler
             )
         ) { 
             header('HTTP/1.1 304 Not Modified');
-            exit;
-        } else {
-            $this->serveFile($fileLocation, $modifiedTime, $eTag);
+            return true;
         }
-    }
-
-    /**
-     * Checks whether access to file is allowed.
-     *
-     * @return void
-     */
-    public static function validateFileRequest()
-    {
-        // check logic for user is allowed to access the file as per HttpRequest::$input
-        // $this->filePath;
-    }
-
-    /**
-     * Serve File content
-     *
-     * @param string  $fileLocation
-     * @param integer $modifiedTime
-     * @param string  $eTag
-     * @return void
-     */
-    private static function serveFile($fileLocation, $modifiedTime, $eTag) {
-        // File name requested for download
-        $fileName = basename($fileLocation);
-
-        // Get the $fileLocation file mime
-        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($fileInfo, $fileLocation);
-        finfo_close($fileInfo);
 
         // send the headers
         //header("Content-Disposition: attachment;filename='$fileName';");
@@ -116,6 +114,6 @@ class CacheHandler
         // Send file content as stream
         $fp = fopen($fileLocation, 'rb');
         fpassthru($fp);
-        exit;
+        return true;
     }
 }
