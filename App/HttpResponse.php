@@ -29,6 +29,13 @@ class HttpResponse
     public static $httpStatus = 200;
 
     /**
+     * Current JsonEncodeObject object
+     *
+     * @var object
+     */
+    public static $httpResponse = null;
+
+    /**
      * Return JSON object.
      */
     public static function getJsonObject()
@@ -114,7 +121,6 @@ class HttpResponse
     {
         $jsonEncodeObj = JsonEncode::getObject();
         $jsonEncodeObj = null;
-        ob_clean();
-        die(json_encode($arr));
+        self::$httpResponse = json_encode($arr);
     }
 }

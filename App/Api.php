@@ -30,12 +30,12 @@ class Api
      */
     public function init()
     {
-        HttpRequest::init();
-        HttpRequest::loadToken();
-        HttpRequest::initSession();
-        HttpRequest::parseRoute();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::init();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::loadToken();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::initSession();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::parseRoute();
 
-        $this->processApi();
+        return true;
     }
 
     /**
@@ -43,7 +43,7 @@ class Api
      *
      * @return void
      */
-    private function processApi()
+    public function process()
     {
         // Check & Process Upload
         if ($this->processBeforePayload()) {
@@ -70,6 +70,8 @@ class Api
 
         // Check & Process Cron / ThirdParty calls.
         $this->processAfterPayload();
+
+        return true;
     }
 
     /**
@@ -95,6 +97,7 @@ class Api
                     $class = 'ThirdParty\\'.HttpRequest::$input['uriParams']['thirdParty'];
                 } else {
                     HttpResponse::return4xx(404, 'Invalid third party call');
+                    return;
                 }
                 break;
             case 'cache':

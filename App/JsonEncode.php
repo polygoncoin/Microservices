@@ -76,10 +76,10 @@ class JsonEncoder
     private function escape($str)
     {
         if (is_null($str)) return 'null';
-        $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
+        $escapers = array("\\", "/", "\"", "\n", "\r", "\n", "\r", "\t", "\x08", "\x0c");
         $replacements = array("\\\\", "\\/", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b");
         $str = str_replace($escapers, $replacements, $str);
-        $this->write('"' . $str . '"');
+        return "\"{$str}\"";
     }
 
     /**
@@ -208,28 +208,14 @@ class JsonEncoder
      *
      * @return void
      */
-    private function streamJson()
+    public function streamJson()
     {
-        $str = ob_get_clean();
-        if (!empty($str) && Env::$ENVIRONMENT === Constants::$PRODUCTION) {
-            $log = [
-                'datetime' => date('Y-m-d H:i:s'),
-                'input' => HttpRequest::$input,
-                'error' => $str
-            ];
-            Logs::log('error', json_encode($log));
-            HttpResponse::return5xx(501, 'Error: Facing server side error with API.');
-        } else if (empty($str)) {
-            // end the json
-            // rewind the temp stream.
-            rewind($this->tempStream);
-            // stream the temp to output
-            $outputStream = fopen("php://output", "w+b");
-            stream_copy_to_stream($this->tempStream, $outputStream);
-            fclose($outputStream);
-        } else {
-            echo $str;
-        }
+        // rewind the temp stream.
+        rewind($this->tempStream);
+        // stream the temp to output
+        $outputStream = fopen("php://output", "w+b");
+        stream_copy_to_stream($this->tempStream, $outputStream);
+        fclose($outputStream);
     }
 
     /**
@@ -249,7 +235,6 @@ class JsonEncoder
                     break;
             }
         }
-        $this->streamJson();
     }
 
     /** 

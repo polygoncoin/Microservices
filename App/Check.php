@@ -54,19 +54,19 @@ class Check
      */
     public function init()
     {
-        HttpRequest::init();
-        HttpRequest::loadToken();
-        HttpRequest::initSession();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::init();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::loadToken();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::initSession();
 
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
 
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        $this->process();
+        return true;
     }
 
-    private function process()
+    public function process()
     {
         $errors = [];
         $httpRoutes = [];
@@ -92,6 +92,8 @@ class Check
                 $this->jsonObj->addKeyValue('Results', $errors);
             }
         }
+
+        return true;
     }
 
     private function processRoutes($groupRoutesFolder, &$errors)

@@ -85,6 +85,13 @@ class Login
     public $jsonObj = null;
 
     /**
+     * Payload
+     *
+     * @var array
+     */
+    private $payload = [];
+
+    /**
      * Login Initialization
      *
      * @return void
@@ -101,7 +108,7 @@ class Login
         $this->cache = Cache::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        $this->process();
+        return true;
     }
 
     /**
@@ -109,13 +116,15 @@ class Login
      *
      * @return void
      */
-    private function process()
+    public function process()
     {
         $this->performBasicCheck();
         $this->loadUser();
         $this->validateRequestIp();
         $this->validatePassword();
         $this->outputTokenDetails();
+
+        return true;
     }
 
     /**
@@ -128,14 +137,18 @@ class Login
         // Check request method is POST.
         if (Constants::$REQUEST_METHOD !== Constants::$POST) {
             HttpResponse::return4xx(404, 'Invalid request method');
+            return;
         }
-
+        if (isset($_POST['Payload'])) {
+            $this->payload = json_decode($_POST['Payload'], true);
+        }
         // Check for required input variables
         foreach (array('username','password') as $value) {
-            if (!isset($_POST[$value]) || empty($_POST[$value])) {
+            if (!isset($this->payload[$value]) || empty($this->payload[$value])) {
                 HttpResponse::return4xx(404, 'Missing required parameters');
+                return;
             } else {
-                $this->$value = $_POST[$value];
+                $this->$value = $this->payload[$value];
             }
         }
     }
@@ -148,15 +161,17 @@ class Login
     private function loadUser()
     {
         // Redis - one can find the userID from username.
-        if ($this->cache->cacheExists("user:{$_POST['username']}")) {
-            $this->userDetails = json_decode($this->cache->getCache("user:{$_POST['username']}"), true);
+        if ($this->cache->cacheExists("user:{$this->payload['username']}")) {
+            $this->userDetails = json_decode($this->cache->getCache("user:{$this->payload['username']}"), true);
             $this->userId = $this->userDetails['user_id'];
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
                 HttpResponse::return4xx(404, 'Invalid credentials');
+                return;
             }            
         } else {
             HttpResponse::return4xx(404, 'Invalid credentials.');
+            return;
         }
     }
 
@@ -179,6 +194,7 @@ class Login
             }
             if (!$isValidIp) {
                 HttpResponse::return4xx(404, 'Invalid credentials.');
+                return;
             }
         }
     }
@@ -192,6 +208,7 @@ class Login
     {
         if (!password_verify($this->password, $this->userDetails['password_hash'])) { // get hash from redis and compares with password
             HttpResponse::return4xx(404, 'Invalid credentials');
+            return;
         }
     }
 

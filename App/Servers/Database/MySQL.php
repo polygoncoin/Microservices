@@ -127,6 +127,7 @@ class MySQL extends AbstractDatabase
             }
         } catch (\PDOException $e) {
             HttpResponse::return5xx(501, 'Unable to connect to database server');
+            return;
         }
     }
 
@@ -152,6 +153,7 @@ class MySQL extends AbstractDatabase
                 $this->rollback();
             }
             HttpResponse::return5xx(501, 'Unable to change database');
+            return;
         }
     }
 

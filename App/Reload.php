@@ -44,26 +44,6 @@ class Reload
      */
     public function init()
     {
-        switch (true) {
-            case isset($_GET['refresh']) && isset($_GET['ids']):
-                $this->process($_GET['refresh'], $_GET['ids']);
-                break;       
-            case isset($_GET['refresh']):
-                $this->process($_GET['refresh']);
-                break;       
-            default:
-                $this->process();
-                break;       
-        }
-    }
-
-    /**
-     * Process authorization
-     *
-     * @return void
-     */
-    private function process($refresh = 'all', $idsString = null)
-    {
         Env::$cacheType = getenv('cacheType');
         Env::$cacheHostname = getenv('cacheHostname');
         Env::$cachePort = getenv('cachePort');
@@ -82,6 +62,16 @@ class Reload
 
         $this->db = Database::getObject();
 
+        return true;
+    }
+
+    /**
+     * Process authorization
+     *
+     * @return void
+     */
+    public function process($refresh = 'all', $idsString = null)
+    {
         $ids = [];
         if (!is_null($idsString)) {
             foreach (explode(',', trim($idsString)) as $value) {
@@ -89,6 +79,7 @@ class Reload
                     $ids[] = (int)$value;
                 } else {
                     HttpResponse::return4xx(404, 'Only integer values supported for ids.');
+                    return;
                 }
             }
         }
@@ -117,7 +108,7 @@ class Reload
     /**
      * Adds user details to cache.
      *
-     * @param array $ids Optional - privide ids are specific reload.
+     * @param array $ids Optional - provide ids are specific reload.
      * @return void
      */
     private function processUser($ids = [])

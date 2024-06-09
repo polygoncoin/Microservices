@@ -35,6 +35,7 @@ class Logs
     
         if (!in_array($logType, array_keys($logTypes))) {
             HttpResponse::return5xx(501, 'Invalid logType');
+            return;
         }
         $logFile = $logTypes[$logType];
         file_put_contents($logFile.'-'.date('Y-m'), $logContent . PHP_EOL, FILE_APPEND);

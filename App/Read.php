@@ -173,6 +173,7 @@ class Read
                 foreach($row as $key => $value) {
                     if (in_array($key, $subQueryKeys)) {
                         HttpResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
+                        return;
                     }
                 }
             }
@@ -202,6 +203,7 @@ class Read
         HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
         if (HttpRequest::$input['payload']['perpage'] > Env::$maxPerpage) {
             HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.Env::$maxPerpage);
+            return;
         }
         HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
@@ -233,6 +235,7 @@ class Read
 
         if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
             HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
+            return;
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
@@ -248,6 +251,7 @@ class Read
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
             HttpResponse::return5xx(501, 'Invalid database query');
+            return;
         }
         $stmt->execute($sqlParams);
         for ($i=0;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {

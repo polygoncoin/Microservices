@@ -54,6 +54,7 @@ class Upload
                 break;
         }
         $this->endProcess();
+
         return true;
     }
 
@@ -65,6 +66,7 @@ class Upload
     private function endProcess()
     {
         HttpResponse::return2xx(200, 'Success');
+        return;
     }
     
     /**

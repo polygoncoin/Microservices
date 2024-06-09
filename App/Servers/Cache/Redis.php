@@ -114,6 +114,7 @@ class Redis extends AbstractCache
             }
             if (!$this->redis->ping()) {
                 HttpResponse::return5xx(501, 'Unable to ping cache server');
+                return;
             }
         } catch (\Exception $e) {
             $log = [
@@ -123,6 +124,7 @@ class Redis extends AbstractCache
             ];
             Logs::log('error', json_encode($log));
             HttpResponse::return5xx(501, 'Unable to connect to cache server');
+            return;
         }
     }
 

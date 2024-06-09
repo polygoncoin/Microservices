@@ -30,9 +30,9 @@ class Cron
      *
      * @return void
      */
-    public static function init()
+    public function init()
     {
-        (new self)->process();
+        ;
     }
 
     /**
@@ -48,6 +48,8 @@ class Cron
 
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($result);
+
+        return true;
     }
 
     /**
@@ -58,5 +60,6 @@ class Cron
     private function endProcess()
     {
         HttpResponse::return2xx(200, 'message as desired.');
+        return;
     }
 }

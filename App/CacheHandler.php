@@ -114,6 +114,7 @@ class CacheHandler
         // Send file content as stream
         $fp = fopen($fileLocation, 'rb');
         fpassthru($fp);
+
         return true;
     }
 }

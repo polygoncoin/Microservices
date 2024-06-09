@@ -66,6 +66,7 @@ trait AppTrait
                 list($type, $typeKey) = $where;
                 if ($first && $type === 'hierarchyData') {
                     HttpResponse::return5xx(501, 'Invalid config: First query can not have hierarchyData config');
+                    return;
                 }
                 if ($type === 'hierarchyData') {
                     $foundHierarchy = true;
@@ -74,11 +75,13 @@ trait AppTrait
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
                 HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
+                return;
             }
         }
         if (isset($sqlConfig['subQuery'])) {
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
                 HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
+                return;
             }
             foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
                 $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($sqlDetails);
@@ -190,6 +193,7 @@ trait AppTrait
                 foreach($typeKeys as $key) {
                     if (!isset($value[$key])) {
                         HttpResponse::return5xx(501, 'Invalid hierarchy:  Missing hierarchy data');
+                        return;
                     }
                     $value = $value[$key];
                 }
@@ -292,6 +296,7 @@ trait AppTrait
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
                 HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
+                return;
             }
         }
         if (isset($sqlConfig['subQuery'])) {

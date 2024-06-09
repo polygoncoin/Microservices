@@ -124,6 +124,7 @@ class MySQL extends AbstractCache
             ];
             Logs::log('error', json_encode($log));
             HttpResponse::return5xx(501, 'Unable to connect to cache server');
+            return;
         }
     }
 

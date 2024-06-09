@@ -227,6 +227,7 @@ class Write
                             $_required = &$required[$module] ?? [];
                         } else {
                             HttpResponse::return4xx(404, "Invalid payload: Module '{$module}' not supported.");
+                            return;
                         }
                     } else {
                         $_payload = &$payload;

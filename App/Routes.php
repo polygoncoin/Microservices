@@ -61,10 +61,11 @@ class Routes
      */
     public function init()
     {
-        HttpRequest::init();
-        HttpRequest::loadToken();
-        HttpRequest::initSession();
-        $this->processRoutes();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::init();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::loadToken();
+        if (is_null(HttpResponse::$httpResponse)) HttpRequest::initSession();
+
+        return true;
     }
 
     /**
@@ -72,7 +73,7 @@ class Routes
      *
      * @return void
      */
-    private function processRoutes()
+    public function process()
     {
         $httpRoutes = [];
         $userRoutesFolder = Constants::$DOC_ROOT . $this->routesFolder . '/' . HttpRequest::$input['readOnlySession']['group_name'];
@@ -88,6 +89,8 @@ class Routes
         }
         $this->jsonObj = HttpResponse::getJsonObject();
         $this->jsonObj->addKeyValue('Results', $httpRoutes);
+
+        return true;
     }
 
     /**

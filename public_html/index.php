@@ -3,6 +3,7 @@ require_once __DIR__ . '/../autoload.php';
 
 use App\Constants;
 use App\Env;
+use App\HttpResponse;
 
 class Microservices
 {
@@ -23,15 +24,20 @@ class Microservices
      */
     private $jsonObj = null;
 
+
+    /**
+     * Output Buffer
+     *
+     * @var string
+     */
+    private $outputBuffer = null;
+
     /**
      * Constructor
      */
     public function __construct()
     {
         ob_start();
-        Constants::init();
-        Env::init();
-        $this->jsonObj = App\HttpResponse::getJsonObject();        
     }
 
     /**
@@ -41,16 +47,32 @@ class Microservices
      */
     public function init()
     {
+        Constants::init();
+        Env::init();
+
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsStart = microtime(true);
         }
-        $this->setHeaders();
-        $this->startJson();
-        $this->startOutputJson();
-        $this->process();
-        $this->endOutputJson();
-        $this->addPerformance();
-        $this->endJson();
+        $this->jsonObj = HttpResponse::getJsonObject();
+
+        return true;
+    }
+
+    /**
+     * Process
+     *
+     * @return void
+     */
+    public function process()
+    {
+        if (is_null(HttpResponse::$httpResponse)) $this->startJson();
+        if (is_null(HttpResponse::$httpResponse)) $this->startOutputJson();
+        if (is_null(HttpResponse::$httpResponse)) $this->processApi();
+        if (is_null(HttpResponse::$httpResponse)) $this->endOutputJson();
+        if (is_null(HttpResponse::$httpResponse)) $this->addPerformance();
+        if (is_null(HttpResponse::$httpResponse)) $this->endJson();
+
+        return true;
     }
 
     /**
@@ -90,46 +112,54 @@ class Microservices
      *
      * @return void
      */
-    public function process()
+    public function processApi()
     {
+        $class = null;
         switch (true) {
             case Constants::$ROUTE === '/login':
-                $login = new App\Login();
-                $login->init();
+                $class = 'App\\Login';
                 break;
             case Constants::$ROUTE === '/routes':
-                $routes = new App\Routes();
-                $routes->init();
+                $class = 'App\\Routes';
                 break;
             case Constants::$ROUTE === '/check':
-                $routes = new App\Check();
-                $routes->init();
+                $class = 'App\\Check';
                 break;
             case Constants::$ROUTE === '/reload':
                 if (httpAuthentication()) {
-                    $reload = new App\Reload();
-                    $reload->init();
+                    $class = 'App\\Reload';
                 }
                 break;
             case strpos(Constants::$ROUTE, '/crons') === 0:
                 if (Constants::$REMOTE_ADDR !== Env::$cronRestrictedIp) {
-                    die('Source IP is not supported.');
+                    HttpResponse::return4xx(404, 'Source IP is not supported');
+                    return;
                 }
                 $routeArr = explode('/', $this->ROUTE);
+                $cron = ucfirst($routeArr[2]);
                 if (
                     isset($routeArr[2]) &&
-                    file_exists(Constants::$DOC_ROOT . "/Crons/{$routeArr[2]}.php")
+                    file_exists(Constants::$DOC_ROOT . "/Crons/{$cron}.php")
                 ) {
-                    eval('Crons\\' . $routeArr[2] . '::init($this->ROUTE);');
+                    $class = "Crons\\{$cron}";
                 } else {
-                    die('Invalid request.');
+                    HttpResponse::return4xx(404, 'Invalid request');
+                    return;
                 }
                 break;
             default:
-                $api = new App\Api();
-                $api->init();
+                $class = 'App\\Api';
                 break;
-        }        
+        }
+        if (!is_null($class)) {
+            $api = new $class();
+            if ($api->init()) {
+                return $api->process();
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
@@ -152,21 +182,15 @@ class Microservices
     {
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsEnd = microtime(true);
-            $time = ($this->tsEnd - $this->tsStart) * 1000;
-            $memory = (memory_get_peak_usage()/1000);
+            $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
+            $memory = ceil(memory_get_peak_usage()/1000);
         
             $this->jsonObj->startAssoc('Stats');
             $this->jsonObj->startAssoc('Performance');
-            $this->jsonObj->encode(
-                [
-                    'total-time-taken' => ceil($time) . ' ms',
-                    'peak-memory-usage' => ceil($memory) . ' KB'
-                ]
-            );
+            $this->jsonObj->addKeyValue('total-time-taken', "{$time} ms");
+            $this->jsonObj->addKeyValue('peak-memory-usage', "{$memory} KB");
             $this->jsonObj->endAssoc();
-            $this->jsonObj->startAssoc('getrusage');
-            $this->jsonObj->encode(getrusage());
-            $this->jsonObj->endAssoc();
+            $this->jsonObj->addKeyValue('getrusage', getrusage());
             $this->jsonObj->endAssoc();
         }
     }
@@ -179,8 +203,62 @@ class Microservices
     public function endJson()
     {
         $this->jsonObj->endAssoc();
-        $jsonObj = null;
+        $this->jsonObj->end();
+    }
+
+    /**
+     * End Json
+     *
+     * @return void
+     */
+    public function checkOutputBuffer()
+    {
+        $outputBuffer = ob_get_clean();
+        if (!empty($outputBuffer) && Env::$ENVIRONMENT === Constants::$PRODUCTION) {
+            $this->outputBuffer = $outputBuffer;
+            $log = [
+                'datetime' => date('Y-m-d H:i:s'),
+                'input' => HttpRequest::$input,
+                'error' => $str
+            ];
+            Logs::log('error', json_encode($log));
+            HttpResponse::return5xx(501, 'Error: Facing server side error with API.');
+        }
+    }
+
+    /**
+     * End Json
+     *
+     * @return void
+     */
+    public function streamJson()
+    {
+        $this->setHeaders();
+        if (!is_null(HttpResponse::$httpResponse)) {
+            echo HttpResponse::$httpResponse;
+        } else {
+            $this->jsonObj->streamJson();
+        }    
+    }
+
+    /**
+     * Output
+     *
+     * @return void
+     */
+    public function outputResults()
+    {
+        if (!is_null($this->outputBuffer)) {
+            echo $this->outputBuffer;
+        } else {
+            $this->streamJson();
+        }
+        $this->jsonObj = null;
     }
 }
+
 $Microservices = new Microservices();
-$Microservices->init();
+if ($Microservices->init()) {
+    $Microservices->process();
+}
+$Microservices->outputResults();

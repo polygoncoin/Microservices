@@ -100,14 +100,17 @@ class HttpRequest
             $token = self::$input['token'];
             if (!self::$cache->cacheExists($token)) {
                 HttpResponse::return5xx(501, 'Cache token missing');
+                return;
             }
             self::$input['readOnlySession'] = json_decode(self::$cache->getCache($token), true);
             self::checkRemoteIp();
         } else {
-            HttpResponse::return4xx(404, 'Missing token in authorization header');   
+            HttpResponse::return4xx(404, 'Missing token in authorization header');
+            return;
         }
         if (empty(self::$input['token'])) {
             HttpResponse::return4xx(404, 'Missing token');
+            return;
         }
     }
 
@@ -120,12 +123,14 @@ class HttpRequest
     {
         if (empty(self::$input['readOnlySession']['user_id']) || empty(self::$input['readOnlySession']['group_id'])) {
             HttpResponse::return4xx(404, 'Invalid session');
+            return;
         }
         self::$userId = self::$input['readOnlySession']['user_id'];
         self::$groupId = self::$input['readOnlySession']['group_id'];
         $key = 'group:'.self::$groupId;
         if (!self::$cache->cacheExists($key)) {
             HttpResponse::return5xx(501, "Cache '{$key}' missing.");
+            return;
         }
         $groupInfoArr = json_decode(self::$cache->getCache($key), true);
 
@@ -157,6 +162,7 @@ class HttpRequest
             }
             if (!$isValidIp) {
                 HttpResponse::return4xx(404, 'Invalid request.');
+                return;
             }
         }
     }
@@ -173,6 +179,7 @@ class HttpRequest
             $routes = require $routeFileLocation;
         } else {
             HttpResponse::return5xx(501, 'Missing route file for ' . Constants::$REQUEST_METHOD . ' method');
+            return;
         }
         self::$routeElements = explode('/', trim(Constants::$ROUTE, '/'));
         $routeLastElementPos = count(self::$routeElements) - 1;
@@ -213,13 +220,16 @@ class HttpRequest
                             list($paramName, $paramDataType) = explode(':', $dynamicRoute);
                             if (!in_array($paramDataType, ['int','string'])) {
                                 HttpResponse::return5xx(501, 'Invalid datatype set for Route');
+                                return;
                             }
                             if (count($preferredValues) > 0 && !in_array($e, $preferredValues)) {
                                 HttpResponse::return4xx(404, $r);
+                                return;
                             }
                             if ($paramDataType === 'int') {
                                 if (!ctype_digit($e)) {
                                     HttpResponse::return4xx(404, "Invalid {$paramName}");
+                                    return;
                                 } else {
                                     $foundIntRoute = $r;
                                 }
@@ -236,9 +246,11 @@ class HttpRequest
                         self::$input['uriParams'][$paramName] = urldecode($e);
                     } else {
                         HttpResponse::return4xx(404, 'Route not supported');
+                        return;
                     }
                 } else {
                     HttpResponse::return4xx(404, 'Route not supported');
+                    return;
                 }
                 $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
@@ -250,9 +262,11 @@ class HttpRequest
             self::$__file__ = $routes['__file__'];
             if (empty(self::$__file__) || !file_exists(self::$__file__)) {
                 HttpResponse::return5xx(501, 'Path cannot be empty');
+                return;
             }
         } elseif ($routes['__file__'] != '') {
             HttpResponse::return5xx(501, 'Missing route configuration file for ' . Constants::$REQUEST_METHOD . ' method');
+            return;
         }
     }
 
@@ -271,10 +285,12 @@ class HttpRequest
             parse_str(file_get_contents('php://input'), $payloadArr);
             if (!isset($payloadArr['Payload'])) {
                 HttpResponse::return4xx(404, 'Invalid "Payload"');
+                return;
             }
             $payloadArr = json_decode($payloadArr['Payload'], true);
             if (is_null($payloadArr)) {
                 HttpResponse::return4xx(404, 'Invalid Payload JSON');
+                return;
             }
             self::$input['payloadArr'] = $payloadArr;
         }
