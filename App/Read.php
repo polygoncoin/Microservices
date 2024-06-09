@@ -120,12 +120,12 @@ class Read
             switch ($readSqlConfig['mode']) {
                 case 'singleRowFormat':
                     if ($start) {
-                        $this->jsonObj->startObject('Results');
+                        $this->jsonObj->startAssoc('Results');
                     } else {
-                        $this->jsonObj->startObject();
+                        $this->jsonObj->startAssoc();
                     }
                     $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
-                    $this->jsonObj->endObject();
+                    $this->jsonObj->endAssoc();
                     break;
                 case 'multipleRowFormat':
                     $keysCount = count($keys)-1;
@@ -140,7 +140,7 @@ class Read
                     $this->fetchMultipleRows($readSqlConfig, $keys, $useHierarchy);
                     $this->jsonObj->endArray();
                     if (!$start) {
-                        $this->jsonObj->endObject();
+                        $this->jsonObj->endAssoc();
                     }
                     break;
             }
@@ -265,7 +265,7 @@ class Read
             if ($singleColumn) {
                 $this->jsonObj->encode($row[key($row)]);
             } else if (isset($readSqlConfig['subQuery'])) {
-                $this->jsonObj->startObject();
+                $this->jsonObj->startAssoc();
                 foreach($row as $key => $value) {
                     $this->jsonObj->addKeyValue($key, $value);
                 }
