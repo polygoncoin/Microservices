@@ -92,10 +92,10 @@ class Write
         $response = [];
         $response['Route'] = HttpRequest::$configuredUri;
         $response['Payload'] = $this->getConfigParams($writeSqlConfig, true, $useHierarchy);
-        $this->jsonObj->startAssoc('Config');
+        $this->jsonObj->startObject('Config');
         $this->jsonObj->addKeyValue('Route', $response['Route']);
         $this->jsonObj->addKeyValue('Payload', $response['Payload']);
-        $this->jsonObj->endAssoc();
+        $this->jsonObj->endObject();
     }    
 
     /**
@@ -111,7 +111,7 @@ class Write
         HttpRequest::$input['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
         if (HttpRequest::$input['payloadArrType'] === 'Object') {
-            $this->jsonObj->startAssoc('Results');
+            $this->jsonObj->startObject('Results');
         } else {
             $this->jsonObj->startArray('Results');
         }
@@ -122,10 +122,10 @@ class Write
             if (Constants::$REQUEST_METHOD === Constants::$PATCH) {
                 if (count(HttpRequest::$input['payloadArr_ith']) !== 1) {
                     HttpResponse::$httpStatus = 400;
-                    $this->jsonObj->startAssoc();
+                    $this->jsonObj->startObject();
                     $this->jsonObj->addKeyValue('Payload', $payload);
                     $this->jsonObj->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
-                    $this->jsonObj->endAssoc();
+                    $this->jsonObj->endObject();
                     continue;
                 }
             }
@@ -134,10 +134,10 @@ class Write
                 list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
                 if ($isValidData !== true) {
                     HttpResponse::$httpStatus = 400;
-                    $this->jsonObj->startAssoc();
+                    $this->jsonObj->startObject();
                     $this->jsonObj->addKeyValue('Payload', $payload);
                     $this->jsonObj->addKeyValue('Error', $errors);
-                    $this->jsonObj->endAssoc();
+                    $this->jsonObj->endObject();
                     continue;
                 }
             }
@@ -151,16 +151,16 @@ class Write
                 $response['Error'] = true;
             }
             if (HttpRequest::$input['payloadArrType'] !== 'Object') {
-                $this->jsonObj->startAssoc();
+                $this->jsonObj->startObject();
             }
             $this->jsonObj->addKeyValue('Payload', $payload);
             $this->jsonObj->addKeyValue('Response', $response);
             if (HttpRequest::$input['payloadArrType'] !== 'Object') {
-                $this->jsonObj->endAssoc();
+                $this->jsonObj->endObject();
             }
         }
         if (HttpRequest::$input['payloadArrType'] === 'Object') {
-            $this->jsonObj->endAssoc();
+            $this->jsonObj->endObject();
         } else {
             $this->jsonObj->endArray();
         }

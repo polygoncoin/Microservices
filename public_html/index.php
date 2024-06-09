@@ -94,7 +94,7 @@ class Microservices
      */
     public function startJson()
     {
-        $this->jsonObj->startAssoc();
+        $this->jsonObj->startObject();
     }
 
     /**
@@ -104,7 +104,7 @@ class Microservices
      */
     public function startOutputJson()
     {
-        $this->jsonObj->startAssoc('Output');        
+        $this->jsonObj->startObject('Output');        
     }
 
     /**
@@ -169,7 +169,7 @@ class Microservices
      */
     public function endOutputJson()
     {
-        $this->jsonObj->endAssoc();
+        $this->jsonObj->endObject();
         $this->jsonObj->addKeyValue('Status', App\HttpResponse::$httpStatus);
     }
 
@@ -185,13 +185,13 @@ class Microservices
             $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
             $memory = ceil(memory_get_peak_usage()/1000);
         
-            $this->jsonObj->startAssoc('Stats');
-            $this->jsonObj->startAssoc('Performance');
+            $this->jsonObj->startObject('Stats');
+            $this->jsonObj->startObject('Performance');
             $this->jsonObj->addKeyValue('total-time-taken', "{$time} ms");
             $this->jsonObj->addKeyValue('peak-memory-usage', "{$memory} KB");
-            $this->jsonObj->endAssoc();
+            $this->jsonObj->endObject();
             $this->jsonObj->addKeyValue('getrusage', getrusage());
-            $this->jsonObj->endAssoc();
+            $this->jsonObj->endObject();
         }
     }
 
@@ -202,7 +202,7 @@ class Microservices
      */
     public function endJson()
     {
-        $this->jsonObj->endAssoc();
+        $this->jsonObj->endObject();
         $this->jsonObj->end();
     }
 

@@ -126,8 +126,8 @@ class JsonEncoder
      */
     public function addKeyValue($key, $value)
     {
-        if ($this->currentObject->mode !== 'Assoc') {
-            throw new Exception('Mode should be Assoc');
+        if ($this->currentObject->mode !== 'Object') {
+            throw new Exception('Mode should be Object');
         }
         $this->write($this->currentObject->comma);
         $this->write($this->escape($key) . ':');
@@ -175,13 +175,16 @@ class JsonEncoder
      * @param string $key Used while creating associative array inside an associative array and $key is the key.
      * @return void
      */
-    public function startAssoc($key = null)
+    public function startObject($key = null)
     {
         if ($this->currentObject) {
+            if ($this->currentObject->mode === 'Object' && is_null($key)) {
+                throw new Exception('Object inside an Object should be supported with a Key');
+            }
             $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
-        $this->currentObject = new JsonEncoderObject('Assoc');
+        $this->currentObject = new JsonEncoderObject('Object');
         if (!is_null($key)) {
             $this->write($this->escape($key) . ':');
         }
@@ -193,7 +196,7 @@ class JsonEncoder
      *
      * @return void
      */
-    public function endAssoc()
+    public function endObject()
     {
         $this->write('}');
         $this->currentObject = null;
@@ -230,8 +233,8 @@ class JsonEncoder
                 case 'Array':
                     $this->endArray();
                     break;
-                case 'Assoc':
-                    $this->endAssoc();
+                case 'Object':
+                    $this->endObject();
                     break;
             }
         }
@@ -267,7 +270,7 @@ class JsonEncoderObject
     /**
      * Constructor
      *
-     * @param string $mode Values can be one among Array/Assoc
+     * @param string $mode Values can be one among Array/Object
      */
     public function __construct($mode)
     {
