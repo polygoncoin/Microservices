@@ -6,8 +6,6 @@ use App\Env;
 use App\HttpRequest;
 use App\HttpResponse;
 use App\Logs;
-use App\Read;
-use App\Write;
 
 /**
  * Class to initialize api HTTP request
@@ -55,18 +53,24 @@ class Api
             HttpRequest::loadPayload();
         }
 
+        $class = null;
         switch (Constants::$REQUEST_METHOD) {
             case Constants::$GET:
-                $request = new Read();
+                $class = 'App\\Read';
                 break;
             case Constants::$POST:
             case Constants::$PUT:
             case Constants::$PATCH:
             case Constants::$DELETE:
-                $request = new Write();
+                $class = 'App\\Write';
                 break;
         }
-        $request->init();
+        if (!is_null($class)) {
+            $api = new $class();
+            if ($api->init()) {
+                $api->process();
+            }
+        }
 
         // Check & Process Cron / ThirdParty calls.
         $this->processAfterPayload();

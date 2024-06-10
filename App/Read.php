@@ -42,19 +42,29 @@ class Read
     /**
      * Initialize
      *
-     * @return void
+     * @return bool
      */
     public function init()
     {
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
 
+        $this->db = Database::getObject();
+        $this->jsonObj = HttpResponse::getJsonObject();
+
+        return true;
+    }
+
+    /**
+     * Process
+     *
+     * @return void
+     */
+    public function process()
+    {
         $Constants = 'App\\Constants';
         $Env = 'App\\Env';
         $HttpRequest = 'App\\HttpRequest';
-
-        $this->db = Database::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
 
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
@@ -120,12 +130,12 @@ class Read
             switch ($readSqlConfig['mode']) {
                 case 'singleRowFormat':
                     if ($start) {
-                        $this->jsonObj->startAssoc('Results');
+                        $this->jsonObj->startObject('Results');
                     } else {
-                        $this->jsonObj->startAssoc();
+                        $this->jsonObj->startObject();
                     }
                     $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
-                    $this->jsonObj->endAssoc();
+                    $this->jsonObj->endObject();
                     break;
                 case 'multipleRowFormat':
                     $keysCount = count($keys)-1;
@@ -140,7 +150,7 @@ class Read
                     $this->fetchMultipleRows($readSqlConfig, $keys, $useHierarchy);
                     $this->jsonObj->endArray();
                     if (!$start) {
-                        $this->jsonObj->endAssoc();
+                        $this->jsonObj->endObject();
                     }
                     break;
             }
@@ -265,7 +275,7 @@ class Read
             if ($singleColumn) {
                 $this->jsonObj->encode($row[key($row)]);
             } else if (isset($readSqlConfig['subQuery'])) {
-                $this->jsonObj->startAssoc();
+                $this->jsonObj->startObject();
                 foreach($row as $key => $value) {
                     $this->jsonObj->addKeyValue($key, $value);
                 }

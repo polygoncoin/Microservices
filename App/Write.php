@@ -57,12 +57,22 @@ class Write
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
 
+        $this->db = Database::getObject();
+        $this->jsonObj = HttpResponse::getJsonObject();
+
+        return true;
+    }
+
+    /**
+     * Process
+     *
+     * @return void
+     */
+    public function process()
+    {
         $Constants = 'App\\Constants';
         $Env = 'App\\Env';
         $HttpRequest = 'App\\HttpRequest';
-
-        $this->db = Database::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
 
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
