@@ -41,7 +41,7 @@ class Upload
     }
 
     /**
-     * Process all functions
+     * Process
      *
      * @return boolean
      */

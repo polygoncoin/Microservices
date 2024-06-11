@@ -26,7 +26,7 @@ use App\Servers\Database\Database;
 class Cron
 {
     /**
-     * Initialize cron
+     * Initialize
      *
      * @return boolean
      */
@@ -36,7 +36,7 @@ class Cron
     }
 
     /**
-     * Process all functions
+     * Process
      *
      * @return boolean
      */

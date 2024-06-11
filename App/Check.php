@@ -63,6 +63,11 @@ class Check
         return HttpResponse::isSuccess();
     }
 
+    /**
+     * Process
+     *
+     * @return boolean
+     */
     public function process()
     {
         $errors = [];
@@ -90,6 +95,13 @@ class Check
         return HttpResponse::isSuccess();
     }
 
+    /**
+     * Process Routes
+     *
+     * @param string $groupRoutesFolder Routes folder for a group
+     * @param array  $errors            Errors
+     * @return array
+     */
     private function processRoutes($groupRoutesFolder, &$errors)
     {
         $httpRoutes = [];
@@ -105,12 +117,20 @@ class Check
             if (empty($errors[$routeFileLocation])) {
                 unset($errors[$routeFileLocation]);
                 $route = '';
-                $this->getRoutes($routes, $route, $httpRoutes[$method]);    
+                $this->getRoutes($routes, $route, $httpRoutes[$method]);  
             }
         }
         return $httpRoutes;
     }
 
+    /**
+     * Check Config Queries
+     *
+     * @param string $method    HTTP method
+     * @param string $__file__  File path
+     * @param array  $errors    Errors
+     * @return void
+     */
     private function checkConfigQueries($method, $__file__, &$errors)
     {
         $errors = [];
@@ -129,6 +149,14 @@ class Check
         }
     }
 
+    /**
+     * Validate write config
+     *
+     * @param array   $writeSqlConfig Write operation SQL configurations
+     * @param array   $errors         Errors
+     * @param boolean $useHierarchy   Use hierarchy flag
+     * @return void
+     */
     private function validateWrite(&$writeSqlConfig, &$errors, $useHierarchy = false)
     {
         $foundHierarchyData = false;
@@ -163,6 +191,14 @@ class Check
         }
     }
 
+    /**
+     * Validate read config
+     *
+     * @param array   $readSqlConfig Write operation SQL configurations
+     * @param array   $errors        Errors
+     * @param boolean $useHierarchy  Use hierarchy flag
+     * @return void
+     */
     private function validateRead(&$readSqlConfig, &$errors, $useHierarchy = false)
     {
         $foundHierarchyData = false;
@@ -198,6 +234,13 @@ class Check
         }
     }
 
+    /**
+     * Validate read config
+     *
+     * @param array $httpRoutes HTTP Routes
+     * @param array $errors     Errors
+     * @return void
+     */
     private function processRoutesQueries($httpRoutes, &$errors)
     {
         foreach ($httpRoutes as $groupFolder => $httpRoute) {
@@ -223,6 +266,8 @@ class Check
     /**
      * Create Routes list.
      *
+     * @param array $routes HTTP Routes
+     * @param array $errors Errors
      * @return void
      */
     private function checkRoutes(&$routes, &$errors)
@@ -277,6 +322,9 @@ class Check
     /**
      * Create Routes list.
      *
+     * @param array  $routes     HTTP Routes
+     * @param string $route      Route
+     * @param array  $httpRoutes HTTP Routes
      * @return void
      */
     private function getRoutes(&$routes, $route, &$httpRoutes)

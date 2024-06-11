@@ -81,8 +81,8 @@ class Read
     /**
      * Process read function for configuration.
      *
-     * @param array $readSqlConfig Config from file
-     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @param array   $readSqlConfig Config from file
+     * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function processReadConfig(&$readSqlConfig, $useHierarchy)
@@ -94,7 +94,7 @@ class Read
      * Process Function for read operation.
      *
      * @param array $readSqlConfig Config from file
-     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @param boolean  $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function processRead(&$readSqlConfig, $useHierarchy)
@@ -104,17 +104,17 @@ class Read
         HttpRequest::$input['payload'] = HttpRequest::$input['payloadArr'][0];
         // Start Read operation.
         $keys = [];
-        $this->readDB($readSqlConfig, true, $keys, $useHierarchy);        
+        $this->readDB($readSqlConfig, true, $keys, $useHierarchy);      
         return HttpResponse::isSuccess();
     }
 
     /**
      * Function to select sub queries recursively.
      *
-     * @param array $readSqlConfig Config from file
-     * @param bool  $start         true to represent the first call in recursion.
-     * @param array $keys          Keys in recursion.
-     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @param array   $readSqlConfig Config from file
+     * @param boolean $start         true to represent the first call in recursion.
+     * @param array   $keys          Keys in recursion.
+     * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function readDB(&$readSqlConfig, $start, &$keys, $useHierarchy)
@@ -162,9 +162,9 @@ class Read
     /**
      * Function to fetch single record.
      *
-     * @param array $readSqlConfig Read SQL configuration.
-     * @param array $keys          Module Keys in recursion.
-     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @param array   $readSqlConfig Read SQL configuration.
+     * @param array   $keys          Module Keys in recursion.
+     * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function fetchSingleRow(&$readSqlConfig, &$keys, $useHierarchy)
@@ -243,9 +243,9 @@ class Read
     /**
      * Function to fetch multiple record.
      *
-     * @param array $readSqlConfig Read SQL configuration.
-     * @param array $keys          Module Keys in recursion.
-     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @param array   $readSqlConfig Read SQL configuration.
+     * @param array   $keys          Module Keys in recursion.
+     * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function fetchMultipleRows(&$readSqlConfig, &$keys, $useHierarchy)
@@ -305,9 +305,9 @@ class Read
     /**
      * Function to reset data for module key wise.
      *
-     * @param array $keys         Module Keys in recursion.
-     * @param array $row          Row data fetched from DB.
-     * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
+     * @param array   $keys         Module Keys in recursion.
+     * @param array   $row          Row data fetched from DB.
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function resetFetchData(&$keys, $row, $useHierarchy)
@@ -336,10 +336,10 @@ class Read
     /**
      * Validate and call readDB
      *
-     * @param array $readSqlConfig Read SQL configuration.
-     * @param array $keys          Module Keys in recursion.
-     * @param array $row           Row data fetched from DB.
-     * @param bool  $useHierarchy  Use results in where clause of sub queries recursively.
+     * @param array   $readSqlConfig Read SQL configuration.
+     * @param array   $keys          Module Keys in recursion.
+     * @param array   $row           Row data fetched from DB.
+     * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function callReadDB(&$readSqlConfig, &$keys, &$row, $useHierarchy)

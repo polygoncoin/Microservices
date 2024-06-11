@@ -384,7 +384,7 @@ class JsonDecoder
                         $arr = [
                             'key' => $this->keys(),
                             'value' => $this->currentObject->arrayValues
-                        ];    
+                        ];  
                     }
                 }
                 $this->currentObject->arrayValues = [];
@@ -408,7 +408,7 @@ class JsonDecoder
                         $arr = [
                             'key' => $this->keys(),
                             'value' => $this->currentObject->objectValues
-                        ];    
+                        ];  
                     }
                 }
                 $this->currentObject->objectValues = [];
@@ -771,7 +771,7 @@ class JsonDecode
     public static $jsonDecoderObj = null;
 
     /**
-     * Initialize object
+     * Initialize
      *
      * @return void
      */

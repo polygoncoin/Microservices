@@ -81,7 +81,7 @@ class Redis extends AbstractCache
         $password,
         $database
     )
-    {   
+    { 
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;

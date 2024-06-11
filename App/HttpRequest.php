@@ -72,7 +72,7 @@ class HttpRequest
     public static $groupId = null;
 
     /**
-     * Initialization
+     * Initialize
      *
      * @return void
      */

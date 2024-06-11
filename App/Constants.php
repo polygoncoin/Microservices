@@ -24,7 +24,7 @@ class Constants
     public static $PRODUCTION = 1;
     public static $DEVELOPMENT = 0;
 
-    public static $TOKEN_EXPIRY_TIME = 3600;    
+    public static $TOKEN_EXPIRY_TIME = 3600;  
     public static $REQUIRED = true;
 
     public static $DOC_ROOT = null;

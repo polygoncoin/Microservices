@@ -38,7 +38,7 @@ class Reload
     private $db = null;
 
     /**
-     * Initialize authorization
+     * Initialize
      *
      * @return boolean
      */
@@ -62,7 +62,7 @@ class Reload
     }
 
     /**
-     * Process authorization
+     * Process
      *
      * @return boolean
      */

@@ -92,7 +92,7 @@ class Login
     private $payload = [];
 
     /**
-     * Login Initialization
+     * Initialize
      *
      * @return boolean
      */
@@ -110,7 +110,7 @@ class Login
     }
 
     /**
-     * Process authorization
+     * Process
      *
      * @return boolean
      */

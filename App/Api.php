@@ -24,7 +24,7 @@ class Api
     /**
      * Route matched for processing before payload was collected.
      * 
-     * @var bool
+     * @var boolean
      */
     private $beforePayload = null;
 
@@ -43,7 +43,7 @@ class Api
     }
 
     /**
-     * Process all functions
+     * Process
      *
      * @return boolean
      */

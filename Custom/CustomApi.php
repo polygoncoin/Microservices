@@ -33,7 +33,7 @@ class CustomApi
     }
 
     /**
-     * Process all functions
+     * Process
      *
      * @return boolean
      */

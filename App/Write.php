@@ -89,8 +89,8 @@ class Write
     /**
      * Process write function for configuration.
      *
-     * @param array $writeSqlConfig Config from file
-     * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
+     * @param array   $writeSqlConfig Config from file
+     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
@@ -112,8 +112,8 @@ class Write
     /**
      * Process Function to insert/update.
      *
-     * @param array $writeSqlConfig Config from file
-     * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
+     * @param array   $writeSqlConfig Config from file
+     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively.
      * @return boolean
      */
     private function processWrite(&$writeSqlConfig, $useHierarchy)
@@ -184,11 +184,11 @@ class Write
     /**
      * Function to insert/update sub queries recursively.
      *
-     * @param array $writeSqlConfig Config from file
-     * @param bool  $payload        Payload.
-     * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
-     * @param array $response       Response by reference.
-     * @param array $required       Required fields.
+     * @param array   $writeSqlConfig Config from file
+     * @param boolean $payload        Payload.
+     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively.
+     * @param array   $response       Response by reference.
+     * @param array   $required       Required fields.
      * @return boolean
      */
     private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response, &$required)

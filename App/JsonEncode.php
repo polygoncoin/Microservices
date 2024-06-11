@@ -298,7 +298,7 @@ class JsonEncode
     public static $jsonObj = null;
 
     /**
-     * Initialize object
+     * Initialize
      *
      * @return void
      */

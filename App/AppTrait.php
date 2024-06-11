@@ -32,9 +32,9 @@ trait AppTrait
     /**
      * Sets required payload.
      *
-     * @param array $sqlConfig    Config from file
-     * @param bool  $first        true to represent the first call in recursion.
-     * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
+     * @param array   $sqlConfig    Config from file
+     * @param boolean $first        true to represent the first call in recursion.
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
      * @return void
      */
     private function getRequired(&$sqlConfig, $first = true, $useHierarchy)
@@ -253,9 +253,9 @@ trait AppTrait
     /**
      * Return config par recursively
      *
-     * @param array $sqlConfig    Config from file
-     * @param array $first        Flag to check if this is first request in a recursive call
-     * @param bool  $useHierarchy Use results in where clause of sub queries recursively.
+     * @param array   $sqlConfig    Config from file
+     * @param array   $first        Flag to check if this is first request in a recursive call
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
      * @return array
      */
     private function getConfigParams(&$sqlConfig, $first, $useHierarchy)

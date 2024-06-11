@@ -89,7 +89,7 @@ class MySQL extends AbstractCache
         $password,
         $database
     )
-    {   
+    { 
         $this->ts = time();
         $this->hostname = $hostname;
         $this->port = $port;
@@ -168,7 +168,7 @@ class MySQL extends AbstractCache
             $params = [$keyDetails['key'], $this->ts];
             $this->redis->execDbQuery($sql, $params);
             $row = $this->redis->fetch();
-            $this->redis->closeCursor();    
+            $this->redis->closeCursor();  
             return $row['value'];
         }
         return false;
