@@ -24,7 +24,6 @@ class Microservices
      */
     private $jsonObj = null;
 
-
     /**
      * Output Buffer
      *
@@ -37,7 +36,7 @@ class Microservices
      */
     public function __construct()
     {
-        $this->cors();
+        $this->setCors();
         ob_start();
     }
 
@@ -48,7 +47,6 @@ class Microservices
      */
     public function init()
     {
-        Constants::init();
         Env::init();
 
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
@@ -264,7 +262,7 @@ class Microservices
      * 
      * @return void
      */
-    private function cors()
+    private function setCors()
     {
         // Allow from any origin
         if (isset($_SERVER['HTTP_ORIGIN'])) {

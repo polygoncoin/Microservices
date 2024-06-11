@@ -1,6 +1,8 @@
 <?php
 namespace App;
 
+use App\Constants;
+
 /**
  * Constants
  *
@@ -50,6 +52,13 @@ class Env
 
     public static function init()
     {
+        Constants::init();
+
+        $env = parse_ini_file(Constants::$DOC_ROOT . '/.env');
+        foreach ($env as $key => $value) {
+            putenv("{$key}={$value}");
+        }
+
         self::$defaultDbDatabase = getenv('defaultDbDatabase');
 
         self::$ENVIRONMENT = getenv('ENVIRONMENT');

@@ -13,9 +13,9 @@ spl_autoload_register(function ($className) {
  * a '/' character and a decimal number specifying the length, in bits, of the subnet
  * mask or routing prefix (number from 0 to 32).
  *
- * @param  $ip     IP address to check
- * @param  $cidr   IP address range in CIDR notation for check
- * @return boolean true match found otherwise false
+ * @param  string  $ip   IP address to check
+ * @param  string  $cidr IP address range in CIDR notation for check
+ * @return boolean true  match found otherwise false
  */
 function cidr_match($ip, $cidr) {
     $outcome = false;
@@ -27,9 +27,4 @@ function cidr_match($ip, $cidr) {
         }
     }
     return $outcome;
-}
-
-$env = parse_ini_file(__DIR__ . '/.env');
-foreach ($env as $key => $value) {
-    putenv("{$key}={$value}");
 }
