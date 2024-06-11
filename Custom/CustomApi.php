@@ -29,7 +29,7 @@ class CustomApi
      */
     public function init()
     {
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

@@ -46,7 +46,7 @@ class Category
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -66,6 +66,6 @@ class Category
         $this->db->closeCursor();
         $this->jsonObj->addKeyValue('Results', $rows);
         
-        return true;
+        return HttpResponse::isSuccess();
     }
 }

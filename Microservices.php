@@ -54,7 +54,7 @@ class Microservices
         }
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -64,14 +64,14 @@ class Microservices
      */
     public function process()
     {
-        if (is_null(HttpResponse::$httpResponse)) $this->startJson();
-        if (is_null(HttpResponse::$httpResponse)) $this->startOutputJson();
-        if (is_null(HttpResponse::$httpResponse)) $this->processApi();
-        if (is_null(HttpResponse::$httpResponse)) $this->endOutputJson();
-        if (is_null(HttpResponse::$httpResponse)) $this->addPerformance();
-        if (is_null(HttpResponse::$httpResponse)) $this->endJson();
+        if (HttpResponse::isSuccess()) $this->startJson();
+        if (HttpResponse::isSuccess()) $this->startOutputJson();
+        if (HttpResponse::isSuccess()) $this->processApi();
+        if (HttpResponse::isSuccess()) $this->endOutputJson();
+        if (HttpResponse::isSuccess()) $this->addPerformance();
+        if (HttpResponse::isSuccess()) $this->endJson();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
     
     /**
@@ -155,12 +155,10 @@ class Microservices
         if (!is_null($class)) {
             $api = new $class();
             if ($api->init()) {
-                return $api->process();
-            } else {
-                return false;
+                $api->process();
             }
         }
-        return false;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -224,6 +222,7 @@ class Microservices
             ];
             Logs::log('error', json_encode($log));
             HttpResponse::return5xx(501, 'Error: Facing server side error with API.');
+            return;
         }
     }
 

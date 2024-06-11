@@ -61,11 +61,11 @@ class Routes
      */
     public function init()
     {
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::init();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::loadToken();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::initSession();
+        if (HttpResponse::isSuccess()) HttpRequest::init();
+        if (HttpResponse::isSuccess()) HttpRequest::loadToken();
+        if (HttpResponse::isSuccess()) HttpRequest::initSession();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -90,7 +90,7 @@ class Routes
         $this->jsonObj = HttpResponse::getJsonObject();
         $this->jsonObj->addKeyValue('Results', $httpRoutes);
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

@@ -123,4 +123,14 @@ class HttpResponse
         $jsonEncodeObj = null;
         self::$httpResponse = json_encode($arr);
     }
+
+    /**
+     * Check HTTP Response to proceed ahead.
+     *
+     * @return bool
+     */
+    public static function isSuccess()
+    {
+        return is_null(HttpResponse::$httpResponse);
+    }
 }

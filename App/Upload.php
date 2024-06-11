@@ -37,7 +37,7 @@ class Upload
     public function init(&$input)
     {
         $this->input = $input;
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -55,7 +55,7 @@ class Upload
         }
         $this->endProcess();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

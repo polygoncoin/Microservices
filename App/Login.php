@@ -108,7 +108,7 @@ class Login
         $this->cache = Cache::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -118,13 +118,13 @@ class Login
      */
     public function process()
     {
-        $this->performBasicCheck();
-        $this->loadUser();
-        $this->validateRequestIp();
-        $this->validatePassword();
-        $this->outputTokenDetails();
+        if (HttpResponse::isSuccess()) $this->performBasicCheck();
+        if (HttpResponse::isSuccess()) $this->loadUser();
+        if (HttpResponse::isSuccess()) $this->validateRequestIp();
+        if (HttpResponse::isSuccess()) $this->validatePassword();
+        if (HttpResponse::isSuccess()) $this->outputTokenDetails();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

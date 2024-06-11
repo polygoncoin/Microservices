@@ -40,7 +40,7 @@ class Google
     {
         $this->jsonObj = HttpResponse::getJsonObject();        
         
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -68,7 +68,7 @@ class Google
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($output);
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

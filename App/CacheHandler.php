@@ -55,7 +55,7 @@ class CacheHandler
         
         $this->fileLocation = $this->cacheLocation . $this->filePath;
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

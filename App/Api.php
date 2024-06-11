@@ -28,12 +28,12 @@ class Api
      */
     public function init()
     {
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::init();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::loadToken();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::initSession();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::parseRoute();
+        if (HttpResponse::isSuccess()) HttpRequest::init();
+        if (HttpResponse::isSuccess()) HttpRequest::loadToken();
+        if (HttpResponse::isSuccess()) HttpRequest::initSession();
+        if (HttpResponse::isSuccess()) HttpRequest::parseRoute();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -75,7 +75,7 @@ class Api
         // Check & Process Cron / ThirdParty calls.
         $this->processAfterPayload();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

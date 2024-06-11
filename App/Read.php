@@ -52,7 +52,7 @@ class Read
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

@@ -54,16 +54,16 @@ class Check
      */
     public function init()
     {
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::init();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::loadToken();
-        if (is_null(HttpResponse::$httpResponse)) HttpRequest::initSession();
+        if (HttpResponse::isSuccess()) HttpRequest::init();
+        if (HttpResponse::isSuccess()) HttpRequest::loadToken();
+        if (HttpResponse::isSuccess()) HttpRequest::initSession();
 
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
 
         $this->jsonObj = HttpResponse::getJsonObject();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     public function process()
@@ -93,7 +93,7 @@ class Check
             }
         }
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     private function processRoutes($groupRoutesFolder, &$errors)

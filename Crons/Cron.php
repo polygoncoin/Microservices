@@ -32,7 +32,7 @@ class Cron
      */
     public function init()
     {
-        ;
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -49,7 +49,7 @@ class Cron
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($result);
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**

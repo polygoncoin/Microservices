@@ -62,7 +62,7 @@ class Reload
 
         $this->db = Database::getObject();
 
-        return true;
+        return HttpResponse::isSuccess();
     }
 
     /**
