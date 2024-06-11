@@ -22,9 +22,16 @@ use App\Logs;
 class Api
 {
     /**
+     * Route matched for processing before payload was collected.
+     * 
+     * @var bool
+     */
+    private $beforePayload = null;
+
+    /**
      * Initialize
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
@@ -32,27 +39,29 @@ class Api
         if (HttpResponse::isSuccess()) HttpRequest::loadToken();
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
         if (HttpResponse::isSuccess()) HttpRequest::parseRoute();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process all functions
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
         // Check & Process Upload
-        if ($this->processBeforePayload()) {
-            return;
+        if (HttpResponse::isSuccess()) $this->processBeforePayload();
+        if ($this->beforePayload === true) {
+            return HttpResponse::isSuccess();
         }
-
+        $success = HttpResponse::isSuccess();
+        if (!$success) {
+            return $success;
+        }
         // Load Payloads
         if (!Env::$isConfigRequest) {
             HttpRequest::loadPayload();
         }
-
         $class = null;
         switch (Constants::$REQUEST_METHOD) {
             case Constants::$GET:
@@ -65,23 +74,21 @@ class Api
                 $class = 'App\\Write';
                 break;
         }
-        if (!is_null($class)) {
+        if (HttpResponse::isSuccess() && !is_null($class)) {
             $api = new $class();
             if ($api->init()) {
                 $api->process();
             }
         }
-
         // Check & Process Cron / ThirdParty calls.
-        $this->processAfterPayload();
-
+        if (HttpResponse::isSuccess()) $this->processAfterPayload();
         return HttpResponse::isSuccess();
     }
 
     /**
      * Miscellaneous Functionality Before Collecting Payload
      *
-     * @return void
+     * @return boolean
      */
     private function processBeforePayload()
     {
@@ -109,23 +116,22 @@ class Api
                 break;
         }
         if (!empty($class)) {
+            $this->beforePayload = true;
             $api = new $class();
             if ($api->init()) {
-                return $api->process();
-            } else {
-                return false;
+                $api->process();
             }
         }
-        return false;
+        return HttpResponse::isSuccess();
     }
 
     /**
      * Miscellaneous Functionality After Collecting Payload
      *
-     * @return void
+     * @return boolean
      */
     private function processAfterPayload()
     {
-
+        return HttpResponse::isSuccess();
     }
 }

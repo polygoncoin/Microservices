@@ -128,7 +128,7 @@ class JsonDecoder
     /**
      * Validate JSON in stream
      *
-     * @return bool
+     * @return boolean
      */
     public function indexJSON()
     {

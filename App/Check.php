@@ -50,19 +50,16 @@ class Check
     /**
      * Initialize
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
         if (HttpResponse::isSuccess()) HttpRequest::init();
         if (HttpResponse::isSuccess()) HttpRequest::loadToken();
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
-
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
-
         $this->jsonObj = HttpResponse::getJsonObject();
-
         return HttpResponse::isSuccess();
     }
 
@@ -71,7 +68,6 @@ class Check
         $errors = [];
         $httpRoutes = [];
         $routesFolder = Constants::$DOC_ROOT . $this->configFolder . '/Routes';
-        
         // $groupFolders = new \DirectoryIterator($routesFolder);
         // foreach ($groupFolders as $groupFolder) {
         //     if ($groupFolder->isDir() && !$groupFolder->isDot()) {
@@ -79,7 +75,6 @@ class Check
         //         $httpRoutes[$groupFolder->getFilename()] = $this->processRoutes($_routesFolder, $errors);
         //     }
         // }
-        
         $groupFolder = HttpRequest::$input['readOnlySession']['group_name'];
         $_routesFolder = $routesFolder . '/' . $groupFolder;
         $httpRoutes[$groupFolder] = $this->processRoutes($_routesFolder, $errors);
@@ -92,7 +87,6 @@ class Check
                 $this->jsonObj->addKeyValue('Results', $errors);
             }
         }
-
         return HttpResponse::isSuccess();
     }
 

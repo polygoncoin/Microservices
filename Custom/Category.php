@@ -39,20 +39,19 @@ class Category
     /**
      * Initialize
      *
-     * @return bool
+     * @return boolean
      */
     public function init()
     {
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -65,7 +64,6 @@ class Category
         $rows = $this->db->fetchAll();
         $this->db->closeCursor();
         $this->jsonObj->addKeyValue('Results', $rows);
-        
         return HttpResponse::isSuccess();
     }
 }

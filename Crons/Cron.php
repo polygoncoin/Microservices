@@ -28,7 +28,7 @@ class Cron
     /**
      * Initialize cron
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
@@ -38,7 +38,7 @@ class Cron
     /**
      * Process all functions
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -48,7 +48,6 @@ class Cron
 
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($result);
-
         return HttpResponse::isSuccess();
     }
 

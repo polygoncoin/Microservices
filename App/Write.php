@@ -50,36 +50,31 @@ class Write
     /**
      * Initialize
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
-
         $this->db = Database::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
         $Constants = 'App\\Constants';
         $Env = 'App\\Env';
         $HttpRequest = 'App\\HttpRequest';
-
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
-
         // Use results in where clause of sub queries recursively.
         $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
-
         if (
             Env::$allowConfigRequest &&
             Env::$isConfigRequest
@@ -88,6 +83,7 @@ class Write
         } else {
             $this->processWrite($writeSqlConfig, $useHierarchy);
         }
+        return HttpResponse::isSuccess();
     }
 
     /**
@@ -95,10 +91,14 @@ class Write
      *
      * @param array $writeSqlConfig Config from file
      * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
-     * @return void
+     * @return boolean
      */
     private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
     {
+        $success = HttpResponse::isSuccess();
+        if (!$success) {
+            return $success;
+        }
         $response = [];
         $response['Route'] = HttpRequest::$configuredUri;
         $response['Payload'] = $this->getConfigParams($writeSqlConfig, true, $useHierarchy);
@@ -106,6 +106,7 @@ class Write
         $this->jsonObj->addKeyValue('Route', $response['Route']);
         $this->jsonObj->addKeyValue('Payload', $response['Payload']);
         $this->jsonObj->endObject();
+        return HttpResponse::isSuccess();
     }    
 
     /**
@@ -113,10 +114,14 @@ class Write
      *
      * @param array $writeSqlConfig Config from file
      * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
-     * @return void
+     * @return boolean
      */
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
+        $success = HttpResponse::isSuccess();
+        if (!$success) {
+            return $success;
+        }
         // Set required fields.
         HttpRequest::$input['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
@@ -125,7 +130,6 @@ class Write
         } else {
             $this->jsonObj->startArray('Results');
         }
-
         // Perform action
         foreach (HttpRequest::$input['payloadArr'] as &$payload) {
             HttpRequest::$input['payload'] = $payload;
@@ -174,6 +178,7 @@ class Write
         } else {
             $this->jsonObj->endArray();
         }
+        return HttpResponse::isSuccess();
     }    
 
     /**
@@ -184,10 +189,14 @@ class Write
      * @param bool  $useHierarchy   Use results in where clause of sub queries recursively.
      * @param array $response       Response by reference.
      * @param array $required       Required fields.
-     * @return void
+     * @return boolean
      */
     private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response, &$required)
     {
+        $success = HttpResponse::isSuccess();
+        if (!$success) {
+            return $success;
+        }
         $isAssoc = $this->isAssoc($payloads);
         $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
@@ -257,5 +266,6 @@ class Write
                 $counter++;
             }
         }
+        return HttpResponse::isSuccess();
     }
 }

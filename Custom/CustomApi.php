@@ -25,7 +25,7 @@ class CustomApi
     /**
      * Initialize
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
@@ -35,7 +35,7 @@ class CustomApi
     /**
      * Process all functions
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -43,11 +43,9 @@ class CustomApi
             $class = 'Custom\\'.ucfirst(HttpRequest::$routeElements[1]);
             $api = new $class();
             if ($api->init()) {
-                return $api->process();
-            } else {
-                return false;
+                $api->process();
             }
         }
-        return false;
+        return HttpResponse::isSuccess();
     }
 }

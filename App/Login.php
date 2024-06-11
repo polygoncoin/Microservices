@@ -94,7 +94,7 @@ class Login
     /**
      * Login Initialization
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
@@ -104,17 +104,15 @@ class Login
         Env::$cacheUsername = getenv('cacheUsername');
         Env::$cachePassword = getenv('cachePassword');
         Env::$cacheDatabase = getenv('cacheDatabase');
-
         $this->cache = Cache::getObject();
         $this->jsonObj = HttpResponse::getJsonObject();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process authorization
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -123,7 +121,6 @@ class Login
         if (HttpResponse::isSuccess()) $this->validateRequestIp();
         if (HttpResponse::isSuccess()) $this->validatePassword();
         if (HttpResponse::isSuccess()) $this->outputTokenDetails();
-
         return HttpResponse::isSuccess();
     }
 

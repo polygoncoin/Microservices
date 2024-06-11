@@ -127,7 +127,7 @@ class HttpResponse
     /**
      * Check HTTP Response to proceed ahead.
      *
-     * @return bool
+     * @return boolean
      */
     public static function isSuccess()
     {

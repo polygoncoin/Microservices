@@ -57,21 +57,20 @@ class Routes
     /**
      * Initialize
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
         if (HttpResponse::isSuccess()) HttpRequest::init();
         if (HttpResponse::isSuccess()) HttpRequest::loadToken();
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Make allowed routes list of a logged-in user
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -89,7 +88,6 @@ class Routes
         }
         $this->jsonObj = HttpResponse::getJsonObject();
         $this->jsonObj->addKeyValue('Results', $httpRoutes);
-
         return HttpResponse::isSuccess();
     }
 

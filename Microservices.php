@@ -43,24 +43,22 @@ class Microservices
     /**
      * Initialize
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
         Env::init();
-
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsStart = microtime(true);
         }
         $this->jsonObj = HttpResponse::getJsonObject();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -70,7 +68,6 @@ class Microservices
         if (HttpResponse::isSuccess()) $this->endOutputJson();
         if (HttpResponse::isSuccess()) $this->addPerformance();
         if (HttpResponse::isSuccess()) $this->endJson();
-
         return HttpResponse::isSuccess();
     }
     
@@ -109,7 +106,7 @@ class Microservices
     /**
      * Process API request
      *
-     * @return void
+     * @return boolean
      */
     public function processApi()
     {
@@ -291,7 +288,7 @@ class Microservices
      *
      * @param string $envUsername env variable to match username
      * @param string $envPassword env variable to match password
-     * @return bool
+     * @return boolean
      */
     private function httpAuthentication($envUsername, $envPassword)
     {

@@ -33,20 +33,18 @@ class Google
     /**
      * Initialize
      *
-     * @param array  $input     Inputs
-     * @return void
+     * @return boolean
      */
     public function init()
     {
-        $this->jsonObj = HttpResponse::getJsonObject();        
-        
+        $this->jsonObj = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process all functions
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
@@ -64,10 +62,8 @@ class Google
         } else {
             $output = json_decode($output, true);
         }
-
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($output);
-
         return HttpResponse::isSuccess();
     }
 

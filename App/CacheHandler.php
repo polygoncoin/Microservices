@@ -44,17 +44,14 @@ class CacheHandler
     /**
      * Initalise check and serve file
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
         $this->cacheLocation = Constants::$DOC_ROOT . $this->cacheLocation;
-
         $this->filePath = '/' . trim(str_replace('../','',urldecode(Constants::$ROUTE)), './');
         $this->validateFileRequest();
-        
         $this->fileLocation = $this->cacheLocation . $this->filePath;
-
         return HttpResponse::isSuccess();
     }
 

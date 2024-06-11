@@ -40,7 +40,7 @@ class Reload
     /**
      * Initialize authorization
      *
-     * @return void
+     * @return boolean
      */
     public function init()
     {
@@ -50,25 +50,21 @@ class Reload
         Env::$cacheUsername = getenv('cacheUsername');
         Env::$cachePassword = getenv('cachePassword');
         Env::$cacheDatabase = getenv('cacheDatabase');
-
         $this->cache = Cache::getObject();
-
         Env::$dbType = getenv('defaultDbType');
         Env::$dbHostname = getenv('defaultDbHostname');
         Env::$dbPort = getenv('defaultDbPort');
         Env::$dbUsername = getenv('defaultDbUsername');
         Env::$dbPassword = getenv('defaultDbPassword');
         Env::$dbDatabase = getenv('defaultDbDatabase');
-
         $this->db = Database::getObject();
-
         return HttpResponse::isSuccess();
     }
 
     /**
      * Process authorization
      *
-     * @return void
+     * @return boolean
      */
     public function process($refresh = 'all', $idsString = null)
     {
@@ -103,6 +99,7 @@ class Reload
                     break;
             }
         }
+        return HttpResponse::isSuccess();
     }
 
     /**

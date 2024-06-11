@@ -239,7 +239,7 @@ trait AppTrait
      * Use results in where clause of sub queries recursively
      *
      * @param array $sqlConfig Config from file
-     * @return bool
+     * @return boolean
      */
     private function getUseHierarchy(&$sqlConfig)
     {

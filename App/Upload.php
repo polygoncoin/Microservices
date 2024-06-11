@@ -32,7 +32,7 @@ class Upload
      * Initialize
      *
      * @param array  $input Inputs
-     * @return void
+     * @return boolean
      */
     public function init(&$input)
     {
@@ -43,7 +43,7 @@ class Upload
     /**
      * Process all functions
      *
-     * @return void
+     * @return boolean
      */
     public function process()
     {
