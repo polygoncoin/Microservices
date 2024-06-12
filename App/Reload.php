@@ -178,9 +178,14 @@ class Reload
         $cidrArray = [];
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['allowed_ips'])) {
-                $cidr = json_decode(trim($cidr), true);
-                if (count($cidr)>0) {
-                    $this->cache->setCache("cidr:{$row['group_id']}", json_encode($cidr));
+                $cidrs = [];
+                foreach (explode(',', str_replace(' ','', $row['allowed_ips'])) as $cidr) {
+                    if (!empty($cidr)) {
+                        $cidrs[] = $cidr;
+                    }
+                }
+                if (count($cidrs)>0) {
+                    $this->cache->setCache("cidr:{$row['group_id']}", json_encode($cidrs));
                 }
             }
         }

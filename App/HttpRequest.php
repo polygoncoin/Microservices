@@ -103,6 +103,8 @@ class HttpRequest
                 return;
             }
             self::$input['readOnlySession'] = json_decode(self::$cache->getCache($token), true);
+            self::$userId = self::$input['readOnlySession']['user_id'];
+            self::$groupId = self::$input['readOnlySession']['group_id'];    
             self::checkRemoteIp();
         } else {
             HttpResponse::return4xx(404, 'Missing token in authorization header');
@@ -125,8 +127,6 @@ class HttpRequest
             HttpResponse::return4xx(404, 'Invalid session');
             return;
         }
-        self::$userId = self::$input['readOnlySession']['user_id'];
-        self::$groupId = self::$input['readOnlySession']['group_id'];
         $key = 'group:'.self::$groupId;
         if (!self::$cache->cacheExists($key)) {
             HttpResponse::return5xx(501, "Cache '{$key}' missing.");

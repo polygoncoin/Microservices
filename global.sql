@@ -86,9 +86,9 @@ CREATE TABLE `m004_master_client` (
 LOCK TABLES `m001_master_group` WRITE;
 /*!40000 ALTER TABLE `m001_master_group` DISABLE KEYS */;
 INSERT INTO `m001_master_group` VALUES
-(1,'AdminGroup',1,1,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','No','No'),
-(2,'Client001UserGroup1',2,2,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','No','No'),
-(3,'Client002UserGroup1',3,3,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','No','No');
+(1,'AdminGroup',1,1,'127.0.0.1/0','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','No','No'),
+(2,'Client001UserGroup1',2,2,'127.0.0.1/0','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','No','No'),
+(3,'Client002UserGroup1',3,3,'127.0.0.1/0','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','No','No');
 /*!40000 ALTER TABLE `m001_master_group` ENABLE KEYS */;
 UNLOCK TABLES;
 
