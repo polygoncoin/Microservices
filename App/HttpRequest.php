@@ -161,7 +161,7 @@ class HttpRequest
                 }
             }
             if (!$isValidIp) {
-                HttpResponse::return4xx(404, 'Invalid request.');
+                HttpResponse::return4xx(404, 'IP not supported');
                 return;
             }
         }

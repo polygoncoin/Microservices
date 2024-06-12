@@ -190,7 +190,7 @@ class Login
                 }
             }
             if (!$isValidIp) {
-                HttpResponse::return4xx(404, 'IP not supported.');
+                HttpResponse::return4xx(404, 'IP not supported');
                 return;
             }
         }
