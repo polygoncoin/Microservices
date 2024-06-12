@@ -15,6 +15,18 @@ spl_autoload_register(function ($className) {
  * @param  string  $cidr IP address range in CIDR notation for check
  * @return boolean true  match found otherwise false
  */
-function cidr_match($ip, $cidr) {
-    return true;
+function cidr_match($ip, $cidr)
+{
+    $response = false;
+    if (strpos($cidr, '/')) {
+        list($cidrIp, $bits) = explode('/', $cidr);
+        $ip = ip2long($ip);
+        $binCidrIpStr = str_pad(decbin(ip2long($cidrIp)), 32, 0, STR_PAD_LEFT);
+        $start = bindec(substr($cidrIp, 0, 32 - $bits) . str_pad('', $bits, 0));
+        $end = $start + pow(2, $bits) - 1;
+        return ($start <= $ip && $ip <= $end);
+    } else {
+        $response = ($ip === $cidr);
+    }
+    return $response;
 }
