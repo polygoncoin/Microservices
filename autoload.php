@@ -22,7 +22,7 @@ function cidr_match($ip, $cidr)
         list($cidrIp, $bits) = explode('/', $cidr);
         $ip = ip2long($ip);
         $binCidrIpStr = str_pad(decbin(ip2long($cidrIp)), 32, 0, STR_PAD_LEFT);
-        $start = bindec(substr($cidrIp, 0, 32 - $bits) . str_pad('', $bits, 0));
+        $start = bindec(str_pad(substr($binCidrIpStr, 0, (32 - $bits)), 32, 0, STR_PAD_RIGHT));
         $end = $start + pow(2, $bits) - 1;
         return ($start <= $ip && $ip <= $end);
     } else {
