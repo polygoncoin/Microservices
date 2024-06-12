@@ -185,65 +185,38 @@ class HttpRequest
         $routeLastElementPos = count(self::$routeElements) - 1;
         Env::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
         $configuredUri = [];
-        foreach(self::$routeElements as $key => $e) {
+        foreach(self::$routeElements as $key => $element) {
             $pos = false;
-            if (isset($routes[$e])) {
+            if (isset($routes[$element])) {
                 if (
                     Env::$allowConfigRequest == 1 &&
                     Env::$isConfigRequest && 
-                    $key === $routeLastElementPos &&
-                    $routes[$e] === true
+                    $routes[$element] === true
                 ) {
                     break;
                 }
-                $configuredUri[] = $e;
-                $routes = &$routes[$e];
-                if (strpos($e, '{') === 0) {
-                    $param = substr($e, 1, strpos($e, ':') - 1);
-                    self::$input['uriParams'][$param] = $e;
+                $configuredUri[] = $element;
+                $routes = &$routes[$element];
+                if (strpos($element, '{') === 0) {
+                    $param = substr($element, 1, strpos($element, ':') - 1);
+                    self::$input['uriParams'][$param] = $element;
                 }
                 continue;
             } else {
                 if (is_array($routes)) {
                     $foundIntRoute = false;
                     $foundStringRoute = false;
-                    foreach (array_keys($routes) as $r) {
-                        // Is a dynamic URI element
-                        if (strpos($r, '{') === 0) {
-                            // Check for compulsary values
-                            $dynamicRoute = trim($r, '{}');
-                            $preferredValues = [];
-                            if (strpos($r, '|') !== false) {
-                                list($dynamicRoute, $preferredValuesString) = explode('|', $dynamicRoute);
-                                $preferredValues = ((strlen($preferredValuesString) > 0) ? explode(',', $preferredValuesString) : []);
-                            }
-                            list($paramName, $paramDataType) = explode(':', $dynamicRoute);
-                            if (!in_array($paramDataType, ['int','string'])) {
-                                HttpResponse::return5xx(501, 'Invalid datatype set for Route');
-                                return;
-                            }
-                            if (count($preferredValues) > 0 && !in_array($e, $preferredValues)) {
-                                HttpResponse::return4xx(404, $r);
-                                return;
-                            }
-                            if ($paramDataType === 'int') {
-                                if (!ctype_digit($e)) {
-                                    HttpResponse::return4xx(404, "Invalid {$paramName}");
-                                    return;
-                                } else {
-                                    $foundIntRoute = $r;
-                                }
-                            } else {
-                                $foundStringRoute = $r;
-                            }
+                    foreach (array_keys($routes) as $routeElement) {
+                        if (strpos($routeElement, '{') === 0) {// Is a dynamic URI element
+                            $paramName = self::processRouteElement($routeElement, $element, $foundIntRoute, $foundStringRoute);
                         }
                     }
                     if ($foundIntRoute) {
                         $configuredUri[] = $foundIntRoute;
-                        self::$input['uriParams'][$paramName] = (int)$e;
+                        self::$input['uriParams'][$paramName] = (int)$element;
                     } else if ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        self::$input['uriParams'][$paramName] = urldecode($e);
+                        self::$input['uriParams'][$paramName] = urldecode($element);
                     } else {
                         HttpResponse::return4xx(404, 'Route not supported');
                         return;
@@ -257,17 +230,67 @@ class HttpRequest
         }
         self::$configuredUri = '/' . implode('/', $configuredUri);
 
-        // Set route code file.
-        if (isset($routes['__file__']) && file_exists($routes['__file__'])) {
-            self::$__file__ = $routes['__file__'];
-            if (empty(self::$__file__) || !file_exists(self::$__file__)) {
-                HttpResponse::return5xx(501, 'Path cannot be empty');
+        self::validateConfigFile($routes);
+    }
+
+    /**
+     * Process Route Element
+     *
+     * @param string $routeElement     Configured route element
+     * @param string $element          Element
+     * @param string $foundIntRoute    Found as Integer route element
+     * @param string $foundStringRoute Found as String route element
+     * @return string
+     */
+    private static function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundStringRoute)
+    {
+        // Is a dynamic URI element
+        if (strpos($routeElement, '{') !== 0) {
+            return false;
+        }
+        // Check for compulsary values
+        $dynamicRoute = trim($routeElement, '{}');
+        $preferredValues = [];
+        if (strpos($routeElement, '|') !== false) {
+            list($dynamicRoute, $preferredValuesString) = explode('|', $dynamicRoute);
+            $preferredValues = ((strlen($preferredValuesString) > 0) ? explode(',', $preferredValuesString) : []);
+        }
+        list($paramName, $paramDataType) = explode(':', $dynamicRoute);
+        if (!in_array($paramDataType, ['int','string'])) {
+            HttpResponse::return5xx(501, 'Invalid datatype set for Route');
+            return;
+        }
+        if (count($preferredValues) > 0 && !in_array($element, $preferredValues)) {
+            HttpResponse::return4xx(404, $routeElement);
+            return;
+        }
+        if ($paramDataType === 'int') {
+            if (!ctype_digit($element)) {
+                HttpResponse::return4xx(404, "Invalid {$paramName}");
                 return;
+            } else {
+                $foundIntRoute = $routeElement;
             }
-        } elseif ($routes['__file__'] != '') {
+        } else {
+            $foundStringRoute = $routeElement;
+        }
+        return $paramName;
+    }
+
+    /**
+     * Validate config file
+     *
+     * @param array $routes Routes config.
+     * @return void
+     */
+    private static function validateConfigFile(&$routes)
+    {
+        // Set route code file.
+        if (!(isset($routes['__file__']) && (empty($routes['__file__']) || file_exists($routes['__file__'])))) {
             HttpResponse::return5xx(501, 'Missing route configuration file for ' . Constants::$REQUEST_METHOD . ' method');
             return;
         }
+        self::$__file__ = $routes['__file__'];
     }
 
     /**
@@ -277,23 +300,24 @@ class HttpRequest
      */
     public static function loadPayload()
     {
+        $payloadArr = [];
         if (Constants::$REQUEST_METHOD === Constants::$GET) {
             self::urlDecode($_GET);
-            self::$input['payloadArr'] = !empty($_GET) ? $_GET : [];
+            $payloadArr = !empty($_GET) ? $_GET : [];
         } else {
             // Load Payload
-            parse_str(file_get_contents('php://input'), $payloadArr);
-            if (!isset($payloadArr['Payload'])) {
+            parse_str(file_get_contents('php://input'), $payload);
+            if (!isset($payload['Payload'])) {
                 HttpResponse::return4xx(404, 'Invalid "Payload"');
                 return;
             }
-            $payloadArr = json_decode($payloadArr['Payload'], true);
+            $payloadArr = json_decode($payload['Payload'], true);
             if (is_null($payloadArr)) {
                 HttpResponse::return4xx(404, 'Invalid Payload JSON');
                 return;
             }
-            self::$input['payloadArr'] = $payloadArr;
         }
+        self::$input['payloadArr'] = $payloadArr;
         self::$input['payloadArrType'] = self::payloadType();
         if (self::$input['payloadArrType'] === 'Object') {
             self::$input['payloadArr'] = [self::$input['payloadArr']];

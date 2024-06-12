@@ -34,7 +34,7 @@ class Logs
         ];
     
         if (!in_array($logType, array_keys($logTypes))) {
-            HttpResponse::return5xx(501, 'Invalid logType');
+            HttpResponse::return5xx(501, 'Invalid log type');
             return;
         }
         $logFile = $logTypes[$logType];

@@ -201,6 +201,7 @@ class Write
         $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
             if (!$this->db->beganTransaction) {
+                $response['Error'] = 'Transaction rolled back';
                 return;
             }
             HttpRequest::$input['payload'] = $payload;

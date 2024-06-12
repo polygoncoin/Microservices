@@ -54,6 +54,7 @@ class Env
     {
         Constants::init();
 
+        // Load .env
         $env = parse_ini_file(Constants::$DOC_ROOT . '/.env');
         foreach ($env as $key => $value) {
             putenv("{$key}={$value}");

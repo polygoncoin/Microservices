@@ -176,6 +176,7 @@ class Read
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
+            HttpResponse::return5xx(501, $errors);
             return;
         }
         $this->db->execDbQuery($sql, $sqlParams);
@@ -226,6 +227,7 @@ class Read
         HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
+            HttpResponse::return5xx(501, $errors);
             return;
         }
         $this->db->execDbQuery($sql, $sqlParams);
@@ -262,6 +264,7 @@ class Read
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
+            HttpResponse::return5xx(501, $errors);
             return;
         }
         if (isset($readSqlConfig['countQuery'])) {
