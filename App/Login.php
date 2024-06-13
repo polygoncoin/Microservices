@@ -182,9 +182,10 @@ class Login
         // Redis - one can find the userID from username.
         if ($this->cache->cacheExists("cidr:{$this->groupId}")) {
             $cidrs = json_decode($this->cache->getCache("cidr:{$this->groupId}"), true);
+            $ipNumber = ip2long(Constants::$REMOTE_ADDR);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
-                if (cidr_match(Constants::$REMOTE_ADDR, $cidr)) {
+                if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
                     $isValidIp = true;
                     break;
                 }

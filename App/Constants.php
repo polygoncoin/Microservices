@@ -36,8 +36,11 @@ class Constants
     public static $ROUTE_URL_PARAM = 'r';
     public static $ROUTE = null;
 
+    private static $initialized = null;
+
     public static function init()
     {
+        if (!is_null(self::$initialized)) return;
         self::$DOC_ROOT = dirname(__DIR__ . '../');
         self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
 
@@ -50,5 +53,6 @@ class Constants
         }
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
         self::$ROUTE = '/' . trim($_GET[self::$ROUTE_URL_PARAM], '/');
+        self::$initialized = true;
     }
 }

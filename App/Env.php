@@ -50,8 +50,11 @@ class Env
     public static $globalDB = null;
     public static $clientDB = null;
 
+    private static $initialized = null;
+
     public static function init()
     {
+        if (!is_null(self::$initialized)) return;
         Constants::init();
 
         // Load .env
@@ -61,18 +64,15 @@ class Env
         }
 
         self::$defaultDbDatabase = getenv('defaultDbDatabase');
-
         self::$ENVIRONMENT = getenv('ENVIRONMENT');
         self::$OUTPUT_PERFORMANCE_STATS = getenv('OUTPUT_PERFORMANCE_STATS');
-
         self::$allowConfigRequest = getenv('allowConfigRequest');
-
         self::$groups = getenv('groups');
         self::$users = getenv('users');
         self::$connections = getenv('connections');
         self::$clients = getenv('clients');
-
         self::$maxPerpage = getenv('maxPerpage');
         self::$cronRestrictedIp = getenv('cronRestrictedIp');
+        self::$initialized = true;
     }
 }

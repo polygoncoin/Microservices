@@ -153,9 +153,10 @@ class HttpRequest
         $key = 'cidr:'.self::$groupId;
         if (self::$cache->cacheExists($key)) {
             $cidrs = json_decode(self::$cache->getCache($key), true);
+            $ipNumber = ip2long(Constants::$REMOTE_ADDR);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
-                if (cidr_match(Constants::$REMOTE_ADDR, $cidr)) {
+                if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
                     $isValidIp = true;
                     break;
                 }

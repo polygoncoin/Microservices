@@ -178,12 +178,7 @@ class Reload
         $cidrArray = [];
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['allowed_ips'])) {
-                $cidrs = [];
-                foreach (explode(',', str_replace(' ','', $row['allowed_ips'])) as $cidr) {
-                    if (!empty($cidr)) {
-                        $cidrs[] = $cidr;
-                    }
-                }
+                $cidrs = cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
                     $this->cache->setCache("cidr:{$row['group_id']}", json_encode($cidrs));
                 }
