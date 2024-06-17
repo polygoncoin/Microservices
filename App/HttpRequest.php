@@ -60,14 +60,14 @@ class HttpRequest
     /**
      * Logged-in User ID
      *
-     * @var int
+     * @var integer
      */
     public static $userId = null;
 
     /**
      * Logged-in user Group ID
      *
-     * @var int
+     * @var integer
      */
     public static $groupId = null;
 

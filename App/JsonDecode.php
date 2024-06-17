@@ -81,14 +81,14 @@ class JsonDecoder
     /**
      * JSON stream start position.
      *
-     * @var int
+     * @var integer
      */
     private $_s_ = null;
 
     /**
      * JSON stream end position.
      *
-     * @var int
+     * @var integer
      */
     private $_e_ = null;
 
@@ -96,7 +96,7 @@ class JsonDecoder
      * JSON char counter.
      * Starts from $_s_ till $_e_
      *
-     * @var int
+     * @var integer
      */
     private $charCounter = null;
 
@@ -692,14 +692,14 @@ class JsonDecoderObject
     /**
      * JSON stream start position.
      *
-     * @var int
+     * @var integer
      */
     public $_s_ = null;
 
     /**
      * JSON stream end position.
      *
-     * @var int
+     * @var integer
      */
     public $_e_ = null;
     

@@ -59,21 +59,21 @@ class Login
     /**
      * User ID
      *
-     * @var int
+     * @var integer
      */
     private $userId;
 
     /**
      * Group ID
      *
-     * @var int
+     * @var integer
      */
     private $groupId;
 
     /**
      * Current timestamp
      *
-     * @var int
+     * @var integer
      */
     private $timestamp;
     

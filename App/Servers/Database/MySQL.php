@@ -198,7 +198,7 @@ class MySQL extends AbstractDatabase
     /**
      * Affected Rows by PDO
      *
-     * @return int
+     * @return integer
      */
     public function affectedRows()
     {
@@ -212,7 +212,7 @@ class MySQL extends AbstractDatabase
     /**
      * Last Insert Id by PDO
      *
-     * @return int
+     * @return integer
      */
     public function lastInsertId()
     {

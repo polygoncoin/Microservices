@@ -33,14 +33,14 @@ abstract class AbstractDatabase
     /**
      * Affected Rows by PDO
      *
-     * @return int
+     * @return integer
      */
     abstract public function affectedRows();
 
     /**
      * Last Insert Id by PDO
      *
-     * @return int
+     * @return integer
      */
     abstract public function lastInsertId();
 

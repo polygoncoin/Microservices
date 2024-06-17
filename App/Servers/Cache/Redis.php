@@ -33,7 +33,7 @@ class Redis extends AbstractCache
     /**
      * Cache port
      *
-     * @var int
+     * @var integer
      */
     private $port = null;
 
@@ -167,10 +167,10 @@ class Redis extends AbstractCache
     /**
      * Set cache on basis of key
      *
-     * @param string $key    Cache key
-     * @param string $value  Cache value
-     * @param int    $expire Seconds to expire. Default 0 - doesnt expire
-     * @return int
+     * @param string  $key    Cache key
+     * @param string  $value  Cache value
+     * @param integer $expire Seconds to expire. Default 0 - doesnt expire
+     * @return integer
      */
     public function setCache($key, $value, $expire = null)
     {
@@ -186,7 +186,7 @@ class Redis extends AbstractCache
      * Delete basis of key
      *
      * @param string $key Cache key
-     * @return int
+     * @return integer
      */
     public function deleteCache($key)
     {

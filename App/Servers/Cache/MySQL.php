@@ -34,7 +34,7 @@ class MySQL extends AbstractCache
     /**
      * Cache port
      *
-     * @var int
+     * @var integer
      */
     private $port = null;
 
@@ -69,7 +69,7 @@ class MySQL extends AbstractCache
     /**
      * Current timestamp
      *
-     * @var int
+     * @var integer
      */
     private $ts = null;
 
@@ -177,10 +177,10 @@ class MySQL extends AbstractCache
     /**
      * Set cache on basis of key
      *
-     * @param string $key    Cache key
-     * @param string $value  Cache value
-     * @param int    $expire Seconds to expire. Default 0 - doesnt expire
-     * @return int
+     * @param string  $key    Cache key
+     * @param string  $value  Cache value
+     * @param integer $expire Seconds to expire. Default 0 - doesnt expire
+     * @return integer
      */
     public function setCache($key, $value, $expire = null)
     {
@@ -213,7 +213,7 @@ class MySQL extends AbstractCache
      * Delete basis of key
      *
      * @param string $key Cache key
-     * @return int
+     * @return integer
      */
     public function deleteCache($key)
     {

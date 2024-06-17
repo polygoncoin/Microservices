@@ -49,10 +49,10 @@ abstract class AbstractCache
     /**
      * Set cache on basis of key
      *
-     * @param string $key    Cache key
-     * @param string $value  Cache value
-     * @param int    $expire Seconds to expire. Default 0 - doesnt expire
-     * @return int
+     * @param string  $key    Cache key
+     * @param string  $value  Cache value
+     * @param integer $expire Seconds to expire. Default 0 - doesnt expire
+     * @return integer
      */
     abstract public function setCache($key, $value, $expire = null);
 
@@ -60,7 +60,7 @@ abstract class AbstractCache
      * Delete cache on basis of key
      *
      * @param string $key Cache key
-     * @return int
+     * @return integer
      */
     abstract public function deleteCache($key);
     
