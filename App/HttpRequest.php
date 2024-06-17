@@ -4,6 +4,7 @@ namespace App;
 use App\Constants;
 use App\Env;
 use App\HttpResponse;
+use App\JsonDecode;
 use App\Logs;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
@@ -305,23 +306,19 @@ class HttpRequest
         if (Constants::$REQUEST_METHOD === Constants::$GET) {
             self::urlDecode($_GET);
             $payloadArr = !empty($_GET) ? $_GET : [];
+            self::$input['payloadType'] = 'Object';
+            self::$input['payloadArr'] = $payloadArr;
         } else {
             // Load Payload
-            parse_str(file_get_contents('php://input'), $payload);
-            if (!isset($payload['Payload'])) {
+            JsonDecode::init();
+            $jsonDecode = JsonDecode::getObject();
+            $jsonDecode->validate();
+            $jsonDecode->indexJSON();
+            if (!$jsonDecode->keysAreSet('Payload')) {
                 HttpResponse::return4xx(404, 'Invalid "Payload"');
                 return;
             }
-            $payloadArr = json_decode($payload['Payload'], true);
-            if (is_null($payloadArr)) {
-                HttpResponse::return4xx(404, 'Invalid Payload JSON');
-                return;
-            }
-        }
-        self::$input['payloadArr'] = $payloadArr;
-        self::$input['payloadArrType'] = self::payloadType();
-        if (self::$input['payloadArrType'] === 'Object') {
-            self::$input['payloadArr'] = [self::$input['payloadArr']];
+            self::$input['payloadType'] = $jsonDecode->keysType('Payload');
         }
     }
 
@@ -356,23 +353,5 @@ class HttpRequest
                 $arr = $decodedVal;
             }
         }
-    }
-
-    /**
-     * Function to find payload is an object/array
-     *
-     * @return boolean
-     */
-    public static function payloadType()
-    {
-        $payloadType = 'Array';
-        $i = 0;
-        foreach (self::$input['payloadArr'] as $k => &$v) {
-            if ($k !== $i++) {
-                $payloadType = 'Object';
-                break;
-            }
-        }
-        return $payloadType;
     }
 }

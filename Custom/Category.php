@@ -34,7 +34,7 @@ class Category
      *
      * @var object
      */
-    public $jsonObj = null;
+    public $jsonEncode = null;
 
     /**
      * Initialize
@@ -44,7 +44,7 @@ class Category
     public function init()
     {
         $this->db = Database::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
+        $this->jsonEncode = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
@@ -63,7 +63,7 @@ class Category
         $this->db->execDbQuery($sql, $sqlParams);
         $rows = $this->db->fetchAll();
         $this->db->closeCursor();
-        $this->jsonObj->addKeyValue('Results', $rows);
+        $this->jsonEncode->addKeyValue('Results', $rows);
         return HttpResponse::isSuccess();
     }
 }

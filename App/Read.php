@@ -37,7 +37,7 @@ class Read
      *
      * @var object
      */
-    public $jsonObj = null;
+    public $jsonEncode = null;
 
     /**
      * Initialize
@@ -49,7 +49,7 @@ class Read
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
         $this->db = Database::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
+        $this->jsonEncode = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
@@ -101,7 +101,7 @@ class Read
     {
         HttpRequest::$input['requiredArr'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
         HttpRequest::$input['required'] = HttpRequest::$input['requiredArr']['__required__'];
-        HttpRequest::$input['payload'] = HttpRequest::$input['payloadArr'][0];
+        HttpRequest::$input['payload'] = HttpRequest::$input['payloadArr'];
         // Start Read operation.
         $keys = [];
         $this->readDB($readSqlConfig, true, $keys, $useHierarchy);      
@@ -128,12 +128,12 @@ class Read
             switch ($readSqlConfig['mode']) {
                 case 'singleRowFormat':
                     if ($start) {
-                        $this->jsonObj->startObject('Results');
+                        $this->jsonEncode->startObject('Results');
                     } else {
-                        $this->jsonObj->startObject();
+                        $this->jsonEncode->startObject();
                     }
                     $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
-                    $this->jsonObj->endObject();
+                    $this->jsonEncode->endObject();
                     break;
                 case 'multipleRowFormat':
                     $keysCount = count($keys)-1;
@@ -141,14 +141,14 @@ class Read
                         if (isset($readSqlConfig['countQuery'])) {
                             $this->fetchRowsCount($readSqlConfig);
                         }
-                        $this->jsonObj->startArray('Results');
+                        $this->jsonEncode->startArray('Results');
                     } else {
-                        $this->jsonObj->startArray($keys[$keysCount]);
+                        $this->jsonEncode->startArray($keys[$keysCount]);
                     }
                     $this->fetchMultipleRows($readSqlConfig, $keys, $useHierarchy);
-                    $this->jsonObj->endArray();
+                    $this->jsonEncode->endArray();
                     if (!$start) {
-                        $this->jsonObj->endObject();
+                        $this->jsonEncode->endObject();
                     }
                     break;
             }
@@ -195,7 +195,7 @@ class Read
             $row = [];
         }
         foreach($row as $key => $value) {
-            $this->jsonObj->addKeyValue($key, $value);
+            $this->jsonEncode->addKeyValue($key, $value);
         }
         $this->db->closeCursor();
         if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
@@ -235,10 +235,10 @@ class Read
         $this->db->closeCursor();
         $totalRowsCount = $row['count'];
         $totalPages = ceil($totalRowsCount/HttpRequest::$input['payload']['perpage']);
-        $this->jsonObj->addKeyValue('page', HttpRequest::$input['payload']['page']);
-        $this->jsonObj->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
-        $this->jsonObj->addKeyValue('totalPages', $totalPages);
-        $this->jsonObj->addKeyValue('totalRecords', $totalRowsCount);
+        $this->jsonEncode->addKeyValue('page', HttpRequest::$input['payload']['page']);
+        $this->jsonEncode->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
+        $this->jsonEncode->addKeyValue('totalPages', $totalPages);
+        $this->jsonEncode->addKeyValue('totalRecords', $totalRowsCount);
         return HttpResponse::isSuccess();
     }
     
@@ -288,14 +288,14 @@ class Read
                 $i++;
             }
             if ($singleColumn) {
-                $this->jsonObj->encode($row[key($row)]);
+                $this->jsonEncode->encode($row[key($row)]);
             } else if (isset($readSqlConfig['subQuery'])) {
-                $this->jsonObj->startObject();
+                $this->jsonEncode->startObject();
                 foreach($row as $key => $value) {
-                    $this->jsonObj->addKeyValue($key, $value);
+                    $this->jsonEncode->addKeyValue($key, $value);
                 }
             } else {
-                $this->jsonObj->encode($row);
+                $this->jsonEncode->encode($row);
             }
             if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
                 $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);

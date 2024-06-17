@@ -28,7 +28,7 @@ class Google
      *
      * @var object
      */
-    private $jsonObj = null;
+    private $jsonEncode = null;
 
     /**
      * Initialize
@@ -37,7 +37,7 @@ class Google
      */
     public function init()
     {
-        $this->jsonObj = HttpResponse::getJsonObject();
+        $this->jsonEncode = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
@@ -75,6 +75,6 @@ class Google
      */
     private function endProcess($output)
     {
-        $this->jsonObj->addKeyValue('Results', $output);
+        $this->jsonEncode->addKeyValue('Results', $output);
     }
 }

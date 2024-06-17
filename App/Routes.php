@@ -52,7 +52,7 @@ class Routes
      *
      * @var object
      */
-    public $jsonObj = null;
+    public $jsonEncode = null;
 
     /**
      * Initialize
@@ -86,8 +86,8 @@ class Routes
             $route = '';
             $this->getRoutes($routes, $route, $httpRoutes[$method]);
         }
-        $this->jsonObj = HttpResponse::getJsonObject();
-        $this->jsonObj->addKeyValue('Results', $httpRoutes);
+        $this->jsonEncode = HttpResponse::getJsonObject();
+        $this->jsonEncode->addKeyValue('Results', $httpRoutes);
         return HttpResponse::isSuccess();
     }
 

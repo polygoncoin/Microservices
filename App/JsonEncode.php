@@ -295,7 +295,7 @@ class JsonEncode
     /**
      * JSON generator object
      */
-    public static $jsonObj = null;
+    public static $jsonEncoderObj = null;
 
     /**
      * Initialize
@@ -304,7 +304,7 @@ class JsonEncode
      */
     public static function init()
     {
-        self::$jsonObj = new JsonEncoder();
+        self::$jsonEncoderObj = new JsonEncoder();
     }
 
     /**
@@ -314,9 +314,9 @@ class JsonEncode
      */
     public static function getObject()
     {
-        if (is_null(self::$jsonObj)) {
+        if (is_null(self::$jsonEncoderObj)) {
             self::init();
         }
-        return self::$jsonObj;
+        return self::$jsonEncoderObj;
     }
 }

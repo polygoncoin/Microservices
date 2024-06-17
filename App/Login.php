@@ -82,7 +82,7 @@ class Login
      *
      * @var object
      */
-    public $jsonObj = null;
+    public $jsonEncode = null;
 
     /**
      * Payload
@@ -105,7 +105,7 @@ class Login
         Env::$cachePassword = getenv('cachePassword');
         Env::$cacheDatabase = getenv('cacheDatabase');
         $this->cache = Cache::getObject();
-        $this->jsonObj = HttpResponse::getJsonObject();
+        $this->jsonEncode = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
@@ -259,7 +259,7 @@ class Login
             'Token' => $tokenDetails['token'],
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
         ];
-        $this->jsonObj->addKeyValue('Results', $output);
+        $this->jsonEncode->addKeyValue('Results', $output);
     }
 
     private function updateDB($tokenDetails)

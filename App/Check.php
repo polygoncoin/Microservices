@@ -45,7 +45,7 @@ class Check
      *
      * @var object
      */
-    public $jsonObj = null;
+    public $jsonEncode = null;
 
     /**
      * Initialize
@@ -59,7 +59,7 @@ class Check
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
-        $this->jsonObj = HttpResponse::getJsonObject();
+        $this->jsonEncode = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
@@ -85,11 +85,11 @@ class Check
         $httpRoutes[$groupFolder] = $this->processRoutes($_routesFolder, $errors);
 
         if (!empty($errors)) {
-            $this->jsonObj->addKeyValue('Results', $errors);
+            $this->jsonEncode->addKeyValue('Results', $errors);
         } else {
             $this->processRoutesQueries($httpRoutes, $errors);
             if (!empty($errors)) {
-                $this->jsonObj->addKeyValue('Results', $errors);
+                $this->jsonEncode->addKeyValue('Results', $errors);
             }
         }
         return HttpResponse::isSuccess();

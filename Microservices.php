@@ -22,7 +22,7 @@ class Microservices
      *
      * @var object
      */
-    private $jsonObj = null;
+    private $jsonEncode = null;
 
     /**
      * Output Buffer
@@ -51,7 +51,7 @@ class Microservices
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsStart = microtime(true);
         }
-        $this->jsonObj = HttpResponse::getJsonObject();
+        $this->jsonEncode = HttpResponse::getJsonObject();
         return HttpResponse::isSuccess();
     }
 
@@ -90,7 +90,7 @@ class Microservices
      */
     public function startJson()
     {
-        $this->jsonObj->startObject();
+        $this->jsonEncode->startObject();
     }
 
     /**
@@ -100,7 +100,7 @@ class Microservices
      */
     public function startOutputJson()
     {
-        $this->jsonObj->startObject('Output');      
+        $this->jsonEncode->startObject('Output');      
     }
 
     /**
@@ -165,8 +165,8 @@ class Microservices
      */
     public function endOutputJson()
     {
-        $this->jsonObj->endObject();
-        $this->jsonObj->addKeyValue('Status', App\HttpResponse::$httpStatus);
+        $this->jsonEncode->endObject();
+        $this->jsonEncode->addKeyValue('Status', App\HttpResponse::$httpStatus);
     }
 
     /**
@@ -181,13 +181,13 @@ class Microservices
             $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
             $memory = ceil(memory_get_peak_usage()/1000);
         
-            $this->jsonObj->startObject('Stats');
-            $this->jsonObj->startObject('Performance');
-            $this->jsonObj->addKeyValue('total-time-taken', "{$time} ms");
-            $this->jsonObj->addKeyValue('peak-memory-usage', "{$memory} KB");
-            $this->jsonObj->endObject();
-            $this->jsonObj->addKeyValue('getrusage', getrusage());
-            $this->jsonObj->endObject();
+            $this->jsonEncode->startObject('Stats');
+            $this->jsonEncode->startObject('Performance');
+            $this->jsonEncode->addKeyValue('total-time-taken', "{$time} ms");
+            $this->jsonEncode->addKeyValue('peak-memory-usage', "{$memory} KB");
+            $this->jsonEncode->endObject();
+            $this->jsonEncode->addKeyValue('getrusage', getrusage());
+            $this->jsonEncode->endObject();
         }
     }
 
@@ -198,8 +198,8 @@ class Microservices
      */
     public function endJson()
     {
-        $this->jsonObj->endObject();
-        $this->jsonObj->end();
+        $this->jsonEncode->endObject();
+        $this->jsonEncode->end();
     }
 
     /**
@@ -234,7 +234,7 @@ class Microservices
         if (!is_null(HttpResponse::$httpResponse)) {
             echo HttpResponse::$httpResponse;
         } else {
-            $this->jsonObj->streamJson();
+            $this->jsonEncode->streamJson();
         }    
     }
 
@@ -250,7 +250,7 @@ class Microservices
         } else {
             $this->streamJson();
         }
-        $this->jsonObj = null;
+        $this->jsonEncode = null;
     }
 
     /**

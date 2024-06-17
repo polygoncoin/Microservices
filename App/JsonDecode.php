@@ -1,7 +1,9 @@
 <?php
 namespace App;
 
+use App\HttpResponse;
 use App\Logs;
+use App\UrlDecodeFilter;
 
 /**
  * Creates Objects from JSON String.
@@ -72,23 +74,23 @@ class JsonDecoder
     public $streamIndex = null;
 
     /**
-     * JSON stream indexes seperated by colon.
+     * JSON stream keys seperated by colon.
      *
      * @var string
      */
-    private $indexes = null;
+    private $keys = null;
 
     /**
      * JSON stream start position.
      *
-     * @var integer
+     * @var int
      */
     private $_s_ = null;
 
     /**
      * JSON stream end position.
      *
-     * @var integer
+     * @var int
      */
     private $_e_ = null;
 
@@ -96,20 +98,32 @@ class JsonDecoder
      * JSON char counter.
      * Starts from $_s_ till $_e_
      *
-     * @var integer
+     * @var int
      */
     private $charCounter = null;
+
+    /**
+     * Allowed Paylaod length
+     *
+     * @var int
+     */
+    private $allowedPayloadLength = 10 * 1024 * 1024; // 10 MB
 
     /**
      * JsonEncode constructor
      * 
      * @return void
      */
-    public function __construct($filepath = "php://input")
+    public function __construct()
     {
-        $inputStream = fopen($filepath, "rb");
-        $this->tempStream = fopen("php://temp", "rw+b");
+        $inputStream = fopen('php://input', "rb");
+        fread($inputStream, 8);
+        stream_filter_register("urldecode", "App\\UrlDecodeFilter") or die("Failed to register filter");
+        stream_filter_append($inputStream, "urldecode");
+        $this->tempStream = fopen("php://memory", "rw+b");
+        fwrite($this->tempStream, '{"Payload":');
         stream_copy_to_stream($inputStream, $this->tempStream);
+        fwrite($this->tempStream, '}');
         fclose($inputStream);
     }
 
@@ -120,7 +134,7 @@ class JsonDecoder
      */
     public function validate()
     {
-        foreach($this->process as $keyArr => $valueArr) {
+        foreach($this->process() as $keyArr => $valueArr) {
             ;
         }
     }
@@ -128,7 +142,7 @@ class JsonDecoder
     /**
      * Validate JSON in stream
      *
-     * @return boolean
+     * @return void
      */
     public function indexJSON()
     {
@@ -140,8 +154,14 @@ class JsonDecoder
             ) {
                 $streamIndex = &$this->streamIndex;
                 for ($i=0, $iCount = count($keys); $i < $iCount; $i++) {
-                    if (!isset($streamIndex[$keys[$i]])) {
+                    if (is_numeric($keys[$i]) && !isset($streamIndex[$keys[$i]])) {
                         $streamIndex[$keys[$i]] = [];
+                        if (!isset($streamIndex['_c_'])) {
+                            $streamIndex['_c_'] = 0;
+                        }
+                        if (is_numeric($keys[$i])) {
+                            $streamIndex['_c_']++;
+                        }
                     }
                     $streamIndex = &$streamIndex[$keys[$i]];
                 }
@@ -149,30 +169,143 @@ class JsonDecoder
                 $streamIndex['_e_'] = $val['_e_'];
             }
         }
-        return true;
+    }
+
+    /**
+     * Key exist.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return boolean
+     */
+    public function keysAreSet($keys)
+    {
+        $return = true;
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                $return = false;
+                break;
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Key exist.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return boolean
+     */
+    public function keysType($keys)
+    {
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        $return = 'Object';
+        if (
+            (
+                isset($streamIndex['_s_']) &&
+                isset($streamIndex['_e_']) &&
+                isset($streamIndex['_c_'])
+            )
+        ) {
+            $return = 'Array';
+        }
+        return $return;
+    }
+
+    /**
+     * Get count of array element.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return integer
+     */
+    public function getCount($keys)
+    {
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        if (
+            !(
+                isset($streamIndex['_s_']) &&
+                isset($streamIndex['_e_']) &&
+                isset($streamIndex['_c_'])
+            )
+        ) {
+            echo "Invalid keys '{$keys}'";
+            die;
+        }
+        return $streamIndex['_c_'];
+    }
+
+    /**
+     * Pass the keys and get whole json content belonging to keys.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return array
+     */
+    public function get($keys)
+    {
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        if (
+            isset($streamIndex['_s_']) &&
+            isset($streamIndex['_e_'])
+        ) {
+            $start = $streamIndex['_s_'];
+            $end = $streamIndex['_e_'];
+        } else {
+            echo "Invalid keys '{$keys}'";
+            die;
+        }
+        $length = $end - $start + 1;
+        $json = stream_get_contents($this->tempStream, $length, $start);
+        return json_decode($json, true);
     }
 
     /**
      * Start processing the JSON string for a keys
      * Perform search inside keys of JSON like $json['data'][0]['data1']
      *
-     * @param string $indexes Key values seperated by colon.
+     * @param string $keys Key values seperated by colon.
      * @return void
      */
-    public function load($indexes)
+    public function load($keys)
     {
-        if (empty($indexes)) {
+        if (empty($keys)) {
             $this->_s_ = null;
             $this->_e_ = null;
-            $this->indexes = null;
+            $this->keys = null;
             return;
         }
         $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $indexes) as $index) {
-            if (isset($streamIndex[$index])) {
-                $streamIndex = &$streamIndex[$index];
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
             } else {
-                die("Invalid index {$index}");
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
             }
         }
         if (
@@ -181,9 +314,9 @@ class JsonDecoder
         ) {
             $this->_s_ = $streamIndex['_s_'];
             $this->_e_ = $streamIndex['_e_'];
-            $this->indexes = $indexes;
+            $this->keys = $keys;
         } else {
-            echo "Invalid indexes '{$indexes}'";
+            echo "Invalid keys '{$keys}'";
             die;
         }
     }
@@ -384,7 +517,7 @@ class JsonDecoder
                         $arr = [
                             'key' => $this->keys(),
                             'value' => $this->currentObject->arrayValues
-                        ];  
+                        ];    
                     }
                 }
                 $this->currentObject->arrayValues = [];
@@ -408,7 +541,7 @@ class JsonDecoder
                         $arr = [
                             'key' => $this->keys(),
                             'value' => $this->currentObject->objectValues
-                        ];  
+                        ];    
                     }
                 }
                 $this->currentObject->objectValues = [];
@@ -606,10 +739,10 @@ class JsonDecoder
     {
         $keys = [];
         $return = &$keys;
-        if (!$index && !empty($this->indexes)) {
-            foreach(explode(':', $this->indexes) as $ind) {
-                $keys[$ind] = [];
-                $keys = &$keys[$ind];
+        if (!$index && !empty($this->keys)) {
+            foreach(explode(':', $this->keys) as $key) {
+                $keys[$key] = [];
+                $keys = &$keys[$key];
             }
         }
         $objCount = count($this->objects);
