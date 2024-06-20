@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\ClientDB\GET;
+namespace Microservices\Config\Queries\ClientDB\GET;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'query' => "SELECT * FROM `{$Env::$clientDB}`.`registration` WHERE __WHERE__",

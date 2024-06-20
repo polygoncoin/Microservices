@@ -1,14 +1,14 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\AppTrait;
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\JsonEncode;
-use App\Servers\Database\Database;
-use App\Validation\Validator;
+use Microservices\App\AppTrait;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\JsonEncode;
+use Microservices\App\Servers\Database\Database;
+use Microservices\App\Validation\Validator;
 
 /**
  * Class to initialize DB Write operation
@@ -68,9 +68,9 @@ class Write
      */
     public function process()
     {
-        $Constants = 'App\\Constants';
-        $Env = 'App\\Env';
-        $HttpRequest = 'App\\HttpRequest';
+        $Constants = __NAMESPACE__ . '\\Constants';
+        $Env = __NAMESPACE__ . '\\Env';
+        $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
         // Use results in where clause of sub queries recursively.

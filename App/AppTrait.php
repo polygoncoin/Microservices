@@ -1,11 +1,11 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Validation\Validator;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Validation\Validator;
 
 /**
  * Trait for PHP functions

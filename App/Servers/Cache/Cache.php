@@ -1,10 +1,10 @@
 <?php
-namespace App\Servers\Cache;
+namespace Microservices\App\Servers\Cache;
 
-use App\Constants;
-use App\Env;
-use App\Servers\Cache\Redis;
-use App\Servers\Cache\MySQL;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\Servers\Cache\Redis;
+use Microservices\App\Servers\Cache\MySQL;
 
 /**
  * Loading database class

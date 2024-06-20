@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\ClientDB\PUT;
+namespace Microservices\Config\Queries\ClientDB\PUT;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$Env::$clientDB}`.`registration` SET username = :username WHERE username = :username_new AND is_deleted = :is_deleted AND id = :id",

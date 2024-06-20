@@ -1,11 +1,11 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
 
 /**
  * Class to reduce cache hits and save on bandwidth using ETags and cache headers.

@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\GlobalDB\DELETE;
+namespace Microservices\Config\Queries\GlobalDB\DELETE;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$groups}` SET __SET__ WHERE __WHERE__",

@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
 class UrlDecodeFilter extends \php_user_filter
 {

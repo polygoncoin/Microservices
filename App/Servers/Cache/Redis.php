@@ -1,12 +1,12 @@
 <?php
-namespace App\Servers\Cache;
+namespace Microservices\App\Servers\Cache;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
-use App\Servers\Cache\AbstractCache;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
+use Microservices\App\Servers\Cache\AbstractCache;
 
 /**
  * Loading Redis server

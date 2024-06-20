@@ -1,12 +1,12 @@
 <?php
-namespace App\Servers\Database;
+namespace Microservices\App\Servers\Database;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
-use App\Servers\Database\AbstractDatabase;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
+use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
  * Loading database server

@@ -1,10 +1,10 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\Logs;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\Logs;
+use Microservices\App\HttpRequest;
 
 /**
  * Creates JSON

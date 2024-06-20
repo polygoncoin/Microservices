@@ -1,12 +1,12 @@
 <?php
-namespace Crons;
+namespace Microservices\Crons;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Servers\Cache\Cache;
-use App\Servers\Database\Database;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Servers\Cache\Cache;
+use Microservices\App\Servers\Database\Database;
 
 /**
  * Class for a particular cron.

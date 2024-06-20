@@ -1,10 +1,10 @@
 <?php
-namespace ThirdParty;
+namespace Microservices\ThirdParty;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
 
 /**
  * Class for third party - Google.

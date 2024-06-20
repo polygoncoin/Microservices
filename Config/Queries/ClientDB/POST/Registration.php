@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\ClientDB\POST;
+namespace Microservices\Config\Queries\ClientDB\POST;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$Env::$clientDB}`.`registration` SET __SET__",

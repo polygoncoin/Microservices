@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\ClientDB\PUT;
+namespace Microservices\Config\Queries\ClientDB\PUT;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return array_merge(
     include Constants::$DOC_ROOT . '/Config/Queries/ClientDB/Common/Registration.php',

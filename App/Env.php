@@ -1,7 +1,7 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
+use Microservices\App\Constants;
 
 /**
  * Constants

@@ -1,13 +1,13 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\AppTrait;
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Servers\Database\Database;
-use App\Validation\Validator;
+use Microservices\App\AppTrait;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Servers\Database\Database;
+use Microservices\App\Validation\Validator;
 
 /**
  * Class to initialize DB Read operation
@@ -60,9 +60,9 @@ class Read
      */
     public function process()
     {
-        $Constants = 'App\\Constants';
-        $Env = 'App\\Env';
-        $HttpRequest = 'App\\HttpRequest';
+        $Constants = __NAMESPACE__ . '\\Constants';
+        $Env = __NAMESPACE__ . '\\Env';
+        $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
         // Use results in where clause of sub queries recursively.

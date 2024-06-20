@@ -1,11 +1,11 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\JsonEncode;
-use App\Logs;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\JsonEncode;
+use Microservices\App\Logs;
 
 /**
  * HTTP Error Response

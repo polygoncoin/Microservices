@@ -1,9 +1,9 @@
 <?php
-namespace Config\Routes\AdminGroup;
+namespace Microservices\Config\Routes\AdminGroup;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'groups' => [

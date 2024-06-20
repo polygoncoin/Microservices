@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\GlobalDB\PATCH\enable;
+namespace Microservices\Config\Queries\GlobalDB\PATCH\enable;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$connections}` SET __SET__ WHERE __WHERE__",

@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\GlobalDB\POST;
+namespace Microservices\Config\Queries\GlobalDB\POST;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'query' => "INSERT INTO `{$Env::$globalDB}`.`{$Env::$users}` SET __SET__",

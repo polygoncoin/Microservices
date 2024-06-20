@@ -1,11 +1,11 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
 
 /**
  * Class to initialize api HTTP request
@@ -65,13 +65,13 @@ class Api
         $class = null;
         switch (Constants::$REQUEST_METHOD) {
             case Constants::$GET:
-                $class = 'App\\Read';
+                $class = __NAMESPACE__ . '\\Read';
                 break;
             case Constants::$POST:
             case Constants::$PUT:
             case Constants::$PATCH:
             case Constants::$DELETE:
-                $class = 'App\\Write';
+                $class = __NAMESPACE__ . '\\Write';
                 break;
         }
         if (HttpResponse::isSuccess() && !is_null($class)) {
@@ -95,24 +95,24 @@ class Api
         $class = null;
         switch (HttpRequest::$routeElements[0]) {
             case 'custom':
-                $class = 'Custom\\CustomApi';
+                $class = 'Microservices\\Custom\\CustomApi';
                 break;
             case 'upload':
-                $class = 'App\\Upload';
+                $class = 'Microservices\\App\\Upload';
                 break;
             case 'thirdParty':
                 if (
                     isset(HttpRequest::$input['uriParams']['thirdParty']) &&
                     file_exists(Constants::$DOC_ROOT . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
                 ) {
-                    $class = 'ThirdParty\\'.HttpRequest::$input['uriParams']['thirdParty'];
+                    $class = 'Microservices\\ThirdParty\\'.HttpRequest::$input['uriParams']['thirdParty'];
                 } else {
                     HttpResponse::return4xx(404, 'Invalid third party call');
                     return;
                 }
                 break;
             case 'cache':
-                $class = 'App\\CacheHandler';
+                $class = 'Microservices\\App\\CacheHandler';
                 break;
         }
         if (!empty($class)) {

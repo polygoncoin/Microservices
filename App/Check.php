@@ -1,10 +1,11 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\AppTrait;
 
 /**
  * Class meant to check Configs
@@ -135,9 +136,9 @@ class Check
     {
         $errors = [];
 
-        $Constants = 'App\\Constants';
-        $Env = 'App\\Env';
-        $HttpRequest = 'App\\HttpRequest';
+        $Constants = __NAMESPACE__ . '\\Constants';
+        $Env = __NAMESPACE__ . '\\Env';
+        $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
 
         if (file_exists($__file__)) {
             $sqlConfig = include $__file__;

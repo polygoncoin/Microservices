@@ -1,9 +1,9 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\HttpResponse;
-use App\Logs;
-use App\UrlDecodeFilter;
+use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
+use Microservices\App\UrlDecodeFilter;
 
 /**
  * Creates Objects from JSON String.
@@ -118,7 +118,7 @@ class JsonDecoder
     {
         $inputStream = fopen('php://input', "rb");
         fread($inputStream, 8);
-        stream_filter_register("urldecode", "App\\UrlDecodeFilter") or die("Failed to register filter");
+        stream_filter_register("urldecode", __NAMESPACE__ . "\\UrlDecodeFilter") or die("Failed to register filter");
         stream_filter_append($inputStream, "urldecode");
         $this->tempStream = fopen("php://memory", "rw+b");
         fwrite($this->tempStream, '{"Payload":');

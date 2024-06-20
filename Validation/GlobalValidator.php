@@ -1,13 +1,13 @@
 <?php
-namespace Validation;
+namespace Microservices\Validation;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\HttpResponse;
-use App\Logs;
-use App\Servers\Database\Database;
-use App\Validation\ValidatorTrait;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
+use Microservices\App\Servers\Database\Database;
+use Microservices\App\Validation\ValidatorTrait;
 
 /**
  * Validator

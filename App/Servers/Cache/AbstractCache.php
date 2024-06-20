@@ -1,5 +1,5 @@
 <?php
-namespace App\Servers\Cache;
+namespace Microservices\App\Servers\Cache;
 
 /**
  * Loading database server

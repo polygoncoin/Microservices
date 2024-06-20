@@ -1,13 +1,13 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpResponse;
-use App\JsonDecode;
-use App\Logs;
-use App\Servers\Cache\Cache;
-use App\Servers\Database\Database;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpResponse;
+use Microservices\App\JsonDecode;
+use Microservices\App\Logs;
+use Microservices\App\Servers\Cache\Cache;
+use Microservices\App\Servers\Database\Database;
 
 /*
  * Class handling details of HTTP request

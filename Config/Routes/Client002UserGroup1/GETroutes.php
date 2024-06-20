@@ -1,9 +1,9 @@
 <?php
-namespace Config\Routes\Client001UserGroup1;
+namespace Microservices\Config\Routes\Client001UserGroup1;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'category' => [

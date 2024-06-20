@@ -1,9 +1,9 @@
 <?php
-namespace Config\Queries\GlobalDB\GET;
+namespace Microservices\Config\Queries\GlobalDB\GET;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 
 return [
     'all' => [

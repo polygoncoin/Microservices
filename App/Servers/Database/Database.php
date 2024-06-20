@@ -1,9 +1,9 @@
 <?php
-namespace App\Servers\Database;
+namespace Microservices\App\Servers\Database;
 
-use App\Constants;
-use App\Env;
-use App\Servers\Database\MySQL;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\Servers\Database\MySQL;
 
 /**
  * Loading database class

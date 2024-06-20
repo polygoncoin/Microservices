@@ -1,12 +1,12 @@
 <?php
-namespace App;
+namespace Microservices\App;
 
-use App\Constants;
-use App\Env;
-use App\HttpRequest;
-use App\Servers\Cache\Cache;
-use App\Servers\Database\Database;
-use App\AppTrait;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpRequest;
+use Microservices\App\Servers\Cache\Cache;
+use Microservices\App\Servers\Database\Database;
+use Microservices\App\AppTrait;
 
 /**
  * Updates cache

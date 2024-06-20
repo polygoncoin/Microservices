@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/autoload.php';
+namespace Microservices;
 
-use App\Constants;
-use App\Env;
-use App\HttpResponse;
+use Microservices\App\Constants;
+use Microservices\App\Env;
+use Microservices\App\HttpResponse;
 
 class Microservices
 {
@@ -113,19 +113,19 @@ class Microservices
         $class = null;
         switch (true) {
             case Constants::$ROUTE === '/login':
-                $class = 'App\\Login';
+                $class = __NAMESPACE__ . '\\App\\Login';
                 break;
             case Constants::$ROUTE === '/routes':
-                $class = 'App\\Routes';
+                $class = __NAMESPACE__ . '\\App\\Routes';
                 break;
             case Constants::$ROUTE === '/check':
-                $class = 'App\\Check';
+                $class = __NAMESPACE__ . '\\App\\Check';
                 break;
             case Constants::$ROUTE === '/reload':
                 $envUsername = 'HttpAuthenticationUser';
                 $envPassword = 'HttpAuthenticationPassword';
                 if ($this->httpAuthentication($envUsername, $envPassword)) {
-                    $class = 'App\\Reload';
+                    $class = __NAMESPACE__ . '\\App\\Reload';
                 }
                 break;
             case strpos(Constants::$ROUTE, '/crons') === 0:
@@ -139,14 +139,14 @@ class Microservices
                     isset($routeArr[2]) &&
                     file_exists(Constants::$DOC_ROOT . "/Crons/{$cron}.php")
                 ) {
-                    $class = "Crons\\{$cron}";
+                    $class = __NAMESPACE__ . "\\Crons\\{$cron}";
                 } else {
                     HttpResponse::return4xx(404, 'Invalid request');
                     return;
                 }
                 break;
             default:
-                $class = 'App\\Api';
+                $class = __NAMESPACE__ . '\\App\\Api';
                 break;
         }
         if (!is_null($class)) {
