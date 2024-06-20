@@ -25,14 +25,14 @@ class Cache
      *
      * @var object
      */
-    public static $cache = null;
+    static public $cache = null;
 
     /**
      * Database constructor
      * 
      * @return void
      */
-    public static function connect()
+    static public function connect()
     {
         switch (Env::$cacheType) {
             case 'Redis':
@@ -61,7 +61,7 @@ class Cache
      *
      * @return object
      */
-    public static function getObject()
+    static public function getObject()
     {
         if (is_null(self::$cache)) {
             self::connect();

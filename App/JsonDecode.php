@@ -901,14 +901,14 @@ class JsonDecode
     /**
      * JSON generator object
      */
-    public static $jsonDecoderObj = null;
+    static public $jsonDecoderObj = null;
 
     /**
      * Initialize
      *
      * @return void
      */
-    public static function init()
+    static public function init()
     {
         self::$jsonDecoderObj = new JsonDecoder();
     }
@@ -918,7 +918,7 @@ class JsonDecode
      *
      * @return object
      */
-    public static function getObject()
+    static public function getObject()
     {
         if (is_null(self::$jsonDecoderObj)) {
             self::init();

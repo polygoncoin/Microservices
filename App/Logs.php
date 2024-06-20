@@ -20,7 +20,7 @@ use App\HttpResponse;
  */
 class Logs
 {
-    public static function log($logType, $logContent)
+    static public function log($logType, $logContent)
     {
         $logTypes = [
             'debug'      => Constants::$DOC_ROOT . '/Logs/debug',

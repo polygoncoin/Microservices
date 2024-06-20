@@ -22,14 +22,14 @@ class Database
     /**
      * Database object
      */
-    public static $db = null;
+    static public $db = null;
 
     /**
      * Database constructor
      *
      * @return void
      */
-    public static function connect()
+    static public function connect()
     {
         if (Env::$dbType === 'MySQL') {
             self::$db = new MySQL(
@@ -47,7 +47,7 @@ class Database
      *
      * @return object
      */
-    public static function getObject()
+    static public function getObject()
     {
         if (is_null(self::$db)) {
             self::connect();

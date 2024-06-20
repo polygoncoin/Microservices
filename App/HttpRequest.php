@@ -28,56 +28,56 @@ class HttpRequest
      *
      * @var string
      */
-    public static $cache = null;
+    static public $cache = null;
 
     /**
      * Raw route / Configured Uri
      *
      * @var string
      */
-    public static $configuredUri = '';
+    static public $configuredUri = '';
 
     /**
      * Array containing details of received route elements
      *
      * @var array
      */
-    public static $routeElements = [];
+    static public $routeElements = [];
 
     /**
      * Locaton of File containing code for route
      *
      * @var string
      */
-    public static $__file__ = null;
+    static public $__file__ = null;
 
     /**
      * Inputs detials of a request
      *
      * @var array
      */
-    public static $input = null;
+    static public $input = null;
 
     /**
      * Logged-in User ID
      *
      * @var integer
      */
-    public static $userId = null;
+    static public $userId = null;
 
     /**
      * Logged-in user Group ID
      *
      * @var integer
      */
-    public static $groupId = null;
+    static public $groupId = null;
 
     /**
      * Initialize
      *
      * @return void
      */
-    public static function init()
+    static public function init()
     {
         Env::$cacheType = getenv('cacheType');
         Env::$cacheHostname = getenv('cacheHostname');
@@ -94,7 +94,7 @@ class HttpRequest
      *
      * @return void
      */
-    public static function loadToken()
+    static public function loadToken()
     {
         if (!is_null(Constants::$HTTP_AUTHORIZATION) && preg_match('/Bearer\s(\S+)/', Constants::$HTTP_AUTHORIZATION, $matches)) {
             self::$input['token'] = $matches[1];
@@ -122,7 +122,7 @@ class HttpRequest
      *
      * @return void
      */
-    public static function initSession()
+    static public function initSession()
     {
         if (empty(self::$input['readOnlySession']['user_id']) || empty(self::$input['readOnlySession']['group_id'])) {
             HttpResponse::return4xx(404, 'Invalid session');
@@ -148,7 +148,7 @@ class HttpRequest
      *
      * @return void
      */
-    public static function checkRemoteIp()
+    static public function checkRemoteIp()
     {
         $groupId = self::$input['readOnlySession']['group_id'];
         $key = 'cidr:'.self::$groupId;
@@ -174,7 +174,7 @@ class HttpRequest
      *
      * @return void
      */
-    public static function parseRoute()
+    static public function parseRoute()
     {
         $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
         if (file_exists($routeFileLocation)) {
@@ -244,7 +244,7 @@ class HttpRequest
      * @param string $foundStringRoute Found as String route element
      * @return string
      */
-    private static function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundStringRoute)
+    static private function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundStringRoute)
     {
         // Is a dynamic URI element
         if (strpos($routeElement, '{') !== 0) {
@@ -285,7 +285,7 @@ class HttpRequest
      * @param array $routes Routes config.
      * @return void
      */
-    private static function validateConfigFile(&$routes)
+    static private function validateConfigFile(&$routes)
     {
         // Set route code file.
         if (!(isset($routes['__file__']) && (empty($routes['__file__']) || file_exists($routes['__file__'])))) {
@@ -300,7 +300,7 @@ class HttpRequest
      *
      * @return void
      */
-    public static function loadPayload()
+    static public function loadPayload()
     {
         $payloadArr = [];
         if (Constants::$REQUEST_METHOD === Constants::$GET) {
@@ -328,7 +328,7 @@ class HttpRequest
      * @param array $arr Array vales to be decoded. Basically $_GET.
      * @return void
      */
-    public static function urlDecode(&$arr)
+    static public function urlDecode(&$arr)
     {
         if (is_array($arr)) {
             foreach ($arr as $key => &$value) {
@@ -353,5 +353,36 @@ class HttpRequest
                 $arr = $decodedVal;
             }
         }
+    }
+
+    /**
+     * Returns Start IP and End IP for a given CIDR
+     *
+     * @param  string $cidrs IP address range in CIDR notation for check
+     * @return array
+     */
+    static public function cidrsIpNumber($cidrs)
+    {
+        $response = [];
+        foreach (explode(',', str_replace(' ', '', $cidrs)) as $cidr) {
+            if (strpos($cidr, '/')) {
+                list($cidrIp, $bits) = explode('/', str_replace(' ', '', $cidr));
+                $binCidrIpStr = str_pad(decbin(ip2long($cidrIp)), 32, 0, STR_PAD_LEFT);
+                $startIpNumber = bindec(str_pad(substr($binCidrIpStr, 0, $bits), 32, 0, STR_PAD_RIGHT));
+                $endIpNumber = $startIpNumber + pow(2, $bits) - 1;
+                $response[] = [
+                    'start' => $startIpNumber,
+                    'end' => $endIpNumber
+                ];
+            } else {
+                if ($ipNumber = ip2long($cidr)) {
+                    $response[] = [
+                        'start' => $ipNumber,
+                        'end' => $ipNumber
+                    ];    
+                }
+            }
+        }
+        return $response;
     }
 }

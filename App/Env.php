@@ -17,42 +17,42 @@ use App\Constants;
  */
 class Env
 {
-    public static $defaultDbDatabase = null;
+    static public $defaultDbDatabase = null;
 
-    public static $cacheType = null;
-    public static $cacheHostname = null;
-    public static $cachePort = null;
-    public static $cacheUsername = null;
-    public static $cachePassword = null;
-    public static $cacheDatabase = null;
+    static public $cacheType = null;
+    static public $cacheHostname = null;
+    static public $cachePort = null;
+    static public $cacheUsername = null;
+    static public $cachePassword = null;
+    static public $cacheDatabase = null;
 
-    public static $dbType = null;
-    public static $dbHostname = null;
-    public static $dbPort = null;
-    public static $dbUsername = null;
-    public static $dbPassword = null;
-    public static $dbDatabase = null;
+    static public $dbType = null;
+    static public $dbHostname = null;
+    static public $dbPort = null;
+    static public $dbUsername = null;
+    static public $dbPassword = null;
+    static public $dbDatabase = null;
 
-    public static $ENVIRONMENT = null;
-    public static $OUTPUT_PERFORMANCE_STATS = null;
+    static public $ENVIRONMENT = null;
+    static public $OUTPUT_PERFORMANCE_STATS = null;
 
-    public static $allowConfigRequest = null;
-    public static $isConfigRequest = null;
+    static public $allowConfigRequest = null;
+    static public $isConfigRequest = null;
 
-    public static $groups = null;
-    public static $users = null;
-    public static $connections = null;
-    public static $clients = null;
+    static public $groups = null;
+    static public $users = null;
+    static public $connections = null;
+    static public $clients = null;
 
-    public static $maxPerpage = null;
-    public static $cronRestrictedIp = null;
+    static public $maxPerpage = null;
+    static public $cronRestrictedIp = null;
 
-    public static $globalDB = null;
-    public static $clientDB = null;
+    static public $globalDB = null;
+    static public $clientDB = null;
 
-    private static $initialized = null;
+    static private $initialized = null;
 
-    public static function init()
+    static public function init()
     {
         if (!is_null(self::$initialized)) return;
         Constants::init();

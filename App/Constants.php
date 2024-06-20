@@ -15,30 +15,30 @@ namespace App;
  */
 class Constants
 {
-    public static $GET       = 'GET';
-    public static $POST      = 'POST';
-    public static $PUT       = 'PUT';
-    public static $PATCH     = 'PATCH';
-    public static $DELETE    = 'DELETE';
+    static public $GET       = 'GET';
+    static public $POST      = 'POST';
+    static public $PUT       = 'PUT';
+    static public $PATCH     = 'PATCH';
+    static public $DELETE    = 'DELETE';
 
-    public static $PRODUCTION = 1;
-    public static $DEVELOPMENT = 0;
+    static public $PRODUCTION = 1;
+    static public $DEVELOPMENT = 0;
 
-    public static $TOKEN_EXPIRY_TIME = 3600;  
-    public static $REQUIRED = true;
+    static public $TOKEN_EXPIRY_TIME = 3600;  
+    static public $REQUIRED = true;
 
-    public static $DOC_ROOT = null;
+    static public $DOC_ROOT = null;
 
-    public static $REQUEST_METHOD = null;
-    public static $HTTP_AUTHORIZATION = null;
-    public static $REMOTE_ADDR = null;
+    static public $REQUEST_METHOD = null;
+    static public $HTTP_AUTHORIZATION = null;
+    static public $REMOTE_ADDR = null;
 
-    public static $ROUTE_URL_PARAM = 'r';
-    public static $ROUTE = null;
+    static public $ROUTE_URL_PARAM = 'r';
+    static public $ROUTE = null;
 
-    private static $initialized = null;
+    static private $initialized = null;
 
-    public static function init()
+    static public function init()
     {
         if (!is_null(self::$initialized)) return;
         self::$DOC_ROOT = dirname(__DIR__ . '../');

@@ -3,6 +3,7 @@ namespace App;
 
 use App\Constants;
 use App\Env;
+use App\HttpRequest;
 use App\Servers\Cache\Cache;
 use App\Servers\Database\Database;
 use App\AppTrait;
@@ -178,7 +179,7 @@ class Reload
         $cidrArray = [];
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['allowed_ips'])) {
-                $cidrs = cidrsIpNumber($row['allowed_ips']);
+                $cidrs = HttpRequest::cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
                     $this->cache->setCache("cidr:{$row['group_id']}", json_encode($cidrs));
                 }

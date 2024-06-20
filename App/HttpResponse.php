@@ -26,19 +26,19 @@ class HttpResponse
      *
      * @var object
      */
-    public static $httpStatus = 200;
+    static public $httpStatus = 200;
 
     /**
      * Current JsonEncodeObject object
      *
      * @var object
      */
-    public static $httpResponse = null;
+    static public $httpResponse = null;
 
     /**
      * Return JSON object.
      */
-    public static function getJsonObject()
+    static public function getJsonObject()
     {
         return JsonEncode::getObject();
     }
@@ -50,7 +50,7 @@ class HttpResponse
      * @param string $errMessage Error message in 501 response
      * @return void
      */
-    public static function return2xx($errorCode, $errMessage)
+    static public function return2xx($errorCode, $errMessage)
     {
         self::returnResponse(
             [
@@ -67,7 +67,7 @@ class HttpResponse
      * @param string $errMessage Error message in 501 response
      * @return void
      */
-    public static function return3xx($errorCode, $errMessage)
+    static public function return3xx($errorCode, $errMessage)
     {
         self::returnResponse(
             [
@@ -84,7 +84,7 @@ class HttpResponse
      * @param string  $errMessage Error message in 404 response
      * @return void
      */
-    public static function return4xx($errorCode, $errMessage)
+    static public function return4xx($errorCode, $errMessage)
     {
         self::returnResponse(
             [
@@ -101,7 +101,7 @@ class HttpResponse
      * @param string $errMessage Error message in 501 response
      * @return void
      */
-    public static function return5xx($errorCode, $errMessage)
+    static public function return5xx($errorCode, $errMessage)
     {
         self::returnResponse(
             [
@@ -117,7 +117,7 @@ class HttpResponse
      * @param array $arr Array containing details of HTTP response
      * @return void
      */
-    public static function returnResponse($arr)
+    static public function returnResponse($arr)
     {
         $jsonEncodeObj = JsonEncode::getObject();
         $jsonEncodeObj = null;
@@ -129,7 +129,7 @@ class HttpResponse
      *
      * @return boolean
      */
-    public static function isSuccess()
+    static public function isSuccess()
     {
         return is_null(HttpResponse::$httpResponse);
     }
