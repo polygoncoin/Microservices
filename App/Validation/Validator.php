@@ -52,6 +52,7 @@ class Validator
                 return [$isValidData, $errors];
             }
         }
+
         return $this->v->validate($input, $validationConfig);
     }
 
@@ -79,6 +80,7 @@ class Validator
             $errors[] = 'Invalid payload';
             $isValidData = false;
         }
+
         return [$isValidData, $errors];
     }
 }

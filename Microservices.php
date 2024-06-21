@@ -232,12 +232,14 @@ class Microservices
 
         if (!empty($outputBuffer) && Env::$ENVIRONMENT === Constants::$PRODUCTION) {
             $this->outputBuffer = $outputBuffer;
+
             $log = [
                 'datetime' => date('Y-m-d H:i:s'),
                 'input' => HttpRequest::$input,
                 'error' => $str
             ];
             Logs::log('error', json_encode($log));
+
             HttpResponse::return5xx(501, 'Error: Facing server side error with API.');
             return;
         }

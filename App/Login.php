@@ -209,7 +209,8 @@ class Login
      */
     private function validatePassword()
     {
-        if (!password_verify($this->password, $this->userDetails['password_hash'])) { // get hash from redis and compares with password
+        // get hash from cache and compares with password
+        if (!password_verify($this->password, $this->userDetails['password_hash'])) {
             HttpResponse::return4xx(404, 'Invalid credentials');
             return;
         }
