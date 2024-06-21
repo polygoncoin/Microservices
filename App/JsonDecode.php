@@ -83,14 +83,14 @@ class JsonDecoder
     /**
      * JSON stream start position.
      *
-     * @var int
+     * @var integer
      */
     private $_s_ = null;
 
     /**
      * JSON stream end position.
      *
-     * @var int
+     * @var integer
      */
     private $_e_ = null;
 
@@ -98,14 +98,22 @@ class JsonDecoder
      * JSON char counter.
      * Starts from $_s_ till $_e_
      *
-     * @var int
+     * @var integer
      */
     private $charCounter = null;
 
     /**
+     * Paylaod key
+     * Key which contain JSON string from Browser / Postman
+     *
+     * @var string
+     */
+    private $payloadKey = 'Payload';
+
+    /**
      * Allowed Paylaod length
      *
-     * @var int
+     * @var integer
      */
     private $allowedPayloadLength = 10 * 1024 * 1024; // 10 MB
 
@@ -114,17 +122,27 @@ class JsonDecoder
      * 
      * @return void
      */
-    public function __construct()
+    public function __construct($fileLocation = null)
     {
-        $inputStream = fopen('php://input', "rb");
-        fread($inputStream, 8);
-        stream_filter_register("urldecode", __NAMESPACE__ . "\\UrlDecodeFilter") or die("Failed to register filter");
-        stream_filter_append($inputStream, "urldecode");
-        $this->tempStream = fopen("php://memory", "rw+b");
-        fwrite($this->tempStream, '{"Payload":');
-        stream_copy_to_stream($inputStream, $this->tempStream);
-        fwrite($this->tempStream, '}');
-        fclose($inputStream);
+        if (is_null($fileLocation)) {
+            $inputStream = fopen('php://input', "rb");
+            fread($inputStream, (strlen($this->payloadKey) + 1));    
+
+            stream_filter_register("urldecode", __NAMESPACE__ . "\\UrlDecodeFilter") or die("Failed to register filter");
+            stream_filter_append($inputStream, "urldecode");
+
+            $this->tempStream = fopen("php://memory", "rw+b");
+            fwrite($this->tempStream, '{"' . $this->payloadKey . '":');
+            stream_copy_to_stream($inputStream, $this->tempStream);
+            fwrite($this->tempStream, '}');
+            
+            fclose($inputStream);
+        } else {
+            if (!file_exists($fileLocation)) {
+                die('Invalid file location');
+            }
+            $this->tempStream = fopen($fileLocation, "rb");
+        }
     }
 
     /**
@@ -140,188 +158,6 @@ class JsonDecoder
     }
 
     /**
-     * Validate JSON in stream
-     *
-     * @return void
-     */
-    public function indexJSON()
-    {
-        $this->streamIndex = null;
-        foreach ($this->process(true) as $keys => $val) {
-            if (
-                isset($val['_s_']) &&
-                isset($val['_e_'])
-            ) {
-                $streamIndex = &$this->streamIndex;
-                for ($i=0, $iCount = count($keys); $i < $iCount; $i++) {
-                    if (is_numeric($keys[$i]) && !isset($streamIndex[$keys[$i]])) {
-                        $streamIndex[$keys[$i]] = [];
-                        if (!isset($streamIndex['_c_'])) {
-                            $streamIndex['_c_'] = 0;
-                        }
-                        if (is_numeric($keys[$i])) {
-                            $streamIndex['_c_']++;
-                        }
-                    }
-                    $streamIndex = &$streamIndex[$keys[$i]];
-                }
-                $streamIndex['_s_'] = $val['_s_'];
-                $streamIndex['_e_'] = $val['_e_'];
-            }
-        }
-    }
-
-    /**
-     * Key exist.
-     *
-     * @param string $keys Key values seperated by colon.
-     * @return boolean
-     */
-    public function keysAreSet($keys)
-    {
-        $return = true;
-        $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                $return = false;
-                break;
-            }
-        }
-        return $return;
-    }
-
-    /**
-     * Key exist.
-     *
-     * @param string $keys Key values seperated by colon.
-     * @return boolean
-     */
-    public function keysType($keys)
-    {
-        $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
-        }
-        $return = 'Object';
-        if (
-            (
-                isset($streamIndex['_s_']) &&
-                isset($streamIndex['_e_']) &&
-                isset($streamIndex['_c_'])
-            )
-        ) {
-            $return = 'Array';
-        }
-        return $return;
-    }
-
-    /**
-     * Get count of array element.
-     *
-     * @param string $keys Key values seperated by colon.
-     * @return integer
-     */
-    public function getCount($keys)
-    {
-        $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
-        }
-        if (
-            !(
-                isset($streamIndex['_s_']) &&
-                isset($streamIndex['_e_']) &&
-                isset($streamIndex['_c_'])
-            )
-        ) {
-            echo "Invalid keys '{$keys}'";
-            die;
-        }
-        return $streamIndex['_c_'];
-    }
-
-    /**
-     * Pass the keys and get whole json content belonging to keys.
-     *
-     * @param string $keys Key values seperated by colon.
-     * @return array
-     */
-    public function get($keys)
-    {
-        $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
-        }
-        if (
-            isset($streamIndex['_s_']) &&
-            isset($streamIndex['_e_'])
-        ) {
-            $start = $streamIndex['_s_'];
-            $end = $streamIndex['_e_'];
-        } else {
-            echo "Invalid keys '{$keys}'";
-            die;
-        }
-        $length = $end - $start + 1;
-        $json = stream_get_contents($this->tempStream, $length, $start);
-        return json_decode($json, true);
-    }
-
-    /**
-     * Start processing the JSON string for a keys
-     * Perform search inside keys of JSON like $json['data'][0]['data1']
-     *
-     * @param string $keys Key values seperated by colon.
-     * @return void
-     */
-    public function load($keys)
-    {
-        if (empty($keys)) {
-            $this->_s_ = null;
-            $this->_e_ = null;
-            $this->keys = null;
-            return;
-        }
-        $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
-        }
-        if (
-            isset($streamIndex['_s_']) &&
-            isset($streamIndex['_e_'])
-        ) {
-            $this->_s_ = $streamIndex['_s_'];
-            $this->_e_ = $streamIndex['_e_'];
-            $this->keys = $keys;
-        } else {
-            echo "Invalid keys '{$keys}'";
-            die;
-        }
-    }
-
-    /**
      * Start processing the JSON string
      *
      * @param bool $index Index output.
@@ -331,19 +167,19 @@ class JsonDecoder
     {
         // Flags Variable
         $quote = false;
-        $comma = false;
-        $colon = false;
-        $keyFlag = false;
-        $valueFlag = false;
 
-        // Values Variables
+        // Values inside Quotes
         $keyValue = '';
         $valueValue = '';
-        $replacements = '';
+
+        // Values without Quotes
         $nullStr = null;
 
         // Variable mode - key/value;
         $varMode = 'keyValue';
+
+        $strToEscape  = '';
+        $prevIsEscape = false;
 
         $this->charCounter = $this->_s_ !== null ? $this->_s_ : 0;
         fseek($this->tempStream, $this->charCounter, SEEK_SET);
@@ -358,105 +194,106 @@ class JsonDecoder
             )
             ;$this->charCounter++
         ) {
-            //Switch mode to value collection after colon.
-            if ($quote === false && $colon === false && $char === ':') {
-                $colon = true;
-                $keyFlag = false;
-                $valueFlag = true;
-                continue;
-            }
-            // Start or End of Array or Object.
-            if ($quote === false && in_array($char, ['[',']','{','}'])) {
-                $arr = $this->handleOpenClose($char, $keyValue, $nullStr, $index);
-                if ($arr !== false) {
-                    yield $arr['key'] => $arr['value'];
-                }
-                $keyValue = $valueValue = '';
-                $keyFlag = true;
-                $valueFlag = false;
-                $colon = false;
-                continue;
-            }
-            // Start of Key or value inside quote.
-            if ($quote === false && $char === '"') {
-                $quote = true;
-                if ($colon === true) {
-                    $varMode = 'valueValue';
-                    $colon = false;
-                    $comma = false;
-                    $keyFlag = false;
-                    $valueFlag = true;
-                    continue;
-                }
-                if ($colon === false) {
-                    $varMode = 'keyValue';
-                    $keyFlag = true;
-                    $valueFlag = false;
-                    continue;
-                }
-            }
-            // Escaped values.
-            if ($quote === true && $replacements === "\\" && in_array($char, $this->escapers)) {
-                $replacement .= $char;
-                $$varMode .= str_replace($this->replacements, $this->escapers, $replacement);
-                $replacement = '';
-                continue;
-            }
-            // Closing double quotes.
-            if ($quote === true && $char === '"') {
-                $quote = false;
-                $colon = false;
-                if ($valueFlag === true) {
-                    $this->currentObject->objectValues[$keyValue] = $valueValue;
-                    $keyValue = $valueValue = '';
-                    $keyFlag = true;
-                    $valueFlag = false;
-                    $colon = false;
-                    $comma = true;
-                }
-                continue;
-            }
-            // Collect values for key or value.
-            if ($quote === true) {
-                $$varMode .= $char;
-                continue;
-            }
-            // Check for null values.
-            if ($quote === false) {
-                if ($char === ',') {
-                    if (!is_null($nullStr)) {
-                        $nullStr = $this->checkNullStr($nullStr);
-                        switch ($this->currentObject->mode) {
-                            case 'Array':
-                                $this->currentObject->arrayValues[] = $nullStr;
-                                if (is_null($this->currentObject->arrayKey)) {
-                                    $this->currentObject->arrayKey = 0;
-                                } else {
-                                    $this->currentObject->arrayKey++;
-                                }
-                                break;
-                            case 'Object':
-                                if (!empty($keyValue)) {
-                                    $this->currentObject->objectValues[$keyValue] = $nullStr;
-                                }
-                                break;
-                        }
-                        $nullStr = null;
-                        $keyValue = $valueValue = '';
-                        $keyFlag = true;
-                        $valueFlag = false;
-                        $colon = false;
-                        $comma = true;
+            switch (true) {
+                case $quote === false:
+                    switch (true) {
+                        // Start of Key or value inside quote.
+                        case $char === '"':
+                            $quote = true;
+                            $nullStr = '';
+                            break;
+
+                        //Switch mode to value collection after colon.
+                        case $char === ':':
+                            $varMode = 'valueValue';
+                            break;
+
+                        // Start or End of Array or Object.
+                        case in_array($char, ['[',']','{','}']):
+                            $arr = $this->handleOpenClose($char, $keyValue, $nullStr, $index);
+                            if ($arr !== false) {
+                                yield $arr['key'] => $arr['value'];
+                            }
+                            $keyValue = $valueValue = '';
+                            $varMode = 'keyValue';
+                            break;
+                    
+                        // Check for null values.
+                        case $char === ',' && !is_null($nullStr):
+                            $nullStr = $this->checkNullStr($nullStr);
+                            switch ($this->currentObject->mode) {
+                                case 'Array':
+                                    $this->currentObject->arrayValues[] = $nullStr;
+                                    break;
+                                case 'Object':
+                                    if (!empty($keyValue)) {
+                                        $this->currentObject->objectValues[$keyValue] = $nullStr;
+                                    }
+                                    break;
+                            }
+                            $nullStr = null;
+                            $keyValue = $valueValue = '';
+                            $varMode = 'keyValue';
+                            break;
+
+                        //Switch mode to value collection after colon.
+                        case in_array($char, $this->escapers):
+                            break;
+
+                        // Append char to null string.
+                        case !in_array($char, $this->escapers):
+                            $nullStr .= $char;
+                            break;
                     }
-                } else {
-                    if (!in_array($char, $this->escapers)) {
-                        $nullStr .= $char;
+                    break;
+            
+                case $quote === true:
+                    switch (true) {
+                        // Collect string to be escaped
+                        case $varMode === 'valueValue' && ($char === '\\' || ($prevIsEscape && in_array($strToEscape . $char , $this->replacements))):
+                            $strToEscape .= $char;
+                            $prevIsEscape = true;
+                            break;
+
+                        // Escape value with char
+                        case $varMode === 'valueValue' && $prevIsEscape === true && in_array($strToEscape . $char , $this->replacements):
+                            $$varMode .= str_replace($this->replacements, $this->escapers, $strToEscape . $char);
+                            $strToEscape = '';
+                            $prevIsEscape = false;
+                            break;
+
+                        // Escape value without char
+                        case $varMode === 'valueValue' && $prevIsEscape === true && in_array($strToEscape , $this->replacements):
+                            $$varMode .= str_replace($this->replacements, $this->escapers, $strToEscape) . $char;
+                            $strToEscape = '';
+                            $prevIsEscape = false;
+                            break;
+
+                        // Closing double quotes.
+                        case $char === '"':
+                            $quote = false;
+                            switch (true) {
+                                // Closing qoute of Key
+                                case $varMode === 'keyValue':
+                                    $varMode = 'valueValue';
+                                    break;
+                                
+                                // Closing qoute of Value
+                                case $varMode === 'valueValue':
+                                    $this->currentObject->objectValues[$keyValue] = $valueValue;
+                                    $keyValue = $valueValue = '';
+                                    $varMode = 'keyValue';
+                                    break;
+                            }
+                            break;
+
+                        // Collect values for key or value.
+                        default:
+                            $$varMode .= $char;
                     }
-                }
-                continue;
+                    break;
             }
         }
-
         $this->objects = [];
         $this->currentObject = null;
         $this->previousObjectIndex = null;
@@ -471,7 +308,7 @@ class JsonDecoder
      * @param bool   $index    Index output.
      * @return array
      */
-    private function handleOpenClose(&$char, &$keyValue, &$nullStr, &$index)
+    private function handleOpenClose($char, $keyValue, $nullStr, $index)
     {
         $arr = false;
         switch ($char) {
@@ -805,6 +642,188 @@ class JsonDecoder
             }
         }
         return $return;
+    }
+
+    /**
+     * Validate JSON in stream
+     *
+     * @return void
+     */
+    public function indexJSON()
+    {
+        $this->streamIndex = null;
+        foreach ($this->process(true) as $keys => $val) {
+            if (
+                isset($val['_s_']) &&
+                isset($val['_e_'])
+            ) {
+                $streamIndex = &$this->streamIndex;
+                for ($i=0, $iCount = count($keys); $i < $iCount; $i++) {
+                    if (is_numeric($keys[$i]) && !isset($streamIndex[$keys[$i]])) {
+                        $streamIndex[$keys[$i]] = [];
+                        if (!isset($streamIndex['_c_'])) {
+                            $streamIndex['_c_'] = 0;
+                        }
+                        if (is_numeric($keys[$i])) {
+                            $streamIndex['_c_']++;
+                        }
+                    }
+                    $streamIndex = &$streamIndex[$keys[$i]];
+                }
+                $streamIndex['_s_'] = $val['_s_'];
+                $streamIndex['_e_'] = $val['_e_'];
+            }
+        }
+    }
+
+    /**
+     * Key exist.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return boolean
+     */
+    public function keysAreSet($keys)
+    {
+        $return = true;
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                $return = false;
+                break;
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Key exist.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return boolean
+     */
+    public function keysType($keys)
+    {
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        $return = 'Object';
+        if (
+            (
+                isset($streamIndex['_s_']) &&
+                isset($streamIndex['_e_']) &&
+                isset($streamIndex['_c_'])
+            )
+        ) {
+            $return = 'Array';
+        }
+        return $return;
+    }
+
+    /**
+     * Get count of array element.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return integer
+     */
+    public function getCount($keys)
+    {
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        if (
+            !(
+                isset($streamIndex['_s_']) &&
+                isset($streamIndex['_e_']) &&
+                isset($streamIndex['_c_'])
+            )
+        ) {
+            echo "Invalid keys '{$keys}'";
+            die;
+        }
+        return $streamIndex['_c_'];
+    }
+
+    /**
+     * Pass the keys and get whole json content belonging to keys.
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return array
+     */
+    public function get($keys)
+    {
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        if (
+            isset($streamIndex['_s_']) &&
+            isset($streamIndex['_e_'])
+        ) {
+            $start = $streamIndex['_s_'];
+            $end = $streamIndex['_e_'];
+        } else {
+            echo "Invalid keys '{$keys}'";
+            die;
+        }
+        $length = $end - $start + 1;
+        $json = stream_get_contents($this->tempStream, $length, $start);
+        return json_decode($json, true);
+    }
+
+    /**
+     * Start processing the JSON string for a keys
+     * Perform search inside keys of JSON like $json['data'][0]['data1']
+     *
+     * @param string $keys Key values seperated by colon.
+     * @return void
+     */
+    public function load($keys)
+    {
+        if (empty($keys)) {
+            $this->_s_ = null;
+            $this->_e_ = null;
+            $this->keys = null;
+            return;
+        }
+        $streamIndex = &$this->streamIndex;
+        foreach (explode(':', $keys) as $key) {
+            if (isset($streamIndex[$key])) {
+                $streamIndex = &$streamIndex[$key];
+            } else {
+                HttpResponse::return4xx(501, "Invalid key {$key}");
+                return;
+            }
+        }
+        if (
+            isset($streamIndex['_s_']) &&
+            isset($streamIndex['_e_'])
+        ) {
+            $this->_s_ = $streamIndex['_s_'];
+            $this->_e_ = $streamIndex['_e_'];
+            $this->keys = $keys;
+        } else {
+            echo "Invalid keys '{$keys}'";
+            die;
+        }
     }
 }
 
