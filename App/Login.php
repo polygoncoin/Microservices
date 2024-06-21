@@ -104,8 +104,10 @@ class Login
         Env::$cacheUsername = getenv('cacheUsername');
         Env::$cachePassword = getenv('cachePassword');
         Env::$cacheDatabase = getenv('cacheDatabase');
+
         $this->cache = Cache::getObject();
         $this->jsonEncode = HttpResponse::getJsonObject();
+
         return HttpResponse::isSuccess();
     }
 
@@ -121,6 +123,7 @@ class Login
         if (HttpResponse::isSuccess()) $this->validateRequestIp();
         if (HttpResponse::isSuccess()) $this->validatePassword();
         if (HttpResponse::isSuccess()) $this->outputTokenDetails();
+
         return HttpResponse::isSuccess();
     }
 
@@ -136,9 +139,11 @@ class Login
             HttpResponse::return4xx(404, 'Invalid request method');
             return;
         }
+
         if (isset($_POST['Payload'])) {
             $this->payload = json_decode($_POST['Payload'], true);
         }
+
         // Check for required input variables
         foreach (array('username','password') as $value) {
             if (!isset($this->payload[$value]) || empty($this->payload[$value])) {
@@ -238,6 +243,7 @@ class Login
     {
         $this->timestamp = time();
         $tokenFound = false;
+
         if ($this->cache->cacheExists("usertoken:{$this->userId}")) {
             $tokenDetails = json_decode($this->cache->getCache("usertoken:{$this->userId}"), true);
             if ($this->cache->cacheExists($tokenDetails['token'])) {
@@ -248,6 +254,7 @@ class Login
                 }
             }
         }
+
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
@@ -255,6 +262,7 @@ class Login
             $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
+
         $output = [
             'Token' => $tokenDetails['token'],
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
@@ -272,6 +280,7 @@ class Login
         Env::$dbDatabase = getenv('defaultDbDatabase');
 
         $this->db = Database::getObject();
+
         $userTable = Env::$users;
         $this->db->execDbQuery("
         UPDATE

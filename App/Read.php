@@ -48,8 +48,10 @@ class Read
     {
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
+
         $this->db = Database::getObject();
         $this->jsonEncode = HttpResponse::getJsonObject();
+
         return HttpResponse::isSuccess();
     }
 
@@ -63,10 +65,13 @@ class Read
         $Constants = __NAMESPACE__ . '\\Constants';
         $Env = __NAMESPACE__ . '\\Env';
         $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
+
         // Load Queries
         $readSqlConfig = include HttpRequest::$__file__;
+
         // Use results in where clause of sub queries recursively.
         $useHierarchy = $this->getUseHierarchy($readSqlConfig);
+
         if (
             Env::$allowConfigRequest &&
             Env::$isConfigRequest
@@ -75,6 +80,7 @@ class Read
         } else {
             $this->processRead($readSqlConfig, $useHierarchy);
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -102,9 +108,11 @@ class Read
         HttpRequest::$input['requiredArr'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
         HttpRequest::$input['required'] = HttpRequest::$input['requiredArr']['__required__'];
         HttpRequest::$input['payload'] = HttpRequest::$input['payloadArr'];
+
         // Start Read operation.
         $keys = [];
-        $this->readDB($readSqlConfig, true, $keys, $useHierarchy);      
+        $this->readDB($readSqlConfig, true, $keys, $useHierarchy);
+
         return HttpResponse::isSuccess();
     }
 
@@ -123,6 +131,7 @@ class Read
         if (!$success) {
             return $success;
         }
+
         $isAssoc = $this->isAssoc($readSqlConfig);
         if ($isAssoc) {
             switch ($readSqlConfig['mode']) {
@@ -156,6 +165,7 @@ class Read
                 $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
             }
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -173,12 +183,14 @@ class Read
         if (!$success) {
             return $success;
         }
+
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
             HttpResponse::return5xx(501, $errors);
             return;
         }
+
         $this->db->execDbQuery($sql, $sqlParams);
         if ($row = $this->db->fetch()) {
             //check if selected column-name mismatches or confliects with configured module/submodule names.
@@ -198,9 +210,11 @@ class Read
             $this->jsonEncode->addKeyValue($key, $value);
         }
         $this->db->closeCursor();
+
         if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
             $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -216,29 +230,38 @@ class Read
         if (!$success) {
             return $success;
         }
+
         $readSqlConfig['query'] = $readSqlConfig['countQuery'];
         unset($readSqlConfig['countQuery']);
+
         HttpRequest::$input['payload']['page']  = $_GET['page'] ?? 1;
         HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
+
         if (HttpRequest::$input['payload']['perpage'] > Env::$maxPerpage) {
             HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.Env::$maxPerpage);
             return;
         }
+
         HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
+        
         if (!empty($errors)) {
             HttpResponse::return5xx(501, $errors);
             return;
         }
+        
         $this->db->execDbQuery($sql, $sqlParams);
         $row = $this->db->fetch();
         $this->db->closeCursor();
+        
         $totalRowsCount = $row['count'];
         $totalPages = ceil($totalRowsCount/HttpRequest::$input['payload']['perpage']);
+        
         $this->jsonEncode->addKeyValue('page', HttpRequest::$input['payload']['page']);
         $this->jsonEncode->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
         $this->jsonEncode->addKeyValue('totalPages', $totalPages);
         $this->jsonEncode->addKeyValue('totalRecords', $totalRowsCount);
+        
         return HttpResponse::isSuccess();
     }
     
@@ -256,28 +279,33 @@ class Read
         if (!$success) {
             return $success;
         }
+
         $isAssoc = $this->isAssoc($readSqlConfig);
         if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
             HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
             return;
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
+        
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
             HttpResponse::return5xx(501, $errors);
             return;
         }
+        
         if (isset($readSqlConfig['countQuery'])) {
             $start = HttpRequest::$input['payload']['start'];
             $offset = HttpRequest::$input['payload']['perpage'];
             $sql .= " LIMIT {$start}, {$offset}";
         }
+
         $singleColumn = false;
         $stmt = $this->db->prepare($sql);
         if (!$stmt) {
             HttpResponse::return5xx(501, 'Invalid database query');
             return;
         }
+
         $stmt->execute($sqlParams);
         for ($i=0;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
             if ($i===0) {
@@ -302,6 +330,7 @@ class Read
             }
         }
         $stmt->closeCursor();
+
         return HttpResponse::isSuccess();
     }    
 
@@ -319,6 +348,7 @@ class Read
         if (!$success) {
             return $success;
         }
+
         if ($useHierarchy) {
             if (count($keys) === 0) {
                 HttpRequest::$input['hierarchyData'] = [];
@@ -333,6 +363,7 @@ class Read
             }
             $httpReq = $row;
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -351,9 +382,11 @@ class Read
         if (!$success) {
             return $success;
         }
+
         if ($useHierarchy) {
             $this->resetFetchData($keys, $row, $useHierarchy);
         }
+
         if (isset($readSqlConfig['subQuery']) && $this->isAssoc($readSqlConfig['subQuery'])) {
             foreach ($readSqlConfig['subQuery'] as $subQuery_key => $readSqlDetails) {
                 $k = array_merge($keys, [$subQuery_key]);
@@ -361,6 +394,7 @@ class Read
                 $this->readDB($readSqlDetails, false, $k, $_useHierarchy);
             }
         }
+
         return HttpResponse::isSuccess();
     }
 }

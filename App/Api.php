@@ -39,6 +39,7 @@ class Api
         if (HttpResponse::isSuccess()) HttpRequest::loadToken();
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
         if (HttpResponse::isSuccess()) HttpRequest::parseRoute();
+
         return HttpResponse::isSuccess();
     }
 
@@ -50,18 +51,22 @@ class Api
     public function process()
     {
         // Check & Process Upload
-        if (HttpResponse::isSuccess()) $this->processBeforePayload();
-        if ($this->beforePayload === true) {
-            return HttpResponse::isSuccess();
+        if (HttpResponse::isSuccess()) {
+            if ($this->processBeforePayload()) {
+                return HttpResponse::isSuccess();
+            }    
         }
+
         $success = HttpResponse::isSuccess();
         if (!$success) {
             return $success;
         }
+
         // Load Payloads
         if (!Env::$isConfigRequest) {
             HttpRequest::loadPayload();
         }
+
         $class = null;
         switch (Constants::$REQUEST_METHOD) {
             case Constants::$GET:
@@ -74,14 +79,18 @@ class Api
                 $class = __NAMESPACE__ . '\\Write';
                 break;
         }
+
         if (HttpResponse::isSuccess() && !is_null($class)) {
             $api = new $class();
             if ($api->init()) {
                 $api->process();
             }
         }
+
         // Check & Process Cron / ThirdParty calls.
-        if (HttpResponse::isSuccess()) $this->processAfterPayload();
+        if (HttpResponse::isSuccess()) {
+            $this->processAfterPayload();
+        }
         return HttpResponse::isSuccess();
     }
 
@@ -115,14 +124,18 @@ class Api
                 $class = 'Microservices\\App\\CacheHandler';
                 break;
         }
+
+        $return = false;
         if (!empty($class)) {
             $this->beforePayload = true;
             $api = new $class();
             if ($api->init()) {
                 $api->process();
             }
+            $return = true;
         }
-        return HttpResponse::isSuccess();
+
+        return $return;
     }
 
     /**

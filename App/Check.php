@@ -58,9 +58,12 @@ class Check
         if (HttpResponse::isSuccess()) HttpRequest::init();
         if (HttpResponse::isSuccess()) HttpRequest::loadToken();
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
+
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
+
         $this->jsonEncode = HttpResponse::getJsonObject();
+
         return HttpResponse::isSuccess();
     }
 
@@ -73,7 +76,9 @@ class Check
     {
         $errors = [];
         $httpRoutes = [];
+
         $routesFolder = Constants::$DOC_ROOT . $this->configFolder . '/Routes';
+
         // $groupFolders = new \DirectoryIterator($routesFolder);
         // foreach ($groupFolders as $groupFolder) {
         //     if ($groupFolder->isDir() && !$groupFolder->isDot()) {
@@ -81,6 +86,7 @@ class Check
         //         $httpRoutes[$groupFolder->getFilename()] = $this->processRoutes($_routesFolder, $errors);
         //     }
         // }
+
         $groupFolder = HttpRequest::$input['readOnlySession']['group_name'];
         $_routesFolder = $routesFolder . '/' . $groupFolder;
         $httpRoutes[$groupFolder] = $this->processRoutes($_routesFolder, $errors);
@@ -93,6 +99,7 @@ class Check
                 $this->jsonEncode->addKeyValue('Results', $errors);
             }
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -106,6 +113,7 @@ class Check
     private function processRoutes($groupRoutesFolder, &$errors)
     {
         $httpRoutes = [];
+
         foreach ($this->httpMethods as $method) {
             $httpRoutes[$method] = [];
             $routeFileLocation =  $groupRoutesFolder . '/' . $method . 'routes.php';
@@ -121,6 +129,7 @@ class Check
                 $this->getRoutes($routes, $route, $httpRoutes[$method]);  
             }
         }
+
         return $httpRoutes;
     }
 
@@ -161,10 +170,12 @@ class Check
     private function validateWrite(&$writeSqlConfig, &$errors, $useHierarchy = false)
     {
         $foundHierarchyData = false;
+
         foreach ($writeSqlConfig as $key => $value) {
             if (in_array($key, ['query', '__CONFIG__', '__WHERE__', 'insertId'])) {
                 continue;
             }
+
             if ($useHierarchy && $key === '__SET__') {
                 foreach ($value as $v) {
                     if ($v[0] === 'insertIdParams') {
@@ -175,6 +186,7 @@ class Check
                     $errors[] = 'Hierarchy usage not maintained.';
                 }
             }
+
             if ($key === 'subQuery') {
                 if (!$useHierarchy && isset($writeSqlConfig['useHierarchy'])) {
                     $useHierarchy = $writeSqlConfig['useHierarchy'];
@@ -203,10 +215,12 @@ class Check
     private function validateRead(&$readSqlConfig, &$errors, $useHierarchy = false)
     {
         $foundHierarchyData = false;
+
         foreach ($readSqlConfig as $key => $value) {
             if (in_array($key, ['countQuery', 'query', '__CONFIG__', 'mode'])) {
                 continue;
             }
+
             if ($useHierarchy && $key === '__WHERE__') {
                 foreach ($value as $v) {
                     if ($v[0] === 'hierarchyData') {
@@ -218,6 +232,7 @@ class Check
                     $errors[] = 'Hierarchy usage not maintained.';
                 }
             }
+
             if ($key === 'subQuery') {
                 if (!$useHierarchy && isset($readSqlConfig['useHierarchy'])) {
                     $useHierarchy = $readSqlConfig['useHierarchy'];
@@ -275,10 +290,12 @@ class Check
     {
         $foundInt = false;
         $foundString = false;
+
         foreach ($routes as $key => &$arr) {
             if (in_array($key, ['config', '__file__']) && !is_array($arr)) {
                 break;
             }
+
             if (strpos($key, '{') === 0) {
                 $explode = explode('|', trim($key, '{}'));
                 $explode0 = explode(':', $explode[0]);
@@ -314,6 +331,7 @@ class Check
                     }
                 }
             }
+
             if (is_array($arr)) {
                 $this->checkRoutes($arr, $errors);
             }
@@ -355,5 +373,4 @@ class Check
             }
         }
     }
-
 }

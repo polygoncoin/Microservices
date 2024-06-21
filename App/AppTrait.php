@@ -41,6 +41,7 @@ trait AppTrait
     {
         $requiredFields = [];
         $requiredFields['__required__'] = [];
+
         if (isset($sqlConfig['__CONFIG__'])) {
             foreach ($sqlConfig['__CONFIG__'] as $config) {
                 $required = false;
@@ -60,6 +61,7 @@ trait AppTrait
                 }
             }
         }
+
         $foundHierarchy = false;
         if (isset($sqlConfig['__WHERE__'])) {
             foreach ($sqlConfig['__WHERE__'] as $var => $where) {
@@ -78,6 +80,7 @@ trait AppTrait
                 return;
             }
         }
+
         if (isset($sqlConfig['subQuery'])) {
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
                 HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
@@ -97,6 +100,7 @@ trait AppTrait
                 }
             }
         }
+
         return $requiredFields;
     }
 
@@ -111,6 +115,7 @@ trait AppTrait
         if (is_null($this->validator)) {
             $this->validator = new Validator();
         }
+
         return $this->validator->validate(HttpRequest::$input, $validationConfig);
     }
 
@@ -126,6 +131,7 @@ trait AppTrait
         $sqlParams = [];
         $paramKeys = [];
         $errors = [];
+
         if (isset($sqlDetails['__SET__']) && count($sqlDetails['__SET__']) !== 0) {
             list($params, $errors) = $this->getSqlParams($sqlDetails['__SET__']);
             if (empty($errors)) {
@@ -146,6 +152,7 @@ trait AppTrait
                 }
             }
         }
+
         if (isset($sqlDetails['__WHERE__']) && count($sqlDetails['__WHERE__']) !== 0) {
             list($sqlWhereParams, $werrors) = $this->getSqlParams($sqlDetails['__WHERE__']);
             if (empty($werrors) && empty($errors)) {
@@ -171,6 +178,7 @@ trait AppTrait
                 $errors = array_merge($errors, $werrors);
             }
         }
+
         return [$sql, $sqlParams, $errors];
     }
 
@@ -184,6 +192,7 @@ trait AppTrait
     {
         $sqlParams = [];
         $errors = [];
+
         foreach ($sqlConfig as $var => [$type, $typeKey]) {
             if ($type === 'function') {
                 $sqlParams[$var] = $typeKey();
@@ -213,6 +222,7 @@ trait AppTrait
                 $sqlParams[$var] = HttpRequest::$input[$type][$typeKey];
             }
         }
+
         return [$sqlParams, $errors];
     }
 
@@ -225,6 +235,7 @@ trait AppTrait
     private function isAssoc($arr)
     {
         $assoc = false;
+
         $i = 0;
         foreach ($arr as $k => &$v) {
             if ($k !== $i++) {
@@ -232,6 +243,7 @@ trait AppTrait
                 break;
             }
         }
+
         return $assoc;
     }
 
@@ -261,6 +273,7 @@ trait AppTrait
     private function getConfigParams(&$sqlConfig, $first, $useHierarchy)
     {
         $result = [];
+
         if (isset($sqlConfig['__CONFIG__'])) {
             foreach ($sqlConfig['__CONFIG__'] as $config) {
                 $required = false;
@@ -285,6 +298,7 @@ trait AppTrait
                 }
             }
         }
+
         $foundHierarchy = false;
         if (isset($sqlConfig['__WHERE__'])) {
             foreach ($sqlConfig['__WHERE__'] as $var => $payload) {
@@ -299,6 +313,7 @@ trait AppTrait
                 return;
             }
         }
+
         if (isset($sqlConfig['subQuery'])) {
             foreach ($sqlConfig['subQuery'] as $module => &$_sqlConfig) {
                 $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($_sqlConfig);
@@ -316,6 +331,7 @@ trait AppTrait
                 }
             }
         }
+
         return $result;
     }
 }

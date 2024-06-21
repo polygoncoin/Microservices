@@ -52,6 +52,7 @@ class CacheHandler
         $this->filePath = '/' . trim(str_replace('../','',urldecode(Constants::$ROUTE)), './');
         $this->validateFileRequest();
         $this->fileLocation = $this->cacheLocation . $this->filePath;
+
         return HttpResponse::isSuccess();
     }
 

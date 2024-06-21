@@ -111,6 +111,7 @@ class HttpRequest
             HttpResponse::return4xx(404, 'Missing token in authorization header');
             return;
         }
+
         if (empty(self::$input['token'])) {
             HttpResponse::return4xx(404, 'Missing token');
             return;
@@ -128,11 +129,13 @@ class HttpRequest
             HttpResponse::return4xx(404, 'Invalid session');
             return;
         }
+
         $key = 'group:'.self::$groupId;
         if (!self::$cache->cacheExists($key)) {
             HttpResponse::return5xx(501, "Cache '{$key}' missing.");
             return;
         }
+
         $groupInfoArr = json_decode(self::$cache->getCache($key), true);
 
         Env::$dbType = getenv($groupInfoArr['db_server_type']);
@@ -151,6 +154,7 @@ class HttpRequest
     static public function checkRemoteIp()
     {
         $groupId = self::$input['readOnlySession']['group_id'];
+
         $key = 'cidr:'.self::$groupId;
         if (self::$cache->cacheExists($key)) {
             $cidrs = json_decode(self::$cache->getCache($key), true);
@@ -177,16 +181,19 @@ class HttpRequest
     static public function parseRoute()
     {
         $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
+
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
         } else {
             HttpResponse::return5xx(501, 'Missing route file for ' . Constants::$REQUEST_METHOD . ' method');
             return;
         }
+
         self::$routeElements = explode('/', trim(Constants::$ROUTE, '/'));
         $routeLastElementPos = count(self::$routeElements) - 1;
         Env::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
         $configuredUri = [];
+
         foreach(self::$routeElements as $key => $element) {
             $pos = false;
             if (isset($routes[$element])) {
@@ -230,8 +237,8 @@ class HttpRequest
                 $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
         }
-        self::$configuredUri = '/' . implode('/', $configuredUri);
 
+        self::$configuredUri = '/' . implode('/', $configuredUri);
         self::validateConfigFile($routes);
     }
 
@@ -250,6 +257,7 @@ class HttpRequest
         if (strpos($routeElement, '{') !== 0) {
             return false;
         }
+
         // Check for compulsary values
         $dynamicRoute = trim($routeElement, '{}');
         $preferredValues = [];
@@ -257,15 +265,18 @@ class HttpRequest
             list($dynamicRoute, $preferredValuesString) = explode('|', $dynamicRoute);
             $preferredValues = ((strlen($preferredValuesString) > 0) ? explode(',', $preferredValuesString) : []);
         }
+
         list($paramName, $paramDataType) = explode(':', $dynamicRoute);
         if (!in_array($paramDataType, ['int','string'])) {
             HttpResponse::return5xx(501, 'Invalid datatype set for Route');
             return;
         }
+
         if (count($preferredValues) > 0 && !in_array($element, $preferredValues)) {
             HttpResponse::return4xx(404, $routeElement);
             return;
         }
+
         if ($paramDataType === 'int') {
             if (!ctype_digit($element)) {
                 HttpResponse::return4xx(404, "Invalid {$paramName}");
@@ -276,6 +287,7 @@ class HttpRequest
         } else {
             $foundStringRoute = $routeElement;
         }
+
         return $paramName;
     }
 
@@ -292,6 +304,7 @@ class HttpRequest
             HttpResponse::return5xx(501, 'Missing route configuration file for ' . Constants::$REQUEST_METHOD . ' method');
             return;
         }
+
         self::$__file__ = $routes['__file__'];
     }
 
@@ -303,6 +316,7 @@ class HttpRequest
     static public function loadPayload()
     {
         $payloadArr = [];
+
         if (Constants::$REQUEST_METHOD === Constants::$GET) {
             self::urlDecode($_GET);
             $payloadArr = !empty($_GET) ? $_GET : [];
@@ -364,6 +378,7 @@ class HttpRequest
     static public function cidrsIpNumber($cidrs)
     {
         $response = [];
+
         foreach (explode(',', str_replace(' ', '', $cidrs)) as $cidr) {
             if (strpos($cidr, '/')) {
                 list($cidrIp, $bits) = explode('/', str_replace(' ', '', $cidr));
@@ -383,6 +398,7 @@ class HttpRequest
                 }
             }
         }
+
         return $response;
     }
 }

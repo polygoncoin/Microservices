@@ -41,16 +41,19 @@ class Constants
     static public function init()
     {
         if (!is_null(self::$initialized)) return;
+
         self::$DOC_ROOT = dirname(__DIR__ . '../');
         self::$REQUEST_METHOD = $_SERVER['REQUEST_METHOD'];
 
         if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
             self::$HTTP_AUTHORIZATION = $_SERVER['HTTP_AUTHORIZATION'];
         }
+        
         if (!isset($_SERVER['REMOTE_ADDR'])) {
             // If from a proxy server. then 404
             http_response_code(404);
         }
+        
         self::$REMOTE_ADDR = $_SERVER['REMOTE_ADDR'];
         self::$ROUTE = '/' . trim($_GET[self::$ROUTE_URL_PARAM], '/');
         self::$initialized = true;

@@ -55,6 +55,8 @@ class Env
     static public function init()
     {
         if (!is_null(self::$initialized)) return;
+        
+        // Initialize constants
         Constants::init();
 
         // Load .env

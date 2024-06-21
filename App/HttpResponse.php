@@ -121,6 +121,7 @@ class HttpResponse
     {
         $jsonEncodeObj = JsonEncode::getObject();
         $jsonEncodeObj = null;
+
         self::$httpResponse = json_encode($arr);
     }
 

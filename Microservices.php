@@ -5,6 +5,18 @@ use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpResponse;
 
+/**
+ * Microservices Class
+ *
+ * Class to start Microservices.
+ *
+ * @category   Microservices
+ * @package    Microservices
+ * @author     Ramesh Narayan Jangid
+ * @copyright  Ramesh Narayan Jangid
+ * @version    Release: @1.0.0@
+ * @since      Class available since Release 1.0.0
+ */
 class Microservices
 {
     /**
@@ -48,10 +60,13 @@ class Microservices
     public function init()
     {
         Env::init();
+
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsStart = microtime(true);
         }
+
         $this->jsonEncode = HttpResponse::getJsonObject();
+        
         return HttpResponse::isSuccess();
     }
 
@@ -68,6 +83,7 @@ class Microservices
         if (HttpResponse::isSuccess()) $this->endOutputJson();
         if (HttpResponse::isSuccess()) $this->addPerformance();
         if (HttpResponse::isSuccess()) $this->endJson();
+
         return HttpResponse::isSuccess();
     }
     
@@ -111,6 +127,7 @@ class Microservices
     public function processApi()
     {
         $class = null;
+
         switch (true) {
             case Constants::$ROUTE === '/login':
                 $class = __NAMESPACE__ . '\\App\\Login';
@@ -149,12 +166,14 @@ class Microservices
                 $class = __NAMESPACE__ . '\\App\\Api';
                 break;
         }
+
         if (!is_null($class)) {
             $api = new $class();
             if ($api->init()) {
                 $api->process();
             }
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -210,6 +229,7 @@ class Microservices
     public function checkOutputBuffer()
     {
         $outputBuffer = ob_get_clean();
+
         if (!empty($outputBuffer) && Env::$ENVIRONMENT === Constants::$PRODUCTION) {
             $this->outputBuffer = $outputBuffer;
             $log = [
@@ -250,6 +270,7 @@ class Microservices
         } else {
             $this->streamJson();
         }
+
         $this->jsonEncode = null;
     }
 

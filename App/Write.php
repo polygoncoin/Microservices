@@ -56,8 +56,10 @@ class Write
     {
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
+
         $this->db = Database::getObject();
         $this->jsonEncode = HttpResponse::getJsonObject();
+
         return HttpResponse::isSuccess();
     }
 
@@ -71,10 +73,13 @@ class Write
         $Constants = __NAMESPACE__ . '\\Constants';
         $Env = __NAMESPACE__ . '\\Env';
         $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
+
         // Load Queries
         $writeSqlConfig = include HttpRequest::$__file__;
+
         // Use results in where clause of sub queries recursively.
         $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
+
         if (
             Env::$allowConfigRequest &&
             Env::$isConfigRequest
@@ -83,6 +88,7 @@ class Write
         } else {
             $this->processWrite($writeSqlConfig, $useHierarchy);
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -99,13 +105,16 @@ class Write
         if (!$success) {
             return $success;
         }
+
         $response = [];
         $response['Route'] = HttpRequest::$configuredUri;
         $response['Payload'] = $this->getConfigParams($writeSqlConfig, true, $useHierarchy);
+
         $this->jsonEncode->startObject('Config');
         $this->jsonEncode->addKeyValue('Route', $response['Route']);
         $this->jsonEncode->addKeyValue('Payload', $response['Payload']);
         $this->jsonEncode->endObject();
+
         return HttpResponse::isSuccess();
     }    
 
@@ -122,6 +131,7 @@ class Write
         if (!$success) {
             return $success;
         }
+
         // Set required fields.
         HttpRequest::$input['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
@@ -130,9 +140,11 @@ class Write
         } else {
             $this->jsonEncode->startArray('Results');
         }
+
         // Perform action
         $jsonDecode = JsonDecode::getObject();
         $i_count = HttpRequest::$input['payloadType'] === 'Object' ? 1 : $jsonDecode->getCount('Payload');
+
         for ($i=0; $i < $i_count; $i++) {
             if ($i === 0) {
                 if (HttpRequest::$input['payloadType'] === 'Object') {
@@ -184,11 +196,13 @@ class Write
                 $this->jsonEncode->endObject();
             }
         }
+
         if (HttpRequest::$input['payloadType'] === 'Object') {
             $this->jsonEncode->endObject();
         } else {
             $this->jsonEncode->endArray();
         }
+
         return HttpResponse::isSuccess();
     }    
 
@@ -208,7 +222,9 @@ class Write
         if (!$success) {
             return $success;
         }
+
         $isAssoc = $this->isAssoc($payloads);
+
         $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
             if (!$this->db->beganTransaction) {
@@ -217,6 +233,7 @@ class Write
             }
             HttpRequest::$input['payload'] = $payload;
             HttpRequest::$input['required'] = $required['__required__'];
+    
             // Get Sql and Params
             list($sql, $sqlParams, $errors) = $this->getSqlAndParams($writeSqlConfig);
             if (!empty($errors)) {
@@ -224,6 +241,8 @@ class Write
                 $this->db->rollback();
                 return;
             }
+
+            // Execute Query
             $this->db->execDbQuery($sql, $sqlParams);
             if (!$this->db->beganTransaction) {
                 $response['Error'] = 'Something went wrong';
@@ -249,6 +268,7 @@ class Write
                 }
             }
             $this->db->closeCursor();
+
             // subQuery for payload.
             if (isset($writeSqlConfig['subQuery'])) {
                 foreach ($writeSqlConfig['subQuery'] as $module => &$_writeSqlConfig) {
@@ -274,10 +294,12 @@ class Write
                     $this->writeDB($_writeSqlConfig, $_payload, $_useHierarchy, $_response, $_required);
                 }
             }
+
             if (!$isAssoc) {
                 $counter++;
             }
         }
+
         return HttpResponse::isSuccess();
     }
 }

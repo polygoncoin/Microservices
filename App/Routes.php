@@ -64,6 +64,7 @@ class Routes
         if (HttpResponse::isSuccess()) HttpRequest::init();
         if (HttpResponse::isSuccess()) HttpRequest::loadToken();
         if (HttpResponse::isSuccess()) HttpRequest::initSession();
+
         return HttpResponse::isSuccess();
     }
 
@@ -76,6 +77,7 @@ class Routes
     {
         $httpRoutes = [];
         $userRoutesFolder = Constants::$DOC_ROOT . $this->routesFolder . '/' . HttpRequest::$input['readOnlySession']['group_name'];
+
         foreach ($this->httpMethods as $method) {
             $httpRoutes[$method] = [];
             $routeFileLocation =  $userRoutesFolder . '/' . $method . 'routes.php';
@@ -86,8 +88,10 @@ class Routes
             $route = '';
             $this->getRoutes($routes, $route, $httpRoutes[$method]);
         }
+
         $this->jsonEncode = HttpResponse::getJsonObject();
         $this->jsonEncode->addKeyValue('Results', $httpRoutes);
+
         return HttpResponse::isSuccess();
     }
 

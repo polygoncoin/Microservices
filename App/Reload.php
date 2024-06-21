@@ -51,14 +51,17 @@ class Reload
         Env::$cacheUsername = getenv('cacheUsername');
         Env::$cachePassword = getenv('cachePassword');
         Env::$cacheDatabase = getenv('cacheDatabase');
-        $this->cache = Cache::getObject();
+
         Env::$dbType = getenv('defaultDbType');
         Env::$dbHostname = getenv('defaultDbHostname');
         Env::$dbPort = getenv('defaultDbPort');
         Env::$dbUsername = getenv('defaultDbUsername');
         Env::$dbPassword = getenv('defaultDbPassword');
         Env::$dbDatabase = getenv('defaultDbDatabase');
+
+        $this->cache = Cache::getObject();
         $this->db = Database::getObject();
+
         return HttpResponse::isSuccess();
     }
 
@@ -70,6 +73,7 @@ class Reload
     public function process($refresh = 'all', $idsString = null)
     {
         $ids = [];
+
         if (!is_null($idsString)) {
             foreach (explode(',', trim($idsString)) as $value) {
                 if (ctype_digit($value = trim($value))) {
@@ -80,6 +84,7 @@ class Reload
                 }
             }
         }
+
         if ($refresh === 'all') {
             $this->processUser();
             $this->processGroup();
@@ -100,6 +105,7 @@ class Reload
                     break;
             }
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -126,9 +132,11 @@ class Reload
             LEFT JOIN
                 `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.group_id
             {$whereClause}", $ids);
+
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("user:{$row['username']}", json_encode($row));
         }
+
         $this->db->closeCursor();
     }
 
@@ -141,6 +149,7 @@ class Reload
     private function processGroup($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE G.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+
         $this->db->execDbQuery("
             SELECT
                 G.group_id,
@@ -157,9 +166,11 @@ class Reload
             LEFT JOIN
                 `{$this->execPhpFunc(getenv('connections'))}` C on G.connection_id = C.connection_id
             {$whereClause}", $ids);
+
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $this->cache->setCache("group:{$row['group_id']}", json_encode($row));
         }
+
         $this->db->closeCursor();
     }
 
@@ -172,10 +183,12 @@ class Reload
     private function processGroupIps($ids = [])
     {
         $whereClause = count($ids) ? 'WHERE group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
+
         $this->db->execDbQuery(
             "SELECT group_id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
             $ids
         );
+
         $cidrArray = [];
         while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['allowed_ips'])) {
@@ -185,6 +198,7 @@ class Reload
                 }
             }
         }
+
         $this->db->closeCursor();
     }
 

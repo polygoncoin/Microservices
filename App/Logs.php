@@ -20,24 +20,24 @@ use Microservices\App\HttpResponse;
  */
 class Logs
 {
+    static private $logTypes = [
+        'debug'      => '/Logs/debug',
+        'info'       => '/Logs/info',
+        'error'      => '/Logs/error',
+        'notice'     => '/Logs/notice',
+        'warning'    => '/Logs/warning',
+        'critical'   => '/Logs/critical',
+        'alert'      => '/Logs/alert',
+        'emergency'  => '/Logs/emergency'
+    ];
+
     static public function log($logType, $logContent)
     {
-        $logTypes = [
-            'debug'      => Constants::$DOC_ROOT . '/Logs/debug',
-            'info'       => Constants::$DOC_ROOT . '/Logs/info',
-            'error'      => Constants::$DOC_ROOT . '/Logs/error',
-            'notice'     => Constants::$DOC_ROOT . '/Logs/notice',
-            'warning'    => Constants::$DOC_ROOT . '/Logs/warning',
-            'critical'   => Constants::$DOC_ROOT . '/Logs/critical',
-            'alert'      => Constants::$DOC_ROOT . '/Logs/alert',
-            'emergency'  => Constants::$DOC_ROOT . '/Logs/emergency'
-        ];
-    
         if (!in_array($logType, array_keys($logTypes))) {
             HttpResponse::return5xx(501, 'Invalid log type');
             return;
         }
-        $logFile = $logTypes[$logType];
+        $logFile = Constants::$DOC_ROOT . self::$logTypes[$logType];
         file_put_contents($logFile.'-'.date('Y-m'), $logContent . PHP_EOL, FILE_APPEND);
     }
 }
