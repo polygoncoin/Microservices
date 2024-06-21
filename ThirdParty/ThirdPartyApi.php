@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\Custom;
+namespace Microservices\ThirdParty;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
@@ -20,7 +20,7 @@ use Microservices\App\Servers\Database\Database;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class CustomApi
+class ThirdPartyApi
 {
     /**
      * Initialize

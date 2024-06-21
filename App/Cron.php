@@ -1,26 +1,20 @@
 <?php
-namespace Microservices\Custom;
+namespace Microservices\App;
 
-use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
-use Microservices\App\Servers\Database\Database;
+use Microservices\Cron\CronApi;
 
 /**
- * Class to initialize api HTTP request
+ * Class to initiate custom API's
  *
- * This class process the api request
- *
- * @category   Custom API
+ * @category   Cron API's
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class CustomApi
+class Cron
 {
     /**
      * Initialize
@@ -39,8 +33,7 @@ class CustomApi
      */
     public function process()
     {
-        $class = __NAMESPACE__ . '\\' . ucfirst(HttpRequest::$routeElements[1]);
-        $api = new $class();
+        $api = new CronApi();
         if ($api->init()) {
             $api->process();
         }

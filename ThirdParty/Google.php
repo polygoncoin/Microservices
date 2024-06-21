@@ -64,6 +64,7 @@ class Google
         }
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($output);
+
         return HttpResponse::isSuccess();
     }
 

@@ -150,17 +150,7 @@ class Microservices
                     HttpResponse::return4xx(404, 'Source IP is not supported');
                     return;
                 }
-                $routeArr = explode('/', $this->ROUTE);
-                $cron = ucfirst($routeArr[2]);
-                if (
-                    isset($routeArr[2]) &&
-                    file_exists(Constants::$DOC_ROOT . "/Crons/{$cron}.php")
-                ) {
-                    $class = __NAMESPACE__ . "\\Crons\\{$cron}";
-                } else {
-                    HttpResponse::return4xx(404, 'Invalid request');
-                    return;
-                }
+                $class = __NAMESPACE__ . "\\App\\Cron";
                 break;
             default:
                 $class = __NAMESPACE__ . '\\App\\Api';

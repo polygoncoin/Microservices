@@ -101,8 +101,7 @@ class Write
      */
     private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -127,8 +126,7 @@ class Write
      */
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -218,8 +216,7 @@ class Write
      */
     private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response, &$required)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 

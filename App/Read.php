@@ -127,8 +127,7 @@ class Read
      */
     private function readDB(&$readSqlConfig, $start, &$keys, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -179,8 +178,7 @@ class Read
      */
     private function fetchSingleRow(&$readSqlConfig, &$keys, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -226,8 +224,7 @@ class Read
      */
     private function fetchRowsCount($readSqlConfig)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -275,8 +272,7 @@ class Read
      */
     private function fetchMultipleRows(&$readSqlConfig, &$keys, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -344,8 +340,7 @@ class Read
      */
     private function resetFetchData(&$keys, $row, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -378,8 +373,7 @@ class Read
      */
     private function callReadDB(&$readSqlConfig, &$keys, &$row, $useHierarchy)
     {
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 

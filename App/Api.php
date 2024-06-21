@@ -57,8 +57,7 @@ class Api
             }    
         }
 
-        $success = HttpResponse::isSuccess();
-        if (!$success) {
+        if (!($success = HttpResponse::isSuccess())) {
             return $success;
         }
 
@@ -91,6 +90,7 @@ class Api
         if (HttpResponse::isSuccess()) {
             $this->processAfterPayload();
         }
+
         return HttpResponse::isSuccess();
     }
 
@@ -102,40 +102,33 @@ class Api
     private function processBeforePayload()
     {
         $class = null;
+
         switch (HttpRequest::$routeElements[0]) {
             case 'custom':
-                $class = 'Microservices\\Custom\\CustomApi';
+                $class = __NAMESPACE__ . '\\CustomApi';
                 break;
             case 'upload':
-                $class = 'Microservices\\App\\Upload';
+                $class = __NAMESPACE__ . '\\Upload';
                 break;
             case 'thirdParty':
-                if (
-                    isset(HttpRequest::$input['uriParams']['thirdParty']) &&
-                    file_exists(Constants::$DOC_ROOT . '/ThirdParty/' . ucfirst(HttpRequest::$input['uriParams']['thirdParty']) . '.php')
-                ) {
-                    $class = 'Microservices\\ThirdParty\\'.HttpRequest::$input['uriParams']['thirdParty'];
-                } else {
-                    HttpResponse::return4xx(404, 'Invalid third party call');
-                    return;
-                }
+                $class = __NAMESPACE__ . '\\ThirdParty';
                 break;
             case 'cache':
-                $class = 'Microservices\\App\\CacheHandler';
+                $class = __NAMESPACE__ . '\\CacheHandler';
                 break;
         }
 
-        $return = false;
+        $foundClass = false;
         if (!empty($class)) {
             $this->beforePayload = true;
             $api = new $class();
             if ($api->init()) {
                 $api->process();
             }
-            $return = true;
+            $foundClass = true;
         }
 
-        return $return;
+        return $foundClass;
     }
 
     /**
