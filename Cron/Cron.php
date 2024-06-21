@@ -13,7 +13,7 @@ use Microservices\App\Servers\Database\Database;
  *
  * This class is meant for cron
  * One can initiate cron via access URL to this class
- * https://domain.tld/crons/className?queryString
+ * https://domain.tld/cron/className?queryString
  * All HTTP methods are supported
  *
  * @category   Crons

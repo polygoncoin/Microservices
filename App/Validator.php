@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\App\Validation;
+namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;

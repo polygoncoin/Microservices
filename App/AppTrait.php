@@ -5,7 +5,7 @@ use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
-use Microservices\App\Validation\Validator;
+use Microservices\App\Validator;
 
 /**
  * Trait for PHP functions

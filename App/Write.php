@@ -8,7 +8,7 @@ use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
 use Microservices\App\JsonEncode;
 use Microservices\App\Servers\Database\Database;
-use Microservices\App\Validation\Validator;
+use Microservices\App\Validator;
 
 /**
  * Class to initialize DB Write operation

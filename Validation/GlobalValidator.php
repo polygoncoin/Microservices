@@ -7,7 +7,7 @@ use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
 use Microservices\App\Logs;
 use Microservices\App\Servers\Database\Database;
-use Microservices\App\Validation\ValidatorTrait;
+use Microservices\Validation\ValidatorTrait;
 
 /**
  * Validator

@@ -7,7 +7,7 @@ use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
 use Microservices\App\Servers\Database\Database;
-use Microservices\App\Validation\Validator;
+use Microservices\App\Validator;
 
 /**
  * Class to initialize DB Read operation
