@@ -134,31 +134,31 @@ Below are the configuration settings details in .env
 
 ### Files - GlobalDB
  
-*    **Config/Queries/GlobalDB/GET/<filenames>.php** GET method SQL.
+*    **Config/Queries/GlobalDB/GET/&lt;filenames&gt;.php** GET method SQL.
  
-*    **Config/Queries/GlobalDB/POST/<filenames>;.php** POST method SQL.
+*    **Config/Queries/GlobalDB/POST/&lt;filenames&gt;;.php** POST method SQL.
  
-*    **Config/Queries/GlobalDB/PUT/<filenames>.php** PUT method SQL.
+*    **Config/Queries/GlobalDB/PUT/&lt;filenames&gt;.php** PUT method SQL.
  
-*    **Config/Queries/GlobalDB/PATCH/<filenames>.php** PATCH method SQL.
+*    **Config/Queries/GlobalDB/PATCH/&lt;filenames&gt;.php** PATCH method SQL.
  
-*    **Config/Queries/GlobalDB/DELETE/<filenames>.php** DELETE method SQL.
+*    **Config/Queries/GlobalDB/DELETE/&lt;filenames&gt;.php** DELETE method SQL.
  
 
 ### Files - ClientDB
  
-*    **Config/Queries/ClientDB/GET/<filenames>.php** GET method SQL.
+*    **Config/Queries/ClientDB/GET/&lt;filenames&gt;.php** GET method SQL.
  
-*    **Config/Queries/ClientDB/POST/<filenames>.php** POST method SQL.
+*    **Config/Queries/ClientDB/POST/&lt;filenames&gt;.php** POST method SQL.
  
-*    **Config/Queries/ClientDB/PUT/<filenames>.php** PUT method SQL.
+*    **Config/Queries/ClientDB/PUT/&lt;filenames&gt;.php** PUT method SQL.
  
-*    **Config/Queries/ClientDB/PATCH/<filenames>.php** PATCH method SQL.
+*    **Config/Queries/ClientDB/PATCH/&lt;filenames&gt;.php** PATCH method SQL.
  
-*    **Config/Queries/ClientDB/DELETE/<filenames>.php** DELETE method SQL.
+*    **Config/Queries/ClientDB/DELETE/&lt;filenames&gt;.php** DELETE method SQL.
  
 
-> One can replace **<filenames>** tag with desired name as per functionality.
+> One can replace **&lt;filenames&gt;** tag with desired name as per functionality.
  
 
 ### Configuration
