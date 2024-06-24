@@ -42,6 +42,7 @@ trait AppTrait
         $requiredFields = [];
         $requiredFields['__required__'] = [];
 
+        // Get Required
         if (isset($sqlConfig['__CONFIG__'])) {
             foreach ($sqlConfig['__CONFIG__'] as $config) {
                 $required = false;
@@ -62,6 +63,7 @@ trait AppTrait
             }
         }
 
+        // Check for hierarchy setting
         $foundHierarchy = false;
         if (isset($sqlConfig['__WHERE__'])) {
             foreach ($sqlConfig['__WHERE__'] as $var => $where) {
@@ -81,6 +83,7 @@ trait AppTrait
             }
         }
 
+        // Check in subQuery
         if (isset($sqlConfig['subQuery'])) {
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
                 HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
@@ -132,10 +135,12 @@ trait AppTrait
         $paramKeys = [];
         $errors = [];
 
+        // Check __SET__
         if (isset($sqlDetails['__SET__']) && count($sqlDetails['__SET__']) !== 0) {
             list($params, $errors) = $this->getSqlParams($sqlDetails['__SET__']);
             if (empty($errors)) {
                 if (!empty($params)) {
+                    // __SET__ not compulsary in query
                     $found = strpos($sql, '__SET__') !== false;
                     $__SET__ = [];
                     foreach ($params as $param => &$v) {
@@ -153,10 +158,12 @@ trait AppTrait
             }
         }
 
+        // Check __WHERE__
         if (isset($sqlDetails['__WHERE__']) && count($sqlDetails['__WHERE__']) !== 0) {
             list($sqlWhereParams, $werrors) = $this->getSqlParams($sqlDetails['__WHERE__']);
             if (empty($werrors) && empty($errors)) {
                 if(!empty($sqlWhereParams)) {
+                    // __WHERE__ not compulsary in query
                     $wfound = strpos($sql, '__WHERE__') !== false;
                     $__WHERE__ = [];
                     foreach ($sqlWhereParams as $param => &$v) {
@@ -193,6 +200,7 @@ trait AppTrait
         $sqlParams = [];
         $errors = [];
 
+        // Collect param values as per config respectively
         foreach ($sqlConfig as $var => [$type, $typeKey]) {
             if ($type === 'function') {
                 $sqlParams[$var] = $typeKey();
@@ -274,6 +282,7 @@ trait AppTrait
     {
         $result = [];
 
+        // Get required and optional params for a route
         if (isset($sqlConfig['__CONFIG__'])) {
             foreach ($sqlConfig['__CONFIG__'] as $config) {
                 $required = false;
@@ -299,6 +308,7 @@ trait AppTrait
             }
         }
 
+        // Check for hierarchy
         $foundHierarchy = false;
         if (isset($sqlConfig['__WHERE__'])) {
             foreach ($sqlConfig['__WHERE__'] as $var => $payload) {
@@ -314,6 +324,7 @@ trait AppTrait
             }
         }
 
+        // Check in subQuery
         if (isset($sqlConfig['subQuery'])) {
             foreach ($sqlConfig['subQuery'] as $module => &$_sqlConfig) {
                 $_useHierarchy = ($useHierarchy) ?? $this->getUseHierarchy($_sqlConfig);

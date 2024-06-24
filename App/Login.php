@@ -98,6 +98,7 @@ class Login
      */
     public function init()
     {
+        // Set Cache credentials
         Env::$cacheType = getenv('cacheType');
         Env::$cacheHostname = getenv('cacheHostname');
         Env::$cachePort = getenv('cachePort');
@@ -273,6 +274,7 @@ class Login
 
     private function updateDB($tokenDetails)
     {
+        // Set Database credentials
         Env::$dbType = getenv('defaultDbType');
         Env::$dbHostname = getenv('defaultDbHostname');
         Env::$dbPort = getenv('defaultDbPort');

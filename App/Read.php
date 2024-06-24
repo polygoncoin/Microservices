@@ -134,6 +134,7 @@ class Read
         $isAssoc = $this->isAssoc($readSqlConfig);
         if ($isAssoc) {
             switch ($readSqlConfig['mode']) {
+                // Query will return single row
                 case 'singleRowFormat':
                     if ($start) {
                         $this->jsonEncode->startObject('Results');
@@ -143,6 +144,7 @@ class Read
                     $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
                     $this->jsonEncode->endObject();
                     break;
+                // Query will return multiple rows
                 case 'multipleRowFormat':
                     $keysCount = count($keys)-1;
                     if ($start) {

@@ -138,6 +138,7 @@ class HttpRequest
 
         $groupInfoArr = json_decode(self::$cache->getCache($key), true);
 
+        // Set Database credentials
         Env::$dbType = getenv($groupInfoArr['db_server_type']);
         Env::$dbHostname = getenv($groupInfoArr['db_hostname']);
         Env::$dbPort = getenv($groupInfoArr['db_port']);

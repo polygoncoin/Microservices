@@ -154,28 +154,13 @@ class Write
                 $payload = $jsonDecode->get('Payload:'.$i);
             }
             HttpRequest::$input['payload'] = $payload;
-            if (Constants::$REQUEST_METHOD === Constants::$PATCH) {
-                if (count(HttpRequest::$input['payload']) !== 1) {
-                    HttpResponse::$httpStatus = 400;
-                    $this->jsonEncode->startObject();
-                    $this->jsonEncode->addKeyValue('Payload', $payload);
-                    $this->jsonEncode->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
-                    $this->jsonEncode->endObject();
-                    continue;
-                }
+            
+            // Validation
+            if (!$this->isValidPayload($writeSqlConfig)) {
+                continue;
             }
-            $isValidData = true;
-            if (isset($writeSqlConfig['validate'])) {
-                list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
-                if ($isValidData !== true) {
-                    HttpResponse::$httpStatus = 400;
-                    $this->jsonEncode->startObject();
-                    $this->jsonEncode->addKeyValue('Payload', $payload);
-                    $this->jsonEncode->addKeyValue('Error', $errors);
-                    $this->jsonEncode->endObject();
-                    continue;
-                }
-            }
+
+            // Begin DML operation
             $this->db->begin();
             $response = [];
             $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, HttpRequest::$input['requiredArr']);
@@ -298,5 +283,54 @@ class Write
         }
 
         return HttpResponse::isSuccess();
+    }
+
+    /**
+     * Checks if the payload is valid
+     *
+     * @param array   $writeSqlConfig Config from file
+     * @return boolean
+     */
+    private function isValidPayload($writeSqlConfig)
+    {
+        $return = true;
+        if (Constants::$REQUEST_METHOD === Constants::$PATCH) {
+            if (!($return = $this->isValidPatch())) {
+                return $return;
+            }
+        }
+    
+        $isValidData = true;
+        if (isset($writeSqlConfig['validate'])) {
+            list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
+            if ($isValidData !== true) {
+                HttpResponse::$httpStatus = 400;
+                $this->jsonEncode->startObject();
+                $this->jsonEncode->addKeyValue('Payload', HttpRequest::$input['payload']);
+                $this->jsonEncode->addKeyValue('Error', $errors);
+                $this->jsonEncode->endObject();
+                $return = false;
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Check if the request is a valid PATCH request
+     *
+     * @return boolean
+     */
+    private function isValidPatch()
+    {
+        $return = true;
+        if (count(HttpRequest::$input['payload']) !== 1) {
+            HttpResponse::$httpStatus = 400;
+            $this->jsonEncode->startObject();
+            $this->jsonEncode->addKeyValue('Payload', HttpRequest::$input['payload']);
+            $this->jsonEncode->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
+            $this->jsonEncode->endObject();
+            $return = false;
+        }
+        return $return;
     }
 }
