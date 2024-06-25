@@ -1,8 +1,6 @@
 <?php
 namespace Microservices\App\Servers\Database;
 
-use Microservices\App\Constants;
-use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
 use Microservices\App\Logs;
@@ -129,6 +127,10 @@ class MySQL extends AbstractDatabase
                 $this->useDatabase($this->database);
             }
         } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+
             HttpResponse::return5xx(501, 'Unable to connect to database server');
             return;
         }
@@ -148,18 +150,10 @@ class MySQL extends AbstractDatabase
             $this->db->exec("USE `{$database}`");
         } catch (\PDOException $e) {
             if ((int)$this->db->errorCode()) {
-                $log = [
-                    'datetime' => date('Y-m-d H:i:s'),
-                    'input' => HttpRequest::$input,
-                    'error' => $this->db->errorInfo()
-                ];
-                Logs::log('error', json_encode($log));
-                
+                $this->logError();
                 $this->rollback();
             }
-            HttpResponse::return5xx(501, 'Unable to change database');
-
-            return;
+            HttpResponse::return5xx(501, 'DB Issue with change database');
         }
     }
 
@@ -171,8 +165,16 @@ class MySQL extends AbstractDatabase
     public function begin()
     {
         $this->connect();
+
         $this->beganTransaction = true;
-        $this->db->beginTransaction();
+        try {
+            $this->db->beginTransaction();
+        } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
+        }
     }
     
     /**
@@ -182,9 +184,16 @@ class MySQL extends AbstractDatabase
      */
     public function commit()
     {
-        if ($this->beganTransaction) {
-            $this->beganTransaction = false;
-            $this->db->commit();
+        try {
+            if ($this->beganTransaction) {
+                $this->beganTransaction = false;
+                $this->db->commit();
+            }
+        } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
     }
     
@@ -195,9 +204,16 @@ class MySQL extends AbstractDatabase
      */
     public function rollback()
     {
-        if ($this->beganTransaction) {
-            $this->beganTransaction = false;
-            $this->db->rollback();
+        try {
+            if ($this->beganTransaction) {
+                $this->beganTransaction = false;
+                $this->db->rollback();
+            }
+        } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
     }
     
@@ -208,10 +224,20 @@ class MySQL extends AbstractDatabase
      */
     public function affectedRows()
     {
-        if ($this->stmt) {
-            return $this->stmt->rowCount();
-        } else {
-            return false;
+        try {
+            if ($this->stmt) {
+                return $this->stmt->rowCount();
+            } else {
+                return false;
+            }
+        } catch (\PDOException $e) {
+            if ($this->beganTransaction) {
+                $this->rollback();
+            }
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
     }
     
@@ -222,7 +248,17 @@ class MySQL extends AbstractDatabase
      */
     public function lastInsertId()
     {
-        return $this->db->lastInsertId();
+        try {
+            return $this->db->lastInsertId();
+        } catch (\PDOException $e) {
+            if ($this->beganTransaction) {
+                $this->rollback();
+            }
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
+        }
     }
 
     /**
@@ -230,27 +266,23 @@ class MySQL extends AbstractDatabase
      *
      * @param string $sql  Parameterised query
      * @param array  $params Parameterised query params
-     * @return object
+     * @return void
      */
     public function execDbQuery($sql, $params = [])
     {
         $this->connect();
 
-        $this->stmt = $this->db->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-
-        if ($this->stmt) {
+        try {
+            $this->stmt = $this->db->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             $this->stmt->execute($params);
-        } else {
+        } catch (\PDOException $e) {
             if ($this->beganTransaction) {
                 $this->rollback();
             }
-
-            $log = [
-                'datetime' => date('Y-m-d H:i:s'),
-                'input' => HttpRequest::$input,
-                'error' => $this->db->errorInfo()
-            ];
-            Logs::log('error', json_encode($log));
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
     }
 
@@ -263,21 +295,19 @@ class MySQL extends AbstractDatabase
     public function prepare($sql)
     {
         $this->connect();
-        $stmt = $this->db->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-        if ($stmt) {
-            return $stmt;
-        } else {
+
+        try {
+            $stmt = $this->db->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+        } catch (\PDOException $e) {
             if ($this->beganTransaction) {
                 $this->rollback();
             }
-
-            $log = [
-                'datetime' => date('Y-m-d H:i:s'),
-                'input' => HttpRequest::$input,
-                'error' => $this->db->errorInfo()
-            ];
-            Logs::log('error', json_encode($log));
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
+        return $stmt;
     }
 
     /**
@@ -287,10 +317,17 @@ class MySQL extends AbstractDatabase
      */
     public function fetch()
     {
-        if ($this->stmt) {
-            return $this->stmt->fetch(\PDO::FETCH_ASSOC);
-        } else {
-            return false;
+        try {
+            if ($this->stmt) {
+                return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+            } else {
+                return false;
+            }
+        } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
     }
 
@@ -301,10 +338,17 @@ class MySQL extends AbstractDatabase
      */
     public function fetchAll()
     {
-        if ($this->stmt) {
-            return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } else {
-            return false;
+        try {
+            if ($this->stmt) {
+                return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+            } else {
+                return false;
+            }
+        } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
     }
 
@@ -315,8 +359,30 @@ class MySQL extends AbstractDatabase
      */
     public function closeCursor()
     {
-        if ($this->stmt) {
-            $this->stmt->closeCursor();
+        try {
+            if ($this->stmt) {
+                $this->stmt->closeCursor();
+            }
+        } catch (\PDOException $e) {
+            if ((int)$this->db->errorCode()) {
+                $this->logError();
+            }
+            HttpResponse::return5xx(501, 'DB Issue with ' . __FUNCTION__);
         }
+    }
+
+    /**
+     * Log error
+     *
+     * @return void
+     */
+    private function logError()
+    {
+        $log = [
+            'datetime' => date('Y-m-d H:i:s'),
+            'input' => HttpRequest::$input,
+            'error' => $this->db->errorInfo()
+        ];
+        Logs::log('error', json_encode($log));
     }
 }

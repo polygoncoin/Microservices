@@ -129,22 +129,7 @@ class Microservices
         $class = null;
 
         switch (true) {
-            case Constants::$ROUTE === '/login':
-                $class = __NAMESPACE__ . '\\App\\Login';
-                break;
-            case Constants::$ROUTE === '/routes':
-                $class = __NAMESPACE__ . '\\App\\Routes';
-                break;
-            case Constants::$ROUTE === '/check':
-                $class = __NAMESPACE__ . '\\App\\Check';
-                break;
-            case Constants::$ROUTE === '/reload':
-                $envUsername = 'HttpAuthenticationUser';
-                $envPassword = 'HttpAuthenticationPassword';
-                if ($this->httpAuthentication($envUsername, $envPassword)) {
-                    $class = __NAMESPACE__ . '\\App\\Reload';
-                }
-                break;
+
             case strpos(Constants::$ROUTE, '/crons') === 0:
                 if (Constants::$REMOTE_ADDR !== Env::$cronRestrictedIp) {
                     HttpResponse::return4xx(404, 'Source IP is not supported');
@@ -152,11 +137,38 @@ class Microservices
                 }
                 $class = __NAMESPACE__ . "\\App\\Cron";
                 break;
+            
+            // Requires HTTP auth username and password
+            case Constants::$ROUTE === '/reload':
+                $envUsername = 'HttpAuthenticationUser';
+                $envPassword = 'HttpAuthenticationPassword';
+                if ($this->httpAuthentication($envUsername, $envPassword)) {
+                    $class = __NAMESPACE__ . '\\App\\Reload';
+                }
+                break;
+            
+            // Generates auth token
+            case Constants::$ROUTE === '/login':
+                $class = __NAMESPACE__ . '\\App\\Login';
+                break;
+
+            // Requires auth token
+            case Constants::$ROUTE === '/routes':
+                $class = __NAMESPACE__ . '\\App\\Routes';
+                break;
+            
+            // Requires auth token
+            case Constants::$ROUTE === '/check':
+                $class = __NAMESPACE__ . '\\App\\Check';
+                break;
+            
+            // Requires auth token
             default:
                 $class = __NAMESPACE__ . '\\App\\Api';
                 break;
         }
 
+        // Class found
         if (!is_null($class)) {
             $api = new $class();
             if ($api->init()) {

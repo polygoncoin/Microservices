@@ -1,6 +1,8 @@
 <?php
 namespace Microservices\App;
 
+use Microservices\App\Constants;
+use Microservices\App\Env;
 use Microservices\App\HttpResponse;
 use Microservices\Cron\CronApi;
 
@@ -23,6 +25,15 @@ class Cron
      */
     public function init()
     {
+        Env::init();
+
+        Env::$cacheType = getenv('cacheType');
+        Env::$cacheHostname = getenv('cacheHostname');
+        Env::$cachePort = getenv('cachePort');
+        Env::$cacheUsername = getenv('cacheUsername');
+        Env::$cachePassword = getenv('cachePassword');
+        Env::$cacheDatabase = getenv('cacheDatabase');
+    
         return HttpResponse::isSuccess();
     }
 

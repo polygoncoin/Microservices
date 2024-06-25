@@ -164,18 +164,18 @@ class Write
             $this->db->begin();
             $response = [];
             $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, HttpRequest::$input['requiredArr']);
+            if (HttpRequest::$input['payloadType'] === 'Array') {
+                $this->jsonEncode->startObject();
+            }
             if ($this->db->beganTransaction === true) {
                 $response['Success'] = true;
                 $this->db->commit();
             } else {
+                $this->jsonEncode->addKeyValue('Payload', $payload);
                 $response['Error'] = true;
             }
-            if (HttpRequest::$input['payloadType'] !== 'Object') {
-                $this->jsonEncode->startObject();
-            }
-            $this->jsonEncode->addKeyValue('Payload', $payload);
             $this->jsonEncode->addKeyValue('Response', $response);
-            if (HttpRequest::$input['payloadType'] !== 'Object') {
+            if (HttpRequest::$input['payloadType'] === 'Array') {
                 $this->jsonEncode->endObject();
             }
         }
