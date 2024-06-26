@@ -20,7 +20,7 @@ return [
     ],
     'upload' => [
         '{module}:string' => [
-            '__file__' => ''
+            '__file__' => false
         ]
     ]
 ];

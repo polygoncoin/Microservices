@@ -8,7 +8,7 @@ use Microservices\App\HttpRequest;
 return [
     'cron' => [
         'category' => [
-            '__file__' => '',
+            '__file__' => false,
         ]
     ]
 ];

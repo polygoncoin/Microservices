@@ -100,7 +100,7 @@ class HttpRequest
             self::$input['token'] = $matches[1];
             $token = self::$input['token'];
             if (!self::$cache->cacheExists($token)) {
-                HttpResponse::return5xx(501, 'Cache token missing');
+                HttpResponse::return5xx(501, 'Token expired');
                 return;
             }
             self::$input['readOnlySession'] = json_decode(self::$cache->getCache($token), true);
@@ -177,11 +177,14 @@ class HttpRequest
     /**
      * Parse route as per method
      *
+     * @param string $routeFileLocation Route file
      * @return void
      */
-    static public function parseRoute()
+    static public function parseRoute($routeFileLocation = null)
     {
-        $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
+        if (is_null($routeFileLocation)) {
+            $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
+        }
 
         if (file_exists($routeFileLocation)) {
             $routes = require $routeFileLocation;
@@ -305,7 +308,7 @@ class HttpRequest
     static private function validateConfigFile(&$routes)
     {
         // Set route code file.
-        if (!(isset($routes['__file__']) && (empty($routes['__file__']) || file_exists($routes['__file__'])))) {
+        if (!(isset($routes['__file__']) && ($routes['__file__'] === false || file_exists($routes['__file__'])))) {
             HttpResponse::return5xx(501, 'Missing route configuration file for ' . Constants::$REQUEST_METHOD . ' method');
             return;
         }

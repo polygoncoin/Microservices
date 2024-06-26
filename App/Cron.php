@@ -3,6 +3,7 @@ namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
 use Microservices\Cron\CronApi;
 
@@ -25,15 +26,11 @@ class Cron
      */
     public function init()
     {
-        Env::init();
+        if (HttpResponse::isSuccess()) HttpRequest::init();
 
-        Env::$cacheType = getenv('cacheType');
-        Env::$cacheHostname = getenv('cacheHostname');
-        Env::$cachePort = getenv('cachePort');
-        Env::$cacheUsername = getenv('cacheUsername');
-        Env::$cachePassword = getenv('cachePassword');
-        Env::$cacheDatabase = getenv('cacheDatabase');
-    
+        $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/Common/Cron/' . Constants::$REQUEST_METHOD . 'routes.php';
+        if (HttpResponse::isSuccess()) HttpRequest::parseRoute($routeFileLocation);
+
         return HttpResponse::isSuccess();
     }
 

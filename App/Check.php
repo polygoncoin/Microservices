@@ -149,7 +149,7 @@ class Check
         $Env = __NAMESPACE__ . '\\Env';
         $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
 
-        if (file_exists($__file__)) {
+        if ($__file__ && file_exists($__file__)) {
             $sqlConfig = include $__file__;
             if ($method === 'GET') {
                 $this->validateRead($sqlConfig, $errors);
@@ -264,6 +264,8 @@ class Check
                 foreach ($routeDetailsArr as $routeDetails) {
                     if (
                         $routeDetails['type'] === 'route' &&
+                        isset($routeDetails['__file__']) &&
+                        $routeDetails['__file__'] &&
                         file_exists($routeDetails['__file__'])
                     ) {
                         $errors[$routeDetails['__file__']] = [];

@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\Crons;
+namespace Microservices\Cron;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
@@ -23,7 +23,7 @@ use Microservices\App\Servers\Database\Database;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Cron
+class Category
 {
     /**
      * Initialize
@@ -47,7 +47,7 @@ class Cron
         // ...
 
         // End the calls with json response with jsonEncode Object.
-        $this->endProcess($result);
+        $this->endProcess();
         return HttpResponse::isSuccess();
     }
 

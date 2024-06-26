@@ -8,7 +8,7 @@ use Microservices\App\HttpRequest;
 return [
     'thirdParty' => [
         '{thirdParty:string}' => [
-            '__file__' => ''
+            '__file__' => false
         ]
     ]
 ];

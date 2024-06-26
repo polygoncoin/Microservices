@@ -130,12 +130,12 @@ class Microservices
 
         switch (true) {
 
-            case strpos(Constants::$ROUTE, '/crons') === 0:
+            case strpos(Constants::$ROUTE, '/cron') === 0:
                 if (Constants::$REMOTE_ADDR !== Env::$cronRestrictedIp) {
                     HttpResponse::return4xx(404, 'Source IP is not supported');
                     return;
                 }
-                $class = __NAMESPACE__ . "\\App\\Cron";
+                $class = __NAMESPACE__ . '\\App\\Cron';
                 break;
             
             // Requires HTTP auth username and password
