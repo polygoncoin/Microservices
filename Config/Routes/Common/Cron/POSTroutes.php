@@ -6,5 +6,5 @@ use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
 return [
-    'cron' => []
+    'cron' => false
 ];

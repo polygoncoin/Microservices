@@ -5,4 +5,6 @@ use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
-return [];
+return [
+    'custom' => false
+];

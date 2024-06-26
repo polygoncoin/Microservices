@@ -196,6 +196,10 @@ class HttpRequest
         $configuredUri = [];
 
         foreach(self::$routeElements as $key => $element) {
+            if ($element === false) {
+                HttpResponse::return4xx(404, 'Route not supported');
+                return;
+            }
             $pos = false;
             if (isset($routes[$element])) {
                 if (
