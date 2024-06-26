@@ -5,14 +5,8 @@ use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
-return [
-    'category' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category.php',
-        'search' => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/SearchCategory.php',
-        ],
-    ],
-    'registration' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration.php',
-    ],
-];
+return array_merge(
+    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Client/GETroutes.php',
+    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Custom/GETroutes.php',
+    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/ThirdParty/GETroutes.php',
+);

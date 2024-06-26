@@ -5,15 +5,4 @@ use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
-return [
-    'registration' => [
-        '{id:int}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/PUT/Registration.php',
-        ],
-    ],
-    'address' => [
-        '{id:int}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/PUT/Address.php',
-        ],
-    ]
-];
+return include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Client/PUTroutes.php';

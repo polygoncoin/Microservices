@@ -28,10 +28,5 @@ return [
         '{id:int}'  => [
             '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-single.php',
         ],
-    ],
-    'thirdParty' => [
-        '{thirdParty:string}' => [
-            '__file__' => ''
-        ]
     ]
 ];

@@ -5,4 +5,8 @@ use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
-return include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Client/GETroutes.php';
+return array_merge(
+    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Client/GETroutes.php',
+    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Custom/GETroutes.php',
+    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/ThirdParty/GETroutes.php',
+);
