@@ -1,6 +1,7 @@
 {
     "name": "polygoncoin/microservices",
     "description": "Microservices framework using configuration arrays",
+    "keywords": ["Microservices", "Framework", "API", "APIs", "Configuration array", "Configuration arrays", "Light", "Easy"],
     "type": "project",
     "license": "MIT",
     "authors": [
