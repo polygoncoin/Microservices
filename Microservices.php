@@ -153,16 +153,6 @@ class Microservices
                 break;
 
             // Requires auth token
-            case Constants::$ROUTE === '/routes':
-                $class = __NAMESPACE__ . '\\App\\Routes';
-                break;
-            
-            // Requires auth token
-            case Constants::$ROUTE === '/check':
-                $class = __NAMESPACE__ . '\\App\\Check';
-                break;
-            
-            // Requires auth token
             default:
                 $class = __NAMESPACE__ . '\\App\\Api';
                 break;

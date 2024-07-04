@@ -187,7 +187,7 @@ class HttpRequest
         }
 
         if (file_exists($routeFileLocation)) {
-            $routes = require $routeFileLocation;
+            $routes = include $routeFileLocation;
         } else {
             HttpResponse::return5xx(501, 'Missing route file for ' . Constants::$REQUEST_METHOD . ' method');
             return;
@@ -199,10 +199,6 @@ class HttpRequest
         $configuredUri = [];
 
         foreach(self::$routeElements as $key => $element) {
-            if ($element === false) {
-                HttpResponse::return4xx(404, 'Route not supported');
-                return;
-            }
             $pos = false;
             if (isset($routes[$element])) {
                 if (

@@ -17,10 +17,5 @@ return [
     'address' => [
         '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/POST/Address.php',
         'config' => true
-    ],
-    'upload' => [
-        '{module}:string' => [
-            '__file__' => false
-        ]
     ]
 ];

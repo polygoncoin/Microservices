@@ -1,13 +1,13 @@
 <?php
-namespace Microservices\Config\Routes\Common\ThirdParty;
+namespace Microservices\Config\Routes\Common\ClientDB\Client;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
 return [
-    'thirdParty' => [
-        '{thirdParty:string}' => [
+    'upload' => [
+        '{module}:string' => [
             '__file__' => false
         ]
     ]

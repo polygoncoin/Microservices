@@ -104,6 +104,13 @@ class Api
         $class = null;
 
         switch (HttpRequest::$routeElements[0]) {
+
+            case 'routes':
+                $class = __NAMESPACE__ . '\\Routes';
+                break;
+            case 'check':
+                $class = __NAMESPACE__ . '\\Check';
+                break;
             case 'custom':
                 $class = __NAMESPACE__ . '\\CustomApi';
                 break;

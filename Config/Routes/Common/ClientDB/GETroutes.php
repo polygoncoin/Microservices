@@ -23,5 +23,14 @@ return [
         '{id:int}'  => [
             '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-single.php',
         ],
+    ],
+    'routes' => [
+        '__file__' => false,
+        '{method:string|GET,POST,PUT,PATCH,DELETE}' => [
+            '__file__' => false
+        ]
+    ],
+    'check' => [
+        '__file__' => false,
     ]
 ];

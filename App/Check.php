@@ -55,10 +55,6 @@ class Check
      */
     public function init()
     {
-        if (HttpResponse::isSuccess()) HttpRequest::init();
-        if (HttpResponse::isSuccess()) HttpRequest::loadToken();
-        if (HttpResponse::isSuccess()) HttpRequest::initSession();
-
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
 

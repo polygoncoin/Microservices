@@ -6,6 +6,6 @@ use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 
 return array_merge(
-    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/Client/POSTroutes.php',
-    include_once Constants::$DOC_ROOT . '/Config/Routes/Common/ThirdParty/POSTroutes.php',
+    include Constants::$DOC_ROOT . '/Config/Routes/Common/ClientDB/POSTroutes.php',
+    include Constants::$DOC_ROOT . '/Config/Routes/Common/ClientDB/ThirdParty/POSTroutes.php',
 );

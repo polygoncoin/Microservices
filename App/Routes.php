@@ -61,10 +61,6 @@ class Routes
      */
     public function init()
     {
-        if (HttpResponse::isSuccess()) HttpRequest::init();
-        if (HttpResponse::isSuccess()) HttpRequest::loadToken();
-        if (HttpResponse::isSuccess()) HttpRequest::initSession();
-
         return HttpResponse::isSuccess();
     }
 
@@ -84,7 +80,7 @@ class Routes
             if (!file_exists($routeFileLocation)) {
                 continue;
             }
-            $routes = require $routeFileLocation;
+            $routes = include $routeFileLocation;
             $route = '';
             $this->getRoutes($routes, $route, $httpRoutes[$method]);
         }
