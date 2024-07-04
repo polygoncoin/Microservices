@@ -8,6 +8,7 @@ use Microservices\App\HttpResponse;
 use Microservices\App\Logs;
 use Microservices\App\Servers\Cache\Cache;
 use Microservices\App\Servers\Database\Database;
+use Microservices\Upload\UploadTrait;
 
 /**
  * Class is used for file uploads
@@ -23,6 +24,8 @@ use Microservices\App\Servers\Database\Database;
  */
 class Module1
 {
+    use UploadTrait;
+
     /**
      * JsonEncode class object
      *
@@ -48,15 +51,8 @@ class Module1
      */
     public function process()
     {
-        $fileLocation = $this->getLocation();
-
-        $src = fopen("php://input", "rb");
-        $dest = fopen($fileLocation, 'w+b');
-
-        stream_copy_to_stream($src, $dest);
-
-        fclose($dest);
-        fclose($src);
+        $absFilePath = $this->getLocation();
+        $this->saveFile($absFilePath);
 
         return HttpResponse::isSuccess();
     }
