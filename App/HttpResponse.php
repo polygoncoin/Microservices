@@ -132,6 +132,6 @@ class HttpResponse
      */
     static public function isSuccess()
     {
-        return is_null(HttpResponse::$httpResponse);
+        return is_null(self::$httpResponse);
     }
 }
