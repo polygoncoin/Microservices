@@ -177,7 +177,7 @@ class Microservices
     public function endOutputJson()
     {
         $this->jsonEncode->endObject();
-        $this->jsonEncode->addKeyValue('Status', App\HttpResponse::$httpStatus);
+        $this->jsonEncode->addKeyValue('Status', HttpResponse::$httpStatus);
     }
 
     /**

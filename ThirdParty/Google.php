@@ -58,7 +58,7 @@ class Google
         curl_close($curl_handle);
         if (empty($output)){
             $output = ['Error' => 'Nothing returned by ipify'];
-            App\HttpResponse::$httpStatus = 501;
+            HttpResponse::$httpStatus = 501;
         } else {
             $output = json_decode($output, true);
         }
