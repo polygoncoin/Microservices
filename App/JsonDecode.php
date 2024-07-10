@@ -103,21 +103,6 @@ class JsonDecoder
     private $charCounter = null;
 
     /**
-     * Paylaod key
-     * Key which contain JSON string from Browser / Postman
-     *
-     * @var string
-     */
-    private $payloadKey = 'Payload';
-
-    /**
-     * Allowed Paylaod length
-     *
-     * @var integer
-     */
-    private $allowedPayloadLength = 10 * 1024 * 1024; // 10 MB
-
-    /**
      * JsonEncode constructor
      * 
      * @return void
@@ -126,16 +111,8 @@ class JsonDecoder
     {
         if (is_null($fileLocation)) {
             $inputStream = fopen('php://input', "rb");
-            fread($inputStream, (strlen($this->payloadKey) + 1));    
-
-            stream_filter_register("urldecode", __NAMESPACE__ . "\\UrlDecodeFilter") or die("Failed to register filter");
-            stream_filter_append($inputStream, "urldecode");
-
             $this->tempStream = fopen("php://memory", "rw+b");
-            fwrite($this->tempStream, '{"' . $this->payloadKey . '":');
             stream_copy_to_stream($inputStream, $this->tempStream);
-            fwrite($this->tempStream, '}');
-            
             fclose($inputStream);
         } else {
             if (!file_exists($fileLocation)) {

@@ -3,7 +3,10 @@ namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
+use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
+use Microservices\App\JsonEncode;
+use Microservices\App\JsonDecode;
 use Microservices\App\Servers\Cache\Cache;
 use Microservices\App\Servers\Database\Database;
 
@@ -141,8 +144,16 @@ class Login
             return;
         }
 
-        if (isset($_POST['Payload'])) {
-            $this->payload = json_decode($_POST['Payload'], true);
+        if (Constants::$REQUEST_METHOD === Constants::$POST) {
+            JsonDecode::init();
+            $jsonDecode = JsonDecode::getObject();
+            $jsonDecode->validate();
+            $jsonDecode->indexJSON();
+            if (!$jsonDecode->keysAreSet('Payload')) {
+                HttpResponse::return4xx(404, 'Invalid "Payload"');
+                return;
+            }
+            $this->payload = $jsonDecode->get('Payload');
         }
 
         // Check for required input variables
