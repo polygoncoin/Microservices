@@ -273,18 +273,17 @@ Below are the configuration settings details in .env
 *   Single
      
 ```
-    {"Payload":
+    Payload =
       {
         "key1": "value1",
         "key2": "value2",
         ...
-      }
-    };
+      };
 ```
 *   Multiple
      
 ```
-    {"Payload":
+    Payload = 
       [
         {
           "key1": "value1",
@@ -297,18 +296,17 @@ Below are the configuration settings details in .env
           ...
         }
         ...
-      ]
-    };
+      ];
 ```
 ## Variables
- 
-*    **HttpRequest::$input\['uriParams'\]** Data passed in URI.
- 
-Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $input\['uriParams'\] will hold these dynamic values as below.
  
 *    **HttpRequest::$input\['readOnlySession'\]** Session Data.
  
 This remains same for every request and contains keys like id, group\_id, client\_id
+ 
+*    **HttpRequest::$input\['uriParams'\]** Data passed in URI.
+ 
+Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $input\['uriParams'\] will hold these dynamic values as below.
  
 *    **HttpRequest::$input\['payload'\]** Request data.
  
@@ -317,7 +315,11 @@ For **GET** method, the **$\_GET** is the payload.
 *    **HttpRequest::$input\['insertIdParams'\]** Insert ids Data as per configuration.
  
 For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertIdParams contains the insert ids of the executed INSERT queries.
+
+*    **HttpRequest::$input\['hierarchyData'\]** Hierarchy data.
  
+For **GET** method, one can use previous query results if configured to use hierarchy.
+
 
 ## Hierarchy
  
@@ -364,19 +366,18 @@ In this file one can confirm how previous select data is used recursively in sub
 *   Request - 1: Single object.
      
 ```
-    {"Payload":
+    Payload = 
       {
         "name":"name",
         "module1":{
           "subname":"subname",
         }
       }
-    }
 ```
 *   Request - 2: Array of module1
      
 ```
-    {"Payload":
+    Payload = 
       {
         "name":"name",
         "module1":[
@@ -389,12 +390,11 @@ In this file one can confirm how previous select data is used recursively in sub
           ...
         ]
       }
-    }
 ```
 *   Request - 3: Array of payload and arrays of module1
      
 ```
-    {"Payload":
+    Payload = 
       [
         {
           "name":"name1",
@@ -422,7 +422,6 @@ In this file one can confirm how previous select data is used recursively in sub
         },
         ...
       ]
-    }
 ```
 ## Route ending with /config
  
