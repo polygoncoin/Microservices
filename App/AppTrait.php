@@ -55,7 +55,7 @@ trait AppTrait
                         list($type, $typeKey) = $config;
                         break;
                 }
-                if ($required && $type === ['payload']) {
+                if ($required && $type === 'payload') {
                     if (!in_array($typeKey, $requiredFields['__required__'])) {
                         $requiredFields['__required__'][] = $typeKey;
                     }
@@ -159,9 +159,9 @@ trait AppTrait
         }
 
         // Check __WHERE__
-        if (isset($sqlDetails['__WHERE__']) && count($sqlDetails['__WHERE__']) !== 0) {
+        if (empty($errors) && isset($sqlDetails['__WHERE__']) && count($sqlDetails['__WHERE__']) !== 0) {
             list($sqlWhereParams, $werrors) = $this->getSqlParams($sqlDetails['__WHERE__']);
-            if (empty($werrors) && empty($errors)) {
+            if (empty($werrors)) {
                 if(!empty($sqlWhereParams)) {
                     // __WHERE__ not compulsary in query
                     $wfound = strpos($sql, '__WHERE__') !== false;

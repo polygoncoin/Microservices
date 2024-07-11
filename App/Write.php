@@ -169,11 +169,10 @@ class Write
                 $this->jsonEncode->startObject();
             }
             if ($this->db->beganTransaction === true) {
-                $response['Success'] = true;
                 $this->db->commit();
             } else {
+                HttpResponse::$httpStatus = 400;
                 $this->jsonEncode->addKeyValue('Payload', $payload);
-                $response['Error'] = true;
             }
             $this->jsonEncode->addKeyValue('Response', $response);
             if (HttpRequest::$input['payloadType'] === 'Array') {
@@ -260,7 +259,7 @@ class Write
                             $_payload = &$payload[$module];
                             $_required = &$required[$module] ?? [];
                         } else {
-                            HttpResponse::return4xx(404, "Invalid payload: Module '{$module}' not supported.");
+                            HttpResponse::return4xx(404, "Invalid payload: Module '{$module}' missing.");
                             return;
                         }
                     } else {
