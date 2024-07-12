@@ -294,12 +294,6 @@ class Write
     private function isValidPayload($writeSqlConfig)
     {
         $return = true;
-        if (Constants::$REQUEST_METHOD === Constants::$PATCH) {
-            if (!($return = $this->isValidPatch())) {
-                return $return;
-            }
-        }
-    
         $isValidData = true;
         if (isset($writeSqlConfig['validate'])) {
             list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
@@ -311,25 +305,6 @@ class Write
                 $this->jsonEncode->endObject();
                 $return = false;
             }
-        }
-        return $return;
-    }
-
-    /**
-     * Check if the request is a valid PATCH request
-     *
-     * @return boolean
-     */
-    private function isValidPatch()
-    {
-        $return = true;
-        if (count(HttpRequest::$input['payload']) !== 1) {
-            HttpResponse::$httpStatus = 400;
-            $this->jsonEncode->startObject();
-            $this->jsonEncode->addKeyValue('Payload', HttpRequest::$input['payload']);
-            $this->jsonEncode->addKeyValue('Error', 'Invalid payload: PATCH can update only single field');
-            $this->jsonEncode->endObject();
-            $return = false;
         }
         return $return;
     }

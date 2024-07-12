@@ -64,6 +64,6 @@ class Module1
      */
     private function getLocation()
     {
-        return Constants::$DOC_ROOT . '/Dropbox/' . 'test.txt';
+        return Constants::$DOC_ROOT . '/Dropbox/' . 'test.png';
     }
 }
