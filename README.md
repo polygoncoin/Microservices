@@ -44,15 +44,19 @@ Below are the configuration settings details in .env
  
 *    **Config** Basic Microservices configuration folder
  
-*    **public\_html** Microservices doc root folder
- 
-*    **ThirdParty** Folder containing Classes to perform HTTP request via cURL to the Third Parties
- 
-*    **Crons** Crons classes folder
- 
+*    **Crons** Contains classes for cron API's
+
+*    **Custom** Contains classes for custom API's
+
 *    **Dropbox** Folder for uploaded files.
  
-*    **Validation** Folder for validation code files.
+*    **public\_html** Microservices doc root folder
+ 
+*    **ThirdParty** Contains classes for third-party API's
+
+*    **Upload** Contains classes for upload file API's
+  
+*    **Validation** Contains validation classes.
  
 
 ## Route
@@ -205,13 +209,14 @@ Below are the configuration settings details in .env
     <?php
     return [
       'query' => "INSERT {$Env::$globalDB}.TableName SET SET WHERE WHERE ",
-      // Only fields present in CONFIG shall be supported. Both Required and Optional
+      // Fields present in below __CONFIG__ shall be supported for DB operation. Both Required and Optional
       '__CONFIG__' => [// Set your payload/uriParams fields config here.
         ['payload', 'group_id', Constants::$REQUIRED], // Required field
         ['payload', 'password'], // Optional field
         ['payload', 'client_id'], // Optional field
       ],
-      '__SET__' => [//column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}],
+      '__SET__' => [
+        //column => [uriParams|payload|readOnlySession|insertIdParams|{custom}|function, key|{value}|function()],
         'group_id' => ['payload', 'group_id'],
         'password' => ['function', function() {
           return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);
