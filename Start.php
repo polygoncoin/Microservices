@@ -52,7 +52,7 @@ try {
 
     if ($Microservices->init()) {
         $Microservices->process();
-        echo $Microservices->outputResults();
+        $Microservices->outputResults();
     }
 } catch (\Exception $e) {
     $arr = [

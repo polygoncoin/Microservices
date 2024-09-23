@@ -251,9 +251,8 @@ class JsonEncode
     public function streamJson()
     {
         rewind($this->tempStream);
-        $json = stream_get_contents($this->tempStream);
-        fclose($this->tempStream);
-        return $json;
+        $outputStream = fopen('php://output', 'wb');
+        stream_copy_to_stream($this->tempStream, $outputStream);
     }
 
     /** 

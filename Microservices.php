@@ -219,7 +219,7 @@ class Microservices
      */
     public function outputResults()
     {
-        return $this->c->httpResponse->jsonEncode->streamJson();
+        $this->c->httpResponse->jsonEncode->streamJson();
     }
 
     /**
