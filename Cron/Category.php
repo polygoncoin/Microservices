@@ -2,11 +2,8 @@
 namespace Microservices\Cron;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 
 /**
  * Class for a particular cron.
@@ -26,13 +23,30 @@ use Microservices\App\Servers\Database\Database;
 class Category
 {
     /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
+
+    /**
      * Initialize
      *
      * @return boolean
      */
     public function init()
     {
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -48,7 +62,7 @@ class Category
 
         // End the calls with json response with jsonEncode Object.
         $this->endProcess();
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -58,7 +72,6 @@ class Category
      */
     private function endProcess()
     {
-        HttpResponse::return2xx(200, 'message as desired.');
-        return;
+        throw new \Exception('message as desired.', 200);
     }
 }

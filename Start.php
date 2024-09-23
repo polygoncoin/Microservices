@@ -1,7 +1,6 @@
 <?php
 namespace Microservices;
 
-use Microservices\App\HttpResponse;
 use Microservices\Microservices;
 
 /**
@@ -18,10 +17,11 @@ class Autoload
 {
     static public function register($className)
     {
+        $className = substr($className, strlen(__NAMESPACE__));
         $className = str_replace("\\", DIRECTORY_SEPARATOR, $className);
-        $file = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . $className . '.php';
+        $file = __DIR__ . $className . '.php';
         if (!file_exists($file)) {
-            HttpResponse::return5xx(501, "File '{$className}' missing");
+            echo PHP_EOL . "File '{$file}' missing" . PHP_EOL;
         }
         require $file;
     }
@@ -29,9 +29,35 @@ class Autoload
 
 spl_autoload_register(__NAMESPACE__ . '\Autoload::register');
 
-// Code to Initialize / Start the service.
-$Microservices = new Microservices();
-if ($Microservices->init()) {
-    $Microservices->process();
+$inputs = [];
+
+$inputs['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
+$inputs['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $inputs['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
-$Microservices->outputResults();
+$inputs['get'] = &$_GET;
+
+// Code to Initialize / Start the service.
+try {
+    $Microservices = new Microservices($inputs);
+    
+    // Setting CORS
+    foreach ($Microservices->getCors() as $k => $v) {
+        header("{$k}: {$v}");
+    }
+    if ($inputs['server']['request_method'] == 'OPTIONS') {
+        exit();
+    }
+
+    if ($Microservices->init()) {
+        $Microservices->process();
+        echo $services->outputResults();
+    }
+} catch (\Exception $e) {
+    $arr = [
+        'Status' => $e->getCode(),
+        'Message' => $e->getMessage()
+    ];
+    echo json_encode($arr);
+}

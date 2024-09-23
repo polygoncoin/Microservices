@@ -2,9 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\Logs;
-use Microservices\App\HttpRequest;
 
 /**
  * Creates JSON
@@ -22,14 +21,14 @@ use Microservices\App\HttpRequest;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class JsonEncoder
+class JsonEncode
 {
     /**
      * Temporary Stream
      *
-     * @var string
+     * @var object
      */
-    private $tempStream = '';
+    private $tempStream = null;
 
     /**
      * Array of JsonEncoderObject objects
@@ -41,19 +40,38 @@ class JsonEncoder
     /**
      * Current JsonEncoderObject object
      *
-     * @var object
+     * @var Microservices\App\JsonEncoderObject
      */
     private $currentObject = null;
 
     /**
-     * JsonEncode constructor
+     * Microservices Request Details
+     * 
+     * @var array
      */
-    public function __construct()
+    public $inputs = null;
+
+    /**
+     * JsonEncode constructor
+     *
+     * @param array $inputs
+     */
+    public function __construct(&$inputs)
     {
-        if (Constants::$REQUEST_METHOD === 'GET') {
-            $this->tempStream = fopen("php://temp", "w+b");
+        $this->inputs = &$inputs;
+    }
+
+    /**
+     * Initialize
+     *
+     * @return boolean
+     */
+    public function init()
+    {
+        if ($this->inputs['server']['request_method'] === 'GET') {
+            $this->tempStream = fopen("php://temp", "rw+b");
         } else {
-            $this->tempStream = fopen("php://memory", "w+b");
+            $this->tempStream = fopen("php://memory", "rw+b");
         }
     }
 
@@ -112,7 +130,7 @@ class JsonEncoder
     public function addValue($value)
     {
         if ($this->currentObject->mode !== 'Array') {
-            throw new Exception('Mode should be Array');
+            throw new \Exception('Mode should be Array', 501);
         }
         $this->encode($value);
     }
@@ -127,7 +145,7 @@ class JsonEncoder
     public function addKeyValue($key, $value)
     {
         if ($this->currentObject->mode !== 'Object') {
-            throw new Exception('Mode should be Object');
+            throw new \Exception('Mode should be Object', 501);
         }
         $this->write($this->currentObject->comma);
         $this->write($this->escape($key) . ':');
@@ -179,7 +197,7 @@ class JsonEncoder
     {
         if ($this->currentObject) {
             if ($this->currentObject->mode === 'Object' && is_null($key)) {
-                throw new Exception('Object inside an Object should be supported with a Key');
+                throw new \Exception('Object inside an Object should be supported with a Key', 501);
             }
             $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
@@ -207,21 +225,6 @@ class JsonEncoder
     }
 
     /**
-     * Stream Json String.
-     *
-     * @return void
-     */
-    public function streamJson()
-    {
-        // rewind the temp stream.
-        rewind($this->tempStream);
-        // stream the temp to output
-        $outputStream = fopen("php://output", "w+b");
-        stream_copy_to_stream($this->tempStream, $outputStream);
-        fclose($outputStream);
-    }
-
-    /**
      * Checks json was properly closed.
      *
      * @return void
@@ -240,13 +243,24 @@ class JsonEncoder
         }
     }
 
+    /**
+     * Stream Json String.
+     *
+     * @return void
+     */
+    public function streamJson()
+    {
+        rewind($this->tempStream);
+        $json = stream_get_contents($this->tempStream);
+        fclose($this->tempStream);
+        return $json;
+    }
+
     /** 
      * destruct functipn 
      */ 
     public function __destruct() 
-    { 
-        $this->end();
-        fclose($this->tempStream);
+    {
     }
 }
 
@@ -275,48 +289,5 @@ class JsonEncoderObject
     public function __construct($mode)
     {
         $this->mode = $mode;
-    }
-}
-
-/**
- * Loading JSON class
- *
- * This class is built to handle JSON Object.
- *
- * @category   Json Encoder Object handler
- * @package    Microservices
- * @author     Ramesh Narayan Jangid
- * @copyright  Ramesh Narayan Jangid
- * @version    Release: @1.0.0@
- * @since      Class available since Release 1.0.0
- */
-class JsonEncode
-{
-    /**
-     * JSON generator object
-     */
-    static public $jsonEncoderObj = null;
-
-    /**
-     * Initialize
-     *
-     * @return void
-     */
-    static public function init()
-    {
-        self::$jsonEncoderObj = new JsonEncoder();
-    }
-
-    /**
-     * JSON generator object
-     *
-     * @return object
-     */
-    static public function getObject()
-    {
-        if (is_null(self::$jsonEncoderObj)) {
-            self::init();
-        }
-        return self::$jsonEncoderObj;
     }
 }

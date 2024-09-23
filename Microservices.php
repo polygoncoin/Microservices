@@ -2,13 +2,14 @@
 namespace Microservices;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpResponse;
+use Microservices\App\Logs;
 
 /**
  * Microservices Class
  *
- * Class to start Microservices.
+ * Class to start Services.
  *
  * @category   Microservices
  * @package    Microservices
@@ -30,28 +31,33 @@ class Microservices
     private $tsEnd = null;
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Microservices Request Details
+     * 
+     * @var array
      */
-    private $jsonEncode = null;
+    public $inputs = null;
 
     /**
-     * Output Buffer
-     *
-     * @var string
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    private $outputBuffer = null;
+    private $c = null;
 
     /**
      * Constructor
+     *
+     * @param array $inputs
+     * @return void
      */
-    public function __construct()
+    public function __construct(&$inputs)
     {
-        $this->setCors();
-        ob_start();
-    }
+        $this->inputs = &$inputs;
 
+        Constants::init();
+        Env::init();
+    }
+    
     /**
      * Initialize
      *
@@ -59,15 +65,18 @@ class Microservices
      */
     public function init()
     {
-        Env::init();
+        $this->c = new Common($this->inputs);
+        $this->c->init();
+
+        if (!isset($this->inputs['get'][Constants::$ROUTE_URL_PARAM])) {
+            throw new \Exception('Missing route', 404);
+        }
 
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsStart = microtime(true);
         }
 
-        $this->jsonEncode = HttpResponse::getJsonObject();
-        
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -77,26 +86,14 @@ class Microservices
      */
     public function process()
     {
-        if (HttpResponse::isSuccess()) $this->startJson();
-        if (HttpResponse::isSuccess()) $this->startOutputJson();
-        if (HttpResponse::isSuccess()) $this->processApi();
-        if (HttpResponse::isSuccess()) $this->endOutputJson();
-        if (HttpResponse::isSuccess()) $this->addPerformance();
-        if (HttpResponse::isSuccess()) $this->endJson();
+        $this->startJson();
+        $this->startOutputJson();
+        $this->processApi();
+        $this->endOutputJson();
+        $this->addPerformance();
+        $this->endJson();
 
-        return HttpResponse::isSuccess();
-    }
-    
-    /**
-     * Set Headers
-     *
-     * @return void
-     */
-    public function setHeaders()
-    {
-        header('Content-Type: application/json;charset=utf-8');
-        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-        header('Pragma: no-cache');      
+        return true;
     }
 
     /**
@@ -106,7 +103,7 @@ class Microservices
      */
     public function startJson()
     {
-        $this->jsonEncode->startObject();
+        $this->c->httpResponse->jsonEncode->startObject();
     }
 
     /**
@@ -116,7 +113,7 @@ class Microservices
      */
     public function startOutputJson()
     {
-        $this->jsonEncode->startObject('Output');      
+        $this->c->httpResponse->jsonEncode->startObject('Output');      
     }
 
     /**
@@ -130,25 +127,23 @@ class Microservices
 
         switch (true) {
 
-            case strpos(Constants::$ROUTE, '/cron') === 0:
-                if (Constants::$REMOTE_ADDR !== Env::$cronRestrictedIp) {
-                    HttpResponse::return4xx(404, 'Source IP is not supported');
-                    return;
+            case strpos($this->c->httpRequest->ROUTE, '/cron') === 0:
+                if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
+                    throw new \Exception('Source IP is not supported', 404);
                 }
                 $class = __NAMESPACE__ . '\\App\\Cron';
                 break;
             
             // Requires HTTP auth username and password
-            case Constants::$ROUTE === '/reload':
-                $envUsername = 'HttpAuthenticationUser';
-                $envPassword = 'HttpAuthenticationPassword';
-                if ($this->httpAuthentication($envUsername, $envPassword)) {
-                    $class = __NAMESPACE__ . '\\App\\Reload';
+            case $this->c->httpRequest->ROUTE === '/reload':
+                if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
+                    throw new \Exception('Source IP is not supported', 404);
                 }
+                $class = __NAMESPACE__ . '\\App\\Reload';
                 break;
             
             // Generates auth token
-            case Constants::$ROUTE === '/login':
+            case $this->c->httpRequest->ROUTE === '/login':
                 $class = __NAMESPACE__ . '\\App\\Login';
                 break;
 
@@ -159,14 +154,18 @@ class Microservices
         }
 
         // Class found
-        if (!is_null($class)) {
-            $api = new $class();
-            if ($api->init()) {
-                $api->process();
-            }
+        try {
+            if (!is_null($class)) {
+                $api = new $class($this->c);
+                if ($api->init()) {
+                    $api->process();
+                }
+            }    
+        } catch (\Exception $e) {
+            $this->log($e);
         }
-
-        return HttpResponse::isSuccess();
+    
+        return true;
     }
 
     /**
@@ -176,8 +175,8 @@ class Microservices
      */
     public function endOutputJson()
     {
-        $this->jsonEncode->endObject();
-        $this->jsonEncode->addKeyValue('Status', HttpResponse::$httpStatus);
+        $this->c->httpResponse->jsonEncode->endObject();
+        $this->c->httpResponse->jsonEncode->addKeyValue('Status', $this->c->httpResponse->httpStatus);
     }
 
     /**
@@ -192,13 +191,13 @@ class Microservices
             $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
             $memory = ceil(memory_get_peak_usage()/1000);
         
-            $this->jsonEncode->startObject('Stats');
-            $this->jsonEncode->startObject('Performance');
-            $this->jsonEncode->addKeyValue('total-time-taken', "{$time} ms");
-            $this->jsonEncode->addKeyValue('peak-memory-usage', "{$memory} KB");
-            $this->jsonEncode->endObject();
-            $this->jsonEncode->addKeyValue('getrusage', getrusage());
-            $this->jsonEncode->endObject();
+            $this->c->httpResponse->jsonEncode->startObject('Stats');
+            $this->c->httpResponse->jsonEncode->startObject('Performance');
+            $this->c->httpResponse->jsonEncode->addKeyValue('total-time-taken', "{$time} ms");
+            $this->c->httpResponse->jsonEncode->addKeyValue('peak-memory-usage', "{$memory} KB");
+            $this->c->httpResponse->jsonEncode->endObject();
+            $this->c->httpResponse->jsonEncode->addKeyValue('getrusage', getrusage());
+            $this->c->httpResponse->jsonEncode->endObject();
         }
     }
 
@@ -209,47 +208,8 @@ class Microservices
      */
     public function endJson()
     {
-        $this->jsonEncode->endObject();
-        $this->jsonEncode->end();
-    }
-
-    /**
-     * End Json
-     *
-     * @return void
-     */
-    public function checkOutputBuffer()
-    {
-        $outputBuffer = ob_get_clean();
-
-        if (!empty($outputBuffer) && Env::$ENVIRONMENT === Constants::$PRODUCTION) {
-            $this->outputBuffer = $outputBuffer;
-
-            $log = [
-                'datetime' => date('Y-m-d H:i:s'),
-                'input' => HttpRequest::$input,
-                'error' => $str
-            ];
-            Logs::log('error', json_encode($log));
-
-            HttpResponse::return5xx(501, 'Error: Facing server side error with API.');
-            return;
-        }
-    }
-
-    /**
-     * End Json
-     *
-     * @return void
-     */
-    public function streamJson()
-    {
-        $this->setHeaders();
-        if (!is_null(HttpResponse::$httpResponse)) {
-            echo HttpResponse::$httpResponse;
-        } else {
-            $this->jsonEncode->streamJson();
-        }    
+        $this->c->httpResponse->jsonEncode->endObject();
+        $this->c->httpResponse->jsonEncode->end();
     }
 
     /**
@@ -259,13 +219,7 @@ class Microservices
      */
     public function outputResults()
     {
-        if (!is_null($this->outputBuffer)) {
-            echo $this->outputBuffer;
-        } else {
-            $this->streamJson();
-        }
-
-        $this->jsonEncode = null;
+        return $this->c->httpResponse->jsonEncode->streamJson();
     }
 
     /**
@@ -273,65 +227,43 @@ class Microservices
      * 
      * @return void
      */
-    private function setCors()
+    public function getCors()
     {
-        // Allow from any origin
-        if (isset($_SERVER['HTTP_ORIGIN'])) {
-            // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
-            // you want to allow, and if so:
-            header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-            header('Access-Control-Allow-Credentials: true');
-            header('Access-Control-Max-Age: 86400'); // cache for 1 day
-        }
-        
+        $headers = [];
+        $headers['Access-Control-Allow-Origin'] = '*';
+        $headers['Access-Control-Allow-Headers'] = '*';
+
         // Access-Control headers are received during OPTIONS requests
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            
-            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
-                // may also be using PUT, PATCH, HEAD etc
-                header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-            
-            if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
-                header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-        
-            exit(0);
+        if ($this->inputs['server']['request_method'] == 'OPTIONS') {
+            // may also be using PUT, PATCH, HEAD etc
+            $headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+        } else {
+            // JSON headers
+            $headers['Content-Type'] = 'application/json;charset=utf-8';
+            $headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
+            $headers['Pragma'] = 'no-cache';
         }
+
+        return $headers;
     }
 
     /**
-     * HTTP Authentication
+     * Log error
      *
-     * @param string $envUsername env variable to match username
-     * @param string $envPassword env variable to match password
-     * @return boolean
+     * @param object $e Exception
+     * @return void
      */
-    private function httpAuthentication($envUsername, $envPassword)
+    private function log($e)
     {
-        // Check request not from proxy.
-        if (
-            !isset($_SERVER['REMOTE_ADDR']) ||
-            $_SERVER['REMOTE_ADDR'] !== getenv('HttpAuthenticationRestrictedIp')
-        ) {
-            http_response_code(404);
-        }
-        if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW'])) {
-            header('WWW-Authenticate: Basic realm="Test Authentication System"');
-            header('HTTP/1.0 401 Unauthorized');
-            echo "You must enter a valid login ID and password to access this resource\n";
-            return false;
-        } else {
-            $username = $_SERVER['PHP_AUTH_USER'];
-            $password = $_SERVER['PHP_AUTH_PW'];
-    
-            $validated = ($username === getenv($envUsername)) && ($password === getenv($envPassword));
-    
-            if (!$validated) {
-                header('WWW-Authenticate: Basic realm="My Realm"');
-                header('HTTP/1.0 401 Unauthorized');
-                die ("Not authorized");
-            } else {
-                return true;
-            }
-        }
+        $log = [
+            'datetime' => date('Y-m-d H:i:s'),
+            'input' => $this->c->httpRequest->input,
+            "code" => $e->getCode(),
+            "msg" => $e->getMessage(),
+            "e" => json_encode($e)
+        ];
+        (new Logs)->log('error', json_encode($log));
+
+        throw new \Exception($e->getMessage(), $e->getCode());
     }
 }

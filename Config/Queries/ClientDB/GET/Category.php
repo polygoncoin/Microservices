@@ -1,13 +1,11 @@
 <?php
 namespace Microservices\Config\Queries\ClientDB\GET;
 
-use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-
 //return represents root for hierarchyData
+use Microservices\App\Constants;
+
 return [
-    'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
+    'query' => "SELECT * FROM `category` WHERE __WHERE__",
     '__WHERE__' => [
         'is_deleted' => ['custom', 'No'],
         'parent_id' => ['custom', 0]
@@ -15,7 +13,7 @@ return [
     'mode' => 'multipleRowFormat',//Multiple rows returned.
     'subQuery' => [
         'sub' => [
-            'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
+            'query' => "SELECT * FROM `category` WHERE __WHERE__",
             '__WHERE__' => [
                 'is_deleted' => ['custom', 'No'],
                 'parent_id' => ['hierarchyData', 'return:id'],
@@ -23,7 +21,7 @@ return [
             'mode' => 'multipleRowFormat',//Multiple rows returned.
             'subQuery' => [
                 'subsub' => [
-                    'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
+                    'query' => "SELECT * FROM `category` WHERE __WHERE__",
                     '__WHERE__' => [
                         'is_deleted' => ['custom', 'No'],
                         'parent_id' => ['hierarchyData', 'return:sub:id'],
@@ -31,7 +29,7 @@ return [
                     'mode' => 'multipleRowFormat',//Multiple rows returned.
                     'subQuery' => [
                         'subsubsub' => [
-                            'query' => "SELECT * FROM `{$Env::$clientDB}`.`category` WHERE __WHERE__",
+                            'query' => "SELECT * FROM `category` WHERE __WHERE__",
                             '__WHERE__' => [
                                 'is_deleted' => ['custom', 'No'],
                                 'parent_id' => ['hierarchyData', 'return:sub:subsub:id'],//data:address:id
@@ -43,5 +41,6 @@ return [
             ],
         ]
     ],
-    'useHierarchy' => true
+    'useHierarchy' => true,
+    'fetchFrom' => 'Master',
 ];

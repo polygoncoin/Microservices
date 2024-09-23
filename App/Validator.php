@@ -2,11 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
-use Microservices\App\Servers\Database\Database;
 use Microservices\Validation\ClientValidator;
 use Microservices\Validation\GlobalValidator;
 
@@ -29,12 +26,26 @@ class Validator
      */
     private $v = null;
 
-    public function __construct()
+    /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
     {
-        if (Env::$dbDatabase === Env::$defaultDbDatabase) {
-            $this->v = new GlobalValidator();
+        $this->c = &$common;
+
+        if ($this->c->httpRequest->db->database === Env::$globalDatabase) {
+            $this->v = new GlobalValidator($this->c);
         } else {
-            $this->v = new ClientValidator();
+            $this->v = new ClientValidator($this->c);
         }
     }
 

@@ -2,12 +2,8 @@
 namespace Microservices\Custom;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 
 /**
  * Class to initialize api HTTP request
@@ -24,13 +20,30 @@ use Microservices\App\Servers\Database\Database;
 class CustomApi
 {
     /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
+
+    /**
      * Initialize
      *
      * @return boolean
      */
     public function init()
     {
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -40,12 +53,12 @@ class CustomApi
      */
     public function process()
     {
-        $class = __NAMESPACE__ . '\\' . ucfirst(HttpRequest::$routeElements[1]);
-        $api = new $class();
+        $class = __NAMESPACE__ . '\\' . ucfirst($this->c->httpRequest->routeElements[1]);
+        $api = new $class($this->c);
         if ($api->init()) {
             $api->process();
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 }

@@ -4,35 +4,36 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\JsonEncode;
+use Microservices\App\HttpRequest;
+use Microservices\App\HttpResponse;
 
 /**
- * HTTP Error Response
+ * Common Class
  *
- * This class is built to handle HTTP error response.
+ * Common objects class.
  *
- * @category   HttpError
+ * @category   Common
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class HttpResponse
+class Common
 {
     /**
-     * HTTP Status
-     *
-     * @var integer
+     * Microservices HTTP Request
+     * 
+     * @var Microservices\App\HttpRequest
      */
-    public $httpStatus = 200;
+    public $httpRequest = null;
 
     /**
-     * Json Encode Object
-     *
-     * @var Microservices\App\JsonEncode
+     * Microservices HTTP Response
+     * 
+     * @var Microservices\App\HttpResponse
      */
-    public $jsonEncode = null;
+    public $httpResponse = null;
 
     /**
      * Microservices Request Details
@@ -58,7 +59,10 @@ class HttpResponse
      */
     public function init()
     {
-        $this->jsonEncode = new JsonEncode($this->inputs);
-        $this->jsonEncode->init();
+        $this->httpRequest = new HttpRequest($this->inputs);
+        $this->httpRequest->init();
+
+        $this->httpResponse = new HttpResponse($this->inputs);
+        $this->httpResponse->init();
     }
 }

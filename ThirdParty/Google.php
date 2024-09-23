@@ -2,9 +2,8 @@
 namespace Microservices\ThirdParty;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
 
 /**
  * Class for third party - Google.
@@ -24,11 +23,21 @@ use Microservices\App\HttpResponse;
 class Google
 {
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    private $jsonEncode = null;
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -37,8 +46,7 @@ class Google
      */
     public function init()
     {
-        $this->jsonEncode = HttpResponse::getJsonObject();
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -58,14 +66,14 @@ class Google
         curl_close($curl_handle);
         if (empty($output)){
             $output = ['Error' => 'Nothing returned by ipify'];
-            HttpResponse::$httpStatus = 501;
+            $this->c->httpResponse->httpStatus = 501;
         } else {
             $output = json_decode($output, true);
         }
         // End the calls with json response with jsonEncode Object.
         $this->endProcess($output);
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -76,6 +84,6 @@ class Google
      */
     private function endProcess($output)
     {
-        $this->jsonEncode->addKeyValue('Results', $output);
+        $this->c->httpResponse->jsonEncode->addKeyValue('Results', $output);
     }
 }

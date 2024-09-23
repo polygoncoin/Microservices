@@ -2,12 +2,10 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpResponse;
 use Microservices\App\JsonDecode;
-use Microservices\App\Logs;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 
 /*
  * Class handling details of HTTP request
@@ -24,69 +22,185 @@ use Microservices\App\Servers\Database\Database;
 class HttpRequest
 {
     /**
-     * Cahe Object
-     *
-     * @var string
-     */
-    static public $cache = null;
-
-    /**
      * Raw route / Configured Uri
      *
      * @var string
      */
-    static public $configuredUri = '';
+    public $configuredUri = '';
 
     /**
      * Array containing details of received route elements
      *
      * @var array
      */
-    static public $routeElements = [];
+    public $routeElements = [];
 
     /**
      * Locaton of File containing code for route
      *
      * @var string
      */
-    static public $__file__ = null;
+    public $__file__ = null;
 
     /**
      * Inputs detials of a request
      *
      * @var array
      */
-    static public $input = null;
+    public $input = null;
 
     /**
      * Logged-in User ID
      *
      * @var integer
      */
-    static public $userId = null;
+    public $userId = null;
 
     /**
      * Logged-in user Group ID
      *
      * @var integer
      */
-    static public $groupId = null;
+    public $groupId = null;
+    
+    /**
+     * Group Info
+     *
+     * @var array
+     */
+    public $groupInfoArr = null;
 
+    /**
+     * Json Decode Object
+     *
+     * @var Microservices\App\Servers\Cache\Cache
+     */
+    public $cache = null;
+
+    /**
+     * Json Decode Object
+     *
+     * @var Microservices\App\Servers\Database\Database
+     */
+    public $db = null;
+
+    /**
+     * Json Decode Object
+     *
+     * @var Microservices\App\JsonDecode
+     */
+    public $jsonDecode = null;
+
+    /**
+     * Details var from $request.
+     */
+    public $REQUEST_METHOD = null;
+    public $HTTP_AUTHORIZATION = null;
+    public $REMOTE_ADDR = null;
+    public $ROUTE = null;
+
+    /**
+     * Global DB
+     */
+    public $globalDB = null;
+
+    /**
+     * Global DB
+     */
+    public $clientDB = null;
+    
+    /**
+     * Microservices Request Details
+     * 
+     * @var array
+     */
+    public $inputs = null;
+
+    /**
+     * Constructor
+     *
+     * @param array $inputs
+     */
+    public function __construct(&$inputs)
+    {
+        $this->inputs = &$inputs;
+        $this->globalDB = Env::$globalDatabase;
+    }
+    
     /**
      * Initialize
      *
+     * @return boolean
+     */
+    public function init()
+    {
+        $this->REQUEST_METHOD = $this->inputs['server']['request_method'];
+        if (isset($this->inputs['header']['authorization'])) {
+            $this->HTTP_AUTHORIZATION = $this->inputs['header']['authorization'];
+        }
+        $this->REMOTE_ADDR = $this->inputs['server']['remote_addr'];
+        $this->ROUTE = '/' . trim($this->inputs['get'][Constants::$ROUTE_URL_PARAM], '/');
+        
+        $this->jsonDecode = new JsonDecode($this->inputs);
+        $this->jsonDecode->init();
+
+        $this->setCache(
+            getenv('cacheType'),
+            getenv('cacheHostname'),
+            getenv('cachePort'),
+            getenv('cacheUsername'),
+            getenv('cachePassword'),
+            getenv('cacheDatabase')
+        );
+    }
+
+    /**
+     * Set Cache
+     *
      * @return void
      */
-    static public function init()
+    public function setCache(
+        $cacheType,
+        $cacheHostname,
+        $cachePort,
+        $cacheUsername,
+        $cachePassword,
+        $cacheDatabase
+    )
     {
-        Env::$cacheType = getenv('cacheType');
-        Env::$cacheHostname = getenv('cacheHostname');
-        Env::$cachePort = getenv('cachePort');
-        Env::$cacheUsername = getenv('cacheUsername');
-        Env::$cachePassword = getenv('cachePassword');
-        Env::$cacheDatabase = getenv('cacheDatabase');
-    
-        self::$cache = Cache::getObject();
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\'.$cacheType;
+        $this->cache = new $cacheNS(
+            $cacheHostname,
+            $cachePort,
+            $cacheUsername,
+            $cachePassword,
+            $cacheDatabase
+        );
+    }
+
+    /**
+     * Set DB
+     *
+     * @return void
+     */
+    public function setDb(
+        $dbType,
+        $dbHostname,
+        $dbPort,
+        $dbUsername,
+        $dbPassword,
+        $dbDatabase
+    )
+    {
+        $dbNS = 'Microservices\\App\\Servers\\Database\\'.$dbType;
+        $this->db = new $dbNS(
+            $dbHostname,
+            $dbPort,
+            $dbUsername,
+            $dbPassword,
+            $dbDatabase
+        );
+        $this->clientDB = $this->db->database;
     }
 
     /**
@@ -94,27 +208,24 @@ class HttpRequest
      *
      * @return void
      */
-    static public function loadToken()
+    public function loadToken()
     {
-        if (!is_null(Constants::$HTTP_AUTHORIZATION) && preg_match('/Bearer\s(\S+)/', Constants::$HTTP_AUTHORIZATION, $matches)) {
-            self::$input['token'] = $matches[1];
-            $token = self::$input['token'];
-            if (!self::$cache->cacheExists($token)) {
-                HttpResponse::return5xx(501, 'Token expired');
-                return;
+        if (!is_null($this->HTTP_AUTHORIZATION) && preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)) {
+            $this->input['token'] = $matches[1];
+            $token = $this->input['token'];
+            if (!$this->cache->cacheExists($token)) {
+                throw new \Exception('Token expired', 400);
             }
-            self::$input['readOnlySession'] = json_decode(self::$cache->getCache($token), true);
-            self::$userId = self::$input['readOnlySession']['user_id'];
-            self::$groupId = self::$input['readOnlySession']['group_id'];    
-            self::checkRemoteIp();
+            $this->input['readOnlySession'] = json_decode($this->cache->getCache($token), true);
+            $this->userId = $this->input['readOnlySession']['user_id'];
+            $this->groupId = $this->input['readOnlySession']['group_id'];    
+            $this->checkRemoteIp();
         } else {
-            HttpResponse::return4xx(404, 'Missing token in authorization header');
-            return;
+            throw new \Exception('Token missing', 400);
         }
 
-        if (empty(self::$input['token'])) {
-            HttpResponse::return4xx(404, 'Missing token');
-            return;
+        if (empty($this->input['token'])) {
+            throw new \Exception('Token missing', 400);
         }
     }
 
@@ -123,28 +234,58 @@ class HttpRequest
      *
      * @return void
      */
-    static public function initSession()
+    public function initSession()
     {
-        if (empty(self::$input['readOnlySession']['user_id']) || empty(self::$input['readOnlySession']['group_id'])) {
-            HttpResponse::return4xx(404, 'Invalid session');
-            return;
+        if (empty($this->input['readOnlySession']['user_id']) || empty($this->input['readOnlySession']['group_id'])) {
+            throw new \Exception('Invalid session', 501);
         }
 
-        $key = 'group:'.self::$groupId;
-        if (!self::$cache->cacheExists($key)) {
-            HttpResponse::return5xx(501, "Cache '{$key}' missing.");
-            return;
+        $key = 'group:'.$this->groupId;
+        if (!$this->cache->cacheExists($key)) {
+            throw new \Exception("Cache '{$key}' missing.", 501);
         }
 
-        $groupInfoArr = json_decode(self::$cache->getCache($key), true);
+        $this->groupInfoArr = json_decode($this->cache->getCache($key), true);
+    }
+
+
+    /**
+     * Init server connection based on $fetchFrom
+     *
+     * @param string $fetchFrom Master/Slave
+     * @return void
+     */
+    public function setConnection($fetchFrom)
+    {
+        if (is_null($this->groupInfoArr)) {
+            throw new \Exception('Yet to set connection params', 501);
+        }
 
         // Set Database credentials
-        Env::$dbType = getenv($groupInfoArr['db_server_type']);
-        Env::$dbHostname = getenv($groupInfoArr['db_hostname']);
-        Env::$dbPort = getenv($groupInfoArr['db_port']);
-        Env::$dbUsername = getenv($groupInfoArr['db_username']);
-        Env::$dbPassword = getenv($groupInfoArr['db_password']);
-        Env::$dbDatabase = getenv($groupInfoArr['db_database']);
+        switch ($fetchFrom) {
+            case 'Master':
+                $this->setDb(
+                    getenv($this->groupInfoArr['master_db_server_type']),
+                    getenv($this->groupInfoArr['master_db_hostname']),
+                    getenv($this->groupInfoArr['master_db_port']),
+                    getenv($this->groupInfoArr['master_db_username']),
+                    getenv($this->groupInfoArr['master_db_password']),
+                    getenv($this->groupInfoArr['master_db_database'])
+                );
+                break;
+            case 'Slave':
+                $this->setDb(
+                    getenv($this->groupInfoArr['slave_db_server_type']),
+                    getenv($this->groupInfoArr['slave_db_hostname']),
+                    getenv($this->groupInfoArr['slave_db_port']),
+                    getenv($this->groupInfoArr['slave_db_username']),
+                    getenv($this->groupInfoArr['slave_db_password']),
+                    getenv($this->groupInfoArr['slave_db_database'])
+                );
+                break;
+            default:
+                throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", 501);
+        }
     }
 
     /**
@@ -152,14 +293,14 @@ class HttpRequest
      *
      * @return void
      */
-    static public function checkRemoteIp()
+    public function checkRemoteIp()
     {
-        $groupId = self::$input['readOnlySession']['group_id'];
+        $groupId = $this->input['readOnlySession']['group_id'];
 
-        $key = 'cidr:'.self::$groupId;
-        if (self::$cache->cacheExists($key)) {
-            $cidrs = json_decode(self::$cache->getCache($key), true);
-            $ipNumber = ip2long(Constants::$REMOTE_ADDR);
+        $key = 'cidr:'.$this->groupId;
+        if ($this->cache->cacheExists($key)) {
+            $cidrs = json_decode($this->cache->getCache($key), true);
+            $ipNumber = ip2long($this->REMOTE_ADDR);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
                 if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
@@ -168,8 +309,7 @@ class HttpRequest
                 }
             }
             if (!$isValidIp) {
-                HttpResponse::return4xx(404, 'IP not supported');
-                return;
+                throw new \Exception('IP not supported', 400);
             }
         }
     }
@@ -180,25 +320,24 @@ class HttpRequest
      * @param string $routeFileLocation Route file
      * @return void
      */
-    static public function parseRoute($routeFileLocation = null)
+    public function parseRoute($routeFileLocation = null)
     {
         if (is_null($routeFileLocation)) {
-            $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . self::$input['readOnlySession']['group_name'] . '/' . Constants::$REQUEST_METHOD . 'routes.php';
+            $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . $this->input['readOnlySession']['group_name'] . '/' . $this->REQUEST_METHOD . 'routes.php';
         }
 
         if (file_exists($routeFileLocation)) {
             $routes = include $routeFileLocation;
         } else {
-            HttpResponse::return5xx(501, 'Missing route file for ' . Constants::$REQUEST_METHOD . ' method');
-            return;
+            throw new \Exception('Missing route file for ' . $this->REQUEST_METHOD . ' method', 501);
         }
 
-        self::$routeElements = explode('/', trim(Constants::$ROUTE, '/'));
-        $routeLastElementPos = count(self::$routeElements) - 1;
-        Env::$isConfigRequest = (self::$routeElements[$routeLastElementPos]) === 'config';
+        $this->routeElements = explode('/', trim($this->ROUTE, '/'));
+        $routeLastElementPos = count($this->routeElements) - 1;
+        Env::$isConfigRequest = ($this->routeElements[$routeLastElementPos]) === 'config';
         $configuredUri = [];
 
-        foreach(self::$routeElements as $key => $element) {
+        foreach($this->routeElements as $key => $element) {
             $pos = false;
             if (isset($routes[$element])) {
                 if (
@@ -212,7 +351,7 @@ class HttpRequest
                 $routes = &$routes[$element];
                 if (strpos($element, '{') === 0) {
                     $param = substr($element, 1, strpos($element, ':') - 1);
-                    self::$input['uriParams'][$param] = $element;
+                    $this->input['uriParams'][$param] = $element;
                 }
                 continue;
             } else {
@@ -221,29 +360,27 @@ class HttpRequest
                     $foundStringRoute = false;
                     foreach (array_keys($routes) as $routeElement) {
                         if (strpos($routeElement, '{') === 0) {// Is a dynamic URI element
-                            $paramName = self::processRouteElement($routeElement, $element, $foundIntRoute, $foundStringRoute);
+                            $paramName = $this->processRouteElement($routeElement, $element, $foundIntRoute, $foundStringRoute);
                         }
                     }
                     if ($foundIntRoute) {
                         $configuredUri[] = $foundIntRoute;
-                        self::$input['uriParams'][$paramName] = (int)$element;
+                        $this->input['uriParams'][$paramName] = (int)$element;
                     } else if ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        self::$input['uriParams'][$paramName] = urldecode($element);
+                        $this->input['uriParams'][$paramName] = urldecode($element);
                     } else {
-                        HttpResponse::return4xx(404, 'Route not supported');
-                        return;
+                        throw new \Exception('Route not supported', 400);
                     }
                 } else {
-                    HttpResponse::return4xx(404, 'Route not supported');
-                    return;
+                    throw new \Exception('Route not supported', 400);
                 }
                 $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
         }
 
-        self::$configuredUri = '/' . implode('/', $configuredUri);
-        self::validateConfigFile($routes);
+        $this->configuredUri = '/' . implode('/', $configuredUri);
+        $this->validateConfigFile($routes);
     }
 
     /**
@@ -255,7 +392,7 @@ class HttpRequest
      * @param string $foundStringRoute Found as String route element
      * @return string
      */
-    static private function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundStringRoute)
+    private function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundStringRoute)
     {
         // Is a dynamic URI element
         if (strpos($routeElement, '{') !== 0) {
@@ -272,19 +409,16 @@ class HttpRequest
 
         list($paramName, $paramDataType) = explode(':', $dynamicRoute);
         if (!in_array($paramDataType, ['int','string'])) {
-            HttpResponse::return5xx(501, 'Invalid datatype set for Route');
-            return;
+            throw new \Exception('Invalid datatype set for Route', 501);
         }
 
         if (count($preferredValues) > 0 && !in_array($element, $preferredValues)) {
-            HttpResponse::return4xx(404, $routeElement);
-            return;
+            throw new \Exception($routeElement, 501);
         }
 
         if ($paramDataType === 'int') {
             if (!ctype_digit($element)) {
-                HttpResponse::return4xx(404, "Invalid {$paramName}");
-                return;
+                throw new \Exception("Invalid {$paramName}", 400);
             } else {
                 $foundIntRoute = $routeElement;
             }
@@ -301,15 +435,14 @@ class HttpRequest
      * @param array $routes Routes config.
      * @return void
      */
-    static private function validateConfigFile(&$routes)
+    private function validateConfigFile(&$routes)
     {
         // Set route code file.
         if (!(isset($routes['__file__']) && ($routes['__file__'] === false || file_exists($routes['__file__'])))) {
-            HttpResponse::return5xx(501, 'Missing route configuration file for ' . Constants::$REQUEST_METHOD . ' method');
-            return;
+            throw new \Exception('Missing route configuration file for ' . $this->REQUEST_METHOD . ' method', 501);
         }
 
-        self::$__file__ = $routes['__file__'];
+        $this->__file__ = $routes['__file__'];
     }
 
     /**
@@ -317,26 +450,20 @@ class HttpRequest
      *
      * @return void
      */
-    static public function loadPayload()
+    public function loadPayload()
     {
         $payloadArr = [];
 
-        if (Constants::$REQUEST_METHOD === Constants::$GET) {
-            self::urlDecode($_GET);
+        if ($this->REQUEST_METHOD === Constants::$GET) {
+            $this->urlDecode($_GET);
             $payloadArr = !empty($_GET) ? $_GET : [];
-            self::$input['payloadType'] = 'Object';
-            self::$input['payloadArr'] = $payloadArr;
+            $this->input['payloadType'] = 'Object';
+            $this->input['payloadArr'] = $payloadArr;
         } else {
             // Load Payload
-            JsonDecode::init();
-            $jsonDecode = JsonDecode::getObject();
-            $jsonDecode->validate();
-            $jsonDecode->indexJSON();
-            if (!$jsonDecode->keysAreSet('Payload')) {
-                HttpResponse::return4xx(404, 'Invalid "Payload"');
-                return;
-            }
-            self::$input['payloadType'] = $jsonDecode->keysType('Payload');
+            $this->jsonDecode->validate();
+            $this->jsonDecode->indexJSON();
+            $this->input['payloadType'] = $this->jsonDecode->keysType();
         }
     }
 
@@ -346,7 +473,7 @@ class HttpRequest
      * @param array $arr Array vales to be decoded. Basically $_GET.
      * @return void
      */
-    static public function urlDecode(&$arr)
+    public function urlDecode(&$arr)
     {
         if (is_array($arr)) {
             foreach ($arr as $key => &$value) {
@@ -379,7 +506,7 @@ class HttpRequest
      * @param  string $cidrs IP address range in CIDR notation for check
      * @return array
      */
-    static public function cidrsIpNumber($cidrs)
+    public function cidrsIpNumber($cidrs)
     {
         $response = [];
 

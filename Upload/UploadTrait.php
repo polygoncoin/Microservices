@@ -1,7 +1,9 @@
 <?php
 namespace Microservices\Upload;
 
-use Microservices\App\HttpResponse;
+use Microservices\App\Constants;
+use Microservices\App\Common;
+use Microservices\App\Env;
 
 /**
  * Class is used for file uploads
@@ -33,6 +35,6 @@ trait UploadTrait
         fclose($dest);
         fclose($src);
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 }

@@ -1,8 +1,6 @@
 <?php
 namespace Microservices\App;
 
-use Microservices\App\Constants;
-
 /**
  * Constants
  *
@@ -17,21 +15,8 @@ use Microservices\App\Constants;
  */
 class Env
 {
-    static public $defaultDbDatabase = null;
-
-    static public $cacheType = null;
-    static public $cacheHostname = null;
-    static public $cachePort = null;
-    static public $cacheUsername = null;
-    static public $cachePassword = null;
+    static public $globalDatabase = null;
     static public $cacheDatabase = null;
-
-    static public $dbType = null;
-    static public $dbHostname = null;
-    static public $dbPort = null;
-    static public $dbUsername = null;
-    static public $dbPassword = null;
-    static public $dbDatabase = null;
 
     static public $ENVIRONMENT = null;
     static public $OUTPUT_PERFORMANCE_STATS = null;
@@ -47,25 +32,21 @@ class Env
     static public $maxPerpage = null;
     static public $cronRestrictedIp = null;
 
-    static public $globalDB = null;
-    static public $clientDB = null;
-
     static private $initialized = null;
 
     static public function init()
     {
         if (!is_null(self::$initialized)) return;
         
-        // Initialize constants
-        Constants::init();
-
         // Load .env
-        $env = parse_ini_file(Constants::$DOC_ROOT . '/.env');
+        $env = parse_ini_file(__DIR__ . '/../.env');
         foreach ($env as $key => $value) {
             putenv("{$key}={$value}");
         }
 
-        self::$defaultDbDatabase = getenv('defaultDbDatabase');
+        self::$globalDatabase = getenv('globalDatabase');
+        self::$cacheDatabase = getenv('cacheDatabase');
+
         self::$ENVIRONMENT = getenv('ENVIRONMENT');
         self::$OUTPUT_PERFORMANCE_STATS = getenv('OUTPUT_PERFORMANCE_STATS');
         self::$allowConfigRequest = getenv('allowConfigRequest');

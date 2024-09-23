@@ -3,12 +3,8 @@ namespace Microservices\App;
 
 use Microservices\App\AppTrait;
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\JsonEncode;
-use Microservices\App\JsonDecode;
-use Microservices\App\Servers\Database\Database;
 use Microservices\App\Validator;
 
 /**
@@ -28,11 +24,31 @@ class Write
     use AppTrait;
 
     /**
-     * DB Server connection object
-     *
-     * @var object
+     * Global DB
      */
-    public $db = null;
+    private $globalDB = null;
+
+    /**
+     * Global DB
+     */
+    private $clientDB = null;
+    
+    /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Validator class object
@@ -42,26 +58,16 @@ class Write
     public $validator = null;
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
-     */
-    public $jsonEncode = null;
-
-    /**
      * Initialize
      *
      * @return boolean
      */
     public function init()
     {
-        Env::$globalDB = Env::$defaultDbDatabase;
-        Env::$clientDB = Env::$dbDatabase;
+        $this->globalDB = $this->c->httpRequest->globalDB;
+        $this->clientDB = $this->c->httpRequest->clientDB;
 
-        $this->db = Database::getObject();
-        $this->jsonEncode = HttpResponse::getJsonObject();
-
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -71,12 +77,14 @@ class Write
      */
     public function process()
     {
-        $Constants = __NAMESPACE__ . '\\Constants';
-        $Env = __NAMESPACE__ . '\\Env';
-        $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
+        $Constants = __NAMESPACE__ . '\Constants';
+        $Env = __NAMESPACE__ . '\Env';
 
         // Load Queries
-        $writeSqlConfig = include HttpRequest::$__file__;
+        $writeSqlConfig = include $this->c->httpRequest->__file__;
+
+        // Set Server mode to execute query on - Read / Write Server.
+        $this->c->httpRequest->setConnection($fetchFrom = 'Master');
 
         // Use results in where clause of sub queries recursively.
         $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
@@ -90,7 +98,7 @@ class Write
             $this->processWrite($writeSqlConfig, $useHierarchy);
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -102,20 +110,16 @@ class Write
      */
     private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         $response = [];
-        $response['Route'] = HttpRequest::$configuredUri;
+        $response['Route'] = $this->c->httpRequest->configuredUri;
         $response['Payload'] = $this->getConfigParams($writeSqlConfig, true, $useHierarchy);
 
-        $this->jsonEncode->startObject('Config');
-        $this->jsonEncode->addKeyValue('Route', $response['Route']);
-        $this->jsonEncode->addKeyValue('Payload', $response['Payload']);
-        $this->jsonEncode->endObject();
+        $this->c->httpResponse->jsonEncode->startObject('Config');
+        $this->c->httpResponse->jsonEncode->addKeyValue('Route', $response['Route']);
+        $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $response['Payload']);
+        $this->c->httpResponse->jsonEncode->endObject();
 
-        return HttpResponse::isSuccess();
+        return true;
     }    
 
     /**
@@ -127,34 +131,29 @@ class Write
      */
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         // Set required fields.
-        HttpRequest::$input['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
+        $this->c->httpRequest->input['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
-        if (HttpRequest::$input['payloadType'] === 'Object') {
-            $this->jsonEncode->startObject('Results');
+        if ($this->c->httpRequest->input['payloadType'] === 'Object') {
+            $this->c->httpResponse->jsonEncode->startObject('Results');
         } else {
-            $this->jsonEncode->startArray('Results');
+            $this->c->httpResponse->jsonEncode->startArray('Results');
         }
 
         // Perform action
-        $jsonDecode = JsonDecode::getObject();
-        $i_count = HttpRequest::$input['payloadType'] === 'Object' ? 1 : $jsonDecode->getCount('Payload');
+        $i_count = $this->c->httpRequest->input['payloadType'] === 'Object' ? 1 : $this->c->httpRequest->jsonDecode->getCount();
 
         for ($i=0; $i < $i_count; $i++) {
             if ($i === 0) {
-                if (HttpRequest::$input['payloadType'] === 'Object') {
-                    $payload = $jsonDecode->get('Payload');
+                if ($this->c->httpRequest->input['payloadType'] === 'Object') {
+                    $payload = $this->c->httpRequest->jsonDecode->get();
                 } else {
-                    $payload = $jsonDecode->get('Payload:'.$i);
+                    $payload = $this->c->httpRequest->jsonDecode->get($i);
                 }
             } else {
-                $payload = $jsonDecode->get('Payload:'.$i);
+                $payload = $this->c->httpRequest->jsonDecode->get($i);
             }
-            HttpRequest::$input['payload'] = $payload;
+            $this->c->httpRequest->input['payload'] = $payload;
             
             // Validation
             if (!$this->isValidPayload($writeSqlConfig)) {
@@ -162,31 +161,31 @@ class Write
             }
 
             // Begin DML operation
-            $this->db->begin();
+            $this->c->httpRequest->db->begin();
             $response = [];
-            $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, HttpRequest::$input['requiredArr']);
-            if (HttpRequest::$input['payloadType'] === 'Array') {
-                $this->jsonEncode->startObject();
+            $this->writeDB($writeSqlConfig, $payload, $useHierarchy, $response, $this->c->httpRequest->input['requiredArr']);
+            if ($this->c->httpRequest->input['payloadType'] === 'Array') {
+                $this->c->httpResponse->jsonEncode->startObject();
             }
-            if ($this->db->beganTransaction === true) {
-                $this->db->commit();
+            if ($this->c->httpRequest->db->beganTransaction === true) {
+                $this->c->httpRequest->db->commit();
             } else {
-                HttpResponse::$httpStatus = 400;
-                $this->jsonEncode->addKeyValue('Payload', $payload);
+                $this->c->httpResponse->httpStatus = 400;
+                $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $payload);
             }
-            $this->jsonEncode->addKeyValue('Response', $response);
-            if (HttpRequest::$input['payloadType'] === 'Array') {
-                $this->jsonEncode->endObject();
+            $this->c->httpResponse->jsonEncode->addKeyValue('Response', $response);
+            if ($this->c->httpRequest->input['payloadType'] === 'Array') {
+                $this->c->httpResponse->jsonEncode->endObject();
             }
         }
 
-        if (HttpRequest::$input['payloadType'] === 'Object') {
-            $this->jsonEncode->endObject();
+        if ($this->c->httpRequest->input['payloadType'] === 'Object') {
+            $this->c->httpResponse->jsonEncode->endObject();
         } else {
-            $this->jsonEncode->endArray();
+            $this->c->httpResponse->jsonEncode->endArray();
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }    
 
     /**
@@ -201,32 +200,28 @@ class Write
      */
     private function writeDB(&$writeSqlConfig, &$payloads, $useHierarchy, &$response, &$required)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         $isAssoc = $this->isAssoc($payloads);
 
         $counter = 0;
         foreach (($isAssoc ? [$payloads] : $payloads) as &$payload) {
-            if (!$this->db->beganTransaction) {
+            if (!$this->c->httpRequest->db->beganTransaction) {
                 $response['Error'] = 'Transaction rolled back';
                 return;
             }
-            HttpRequest::$input['payload'] = $payload;
-            HttpRequest::$input['required'] = $required['__required__'];
+            $this->c->httpRequest->input['payload'] = $payload;
+            $this->c->httpRequest->input['required'] = $required['__required__'];
     
             // Get Sql and Params
             list($sql, $sqlParams, $errors) = $this->getSqlAndParams($writeSqlConfig);
             if (!empty($errors)) {
                 $response['Error'] = $errors;
-                $this->db->rollback();
+                $this->c->httpRequest->db->rollback();
                 return;
             }
 
             // Execute Query
-            $this->db->execDbQuery($sql, $sqlParams);
-            if (!$this->db->beganTransaction) {
+            $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
+            if (!$this->c->httpRequest->db->beganTransaction) {
                 $response['Error'] = 'Something went wrong';
                 return;
             }
@@ -234,22 +229,22 @@ class Write
                 $response[$counter] = [];
             }
             if (isset($writeSqlConfig['insertId'])) {
-                $insertId = $this->db->lastInsertId();
+                $insertId = $this->c->httpRequest->db->lastInsertId();
                 if ($isAssoc) {
                     $response[$writeSqlConfig['insertId']] = $insertId;
                 } else {
                     $response[$counter][$writeSqlConfig['insertId']] = $insertId;
                 }
-                HttpRequest::$input['insertIdParams'][$writeSqlConfig['insertId']] = $insertId;
+                $this->c->httpRequest->input['insertIdParams'][$writeSqlConfig['insertId']] = $insertId;
             } else {
-                $affectedRows = $this->db->affectedRows();
+                $affectedRows = $this->c->httpRequest->db->affectedRows();
                 if ($isAssoc) {
                     $response['affectedRows'] = $affectedRows;
                 } else {
                     $response[$counter]['affectedRows'] = $affectedRows;
                 }
             }
-            $this->db->closeCursor();
+            $this->c->httpRequest->db->closeCursor();
 
             // subQuery for payload.
             if (isset($writeSqlConfig['subQuery'])) {
@@ -259,8 +254,7 @@ class Write
                             $_payload = &$payload[$module];
                             $_required = &$required[$module] ?? [];
                         } else {
-                            HttpResponse::return4xx(404, "Invalid payload: Module '{$module}' missing.");
-                            return;
+                            throw new \Exception("Invalid payload: Module '{$module}' missing.", 404);
                         }
                     } else {
                         $_payload = &$payload;
@@ -282,7 +276,7 @@ class Write
             }
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -298,11 +292,11 @@ class Write
         if (isset($writeSqlConfig['validate'])) {
             list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
             if ($isValidData !== true) {
-                HttpResponse::$httpStatus = 400;
-                $this->jsonEncode->startObject();
-                $this->jsonEncode->addKeyValue('Payload', HttpRequest::$input['payload']);
-                $this->jsonEncode->addKeyValue('Error', $errors);
-                $this->jsonEncode->endObject();
+                $this->c->httpResponse->httpStatus = 400;
+                $this->c->httpResponse->jsonEncode->startObject();
+                $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $this->c->httpRequest->input['payload']);
+                $this->c->httpResponse->jsonEncode->addKeyValue('Error', $errors);
+                $this->c->httpResponse->jsonEncode->endObject();
                 $return = false;
             }
         }

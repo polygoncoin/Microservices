@@ -2,7 +2,8 @@
 namespace Microservices\Config\Routes\Client001UserGroup1;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
-return include Constants::$DOC_ROOT . '/Config/Routes/Common/ClientDB/PUTroutes.php';
+return array_merge (
+    include Constants::$DOC_ROOT . '/Config/Routes/Common/ClientDB/PUTroutes.php',
+    include Constants::$DOC_ROOT . '/Config/Routes/Common/ClientDB/Custom/PUTroutes.php'
+);

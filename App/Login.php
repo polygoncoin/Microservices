@@ -2,13 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\JsonEncode;
-use Microservices\App\JsonDecode;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 
 /**
  * Login
@@ -24,20 +19,6 @@ use Microservices\App\Servers\Database\Database;
  */
 class Login
 {
-    /**
-     * Cache Server cacheection object
-     *
-     * @var object
-     */
-    private $cache = null;
-
-    /**
-     * DB Server connection object
-     *
-     * @var object
-     */
-    public $db = null;
-
     /**
      * Username for login
      *
@@ -81,18 +62,28 @@ class Login
     private $timestamp;
     
     /**
-     * JsonEncode class object
-     *
-     * @var object
-     */
-    public $jsonEncode = null;
-
-    /**
      * Payload
      *
      * @var array
      */
     private $payload = [];
+
+    /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -101,18 +92,7 @@ class Login
      */
     public function init()
     {
-        // Set Cache credentials
-        Env::$cacheType = getenv('cacheType');
-        Env::$cacheHostname = getenv('cacheHostname');
-        Env::$cachePort = getenv('cachePort');
-        Env::$cacheUsername = getenv('cacheUsername');
-        Env::$cachePassword = getenv('cachePassword');
-        Env::$cacheDatabase = getenv('cacheDatabase');
-
-        $this->cache = Cache::getObject();
-        $this->jsonEncode = HttpResponse::getJsonObject();
-
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -122,13 +102,13 @@ class Login
      */
     public function process()
     {
-        if (HttpResponse::isSuccess()) $this->performBasicCheck();
-        if (HttpResponse::isSuccess()) $this->loadUser();
-        if (HttpResponse::isSuccess()) $this->validateRequestIp();
-        if (HttpResponse::isSuccess()) $this->validatePassword();
-        if (HttpResponse::isSuccess()) $this->outputTokenDetails();
+        $this->performBasicCheck();
+        $this->loadUser();
+        $this->validateRequestIp();
+        $this->validatePassword();
+        $this->outputTokenDetails();
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -139,28 +119,20 @@ class Login
     private function performBasicCheck()
     {
         // Check request method is POST.
-        if (Constants::$REQUEST_METHOD !== Constants::$POST) {
-            HttpResponse::return4xx(404, 'Invalid request method');
-            return;
+        if ($this->c->httpRequest->REQUEST_METHOD !== Constants::$POST) {
+            throw new \Exception('Invalid request method', 404);
         }
 
-        if (Constants::$REQUEST_METHOD === Constants::$POST) {
-            JsonDecode::init();
-            $jsonDecode = JsonDecode::getObject();
-            $jsonDecode->validate();
-            $jsonDecode->indexJSON();
-            if (!$jsonDecode->keysAreSet('Payload')) {
-                HttpResponse::return4xx(404, 'Invalid "Payload"');
-                return;
-            }
-            $this->payload = $jsonDecode->get('Payload');
+        if ($this->c->httpRequest->REQUEST_METHOD === Constants::$POST) {
+            $this->c->httpRequest->jsonDecode->validate();
+            $this->c->httpRequest->jsonDecode->indexJSON();
+            $this->payload = $this->c->httpRequest->jsonDecode->get();
         }
 
         // Check for required input variables
         foreach (array('username','password') as $value) {
             if (!isset($this->payload[$value]) || empty($this->payload[$value])) {
-                HttpResponse::return4xx(404, 'Missing required parameters');
-                return;
+                throw new \Exception('Missing required parameters', 404);
             } else {
                 $this->$value = $this->payload[$value];
             }
@@ -175,17 +147,15 @@ class Login
     private function loadUser()
     {
         // Redis - one can find the userID from username.
-        if ($this->cache->cacheExists("user:{$this->payload['username']}")) {
-            $this->userDetails = json_decode($this->cache->getCache("user:{$this->payload['username']}"), true);
+        if ($this->c->httpRequest->cache->cacheExists("user:{$this->payload['username']}")) {
+            $this->userDetails = json_decode($this->c->httpRequest->cache->getCache("user:{$this->payload['username']}"), true);
             $this->userId = $this->userDetails['user_id'];
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
-                HttpResponse::return4xx(404, 'Invalid credentials');
-                return;
+                throw new \Exception('Invalid credentials', 401);
             }            
         } else {
-            HttpResponse::return4xx(404, 'Invalid credentials.');
-            return;
+            throw new \Exception('Invalid credentials.', 401);
         }
     }
 
@@ -197,9 +167,9 @@ class Login
     private function validateRequestIp()
     {
         // Redis - one can find the userID from username.
-        if ($this->cache->cacheExists("cidr:{$this->groupId}")) {
-            $cidrs = json_decode($this->cache->getCache("cidr:{$this->groupId}"), true);
-            $ipNumber = ip2long(Constants::$REMOTE_ADDR);
+        if ($this->c->httpRequest->cache->cacheExists("cidr:{$this->groupId}")) {
+            $cidrs = json_decode($this->c->httpRequest->cache->getCache("cidr:{$this->groupId}"), true);
+            $ipNumber = ip2long($this->c->httpRequest->REMOTE_ADDR);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
                 if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
@@ -208,8 +178,7 @@ class Login
                 }
             }
             if (!$isValidIp) {
-                HttpResponse::return4xx(404, 'IP not supported');
-                return;
+                throw new \Exception('IP not supported', 401);
             }
         }
     }
@@ -223,8 +192,7 @@ class Login
     {
         // get hash from cache and compares with password
         if (!password_verify($this->password, $this->userDetails['password_hash'])) {
-            HttpResponse::return4xx(404, 'Invalid credentials');
-            return;
+            throw new \Exception('Invalid credentials', 401);
         }
     }
 
@@ -238,8 +206,8 @@ class Login
         //generates a crypto-secure 64 characters long
         while (true) {
             $token = bin2hex(random_bytes(32));
-            if (!$this->cache->cacheExists($token)) {
-                $this->cache->setCache($token, '{}', Constants::$TOKEN_EXPIRY_TIME);
+            if (!$this->c->httpRequest->cache->cacheExists($token)) {
+                $this->c->httpRequest->cache->setCache($token, '{}', Constants::$TOKEN_EXPIRY_TIME);
                 $tokenDetails = ['token' => $token, 'timestamp' => $this->timestamp];
                 break;
             }
@@ -257,13 +225,13 @@ class Login
         $this->timestamp = time();
         $tokenFound = false;
 
-        if ($this->cache->cacheExists("usertoken:{$this->userId}")) {
-            $tokenDetails = json_decode($this->cache->getCache("usertoken:{$this->userId}"), true);
-            if ($this->cache->cacheExists($tokenDetails['token'])) {
+        if ($this->c->httpRequest->cache->cacheExists("usertoken:{$this->userId}")) {
+            $tokenDetails = json_decode($this->c->httpRequest->cache->getCache("usertoken:{$this->userId}"), true);
+            if ($this->c->httpRequest->cache->cacheExists($tokenDetails['token'])) {
                 if ((Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
                     $tokenFound = true;
                 } else {
-                    $this->cache->deleteCache($tokenDetails['token']);
+                    $this->c->httpRequest->cache->deleteCache($tokenDetails['token']);
                 }
             }
         }
@@ -271,8 +239,8 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
-            $this->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->c->httpRequest->cache->setCache("usertoken:{$this->userId}", json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->c->httpRequest->cache->setCache($tokenDetails['token'], json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
 
@@ -280,23 +248,23 @@ class Login
             'Token' => $tokenDetails['token'],
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp']))
         ];
-        $this->jsonEncode->addKeyValue('Results', $output);
+        $this->c->httpResponse->jsonEncode->addKeyValue('Results', $output);
     }
 
     private function updateDB($tokenDetails)
     {
-        // Set Database credentials
-        Env::$dbType = getenv('defaultDbType');
-        Env::$dbHostname = getenv('defaultDbHostname');
-        Env::$dbPort = getenv('defaultDbPort');
-        Env::$dbUsername = getenv('defaultDbUsername');
-        Env::$dbPassword = getenv('defaultDbPassword');
-        Env::$dbDatabase = getenv('defaultDbDatabase');
-
-        $this->db = Database::getObject();
-
         $userTable = Env::$users;
-        $this->db->execDbQuery("
+
+        $this->c->httpRequest->setDb(
+            getenv('globalType'),
+            getenv('globalHostname'),
+            getenv('globalPort'),
+            getenv('globalUsername'),
+            getenv('globalPassword'),
+            getenv('globalDatabase')
+        );
+
+        $this->c->httpRequest->db->execDbQuery("
         UPDATE
             `{$userTable}`
         SET

@@ -2,9 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
 use Microservices\App\Validator;
 
 /**
@@ -37,7 +36,7 @@ trait AppTrait
      * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
      * @return void
      */
-    private function getRequired(&$sqlConfig, $first = true, $useHierarchy)
+    private function getRequired(&$sqlConfig, $first, $useHierarchy)
     {
         $requiredFields = [];
         $requiredFields['__required__'] = [];
@@ -69,8 +68,7 @@ trait AppTrait
             foreach ($sqlConfig['__WHERE__'] as $var => $where) {
                 list($type, $typeKey) = $where;
                 if ($first && $type === 'hierarchyData') {
-                    HttpResponse::return5xx(501, 'Invalid config: First query can not have hierarchyData config');
-                    return;
+                    throw new \Exception('Invalid config: First query can not have hierarchyData config', 501);
                 }
                 if ($type === 'hierarchyData') {
                     $foundHierarchy = true;
@@ -78,15 +76,14 @@ trait AppTrait
                 }
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
-                HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
-                return;
+                throw new \Exception('Invalid config: missing hierarchyData', 501);
             }
         }
 
         // Check in subQuery
         if (isset($sqlConfig['subQuery'])) {
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
-                HttpResponse::return5xx(501, 'Invalid Configuration: subQuery should be an associative array');
+                throw new \Exception('Invalid Configuration: subQuery should be an associative array', 501);
                 return;
             }
             foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
@@ -116,10 +113,10 @@ trait AppTrait
     private function validate(&$validationConfig)
     {
         if (is_null($this->validator)) {
-            $this->validator = new Validator();
+            $this->validator = new Validator($this->c);
         }
 
-        return $this->validator->validate(HttpRequest::$input, $validationConfig);
+        return $this->validator->validate($this->c->httpRequest->input, $validationConfig);
     }
 
     /**
@@ -206,28 +203,27 @@ trait AppTrait
                 $sqlParams[$var] = $typeKey();
             } else if ($type === 'hierarchyData') {
                 $typeKeys = explode(':',$typeKey);
-                $value = HttpRequest::$input['hierarchyData'];
+                $value = $this->c->httpRequest->input['hierarchyData'];
                 foreach($typeKeys as $key) {
                     if (!isset($value[$key])) {
-                        HttpResponse::return5xx(501, 'Invalid hierarchy:  Missing hierarchy data');
-                        return;
+                        throw new \Exception('Invalid hierarchy:  Missing hierarchy data', 501);
                     }
                     $value = $value[$key];
                 }
                 $sqlParams[$var] = $value;
             } else if ($type === 'custom') {
                 $sqlParams[$var] = $typeKey;
-            } else if ($type === 'payload' && isset(HttpRequest::$input['payload'][$typeKey])) {
-                $sqlParams[$var] = HttpRequest::$input['payload'][$typeKey];
-            } else if ($type === 'payload' && !in_array($typeKey, HttpRequest::$input['required']) && !isset(HttpRequest::$input['payload'][$typeKey])) {
+            } else if ($type === 'payload' && isset($this->c->httpRequest->input['payload'][$typeKey])) {
+                $sqlParams[$var] = $this->c->httpRequest->input['payload'][$typeKey];
+            } else if ($type === 'payload' && !in_array($typeKey, $this->c->httpRequest->input['required']) && !isset($this->c->httpRequest->input['payload'][$typeKey])) {
                 continue;
-            } else if ($type === 'payload' && in_array($typeKey, HttpRequest::$input['required']) && !isset(HttpRequest::$input['payload'][$typeKey])) {
+            } else if ($type === 'payload' && in_array($typeKey, $this->c->httpRequest->input['required']) && !isset($this->c->httpRequest->input['payload'][$typeKey])) {
                 $errors[] = "Missing required field of '{$type}' for '{$typeKey}'";
             } else {
-                if (!isset(HttpRequest::$input[$type][$typeKey])) {
+                if (!isset($this->c->httpRequest->input[$type][$typeKey])) {
                     $errors[] = "Invalid configuration of '{$type}' for '{$typeKey}'";
                 }
-                $sqlParams[$var] = HttpRequest::$input[$type][$typeKey];
+                $sqlParams[$var] = $this->c->httpRequest->input[$type][$typeKey];
             }
         }
 
@@ -319,8 +315,7 @@ trait AppTrait
                 }
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
-                HttpResponse::return5xx(501, 'Invalid config: missing hierarchyData');
-                return;
+                throw new \Exception('Invalid config: missing hierarchyData', 501);
             }
         }
 

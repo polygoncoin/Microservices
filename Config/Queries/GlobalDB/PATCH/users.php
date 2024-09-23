@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\GlobalDB\PATCH;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$users}` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$Env::$users}` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name', Constants::$REQUIRED],
         ['uriParams', 'user_id', Constants::$REQUIRED],

@@ -2,9 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
 
 /**
  * Class to initialize api HTTP request
@@ -48,11 +47,21 @@ class Routes
     private $reservedKeys = [];
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    public $jsonEncode = null;
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -61,7 +70,7 @@ class Routes
      */
     public function init()
     {
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -72,7 +81,7 @@ class Routes
     public function process()
     {
         $httpRoutes = [];
-        $userRoutesFolder = Constants::$DOC_ROOT . $this->routesFolder . '/' . HttpRequest::$input['readOnlySession']['group_name'];
+        $userRoutesFolder = Constants::$DOC_ROOT . $this->routesFolder . '/' . $this->c->httpRequest->input['readOnlySession']['group_name'];
 
         foreach ($this->httpMethods as $method) {
             $httpRoutes[$method] = [];
@@ -84,11 +93,9 @@ class Routes
             $route = '';
             $this->getRoutes($routes, $route, $httpRoutes[$method]);
         }
+        $this->c->httpResponse->jsonEncode->addKeyValue('Results', $httpRoutes);
 
-        $this->jsonEncode = HttpResponse::getJsonObject();
-        $this->jsonEncode->addKeyValue('Results', $httpRoutes);
-
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**

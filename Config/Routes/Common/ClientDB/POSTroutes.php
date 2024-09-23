@@ -2,8 +2,6 @@
 namespace Microservices\Config\Routes\Common\Client;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
     'category' => [

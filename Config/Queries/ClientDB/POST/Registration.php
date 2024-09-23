@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\ClientDB\POST;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "INSERT INTO `{$Env::$clientDB}`.`registration` SET __SET__",
+    'query' => "INSERT INTO `registration` SET __SET__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'firstname', Constants::$REQUIRED],
         ['payload', 'lastname', Constants::$REQUIRED],
@@ -21,7 +19,7 @@ return [
     'insertId' => 'registration:id',
     'subQuery' => [
         'address' => [
-            'query' => "INSERT INTO `{$Env::$clientDB}`.`address` SET __SET__",
+            'query' => "INSERT INTO `address` SET __SET__",
             '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                 ['payload', 'address', Constants::$REQUIRED]
             ],

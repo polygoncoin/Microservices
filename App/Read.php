@@ -3,10 +3,8 @@ namespace Microservices\App;
 
 use Microservices\App\AppTrait;
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Servers\Database\Database;
 use Microservices\App\Validator;
 
 /**
@@ -26,18 +24,31 @@ class Read
     use AppTrait;
 
     /**
-     * DB Server connection object
-     *
-     * @var object
+     * Global DB
      */
-    public $db = null;
+    private $globalDB = null;
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Global DB
      */
-    public $jsonEncode = null;
+    private $clientDB = null;
+    
+    /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -46,13 +57,10 @@ class Read
      */
     public function init()
     {
-        Env::$globalDB = Env::$defaultDbDatabase;
-        Env::$clientDB = Env::$dbDatabase;
+        $this->globalDB = $this->c->httpRequest->globalDB;
+        $this->clientDB = $this->c->httpRequest->clientDB;
 
-        $this->db = Database::getObject();
-        $this->jsonEncode = HttpResponse::getJsonObject();
-
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -62,12 +70,15 @@ class Read
      */
     public function process()
     {
-        $Constants = __NAMESPACE__ . '\\Constants';
-        $Env = __NAMESPACE__ . '\\Env';
-        $HttpRequest = __NAMESPACE__ . '\\HttpRequest';
+        $Constants = __NAMESPACE__ . '\Constants';
+        $Env = __NAMESPACE__ . '\Env';
 
         // Load Queries
-        $readSqlConfig = include HttpRequest::$__file__;
+        $readSqlConfig = include $this->c->httpRequest->__file__;
+
+        // Set Server mode to execute query on - Read / Write Server.
+        $fetchFrom = (isset($readSqlConfig['fetchFrom'])) ? $readSqlConfig['fetchFrom'] : 'Slave';
+        $this->c->httpRequest->setConnection($fetchFrom);
 
         // Use results in where clause of sub queries recursively.
         $useHierarchy = $this->getUseHierarchy($readSqlConfig);
@@ -81,7 +92,7 @@ class Read
             $this->processRead($readSqlConfig, $useHierarchy);
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -93,7 +104,7 @@ class Read
      */
     private function processReadConfig(&$readSqlConfig, $useHierarchy)
     {
-        return HttpResponse::isSuccess();
+        return true;
     }    
 
     /**
@@ -105,15 +116,15 @@ class Read
      */
     private function processRead(&$readSqlConfig, $useHierarchy)
     {
-        HttpRequest::$input['requiredArr'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
-        HttpRequest::$input['required'] = HttpRequest::$input['requiredArr']['__required__'];
-        HttpRequest::$input['payload'] = HttpRequest::$input['payloadArr'];
+        $this->c->httpRequest->input['requiredArr'] = $this->getRequired($readSqlConfig, true, $useHierarchy);
+        $this->c->httpRequest->input['required'] = $this->c->httpRequest->input['requiredArr']['__required__'];
+        $this->c->httpRequest->input['payload'] = $this->c->httpRequest->input['payloadArr'];
 
         // Start Read operation.
         $keys = [];
         $this->readDB($readSqlConfig, true, $keys, $useHierarchy);
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -127,22 +138,18 @@ class Read
      */
     private function readDB(&$readSqlConfig, $start, &$keys, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         $isAssoc = $this->isAssoc($readSqlConfig);
         if ($isAssoc) {
             switch ($readSqlConfig['mode']) {
                 // Query will return single row
                 case 'singleRowFormat':
                     if ($start) {
-                        $this->jsonEncode->startObject('Results');
+                        $this->c->httpResponse->jsonEncode->startObject('Results');
                     } else {
-                        $this->jsonEncode->startObject();
+                        $this->c->httpResponse->jsonEncode->startObject();
                     }
                     $this->fetchSingleRow($readSqlConfig, $keys, $useHierarchy);
-                    $this->jsonEncode->endObject();
+                    $this->c->httpResponse->jsonEncode->endObject();
                     break;
                 // Query will return multiple rows
                 case 'multipleRowFormat':
@@ -151,14 +158,14 @@ class Read
                         if (isset($readSqlConfig['countQuery'])) {
                             $this->fetchRowsCount($readSqlConfig);
                         }
-                        $this->jsonEncode->startArray('Results');
+                        $this->c->httpResponse->jsonEncode->startArray('Results');
                     } else {
-                        $this->jsonEncode->startArray($keys[$keysCount]);
+                        $this->c->httpResponse->jsonEncode->startArray($keys[$keysCount]);
                     }
                     $this->fetchMultipleRows($readSqlConfig, $keys, $useHierarchy);
-                    $this->jsonEncode->endArray();
+                    $this->c->httpResponse->jsonEncode->endArray();
                     if (!$start) {
-                        $this->jsonEncode->endObject();
+                        $this->c->httpResponse->jsonEncode->endObject();
                     }
                     break;
             }
@@ -167,7 +174,7 @@ class Read
             }
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -180,26 +187,20 @@ class Read
      */
     private function fetchSingleRow(&$readSqlConfig, &$keys, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
-            HttpResponse::return5xx(501, $errors);
-            return;
+            throw new \Exception($errors, 501);
         }
 
-        $this->db->execDbQuery($sql, $sqlParams);
-        if ($row = $this->db->fetch()) {
+        $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
+        if ($row =  $this->c->httpRequest->db->fetch()) {
             //check if selected column-name mismatches or confliects with configured module/submodule names.
             if (isset($readSqlConfig['subQuery'])) {
                 $subQueryKeys = array_keys($readSqlConfig['subQuery']);
                 foreach($row as $key => $value) {
                     if (in_array($key, $subQueryKeys)) {
-                        HttpResponse::return5xx(501, 'Invalid configuration: Conflicting column names');
-                        return;
+                        throw new \Exception('Invalid configuration: Conflicting column names', 501);
                     }
                 }
             }
@@ -207,15 +208,15 @@ class Read
             $row = [];
         }
         foreach($row as $key => $value) {
-            $this->jsonEncode->addKeyValue($key, $value);
+            $this->c->httpResponse->jsonEncode->addKeyValue($key, $value);
         }
-        $this->db->closeCursor();
+        $this->c->httpRequest->db->closeCursor();
 
         if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
             $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -226,42 +227,36 @@ class Read
      */
     private function fetchRowsCount($readSqlConfig)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         $readSqlConfig['query'] = $readSqlConfig['countQuery'];
         unset($readSqlConfig['countQuery']);
 
-        HttpRequest::$input['payload']['page']  = $_GET['page'] ?? 1;
-        HttpRequest::$input['payload']['perpage']  = $_GET['perpage'] ?? 10;
+        $this->c->httpRequest->input['payload']['page']  = $_GET['page'] ?? 1;
+        $this->c->httpRequest->input['payload']['perpage']  = $_GET['perpage'] ?? 10;
 
-        if (HttpRequest::$input['payload']['perpage'] > Env::$maxPerpage) {
-            HttpResponse::return4xx(403, 'perpage exceeds max perpage value of '.Env::$maxPerpage);
-            return;
+        if ($this->c->httpRequest->input['payload']['perpage'] > Env::$maxPerpage) {
+            throw new \Exception('perpage exceeds max perpage value of '.Env::$maxPerpage, 403);
         }
 
-        HttpRequest::$input['payload']['start']  = (HttpRequest::$input['payload']['page'] - 1) * HttpRequest::$input['payload']['perpage'];
+        $this->c->httpRequest->input['payload']['start']  = ($this->c->httpRequest->input['payload']['page'] - 1) * $this->c->httpRequest->input['payload']['perpage'];
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         
         if (!empty($errors)) {
-            HttpResponse::return5xx(501, $errors);
-            return;
+            throw new \Exception($errors, 501);
         }
         
-        $this->db->execDbQuery($sql, $sqlParams);
-        $row = $this->db->fetch();
-        $this->db->closeCursor();
+        $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
+        $row = $this->c->httpRequest->db->fetch();
+        $this->c->httpRequest->db->closeCursor();
         
         $totalRowsCount = $row['count'];
-        $totalPages = ceil($totalRowsCount/HttpRequest::$input['payload']['perpage']);
+        $totalPages = ceil($totalRowsCount/$this->c->httpRequest->input['payload']['perpage']);
         
-        $this->jsonEncode->addKeyValue('page', HttpRequest::$input['payload']['page']);
-        $this->jsonEncode->addKeyValue('perpage', HttpRequest::$input['payload']['perpage']);
-        $this->jsonEncode->addKeyValue('totalPages', $totalPages);
-        $this->jsonEncode->addKeyValue('totalRecords', $totalRowsCount);
+        $this->c->httpResponse->jsonEncode->addKeyValue('page', $this->c->httpRequest->input['payload']['page']);
+        $this->c->httpResponse->jsonEncode->addKeyValue('perpage', $this->c->httpRequest->input['payload']['perpage']);
+        $this->c->httpResponse->jsonEncode->addKeyValue('totalPages', $totalPages);
+        $this->c->httpResponse->jsonEncode->addKeyValue('totalRecords', $totalRowsCount);
         
-        return HttpResponse::isSuccess();
+        return true;
     }
     
     /**
@@ -274,38 +269,31 @@ class Read
      */
     private function fetchMultipleRows(&$readSqlConfig, &$keys, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         $isAssoc = $this->isAssoc($readSqlConfig);
         if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
-            HttpResponse::return5xx(501, 'Invalid Configuration: multipleRowFormat can\'t have sub query');
-            return;
+            throw new \Exception('Invalid Configuration: multipleRowFormat can\'t have sub query', 501);
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
         
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
-            HttpResponse::return5xx(501, $errors);
-            return;
+            throw new \Exception($errors, 501);
         }
         
         if (isset($readSqlConfig['countQuery'])) {
-            $start = HttpRequest::$input['payload']['start'];
-            $offset = HttpRequest::$input['payload']['perpage'];
+            $start = $this->c->httpRequest->input['payload']['start'];
+            $offset = $this->c->httpRequest->input['payload']['perpage'];
             $sql .= " LIMIT {$start}, {$offset}";
         }
 
         $singleColumn = false;
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->c->httpRequest->db->prepare($sql);
         if (!$stmt) {
-            HttpResponse::return5xx(501, 'Invalid database query');
-            return;
+            throw new \Exception('Invalid database query', 501);
         }
 
         $stmt->execute($sqlParams);
-        for ($i=0;$row=$stmt->fetch(\PDO::FETCH_ASSOC);) {
+        for ($i = 0; $row = $stmt->fetch(\PDO::FETCH_ASSOC);) {
             if ($i===0) {
                 if (count($row) === 1) {
                     $singleColumn = true;
@@ -314,14 +302,14 @@ class Read
                 $i++;
             }
             if ($singleColumn) {
-                $this->jsonEncode->encode($row[key($row)]);
+                $this->c->httpResponse->jsonEncode->encode($row[key($row)]);
             } else if (isset($readSqlConfig['subQuery'])) {
-                $this->jsonEncode->startObject();
+                $this->c->httpResponse->jsonEncode->startObject();
                 foreach($row as $key => $value) {
-                    $this->jsonEncode->addKeyValue($key, $value);
+                    $this->c->httpResponse->jsonEncode->addKeyValue($key, $value);
                 }
             } else {
-                $this->jsonEncode->encode($row);
+                $this->c->httpResponse->jsonEncode->encode($row);
             }
             if ($useHierarchy && isset($readSqlConfig['subQuery'])) {
                 $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
@@ -329,7 +317,7 @@ class Read
         }
         $stmt->closeCursor();
 
-        return HttpResponse::isSuccess();
+        return true;
     }    
 
     /**
@@ -342,16 +330,12 @@ class Read
      */
     private function resetFetchData(&$keys, $row, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         if ($useHierarchy) {
             if (count($keys) === 0) {
-                HttpRequest::$input['hierarchyData'] = [];
-                HttpRequest::$input['hierarchyData']['return'] = [];
+                $this->c->httpRequest->input['hierarchyData'] = [];
+                $this->c->httpRequest->input['hierarchyData']['return'] = [];
             }
-            $httpReq = &HttpRequest::$input['hierarchyData']['return'];
+            $httpReq = &$this->c->httpRequest->input['hierarchyData']['return'];
             foreach ($keys as $k) {
                 if (!isset($httpReq[$k])) {
                     $httpReq[$k] = [];
@@ -361,7 +345,7 @@ class Read
             $httpReq = $row;
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -375,10 +359,6 @@ class Read
      */
     private function callReadDB(&$readSqlConfig, &$keys, &$row, $useHierarchy)
     {
-        if (!($success = HttpResponse::isSuccess())) {
-            return $success;
-        }
-
         if ($useHierarchy) {
             $this->resetFetchData($keys, $row, $useHierarchy);
         }
@@ -391,6 +371,6 @@ class Read
             }
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 }

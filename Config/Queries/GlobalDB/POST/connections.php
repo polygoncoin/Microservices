@@ -2,28 +2,40 @@
 namespace Microservices\Config\Queries\GlobalDB\POST;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "INSERT INTO `{$Env::$globalDB}`.`{$Env::$connections}` SET __SET__",
+    'query' => "INSERT INTO `{$Env::$connections}` SET __SET__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name', Constants::$REQUIRED],
-        ['payload', 'db_server_type'],
-        ['payload', 'db_hostname'],
-        ['payload', 'db_username'],
-        ['payload', 'db_password'],
-        ['payload', 'db_database'],
+        ['payload', 'master_db_server_type'],
+        ['payload', 'master_db_hostname'],
+        ['payload', 'master_db_port'],
+        ['payload', 'master_db_username'],
+        ['payload', 'master_db_password'],
+        ['payload', 'master_db_database'],
+        ['payload', 'slave_db_server_type'],
+        ['payload', 'slave_db_hostname'],
+        ['payload', 'slave_db_port'],
+        ['payload', 'slave_db_username'],
+        ['payload', 'slave_db_password'],
+        ['payload', 'slave_db_database'],
         ['payload', 'comments'],
     ],
     '__SET__' => [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'name' => ['payload', 'name'],
-        'db_server_type' => ['payload', 'db_server_type'],
-        'db_hostname' => ['payload', 'db_hostname'],
-        'db_username' => ['payload', 'db_username'],
-        'db_password' => ['payload', 'db_password'],
-        'db_database' => ['payload', 'db_database'],
+        'master_db_server_type' => ['payload', 'master_db_server_type'],
+        'master_db_hostname' => ['payload', 'master_db_hostname'],
+        'master_db_port' => ['payload', 'master_db_port'],
+        'master_db_username' => ['payload', 'master_db_username'],
+        'master_db_password' => ['payload', 'master_db_password'],
+        'master_db_database' => ['payload', 'master_db_database'],
+        'slave_db_server_type' => ['payload', 'slave_db_server_type'],
+        'slave_db_hostname' => ['payload', 'slave_db_hostname'],
+        'slave_db_port' => ['payload', 'slave_db_port'],
+        'slave_db_username' => ['payload', 'slave_db_username'],
+        'slave_db_password' => ['payload', 'slave_db_password'],
+        'slave_db_database' => ['payload', 'slave_db_database'],
         'comments' => ['payload', 'comments'],
         'created_by' => ['readOnlySession', 'user_id'],
         'created_on' => ['custom', date('Y-m-d H:i:s')],

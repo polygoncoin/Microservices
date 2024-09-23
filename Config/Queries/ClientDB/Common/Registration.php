@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\ClientDB\Common;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$Env::$clientDB}`.`registration` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `registration` SET __SET__ WHERE __WHERE__",
     'validate' => [
 		[
 			'fn' => 'primaryKeyExist',

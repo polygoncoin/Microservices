@@ -3,8 +3,6 @@ namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
 
 /**
  * Constants
@@ -20,7 +18,7 @@ use Microservices\App\HttpResponse;
  */
 class Logs
 {
-    static private $logTypes = [
+    private $logTypes = [
         'debug'      => '/Logs/debug',
         'info'       => '/Logs/info',
         'error'      => '/Logs/error',
@@ -31,13 +29,15 @@ class Logs
         'emergency'  => '/Logs/emergency'
     ];
 
-    static public function log($logType, $logContent)
+    public function log($logType, $logContent)
     {
-        if (!in_array($logType, array_keys($logTypes))) {
-            HttpResponse::return5xx(501, 'Invalid log type');
-            return;
+        if (!in_array($logType, array_keys($this->logTypes))) {
+            throw new \Exception('Invalid log type', 501);
         }
-        $logFile = Constants::$DOC_ROOT . self::$logTypes[$logType];
-        file_put_contents($logFile.'-'.date('Y-m'), $logContent . PHP_EOL, FILE_APPEND);
+        $logFile = Constants::$DOC_ROOT . $this->logTypes[$logType] . '-' . date('Y-m');
+        if (!file_exists($logFile)) {
+            touch($logFile);
+        }
+        file_put_contents($logFile, $logContent . PHP_EOL, FILE_APPEND);
     }
 }

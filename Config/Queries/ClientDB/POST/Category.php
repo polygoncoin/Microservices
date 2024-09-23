@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\ClientDB\POST;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
+    'query' => "INSERT INTO `category` SET __SET__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name', Constants::$REQUIRED],
     ],
@@ -18,7 +16,7 @@ return [
     'insertId' => 'category:id',
     'subQuery' => [
         'sub' => [
-            'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
+            'query' => "INSERT INTO `category` SET __SET__",
             '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                 ['payload', 'subname', Constants::$REQUIRED],
             ],
@@ -29,7 +27,7 @@ return [
             'insertId' => 'sub:id',
             'subQuery' => [
                 'subsub' => [
-                    'query' => "INSERT INTO `{$Env::$clientDB}`.`category` SET __SET__",
+                    'query' => "INSERT INTO `category` SET __SET__",
                     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
                         ['payload', 'subsubname', Constants::$REQUIRED],
                     ],

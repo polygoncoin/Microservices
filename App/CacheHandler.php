@@ -2,10 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
 
 /**
  * Class to reduce cache hits and save on bandwidth using ETags and cache headers.
@@ -42,6 +40,23 @@ class CacheHandler
     private $cacheLocation = '/Dropbox';
 
     /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
+
+    /**
      * Initalise check and serve file
      *
      * @return boolean
@@ -49,11 +64,11 @@ class CacheHandler
     public function init()
     {
         $this->cacheLocation = Constants::$DOC_ROOT . $this->cacheLocation;
-        $this->filePath = '/' . trim(str_replace('../','',urldecode(Constants::$ROUTE)), './');
+        $this->filePath = '/' . trim(str_replace('../','',urldecode($this->c->httpRequest->ROUTE)), './');
         $this->validateFileRequest();
         $this->fileLocation = $this->cacheLocation . $this->filePath;
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -63,7 +78,7 @@ class CacheHandler
      */
     public function validateFileRequest()
     {
-        // check logic for user is allowed to access the file as per HttpRequest::$input
+        // check logic for user is allowed to access the file as per $this->c->httpRequest->input
         // $this->filePath;
     }
 

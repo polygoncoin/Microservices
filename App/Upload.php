@@ -1,7 +1,9 @@
 <?php
 namespace Microservices\App;
 
-use Microservices\App\HttpResponse;
+use Microservices\App\Constants;
+use Microservices\App\Common;
+use Microservices\App\Env;
 use Microservices\Upload\UploadApi;
 
 /**
@@ -19,13 +21,30 @@ use Microservices\Upload\UploadApi;
 class Upload
 {
     /**
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
+
+    /**
      * Initialize
      *
      * @return boolean
      */
     public function init()
     {
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -35,11 +54,11 @@ class Upload
      */
     public function process()
     {
-        $api = new UploadApi();
+        $api = new UploadApi($this->c);
         if ($api->init()) {
             $api->process();
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 }

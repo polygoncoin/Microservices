@@ -2,10 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 use Microservices\App\AppTrait;
 
 /**
@@ -23,20 +21,23 @@ use Microservices\App\AppTrait;
 class Reload
 {
     use AppTrait;
-    
-    /**
-     * Cache Server connection object
-     *
-     * @var object
-     */
-    private $cache = null;
 
     /**
-     * Database Server connection object
-     *
-     * @var object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    private $db = null;
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -45,24 +46,16 @@ class Reload
      */
     public function init()
     {
-        Env::$cacheType = getenv('cacheType');
-        Env::$cacheHostname = getenv('cacheHostname');
-        Env::$cachePort = getenv('cachePort');
-        Env::$cacheUsername = getenv('cacheUsername');
-        Env::$cachePassword = getenv('cachePassword');
-        Env::$cacheDatabase = getenv('cacheDatabase');
+        $this->c->httpRequest->setDb(
+            getenv('globalType'),
+            getenv('globalHostname'),
+            getenv('globalPort'),
+            getenv('globalUsername'),
+            getenv('globalPassword'),
+            getenv('globalDatabase')
+        );
 
-        Env::$dbType = getenv('defaultDbType');
-        Env::$dbHostname = getenv('defaultDbHostname');
-        Env::$dbPort = getenv('defaultDbPort');
-        Env::$dbUsername = getenv('defaultDbUsername');
-        Env::$dbPassword = getenv('defaultDbPassword');
-        Env::$dbDatabase = getenv('defaultDbDatabase');
-
-        $this->cache = Cache::getObject();
-        $this->db = Database::getObject();
-
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -79,7 +72,7 @@ class Reload
                 if (ctype_digit($value = trim($value))) {
                     $ids[] = (int)$value;
                 } else {
-                    HttpResponse::return4xx(404, 'Only integer values supported for ids.');
+                    throw new \Exception('Only integer values supported for ids.', 404);
                     return;
                 }
             }
@@ -94,7 +87,7 @@ class Reload
                 case 'user':
                     $this->processUser($ids);
                     break;
-                case 'user':
+                case 'group':
                     $this->processGroup($ids);
                     break;
                 case 'groupIp':
@@ -106,7 +99,7 @@ class Reload
             }
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -119,7 +112,7 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE U.user_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $this->db->execDbQuery("
+        $this->c->httpRequest->db->execDbQuery("
             SELECT
                 U.user_id,
                 U.username,
@@ -133,11 +126,11 @@ class Reload
                 `{$this->execPhpFunc(getenv('groups'))}` G ON U.group_id = G.group_id
             {$whereClause}", $ids);
 
-        while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
-            $this->cache->setCache("user:{$row['username']}", json_encode($row));
+        while($row = $this->c->httpRequest->db->fetch(\PDO::FETCH_ASSOC)) {
+            $this->c->httpRequest->cache->setCache("user:{$row['username']}", json_encode($row));
         }
 
-        $this->db->closeCursor();
+        $this->c->httpRequest->db->closeCursor();
     }
 
     /**
@@ -150,28 +143,34 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE G.group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $this->db->execDbQuery("
+       $this->c->httpRequest->db->execDbQuery("
             SELECT
                 G.group_id,
                 G.name,
                 G.client_id,
-                C.db_server_type,
-                C.db_hostname,
-                C.db_port,
-                C.db_username,
-                C.db_password,
-                C.db_database                
+                C.master_db_server_type,
+                C.master_db_hostname,
+                C.master_db_port,
+                C.master_db_username,
+                C.master_db_password,
+                C.master_db_database,
+                C.slave_db_server_type,
+                C.slave_db_hostname,
+                C.slave_db_port,
+                C.slave_db_username,
+                C.slave_db_password,
+                C.slave_db_database
             FROM
                 `{$this->execPhpFunc(getenv('groups'))}` G
             LEFT JOIN
                 `{$this->execPhpFunc(getenv('connections'))}` C on G.connection_id = C.connection_id
             {$whereClause}", $ids);
 
-        while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
-            $this->cache->setCache("group:{$row['group_id']}", json_encode($row));
+        while($row = $this->c->httpRequest->db->fetch(\PDO::FETCH_ASSOC)) {
+            $this->c->httpRequest->cache->setCache("group:{$row['group_id']}", json_encode($row));
         }
 
-        $this->db->closeCursor();
+       $this->c->httpRequest->db->closeCursor();
     }
 
     /**
@@ -184,22 +183,22 @@ class Reload
     {
         $whereClause = count($ids) ? 'WHERE group_id IN (' . implode(', ',array_map(function ($id) { return '?';}, $ids)) . ');' : ';';
 
-        $this->db->execDbQuery(
+       $this->c->httpRequest->db->execDbQuery(
             "SELECT group_id, allowed_ips FROM `{$this->execPhpFunc(getenv('groups'))}` {$whereClause}",
             $ids
         );
 
         $cidrArray = [];
-        while($row =  $this->db->fetch(\PDO::FETCH_ASSOC)) {
+        while($row = $this->c->httpRequest->db->fetch(\PDO::FETCH_ASSOC)) {
             if (!empty($row['allowed_ips'])) {
-                $cidrs = HttpRequest::cidrsIpNumber($row['allowed_ips']);
+                $cidrs = $this->c->httpRequest->cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
-                    $this->cache->setCache("cidr:{$row['group_id']}", json_encode($cidrs));
+                    $this->c->httpRequest->cache->setCache("cidr:{$row['group_id']}", json_encode($cidrs));
                 }
             }
         }
 
-        $this->db->closeCursor();
+       $this->c->httpRequest->db->closeCursor();
     }
 
     /**
@@ -210,7 +209,7 @@ class Reload
      */
     private function processToken($token)
     {
-        $this->cache->deleteCache($token);
+        $this->c->httpRequest->cache->deleteCache($token);
     }
 
     /**

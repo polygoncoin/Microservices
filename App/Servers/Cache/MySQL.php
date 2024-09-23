@@ -2,10 +2,8 @@
 namespace Microservices\App\Servers\Cache;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
 use Microservices\App\Servers\Cache\AbstractCache;
 use Microservices\App\Servers\Database\MySQL as DB_MySQL;
 
@@ -118,29 +116,21 @@ class MySQL extends AbstractCache
                 $this->database
             );
         } catch (\Exception $e) {
-            $log = [
-                'datetime' => date('Y-m-d H:i:s'),
-                'input' => HttpRequest::$input,
-                'error' => 'Unable to connect to MySQL as cache server'
-            ];
-            Logs::log('error', json_encode($log));
-
-            HttpResponse::return5xx(501, 'Unable to connect to cache server');
-            
-            return;
+            throw new \Exception($e->getMessage(), 501);
         }
     }
 
     /**
      * Use Database
      *
-     * @param string $database Database .env string
      * @return void
      */
-    public function useDatabase($database)
+    public function useDatabase()
     {
         $this->connect();
-        $this->cache->useDatabase($this->database);
+        if (!is_null($this->database)) {
+            $this->cache->useDatabase();
+        }
     }
 
     /**
@@ -151,8 +141,8 @@ class MySQL extends AbstractCache
      */
     public function cacheExists($key)
     {
-        $this->connect();
-        $keyDetails = $this->getTableAndKey($key);
+        $this->useDatabase();
+        $keyDetails = $this->getKeyDetails($key);
         return $keyDetails['count'] === 1;
     }
 
@@ -164,20 +154,20 @@ class MySQL extends AbstractCache
      */
     public function getCache($key)
     {
-        $this->connect();
+        $this->useDatabase();
 
-        $keyDetails = $this->getTableAndKey($key);
-        
-        if ($keyDetails['count'] === 1) {
+        $keyDetails = $this->getKeyDetails($key);
+
+        if (isset($keyDetails['count']) && $keyDetails['count'] === 1) {
             $sql = "SELECT `value` FROM `{$keyDetails['table']}` WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)";
             $params = [$keyDetails['key'], $this->ts];
             $this->cache->execDbQuery($sql, $params);
             $row = $this->cache->fetch();
             $this->cache->closeCursor();  
-            return $row['value'];
+            return $row['value'];    
+        } else {
+            return false;
         }
-        
-        return false;
     }
 
     /**
@@ -190,28 +180,22 @@ class MySQL extends AbstractCache
      */
     public function setCache($key, $value, $expire = null)
     {
-        $this->connect();
+        $this->useDatabase();
 
-        $keyDetails = $this->getTableAndKey($key);
-        
-        if ($keyDetails['count'] === 1) {
-            $sql = "UPDATE `{$keyDetails['table']}` SET `value` = ?, `ts` = ? WHERE `key` = ?";
-            if (is_null($expire)) {
-                $params = [$value, 0, $keyDetails['key']];
-            } else {
-                $params = [$value, $this->ts + $expire, $keyDetails['key']];
-            }
-        } else {
+        $keyDetails = $this->getKeyDetails($key);
+
+        if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
             $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
             $params = [$keyDetails['key']];
             $this->cache->execDbQuery($sql, $params);
             $this->cache->closeCursor();
-            $sql = "INSERT INTO `{$keyDetails['table']}` SET `value` = ?, `ts` = ?, `key` = ?";
-            if (is_null($expire)) {
-                $params = [$value, 0, $keyDetails['key']];
-            } else {
-                $params = [$value, $this->ts + $expire, $keyDetails['key']];
-            }
+        }
+
+        $sql = "INSERT INTO `{$keyDetails['table']}` SET `value` = ?, `ts` = ?, `key` = ?";
+        if (is_null($expire)) {
+            $params = [$value, 0, $keyDetails['key']];
+        } else {
+            $params = [$value, $this->ts + $expire, $keyDetails['key']];
         }
 
         $this->cache->execDbQuery($sql, $params);
@@ -226,15 +210,16 @@ class MySQL extends AbstractCache
      */
     public function deleteCache($key)
     {
-        $this->connect();
+        $this->useDatabase();
 
-        $keyDetails = $this->getTableAndKey($key);
+        $keyDetails = $this->getKeyDetails($key);
         
-        $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
-        $params = [$keyDetails['key']];
-        
-        $this->cache->execDbQuery($sql, $params);
-        $this->cache->closeCursor();
+        if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
+            $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
+            $params = [$keyDetails['key']];    
+            $this->cache->execDbQuery($sql, $params);
+            $this->cache->closeCursor();
+        }
     }
     
     /**
@@ -246,7 +231,7 @@ class MySQL extends AbstractCache
      */
     public function isSetMember($set, $member)
     {
-        $this->connect();
+        $this->useDatabase();
         // return $this->cache->sIsMember($set, $member);
     }
 
@@ -259,14 +244,14 @@ class MySQL extends AbstractCache
      */
     public function setSetMembers($key, $valueArray)
     {
-        $this->connect();
+        $this->useDatabase();
         // $this->deleteCache($key);
         // foreach ($valueArray as $value) {
         //     $this->cache->sAdd($key, $value);
         // }
     }
 
-    public function getTableAndKey($key)
+    public function getKeyDetails($key)
     {
         $keyArr = explode(':',$key);
         

@@ -2,9 +2,8 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
 use Microservices\App\AppTrait;
 
 /**
@@ -42,11 +41,21 @@ class Check
     private $configFolder = '/Config';
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    public $jsonEncode = null;
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -58,9 +67,7 @@ class Check
         Env::$globalDB = Env::$defaultDbDatabase;
         Env::$clientDB = Env::$dbDatabase;
 
-        $this->jsonEncode = HttpResponse::getJsonObject();
-
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -83,20 +90,20 @@ class Check
         //     }
         // }
 
-        $groupFolder = HttpRequest::$input['readOnlySession']['group_name'];
+        $groupFolder = $this->c->httpRequest->input['readOnlySession']['group_name'];
         $_routesFolder = $routesFolder . '/' . $groupFolder;
         $httpRoutes[$groupFolder] = $this->processRoutes($_routesFolder, $errors);
 
         if (!empty($errors)) {
-            $this->jsonEncode->addKeyValue('Results', $errors);
+            $this->c->httpResponse->jsonEncode->addKeyValue('Results', $errors);
         } else {
             $this->processRoutesQueries($httpRoutes, $errors);
             if (!empty($errors)) {
-                $this->jsonEncode->addKeyValue('Results', $errors);
+                $this->c->httpResponse->jsonEncode->addKeyValue('Results', $errors);
             }
         }
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**

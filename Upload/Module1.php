@@ -2,12 +2,8 @@
 namespace Microservices\Upload;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 use Microservices\Upload\UploadTrait;
 
 /**
@@ -27,11 +23,21 @@ class Module1
     use UploadTrait;
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    private $jsonEncode = null;
+    private $c = null;
+
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -40,8 +46,7 @@ class Module1
      */
     public function init()
     {
-        $this->jsonEncode = HttpResponse::getJsonObject();
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -54,7 +59,7 @@ class Module1
         $absFilePath = $this->getLocation();
         $this->saveFile($absFilePath);
 
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**

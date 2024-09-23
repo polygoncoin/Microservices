@@ -2,10 +2,8 @@
 namespace Microservices\Custom;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Servers\Database\Database;
 
 /**
  * Class to initialize DB Read operation
@@ -22,18 +20,21 @@ use Microservices\App\Servers\Database\Database;
 class Category
 {
     /**
-     * DB Server connection object
-     *
-     * @var object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    public $db = null;
+    private $c = null;
 
     /**
-     * JsonEncode class object
-     *
-     * @var object
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
      */
-    public $jsonEncode = null;
+    public function __construct(Common &$common)
+    {
+        $this->c = &$common;
+    }
 
     /**
      * Initialize
@@ -42,9 +43,7 @@ class Category
      */
     public function init()
     {
-        $this->db = Database::getObject();
-        $this->jsonEncode = HttpResponse::getJsonObject();
-        return HttpResponse::isSuccess();
+        return true;
     }
 
     /**
@@ -59,10 +58,10 @@ class Category
             ':is_deleted' => 'No',
             ':parent_id' => 0,
         ];
-        $this->db->execDbQuery($sql, $sqlParams);
-        $rows = $this->db->fetchAll();
-        $this->db->closeCursor();
-        $this->jsonEncode->addKeyValue('Results', $rows);
-        return HttpResponse::isSuccess();
+        $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
+        $rows = $this->c->httpRequest->db->fetchAll();
+        $this->c->httpRequest->db->closeCursor();
+        $this->c->httpResponse->jsonEncode->addKeyValue('Results', $rows);
+        return true;
     }
 }

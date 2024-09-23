@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\ClientDB\Common;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$Env::$clientDB}`.`address` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `address` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['uriParams', 'id', Constants::$REQUIRED],
     ],

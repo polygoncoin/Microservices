@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\GlobalDB\PUT;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "UPDATE `{$Env::$globalDB}`.`{$Env::$users}` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `{$Env::$users}` SET __SET__ WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['payload', 'name'],
         ['payload', 'comments'],
@@ -16,7 +14,7 @@ return [
         //column => [payload|readOnlySession|uriParams|insertIdParams|{custom}, key|{value}],
         'username' => ['payload', 'username'],
         'password_hash' => ['function', function() {
-            return password_hash(HttpRequest::$input['payload']['password'], PASSWORD_DEFAULT);
+            return password_hash($this->c->httpRequest->input['payload']['password'], PASSWORD_DEFAULT);
          }],
         'group_id' => ['payload', 'group_id'],
         'comments' => ['payload', 'comments'],

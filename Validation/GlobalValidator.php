@@ -2,12 +2,8 @@
 namespace Microservices\Validation;
 
 use Microservices\App\Constants;
+use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
-use Microservices\App\Servers\Cache\Cache;
-use Microservices\App\Servers\Database\Database;
 use Microservices\Validation\ValidatorTrait;
 
 /**
@@ -27,13 +23,20 @@ class GlobalValidator
     use ValidatorTrait;
 
     /**
-     * Database object
+     * Microservices Collection of Common Objects
+     * 
+     * @var Microservices\App\Common
      */
-    private $db = null;
+    private $c = null;
 
-    public function __construct()
+    /**
+     * Constructor
+     * 
+     * @param Microservices\App\Common $common
+     */
+    public function __construct(Common &$common)
     {
-        $this->db = Database::getObject();
+        $this->c = &$common;
     }
 
     /**
@@ -76,9 +79,9 @@ class GlobalValidator
         extract($args);
         $sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
         $params = [$id];
-        $this->db->execDbQuery($sql, $params);
-        $row = $this->db->fetch();
-        $this->db->closeCursor();
+        $this->c->httpRequest->db->execDbQuery($sql, $params);
+        $row = $this->c->httpRequest->db->fetch();
+        $this->c->httpRequest->db->closeCursor();
         return ($row['count'] === 0) ? false : true;
     }
 
@@ -93,9 +96,9 @@ class GlobalValidator
         extract($args);
         $sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$column}` = ? AND`{$primary}` = ?";
         $params = [$columnValue, $id];
-        $this->db->execDbQuery($sql, $params);
-        $row = $this->db->fetch();
-        $this->db->closeCursor();
+        $this->c->httpRequest->db->execDbQuery($sql, $params);
+        $row = $this->c->httpRequest->db->fetch();
+        $this->c->httpRequest->db->closeCursor();
         return ($row['count'] === 0) ? false : true;
     }
 }

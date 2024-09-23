@@ -1,9 +1,9 @@
 <?php
 namespace Microservices\App;
 
-use Microservices\App\HttpResponse;
-use Microservices\App\Logs;
-use Microservices\App\UrlDecodeFilter;
+use Microservices\App\Constants;
+use Microservices\App\Common;
+use Microservices\App\Env;
 
 /**
  * Creates Objects from JSON String.
@@ -21,7 +21,7 @@ use Microservices\App\UrlDecodeFilter;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class JsonDecoder
+class JsonDecode
 {
     /**
      * Temporary Stream
@@ -40,14 +40,14 @@ class JsonDecoder
     /**
      * Parent JsonEncodeObject object
      *
-     * @var object
+     * @var Microservices\App\JsonDecoderObject
      */
     private $previousObjectIndex = null;
 
     /**
      * Current JsonEncodeObject object
      *
-     * @var object
+     * @var Microservices\App\JsonDecoderObject
      */
     private $currentObject = null;
 
@@ -103,23 +103,32 @@ class JsonDecoder
     private $charCounter = null;
 
     /**
-     * JsonEncode constructor
+     * Microservices Request Details
      * 
-     * @return void
+     * @var array
      */
-    public function __construct($fileLocation = null)
+    public $inputs = null;
+
+    /**
+     * JsonDecode constructor
+     *
+     * @param array $inputs
+     */
+    public function __construct(&$inputs)
     {
-        if (is_null($fileLocation)) {
-            $inputStream = fopen('php://input', "rb");
-            $this->tempStream = fopen("php://memory", "rw+b");
-            stream_copy_to_stream($inputStream, $this->tempStream);
-            fclose($inputStream);
-        } else {
-            if (!file_exists($fileLocation)) {
-                die('Invalid file location');
-            }
-            $this->tempStream = fopen($fileLocation, "rb");
-        }
+        $this->inputs = &$inputs;
+    }
+
+    /**
+     * Initialize
+     *
+     * @return boolean
+     */
+    public function init()
+    {
+        $inputStream = fopen('php://input', 'rb');
+        $this->tempStream = fopen("php://memory", "rw+b");
+        stream_copy_to_stream($inputStream, $this->tempStream);
     }
 
     /**
@@ -142,6 +151,10 @@ class JsonDecoder
      */
     public function process($index = false)
     {
+        if (!$this->tempStream) {
+            return;
+        }
+
         // Flags Variable
         $quote = false;
 
@@ -538,8 +551,7 @@ class JsonDecoder
     {
         $str = trim($str);
         if (!empty($str)) {
-            echo 'Invalid JSON: ' . $str;
-            die;
+            throw new \Exception('Invalid JSON: ' . $str, 400);
         }
     }
 
@@ -680,24 +692,23 @@ class JsonDecoder
      * @param string $keys Key values seperated by colon.
      * @return boolean
      */
-    public function keysType($keys)
+    public function keysType($keys = null)
     {
         $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
+        if (!is_null($keys)) {
+            foreach (explode(':', $keys) as $key) {
+                if (isset($streamIndex[$key])) {
+                    $streamIndex = &$streamIndex[$key];
+                } else {
+                    throw new \Exception("Invalid key {$key}", 400);
+                    return;
+                }
+            }    
         }
         $return = 'Object';
         if (
-            (
-                isset($streamIndex['_s_']) &&
-                isset($streamIndex['_e_']) &&
-                isset($streamIndex['_c_'])
-            )
+            isset($streamIndex['_c_']) &&
+            $streamIndex['_c_'] > 1
         ) {
             $return = 'Array';
         }
@@ -710,26 +721,21 @@ class JsonDecoder
      * @param string $keys Key values seperated by colon.
      * @return integer
      */
-    public function getCount($keys)
+    public function getCount($keys = null)
     {
         $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
+        if (!is_null($keys)) {
+            foreach (explode(':', $keys) as $key) {
+                if (isset($streamIndex[$key])) {
+                    $streamIndex = &$streamIndex[$key];
+                } else {
+                    throw new \Exception("Invalid key {$key}", 400);
+                    return;
+                }
+            }    
         }
-        if (
-            !(
-                isset($streamIndex['_s_']) &&
-                isset($streamIndex['_e_']) &&
-                isset($streamIndex['_c_'])
-            )
-        ) {
-            echo "Invalid keys '{$keys}'";
-            die;
+        if (!isset($streamIndex['_c_'])) {
+            $streamIndex['_c_'] = 1;
         }
         return $streamIndex['_c_'];
     }
@@ -740,16 +746,19 @@ class JsonDecoder
      * @param string $keys Key values seperated by colon.
      * @return array
      */
-    public function get($keys)
+    public function get($keys = null)
     {
+        $keys = 'Payload:' . (is_null($keys) ? '' : $keys);
         $streamIndex = &$this->streamIndex;
-        foreach (explode(':', $keys) as $key) {
-            if (isset($streamIndex[$key])) {
-                $streamIndex = &$streamIndex[$key];
-            } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
-                return;
-            }
+        if (!is_null($keys)) {
+            foreach (explode(':', $keys) as $key) {
+                if (isset($streamIndex[$key])) {
+                    $streamIndex = &$streamIndex[$key];
+                } else {
+                    throw new \Exception("Invalid key {$key}", 400);
+                    return;
+                }
+            }    
         }
         if (
             isset($streamIndex['_s_']) &&
@@ -758,11 +767,12 @@ class JsonDecoder
             $start = $streamIndex['_s_'];
             $end = $streamIndex['_e_'];
         } else {
-            echo "Invalid keys '{$keys}'";
-            die;
+            throw new \Exception("Invalid keys '{$keys}'", 400);
         }
+
         $length = $end - $start + 1;
         $json = stream_get_contents($this->tempStream, $length, $start);
+
         return json_decode($json, true);
     }
 
@@ -786,7 +796,7 @@ class JsonDecoder
             if (isset($streamIndex[$key])) {
                 $streamIndex = &$streamIndex[$key];
             } else {
-                HttpResponse::return4xx(501, "Invalid key {$key}");
+                throw new \Exception("Invalid key {$key}", 400);
                 return;
             }
         }
@@ -798,8 +808,7 @@ class JsonDecoder
             $this->_e_ = $streamIndex['_e_'];
             $this->keys = $keys;
         } else {
-            echo "Invalid keys '{$keys}'";
-            die;
+            throw new \Exception("Invalid keys '{$keys}'", 400);
         }
     }
 }
@@ -877,48 +886,5 @@ class JsonDecoderObject
         $this->mode = $mode;
         $objectKey = trim($objectKey);
         $this->objectKey = !empty($objectKey) ? $objectKey : null;
-    }
-}
-
-/**
- * Loading JSON class
- *
- * This class is built to handle JSON Object.
- *
- * @category   Json Decoder Object handler
- * @package    Microservices
- * @author     Ramesh Narayan Jangid
- * @copyright  Ramesh Narayan Jangid
- * @version    Release: @1.0.0@
- * @since      Class available since Release 1.0.0
- */
-class JsonDecode
-{
-    /**
-     * JSON generator object
-     */
-    static public $jsonDecoderObj = null;
-
-    /**
-     * Initialize
-     *
-     * @return void
-     */
-    static public function init()
-    {
-        self::$jsonDecoderObj = new JsonDecoder();
-    }
-
-    /**
-     * JSON generator object
-     *
-     * @return object
-     */
-    static public function getObject()
-    {
-        if (is_null(self::$jsonDecoderObj)) {
-            self::init();
-        }
-        return self::$jsonDecoderObj;
     }
 }

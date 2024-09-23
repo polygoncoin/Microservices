@@ -2,11 +2,9 @@
 namespace Microservices\Config\Queries\ClientDB\GET;
 
 use Microservices\App\Constants;
-use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 
 return [
-    'query' => "SELECT * FROM `{$Env::$clientDB}`.`address` WHERE __WHERE__",
+    'query' => "SELECT * FROM `address` WHERE __WHERE__",
     '__CONFIG__' => [// [{payload/uriParams}, key/index, {Constants::$REQUIRED}]
         ['uriParams', 'id', Constants::$REQUIRED],
     ],
