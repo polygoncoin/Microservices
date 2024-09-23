@@ -74,7 +74,7 @@ Below are the configuration settings details in .env
 ### Example
 
 * For configuring route **/tableName/parts** GET method
-``
+````
     return [
       'tableName' => [
         'parts' => [
@@ -82,9 +82,9 @@ Below are the configuration settings details in .env
         ]
       ]
     ];
-``
+````
 * For configuring route **/tableName/{id}** where id is dynamic **integer** value to be collected.
-``
+````
     return [
       'tableName' => [
         '{id:int}' => [
@@ -92,9 +92,9 @@ Below are the configuration settings details in .env
         ]
       ]
     ];
-``
+````
 * Same dynamic variable but with a different data type, for e.g. **{id}** will be treated differently for **string** and **integer** values to be collected.
-``
+````
     return [
       'tableName' => [
         '{id:int}' => [
@@ -105,9 +105,9 @@ Below are the configuration settings details in .env
         ]
       ]
     ];
-``
+````
 * To restrict dynamic values to a certain set of values. One can do the same by appending comma-separated values after OR key.
-``
+````
     return [
       '{tableName:string|admin,group,client,routes}' => [
         '{id:int}' => [
@@ -115,7 +115,7 @@ Below are the configuration settings details in .env
         ]
       ]
     ];
-``
+````
 
 ## SQLs
 
@@ -155,7 +155,7 @@ Below are the configuration settings details in .env
 
 * GET method.
 
-``
+````
     <?php
     return [
       'query' => "SELECT * FROM {$Env::$globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
@@ -184,12 +184,12 @@ Below are the configuration settings details in .env
         ...
       ]
     ];
-``
+````
 > Here **query & mode** keys are required keys
 
 * For POST/PUT/PATCH/DELETE method.
 
-``
+````
     <?php
     return [
       'query' => "INSERT {$Env::$globalDB}.TableName SET SET WHERE WHERE ",
@@ -232,14 +232,14 @@ Below are the configuration settings details in .env
         ...
       ]
     ];
-``
+````
 > **Note**: If there are modules or configurations repeated. One can reuse them by palcing them in a separate file and including as below.
-``
+````
       'subQuery' => [
         //Here the module1 properties are reused for write operation.
         'module1' => include DOC_ROOT . 'Config/Queries/ClientDB/Common/reusefilename.php',
       ]
-``
+````
 > **Note**: For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
 
 ## HTTP Request
@@ -255,7 +255,7 @@ Below are the configuration settings details in .env
 ### POST, PUT, PATCH, and DELETE Request
 
 * Single
-``
+````
     {"Payload":
       {
         "key1": "value1",
@@ -263,10 +263,10 @@ Below are the configuration settings details in .env
         ...
       }
     };
-``
+````
 
 * Multiple
-``
+````
     {"Payload":
       [
         {
@@ -282,7 +282,7 @@ Below are the configuration settings details in .env
         ...
       ]
     };
-``
+````
 
 ## Variables
 
@@ -311,13 +311,13 @@ For **GET** method, one can use previous query results if configured to use hier
 * Config/Queries/ClientDB/GET/Category.php
 
 In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
-``
+````
     'parent_id' => ['hierarchyData', 'return:id'],
-``
+````
 
 * Config/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
 
-``
+````
         // Configuration
         return [
           'query' => "INSERT INTO {$Env::$clientDB}.`category` SET SET",
@@ -344,11 +344,11 @@ In this file one can confirm how previous select data is used recursively in sub
           ],
           'useHierarchy' => true
         ];
-``
+````
 
 * Request - 1: Single object.
 
-``
+````
     {"Payload":
       {
         "name":"name",
@@ -357,11 +357,11 @@ In this file one can confirm how previous select data is used recursively in sub
         }
       }
     }
-``
+````
 
 * Request - 2: Array of module1
 
-``
+````
     {"Payload":
       {
         "name":"name",
@@ -376,11 +376,11 @@ In this file one can confirm how previous select data is used recursively in sub
         ]
       }
     }
-``
+````
 
 * Request - 3: Array of payload and arrays of module1
 
-``
+````
     {"Payload":
       [
         {
@@ -410,7 +410,7 @@ In this file one can confirm how previous select data is used recursively in sub
         ...
       ]
     }
-``
+````
 
 ## Route ending with /config
 
