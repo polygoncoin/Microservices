@@ -408,4 +408,4 @@ Perform basic checks on Config folder.
 
 ### fetchFrom
 
-- **fetchFrom** is a SQL config feature to indicates fetch mode either from Master or Slave.
+- **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
