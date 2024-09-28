@@ -31,9 +31,6 @@ Below are the configuration settings details in .env
 | dbDatabaseClient001 | Client MySQL database | client\_001 / as\_per\_your\_use |
 |  | The Client details can be same as all Default MySQL settings also depending on situation |  |
 | r=/reload |  |  |
-| HttpAuthenticationRestrictedIp | For reloading global DB changes allowed IP | 127.0.0.1 |
-| HttpAuthenticationUser | HTTP Authentication Username | reload\_username |
-| HttpAuthenticationPassword | HTTP Authentication Password | reload\_password |
 
 ## Folders
 
@@ -158,7 +155,7 @@ Below are the configuration settings details in .env
 ````
     <?php
     return [
-      'query' => "SELECT * FROM {$Env::$globalDB}.TableName WHERE id = ? AND group_id = ? AND client_id = ?",
+      'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
       '__WHERE__' => [//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
         'id' => ['uriParams', 'id'],
         'group_id' => ['payload', 'group_id'],
@@ -192,7 +189,7 @@ Below are the configuration settings details in .env
 ````
     <?php
     return [
-      'query' => "INSERT {$Env::$globalDB}.TableName SET SET WHERE WHERE ",
+      'query' => "INSERT TableName SET SET WHERE WHERE ",
       // Fields present in below __CONFIG__ shall be supported for DB operation. Both Required and Optional
       '__CONFIG__' => [// Set your payload/uriParams fields config here.
         ['payload', 'group_id', Constants::$REQUIRED], // Required field
@@ -320,7 +317,7 @@ In this file one can confirm how previous select data is used recursively in sub
 ````
         // Configuration
         return [
-          'query' => "INSERT INTO {$Env::$clientDB}.`category` SET SET",
+          'query' => "INSERT INTO `category` SET SET",
           '__CONFIG__' => [
               ['payload', 'name', Constants::$REQUIRED],
           ],
@@ -331,7 +328,7 @@ In this file one can confirm how previous select data is used recursively in sub
           'insertId' => 'category:id',
           'subQuery' => [
               'module1' => [
-                'query' => "INSERT INTO {$Env::$clientDB}.`category` SET SET",
+                'query' => "INSERT INTO `category` SET SET",
                 '__CONFIG__' => [
                   ['payload', 'subname', Constants::$REQUIRED],
                 ],

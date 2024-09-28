@@ -31,6 +31,7 @@ spl_autoload_register(__NAMESPACE__ . '\Autoload::register');
 
 $inputs = [];
 
+$inputs['server']['host'] = $_SERVER['HTTP_HOST'];
 $inputs['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
 $inputs['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {

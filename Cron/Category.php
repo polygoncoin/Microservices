@@ -72,6 +72,6 @@ class Category
      */
     private function endProcess()
     {
-        throw new \Exception('message as desired.', 200);
+        throw new \Exception('message as desired', 200);
     }
 }
