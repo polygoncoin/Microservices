@@ -15,17 +15,67 @@ This is very light & easy **Framework** for Microservices. It can be used to cre
 
 Below are the configuration settings details in .env
 
-| Variable | Description | Value Example |
-| -------- | ----------- | ------------- |
-| defaultDbHostname | Default MySQL hostname | 127.0.0.1 |
-| defaultDbUsername | Default MySQL username | root |
-| defaultDbPassword | Default MySQL password | password |
-| defaultDbDatabase | Default MySQL database | global |
-| clientMasterDbName | Client Master Database | client\_master - Complete Database with least required data to replicate if client demand a separate database for his data. |
-| dbHostnameClient001 | Client MySQL hostname | This can be the dedicated host domain / IP |
-| dbUsernameClient001 | Client MySQL username | username |
-| dbPasswordClient001 | Client MySQL password | password |
-| dbDatabaseClient001 | Client MySQL database | client\_001 / as\_per\_your\_use |
+- ENVIRONMENT=0
+>Environment PRODUCTION = 1 / DEVELOPMENT = 0
+
+- OUTPUT_PERFORMANCE_STATS=1
+>Add Performance Stats in Json output: 1 = true / 0 = false
+
+- allowConfigRequest=1
+>Allow config request (global flag): 1 = true / 0 = false
+
+- cronRestrictedIp='127.0.0.1'
+>Crons Details
+
+- maxPerpage=10000
+>;Maximum value of perpage (records per page)
+
+#### Cache Server Details (Redis)
+- cacheType='Redis'
+- cacheHostname='127.0.0.1'
+- cachePort=6379
+- cacheUsername='ramesh'
+- cachePassword='shames11'
+- cacheDatabase=0
+
+#### Global Database details - global.sql
+- globalType='MySQL'
+- globalHostname='127.0.0.1'
+- globalPort=3306
+- globalUsername='root'
+- globalPassword='shames11'
+- globalDatabase='global'
+
+#### global Database tables details
+- groups='m002_master_groups'
+- clients='m001_master_clients'
+
+#### Default application database/server for clients
+- defaultDbType='MySQL'
+- defaultDbHostname='127.0.0.1'
+- defaultDbPort=3306
+- defaultDbUsername='root'
+- defaultDbPassword='shames11'
+- defaultDbDatabase='global'
+
+####  Dedicated application database/server for client 1
+- dbHostnameClient001='127.0.0.1'
+- dbUsernameClient001='root'
+- dbPasswordClient001='shames11'
+- dbDatabaseClient001='client_001'
+
+####  Dedicated application database/server for client 2
+- dbHostnameClient002='127.0.0.1'
+- dbUsernameClient002='root'
+- dbPasswordClient002='shames11'
+- dbDatabaseClient002='client_002'
+
+#### Additional client database details
+- clientMasterDbName='client_master'
+>contains all entities required for a new client.
+
+- client_users='master_users'
+>Table in client database containing user details.
 
 ## Folders
 
@@ -57,46 +107,46 @@ Below are the configuration settings details in .env
 
 * For configuring route **/tableName/parts** GET method
 ````
-    return [
-      'tableName' => [
-        'parts' => [
-          '__file__' => 'SQL file location'
-        ]
-      ]
-    ];
+return [
+	'tableName' => [
+		'parts' => [
+			'__file__' => 'SQL file location'
+		]
+	]
+];
 ````
 * For configuring route **/tableName/{id}** where id is dynamic **integer** value to be collected.
 ````
-    return [
-      'tableName' => [
-        '{id:int}' => [
-          '__file__' => 'SQL file location'
-        ]
-      ]
-    ];
+return [
+	'tableName' => [
+		'{id:int}' => [
+			'__file__' => 'SQL file location'
+		]
+	]
+];
 ````
 * Same dynamic variable but with a different data type, for e.g. **{id}** will be treated differently for **string** and **integer** values to be collected.
 ````
-    return [
-      'tableName' => [
-        '{id:int}' => [
-          '__file__' => 'SQL file location for integer data type'
-        ],
-        '{id:string}' => [
-          '__file__' => 'SQL file location for string data type'
-        ]
-      ]
-    ];
+return [
+	'tableName' => [
+		'{id:int}' => [
+			'__file__' => 'SQL file location for integer data type'
+		],
+		'{id:string}' => [
+			'__file__' => 'SQL file location for string data type'
+		]
+	]
+];
 ````
 * To restrict dynamic values to a certain set of values. One can do the same by appending comma-separated values after OR key.
 ````
-    return [
-      '{tableName:string|admin,group,client,routes}' => [
-        '{id:int}' => [
-          '__file__' => 'SQL file location'
-        ]
-      ]
-    ];
+return [
+	'{tableName:string|admin,group,client,routes}' => [
+		'{id:int}' => [
+			'__file__' => 'SQL file location'
+		]
+	]
+];
 ````
 
 ## Queries Folder
