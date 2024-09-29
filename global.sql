@@ -52,7 +52,7 @@ CREATE TABLE `m002_master_groups` (
 LOCK TABLES `m001_master_clients` WRITE;
 /*!40000 ALTER TABLE `m001_master_clients` DISABLE KEYS */;
 INSERT INTO `m001_master_clients` VALUES
-(1,'Client 001','localhost','defaultDbType','dbHostnameClient001','defaultDbPort','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','defaultDbType','dbHostnameClient001','defaultDbPort','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No');
+(1,'Client 001','api.client001.localhost','defaultDbType','dbHostnameClient001','defaultDbPort','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','defaultDbType','dbHostnameClient001','defaultDbPort','dbUsernameClient001','dbPasswordClient001','dbDatabaseClient001','',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes','No','No');
 /*!40000 ALTER TABLE `m001_master_clients` ENABLE KEYS */;
 UNLOCK TABLES;
 

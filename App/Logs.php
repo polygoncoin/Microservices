@@ -37,8 +37,8 @@ class Logs
             throw new \Exception('Invalid log type', 501);
         }
         
-        $absLogsDir = Constants::$DOC_ROOT . $logsDir;
-        if (!is_dir()) {
+        $absLogsDir = Constants::$DOC_ROOT . $this->logsDir;
+        if (!is_dir($absLogsDir)) {
             mkdir($absLogsDir, 0755, true);
         }
 
