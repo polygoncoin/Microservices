@@ -2,6 +2,7 @@
 namespace Microservices\Custom;
 
 use Microservices\App\Constants;
+use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
 
@@ -81,12 +82,12 @@ class Password
             $this->c->httpRequest->db->closeCursor();
 
             $clientId = $this->c->httpRequest->clientInfo['client_id'];
-            $cu_key = "cu:{$clientId}:u:{$userName}";
+            $cu_key = CacheKey::ClientUser($clientId,$userName);
             if ($this->c->httpRequest->cache->cacheExists($cu_key)) {
                 $userDetails = json_decode($this->c->httpRequest->cache->getCache($cu_key), true);
                 $userDetails['password_hash'] = $newPasswordHash;
                 $this->c->httpRequest->cache->setCache($cu_key, json_encode($userDetails));
-                $this->c->httpRequest->cache->deleteCache($this->c->httpRequest->input['token']);
+                $this->c->httpRequest->cache->deleteCache(CacheKey::Token($this->c->httpRequest->input['token']));
             }
 
             $this->c->httpResponse->jsonEncode->addKeyValue('Results', 'Password changed successfully');
