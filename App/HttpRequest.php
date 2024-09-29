@@ -2,6 +2,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpResponse;
@@ -50,20 +51,6 @@ class HttpRequest
     public $input = null;
 
     /**
-     * Logged-in User ID
-     *
-     * @var integer
-     */
-    public $userId = null;
-
-    /**
-     * Logged-in user Group ID
-     *
-     * @var integer
-     */
-    public $groupId = null;
-
-    /**
      * Client details
      *
      * @var array
@@ -99,6 +86,13 @@ class HttpRequest
     public $jsonDecode = null;
 
     /**
+     * Microservices Request Details
+     * 
+     * @var array
+     */
+    public $inputs = null;
+
+    /**
      * Details var from $request.
      */
     public $HOST = null;
@@ -108,11 +102,18 @@ class HttpRequest
     public $ROUTE = null;
 
     /**
-     * Microservices Request Details
-     * 
-     * @var array
+     * ids
      */
-    public $inputs = null;
+    public $userId = null;
+    public $groupId = null;
+
+    /**
+     * Cache Keys
+     */
+    public $t_key = null;
+    public $c_key = null;
+    public $g_key = null;
+    public $cidr_key = null;
 
     /**
      * Constructor
@@ -160,12 +161,12 @@ class HttpRequest
      */
     public function checkHost()
     {
-        $key = "c:{$this->HOST}";
-        if (!$this->cache->cacheExists($key)) {
+        $this->c_key = "c:{$this->HOST}";
+        if (!$this->cache->cacheExists($this->c_key)) {
             throw new \Exception("Invalid Host '{$this->HOST}'", 501);
         }
 
-        $this->clientInfo = json_decode($this->cache->getCache($key), true);
+        $this->clientInfo = json_decode($this->cache->getCache($this->c_key), true);
     }
 
     /**
@@ -177,11 +178,11 @@ class HttpRequest
     {
         if (!is_null($this->HTTP_AUTHORIZATION) && preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)) {
             $this->input['token'] = $matches[1];
-            $token = $this->input['token'];
-            if (!$this->cache->cacheExists("t:{$token}")) {
+            $this->t_key = CacheKey::Token($this->input['token']);
+            if (!$this->cache->cacheExists($this->t_key)) {
                 throw new \Exception('Token expired', 400);
             }
-            $this->input['readOnlySession'] = json_decode($this->cache->getCache("t:{$token}"), true);
+            $this->input['readOnlySession'] = json_decode($this->cache->getCache($this->t_key), true);
             $this->userId = $this->input['readOnlySession']['user_id'];
             $this->groupId = $this->input['readOnlySession']['group_id'];    
             $this->checkRemoteIp();
@@ -205,12 +206,12 @@ class HttpRequest
             throw new \Exception('Invalid session', 501);
         }
 
-        $key = 'g:'.$this->groupId;
-        if (!$this->cache->cacheExists($key)) {
-            throw new \Exception("Cache '{$key}' missing", 501);
+        $this->g_key = CacheKey::Group($this->groupId);
+        if (!$this->cache->cacheExists($this->g_key)) {
+            throw new \Exception("Cache '{$this->g_key}' missing", 501);
         }
 
-        $this->groupInfo = json_decode($this->cache->getCache($key), true);
+        $this->groupInfo = json_decode($this->cache->getCache($this->g_key), true);
     }
 
     /**
@@ -261,9 +262,9 @@ class HttpRequest
     {
         $groupId = $this->input['readOnlySession']['group_id'];
 
-        $key = "cidr:{$this->groupId}";
-        if ($this->cache->cacheExists($key)) {
-            $cidrs = json_decode($this->cache->getCache($key), true);
+        $this->cidr_key = CacheKey::CIDR($this->groupId);
+        if ($this->cache->cacheExists($this->cidr_key)) {
+            $cidrs = json_decode($this->cache->getCache($this->cidr_key), true);
             $ipNumber = ip2long($this->REMOTE_ADDR);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {

@@ -2,6 +2,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Constants;
+use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\AppTrait;
@@ -87,7 +88,8 @@ class Reload
         $crows = $this->c->httpRequest->db->fetchAll();
         $this->c->httpRequest->db->closeCursor();
         for ($ci = 0, $ci_count = count($crows); $ci < $ci_count; $ci++) {
-            $this->c->httpRequest->cache->setCache("c:{$crows[$ci]['api_domain']}", json_encode($crows[$ci]));
+            $c_key = CacheKey::Client($crows[$ci]['api_domain']);
+            $this->c->httpRequest->cache->setCache($c_key, json_encode($crows[$ci]));
             $this->c->httpRequest->setDb(
                 getenv($crows[$ci]['master_db_server_type']),
                 getenv($crows[$ci]['master_db_hostname']),
@@ -105,7 +107,8 @@ class Reload
             $urows = $this->c->httpRequest->db->fetchAll();
             $this->c->httpRequest->db->closeCursor();
             for ($ui = 0, $ui_count = count($urows); $ui < $ui_count; $ui++) {
-                $this->c->httpRequest->cache->setCache("cu:{$crows[$ci]['client_id']}:u:{$urows[$ui]['username']}", json_encode($urows[$ui]));
+                $cu_key = CacheKey::ClientUser($crows[$ci]['client_id'], $urows[$ui]['username']);
+                $this->c->httpRequest->cache->setCache($cu_key, json_encode($urows[$ui]));
             }
         }
     }
@@ -134,11 +137,13 @@ class Reload
             ", []);
 
         while($row = $this->c->httpRequest->db->fetch(\PDO::FETCH_ASSOC)) {
-            $this->c->httpRequest->cache->setCache("g:{$row['group_id']}", json_encode($row));
+            $g_key = CacheKey::Group($row['group_id']);
+            $this->c->httpRequest->cache->setCache($g_key, json_encode($row));
             if (!empty($row['allowed_ips'])) {
                 $cidrs = $this->c->httpRequest->cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
-                    $this->c->httpRequest->cache->setCache("cidr:{$row['group_id']}", json_encode($cidrs));
+                    $cidr_key = CacheKey::CIDR($row['group_id']);
+                    $this->c->httpRequest->cache->setCache($cidr_key, json_encode($cidrs));
                 }
             }
         }
