@@ -459,3 +459,112 @@ Perform basic checks on Config folder.
 ### fetchFrom
 
 - **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
+
+## Javascript - HTTP request example
+
+### Login
+
+````
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/login";
+var xmlhttp = new XMLHttpRequest();
+
+xmlhttp . open( "POST", handlerUrl );
+xmlhttp . setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+xmlhttp . onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var responseJson = this.responseText;
+        var responseArr = JSON.parse(responseJson);
+        console.log(responseArr);
+        var token = responseArr\['Output'\]\['Results'\]\['Token'\];
+        console.log(token);
+    }
+};
+
+var params = {
+	"Payload": {
+		"username":"client_1_user_1",
+		"password":"shames11"
+	}
+};
+
+xmlhttp . send( JSON.stringify(params) );
+````
+
+### For other API's
+
+* GET Request
+
+````
+  var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/routes";
+  var xmlhttp = new XMLHttpRequest();
+
+  xmlhttp . open( "GET", handlerUrl );
+  xmlhttp . setRequestHeader('Authorization', 'Bearer &lt;Token-from-login-api&gt;');
+
+  xmlhttp . onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+          var responseJson = this.responseText;
+          var responseArr = JSON.parse(responseJson);
+          console.log(responseArr);
+      }
+  };
+
+  xmlhttp . send();
+````
+
+* POST Request
+
+````
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/ajax-handler-route";
+var xmlhttp = new XMLHttpRequest();
+
+xmlhttp . open( "POST", handlerUrl );
+xmlhttp . setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+xmlhttp . setRequestHeader('Authorization', ‘Bearer &lt;Token-from-login-api&gt;');
+
+xmlhttp . onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var responseJson = this.responseText;
+        var responseArr = JSON.parse(responseJson);
+        console.log(responseArr);
+    }
+};
+
+var params = {
+	"Payload": {
+		"key1": "value1",
+		"key2": "value2",
+	}
+};
+
+xmlhttp . send( JSON.stringify(params) );
+````
+
+* PUT Request
+
+````
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/custom/password";
+var xmlhttp = new XMLHttpRequest();
+
+xmlhttp . open( "PUT", handlerUrl );
+xmlhttp . setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+xmlhttp . setRequestHeader('Authorization', ‘Bearer &lt;Token-from-login-api&gt;');
+
+xmlhttp . onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var responseJson = this.responseText;
+        var responseArr = JSON.parse(responseJson);
+        console.log(responseArr);
+    }
+};
+
+var params = {
+	"Payload": {
+		"old_password": "shames11",
+		"new_password": "ramesh",
+	}
+};
+
+xmlhttp . send( JSON.stringify(params) );
+````
