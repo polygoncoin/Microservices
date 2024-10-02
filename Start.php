@@ -29,25 +29,25 @@ class Autoload
 
 spl_autoload_register(__NAMESPACE__ . '\Autoload::register');
 
-$inputs = [];
+$httpRequestDetails = [];
 
-$inputs['server']['host'] = $_SERVER['HTTP_HOST'];
-$inputs['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
-$inputs['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
+$httpRequestDetails['server']['host'] = $_SERVER['HTTP_HOST'];
+$httpRequestDetails['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
+$httpRequestDetails['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $inputs['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+    $httpRequestDetails['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
-$inputs['get'] = &$_GET;
+$httpRequestDetails['get'] = &$_GET;
 
 // Code to Initialize / Start the service.
 try {
-    $Microservices = new Microservices($inputs);
+    $Microservices = new Microservices($httpRequestDetails);
     
     // Setting CORS
     foreach ($Microservices->getCors() as $k => $v) {
         header("{$k}: {$v}");
     }
-    if ($inputs['server']['request_method'] == 'OPTIONS') {
+    if ($httpRequestDetails['server']['request_method'] == 'OPTIONS') {
         exit();
     }
 

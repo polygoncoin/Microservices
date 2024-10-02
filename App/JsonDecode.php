@@ -110,20 +110,11 @@ class JsonDecode
     private $charCounter = null;
 
     /**
-     * Microservices Request Details
-     * 
-     * @var array
-     */
-    public $inputs = null;
-
-    /**
      * JsonDecode constructor
-     *
-     * @param array $inputs
      */
-    public function __construct(&$inputs)
+    public function __construct()
     {
-        $this->inputs = &$inputs;
+
     }
 
     /**
