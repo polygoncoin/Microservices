@@ -180,7 +180,7 @@ class MySQL extends AbstractDatabase
         try {
             if ($this->beganTransaction) {
                 $this->beganTransaction = false;
-               $this->db->commit();
+                $this->db->commit();
             }
         } catch (\PDOException $e) {
             if ((int)$this->db->errorCode()) {
@@ -199,7 +199,7 @@ class MySQL extends AbstractDatabase
         try {
             if ($this->beganTransaction) {
                 $this->beganTransaction = false;
-               $this->db->rollback();
+                $this->db->rollback();
             }
         } catch (\PDOException $e) {
             if ((int)$this->db->errorCode()) {

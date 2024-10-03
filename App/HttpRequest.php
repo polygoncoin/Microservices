@@ -139,9 +139,9 @@ class HttpRequest
         }
         $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
         $this->ROUTE = '/' . trim($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM], '/');
-        
-        $this->jsonDecode = new JsonDecode();
-        $this->jsonDecode->init();
+
+        $this->jsonDecode = new JsonDecode($this->httpRequestDetails);
+        $this->jsonDecode->init();    
 
         $this->setCache(
             getenv('cacheType'),
