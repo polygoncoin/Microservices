@@ -359,12 +359,9 @@ return [
 
 ````
 {
-	"Payload":
-	{
-		"name":"name",
-		"module1": {
-			"subname":"subname",
-		}
+	"name":"name",
+	"module1": {
+		"subname":"subname",
 	}
 }
 ````
@@ -373,9 +370,26 @@ return [
 
 ````
 {
-	"Payload":
+	"name":"name",
+	"module1":
+	[
+		{
+			"subname":"subname1",
+		},
+		{
+			"subname":"subname2",
+		},
+		...
+	]
+}
+````
+
+- Request - 3: Array of payload and arrays of module1
+
+````
+[
 	{
-		"name":"name",
+		"name":"name1",
 		"module1":
 		[
 			{
@@ -386,46 +400,22 @@ return [
 			},
 			...
 		]
-	}
-}
-````
-
-- Request - 3: Array of payload and arrays of module1
-
-````
-{
-	"Payload":
-	[
-		{
-			"name":"name1",
-			"module1":
-			[
-				{
-					"subname":"subname1",
-				},
-				{
-					"subname":"subname2",
-				},
-				...
-			]
-		},
-		{
-		{
-			"name":"name2",
-			"module1":
-			[
-				{
-					"subname":"subname21",
-				},
-				{
-					"subname":"subname22",
-				},
-				...
-			]
-		},
-		...
-	]
-}
+	},
+	{
+		"name":"name2",
+		"module1":
+		[
+			{
+				"subname":"subname21",
+			},
+			{
+				"subname":"subname22",
+			},
+			...
+		]
+	},
+	...
+]
 ````
 
 ### Route ending with /config
@@ -481,14 +471,12 @@ xmlhttp . onreadystatechange = function() {
     }
 };
 
-var params = {
-	"Payload": {
-		"username":"client_1_user_1",
-		"password":"shames11"
-	}
+var payload = {
+	"username":"client_1_user_1",
+	"password":"shames11"
 };
 
-xmlhttp . send( JSON.stringify(params) );
+xmlhttp . send( JSON.stringify(payload) );
 ````
 
 ### For other API's
@@ -531,14 +519,12 @@ xmlhttp . onreadystatechange = function() {
     }
 };
 
-var params = {
-	"Payload": {
-		"key1": "value1",
-		"key2": "value2",
-	}
+var payload = {
+	"key1": "value1",
+	"key2": "value2",
 };
 
-xmlhttp . send( JSON.stringify(params) );
+xmlhttp . send( JSON.stringify(payload) );
 ````
 
 * PUT Request
@@ -559,12 +545,10 @@ xmlhttp . onreadystatechange = function() {
     }
 };
 
-var params = {
-	"Payload": {
-		"old_password": "shames11",
-		"new_password": "ramesh",
-	}
+var payload = {
+	"old_password": "shames11",
+	"new_password": "ramesh",
 };
 
-xmlhttp . send( JSON.stringify(params) );
+xmlhttp . send( JSON.stringify(payload) );
 ````

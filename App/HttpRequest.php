@@ -116,6 +116,11 @@ class HttpRequest
     public $cidr_key = null;
 
     /**
+     * Payload stream
+     */
+    private $payloadStream = null;
+
+    /**
      * Constructor
      *
      * @param array $httpRequestDetails
@@ -140,7 +145,8 @@ class HttpRequest
         $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
         $this->ROUTE = '/' . trim($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM], '/');
 
-        $this->jsonDecode = new JsonDecode($this->httpRequestDetails);
+        $this->payloadStream = fopen('php://input', 'rb');
+        $this->jsonDecode = new JsonDecode($this->payloadStream);
         $this->jsonDecode->init();    
 
         $this->setCache(
@@ -428,7 +434,7 @@ class HttpRequest
             // Load Payload
             $this->jsonDecode->validate();
             $this->jsonDecode->indexJSON();
-            $this->input['payloadType'] = $this->jsonDecode->keysType();
+            $this->input['payloadType'] = $this->jsonDecode->jsonType();
         }
     }
 
