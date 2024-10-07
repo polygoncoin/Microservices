@@ -423,13 +423,10 @@ class HttpRequest
      */
     public function loadPayload()
     {
-        $payloadArr = [];
-
         if ($this->REQUEST_METHOD === Constants::$GET) {
             $this->urlDecode($_GET);
-            $payloadArr = !empty($_GET) ? $_GET : [];
             $this->input['payloadType'] = 'Object';
-            $this->input['payloadArr'] = $payloadArr;
+            $this->input['payload'] = !empty($_GET) ? $_GET : [];
         } else {
             // Load Payload
             $this->jsonDecode->validate();
