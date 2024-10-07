@@ -429,7 +429,6 @@ class HttpRequest
             $this->input['payload'] = !empty($_GET) ? $_GET : [];
         } else {
             // Load Payload
-            $this->jsonDecode->validate();
             $this->jsonDecode->indexJSON();
             $this->input['payloadType'] = $this->jsonDecode->jsonType();
         }
