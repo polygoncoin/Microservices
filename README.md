@@ -28,7 +28,7 @@ Below are the configuration settings details in .env
 >Crons Details
 
 - maxPerpage=10000
->;Maximum value of perpage (records per page)
+>Maximum value of perpage (records per page)
 
 #### Cache Server Details (Redis)
 - cacheType='Redis'
