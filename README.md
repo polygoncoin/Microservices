@@ -106,7 +106,7 @@ Below are the configuration settings details in .env
 #### Example
 
 * For configuring route **/tableName/parts** GET method
-````
+```PHP
 return [
 	'tableName' => [
 		'parts' => [
@@ -114,9 +114,9 @@ return [
 		]
 	]
 ];
-````
+```
 * For configuring route **/tableName/{id}** where id is dynamic **integer** value to be collected.
-````
+```PHP
 return [
 	'tableName' => [
 		'{id:int}' => [
@@ -124,9 +124,9 @@ return [
 		]
 	]
 ];
-````
+```
 * Same dynamic variable but with a different data type, for e.g. **{id}** will be treated differently for **string** and **integer** values to be collected.
-````
+```PHP
 return [
 	'tableName' => [
 		'{id:int}' => [
@@ -137,9 +137,9 @@ return [
 		]
 	]
 ];
-````
+```
 * To restrict dynamic values to a certain set of values. One can do the same by appending comma-separated values after OR key.
-````
+```PHP
 return [
 	'{tableName:string|admin,group,client,routes}' => [
 		'{id:int}' => [
@@ -147,7 +147,7 @@ return [
 		]
 	]
 ];
-````
+```
 
 ## Queries Folder
 
@@ -166,26 +166,106 @@ return [
 
 ### Example
 
-* GET method.
+####GET method.
 
-````
-<?php
-	return [
-		 'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
-		'__WHERE__' => [//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
+* For Single row
+
+```PHP
+return [
+	'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
+	'__WHERE__' => [
+		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
 		'id' => ['uriParams', 'id'],
 		'group_id' => ['payload', 'group_id'],
 		'client_id' => ['readOnlySession', 'client_id'],
-		'mode' => 'singleRowFormat',// Single row returned.
-		'subQuery' => [
-			'Clients' => [
-				'query' => "MySQL Query here",
-				'__WHERE__' => [],
-				'mode' => 'multipleRowFormat'// Multiple rows returned.
-			],
-			...
+	],
+	'mode' => 'singleRowFormat'				// Single row is returned.
+];
+```
+* For Multiple rows
+
+```PHP
+return [
+	'query' => "SELECT * FROM TableName WHERE client_id = ?",
+	'__WHERE__' => [
+		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
+		'client_id' => ['readOnlySession', 'client_id'],
+	],
+	'mode' => 'multipleRowFormat'			// Multiple rows are returned.
+];
+```
+
+* For Mixed
+
+```PHP
+return [
+	'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
+	'__WHERE__' => [
+		//column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
+		'id' => ['uriParams', 'id'],
+		'group_id' => ['payload', 'group_id'],
+		'client_id' => ['readOnlySession', 'client_id'],
+	],
+	'mode' => 'singleRowFormat',			// Single row is returned.
+	'subQuery' => [
+		'Clients' => [
+			'query' => "MySQL Query here",
+			'__WHERE__' => [],
+			'mode' => 'multipleRowFormat'	// Multiple rows are returned.
 		],
-		'validate' => [
+		...
+	],
+	'validate' => [
+		[
+			'fn' => 'validateGroupId',
+			'fnArgs' => [
+				'group_id' => ['payload', 'group_id']
+			],
+			'errorMessage' => 'Invalid Group Id'
+		]
+	],
+	...
+];
+```
+> Here **query & mode** keys are required keys
+
+* For POST/PUT/PATCH/DELETE method.
+
+```PHP
+return [
+	'query' => "INSERT TableName SET SET WHERE WHERE ",
+	// Fields present in below __CONFIG__ shall be supported for DB operation. Both Required and Optional
+	'__CONFIG__' => [
+		// Set your payload/uriParams fields config here.
+		['payload', 'group_id', Constants::$REQUIRED],	// Required field
+		['payload', 'password'],						// Optional field
+		['payload', 'client_id'],						// Optional field
+	],
+	'__SET__' => [
+		//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}|function, key|{value}|function($conditions)],
+		'group_id' => ['payload', 'group_id'],
+		'password' => ['function', function($conditions) {
+			return password_hash($conditions['payload']['password'], PASSWORD_DEFAULT);
+		}],
+		'client_id' => ['readOnlySession', 'client_id']
+	],
+	'__WHERE__' => [
+		// column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}
+		'id' => ['uriParams', 'id']
+	],
+	// Last insert id to be made available as $conditions['insertIdParams'][uniqueParamString];
+	'insertId' => '<keyName>:id',
+	'subQuery' => [
+		'module1' => [
+			'query' => "MySQL Query here",
+			'__SET__' => [
+				'previous_table_id' => ['insertIdParams', '<keyName>:id'],
+			],
+			'__WHERE__' => [],
+		],
+		...
+	],
+	'validate' => [
 		[
 			'fn' => 'validateGroupId',
 			'fnArgs' => [
@@ -196,62 +276,14 @@ return [
 		...
 	]
 ];
-````
-> Here **query & mode** keys are required keys
-
-* For POST/PUT/PATCH/DELETE method.
-
-````
-<?php
-	return [
-		'query' => "INSERT TableName SET SET WHERE WHERE ",
-		// Fields present in below __CONFIG__ shall be supported for DB operation. Both Required and Optional
-		'__CONFIG__' => [// Set your payload/uriParams fields config here.
-			['payload', 'group_id', Constants::$REQUIRED], // Required field
-			['payload', 'password'], // Optional field
-			['payload', 'client_id'], // Optional field
-		],
-		'__SET__' => [
-			//column => [uriParams|payload|readOnlySession|insertIdParams|{custom}|function, key|{value}|function()],
-			'group_id' => ['payload', 'group_id'],
-			'password' => ['function', function($conditions) {
-				return password_hash($conditions['payload']['password'], PASSWORD_DEFAULT);
-			}],
-			'client_id' => ['readOnlySession', 'client_id']
-		],
-		'__WHERE__' => [// column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}
-			'id' => ['uriParams', 'id']
-		],
-		'insertId' => 'tablename1:id',// Last insert id key name in $conditions['insertIdParams'][<tableName>:id];
-		'subQuery' => [
-			'module1' => [
-				'query' => "MySQL Query here",
-				'__SET__' => [
-					'previous_table_id' => ['insertIdParams', '&lt;tableName&gt;:id'],
-				],
-				'__WHERE__' => [],
-			],
-			...
-		],
-		'validate' => [
-			[
-				'fn' => 'validateGroupId',
-				'fnArgs' => [
-					'group_id' => ['payload', 'group_id']
-				],
-				'errorMessage' => 'Invalid Group Id'
-			],
-			...
-		]
-	];
-````
+```
 > **Note**: If there are modules or configurations repeated. One can reuse them by palcing them in a separate file and including as below.
-````
+```PHP
 'subQuery' => [
 	//Here the module1 properties are reused for write operation.
 	'module1' => include DOC_ROOT . 'Config/Queries/ClientDB/Common/reusefilename.php',
 ]
-````
+```
 > **Note**: For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
 
 ## HTTP Request
@@ -267,36 +299,32 @@ return [
 ### POST, PUT, PATCH, and DELETE Request
 
 * Single
-````
-{
-	"Payload":
+
+```javascript
+var payload = {
+	"key1": "value1",
+	"key2": "value2",
+	...
+};
+```
+
+* Multiple
+
+```javascript
+var payload = [
 	{
 		"key1": "value1",
 		"key2": "value2",
 		...
-	}
-};
-````
-
-* Multiple
-````
-{
-	"Payload":
-	[
-		{
-			"key1": "value1",
-			"key2": "value2",
-			...
-		},
-		{
-			"key1": "value1",
-			"key2": "value2",
-			...
-		},
+	},
+	{
+		"key1": "value1",
+		"key2": "value2",
 		...
-	]
-};
-````
+	},
+	...
+];
+```
 
 ### HttpRequest Variables
 
@@ -319,57 +347,58 @@ return [
 
 - Config/Queries/ClientDB/GET/Category.php
 >In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
-````
+
+```PHP
 'parent_id' => ['hierarchyData', 'return:id'],
-````
+```
 
 - Config/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
 
-````
+```PHP
 return [
 	'query' => "INSERT INTO `category` SET SET",
-		'__CONFIG__' => [
-			['payload', 'name', Constants::$REQUIRED],
-		],
-		'__SET__' => [
-			'name' => ['payload', 'name'],
-			'parent_id' => ['custom', 0],
-		],
-		'insertId' => 'category:id',
-		'subQuery' => [
-			'module1' => [
-				query' => "INSERT INTO `category` SET SET",
-				'__CONFIG__' => [
-					['payload', 'subname', Constants::$REQUIRED],
-				],
-				'__SET__' => [
-					'name' => ['payload', 'subname'],
-					'parent_id' => ['insertIdParams', 'category:id'],
-				],
-				'insertId' => 'sub:id',
-			]
-		],
+	'__CONFIG__' => [
+		['payload', 'name', Constants::$REQUIRED],
+	],
+	'__SET__' => [
+		'name' => ['payload', 'name'],
+		'parent_id' => ['custom', 0],
+	],
+	'insertId' => 'category:id',
+	'subQuery' => [
+		'module1' => [
+			'query' => "INSERT INTO `category` SET SET",
+			'__CONFIG__' => [
+				['payload', 'subname', Constants::$REQUIRED],
+			],
+			'__SET__' => [
+				'name' => ['payload', 'subname'],
+				'parent_id' => ['insertIdParams', 'category:id'],
+			],
+			'insertId' => 'sub:id',
+		]
+	],
 	'useHierarchy' => true
 ];
-````
+```
 
 #### Hierarchy Request
 
 - Request - 1: Single object.
 
-````
-{
+```javascript
+var payload = {
 	"name":"name",
 	"module1": {
 		"subname":"subname",
 	}
 }
-````
+```
 
 - Request - 2: Array of module1
 
-````
-{
+```javascript
+var payload = {
 	"name":"name",
 	"module1":
 	[
@@ -382,12 +411,12 @@ return [
 		...
 	]
 }
-````
+```
 
 - Request - 3: Array of payload and arrays of module1
 
-````
-[
+```javascript
+var payload = [
 	{
 		"name":"name1",
 		"module1":
@@ -416,7 +445,7 @@ return [
 	},
 	...
 ]
-````
+```
 
 ### Route ending with /config
 
@@ -454,7 +483,7 @@ Perform basic checks on Config folder.
 
 ### Login
 
-````
+```javascript
 var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/login";
 var xmlhttp = new XMLHttpRequest();
 
@@ -477,13 +506,13 @@ var payload = {
 };
 
 xmlhttp . send( JSON.stringify(payload) );
-````
+```
 
 ### For other API's
 
 * GET Request
 
-````
+```javascript
   var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/routes";
   var xmlhttp = new XMLHttpRequest();
 
@@ -499,11 +528,11 @@ xmlhttp . send( JSON.stringify(payload) );
   };
 
   xmlhttp . send();
-````
+```
 
 * POST Request
 
-````
+```javascript
 var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/ajax-handler-route";
 var xmlhttp = new XMLHttpRequest();
 
@@ -525,11 +554,11 @@ var payload = {
 };
 
 xmlhttp . send( JSON.stringify(payload) );
-````
+```
 
 * PUT Request
 
-````
+```javascript
 var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/custom/password";
 var xmlhttp = new XMLHttpRequest();
 
@@ -551,4 +580,4 @@ var payload = {
 };
 
 xmlhttp . send( JSON.stringify(payload) );
-````
+```
