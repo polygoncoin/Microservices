@@ -113,7 +113,7 @@ class Microservices
      */
     public function startOutputJson()
     {
-        $this->c->httpResponse->jsonEncode->startObject('Output');      
+        $this->c->httpResponse->jsonEncode->startObject('Output');
     }
 
     /**
