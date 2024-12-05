@@ -71,8 +71,7 @@ class Read
         $useHierarchy = $this->getUseHierarchy($readSqlConfig);
 
         if (
-            Env::$allowConfigRequest &&
-            Env::$isConfigRequest
+            (Env::$allowConfigRequest && Env::$isConfigRequest)
         ) {
             $this->processReadConfig($readSqlConfig, $useHierarchy);
         } else {
@@ -91,6 +90,11 @@ class Read
      */
     private function processReadConfig(&$readSqlConfig, $useHierarchy)
     {
+        $this->c->httpResponse->jsonEncode->startObject('Config');
+        $this->c->httpResponse->jsonEncode->addKeyValue('Route', $this->c->httpRequest->configuredUri);
+        $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $this->getConfigParams($readSqlConfig, true, $useHierarchy));
+        $this->c->httpResponse->jsonEncode->endObject();
+
         return true;
     }    
 
@@ -217,7 +221,7 @@ class Read
         unset($readSqlConfig['countQuery']);
 
         $this->c->httpRequest->conditions['payload']['page']  = $_GET['page'] ?? 1;
-        $this->c->httpRequest->conditions['payload']['perpage']  = $_GET['perpage'] ?? 10;
+        $this->c->httpRequest->conditions['payload']['perpage']  = $_GET['perpage'] ?? Env::$defaultPerpage;
 
         if ($this->c->httpRequest->conditions['payload']['perpage'] > Env::$maxPerpage) {
             throw new \Exception('perpage exceeds max perpage value of '.Env::$maxPerpage, 403);

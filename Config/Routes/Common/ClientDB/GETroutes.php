@@ -1,28 +1,26 @@
 <?php
 namespace Microservices\Config\Routes\Common\Client;
 
-use Microservices\App\Constants;
-
 return [
     'category' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category.php',
+        '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category.php',
         'search' => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/SearchCategory.php',
+            '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/SearchCategory.php',
         ],
         '{id:int|!0}' => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category-Single.php',
+            '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Category-Single.php',
         ]
     ],
     'registration' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration-all.php',
+        '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration-all.php',
         '{id:int|!0}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration-single.php',
+            '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Registration-single.php',
         ],
     ],
     'address' => [
-        '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-all.php',
+        '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-all.php',
         '{id:int|!0}'  => [
-            '__file__' => Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-single.php',
+            '__file__' => $Constants::$DOC_ROOT . '/Config/Queries/ClientDB/GET/Address-single.php',
         ],
     ],
     'routes' => [

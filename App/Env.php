@@ -21,7 +21,12 @@ class Env
     static public $ENVIRONMENT = null;
     static public $OUTPUT_PERFORMANCE_STATS = null;
 
+    static public $allowRoutesRequest = null;
+
     static public $allowConfigRequest = null;
+    static public $configRequestUriKeyword = null;
+
+    static public $isRoutesRequest = null;
     static public $isConfigRequest = null;
 
     static public $groups = null;
@@ -29,6 +34,8 @@ class Env
     static public $clients = null;
 
     static public $maxPerpage = null;
+    static public $defaultPerpage = null;
+
     static public $cronRestrictedIp = null;
 
     static private $initialized = null;
@@ -48,12 +55,20 @@ class Env
 
         self::$ENVIRONMENT = getenv('ENVIRONMENT');
         self::$OUTPUT_PERFORMANCE_STATS = getenv('OUTPUT_PERFORMANCE_STATS');
+
+        self::$allowRoutesRequest = getenv('allowRoutesRequest');
+        
         self::$allowConfigRequest = getenv('allowConfigRequest');
+        self::$configRequestUriKeyword = getenv('configRequestUriKeyword');
+        
         self::$groups = getenv('groups');
         self::$client_users = getenv('client_users');
         self::$clients = getenv('clients');
         self::$maxPerpage = getenv('maxPerpage');
+        self::$defaultPerpage = getenv('defaultPerpage');
+
         self::$cronRestrictedIp = getenv('cronRestrictedIp');
+
         self::$initialized = true;
     }
 }

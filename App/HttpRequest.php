@@ -293,6 +293,9 @@ class HttpRequest
      */
     public function parseRoute($routeFileLocation = null)
     {
+        $Constants = __NAMESPACE__ . '\Constants';
+        $Env = __NAMESPACE__ . '\Env';
+
         if (is_null($routeFileLocation)) {
             $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . $this->groupInfo['name'] . '/' . $this->REQUEST_METHOD . 'routes.php';
         }
@@ -305,19 +308,22 @@ class HttpRequest
 
         $this->routeElements = explode('/', trim($this->ROUTE, '/'));
         $routeLastElementPos = count($this->routeElements) - 1;
-        Env::$isConfigRequest = ($this->routeElements[$routeLastElementPos]) === 'config';
+        if (Env::$allowConfigRequest) {
+            Env::$isConfigRequest = $this->routeElements[$routeLastElementPos] === Env::$configRequestUriKeyword;
+        } else {
+            Env::$isConfigRequest = false;
+        }
         $configuredUri = [];
 
         foreach($this->routeElements as $key => $element) {
             $pos = false;
-            if (isset($routes[$element])) {
-                if (
-                    Env::$allowConfigRequest == 1 &&
-                    Env::$isConfigRequest && 
-                    $routes[$element] === true
-                ) {
-                    break;
-                }
+            if (
+                Env::$allowConfigRequest == 1 &&
+                Env::$isConfigRequest &&
+                $key === $routeLastElementPos
+            ) {
+                break;
+            } else if (isset($routes[$element])) {
                 $configuredUri[] = $element;
                 $routes = &$routes[$element];
                 if (strpos($element, '{') === 0) {
