@@ -308,22 +308,11 @@ class HttpRequest
 
         $this->routeElements = explode('/', trim($this->ROUTE, '/'));
         $routeLastElementPos = count($this->routeElements) - 1;
-        if (Env::$allowConfigRequest) {
-            Env::$isConfigRequest = $this->routeElements[$routeLastElementPos] === Env::$configRequestUriKeyword;
-        } else {
-            Env::$isConfigRequest = false;
-        }
         $configuredUri = [];
 
         foreach($this->routeElements as $key => $element) {
             $pos = false;
-            if (
-                Env::$allowConfigRequest == 1 &&
-                Env::$isConfigRequest &&
-                $key === $routeLastElementPos
-            ) {
-                break;
-            } else if (isset($routes[$element])) {
+            if (isset($routes[$element])) {
                 $configuredUri[] = $element;
                 $routes = &$routes[$element];
                 if (strpos($element, '{') === 0) {
@@ -332,27 +321,39 @@ class HttpRequest
                 }
                 continue;
             } else {
-                if (is_array($routes)) {
+                if (
+                    (isset($routes['__file__']) && count($routes) > 1)
+                    || (!isset($routes['__file__']) && count($routes) > 0)
+                ) {
                     $foundIntRoute = false;
+                    $foundIntParamName = false;
                     $foundStringRoute = false;
+                    $foundStringParamName = false;
                     foreach (array_keys($routes) as $routeElement) {
                         if (strpos($routeElement, '{') === 0) {// Is a dynamic URI element
-                            $paramName = $this->processRouteElement($routeElement, $element, $foundIntRoute, $foundStringRoute);
+                            $this->processRouteElement($routeElement, $element, $foundIntRoute, $foundIntParamName, $foundStringRoute, $foundStringParamName);
                         }
                     }
                     if ($foundIntRoute) {
                         $configuredUri[] = $foundIntRoute;
-                        $this->conditions['uriParams'][$paramName] = (int)$element;
+                        $this->conditions['uriParams'][$foundIntParamName] = (int)$element;
                     } else if ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        $this->conditions['uriParams'][$paramName] = urldecode($element);
+                        $this->conditions['uriParams'][$foundStringParamName] = urldecode($element);
                     } else {
                         throw new \Exception('Route not supported', 400);
                     }
+                    $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
+                } else if (
+                    $key === $routeLastElementPos
+                    && Env::$allowConfigRequest == 1
+                    && Env::$configRequestUriKeyword === $element
+                ) {
+                    Env::$isConfigRequest = true;
+                    break;
                 } else {
                     throw new \Exception('Route not supported', 400);
                 }
-                $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
             }
         }
 
@@ -369,7 +370,7 @@ class HttpRequest
      * @param string $foundStringRoute Found as String route element
      * @return string
      */
-    private function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundStringRoute)
+    private function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundIntParamName, &$foundStringRoute, &$foundStringParamName)
     {
         // Is a dynamic URI element
         if (strpos($routeElement, '{') !== 0) {
@@ -409,17 +410,14 @@ class HttpRequest
             }
         }
 
-        if ($paramDataType === 'int') {
-            if (!ctype_digit($element)) {
-                throw new \Exception("Invalid {$paramName}", 400);
-            } else {
-                $foundIntRoute = $routeElement;
-            }
-        } else {
-            $foundStringRoute = $routeElement;
+        if ($paramDataType === 'int' && ctype_digit($element)) {
+            $foundIntRoute = $routeElement;
+            $foundIntParamName = $paramName;
         }
-
-        return $paramName;
+        if ($paramDataType === 'string') {
+            $foundStringRoute = $routeElement;
+            $foundStringParamName = $paramName;
+        }
     }
 
     /**
