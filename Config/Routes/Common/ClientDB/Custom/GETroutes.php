@@ -2,7 +2,7 @@
 namespace Microservices\Config\Routes\Common\ClientDB\Custom;
 
 return [
-    'custom' => [
+    $Env::$customRequestUriPrefix => [
         'category' => [
             '__file__' => false
         ]

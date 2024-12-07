@@ -2,7 +2,7 @@
 namespace Microservices\Config\Routes\Common\ClientDB\Client;
 
 return [
-    'upload' => [
+    $Env::$uploadRequestUriPrefix => [
         '{module:string}' => [
             '__file__' => false
         ]

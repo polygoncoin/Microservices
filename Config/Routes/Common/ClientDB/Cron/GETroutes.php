@@ -2,7 +2,7 @@
 namespace Microservices\Config\Routes\Common\ClientDB\Cron;
 
 return [
-    'cron' => [
+    $Env::$cronRequestUriPrefix => [
         'category' => [
             '__file__' => false
         ]

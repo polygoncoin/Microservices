@@ -2,7 +2,7 @@
 namespace Microservices\Config\Routes\Common\ClientDB\ThirdParty;
 
 return [
-    'thirdParty' => [
+    $Env::$thirdPartyRequestUriPrefix => [
         '{thirdParty:string}' => [
             '__file__' => false
         ]

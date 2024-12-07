@@ -100,8 +100,6 @@ class Write
         $this->c->httpResponse->jsonEncode->addKeyValue('Route', $this->c->httpRequest->configuredUri);
         $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $this->getConfigParams($writeSqlConfig, true, $useHierarchy));
         $this->c->httpResponse->jsonEncode->endObject();
-
-        return true;
     }    
 
     /**
