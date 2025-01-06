@@ -22,25 +22,29 @@ class Microservices
 {
     /**
      * Start micro timestamp;
+     *
+     * @var null|integer
      */
     private $tsStart = null;
 
     /**
      * End micro timestamp;
+     *
+     * @var null|integer
      */
     private $tsEnd = null;
 
     /**
      * Microservices Request Details
      * 
-     * @var array
+     * @var null|array
      */
     public $httpRequestDetails = null;
 
     /**
      * Microservices Collection of Common Objects
      * 
-     * @var Microservices\App\Common
+     * @var null|Common
      */
     private $c = null;
 
@@ -250,7 +254,7 @@ class Microservices
     /**
      * Log error
      *
-     * @param object $e Exception
+     * @param \Exception $e
      * @return void
      */
     private function log($e)

@@ -32,7 +32,7 @@ class HttpRequest
     /**
      * Array containing details of received route elements
      *
-     * @var array
+     * @var string[]
      */
     public $routeElements = [];
 
@@ -46,49 +46,49 @@ class HttpRequest
     /**
      * Inputs detials of a request
      *
-     * @var array
+     * @var null|array
      */
     public $conditions = null;
 
     /**
      * Client details
      *
-     * @var array
+     * @var null|array
      */
     public $clientInfo = null;
 
     /**
      * Group Info
      *
-     * @var array
+     * @var null|array
      */
     public $groupInfo = null;
 
     /**
      * Json Decode Object
      *
-     * @var Microservices\App\Servers\Cache\Cache
+     * @var null|Cache
      */
     public $cache = null;
 
     /**
      * Json Decode Object
      *
-     * @var Microservices\App\Servers\Database\Database
+     * @var null|Database
      */
     public $db = null;
 
     /**
      * Json Decode Object
      *
-     * @var Microservices\App\JsonDecode
+     * @var null|JsonDecode
      */
     public $jsonDecode = null;
 
     /**
      * Microservices Request Details
      * 
-     * @var array
+     * @var null|array
      */
     public $httpRequestDetails = null;
 

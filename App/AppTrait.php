@@ -22,6 +22,13 @@ use Microservices\App\Validator;
 trait AppTrait
 {
     /**
+     * Validator class object
+     *
+     * @var null|Validator
+     */
+    public $validator = null;
+
+    /**
      * Function to help execute PHP functions enclosed with double quotes.
      *
      * @param $param Returned values by PHP inbuilt functions.

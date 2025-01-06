@@ -26,28 +26,28 @@ class JsonEncode
     /**
      * Temporary Stream
      *
-     * @var object
+     * @var null|resource
      */
     private $tempStream = null;
 
     /**
      * Array of JsonEncoderObject objects
      *
-     * @var array
+     * @var JsonEncoderObject[]
      */
     private $objects = [];
 
     /**
      * Current JsonEncoderObject object
      *
-     * @var Microservices\App\JsonEncoderObject
+     * @var null|JsonEncoderObject
      */
     private $currentObject = null;
 
     /**
      * Microservices Request Details
      * 
-     * @var array
+     * @var null|array
      */
     public $httpRequestDetails = null;
 

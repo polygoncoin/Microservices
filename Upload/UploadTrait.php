@@ -1,15 +1,7 @@
 <?php
 namespace Microservices\Upload;
 
-use Microservices\App\Constants;
-use Microservices\App\Common;
-use Microservices\App\Env;
-
 /**
- * Class is used for file uploads
- *
- * This class supports POST & PUT HTTP request
- *
  * @category   Upload Trait
  * @package    Microservices
  * @author     Ramesh Narayan Jangid

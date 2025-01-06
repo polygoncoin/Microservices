@@ -20,49 +20,49 @@ class MySQL extends AbstractDatabase
     /**
      * Database hostname
      *
-     * @var string
+     * @var null|string
      */
     private $hostname = null;
 
     /**
      * Database port
      *
-     * @var string
+     * @var null|string
      */
     private $port = null;
 
     /**
      * Database username
      *
-     * @var string
+     * @var null|string
      */
     private $username = null;
 
     /**
      * Database password
      *
-     * @var string
+     * @var null|string
      */
     private $password = null;
 
     /**
      * Database database
      *
-     * @var string
+     * @var null|string
      */
     public $database = null;
 
     /**
      * Database connection
      *
-     * @var object
+     * @var null|\PDO
      */
     private $db = null;
 
     /**
      * Executed query statement
      *
-     * @var object
+     * @var null|\PDOStatement
      */
     private $stmt = null;
 

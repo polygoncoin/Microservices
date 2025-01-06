@@ -25,49 +25,49 @@ class MySQL extends AbstractCache
     /**
      * Cache hostname
      *
-     * @var string
+     * @var null|string
      */
     private $hostname = null;
 
     /**
      * Cache port
      *
-     * @var integer
+     * @var null|integer
      */
     private $port = null;
 
     /**
      * Cache password
      *
-     * @var string
+     * @var null|string
      */
     private $username = null;
 
     /**
      * Cache password
      *
-     * @var string
+     * @var null|string
      */
     private $password = null;
 
     /**
      * Cache database
      *
-     * @var string
+     * @var null|string
      */
     private $database = null;
 
     /**
      * Cache connection
      *
-     * @var object
+     * @var null|DB_MySQL
      */
     private $cache = null;
 
     /**
      * Current timestamp
      *
-     * @var integer
+     * @var null|integer
      */
     private $ts = null;
 
@@ -175,7 +175,7 @@ class MySQL extends AbstractCache
      *
      * @param string  $key    Cache key
      * @param string  $value  Cache value
-     * @param integer $expire Seconds to expire. Default 0 - doesnt expire
+     * @param null|integer $expire Seconds to expire. Default 0 - doesnt expire
      * @return integer
      */
     public function setCache($key, $value, $expire = null)
