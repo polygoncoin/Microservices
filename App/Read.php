@@ -25,14 +25,14 @@ class Read
 
     /**
      * Microservices Collection of Common Objects
-     * 
+     *
      * @var null|Common
      */
     private $c = null;
 
     /**
      * Constructor
-     * 
+     *
      * @param Common $common
      */
     public function __construct(&$common)
@@ -96,7 +96,7 @@ class Read
         $this->c->httpResponse->jsonEncode->endObject();
 
         return true;
-    }    
+    }
 
     /**
      * Process Function for read operation.
@@ -229,26 +229,26 @@ class Read
 
         $this->c->httpRequest->conditions['payload']['start']  = ($this->c->httpRequest->conditions['payload']['page'] - 1) * $this->c->httpRequest->conditions['payload']['perpage'];
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
-        
+
         if (!empty($errors)) {
             throw new \Exception($errors, 501);
         }
-        
+
         $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
         $row = $this->c->httpRequest->db->fetch();
         $this->c->httpRequest->db->closeCursor();
-        
+
         $totalRowsCount = $row['count'];
         $totalPages = ceil($totalRowsCount/$this->c->httpRequest->conditions['payload']['perpage']);
-        
+
         $this->c->httpResponse->jsonEncode->addKeyValue('page', $this->c->httpRequest->conditions['payload']['page']);
         $this->c->httpResponse->jsonEncode->addKeyValue('perpage', $this->c->httpRequest->conditions['payload']['perpage']);
         $this->c->httpResponse->jsonEncode->addKeyValue('totalPages', $totalPages);
         $this->c->httpResponse->jsonEncode->addKeyValue('totalRecords', $totalRowsCount);
-        
+
         return true;
     }
-    
+
     /**
      * Function to fetch multiple record.
      *
@@ -264,12 +264,12 @@ class Read
             throw new \Exception('Invalid Configuration: multipleRowFormat can\'t have sub query', 501);
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
-        
+
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
             throw new \Exception($errors, 501);
         }
-        
+
         if (isset($readSqlConfig['countQuery'])) {
             $start = $this->c->httpRequest->conditions['payload']['start'];
             $offset = $this->c->httpRequest->conditions['payload']['perpage'];
@@ -308,7 +308,7 @@ class Read
         $stmt->closeCursor();
 
         return true;
-    }    
+    }
 
     /**
      * Function to reset data for module key wise.

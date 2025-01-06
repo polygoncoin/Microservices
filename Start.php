@@ -42,7 +42,7 @@ $httpRequestDetails['get'] = &$_GET;
 // Code to Initialize / Start the service.
 try {
     $Microservices = new Microservices($httpRequestDetails);
-    
+
     // Setting CORS
     foreach ($Microservices->getCors() as $k => $v) {
         header("{$k}: {$v}");

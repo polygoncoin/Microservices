@@ -25,14 +25,14 @@ class Write
 
     /**
      * Microservices Collection of Common Objects
-     * 
+     *
      * @var null|Common
      */
     private $c = null;
 
     /**
      * Constructor
-     * 
+     *
      * @param Common $common
      */
     public function __construct(&$common)
@@ -93,7 +93,7 @@ class Write
         $this->c->httpResponse->jsonEncode->addKeyValue('Route', $this->c->httpRequest->configuredUri);
         $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $this->getConfigParams($writeSqlConfig, true, $useHierarchy));
         $this->c->httpResponse->jsonEncode->endObject();
-    }    
+    }
 
     /**
      * Process Function to insert/update.
@@ -156,7 +156,7 @@ class Write
         }
 
         return true;
-    }    
+    }
 
     /**
      * Function to insert/update sub queries recursively.
@@ -179,7 +179,7 @@ class Write
                 $response['Error'] = 'Transaction rolled back';
                 return;
             }
-            
+
             if ($isAssoc && $i > 0) {
                     return;
             }
@@ -200,7 +200,7 @@ class Write
             } else {
                 $this->c->httpRequest->conditions['required'] = [];
             }
-    
+
             // Validation
             if (!$this->isValidPayload($writeSqlConfig)) {
                 continue;

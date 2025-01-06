@@ -60,7 +60,7 @@ class JsonEncode
 
     /**
      * Microservices Request Details
-     * 
+     *
      * @var null|array
      */
     public $httpRequestDetails = null;
@@ -91,7 +91,7 @@ class JsonEncode
 
     /**
      * Write to temporary stream
-     * 
+     *
      * @return void
      */
     public function write($str)
@@ -115,7 +115,7 @@ class JsonEncode
     /**
      * Encodes both simple and associative array to json
      *
-     * @param $arr string value escaped and array value json_encode function is applied.  
+     * @param $arr string value escaped and array value json_encode function is applied.
      * @return void
      */
     public function encode($arr)
@@ -267,10 +267,10 @@ class JsonEncode
         stream_copy_to_stream($this->tempStream, $outputStream);
     }
 
-    /** 
-     * destruct functipn 
-     */ 
-    public function __destruct() 
+    /**
+     * destruct functipn
+     */
+    public function __destruct()
     {
     }
 }

@@ -25,14 +25,14 @@ class Module1 implements UploadInterface
 
     /**
      * Microservices Collection of Common Objects
-     * 
+     *
      * @var null|Common
      */
     private $c = null;
 
     /**
      * Constructor
-     * 
+     *
      * @param Common $common
      */
     public function __construct(&$common)

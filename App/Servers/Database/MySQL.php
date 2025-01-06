@@ -169,7 +169,7 @@ class MySQL extends AbstractDatabase
             }
         }
     }
-    
+
     /**
      * Commit transaction
      *
@@ -188,7 +188,7 @@ class MySQL extends AbstractDatabase
             }
         }
     }
-    
+
     /**
      * Rollback transaction
      *
@@ -207,7 +207,7 @@ class MySQL extends AbstractDatabase
             }
         }
     }
-    
+
     /**
      * Affected Rows by PDO
      *
@@ -230,7 +230,7 @@ class MySQL extends AbstractDatabase
             }
         }
     }
-    
+
     /**
      * Last Insert Id by PDO
      *

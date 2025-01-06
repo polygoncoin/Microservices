@@ -21,21 +21,21 @@ class Api
 {
     /**
      * Route matched for processing before payload was collected.
-     * 
+     *
      * @var null|boolean
      */
     private $beforePayload = null;
 
     /**
      * Microservices Collection of Common Objects
-     * 
+     *
      * @var null|Common
      */
     private $c = null;
 
     /**
      * Constructor
-     * 
+     *
      * @param Common $common
      */
     public function __construct(&$common)
@@ -69,7 +69,7 @@ class Api
         {
             if ($this->processBeforePayload()) {
                 return true;
-            }    
+            }
         }
 
         // Load Payloads

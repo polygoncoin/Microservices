@@ -40,7 +40,7 @@ class Login
      * @var array
      */
     private $userDetails;
-    
+
     /**
      * IDs
      */
@@ -53,7 +53,7 @@ class Login
      * @var integer
      */
     private $timestamp;
-    
+
     /**
      * Payload
      *
@@ -63,7 +63,7 @@ class Login
 
     /**
      * Microservices Collection of Common Objects
-     * 
+     *
      * @var null|Common
      */
     private $c = null;
@@ -78,7 +78,7 @@ class Login
 
     /**
      * Constructor
-     * 
+     *
      * @param Common $common
      */
     public function __construct(&$common)
@@ -156,7 +156,7 @@ class Login
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
                 throw new \Exception('Invalid credentials', 401);
-            }            
+            }
         } else {
             throw new \Exception('Invalid credentials', 401);
         }

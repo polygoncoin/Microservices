@@ -57,7 +57,7 @@ trait AppTrait
                     case 3:
                         list($type, $typeKey, $required) = $config;
                         break;
-                    case 2: 
+                    case 2:
                         list($type, $typeKey) = $config;
                         break;
                 }
@@ -103,7 +103,7 @@ trait AppTrait
                         if (!in_array($field, $requiredFields)) {
                             $requiredFields['__required__'][] = $field;
                         }
-                    }    
+                    }
                 }
             }
         }
@@ -298,7 +298,7 @@ trait AppTrait
                     case 3:
                         list($type, $typeKey, $required) = $config;
                         break;
-                    case 2: 
+                    case 2:
                         list($type, $typeKey) = $config;
                         break;
                 }
@@ -343,7 +343,7 @@ trait AppTrait
                     foreach ($sub_requiredFields as $field => $required) {
                         if (!isset($result[$field])) {
                             $result[$field] = $required;
-                        }    
+                        }
                     }
                 }
             }

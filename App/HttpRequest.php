@@ -87,7 +87,7 @@ class HttpRequest
 
     /**
      * Microservices Request Details
-     * 
+     *
      * @var null|array
      */
     public $httpRequestDetails = null;
@@ -129,7 +129,7 @@ class HttpRequest
     {
         $this->httpRequestDetails = &$httpRequestDetails;
     }
-    
+
     /**
      * Initialize
      *
@@ -147,7 +147,7 @@ class HttpRequest
 
         $this->payloadStream = fopen('php://input', 'rb');
         $this->jsonDecode = new JsonDecode($this->payloadStream);
-        $this->jsonDecode->init();    
+        $this->jsonDecode->init();
 
         $this->setCache(
             getenv('cacheType'),
@@ -190,7 +190,7 @@ class HttpRequest
             }
             $this->conditions['readOnlySession'] = json_decode($this->cache->getCache($this->t_key), true);
             $this->userId = $this->conditions['readOnlySession']['user_id'];
-            $this->groupId = $this->conditions['readOnlySession']['group_id'];    
+            $this->groupId = $this->conditions['readOnlySession']['group_id'];
             $this->checkRemoteIp();
         } else {
             throw new \Exception('Token missing', 400);
@@ -512,7 +512,7 @@ class HttpRequest
                     $response[] = [
                         'start' => $ipNumber,
                         'end' => $ipNumber
-                    ];    
+                    ];
                 }
             }
         }

@@ -36,7 +36,7 @@ class HttpResponse
 
     /**
      * Microservices Request Details
-     * 
+     *
      * @var array
      */
     public $httpRequestDetails = null;

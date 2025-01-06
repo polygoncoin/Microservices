@@ -36,14 +36,14 @@ class Microservices
 
     /**
      * Microservices Request Details
-     * 
+     *
      * @var null|array
      */
     public $httpRequestDetails = null;
 
     /**
      * Microservices Collection of Common Objects
-     * 
+     *
      * @var null|Common
      */
     private $c = null;
@@ -61,7 +61,7 @@ class Microservices
         Constants::init();
         Env::init();
     }
-    
+
     /**
      * Initialize
      *
@@ -137,7 +137,7 @@ class Microservices
                 }
                 $class = __NAMESPACE__ . '\\App\\Cron';
                 break;
-            
+
             // Requires HTTP auth username and password
             case $this->c->httpRequest->ROUTE === '/reload':
                 if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
@@ -145,7 +145,7 @@ class Microservices
                 }
                 $class = __NAMESPACE__ . '\\App\\Reload';
                 break;
-            
+
             // Generates auth token
             case $this->c->httpRequest->ROUTE === '/login':
                 $class = __NAMESPACE__ . '\\App\\Login';
@@ -164,11 +164,11 @@ class Microservices
                 if ($api->init()) {
                     $api->process();
                 }
-            }    
+            }
         } catch (\Exception $e) {
             $this->log($e);
         }
-    
+
         return true;
     }
 
@@ -194,7 +194,7 @@ class Microservices
             $this->tsEnd = microtime(true);
             $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
             $memory = ceil(memory_get_peak_usage()/1000);
-        
+
             $this->c->httpResponse->jsonEncode->startObject('Stats');
             $this->c->httpResponse->jsonEncode->startObject('Performance');
             $this->c->httpResponse->jsonEncode->addKeyValue('total-time-taken', "{$time} ms");
@@ -228,7 +228,7 @@ class Microservices
 
     /**
      * CORS-compliant method
-     * 
+     *
      * @return void
      */
     public function getCors()

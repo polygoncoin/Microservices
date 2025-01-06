@@ -79,7 +79,7 @@ class Redis extends AbstractCache
         $password,
         $database
     )
-    { 
+    {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
@@ -189,7 +189,7 @@ class Redis extends AbstractCache
         $this->useDatabase();
         return $this->cache->del($key);
     }
-    
+
     /**
      * Checks member is present in set
      *

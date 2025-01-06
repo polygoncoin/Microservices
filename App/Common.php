@@ -23,21 +23,21 @@ class Common
 {
     /**
      * Microservices HTTP Request
-     * 
+     *
      * @var null|HttpRequest
      */
     public $httpRequest = null;
 
     /**
      * Microservices HTTP Response
-     * 
+     *
      * @var null|HttpResponse
      */
     public $httpResponse = null;
 
     /**
      * Microservices Request Details
-     * 
+     *
      * @var null|array
      */
     public $httpRequestDetails = null;
