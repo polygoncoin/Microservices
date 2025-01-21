@@ -1,6 +1,7 @@
 <?php
 namespace Microservices\App\Servers\Database;
 
+use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
@@ -342,6 +343,6 @@ class MySql extends AbstractDatabase
      */
     private function logError($e)
     {
-        throw new \Exception($e->getMessage(), 501);
+        throw new \Exception($e->getMessage(), HttpStatus::$InternalServerError);
     }
 }

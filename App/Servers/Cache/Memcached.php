@@ -4,6 +4,7 @@ namespace Microservices\App\Servers\Cache;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Cache\AbstractCache;
 
 /**
@@ -73,7 +74,7 @@ class Memcached extends AbstractCache
             $this->cache = new \Memcached();
             $this->cache->addServer($this->hostname, $this->port);
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 501);
+            throw new \Exception($e->getMessage(), HttpStatus::$InternalServerError);
         }
     }
 
@@ -84,7 +85,7 @@ class Memcached extends AbstractCache
      */
     public function useDatabase()
     {
-        throw new \Exception('No database support', 501);
+        throw new \Exception('No database support', HttpStatus::$InternalServerError);
     }
 
     /**

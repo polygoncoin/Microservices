@@ -3,6 +3,7 @@ namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 
 /**
  * Constants
@@ -34,7 +35,7 @@ class Logs
     public function log($logType, $logContent)
     {
         if (!in_array($logType, array_keys($this->logTypes))) {
-            throw new \Exception('Invalid log type', 501);
+            throw new \Exception('Invalid log type', HttpStatus::$InternalServerError);
         }
 
         $absLogsDir = Constants::$DOC_ROOT . $this->logsDir;

@@ -4,6 +4,7 @@ namespace Microservices\App\Servers\Cache;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Cache\AbstractCache;
 use Microservices\App\Servers\Database\MySql as DB_MySql;
 
@@ -116,7 +117,7 @@ class MySql extends AbstractCache
                 $this->database
             );
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 501);
+            throw new \Exception($e->getMessage(), HttpStatus::$InternalServerError);
         }
     }
 

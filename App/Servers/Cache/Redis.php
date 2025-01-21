@@ -4,6 +4,7 @@ namespace Microservices\App\Servers\Cache;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Cache\AbstractCache;
 
 /**
@@ -115,10 +116,10 @@ class Redis extends AbstractCache
             }
 
             if (!$this->cache->ping()) {
-                throw new \Exception($e->getMessage(), 501);
+                throw new \Exception($e->getMessage(), HttpStatus::$InternalServerError);
             }
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 501);
+            throw new \Exception($e->getMessage(), HttpStatus::$InternalServerError);
         }
     }
 

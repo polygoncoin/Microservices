@@ -5,6 +5,7 @@ use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 
 /**
  * Login
@@ -123,7 +124,7 @@ class Login
     {
         // Check request method is POST.
         if ($this->c->httpRequest->REQUEST_METHOD !== Constants::$POST) {
-            throw new \Exception('Invalid request method', 404);
+            throw new \Exception('Invalid request method', HttpStatus::$NotFound);
         }
 
         $this->c->httpRequest->jsonDecode->validate();
@@ -133,7 +134,7 @@ class Login
         // Check for required conditions variables
         foreach (array('username','password') as $value) {
             if (!isset($this->payload[$value]) || empty($this->payload[$value])) {
-                throw new \Exception('Missing required parameters', 404);
+                throw new \Exception('Missing required parameters', HttpStatus::$NotFound);
             } else {
                 $this->$value = $this->payload[$value];
             }
@@ -155,10 +156,10 @@ class Login
             $this->userId = $this->userDetails['user_id'];
             $this->groupId = $this->userDetails['group_id'];
             if (empty($this->userId) || empty($this->groupId)) {
-                throw new \Exception('Invalid credentials', 401);
+                throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
             }
         } else {
-            throw new \Exception('Invalid credentials', 401);
+            throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
         }
     }
 
@@ -182,7 +183,7 @@ class Login
                 }
             }
             if (!$isValidIp) {
-                throw new \Exception('IP not supported', 401);
+                throw new \Exception('IP not supported', HttpStatus::$Unauthorized);
             }
         }
     }
@@ -196,7 +197,7 @@ class Login
     {
         // get hash from cache and compares with password
         if (!password_verify($this->password, $this->userDetails['password_hash'])) {
-            throw new \Exception('Invalid credentials', 401);
+            throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
         }
     }
 

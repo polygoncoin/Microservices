@@ -5,6 +5,7 @@ use Microservices\App\AppTrait;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
 
 /**
@@ -180,7 +181,7 @@ class Read
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
-            throw new \Exception($errors, 501);
+            throw new \Exception($errors, HttpStatus::$InternalServerError);
         }
 
         $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
@@ -190,7 +191,7 @@ class Read
                 $subQueryKeys = array_keys($readSqlConfig['subQuery']);
                 foreach($row as $key => $value) {
                     if (in_array($key, $subQueryKeys)) {
-                        throw new \Exception('Invalid configuration: Conflicting column names', 501);
+                        throw new \Exception('Invalid configuration: Conflicting column names', HttpStatus::$InternalServerError);
                     }
                 }
             }
@@ -224,14 +225,14 @@ class Read
         $this->c->httpRequest->conditions['payload']['perpage']  = $_GET['perpage'] ?? Env::$defaultPerpage;
 
         if ($this->c->httpRequest->conditions['payload']['perpage'] > Env::$maxPerpage) {
-            throw new \Exception('perpage exceeds max perpage value of '.Env::$maxPerpage, 403);
+            throw new \Exception('perpage exceeds max perpage value of '.Env::$maxPerpage, HttpStatus::$Forbidden);
         }
 
         $this->c->httpRequest->conditions['payload']['start']  = ($this->c->httpRequest->conditions['payload']['page'] - 1) * $this->c->httpRequest->conditions['payload']['perpage'];
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
 
         if (!empty($errors)) {
-            throw new \Exception($errors, 501);
+            throw new \Exception($errors, HttpStatus::$InternalServerError);
         }
 
         $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
@@ -261,13 +262,13 @@ class Read
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
-            throw new \Exception('Invalid Configuration: multipleRowFormat can\'t have sub query', 501);
+            throw new \Exception('Invalid Configuration: multipleRowFormat can\'t have sub query', HttpStatus::$InternalServerError);
         }
         $isAssoc = $this->isAssoc($readSqlConfig);
 
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
         if (!empty($errors)) {
-            throw new \Exception($errors, 501);
+            throw new \Exception($errors, HttpStatus::$InternalServerError);
         }
 
         if (isset($readSqlConfig['countQuery'])) {

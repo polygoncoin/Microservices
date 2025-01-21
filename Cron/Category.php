@@ -4,6 +4,7 @@ namespace Microservices\Cron;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\Cron\CronInterface;
 use Microservices\Cron\CronTrait;
 
@@ -77,6 +78,6 @@ class Category implements CronInterface
      */
     private function endProcess()
     {
-        throw new \Exception('message as desired', 200);
+        throw new \Exception('message as desired', HttpStatus::$Ok);
     }
 }

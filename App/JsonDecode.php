@@ -1,6 +1,8 @@
 <?php
 namespace Microservices\App;
 
+use Microservices\App\HttpStatus;
+
 /**
  * Creates Arrays from JSON String
  *
@@ -270,7 +272,7 @@ class JsonDecode
             $this->jsonDecodeEngine->_s_ = $jsonFileIndex['_s_'];
             $this->jsonDecodeEngine->_e_ = $jsonFileIndex['_e_'];
         } else {
-            throw new \Exception("Invalid keys '{$keys}'", 400);
+            throw new \Exception("Invalid keys '{$keys}'", HttpStatus::$BadRequest);
         }
     }
 }

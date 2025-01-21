@@ -4,6 +4,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 
 /**
  * Creates JSON
@@ -142,7 +143,7 @@ class JsonEncode
     public function addValue($value)
     {
         if ($this->currentObject->mode !== 'Array') {
-            throw new \Exception('Mode should be Array', 501);
+            throw new \Exception('Mode should be Array', HttpStatus::$InternalServerError);
         }
         $this->encode($value);
     }
@@ -157,7 +158,7 @@ class JsonEncode
     public function addKeyValue($key, $value)
     {
         if ($this->currentObject->mode !== 'Object') {
-            throw new \Exception('Mode should be Object', 501);
+            throw new \Exception('Mode should be Object', HttpStatus::$InternalServerError);
         }
         $this->write($this->currentObject->comma);
         $this->write($this->escape($key) . ':');
@@ -209,7 +210,7 @@ class JsonEncode
     {
         if ($this->currentObject) {
             if ($this->currentObject->mode === 'Object' && is_null($key)) {
-                throw new \Exception('Object inside an Object should be supported with a Key', 501);
+                throw new \Exception('Object inside an Object should be supported with a Key', HttpStatus::$InternalServerError);
             }
             $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);

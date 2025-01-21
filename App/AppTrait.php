@@ -4,6 +4,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
 
 /**
@@ -75,7 +76,7 @@ trait AppTrait
             foreach ($sqlConfig['__WHERE__'] as $var => $where) {
                 list($type, $typeKey) = $where;
                 if ($first && $type === 'hierarchyData') {
-                    throw new \Exception('Invalid config: First query can not have hierarchyData config', 501);
+                    throw new \Exception('Invalid config: First query can not have hierarchyData config', HttpStatus::$InternalServerError);
                 }
                 if ($type === 'hierarchyData') {
                     $foundHierarchy = true;
@@ -83,14 +84,14 @@ trait AppTrait
                 }
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
-                throw new \Exception('Invalid config: missing hierarchyData', 501);
+                throw new \Exception('Invalid config: missing hierarchyData', HttpStatus::$InternalServerError);
             }
         }
 
         // Check in subQuery
         if (isset($sqlConfig['subQuery'])) {
             if (!$this->isAssoc($sqlConfig['subQuery'])) {
-                throw new \Exception('Invalid Configuration: subQuery should be an associative array', 501);
+                throw new \Exception('Invalid Configuration: subQuery should be an associative array', HttpStatus::$InternalServerError);
                 return;
             }
             foreach ($sqlConfig['subQuery'] as $module => &$sqlDetails) {
@@ -213,7 +214,7 @@ trait AppTrait
                 $value = $this->c->httpRequest->conditions['hierarchyData'];
                 foreach($typeKeys as $key) {
                     if (!isset($value[$key])) {
-                        throw new \Exception('Invalid hierarchy:  Missing hierarchy data', 501);
+                        throw new \Exception('Invalid hierarchy:  Missing hierarchy data', HttpStatus::$InternalServerError);
                     }
                     $value = $value[$key];
                 }
@@ -326,7 +327,7 @@ trait AppTrait
                 }
             }
             if (!$first && $useHierarchy && !$foundHierarchy) {
-                throw new \Exception('Invalid config: missing hierarchyData', 501);
+                throw new \Exception('Invalid config: missing hierarchyData', HttpStatus::$InternalServerError);
             }
         }
 

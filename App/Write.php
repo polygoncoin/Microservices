@@ -5,6 +5,7 @@ use Microservices\App\AppTrait;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
 
 /**
@@ -134,14 +135,14 @@ class Write
             if ($this->c->httpRequest->db->beganTransaction === true) {
                 $this->c->httpRequest->db->commit();
                 $arr = [
-                    'Status' => 200,
+                    'Status' => HttpStatus::$Created,
                     'Payload' => $this->c->httpRequest->jsonDecode->getCompleteArray($payloadKey),
                     'Response' => &$response
                 ];
             } else {
-                $this->c->httpResponse->httpStatus = 400;
+                $this->c->httpResponse->httpStatus = HttpStatus::$BadRequest;
                 $arr = [
-                    'Status' => 400,
+                    'Status' => HttpStatus::$BadRequest,
                     'Payload' => $this->c->httpRequest->jsonDecode->getCompleteArray($payloadKey),
                     'Error' => &$response
                 ];
@@ -191,7 +192,7 @@ class Write
             }
 
             if (!$this->c->httpRequest->jsonDecode->isset($payloadKey)) {
-                throw new \Exception("Paylaod key '{$payloadKey}' not set", 404);
+                throw new \Exception("Paylaod key '{$payloadKey}' not set", HttpStatus::$NotFound);
             }
 
             $this->c->httpRequest->conditions['payload'] = $this->c->httpRequest->jsonDecode->get($payloadKey);
@@ -250,7 +251,7 @@ class Write
                             $_payloadKey = $modulePayloadKey;
                             $_required = &$required[$module] ?? [];
                         } else {
-                            throw new \Exception("Invalid payload: Module '{$module}' missing", 404);
+                            throw new \Exception("Invalid payload: Module '{$module}' missing", HttpStatus::$NotFound);
                         }
                     } else {
                         $_payloadKey = $modulePayloadKey;
@@ -289,7 +290,7 @@ class Write
         if (isset($writeSqlConfig['validate'])) {
             list($isValidData, $errors) = $this->validate($writeSqlConfig['validate']);
             if ($isValidData !== true) {
-                $this->c->httpResponse->httpStatus = 400;
+                $this->c->httpResponse->httpStatus = HttpStatus::$BadRequest;
                 $this->c->httpResponse->jsonEncode->startObject();
                 $this->c->httpResponse->jsonEncode->addKeyValue('Payload', $this->c->httpRequest->conditions['payload']);
                 $this->c->httpResponse->jsonEncode->addKeyValue('Error', $errors);

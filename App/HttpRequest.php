@@ -6,6 +6,7 @@ use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpResponse;
+use Microservices\App\HttpStatus;
 use Microservices\App\JsonDecode;
 
 /*
@@ -169,7 +170,7 @@ class HttpRequest
     {
         $this->c_key = "c:{$this->HOST}";
         if (!$this->cache->cacheExists($this->c_key)) {
-            throw new \Exception("Invalid Host '{$this->HOST}'", 501);
+            throw new \Exception("Invalid Host '{$this->HOST}'", HttpStatus::$InternalServerError);
         }
 
         $this->clientInfo = json_decode($this->cache->getCache($this->c_key), true);
@@ -186,18 +187,18 @@ class HttpRequest
             $this->conditions['token'] = $matches[1];
             $this->t_key = CacheKey::Token($this->conditions['token']);
             if (!$this->cache->cacheExists($this->t_key)) {
-                throw new \Exception('Token expired', 400);
+                throw new \Exception('Token expired', HttpStatus::$BadRequest);
             }
             $this->conditions['readOnlySession'] = json_decode($this->cache->getCache($this->t_key), true);
             $this->userId = $this->conditions['readOnlySession']['user_id'];
             $this->groupId = $this->conditions['readOnlySession']['group_id'];
             $this->checkRemoteIp();
         } else {
-            throw new \Exception('Token missing', 400);
+            throw new \Exception('Token missing', HttpStatus::$BadRequest);
         }
 
         if (empty($this->conditions['token'])) {
-            throw new \Exception('Token missing', 400);
+            throw new \Exception('Token missing', HttpStatus::$BadRequest);
         }
     }
 
@@ -209,12 +210,12 @@ class HttpRequest
     public function initSession()
     {
         if (empty($this->conditions['readOnlySession']['user_id']) || empty($this->conditions['readOnlySession']['group_id'])) {
-            throw new \Exception('Invalid session', 501);
+            throw new \Exception('Invalid session', HttpStatus::$InternalServerError);
         }
 
         $this->g_key = CacheKey::Group($this->groupId);
         if (!$this->cache->cacheExists($this->g_key)) {
-            throw new \Exception("Cache '{$this->g_key}' missing", 501);
+            throw new \Exception("Cache '{$this->g_key}' missing", HttpStatus::$InternalServerError);
         }
 
         $this->groupInfo = json_decode($this->cache->getCache($this->g_key), true);
@@ -229,7 +230,7 @@ class HttpRequest
     public function setConnection($fetchFrom)
     {
         if (is_null($this->clientInfo)) {
-            throw new \Exception('Yet to set connection params', 501);
+            throw new \Exception('Yet to set connection params', HttpStatus::$InternalServerError);
         }
 
         // Set Database credentials
@@ -255,7 +256,7 @@ class HttpRequest
                 );
                 break;
             default:
-                throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", 501);
+                throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", HttpStatus::$InternalServerError);
         }
     }
 
@@ -280,7 +281,7 @@ class HttpRequest
                 }
             }
             if (!$isValidIp) {
-                throw new \Exception('IP not supported', 400);
+                throw new \Exception('IP not supported', HttpStatus::$BadRequest);
             }
         }
     }
@@ -303,7 +304,7 @@ class HttpRequest
         if (file_exists($routeFileLocation)) {
             $routes = include $routeFileLocation;
         } else {
-            throw new \Exception('Missing route file for ' . $this->REQUEST_METHOD . ' method', 501);
+            throw new \Exception('Missing route file for ' . $this->REQUEST_METHOD . ' method', HttpStatus::$InternalServerError);
         }
 
         $this->routeElements = explode('/', trim($this->ROUTE, '/'));
@@ -341,7 +342,7 @@ class HttpRequest
                         $configuredUri[] = $foundStringRoute;
                         $this->conditions['uriParams'][$foundStringParamName] = urldecode($element);
                     } else {
-                        throw new \Exception('Route not supported', 400);
+                        throw new \Exception('Route not supported', HttpStatus::$BadRequest);
                     }
                     $routes = &$routes[(($foundIntRoute) ? $foundIntRoute : $foundStringRoute)];
                 } else if (
@@ -352,7 +353,7 @@ class HttpRequest
                     Env::$isConfigRequest = true;
                     break;
                 } else {
-                    throw new \Exception('Route not supported', 400);
+                    throw new \Exception('Route not supported', HttpStatus::$BadRequest);
                 }
             }
         }
@@ -392,19 +393,19 @@ class HttpRequest
 
         list($paramName, $paramDataType) = explode(':', $dynamicRoute);
         if (!in_array($paramDataType, ['int','string'])) {
-            throw new \Exception('Invalid datatype set for Route', 501);
+            throw new \Exception('Invalid datatype set for Route', HttpStatus::$InternalServerError);
         }
 
         if (count($preferredValues) > 0) {
             switch ($mode) {
                 case 'include': // preferred values
                     if (!in_array($element, $preferredValues)) {
-                        throw new \Exception("Element value '{$element}' not allowed in config {$routeElement}", 501);
+                        throw new \Exception("Element value '{$element}' not allowed in config {$routeElement}", HttpStatus::$InternalServerError);
                     }
                     break;
                 case 'exclude': // exclude set values
                     if (in_array($element, $preferredValues)) {
-                        throw new \Exception("Element value '{$element}' restricted in config {$routeElement}", 501);
+                        throw new \Exception("Element value '{$element}' restricted in config {$routeElement}", HttpStatus::$InternalServerError);
                     }
                     break;
             }
@@ -430,7 +431,7 @@ class HttpRequest
     {
         // Set route code file.
         if (!(isset($routes['__file__']) && ($routes['__file__'] === false || file_exists($routes['__file__'])))) {
-            throw new \Exception('Missing route configuration file for ' . $this->REQUEST_METHOD . ' method', 501);
+            throw new \Exception('Missing route configuration file for ' . $this->REQUEST_METHOD . ' method', HttpStatus::$InternalServerError);
         }
 
         $this->__file__ = $routes['__file__'];

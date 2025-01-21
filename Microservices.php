@@ -4,6 +4,7 @@ namespace Microservices;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\HttpStatus;
 use Microservices\App\Logs;
 
 /**
@@ -73,7 +74,7 @@ class Microservices
         $this->c->init();
 
         if (!isset($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM])) {
-            throw new \Exception('Missing route', 404);
+            throw new \Exception('Missing route', HttpStatus::$NotFound);
         }
 
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
@@ -133,7 +134,7 @@ class Microservices
 
             case Env::$allowCronRequest && strpos($this->c->httpRequest->ROUTE, '/'.Env::$cronRequestUriPrefix) === 0:
                 if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
-                    throw new \Exception('Source IP is not supported', 404);
+                    throw new \Exception('Source IP is not supported', HttpStatus::$NotFound);
                 }
                 $class = __NAMESPACE__ . '\\App\\Cron';
                 break;
@@ -141,7 +142,7 @@ class Microservices
             // Requires HTTP auth username and password
             case $this->c->httpRequest->ROUTE === '/reload':
                 if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
-                    throw new \Exception('Source IP is not supported', 404);
+                    throw new \Exception('Source IP is not supported', HttpStatus::$NotFound);
                 }
                 $class = __NAMESPACE__ . '\\App\\Reload';
                 break;

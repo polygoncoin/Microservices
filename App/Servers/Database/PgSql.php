@@ -1,6 +1,7 @@
 <?php
 namespace Microservices\App\Servers\Database;
 
+use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
@@ -318,6 +319,6 @@ class PgSql extends AbstractDatabase
      */
     private function logError($e)
     {
-        throw new \Exception(pg_last_error($this->db), 501);
+        throw new \Exception(pg_last_error($this->db), HttpStatus::$InternalServerError);
     }
 }
