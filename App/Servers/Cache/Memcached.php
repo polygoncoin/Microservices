@@ -11,7 +11,7 @@ use Microservices\App\Servers\Cache\AbstractCache;
  *
  * This class is built to handle cache operation.
  *
- * @category   Cache - Redis
+ * @category   Cache - Memcached
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -19,7 +19,7 @@ use Microservices\App\Servers\Cache\AbstractCache;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class Redis extends AbstractCache
+class Memcached extends AbstractCache
 {
     /**
      * Cache hostname
@@ -34,27 +34,6 @@ class Redis extends AbstractCache
      * @var null|integer
      */
     private $port = null;
-
-    /**
-     * Cache password
-     *
-     * @var null|string
-     */
-    private $username = null;
-
-    /**
-     * Cache password
-     *
-     * @var null|string
-     */
-    private $password = null;
-
-    /**
-     * Cache database
-     *
-     * @var null|string
-     */
-    private $database = null;
 
     /**
      * Cache connection
@@ -74,20 +53,11 @@ class Redis extends AbstractCache
      */
     public function __construct(
         $hostname,
-        $port,
-        $username,
-        $password,
-        $database
+        $port
     )
     {
         $this->hostname = $hostname;
         $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
-
-        if (!is_null($database)) {
-            $this->database = $database;
-        }
     }
 
     /**
@@ -100,23 +70,8 @@ class Redis extends AbstractCache
         if (!is_null($this->cache)) return;
 
         try {
-            // https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
-            $this->cache = new \Redis(
-                [
-                    'host' => $this->hostname,
-                    'port' => (int)$this->port,
-                    'connectTimeout' => 2.5,
-                    'auth' => [$this->username, $this->password],
-                ]
-            );
-
-            if (!is_null($this->database)) {
-                $this->useDatabase();
-            }
-
-            if (!$this->cache->ping()) {
-                throw new \Exception($e->getMessage(), 501);
-            }
+            $this->cache = new \Memcached();
+            $this->cache->addServer($this->hostname, $this->port);
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), 501);
         }
@@ -129,10 +84,7 @@ class Redis extends AbstractCache
      */
     public function useDatabase()
     {
-        $this->connect();
-        if (!is_null($this->database)) {
-            $this->cache->select($this->database);
-        }
+        throw new \Exception('No database support', 501);
     }
 
     /**
@@ -143,8 +95,8 @@ class Redis extends AbstractCache
      */
     public function cacheExists($key)
     {
-        $this->useDatabase();
-        return $this->cache->exists($key);
+        $this->connect();
+        return $this->getCache($key) !== false;
     }
 
     /**
@@ -155,7 +107,7 @@ class Redis extends AbstractCache
      */
     public function getCache($key)
     {
-        $this->useDatabase();
+        $this->connect();
         return $this->cache->get($key);
     }
 
@@ -169,7 +121,7 @@ class Redis extends AbstractCache
      */
     public function setCache($key, $value, $expire = null)
     {
-        $this->useDatabase();
+        $this->connect();
 
         if (is_null($expire)) {
             return $this->cache->set($key, $value);
@@ -186,7 +138,7 @@ class Redis extends AbstractCache
      */
     public function deleteCache($key)
     {
-        $this->useDatabase();
-        return $this->cache->del($key);
+        $this->connect();
+        return $this->cache->delete($key);
     }
 }

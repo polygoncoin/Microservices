@@ -5,9 +5,9 @@ This is very light & easy **Framework** for Microservices. It can be used to cre
 ## Important Files
 
 - **.env.example** Create a copy of this file as **.env**
-- **global.sql** Import this SQL file on your **MySQL global** instance
-- **client\_master.sql** Import this SQL file on your **MySQL client** instance
-- **cache.sql** Import this SQL file for cache in **MySQL cache** instance if Redis is not the choice (To be configured in .env)
+- **global.sql** Import this SQL file on your **MySql global** instance
+- **client\_master.sql** Import this SQL file on your **MySql client** instance
+- **cache.sql** Import this SQL file for cache in **MySql cache** instance if Redis is not the choice (To be configured in .env)
 
 > **Note**: One can import all three sql's in a single database to start with. Just configure the same details in the .env file.
 
@@ -39,7 +39,7 @@ Below are the configuration settings details in .env
 - cacheDatabase=0
 
 #### Global Database details - global.sql
-- globalType='MySQL'
+- globalType='MySql'
 - globalHostname='127.0.0.1'
 - globalPort=3306
 - globalUsername='root'
@@ -51,7 +51,7 @@ Below are the configuration settings details in .env
 - clients='m001_master_clients'
 
 #### Default application database/server for clients
-- defaultDbType='MySQL'
+- defaultDbType='MySql'
 - defaultDbHostname='127.0.0.1'
 - defaultDbPort=3306
 - defaultDbUsername='root'
@@ -221,7 +221,7 @@ return [
     'mode' => 'singleRowFormat',            // Single row is returned.
     'subQuery' => [
         'Clients' => [
-            'query' => "MySQL Query here",
+            'query' => "MySql Query here",
             '__WHERE__' => [],
             'mode' => 'multipleRowFormat'    // Multiple rows are returned.
         ],
@@ -269,7 +269,7 @@ return [
     'insertId' => '<keyName>:id',
     'subQuery' => [
         'module1' => [
-            'query' => "MySQL Query here",
+            'query' => "MySql Query here",
             '__SET__' => [
                 'previous_table_id' => ['insertIdParams', '<keyName>:id'],
             ],

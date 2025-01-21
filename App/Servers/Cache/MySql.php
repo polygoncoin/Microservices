@@ -5,14 +5,14 @@ use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\Servers\Cache\AbstractCache;
-use Microservices\App\Servers\Database\MySQL as DB_MySQL;
+use Microservices\App\Servers\Database\MySql as DB_MySql;
 
 /**
- * Loading MySQL server
+ * Loading MySql server
  *
  * This class is built to handle cache operation.
  *
- * @category   Cache - MySQL
+ * @category   Cache - MySql
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
@@ -20,7 +20,7 @@ use Microservices\App\Servers\Database\MySQL as DB_MySQL;
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class MySQL extends AbstractCache
+class MySql extends AbstractCache
 {
     /**
      * Cache hostname
@@ -60,7 +60,7 @@ class MySQL extends AbstractCache
     /**
      * Cache connection
      *
-     * @var null|DB_MySQL
+     * @var null|DB_MySql
      */
     private $cache = null;
 
@@ -108,7 +108,7 @@ class MySQL extends AbstractCache
     {
         if (!is_null($this->cache)) return;
         try {
-            $this->cache = new DB_MySQL(
+            $this->cache = new DB_MySql(
                 $this->hostname,
                 $this->port,
                 $this->username,
@@ -220,35 +220,6 @@ class MySQL extends AbstractCache
             $this->cache->execDbQuery($sql, $params);
             $this->cache->closeCursor();
         }
-    }
-
-    /**
-     * Checks member is present in set
-     *
-     * @param string $set    Cache Set
-     * @param string $member Cache Set member
-     * @return boolean
-     */
-    public function isSetMember($set, $member)
-    {
-        $this->useDatabase();
-        // return $this->cache->sIsMember($set, $member);
-    }
-
-    /**
-     * Set Set values
-     *
-     * @param string $key        Cache Set key
-     * @param array  $valueArray Cache values for Set
-     * @return void
-     */
-    public function setSetMembers($key, $valueArray)
-    {
-        $this->useDatabase();
-        // $this->deleteCache($key);
-        // foreach ($valueArray as $value) {
-        //     $this->cache->sAdd($key, $value);
-        // }
     }
 
     public function getKeyDetails($key)

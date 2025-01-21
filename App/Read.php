@@ -277,13 +277,8 @@ class Read
         }
 
         $singleColumn = false;
-        $stmt = $this->c->httpRequest->db->prepare($sql);
-        if (!$stmt) {
-            throw new \Exception('Invalid database query', 501);
-        }
-
-        $stmt->execute($sqlParams);
-        for ($i = 0; $row = $stmt->fetch(\PDO::FETCH_ASSOC);) {
+        $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
+        for ($i = 0; $row = $this->c->httpRequest->db->fetch();) {
             if ($i===0) {
                 if (count($row) === 1) {
                     $singleColumn = true;
@@ -305,7 +300,7 @@ class Read
                 $this->callReadDB($readSqlConfig, $keys, $row, $useHierarchy);
             }
         }
-        $stmt->closeCursor();
+        $this->c->httpRequest->db->closeCursor();
 
         return true;
     }

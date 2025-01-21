@@ -6,16 +6,16 @@ use Microservices\App\Servers\Database\AbstractDatabase;
 /**
  * Loading database server
  *
- * This class is built to handle MySQL database operation.
+ * This class is built to handle MySql database operation.
  *
- * @category   Database - MySQL
+ * @category   Database - MySql
  * @package    Microservices
  * @author     Ramesh Narayan Jangid
  * @copyright  Ramesh Narayan Jangid
  * @version    Release: @1.0.0@
  * @since      Class available since Release 1.0.0
  */
-class MySQL extends AbstractDatabase
+class MySql extends AbstractDatabase
 {
     /**
      * Database hostname
@@ -111,7 +111,7 @@ class MySQL extends AbstractDatabase
 
         try {
            $this->db = new \PDO(
-                "mysql:host=".$this->hostname,
+                "mysql:host={$this->hostname};port={$this->port}",
                 $this->username,
                 $this->password,
                 [
@@ -263,7 +263,9 @@ class MySQL extends AbstractDatabase
 
         try {
             $this->stmt = $this->db->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-            $this->stmt->execute($params);
+            if ($this->stmt) {
+                $this->stmt->execute($params);
+            }
         } catch (\PDOException $e) {
             if ($this->beganTransaction) {
                 $this->rollback();
@@ -272,29 +274,6 @@ class MySQL extends AbstractDatabase
                 $this->logError($e);
             }
         }
-    }
-
-    /**
-     * Prepare Sql
-     *
-     * @param string $sql  SQL query
-     * @return object
-     */
-    public function prepare($sql)
-    {
-        $this->useDatabase();
-
-        try {
-            $stmt = $this->db->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-        } catch (\PDOException $e) {
-            if ($this->beganTransaction) {
-                $this->rollback();
-            }
-            if ((int)$this->db->errorCode()) {
-                $this->logError($e);
-            }
-        }
-        return $stmt;
     }
 
     /**
@@ -358,6 +337,7 @@ class MySQL extends AbstractDatabase
     /**
      * Log error
      *
+     * @param \Exception $e
      * @return void
      */
     private function logError($e)

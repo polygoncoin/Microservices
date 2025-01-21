@@ -153,8 +153,10 @@ class Microservices
 
             // Requires auth token
             default:
-                $class = __NAMESPACE__ . '\\App\\Api';
-                break;
+                if (isset($this->httpRequestDetails['header']['authorization'])) {
+                    $class = __NAMESPACE__ . '\\App\\Api';
+                    break;    
+                }
         }
 
         // Class found
