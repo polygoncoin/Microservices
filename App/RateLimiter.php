@@ -56,23 +56,32 @@ class RateLimiter
      *
      * @var null|integer
      */
-    private $windowSeconds = null;
+    private $secondsWindow = null;
+
+    /**
+     * Current timestamp
+     * 
+     * @var null|integer
+    */
+    private $currentTimestamp = null;
 
     /**
      * Constructor
      */
     public function __construct(
         $hostname,
-        $post,
+        $port,
         $prefix,
         $maxRequests,
-        $windowSeconds
+        $secondsWindow
     ) {
         $this->hostname = $hostname;
-        $this->post = $post;
+        $this->port = $port;
         $this->prefix = $prefix;
         $this->maxRequests = $maxRequests;
-        $this->windowSeconds = $windowSeconds;
+        $this->secondsWindow = $secondsWindow;
+
+        $this->currentTimestamp = time();
 
         $this->redis = new \Redis();
         $this->redis->connect($this->hostname, (int)$this->port);
@@ -88,14 +97,13 @@ class RateLimiter
     {
         $key = $this->prefix . $key;
 
-        $now = time();
-        $windowStart = $now - $this->windowSeconds;
+        $windowStart = $this->currentTimestamp - $this->secondsWindow;
 
         $this->redis->multi();
         $this->redis->zRemRangeByScore($key, 0, $windowStart);
         $this->redis->zAdd($key, $now, (string)microtime(true));
         $this->redis->zCard($key);
-        $this->redis->expire($key, $this->windowSeconds);
+        $this->redis->expire($key, $this->secondsWindow);
 
         $results = $this->redis->exec();
         
@@ -106,7 +114,7 @@ class RateLimiter
         $requestCount = $results[2];
         $allowed = $requestCount <= $this->maxRequests;
         $remaining = max(0, $this->maxRequests - $requestCount);
-        $resetAt = $now + $this->windowSeconds;
+        $resetAt = $now + $this->secondsWindow;
 
         return [
             'allowed' => $allowed,

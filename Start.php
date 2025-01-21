@@ -38,17 +38,17 @@ foreach ($env as $key => $value) {
 
 $RateLimiterHost = getenv('RateLimiterHost');
 $RateLimiterHostPort = getenv('RateLimiterHostPort');
-$RateLimiterMaxRequests = getenv('RateLimiterMaxRequests');
-$RateLimiterWindowSeconds = getenv('RateLimiterWindowSeconds');
-$RateLimiterPrefix = getenv('RateLimiterPrefix');
+$RateLimiterIPMaxRequests = getenv('RateLimiterIPMaxRequests');
+$RateLimiterIPSecondsWindow = getenv('RateLimiterIPSecondsWindow');
+$RateLimiterIPPrefix = getenv('RateLimiterIPPrefix');
 
 try {
     $rateLimiter = new RateLimiter(
         $RateLimiterHost,
         $RateLimiterHostPort,
-        $RateLimiterPrefix,
+        $RateLimiterIPPrefix,
         $RateLimiterMaxRequests,
-        $RateLimiterWindowSeconds
+        $RateLimiterSecondsWindow
     );
 
     // Check rate limit for request from IP
