@@ -49,7 +49,7 @@ class HttpResponse
      */
     public function __construct(&$httpRequestDetails)
     {
-        $httpStatus = HttpStatus::$Ok;
+        $this->httpStatus = HttpStatus::$Ok;
         $this->httpRequestDetails = &$httpRequestDetails;
     }
 

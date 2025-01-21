@@ -101,7 +101,7 @@ class RateLimiter
 
         $this->redis->multi();
         $this->redis->zRemRangeByScore($key, 0, $windowStart);
-        $this->redis->zAdd($key, $now, (string)microtime(true));
+        $this->redis->zAdd($key, $this->currentTimestamp, (string)microtime(true));
         $this->redis->zCard($key);
         $this->redis->expire($key, $this->secondsWindow);
 
@@ -114,7 +114,7 @@ class RateLimiter
         $requestCount = $results[2];
         $allowed = $requestCount <= $this->maxRequests;
         $remaining = max(0, $this->maxRequests - $requestCount);
-        $resetAt = $now + $this->secondsWindow;
+        $resetAt = $this->currentTimestamp + $this->secondsWindow;
 
         return [
             'allowed' => $allowed,

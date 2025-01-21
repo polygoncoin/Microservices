@@ -149,7 +149,7 @@ class Login
     private function loadUser()
     {
         $clientId = $this->c->httpRequest->clientInfo['client_id'];
-        $this->cu_key = CacheKey::ClientUser($clientId,$this->payload['username']);
+        $this->cu_key = CacheKey::ClientUser($clientId, $this->payload['username']);
         // Redis - one can find the userID from username.
         if ($this->c->httpRequest->cache->cacheExists($this->cu_key)) {
             $this->userDetails = json_decode($this->c->httpRequest->cache->getCache($this->cu_key), true);

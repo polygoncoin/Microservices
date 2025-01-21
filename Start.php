@@ -47,8 +47,8 @@ try {
         $RateLimiterHost,
         $RateLimiterHostPort,
         $RateLimiterIPPrefix,
-        $RateLimiterMaxRequests,
-        $RateLimiterSecondsWindow
+        $RateLimiterIPMaxRequests,
+        $RateLimiterIPSecondsWindow
     );
 
     // Check rate limit for request from IP
