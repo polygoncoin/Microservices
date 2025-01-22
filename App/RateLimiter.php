@@ -76,10 +76,10 @@ class RateLimiter
         $secondsWindow
     ) {
         $this->hostname = $hostname;
-        $this->port = $port;
+        $this->port = (int)$port;
         $this->prefix = $prefix;
-        $this->maxRequests = $maxRequests;
-        $this->secondsWindow = $secondsWindow;
+        $this->maxRequests = (int)$maxRequests;
+        $this->secondsWindow = (int)$secondsWindow;
 
         $this->currentTimestamp = time();
 
