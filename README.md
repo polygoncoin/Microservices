@@ -7,8 +7,12 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 - [Important Files](#important-files)
 - [Environment File](#environment-file)
 - [Folders](#folders)
+- [Routes Folder](#routes-folder)
 - [Queries Folder](#queries-folder)
 - [HTTP Request](#http-request)
+- [Hierarchy Data](#hierarchy-data)
+- [Configuration Route](#configuration-route)
+- [Database](#database)
 - [Javascript HTTP request example](#javascript-http-request-example)
 - [License](#license)
 
@@ -101,11 +105,11 @@ Below are the configuration settings details in .env
 - **Upload** Contains classes for upload file API's
 - **Validation** Contains validation classes.
 
-### Route Folder
+## Route Folder
 
 - **Config/Routes/&lt;GroupName&gt;**
 
-#### Files
+### Files
 
 - **/GETroutes.php** for all GET method routes configuration.
 - **/POSTroutes.php** for all POST method routes configuration.
@@ -115,7 +119,7 @@ Below are the configuration settings details in .env
 
 **&lt;GroupName&gt;** assigned group to a user for accessing the API's
 
-#### Example
+### Example
 
 * For configuring route **/tableName/parts** GET method
 ```PHP
@@ -367,7 +371,7 @@ var payload = [
 * **$conditions\['hierarchyData'\]** Hierarchy data.
 >For **GET** method, one can use previous query results if configured to use hierarchy.
 
-### Hierarchy
+## Hierarchy Data
 
 - Config/Queries/ClientDB/GET/Category.php
 >In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
@@ -406,7 +410,7 @@ return [
 ];
 ```
 
-#### Hierarchy Request
+### Hierarchy Request
 
 - Request - 1: Single object.
 
@@ -471,7 +475,7 @@ var payload = [
 ]
 ```
 
-### Route ending with /config
+## Configuration Route
 
 * Appending route with **/config** returns the payload information that should be supplied; both required and optional with desired format.
 
@@ -489,7 +493,7 @@ configRequestUriKeyword='config' ;for appending /config at end of URI
 
 >For controlling globally there is a flag in env file labled **allowConfigRequest**
 
-#### r=/routes
+### r=/routes
 
 This lists down all allowed routes for HTTP methods respectively.
 
