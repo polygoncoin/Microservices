@@ -5,7 +5,7 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 ## Contents
 
 - [Important Files](#important-files)
-- [.env.example File](#.env.example-file)
+- [Environment File](#environment-file)
 - [Folders](#folders)
 - [Queries Folder](#queries-folder)
 - [HTTP Request](#http-request)
@@ -23,7 +23,7 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 
 > **Note**: One can import all three sql's in a single database to start with. Just configure the same details in the .env file.
 
-## .env.example File
+## Environment File
 
 Below are the configuration settings details in .env
 
