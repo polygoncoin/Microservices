@@ -5,10 +5,10 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 ## Contents
 
 - [Important Files](#important-files)
-- [.env.example](#env-example)
+- [.env.example](#.env.example)
 - [Folders](#folders)
 - [Queries Folder](#queries-folder)
-- [HTTP Request](#http-equest)
+- [HTTP Request](#http-request)
 - [Javascript - HTTP request example](#javascript-http-request-example)
 - [License](#license)
 
