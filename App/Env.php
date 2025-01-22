@@ -135,16 +135,15 @@ class Env
                 // Return 429 Too Many Requests
                 http_response_code(429);
                 header('Retry-After: ' . ($result['resetAt'] - time()));
-                echo json_encode([
+                die(json_encode([
                     'error' => 'Too Many Requests',
                     'retryAfter' => $result['resetAt']
-                ]);
-                exit();
+                ]));
             }
         
         } catch (Exception $e) {
             // Handle connection errors
-            echo('Rate limiter error: ' . $e->getMessage());
+            die('Rate limiter error: ' . $e->getMessage());
         }
     }
 }
