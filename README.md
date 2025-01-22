@@ -107,7 +107,7 @@ Below are the configuration settings details in .env
 
 ## Route Folder
 
-- **Config/Routes/&lt;GroupName&gt;**
+- **/Config/Routes/&lt;GroupName&gt;**
 
 ### Files
 
@@ -179,8 +179,8 @@ return [
 
 ## Queries Folder
 
-- **Config/Queries/GlobalDB** for global database.
-- **Config/Queries/ClientDB** for Clients (including all hosts and their databases).
+- **/Config/Queries/GlobalDB** for global database.
+- **/Config/Queries/ClientDB** for Clients (including all hosts and their databases).
 
 ### Files
 
