@@ -83,8 +83,10 @@ class RateLimiter
 
         $this->currentTimestamp = time();
 
-        $this->redis = new \Redis();
-        $this->redis->connect($this->hostname, (int)$this->port);
+        if (is_null($this->redis)) {
+            $this->redis = new \Redis();
+            $this->redis->connect($this->hostname, (int)$this->port);    
+        }
     }
 
     /**
