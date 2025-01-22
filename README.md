@@ -5,11 +5,11 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 ## Contents
 
 - [Important Files](#important-files)
-- [.env.example](#.env.example)
+- [.env.example](#-env-example)
 - [Folders](#folders)
 - [Queries Folder](#queries-folder)
 - [HTTP Request](#http-request)
-- [Javascript - HTTP request example](#javascript-http-request-example)
+- [Javascript HTTP request example](#javascript-http-request-example)
 - [License](#license)
 
 ***
@@ -502,7 +502,7 @@ This lists down all allowed routes for HTTP methods respectively.
 
 - **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
 
-## Javascript - HTTP request example
+## Javascript HTTP request example
 
 ### Login
 
