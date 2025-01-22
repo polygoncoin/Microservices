@@ -8,7 +8,6 @@ use Microservices\App\Env;
 use Microservices\App\HttpResponse;
 use Microservices\App\HttpStatus;
 use Microservices\App\JsonDecode;
-use Microservices\App\RateLimiter;
 
 /*
  * Class handling details of HTTP request
@@ -203,7 +202,7 @@ class HttpRequest
                 !empty($this->groupInfo['rateLimiterMaxRequests'])
                 && !empty($this->groupInfo['rateLimiterSecondsWindow'])
             ) {
-                $this->checkRateLimit(
+                Env::checkRateLimit(
                     $RateLimiterHost = getenv('RateLimiterHost'),
                     $RateLimiterHostPort = getenv('RateLimiterHostPort'),
                     $RateLimiterMaxRequests = $this->groupInfo['rateLimiterMaxRequests'],
@@ -217,7 +216,7 @@ class HttpRequest
                 !empty($this->conditions['readOnlySession']['rateLimiterMaxRequests'])
                 && !empty($this->conditions['readOnlySession']['rateLimiterSecondsWindow'])
             ) {
-                $this->checkRateLimit(
+                Env::checkRateLimit(
                     $RateLimiterHost = getenv('RateLimiterHost'),
                     $RateLimiterHostPort = getenv('RateLimiterHostPort'),
                     $RateLimiterMaxRequests = $this->groupInfo['rateLimiterMaxRequests'],
@@ -316,49 +315,6 @@ class HttpRequest
             if (!$isValidIp) {
                 throw new \Exception('IP not supported', HttpStatus::$BadRequest);
             }
-        }
-    }
-
-    /**
-     * Check Rate Limit
-     *
-     * @return void
-     */
-    public function checkRateLimit(
-        $RateLimiterHost,
-        $RateLimiterHostPort,
-        $RateLimiterPrefix,
-        $RateLimiterMaxRequests,
-        $RateLimiterSecondsWindow,
-        $key
-    ) {
-        try {
-            $rateLimiter = new RateLimiter(
-                $RateLimiterHost,
-                $RateLimiterHostPort,
-                $RateLimiterPrefix,
-                $RateLimiterMaxRequests,
-                $RateLimiterSecondsWindow
-            );
-        
-            $result = $rateLimiter->check($key);
-        
-            if ($result['allowed']) {
-                // Process the request
-                return;
-            } else {
-                // Return 429 Too Many Requests
-                http_response_code(429);
-                header('Retry-After: ' . ($result['resetAt'] - time()));
-                echo json_encode([
-                    'error' => 'Too Many Requests',
-                    'retryAfter' => $result['resetAt']
-                ]);
-            }
-        
-        } catch (Exception $e) {
-            // Handle connection errors
-            echo('Rate limiter error: ' . $e->getMessage());
         }
     }
 

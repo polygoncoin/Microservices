@@ -1,7 +1,7 @@
 <?php
 namespace Microservices;
 
-use Microservices\App\RateLimiter;
+use Microservices\App\Env;
 use Microservices\Microservices;
 
 /**
@@ -36,71 +36,46 @@ foreach ($env as $key => $value) {
     putenv("{$key}={$value}");
 }
 
-$RateLimiterHost = getenv('RateLimiterHost');
-$RateLimiterHostPort = getenv('RateLimiterHostPort');
-$RateLimiterIPMaxRequests = getenv('RateLimiterIPMaxRequests');
-$RateLimiterIPSecondsWindow = getenv('RateLimiterIPSecondsWindow');
-$RateLimiterIPPrefix = getenv('RateLimiterIPPrefix');
+Env::checkRateLimit(
+    $RateLimiterHost = getenv('RateLimiterHost'),
+    $RateLimiterHostPort = getenv('RateLimiterHostPort'),
+    $RateLimiterIPMaxRequests = getenv('RateLimiterIPMaxRequests'),
+    $RateLimiterIPSecondsWindow = getenv('RateLimiterIPSecondsWindow'),
+    $RateLimiterIPPrefix = getenv('RateLimiterIPPrefix'),
+    $key = $_SERVER['REMOTE_ADDR']
+);
 
+// Process the request
+$httpRequestDetails = [];
+
+$httpRequestDetails['server']['host'] = $_SERVER['HTTP_HOST'];
+$httpRequestDetails['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
+$httpRequestDetails['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $httpRequestDetails['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+}
+$httpRequestDetails['get'] = &$_GET;
+
+// Code to Initialize / Start the service.
 try {
-    $rateLimiter = new RateLimiter(
-        $RateLimiterHost,
-        $RateLimiterHostPort,
-        $RateLimiterIPPrefix,
-        $RateLimiterIPMaxRequests,
-        $RateLimiterIPSecondsWindow
-    );
+    $Microservices = new Microservices($httpRequestDetails);
 
-    // Check rate limit for request from IP
-    $result = $rateLimiter->check($_SERVER['REMOTE_ADDR']);
-
-    if ($result['allowed']) {
-        // Process the request
-        $httpRequestDetails = [];
-
-        $httpRequestDetails['server']['host'] = $_SERVER['HTTP_HOST'];
-        $httpRequestDetails['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
-        $httpRequestDetails['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
-        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $httpRequestDetails['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
-        }
-        $httpRequestDetails['get'] = &$_GET;
-        
-        // Code to Initialize / Start the service.
-        try {
-            $Microservices = new Microservices($httpRequestDetails);
-        
-            // Setting CORS
-            foreach ($Microservices->getCors() as $k => $v) {
-                header("{$k}: {$v}");
-            }
-            if ($httpRequestDetails['server']['request_method'] == 'OPTIONS') {
-                exit();
-            }
-        
-            if ($Microservices->init()) {
-                $Microservices->process();
-                $Microservices->outputResults();
-            }
-        } catch (\Exception $e) {
-            $arr = [
-                'Status' => $e->getCode(),
-                'Message' => $e->getMessage()
-            ];
-            echo json_encode($arr);
-        }
-    } else {
-        // Return 429 Too Many Requests
-        http_response_code(429);
-        header('Retry-After: ' . ($result['resetAt'] - time()));
-        echo json_encode([
-            'error' => 'Too Many Requests',
-            'retryAfter' => $result['resetAt']
-        ]);
+    // Setting CORS
+    foreach ($Microservices->getCors() as $k => $v) {
+        header("{$k}: {$v}");
+    }
+    if ($httpRequestDetails['server']['request_method'] == 'OPTIONS') {
+        exit();
     }
 
-} catch (Exception $e) {
-    // Handle connection errors
-    // error_log('Rate limiter error: ' . $e->getMessage());
-    echo('Rate limiter error: ' . $e->getMessage());
+    if ($Microservices->init()) {
+        $Microservices->process();
+        $Microservices->outputResults();
+    }
+} catch (\Exception $e) {
+    $arr = [
+        'Status' => $e->getCode(),
+        'Message' => $e->getMessage()
+    ];
+    echo json_encode($arr);
 }

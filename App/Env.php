@@ -1,6 +1,8 @@
 <?php
 namespace Microservices\App;
 
+use Microservices\App\RateLimiter;
+
 /**
  * Constants
  *
@@ -100,5 +102,49 @@ class Env
         self::$cacheRequestUriPrefix = getenv('cacheRequestUriPrefix');
 
         self::$initialized = true;
+    }
+
+    /**
+     * Check Rate Limit
+     *
+     * @return void
+     */
+    static public function checkRateLimit(
+        $RateLimiterHost,
+        $RateLimiterHostPort,
+        $RateLimiterPrefix,
+        $RateLimiterMaxRequests,
+        $RateLimiterSecondsWindow,
+        $key
+    ) {
+        try {
+            $rateLimiter = new RateLimiter(
+                $RateLimiterHost,
+                $RateLimiterHostPort,
+                $RateLimiterPrefix,
+                $RateLimiterMaxRequests,
+                $RateLimiterSecondsWindow
+            );
+        
+            $result = $rateLimiter->check($key);
+        
+            if ($result['allowed']) {
+                // Process the request
+                return;
+            } else {
+                // Return 429 Too Many Requests
+                http_response_code(429);
+                header('Retry-After: ' . ($result['resetAt'] - time()));
+                echo json_encode([
+                    'error' => 'Too Many Requests',
+                    'retryAfter' => $result['resetAt']
+                ]);
+                exit();
+            }
+        
+        } catch (Exception $e) {
+            // Handle connection errors
+            echo('Rate limiter error: ' . $e->getMessage());
+        }
     }
 }
