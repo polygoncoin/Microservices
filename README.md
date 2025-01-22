@@ -1,6 +1,18 @@
 # PHP Microservices Framework
 
-This is very light & easy **Framework** for Microservices. It can be used to create API's in very short time once you are done with your database.
+This is very light & easy **Microservices Framework**. It can be used to create API's in very short time once you are done with your database.
+
+## Contents
+
+- [Important Files](#important-files)
+- [.env.example](#env-example)
+- [Folders](#folders)
+- [Queries Folder](#queries-folder)
+- [HTTP Request](#http-equest)
+- [Javascript - HTTP request example](#javascript-http-request-example)
+- [License](#license)
+
+***
 
 ## Important Files
 
@@ -592,3 +604,6 @@ var payload = {
 
 xmlhttp . send( JSON.stringify(payload) );
 ```
+## License
+
+[MIT](LICENSE)
