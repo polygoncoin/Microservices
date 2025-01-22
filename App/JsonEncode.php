@@ -259,10 +259,23 @@ class JsonEncode
     /**
      * Stream Json String.
      *
+     * @param array $httpRequestConditions
      * @return void
      */
-    public function streamJson()
+    public function streamJson(&$httpRequestConditions)
     {
+        // Log request details
+        rewind($this->tempStream);
+        $log = [
+            'datetime' => date('Y-m-d H:i:s'),
+            'httpRequestDetails' => $this->httpRequestDetails,
+            'httpRequestConditions' => $httpRequestConditions,
+            'php:input' => file_get_contents('php://input'),
+            'php:output' => stream_get_contents($this->tempStream)
+        ];
+        (new Logs)->log('info', json_encode($log));
+
+        // Stream JSON
         rewind($this->tempStream);
         $outputStream = fopen('php://output', 'wb');
         stream_copy_to_stream($this->tempStream, $outputStream);
