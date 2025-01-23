@@ -67,6 +67,7 @@ class Microservices
      * Initialize
      *
      * @return boolean
+     * @throws \Exception
      */
     public function init()
     {
@@ -124,6 +125,7 @@ class Microservices
     /**
      * Process API request
      *
+     * @throws \Exception
      * @return boolean
      */
     public function processApi()
@@ -259,6 +261,7 @@ class Microservices
      *
      * @param \Exception $e
      * @return void
+     * @throws \Exception
      */
     private function log($e)
     {

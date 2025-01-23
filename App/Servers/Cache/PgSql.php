@@ -104,6 +104,7 @@ class PgSql extends AbstractCache
      * Cache connection
      *
      * @return void
+     * @throws \Exception
      */
     public function connect()
     {

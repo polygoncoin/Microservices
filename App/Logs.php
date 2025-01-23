@@ -19,9 +19,9 @@ use Microservices\App\HttpStatus;
  */
 class Logs
 {
-    private $logsDir = '/Logs';
+    private string $logsDir = '/Logs';
 
-    private $logTypes = [
+    private array $logTypes = [
         'debug'      => '/debug',
         'info'       => '/info',
         'error'      => '/error',
@@ -32,6 +32,14 @@ class Logs
         'emergency'  => '/emergency'
     ];
 
+    /**
+     * Validates password from its hash present in cache
+     *
+     * @param string $logType
+     * @param string $logContent
+     * @return void
+     * @throws \Exception
+     */
     public function log($logType, $logContent)
     {
         if (!in_array($logType, array_keys($this->logTypes))) {

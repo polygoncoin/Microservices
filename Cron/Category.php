@@ -75,6 +75,7 @@ class Category implements CronInterface
      * Function to end process which outputs the results.
      *
      * @return void
+     * @throws \Exception
      */
     private function endProcess()
     {

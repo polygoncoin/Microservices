@@ -94,6 +94,7 @@ class RateLimiter
      * 
      * @param string $key
      * @return array
+     * @throws \RuntimeException
      */
     public function check(string $key): array
     {

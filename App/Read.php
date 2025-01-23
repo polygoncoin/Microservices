@@ -175,6 +175,7 @@ class Read
      * @param array   $keys          Module Keys in recursion.
      * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
+     * @throws \Exception
      */
     private function fetchSingleRow(&$readSqlConfig, &$keys, $useHierarchy)
     {
@@ -215,6 +216,7 @@ class Read
      *
      * @param array  $readSqlConfig Read SQL configuration.
      * @return boolean
+     * @throws \Exception
      */
     private function fetchRowsCount($readSqlConfig)
     {
@@ -257,6 +259,7 @@ class Read
      * @param array   $keys          Module Keys in recursion.
      * @param boolean $useHierarchy  Use results in where clause of sub queries recursively.
      * @return boolean
+     * @throws \Exception
      */
     private function fetchMultipleRows(&$readSqlConfig, &$keys, $useHierarchy)
     {

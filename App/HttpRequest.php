@@ -165,6 +165,7 @@ class HttpRequest
      * Check Host request
      *
      * @return void
+     * @throws \Exception
      */
     public function checkHost()
     {
@@ -180,6 +181,7 @@ class HttpRequest
      * Loads token from HTTP_AUTHORIZATION
      *
      * @return void
+     * @throws \Exception
      */
     public function loadToken()
     {
@@ -238,6 +240,7 @@ class HttpRequest
      * Load session with help of token
      *
      * @return void
+     * @throws \Exception
      */
     public function initSession()
     {
@@ -258,6 +261,7 @@ class HttpRequest
      *
      * @param string $fetchFrom Master/Slave
      * @return void
+     * @throws \Exception
      */
     public function setConnection($fetchFrom)
     {
@@ -296,6 +300,7 @@ class HttpRequest
      * Validate request IP
      *
      * @return void
+     * @throws \Exception
      */
     public function checkRemoteIp()
     {
@@ -323,6 +328,7 @@ class HttpRequest
      *
      * @param string $routeFileLocation Route file
      * @return void
+     * @throws \Exception
      */
     public function parseRoute($routeFileLocation = null)
     {
@@ -402,6 +408,7 @@ class HttpRequest
      * @param string $foundIntRoute    Found as Integer route element
      * @param string $foundStringRoute Found as String route element
      * @return string
+     * @throws \Exception
      */
     private function processRouteElement($routeElement, &$element, &$foundIntRoute, &$foundIntParamName, &$foundStringRoute, &$foundStringParamName)
     {
@@ -458,6 +465,7 @@ class HttpRequest
      *
      * @param array $routes Routes config.
      * @return void
+     * @throws \Exception
      */
     private function validateConfigFile(&$routes)
     {

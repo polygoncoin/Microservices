@@ -65,6 +65,7 @@ class Memcached extends AbstractCache
      * Cache connection
      *
      * @return void
+     * @throws \Exception
      */
     public function connect()
     {
@@ -82,6 +83,7 @@ class Memcached extends AbstractCache
      * Use Database
      *
      * @return void
+     * @throws \Exception
      */
     public function useDatabase()
     {

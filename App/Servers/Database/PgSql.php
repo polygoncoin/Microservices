@@ -316,6 +316,7 @@ class PgSql extends AbstractDatabase
      *
      * @param \Exception $e
      * @return void
+     * @throws \Exception
      */
     private function logError($e)
     {

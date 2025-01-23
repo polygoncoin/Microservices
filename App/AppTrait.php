@@ -43,6 +43,7 @@ trait AppTrait
      * @param boolean $first        true to represent the first call in recursion.
      * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
      * @return void
+     * @throws \Exception
      */
     private function getRequired(&$sqlConfig, $first, $useHierarchy)
     {
@@ -199,6 +200,7 @@ trait AppTrait
      *
      * @param array $sqlConfig    Config from file
      * @return array
+     * @throws \Exception
      */
     private function getSqlParams(&$sqlConfig)
     {
@@ -281,6 +283,7 @@ trait AppTrait
      * @param array   $first        Flag to check if this is first request in a recursive call
      * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
      * @return array
+     * @throws \Exception
      */
     private function getConfigParams(&$sqlConfig, $first, $useHierarchy)
     {

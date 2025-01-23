@@ -119,6 +119,7 @@ class Login
      * Function to perform basic checks
      *
      * @return void
+     * @throws \Exception
      */
     private function performBasicCheck()
     {
@@ -145,6 +146,7 @@ class Login
      * Function to load user details from cache
      *
      * @return void
+     * @throws \Exception
      */
     private function loadUser()
     {
@@ -167,6 +169,7 @@ class Login
      * Function to validate source ip.
      *
      * @return void
+     * @throws \Exception
      */
     private function validateRequestIp()
     {
@@ -192,6 +195,7 @@ class Login
      * Validates password from its hash present in cache
      *
      * @return void
+     * @throws \Exception
      */
     private function validatePassword()
     {

@@ -140,6 +140,7 @@ class JsonEncode
      *
      * @param $value data type is string/array. This is used to add value/array in the current Array.
      * @return void
+     * @throws \Exception
      */
     public function addValue($value)
     {
@@ -155,6 +156,7 @@ class JsonEncode
      * @param string $key   key of associative array
      * @param        $value data type is string/array. This is used to add value/array in the current Array.
      * @return void
+     * @throws \Exception
      */
     public function addKeyValue($key, $value)
     {
@@ -206,6 +208,7 @@ class JsonEncode
      *
      * @param string $key Used while creating associative array inside an associative array and $key is the key.
      * @return void
+     * @throws \Exception
      */
     public function startObject($key = null)
     {

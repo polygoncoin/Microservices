@@ -247,6 +247,7 @@ class JsonDecode
      *
      * @param string $keys Key values seperated by colon.
      * @return void
+     * @throws \Exception
      */
     public function load($keys)
     {

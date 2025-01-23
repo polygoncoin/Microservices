@@ -168,6 +168,7 @@ class Write
      * @param array   $response       Response by reference.
      * @param array   $required       Required fields.
      * @return boolean
+     * @throws \Exception
      */
     private function writeDB(&$writeSqlConfig, $payloadKey, $useHierarchy, &$response, &$required)
     {
