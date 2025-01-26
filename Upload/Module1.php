@@ -65,7 +65,7 @@ class Module1 implements UploadInterface
     }
 
     /**
-     * Function to get filename with location depending uplon $conditions
+     * Function to get filename with location depending uplon $session
      *
      * @return string
      */

@@ -43,12 +43,6 @@ class Login
     private $userDetails;
 
     /**
-     * IDs
-     */
-    private $userId;
-    private $groupId;
-
-    /**
      * Current timestamp
      *
      * @var integer
@@ -72,9 +66,9 @@ class Login
     /**
      * Cache Keys
      */
-    private $cu_key = null;
-    private $t_key = null;
-    private $ut_key = null;
+    private $clientUserKey = null;
+    private $tokenKey = null;
+    private $userTokenKey = null;
     private $cidr_key = null;
 
     /**
@@ -94,7 +88,7 @@ class Login
      */
     public function init()
     {
-        $this->c->httpRequest->checkHost();
+        $this->c->httpRequest->loadClient();
 
         return true;
     }
@@ -150,14 +144,12 @@ class Login
      */
     private function loadUser()
     {
-        $clientId = $this->c->httpRequest->clientInfo['client_id'];
-        $this->cu_key = CacheKey::ClientUser($clientId, $this->payload['username']);
+        $clientId = $this->c->httpRequest->session['clientInfo']['client_id'];
+        $this->clientUserKey = CacheKey::ClientUser($clientId, $this->payload['username']);
         // Redis - one can find the userID from username.
-        if ($this->c->httpRequest->cache->cacheExists($this->cu_key)) {
-            $this->userDetails = json_decode($this->c->httpRequest->cache->getCache($this->cu_key), true);
-            $this->userId = $this->userDetails['user_id'];
-            $this->groupId = $this->userDetails['group_id'];
-            if (empty($this->userId) || empty($this->groupId)) {
+        if ($this->c->httpRequest->cache->cacheExists($this->clientUserKey)) {
+            $this->userDetails = json_decode($this->c->httpRequest->cache->getCache($this->clientUserKey), true);
+            if (empty($this->userDetails['user_id']) || empty($this->userDetails['group_id'])) {
                 throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
             }
         } else {
@@ -174,7 +166,7 @@ class Login
     private function validateRequestIp()
     {
         // Redis - one can find the userID from username.
-        $this->cidr_key = CacheKey::CIDR($this->groupId);
+        $this->cidr_key = CacheKey::CIDR($this->userDetails['group_id']);
         if ($this->c->httpRequest->cache->cacheExists($this->cidr_key)) {
             $cidrs = json_decode($this->c->httpRequest->cache->getCache($this->cidr_key), true);
             $ipNumber = ip2long($this->c->httpRequest->REMOTE_ADDR);
@@ -215,9 +207,9 @@ class Login
         //generates a crypto-secure 64 characters long
         while (true) {
             $token = bin2hex(random_bytes(32));
-            $this->t_key = CacheKey::Token($token);
-            if (!$this->c->httpRequest->cache->cacheExists($this->t_key)) {
-                $this->c->httpRequest->cache->setCache($this->t_key, '{}', Constants::$TOKEN_EXPIRY_TIME);
+            $this->tokenKey = CacheKey::Token($token);
+            if (!$this->c->httpRequest->cache->cacheExists($this->tokenKey)) {
+                $this->c->httpRequest->cache->setCache($this->tokenKey, '{}', Constants::$TOKEN_EXPIRY_TIME);
                 $tokenDetails = ['token' => $token, 'timestamp' => $this->timestamp];
                 break;
             }
@@ -235,15 +227,15 @@ class Login
         $this->timestamp = time();
         $tokenFound = false;
 
-        $this->ut_key = CacheKey::UserToken($this->userId);
-        if ($this->c->httpRequest->cache->cacheExists($this->ut_key)) {
-            $tokenDetails = json_decode($this->c->httpRequest->cache->getCache($this->ut_key), true);
-            $this->t_key = CacheKey::Token($tokenDetails['token']);
-            if ($this->c->httpRequest->cache->cacheExists($this->t_key)) {
+        $this->userTokenKey = CacheKey::UserToken($this->userDetails['user_id']);
+        if ($this->c->httpRequest->cache->cacheExists($this->userTokenKey)) {
+            $tokenDetails = json_decode($this->c->httpRequest->cache->getCache($this->userTokenKey), true);
+            $this->tokenKey = CacheKey::Token($tokenDetails['token']);
+            if ($this->c->httpRequest->cache->cacheExists($this->tokenKey)) {
                 if ((Constants::$TOKEN_EXPIRY_TIME - ($this->timestamp - $tokenDetails['timestamp'])) > 0) {
                     $tokenFound = true;
                 } else {
-                    $this->c->httpRequest->cache->deleteCache($this->t_key);
+                    $this->c->httpRequest->cache->deleteCache($this->tokenKey);
                 }
             }
         }
@@ -251,9 +243,9 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs.
-            $this->c->httpRequest->cache->setCache($this->ut_key, json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
-            $this->t_key = CacheKey::Token($tokenDetails['token']);
-            $this->c->httpRequest->cache->setCache($this->t_key, json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->c->httpRequest->cache->setCache($this->userTokenKey, json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->tokenKey = CacheKey::Token($tokenDetails['token']);
+            $this->c->httpRequest->cache->setCache($this->tokenKey, json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
 
@@ -281,7 +273,7 @@ class Login
         [
             ':token' => $tokenDetails['token'],
             ':token_ts' => $tokenDetails['timestamp'],
-            ':user_id' => $this->userId
+            ':user_id' => $this->userDetails['user_id']
         ]);
     }
 }

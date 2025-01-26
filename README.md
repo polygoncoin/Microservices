@@ -203,10 +203,10 @@ return [
 return [
     'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
     '__WHERE__' => [
-        //column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
+        //column => [uriParams|payload|function|userInfo|{custom}, key|{value}]
         'id' => ['uriParams', 'id'],
         'group_id' => ['payload', 'group_id'],
-        'client_id' => ['readOnlySession', 'client_id'],
+        'client_id' => ['userInfo', 'client_id'],
     ],
     'mode' => 'singleRowFormat'                // Single row is returned.
 ];
@@ -217,8 +217,8 @@ return [
 return [
     'query' => "SELECT * FROM TableName WHERE client_id = ?",
     '__WHERE__' => [
-        //column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
-        'client_id' => ['readOnlySession', 'client_id'],
+        //column => [uriParams|payload|function|userInfo|{custom}, key|{value}]
+        'client_id' => ['userInfo', 'client_id'],
     ],
     'mode' => 'multipleRowFormat'            // Multiple rows are returned.
 ];
@@ -230,10 +230,10 @@ return [
 return [
     'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
     '__WHERE__' => [
-        //column => [uriParams|payload|function|readOnlySession|{custom}, key|{value}]
+        //column => [uriParams|payload|function|userInfo|{custom}, key|{value}]
         'id' => ['uriParams', 'id'],
         'group_id' => ['payload', 'group_id'],
-        'client_id' => ['readOnlySession', 'client_id'],
+        'client_id' => ['userInfo', 'client_id'],
     ],
     'mode' => 'singleRowFormat',            // Single row is returned.
     'subQuery' => [
@@ -271,18 +271,18 @@ return [
         ['payload', 'client_id'],                        // Optional field
     ],
     '__SET__' => [
-        //column => [uriParams|payload|readOnlySession|insertIdParams|{custom}|function, key|{value}|function($conditions)],
+        //column => [uriParams|payload|userInfo|insertIdParams|{custom}|function, key|{value}|function($session)],
         'group_id' => ['payload', 'group_id'],
-        'password' => ['function', function($conditions) {
-            return password_hash($conditions['payload']['password'], PASSWORD_DEFAULT);
+        'password' => ['function', function($session) {
+            return password_hash($session['payload']['password'], PASSWORD_DEFAULT);
         }],
-        'client_id' => ['readOnlySession', 'client_id']
+        'client_id' => ['userInfo', 'client_id']
     ],
     '__WHERE__' => [
-        // column => [uriParams|payload|function|readOnlySession|insertIdParams|{custom}, key|{value}
+        // column => [uriParams|payload|function|userInfo|insertIdParams|{custom}, key|{value}
         'id' => ['uriParams', 'id']
     ],
-    // Last insert id to be made available as $conditions['insertIdParams'][uniqueParamString];
+    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
     'insertId' => '<keyName>:id',
     'subQuery' => [
         'module1' => [
@@ -357,19 +357,19 @@ var payload = [
 
 ### HttpRequest Variables
 
-- **$conditions\['readOnlySession'\]** Session Data.
+- **$session\['userInfo'\]** Session Data.
 > This remains same for every request and contains keys like id, group\_id, client\_id
 
-- **$conditions\['uriParams'\]** Data passed in URI.
-> Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $conditions\['uriParams'\] will hold these dynamic values as below.
+- **$session\['uriParams'\]** Data passed in URI.
+> Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $session\['uriParams'\] will hold these dynamic values as below.
 
-- **$conditions\['payload'\]** Request data.
+- **$session\['payload'\]** Request data.
 > For **GET** method, the **$\_GET** is the payload.
 
-* **$conditions\['insertIdParams'\]** Insert ids Data as per configuration.
+* **$session\['insertIdParams'\]** Insert ids Data as per configuration.
 >For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertIdParams contains the insert ids of the executed INSERT queries.
 
-* **$conditions\['hierarchyData'\]** Hierarchy data.
+* **$session\['hierarchyData'\]** Hierarchy data.
 >For **GET** method, one can use previous query results if configured to use hierarchy.
 
 ## Hierarchy Data

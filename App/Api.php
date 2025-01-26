@@ -50,9 +50,9 @@ class Api
      */
     public function init()
     {
-        $this->c->httpRequest->checkHost();
-        $this->c->httpRequest->loadToken();
-        $this->c->httpRequest->initSession();
+        $this->c->httpRequest->loadClient();
+        $this->c->httpRequest->loadUser();
+        $this->c->httpRequest->loadGroup();
         $this->c->httpRequest->parseRoute();
 
         return true;

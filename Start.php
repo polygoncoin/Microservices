@@ -1,7 +1,6 @@
 <?php
 namespace Microservices;
 
-use Microservices\App\Env;
 use Microservices\Microservices;
 
 /**
@@ -35,15 +34,6 @@ $env = parse_ini_file(__DIR__ . '/.rate-limit.env');
 foreach ($env as $key => $value) {
     putenv("{$key}={$value}");
 }
-
-Env::checkRateLimit(
-    $RateLimiterHost = getenv('RateLimiterHost'),
-    $RateLimiterHostPort = getenv('RateLimiterHostPort'),
-    $RateLimiterIPMaxRequests = getenv('RateLimiterIPMaxRequests'),
-    $RateLimiterIPSecondsWindow = getenv('RateLimiterIPSecondsWindow'),
-    $RateLimiterIPPrefix = getenv('RateLimiterIPPrefix'),
-    $key = $_SERVER['REMOTE_ADDR']
-);
 
 // Process the request
 $httpRequestDetails = [];

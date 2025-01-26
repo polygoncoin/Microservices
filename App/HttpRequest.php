@@ -45,11 +45,11 @@ class HttpRequest
     public $__file__ = null;
 
     /**
-     * Inputs detials of a request
+     * Session detials of a request
      *
      * @var null|array
      */
-    public $conditions = null;
+    public $session = null;
 
     /**
      * Client details
@@ -57,13 +57,6 @@ class HttpRequest
      * @var null|array
      */
     public $clientInfo = null;
-
-    /**
-     * Group Info
-     *
-     * @var null|array
-     */
-    public $groupInfo = null;
 
     /**
      * Json Decode Object
@@ -103,17 +96,11 @@ class HttpRequest
     public $ROUTE = null;
 
     /**
-     * ids
-     */
-    public $userId = null;
-    public $groupId = null;
-
-    /**
      * Cache Keys
      */
-    public $t_key = null;
-    public $c_key = null;
-    public $g_key = null;
+    public $tokenKey = null;
+    public $clientKey = null;
+    public $groupKey = null;
     public $cidr_key = null;
 
     /**
@@ -162,165 +149,61 @@ class HttpRequest
     }
 
     /**
-     * Check Host request
+     * Load Client Details
      *
      * @return void
      * @throws \Exception
      */
-    public function checkHost()
+    public function loadClient()
     {
-        $this->c_key = "c:{$this->HOST}";
-        if (!$this->cache->cacheExists($this->c_key)) {
+        $this->clientKey = CacheKey::Client($this->HOST);
+        if (!$this->cache->cacheExists($this->clientKey)) {
             throw new \Exception("Invalid Host '{$this->HOST}'", HttpStatus::$InternalServerError);
         }
 
-        $this->clientInfo = json_decode($this->cache->getCache($this->c_key), true);
+        $this->session['clientInfo'] = json_decode($this->cache->getCache($this->clientKey), true);
     }
 
     /**
-     * Loads token from HTTP_AUTHORIZATION
+     * Load User Details
      *
      * @return void
      * @throws \Exception
      */
-    public function loadToken()
+    public function loadUser()
     {
-        if (!is_null($this->HTTP_AUTHORIZATION) && preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)) {
-            $this->conditions['token'] = $matches[1];
-            $this->t_key = CacheKey::Token($this->conditions['token']);
-            if (!$this->cache->cacheExists($this->t_key)) {
+        if (preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)) {
+            $this->session['token'] = $matches[1];
+            $this->tokenKey = CacheKey::Token($this->session['token']);
+            if (!$this->cache->cacheExists($this->tokenKey)) {
                 throw new \Exception('Token expired', HttpStatus::$BadRequest);
             }
-            $this->conditions['readOnlySession'] = json_decode($this->cache->getCache($this->t_key), true);
-
-            $this->userId = $this->conditions['readOnlySession']['user_id'];
-            $this->groupId = $this->conditions['readOnlySession']['group_id'];
-
-            // Check IP
-            $this->checkRemoteIp();
-
-            // Check Rate Limit
-            if (
-                !empty($this->groupInfo['rateLimiterMaxRequests'])
-                && !empty($this->groupInfo['rateLimiterSecondsWindow'])
-            ) {
-                Env::checkRateLimit(
-                    $RateLimiterHost = getenv('RateLimiterHost'),
-                    $RateLimiterHostPort = getenv('RateLimiterHostPort'),
-                    $RateLimiterMaxRequests = $this->groupInfo['rateLimiterMaxRequests'],
-                    $RateLimiterSecondsWindow = $this->groupInfo['rateLimiterSecondsWindow'],
-                    $RateLimiterGroupPrefix = getenv('RateLimiterGroupPrefix'),
-                    $key = $this->groupId . ':' . $this->userId
-                );
-            }
-
-            if (
-                !empty($this->conditions['readOnlySession']['rateLimiterMaxRequests'])
-                && !empty($this->conditions['readOnlySession']['rateLimiterSecondsWindow'])
-            ) {
-                Env::checkRateLimit(
-                    $RateLimiterHost = getenv('RateLimiterHost'),
-                    $RateLimiterHostPort = getenv('RateLimiterHostPort'),
-                    $RateLimiterMaxRequests = $this->groupInfo['rateLimiterMaxRequests'],
-                    $RateLimiterSecondsWindow = $this->groupInfo['rateLimiterSecondsWindow'],
-                    $RateLimiterUserPrefix = getenv('RateLimiterUserPrefix'),
-                    $key = $this->groupId . ':' . $this->userId
-                );
-            }
-        } else {
-            throw new \Exception('Token missing', HttpStatus::$BadRequest);
+            $this->session['userInfo'] = json_decode($this->cache->getCache($this->tokenKey), true);
         }
-
-        if (empty($this->conditions['token'])) {
+        if (empty($this->session['token'])) {
             throw new \Exception('Token missing', HttpStatus::$BadRequest);
         }
     }
-
+    
     /**
-     * Load session with help of token
+     * Load User Details
      *
      * @return void
      * @throws \Exception
      */
-    public function initSession()
+    public function loadGroup()
     {
-        if (empty($this->conditions['readOnlySession']['user_id']) || empty($this->conditions['readOnlySession']['group_id'])) {
+        // Load groupInfo
+        if (empty($this->session['userInfo']['user_id']) || empty($this->session['userInfo']['group_id'])) {
             throw new \Exception('Invalid session', HttpStatus::$InternalServerError);
         }
 
-        $this->g_key = CacheKey::Group($this->groupId);
-        if (!$this->cache->cacheExists($this->g_key)) {
-            throw new \Exception("Cache '{$this->g_key}' missing", HttpStatus::$InternalServerError);
+        $this->groupKey = CacheKey::Group($this->session['userInfo']['group_id']);
+        if (!$this->cache->cacheExists($this->groupKey)) {
+            throw new \Exception("Cache '{$this->groupKey}' missing", HttpStatus::$InternalServerError);
         }
 
-        $this->groupInfo = json_decode($this->cache->getCache($this->g_key), true);
-    }
-
-    /**
-     * Init server connection based on $fetchFrom
-     *
-     * @param string $fetchFrom Master/Slave
-     * @return void
-     * @throws \Exception
-     */
-    public function setConnection($fetchFrom)
-    {
-        if (is_null($this->clientInfo)) {
-            throw new \Exception('Yet to set connection params', HttpStatus::$InternalServerError);
-        }
-
-        // Set Database credentials
-        switch ($fetchFrom) {
-            case 'Master':
-                $this->setDb(
-                    getenv($this->clientInfo['master_db_server_type']),
-                    getenv($this->clientInfo['master_db_hostname']),
-                    getenv($this->clientInfo['master_db_port']),
-                    getenv($this->clientInfo['master_db_username']),
-                    getenv($this->clientInfo['master_db_password']),
-                    getenv($this->clientInfo['master_db_database'])
-                );
-                break;
-            case 'Slave':
-                $this->setDb(
-                    getenv($this->clientInfo['slave_db_server_type']),
-                    getenv($this->clientInfo['slave_db_hostname']),
-                    getenv($this->clientInfo['slave_db_port']),
-                    getenv($this->clientInfo['slave_db_username']),
-                    getenv($this->clientInfo['slave_db_password']),
-                    getenv($this->clientInfo['slave_db_database'])
-                );
-                break;
-            default:
-                throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", HttpStatus::$InternalServerError);
-        }
-    }
-
-    /**
-     * Validate request IP
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function checkRemoteIp()
-    {
-        $groupId = $this->conditions['readOnlySession']['group_id'];
-
-        $this->cidr_key = CacheKey::CIDR($this->groupId);
-        if ($this->cache->cacheExists($this->cidr_key)) {
-            $cidrs = json_decode($this->cache->getCache($this->cidr_key), true);
-            $ipNumber = ip2long($this->REMOTE_ADDR);
-            $isValidIp = false;
-            foreach ($cidrs as $cidr) {
-                if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
-                    $isValidIp = true;
-                    break;
-                }
-            }
-            if (!$isValidIp) {
-                throw new \Exception('IP not supported', HttpStatus::$BadRequest);
-            }
-        }
+        $this->session['groupInfo'] = json_decode($this->cache->getCache($this->groupKey), true);
     }
 
     /**
@@ -336,7 +219,7 @@ class HttpRequest
         $Env = __NAMESPACE__ . '\Env';
 
         if (is_null($routeFileLocation)) {
-            $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . $this->groupInfo['name'] . '/' . $this->REQUEST_METHOD . 'routes.php';
+            $routeFileLocation = Constants::$DOC_ROOT . '/Config/Routes/' . $this->session['groupInfo']['name'] . '/' . $this->REQUEST_METHOD . 'routes.php';
         }
 
         if (file_exists($routeFileLocation)) {
@@ -356,7 +239,7 @@ class HttpRequest
                 $routes = &$routes[$element];
                 if (strpos($element, '{') === 0) {
                     $param = substr($element, 1, strpos($element, ':') - 1);
-                    $this->conditions['uriParams'][$param] = $element;
+                    $this->session['uriParams'][$param] = $element;
                 }
                 continue;
             } else {
@@ -375,10 +258,10 @@ class HttpRequest
                     }
                     if ($foundIntRoute) {
                         $configuredUri[] = $foundIntRoute;
-                        $this->conditions['uriParams'][$foundIntParamName] = (int)$element;
+                        $this->session['uriParams'][$foundIntParamName] = (int)$element;
                     } else if ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        $this->conditions['uriParams'][$foundStringParamName] = urldecode($element);
+                        $this->session['uriParams'][$foundStringParamName] = urldecode($element);
                     } else {
                         throw new \Exception('Route not supported', HttpStatus::$BadRequest);
                     }
@@ -486,12 +369,12 @@ class HttpRequest
     {
         if ($this->REQUEST_METHOD === Constants::$GET) {
             $this->urlDecode($_GET);
-            $this->conditions['httpRequestPayloadType'] = 'Object';
-            $this->conditions['payload'] = !empty($_GET) ? $_GET : [];
+            $this->session['payloadType'] = 'Object';
+            $this->session['payload'] = !empty($_GET) ? $_GET : [];
         } else {
             // Load Payload
             $this->jsonDecode->indexJSON();
-            $this->conditions['httpRequestPayloadType'] = $this->jsonDecode->jsonType();
+            $this->session['payloadType'] = $this->jsonDecode->jsonType();
         }
     }
 
@@ -607,5 +490,45 @@ class HttpRequest
             $dbPassword,
             $dbDatabase
         );
+    }
+
+    /**
+     * Init server connection based on $fetchFrom
+     *
+     * @param string $fetchFrom Master/Slave
+     * @return void
+     * @throws \Exception
+     */
+    public function setConnection($fetchFrom)
+    {
+        if (is_null($this->session['clientInfo'])) {
+            throw new \Exception('Yet to set connection params', HttpStatus::$InternalServerError);
+        }
+
+        // Set Database credentials
+        switch ($fetchFrom) {
+            case 'Master':
+                $this->setDb(
+                    getenv($this->session['clientInfo']['master_db_server_type']),
+                    getenv($this->session['clientInfo']['master_db_hostname']),
+                    getenv($this->session['clientInfo']['master_db_port']),
+                    getenv($this->session['clientInfo']['master_db_username']),
+                    getenv($this->session['clientInfo']['master_db_password']),
+                    getenv($this->session['clientInfo']['master_db_database'])
+                );
+                break;
+            case 'Slave':
+                $this->setDb(
+                    getenv($this->session['clientInfo']['slave_db_server_type']),
+                    getenv($this->session['clientInfo']['slave_db_hostname']),
+                    getenv($this->session['clientInfo']['slave_db_port']),
+                    getenv($this->session['clientInfo']['slave_db_username']),
+                    getenv($this->session['clientInfo']['slave_db_password']),
+                    getenv($this->session['clientInfo']['slave_db_database'])
+                );
+                break;
+            default:
+                throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", HttpStatus::$InternalServerError);
+        }
     }
 }

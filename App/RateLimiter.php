@@ -17,20 +17,6 @@ namespace Microservices\App;
 class RateLimiter
 {
     /**
-     * Cache hostname
-     *
-     * @var null|string
-     */
-    private $hostname = null;
-
-    /**
-     * Cache port
-     *
-     * @var null|integer
-     */
-    private $port = null;
-
-    /**
      * Cache connection
      *
      * @var null|\Redis
@@ -69,24 +55,17 @@ class RateLimiter
      * Constructor
      */
     public function __construct(
-        $hostname,
-        $port,
+        &$redis,
         $prefix,
         $maxRequests,
         $secondsWindow
     ) {
-        $this->hostname = $hostname;
-        $this->port = (int)$port;
+        $this->redis = &$redis;
         $this->prefix = $prefix;
         $this->maxRequests = (int)$maxRequests;
         $this->secondsWindow = (int)$secondsWindow;
 
         $this->currentTimestamp = time();
-
-        if (is_null($this->redis)) {
-            $this->redis = new \Redis();
-            $this->redis->connect($this->hostname, (int)$this->port);
-        }
     }
 
     /**

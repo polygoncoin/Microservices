@@ -1,6 +1,7 @@
 <?php
 namespace Microservices;
 
+use Microservices\App\ApiGateway;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
@@ -50,6 +51,13 @@ class Microservices
     private $c = null;
 
     /**
+     * Microservices Collection of Common Objects
+     *
+     * @var null|ApiGateway
+     */
+    private $apiGateway = null;
+
+    /**
      * Constructor
      *
      * @param array $httpRequestDetails
@@ -57,6 +65,8 @@ class Microservices
      */
     public function __construct(&$httpRequestDetails)
     {
+        $this->apiGateway = new ApiGateway($httpRequestDetails);
+
         $this->httpRequestDetails = &$httpRequestDetails;
 
         Constants::init();
@@ -93,7 +103,6 @@ class Microservices
     public function process()
     {
         $this->startJson();
-        $this->startOutputJson();
         $this->processApi();
         $this->endOutputJson();
         $this->addPerformance();
@@ -110,16 +119,6 @@ class Microservices
     public function startJson()
     {
         $this->c->httpResponse->jsonEncode->startObject();
-    }
-
-    /**
-     * Start Json Output Key
-     *
-     * @return void
-     */
-    public function startOutputJson()
-    {
-        // $this->c->httpResponse->jsonEncode->startObject('Output');
     }
 
     /**
@@ -157,10 +156,12 @@ class Microservices
             // Requires auth token
             default:
                 if (isset($this->httpRequestDetails['header']['authorization'])) {
+                    $this->apiGateway->init();
                     $class = __NAMESPACE__ . '\\App\\Api';
                     break;
                 }
         }
+        $this->apiGateway = null;
 
         // Class found
         try {
@@ -267,7 +268,7 @@ class Microservices
     {
         $log = [
             'datetime' => date('Y-m-d H:i:s'),
-            'conditions' => $this->c->httpRequest->conditions,
+            'conditions' => $this->c->httpRequest->session,
             "code" => $e->getCode(),
             "msg" => $e->getMessage(),
             "e" => json_encode($e)
