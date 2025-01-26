@@ -195,7 +195,7 @@ class HttpRequest
 
             $this->userId = $this->conditions['readOnlySession']['user_id'];
             $this->groupId = $this->conditions['readOnlySession']['group_id'];
-            
+
             // Check IP
             $this->checkRemoteIp();
 
@@ -213,7 +213,7 @@ class HttpRequest
                     $key = $this->groupId . ':' . $this->userId
                 );
             }
-        
+
             if (
                 !empty($this->conditions['readOnlySession']['rateLimiterMaxRequests'])
                 && !empty($this->conditions['readOnlySession']['rateLimiterSecondsWindow'])

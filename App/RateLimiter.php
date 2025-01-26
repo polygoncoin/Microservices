@@ -60,7 +60,7 @@ class RateLimiter
 
     /**
      * Current timestamp
-     * 
+     *
      * @var null|integer
     */
     private $currentTimestamp = null;
@@ -85,13 +85,13 @@ class RateLimiter
 
         if (is_null($this->redis)) {
             $this->redis = new \Redis();
-            $this->redis->connect($this->hostname, (int)$this->port);    
+            $this->redis->connect($this->hostname, (int)$this->port);
         }
     }
 
     /**
      * Check the request is valid
-     * 
+     *
      * @param string $key
      * @return array
      * @throws \RuntimeException
@@ -109,7 +109,7 @@ class RateLimiter
         $this->redis->expire($key, $this->secondsWindow);
 
         $results = $this->redis->exec();
-        
+
         if ($results === false) {
             throw new \RuntimeException('Rate Limit transaction failed');
         }

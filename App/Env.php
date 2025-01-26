@@ -125,9 +125,9 @@ class Env
                 $RateLimiterMaxRequests,
                 $RateLimiterSecondsWindow
             );
-        
+
             $result = $rateLimiter->check($key);
-        
+
             if ($result['allowed']) {
                 // Process the request
                 return;
@@ -140,7 +140,7 @@ class Env
                     'retryAfter' => $result['resetAt']
                 ]));
             }
-        
+
         } catch (Exception $e) {
             // Handle connection errors
             die('Rate limiter error: ' . $e->getMessage());

@@ -23,7 +23,7 @@ class HttpStatus
     static public $Found                = 302;
     static public $TemporaryRedirect    = 307;
     static public $PermanentRedirect    = 308;
-    
+
     static public $BadRequest           = 400;
     static public $Unauthorized         = 401;
     static public $Forbidden            = 403;
@@ -37,7 +37,7 @@ class HttpStatus
     static public $UnprocessableEntity  = 422;
     static public $TooEarly             = 425;
     static public $TooManyRequests      = 429;
-    
+
     static public $InternalServerError  = 500;
     static public $BadGateway           = 502;
     static public $ServiceUnavailable   = 503;

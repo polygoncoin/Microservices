@@ -158,7 +158,7 @@ class Microservices
             default:
                 if (isset($this->httpRequestDetails['header']['authorization'])) {
                     $class = __NAMESPACE__ . '\\App\\Api';
-                    break;    
+                    break;
                 }
         }
 
