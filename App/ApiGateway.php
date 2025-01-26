@@ -92,7 +92,7 @@ class ApiGateway
             $RateLimiterIPSecondsWindow = getenv('RateLimiterIPSecondsWindow'),
             $RateLimiterIPPrefix = getenv('RateLimiterIPPrefix'),
             $key = $this->REMOTE_ADDR
-        );        
+        );
     }
 
     /**
@@ -143,12 +143,12 @@ class ApiGateway
             if (empty($this->userInfo['user_id']) || empty($this->userInfo['group_id'])) {
                 throw new \Exception('Invalid session', HttpStatus::$InternalServerError);
             }
-    
+
             $this->groupKey = CacheKey::Group($this->userInfo['group_id']);
             if (!$this->redis->exists($this->groupKey)) {
                 throw new \Exception("Cache '{$this->groupKey}' missing", HttpStatus::$InternalServerError);
             }
-    
+
             $this->groupInfo = json_decode($this->redis->get($this->groupKey), true);
 
             // Check Rate Limit

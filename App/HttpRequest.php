@@ -184,7 +184,7 @@ class HttpRequest
             throw new \Exception('Token missing', HttpStatus::$BadRequest);
         }
     }
-    
+
     /**
      * Load User Details
      *
