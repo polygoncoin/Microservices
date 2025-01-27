@@ -13,7 +13,6 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 - [Hierarchy Data](#hierarchy-data)
 - [Configuration Route](#configuration-route)
 - [Database](#database)
-- [Rate Limiting](#rate-limiting)
 - [Javascript HTTP request example](#javascript-http-request-example)
 - [License](#license)
 
@@ -506,11 +505,6 @@ This lists down all allowed routes for HTTP methods respectively.
 ### fetchFrom
 
 - **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
-
-## Rate Limiting
-
-- Rate Limiting can be configured in database at group(global DB) and user(client DB) level.
-- IP level rate limiting can be configured in **.rate-limit.env.example** on similar lines of .env
 
 ## Javascript HTTP request example
 
