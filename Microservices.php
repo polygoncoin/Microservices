@@ -51,8 +51,6 @@ class Microservices
     private $c = null;
 
     /**
-     * Microservices Collection of Common Objects
-     *
      * @var null|ApiGateway
      */
     private $apiGateway = null;
