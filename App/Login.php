@@ -88,7 +88,7 @@ class Login
      */
     public function init()
     {
-        $this->c->httpRequest->loadClient();
+        $this->c->httpRequest->loadClientDetails();
 
         return true;
     }
@@ -100,8 +100,8 @@ class Login
      */
     public function process()
     {
-        $this->performBasicCheck();
-        $this->loadUser();
+        $this->loadPayload();
+        $this->loadUserDetails();
         $this->validateRequestIp();
         $this->validatePassword();
         $this->outputTokenDetails();
@@ -110,12 +110,12 @@ class Login
     }
 
     /**
-     * Function to perform basic checks
+     * Function to load Paylaod
      *
      * @return void
      * @throws \Exception
      */
-    private function performBasicCheck()
+    private function loadPayload()
     {
         // Check request method is POST.
         if ($this->c->httpRequest->REQUEST_METHOD !== Constants::$POST) {
@@ -142,17 +142,16 @@ class Login
      * @return void
      * @throws \Exception
      */
-    private function loadUser()
+    private function loadUserDetails()
     {
-        $clientId = $this->c->httpRequest->session['clientInfo']['client_id'];
+        $clientId = $this->c->httpRequest->session['clientDetails']['client_id'];
         $this->clientUserKey = CacheKey::ClientUser($clientId, $this->payload['username']);
-        // Redis - one can find the userID from username.
-        if ($this->c->httpRequest->cache->cacheExists($this->clientUserKey)) {
-            $this->userDetails = json_decode($this->c->httpRequest->cache->getCache($this->clientUserKey), true);
-            if (empty($this->userDetails['user_id']) || empty($this->userDetails['group_id'])) {
-                throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
-            }
-        } else {
+        // Redis - one can find the userID from client username.
+        if (!$this->c->httpRequest->cache->cacheExists($this->clientUserKey)) {
+            throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
+        }
+        $this->userDetails = json_decode($this->c->httpRequest->cache->getCache($this->clientUserKey), true);
+        if (empty($this->userDetails['user_id']) || empty($this->userDetails['group_id'])) {
             throw new \Exception('Invalid credentials', HttpStatus::$Unauthorized);
         }
     }
