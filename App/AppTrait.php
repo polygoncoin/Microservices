@@ -427,6 +427,7 @@ trait AppTrait
      * @param string|array $data
      * @param string       $dataTypeDetails
      * @return mixed
+     * @throws \Exception
      */
     private function getDataBasedOnDataType($data, $dataTypeDetails)
     {
@@ -449,6 +450,8 @@ trait AppTrait
             case 'json':
                 $data = (string)json_encode($data);
                 break;
+            default:
+                throw new \Exception('Invalid Data-type:'.$dataTypeDetails['dataType'], HttpStatus::$InternalServerError);
         }
 
         $returnFlag = true;
