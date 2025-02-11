@@ -10,7 +10,7 @@ namespace Microservices\App;
         'minLength' => (size-x),
         'maxLength' => (size-x)
     ];
-    
+
     A VARIABLE length string (can contain letters, numbers, and special characters). The size parameter specifies the maximum column length in characters - can be from 0 to 65535
     VARCHAR(size)
     static public $VARCHAR = [
@@ -26,7 +26,7 @@ namespace Microservices\App;
         'minLength' => 0,
         'maxLength' => 8
     ];
-    
+
     Equal to VARCHAR(), but stores binary byte strings. The size parameter specifies the maximum column length in bytes.
     VARBINARY(size)
     static public $VARBINARY = [
@@ -202,7 +202,7 @@ namespace Microservices\App;
 
     A normal-size floating point number. The total number of digits is specified in size. The number of digits after the decimal point is specified in the d parameter
     DOUBLE(size, d)
-    DOUBLE PRECISION(size, d)	 
+    DOUBLE PRECISION(size, d)	
     static public $DOUBLE = [
         'dataType' => 'string'
     ];
@@ -276,7 +276,7 @@ class DatabaseDataTypes
      * You can configure them in /Config/Queries folder as a data type
      * This will validate the received payload/uriParam/etc data where thisnis configured.
      * DatabaseDataTypes::$CustomINT
-     * 
+     *
      *  static public $CustomINT = [
      *      // PHP data type (null, bool, int, float, string)
      *      'dataType' => 'int',

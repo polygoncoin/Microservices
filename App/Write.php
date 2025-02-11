@@ -196,7 +196,7 @@ class Write
             }
 
             $this->c->httpRequest->session['payload'] = $this->c->httpRequest->jsonDecode->get($payloadKey);
-            
+
 
             if (count($required)) {
                 $this->c->httpRequest->session['required'] = $required;

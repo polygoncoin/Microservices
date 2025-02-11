@@ -450,7 +450,7 @@ trait AppTrait
                 $data = (string)json_encode($data);
                 break;
         }
-   
+
         $returnFlag = true;
         if ($returnFlag && isset($dataTypeDetails['minValue']) && $dataTypeDetails['minValue'] <= $data) {
             $returnFlag = false;
@@ -473,7 +473,7 @@ trait AppTrait
         if ($returnFlag && isset($dataTypeDetails['regex']) && preg_match($dataTypeDetails['regex'], $data) === 0) {
             $returnFlag = false;
         }
-        
+
         if (!$returnFlag) {
             throw new \Exception('Invalid data based on Data-type details', HttpStatus::$BadRequest);
         }
