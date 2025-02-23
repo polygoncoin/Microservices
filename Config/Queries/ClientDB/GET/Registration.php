@@ -1,7 +1,6 @@
 <?php
 namespace Microservices\Config\Queries\ClientDB\GET;
 
-//return represents root for hierarchyData
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
 use Microservices\App\Env;
@@ -11,7 +10,7 @@ return [
     '__WHERE__' => [
         'is_deleted' => ['custom', 'No']
     ],
-    'mode' => 'multipleRowFormat',//Multiple rows returned.
+    'mode' => 'multipleRowFormat',
     'subQuery' => [
         'reg-address' => [
             'query' => "SELECT * FROM `address` WHERE __WHERE__",
@@ -19,7 +18,7 @@ return [
                 'is_deleted' => ['custom', 'No'],
                 'registration_id' => ['hierarchyData', 'return:id'],
             ],
-            'mode' => 'multipleRowFormat',//Multiple rows returned.
+            'mode' => 'multipleRowFormat',
         ]
     ],
     'useHierarchy' => true
