@@ -19,17 +19,17 @@ use Microservices\App\HttpStatus;
  */
 class Logs
 {
-    private string $logsDir = '/Logs';
+    private string $logsDir = DIRECTORY_SEPARATOR . 'Logs';
 
     private array $logTypes = [
-        'debug'      => '/debug',
-        'info'       => '/info',
-        'error'      => '/error',
-        'notice'     => '/notice',
-        'warning'    => '/warning',
-        'critical'   => '/critical',
-        'alert'      => '/alert',
-        'emergency'  => '/emergency'
+        'debug'      => DIRECTORY_SEPARATOR . 'debug',
+        'info'       => DIRECTORY_SEPARATOR . 'info',
+        'error'      => DIRECTORY_SEPARATOR . 'error',
+        'notice'     => DIRECTORY_SEPARATOR . 'notice',
+        'warning'    => DIRECTORY_SEPARATOR . 'warning',
+        'critical'   => DIRECTORY_SEPARATOR . 'critical',
+        'alert'      => DIRECTORY_SEPARATOR . 'alert',
+        'emergency'  => DIRECTORY_SEPARATOR . 'emergency'
     ];
 
     /**

@@ -9,6 +9,7 @@ This is very light & easy **Microservices Framework**. It can be used to create 
 - [Folders](#folders)
 - [Routes Folder](#routes-folder)
 - [Queries Folder](#queries-folder)
+- [Queries Configuration Rules](#queries-configuration-rules)
 - [HTTP Request](#http-request)
 - [Hierarchy Data](#hierarchy-data)
 - [Configuration Route](#configuration-route)
@@ -192,57 +193,134 @@ return [
 
 > One can replace **&lt;filenames&gt;** tag with desired name as per functionality.
 
-### Example
+## Queries Configuration Rules
 
-####GET method.
-
-* For Single row
+### Database Field DataTypes Configuration in DatabaseDataTypes class
 
 ```PHP
-return [
-    'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
-    '__WHERE__' => [
-        //column => [uriParams|payload|function|userDetails|{custom}, key|{value}]
-        'id' => ['uriParams', 'id'],
-        'group_id' => ['payload', 'group_id'],
-        'client_id' => ['userDetails', 'client_id'],
-    ],
-    'mode' => 'singleRowFormat'                // Single row is returned.
+static public $CustomINT = [
+
+    // Required param
+
+    // PHP data type (bool, int, float, string)
+    'dataType' => 'int',
+
+    // Optional params
+
+    // Minimum value (int)
+    'minValue' => false,
+    // Maximum value (int)
+    'maxValue' => false,
+    // Minimum length (string)
+    'minLength' => false,
+    // Maximum length (string)
+    'maxLength' => false,
+    // Any one value from the Array
+    'enumValues' => false,
+    // Values belonging to this Array
+    'setValues' => false,
+
+    // Values should pass this regex before use
+    'regex' => false
 ];
 ```
-* For Multiple rows
+
+### SQL Configuration Rules
+
+#### Available configuration options
 
 ```PHP
+//return represents root for hierarchyData
 return [
-    'query' => "SELECT * FROM TableName WHERE client_id = ?",
-    '__WHERE__' => [
-        //column => [uriParams|payload|function|userDetails|{custom}, key|{value}]
-        'client_id' => ['userDetails', 'client_id'],
-    ],
-    'mode' => 'multipleRowFormat'            // Multiple rows are returned.
-];
-```
-
-* For Mixed
-
-```PHP
-return [
-    'query' => "SELECT * FROM TableName WHERE id = ? AND group_id = ? AND client_id = ?",
-    '__WHERE__' => [
-        //column => [uriParams|payload|function|userDetails|{custom}, key|{value}]
-        'id' => ['uriParams', 'id'],
-        'group_id' => ['payload', 'group_id'],
-        'client_id' => ['userDetails', 'client_id'],
-    ],
-    'mode' => 'singleRowFormat',            // Single row is returned.
-    'subQuery' => [
-        'Clients' => [
-            'query' => "MySql Query here",
-            '__WHERE__' => [],
-            'mode' => 'multipleRowFormat'    // Multiple rows are returned.
+    // Required to implementing pagination
+    'countQuery' => "Count SQL",
+    // Query to perform task
+    'query' => "SQL",
+    // Configure allowed uriParams & payload fields both Required & Optional to be used
+    // Rest supplied fields will be ignored
+    '__CONFIG__' => [
+        [
+            'uriParams',                                // uriParams / payload
+            '<key-1>',                                  // key
+            DatabaseDataTypes::$PrimaryKey,             // key data type
+            Constants::$REQUIRED                        // Represents required field
         ],
-        ...
+        [
+            'payload',                                  // uriParams / payload
+            '<key-1>',                                  // key
+            DatabaseDataTypes::$Default,                // key data type default to string
+        ],
     ],
+    '__SET__' => [
+        'column' => ['uriParams', '<key>'],             // Fatch value from parsed route
+        'column' => ['payload', '<key>'],               // Fetch value from Payload
+        'column' => ['function', function($session) {       // Perform a function and use returned value
+            return 'value';
+        }],
+        'column' => ['userDetails', '<key>'],           // From user session
+        'column' => ['insertIdParams', '<key>'],        // previous Insert ids
+        'column' => ['custom', '<static-value>'],       // Static values
+
+    ],
+    '__WHERE__' => [
+        'column' => ['uriParams', '<key>'],             // Fatch value from parsed route
+        'column' => ['payload', '<key>'],               // Fetch value from Payload
+        'column' => ['function', function($session) {   // Perform a function and use returned value
+            return 'value';
+        }],
+        'column' => ['userDetails', '<key>'],           // From user session
+        'column' => ['custom', '<static-value>'],       // Static values
+    ],
+    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
+    'insertId' => '<keyName>:id',
+    // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
+    'mode' => 'singleRowFormat/multipleRowFormat',
+    // subQuery is a keyword to perform recursive operations
+    /** Supported configuration for recursive operations are :
+     * query,
+     * __SET__,
+     * __WHERE__,
+     * mode,
+     * insertId,
+     * subQuery
+     */
+    'subQuery' => [
+        '<sub-key>' => [
+            ... // Recursive
+            '__SET__' => [
+                ...
+                ...
+                // Database DataTypes settings required when useHierarchy is true
+                // to validate each data set before procedding forward
+                'column' => [
+                    'uriParams',
+                    '<key>',
+                    DatabaseDataTypes::$PrimaryKey,             // key data type
+                    Constants::$REQUIRED                        // Represents required field
+                ],
+                ...
+                ...
+                'column' => ['hierarchyData', '<return:keys>'], // Only for GET
+                'column' => ['insertIdParams', '<keyName>:id'], // previous Insert ids
+            ],
+            '__WHERE__' => [
+                ...
+                ...
+                // Database DataTypes settings required when useHierarchy is true
+                // to validate each data set before procedding forward
+                'column' => [
+                    'uriParams',
+                    '<key>',
+                    DatabaseDataTypes::$PrimaryKey,             // key data type
+                    Constants::$REQUIRED                        // Represents required field
+                ],
+                ...
+                ...
+                'column' => ['hierarchyData', '<return:keys>'], // Only for GET
+            ],
+        ]
+    ]
+    // Array of validation functions to be performed
     'validate' => [
         [
             'fn' => 'validateGroupId',
@@ -252,47 +330,64 @@ return [
             'errorMessage' => 'Invalid Group Id'
         ]
     ],
-    ...
+    'useHierarchy' => true
 ];
 ```
-> Here **query & mode** keys are required keys
 
-* For POST/PUT/PATCH/DELETE method.
+#### GET method configuration
 
 ```PHP
+//return represents root for hierarchyData
 return [
-    'query' => "INSERT TableName SET SET WHERE WHERE ",
-    // Fields present in below __CONFIG__ shall be supported for DB operation. Both Required and Optional
+    // Required to implementing pagination
+    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__",
+    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND column2 = :column2",
+    // Query to perform task
+    'query' => "SELECT columns FROM TableName WHERE __WHERE__",
+    'query' => "SELECT columns FROM TableName WHERE column1 = :column1 AND column2 = :column2",
+    // Configure allowed uriParams & payload fields both Required & Optional to be used
+    // Rest supplied fields will be ignored
     '__CONFIG__' => [
-        // Set your payload/uriParams fields config here.
-        ['payload', 'group_id', Constants::$REQUIRED],    // Required field
-        ['payload', 'password'],                        // Optional field
-        ['payload', 'client_id'],                        // Optional field
-    ],
-    '__SET__' => [
-        //column => [uriParams|payload|userDetails|insertIdParams|{custom}|function, key|{value}|function($session)],
-        'group_id' => ['payload', 'group_id'],
-        'password' => ['function', function($session) {
-            return password_hash($session['payload']['password'], PASSWORD_DEFAULT);
-        }],
-        'client_id' => ['userDetails', 'client_id']
+        [
+            'uriParams',                                // From parsed route
+            '<key-1>',                                  // key
+            DatabaseDataTypes::$PrimaryKey,             // key data type
+            Constants::$REQUIRED                        // Represents required field
+        ],
+        [
+            'payload',                                  // $_GET
+            '<key-1>',                                  // key
+            DatabaseDataTypes::$Default,                // key data type default to string
+        ],
     ],
     '__WHERE__' => [
-        // column => [uriParams|payload|function|userDetails|insertIdParams|{custom}, key|{value}
-        'id' => ['uriParams', 'id']
+        'column' => ['uriParams', '<key>'],             // Fatch value from parsed route
+        'column' => ['payload', '<key>'],               // Fetch value from Payload ($_GET)
+        'column' => ['function', function($session) {   // Perform a function and use returned value
+            return $session['payload']['password'];
+        }],
+        'column' => ['userDetails', '<key>'],           // From user session
+        'column' => ['custom', '<static-value>'],       // Static values
     ],
-    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
-    'insertId' => '<keyName>:id',
+    // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
+    'mode' => 'singleRowFormat/multipleRowFormat',
+    // subQuery is a keyword to perform recursive operations
+    /** Supported configuration for recursive operations are :
+     * query,
+     * __WHERE__,
+     * mode,
+     * subQuery
+     */
     'subQuery' => [
-        'module1' => [
-            'query' => "MySql Query here",
-            '__SET__' => [
-                'previous_table_id' => ['insertIdParams', '<keyName>:id'],
+        '<sub-key>' => [
+            ... // Recursive
+            '__WHERE__' => [
+                ...
+                'column' => ['hierarchyData', '<return:keys>'],
             ],
-            '__WHERE__' => [],
-        ],
-        ...
-    ],
+        ]
+    ]
+    // Array of validation functions to be performed
     'validate' => [
         [
             'fn' => 'validateGroupId',
@@ -300,19 +395,131 @@ return [
                 'group_id' => ['payload', 'group_id']
             ],
             'errorMessage' => 'Invalid Group Id'
-        ],
-        ...
-    ]
+        ]
+    ],
+    // useHierarchy true represent data from higher hierarchy to be preserved
+    // to be used used in sub queries
+    'useHierarchy' => true
 ];
 ```
-> **Note**: If there are modules or configurations repeated. One can reuse them by palcing them in a separate file and including as below.
+
+#### POST/PUT/PATCH/DELETE method configuration
+
+```PHP
+//return represents root for hierarchyData
+return [
+    // Query to perform task
+    'query' => "INSERT INTO `TableName` SET __SET__",
+    'query' => "INSERT INTO `TableName` SET column1 = :column1, column2 = :column2",
+    'query' => "UPDATE `TableName` SET __SET__ WHERE __WHERE__",
+    'query' => "UPDATE `TableName` SET column1 = :column1, column2 = :column2 WHERE column3 = :column3 AND column4 = :column4",
+    // Configure allowed uriParams & payload fields both Required & Optional to be used
+    // Rest supplied fields will be ignored
+    '__CONFIG__' => [
+        [
+            'uriParams',                                // uriParams / payload
+            '<key-1>',                                  // key
+            DatabaseDataTypes::$PrimaryKey,             // key data type
+            Constants::$REQUIRED                        // Represents required field
+        ],
+        [
+            'payload',                                  // uriParams / payload
+            '<key-1>',                                  // key
+            DatabaseDataTypes::$Default,                // key data type default to string
+        ],
+    ],
+    '__SET__' => [
+        'column' => ['uriParams', '<key>'],             // Fatch value from parsed route
+        'column' => ['payload', '<key>'],               // Fetch value from Payload
+        'column' => ['function', function($session) {       // Perform a function and use returned value
+            return 'value';
+        }],
+        'column' => ['userDetails', '<key>'],           // From user session
+        'column' => ['insertIdParams', '<key>'],        // previous Insert ids
+        'column' => ['custom', '<static-value>'],       // Static values
+    ],
+    '__WHERE__' => [
+        'column' => ['uriParams', '<key>'],             // Fatch value from parsed route
+        'column' => ['payload', '<key>'],               // Fetch value from Payload
+        'column' => ['function', function($session) {   // Perform a function and use returned value
+            return password_hash($session['payload']['password'], PASSWORD_DEFAULT);
+        }],
+        'column' => ['userDetails', '<key>'],           // From user session
+        'column' => ['custom', '<static-value>'],       // Static values
+    ],
+    // To be used only for INSERT queries
+    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
+    'insertId' => '<keyName>:id',
+    // subQuery is a keyword to perform recursive operations
+    /** Supported configuration for recursive operations are :
+     * query,
+     * __SET__,
+     * __WHERE__,
+     * insertId,
+     * subQuery
+     */
+    'subQuery' => [
+        '<sub-key>' => [
+            ... // Recursive
+            '__SET__' => [
+                ...
+                ...
+                // Database DataTypes settings required when useHierarchy is true
+                // to validate each data set before procedding forward
+                'column' => [
+                    'uriParams',
+                    '<key>',
+                    DatabaseDataTypes::$PrimaryKey,             // key data type
+                    Constants::$REQUIRED                        // Represents required field
+                ],
+                ...
+                ...
+                'column' => ['insertIdParams', '<keyName>:id'], // previous Insert ids
+                'column' => ['hierarchyData', '<return:keys>'],
+            ],
+            '__WHERE__' => [
+                ...
+                ...
+                // Database DataTypes settings required when useHierarchy is true
+                // to validate each data set before procedding forward
+                'column' => [
+                    'uriParams',
+                    '<key>',
+                    DatabaseDataTypes::$PrimaryKey,             // key data type
+                    Constants::$REQUIRED                        // Represents required field
+                ],
+                'column' => ['hierarchyData', '<return:keys>'],
+            ],
+        ]
+    ]
+    // Array of validation functions to be performed
+    'validate' => [
+        [
+            'fn' => 'validateGroupId',
+            'fnArgs' => [
+                'group_id' => ['payload', 'group_id']
+            ],
+            'errorMessage' => 'Invalid Group Id'
+        ]
+    ],
+    // useHierarchy true represent data is in recursive format
+    // In other words it is not presented in one simple key/value pair array
+    // Instead the data is served as per the configured hierarchy with sub arrays
+    'useHierarchy' => true
+];
+```
+
+> If there are repeated modules or configurations; one can reuse them by palcing them in a separate file and including as below.
+
 ```PHP
 'subQuery' => [
     //Here the module1 properties are reused for write operation.
-    'module1' => include DOC_ROOT . 'Config/Queries/ClientDB/Common/reusefilename.php',
+    'module1' => include $Constants::$DOC_ROOT . DIRECTORY_SEPARATOR . 'Config/Queries/ClientDB/Common/reusefilename.php',
 ]
 ```
-> **Note**: For POST, PUT, PATCH, and DELETE methods we can configure both INSERT as well as UPDATE queries.
+
+> For POST, PUT, PATCH, and DELETE methods one can configure both INSERT as well as UPDATE queries if required for sub modules.
+
 
 ## HTTP Request
 

@@ -30,7 +30,7 @@ class Autoload
 spl_autoload_register(__NAMESPACE__ . '\Autoload::register');
 
 // Load .env
-$env = parse_ini_file(__DIR__ . '/.env');
+$env = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . '.env');
 foreach ($env as $key => $value) {
     putenv("{$key}={$value}");
 }

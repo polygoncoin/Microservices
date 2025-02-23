@@ -197,7 +197,7 @@ class Microservices
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
             $this->tsEnd = microtime(true);
             $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
-            $memory = ceil(memory_get_peak_usage()/1000);
+            $memory = ceil(memory_get_peak_usage() / 1000);
 
             $this->c->httpResponse->jsonEncode->startObject('Stats');
             $this->c->httpResponse->jsonEncode->startObject('Performance');
