@@ -314,7 +314,11 @@ return [
                 ...
                 'column' => ['hierarchyData', '<return:keys>'], // Only for GET
             ],
-        ]
+        ],
+        '<sub-key>' => [
+            ...
+        ],
+        ...
     ]
     // Array of validation functions to be performed
     'validate' => [
@@ -362,8 +366,11 @@ return [
     'subQuery' => [
         '<sub-key>' => [// Recursive
             ...
+        ],
+        '<sub-key>' => [
             ...
-        ]
+        ],
+        ...
     ]
     // Array of validation functions to be performed
     'validate' => [
@@ -419,8 +426,12 @@ return [
             '__WHERE__' => [
                 ...
                 'column' => ['hierarchyData', '<return:keys>'],
-            ],
-        ]
+            ]
+        ],
+        '<sub-key>' => [
+            ...
+        ],
+        ...
     ]
     // Array of validation functions to be performed
     'validate' => [
@@ -498,7 +509,11 @@ return [
                 ...
                 'column' => ['insertIdParams', '<keyName>:id'], // previous Insert ids
             ],
-        ]
+        ],
+        '<sub-key>' => [
+            ...
+        ],
+        ...
     ]
     // Array of validation functions to be performed
     'validate' => [
@@ -597,7 +612,11 @@ return [
                 ],
                 'column' => ['hierarchyData', '<return:keys>'],
             ],
-        ]
+        ],
+        '<sub-key>' => [
+            ...
+        ],
+        ...
     ]
     // Array of validation functions to be performed
     'validate' => [
