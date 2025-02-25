@@ -469,9 +469,9 @@ trait AppTrait
      * @param array   $keys         Module Keys in recursion
      * @param array   $row          Row data fetched from DB
      * @param boolean $useHierarchy Use results in where clause of sub queries recursively
-     * @return boolean
+     * @return void
      */
-    private function resetFetchData(&$keys, $row, $useHierarchy)
+    private function resetFetchData($keys, $row, $useHierarchy)
     {
         if ($useHierarchy) {
             if (count($keys) === 0) {
@@ -487,7 +487,5 @@ trait AppTrait
             }
             $httpReq = $row;
         }
-
-        return true;
     }
 }
