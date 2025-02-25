@@ -127,7 +127,7 @@ class Read
      * @param boolean $useHierarchy  Use results in where clause of sub queries recursively
      * @return void
      */
-    private function readDB(&$readSqlConfig, $start, $configKeys, $useHierarchy)
+    private function readDB(&$readSqlConfig, $start, &$configKeys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         if ($isAssoc) {
@@ -156,9 +156,6 @@ class Read
                     $this->c->httpResponse->jsonEncode->endArray();
                     break;
             }
-            if (isset($readSqlConfig['subQuery'])) {
-                $this->callReadDB($readSqlConfig, $configKeys, $row = false, $useHierarchy);
-            }
         }
     }
 
@@ -171,7 +168,7 @@ class Read
      * @return void
      * @throws \Exception
      */
-    private function fetchSingleRow(&$readSqlConfig, $configKeys, $useHierarchy)
+    private function fetchSingleRow(&$readSqlConfig, &$configKeys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         list($sql, $sqlParams, $errors) = $this->getSqlAndParams($readSqlConfig);
@@ -251,7 +248,7 @@ class Read
      * @return void
      * @throws \Exception
      */
-    private function fetchMultipleRows(&$readSqlConfig, $configKeys, $useHierarchy)
+    private function fetchMultipleRows(&$readSqlConfig, &$configKeys, $useHierarchy)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
         if (!$useHierarchy && isset($readSqlConfig['subQuery'])) {
@@ -306,7 +303,7 @@ class Read
      * @param boolean $useHierarchy  Use results in where clause of sub queries recursively
      * @return void
      */
-    private function callReadDB(&$readSqlConfig, $configKeys, $row, $useHierarchy)
+    private function callReadDB(&$readSqlConfig, &$configKeys, $row, $useHierarchy)
     {
         if ($useHierarchy && $row !== false) {
             $this->resetFetchData($configKeys, $row, $useHierarchy);
