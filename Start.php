@@ -3,6 +3,10 @@ namespace Microservices;
 
 use Microservices\Microservices;
 
+if ($_SERVER["CONTENT_TYPE"] !== 'text/plain; charset=utf-8') {
+    die('{"Status":400,"Message":"Bad Request"}');
+}
+
 /**
  * Class to autoload class files
  *

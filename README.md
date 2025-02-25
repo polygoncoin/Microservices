@@ -842,7 +842,7 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
-xmlhttp . setRequestHeader('Content-type', 'text/plain');
+xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 
 xmlhttp . onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -891,7 +891,7 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
-xmlhttp . setRequestHeader('Content-type', 'text/plain');
+xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 
 xmlhttp . onreadystatechange = function() {
@@ -917,7 +917,7 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "PUT", handlerUrl );
-xmlhttp . setRequestHeader('Content-type', 'text/plain');
+xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 
 xmlhttp . onreadystatechange = function() {
