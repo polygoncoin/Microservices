@@ -47,10 +47,12 @@ function trigger($method, $route, $header = [], $json = '')
         echo "cURL Error #:" . $err;
     } else {
         $response = json_decode($responseJSON, true);
-        if ($response['Status'] == 200) {
-            echo 'Sucess:'.$route . PHP_EOL;
+        if (!empty($response) && isset($response['Status']) && $response['Status'] == 200) {
+            echo 'Sucess:'.$route . PHP_EOL . PHP_EOL;
         } else {
             echo 'Failed:'.$route . PHP_EOL;
+            echo 'O/P:' . $responseJSON . PHP_EOL . PHP_EOL;
+            $response = false;
         }
     }
     return $response;
@@ -59,15 +61,18 @@ function trigger($method, $route, $header = [], $json = '')
 $response = [];
 echo '<pre>';
 
-$response[] = trigger('GET', '/reload', [], '');
+// $response[] = trigger('GET', '/reload', [], '');
 
-$response[] = trigger('POST', '/login', [], '{"username":"client_1_group_1_user_1", "password":"shames11"}');
-$token = $response['Results']['Token'];
-$header = ["Authorization: Bearer {$token}"];
+$res = trigger('POST', '/login', [], '{"username":"client_1_group_1_user_1", "password":"shames11"}');
+if ($res) {
+    $response[] = $res;
+    $token = $res['Results']['Token'];
+    $header = ["Authorization: Bearer {$token}"];    
 
-$response[] = trigger('GET', '/routes', $header, '');
-$response[] = trigger('POST', '/category', $header, '[{"name":"ramesh0","sub":{"subname":"ramesh1","subsub":{"subsubname":"ramesh"}}},{"name":"ramesh1","sub":{"subname":"ramesh1","subsub":{"subsubname":"ramesh"}}}]');
-$response[] = trigger('GET', '/category', $header, '');
-$response[] = trigger('POST', '/category/config', $header, '');
+    // $response[] = trigger('GET', '/routes', $header, '');
+    $response[] = trigger('POST', '/category', $header, '[{"name":"ramesh0","sub":{"subname":"ramesh1","subsub":{"subsubname":"ramesh"}}},{"name":"ramesh1","sub":{"subname":"ramesh1","subsub":{"subsubname":"ramesh"}}}]');
+    // $response[] = trigger('GET', '/category', $header, '');
+    // $response[] = trigger('POST', '/category/config', $header, '');
 
-print_r($response);
+    print_r($response);
+}

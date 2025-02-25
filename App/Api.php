@@ -98,9 +98,7 @@ class Api
         }
 
         // Check & Process Cron / ThirdParty calls.
-        {
-            $this->processAfterPayload();
-        }
+        $this->processAfterPayload();
 
         return true;
     }
