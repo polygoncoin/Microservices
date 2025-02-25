@@ -11,7 +11,7 @@ use Microservices\App\Logs;
 /**
  * Microservices Class
  *
- * Class to start Services.
+ * Class to start Services
  *
  * @category   Microservices
  * @package    Microservices

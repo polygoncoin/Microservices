@@ -31,18 +31,18 @@ trait AppTrait
     public $validator = null;
 
     /**
-     * Function to help execute PHP functions enclosed with double quotes.
+     * Function to help execute PHP functions enclosed with double quotes
      *
-     * @param $param Returned values by PHP inbuilt functions.
+     * @param $param Returned values by PHP inbuilt functions
      */
     function execPhpFunc($param) { return $param;}
 
     /**
-     * Sets required payload.
+     * Sets required payload
      *
      * @param array   $sqlConfig    Config from file
-     * @param boolean $first        true to represent the first call in recursion.
-     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
+     * @param boolean $first        true to represent the first call in recursion
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively
      * @return void
      * @throws \Exception
      */
@@ -127,7 +127,7 @@ trait AppTrait
     /**
      * Validate payload
      *
-     * @param array $validationConfig Validation config from Config file.
+     * @param array $validationConfig Validation config from Config file
      * @return array
      */
     private function validate(&$validationConfig)
@@ -140,7 +140,7 @@ trait AppTrait
     }
 
     /**
-     * Returns Query and Params for execution.
+     * Returns Query and Params for execution
      *
      * @param array $sqlDetails   Config from file
      * @return array
@@ -207,9 +207,9 @@ trait AppTrait
     }
 
     /**
-     * Generates Params for statement to execute.
+     * Generates Params for statement to execute
      *
-     * @param array $sqlConfig    Config from file
+     * @param array $sqlConfig Config from file
      * @return array
      * @throws \Exception
      */
@@ -299,7 +299,7 @@ trait AppTrait
      *
      * @param array   $sqlConfig    Config from file
      * @param array   $first        Flag to check if this is first request in a recursive call
-     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively
      * @return array
      * @throws \Exception
      */
@@ -464,11 +464,11 @@ trait AppTrait
     }
 
     /**
-     * Function to reset data for module key wise.
+     * Function to reset data for module key wise
      *
-     * @param array   $keys         Module Keys in recursion.
-     * @param array   $row          Row data fetched from DB.
-     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
+     * @param array   $keys         Module Keys in recursion
+     * @param array   $row          Row data fetched from DB
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively
      * @return boolean
      */
     private function resetFetchData(&$keys, $row, $useHierarchy)

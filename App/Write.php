@@ -63,10 +63,10 @@ class Write
         // Load Queries
         $writeSqlConfig = include $this->c->httpRequest->__file__;
 
-        // Set Server mode to execute query on - Read / Write Server.
+        // Set Server mode to execute query on - Read / Write Server
         $this->c->httpRequest->setConnection('Master');
 
-        // Use results in where clause of sub queries recursively.
+        // Use results in where clause of sub queries recursively
         $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
 
         if (
@@ -81,10 +81,10 @@ class Write
     }
 
     /**
-     * Process write function for configuration.
+     * Process write function for configuration
      *
      * @param array   $writeSqlConfig Config from file
-     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively.
+     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively
      * @return void
      */
     private function processWriteConfig(&$writeSqlConfig, $useHierarchy)
@@ -96,15 +96,15 @@ class Write
     }
 
     /**
-     * Process Function to insert/update.
+     * Process Function to insert/update
      *
      * @param array   $writeSqlConfig Config from file
-     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively.
+     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively
      * @return void
      */
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
-        // Set required fields.
+        // Set required fields
         $this->c->httpRequest->session['requiredArr'] = $this->getRequired($writeSqlConfig, true, $useHierarchy);
 
         if ($this->c->httpRequest->session['payloadType'] === 'Object') {
@@ -161,7 +161,7 @@ class Write
     }
 
     /**
-     * Function to insert/update sub queries recursively.
+     * Function to insert/update sub queries recursively
      *
      * @param array   $writeSqlConfig Config from file
      * @param array   $payloadIndexes Payload Indexes
@@ -248,7 +248,7 @@ class Write
             }
             $this->c->httpRequest->db->closeCursor();
 
-            // subQuery for payload.
+            // subQuery for payload
             if (isset($writeSqlConfig['subQuery'])) {
                 $this->callWriteDB($isAssoc, $writeSqlConfig, $_payloadIndexes, $configKeys, $useHierarchy, $response, $required);
             }
@@ -266,9 +266,9 @@ class Write
      * @param array   $writeSqlConfig Config from file
      * @param array   $payloadIndexes Payload Indexes
      * @param array   $configKeys     Config Keys
-     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively.
-     * @param array   $response       Response by reference.
-     * @param array   $required       Required fields.
+     * @param boolean $useHierarchy   Use results in where clause of sub queries recursively
+     * @param array   $response       Response by reference
+     * @param array   $required       Required fields
      * @return void
      */
     private function callWriteDB($isAssoc, &$writeSqlConfig, $payloadIndexes, $configKeys, $useHierarchy, &$response, &$required)
@@ -285,7 +285,7 @@ class Write
                 array_push($_payloadIndexes, $module);
                 array_push($_configKeys, $module);
                 $modulePayloadKey = implode(':', $_payloadIndexes);
-                if ($useHierarchy) { // use parent data of a payload.
+                if ($useHierarchy) { // use parent data of a payload
                     if ($this->c->httpRequest->jsonDecode->isset($modulePayloadKey)) {
                         $_required = &$required[$module] ?? [];
                     } else {

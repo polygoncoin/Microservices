@@ -46,7 +46,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 }
 $httpRequestDetails['get'] = &$_GET;
 
-// Code to Initialize / Start the service.
+// Code to Initialize / Start the service
 try {
     $Microservices = new Microservices($httpRequestDetails);
 
