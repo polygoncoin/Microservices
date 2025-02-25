@@ -871,6 +871,7 @@ xmlhttp . send( JSON.stringify(payload) );
   var xmlhttp = new XMLHttpRequest();
 
   xmlhttp . open( "GET", handlerUrl );
+  xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
   xmlhttp . setRequestHeader('Authorization', 'Bearer <Token-from-login-api>');
 
   xmlhttp . onreadystatechange = function() {
