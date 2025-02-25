@@ -462,4 +462,32 @@ trait AppTrait
 
         return $data;
     }
+
+    /**
+     * Function to reset data for module key wise.
+     *
+     * @param array   $keys         Module Keys in recursion.
+     * @param array   $row          Row data fetched from DB.
+     * @param boolean $useHierarchy Use results in where clause of sub queries recursively.
+     * @return boolean
+     */
+    private function resetFetchData(&$keys, $row, $useHierarchy)
+    {
+        if ($useHierarchy) {
+            if (count($keys) === 0) {
+                $this->c->httpRequest->session['hierarchyData'] = [];
+                $this->c->httpRequest->session['hierarchyData']['return'] = [];
+            }
+            $httpReq = &$this->c->httpRequest->session['hierarchyData']['return'];
+            foreach ($keys as $k) {
+                if (!isset($httpReq[$k])) {
+                    $httpReq[$k] = [];
+                }
+                $httpReq = &$httpReq[$k];
+            }
+            $httpReq = $row;
+        }
+
+        return true;
+    }
 }
