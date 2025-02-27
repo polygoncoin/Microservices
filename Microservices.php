@@ -63,12 +63,7 @@ class Microservices
      */
     public function __construct(&$httpRequestDetails)
     {
-        $this->apiGateway = new ApiGateway($httpRequestDetails);
-
         $this->httpRequestDetails = &$httpRequestDetails;
-
-        Constants::init();
-        Env::init();
     }
 
     /**
@@ -79,6 +74,11 @@ class Microservices
      */
     public function init()
     {
+        Constants::init();
+        Env::init();
+
+        $this->apiGateway = new ApiGateway($this->httpRequestDetails);
+
         $this->c = new Common($this->httpRequestDetails);
         $this->c->init();
 
@@ -238,7 +238,8 @@ class Microservices
     public function getCors()
     {
         $headers = [];
-        $headers['Access-Control-Allow-Origin'] = '*';
+        $headers['Access-Control-Allow-Origin'] = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}";
+        $headers['Vary'] = 'Origin';
         $headers['Access-Control-Allow-Headers'] = '*';
 
         // Access-Control headers are received during OPTIONS requests

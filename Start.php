@@ -3,7 +3,7 @@ namespace Microservices;
 
 use Microservices\Microservices;
 
-if ($_SERVER["CONTENT_TYPE"] !== 'text/plain; charset=utf-8') {
+if ($_SERVER["HTTP_X_API_VERSION"] !== 'v1.0.0') {
     http_response_code(400);
 
     header("Content-Type: application/json; charset=utf-8");
@@ -39,12 +39,6 @@ class Autoload
 
 spl_autoload_register(__NAMESPACE__ . '\Autoload::register');
 
-// Load .env
-$env = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . '.env');
-foreach ($env as $key => $value) {
-    putenv("{$key}={$value}");
-}
-
 // Process the request
 $httpRequestDetails = [];
 
@@ -66,6 +60,12 @@ try {
     }
     if ($httpRequestDetails['server']['request_method'] == 'OPTIONS') {
         exit();
+    }
+
+    // Load .env
+    $env = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . '.env');
+    foreach ($env as $key => $value) {
+        putenv("{$key}={$value}");
     }
 
     if ($Microservices->init()) {

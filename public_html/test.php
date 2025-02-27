@@ -6,25 +6,29 @@ function getCurlConfig($method, $route, $header = [], $json = '')
 
     $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}";
     $curlConfig[CURLOPT_HTTPHEADER] = $header;
+    $curlConfig[CURLOPT_HTTPHEADER][] = "X-API-Version: v1.0.0";
     $curlConfig[CURLOPT_HTTPHEADER][] = "Cache-Control: no-cache";
-    $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
     
     switch ($method) {
         case 'GET':
             break;
         case 'POST':
+            $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_POST] = true;
             $curlConfig[CURLOPT_POSTFIELDS] = $json;
             break;
         case 'PUT':
+            $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PUT';
             $curlConfig[CURLOPT_POSTFIELDS] = $json;
             break;
         case 'PATCH':
+            $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PATCH';
             $curlConfig[CURLOPT_POSTFIELDS] = $json;
             break;
         case 'DELETE':
+            $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_CUSTOMREQUEST] = 'DELETE';
             $curlConfig[CURLOPT_POSTFIELDS] = $json;
             break;
@@ -61,7 +65,7 @@ function trigger($method, $route, $header = [], $json = '')
 $response = [];
 echo '<pre>';
 
-// $response[] = trigger('GET', '/reload', [], '');
+$response[] = trigger('GET', '/reload', [], '');
 
 $res = trigger('POST', '/login', [], '{"username":"client_1_group_1_user_1", "password":"shames11"}');
 if ($res) {
@@ -76,4 +80,5 @@ if ($res) {
     $response[] = trigger('GET', '/category', $header, '');
     $response[] = trigger('POST', '/category/config', $header, '');
 }
+
 print_r($response);
