@@ -48,6 +48,7 @@ $httpRequestDetails['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $httpRequestDetails['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
+$httpRequestDetails['server']['api_version'] = $_SERVER["HTTP_X_API_VERSION"];
 $httpRequestDetails['get'] = &$_GET;
 
 // Code to Initialize / Start the service
