@@ -183,7 +183,6 @@ class Microservices
      */
     public function endOutputJson()
     {
-        // $this->c->httpResponse->jsonEncode->endObject();
         $this->c->httpResponse->jsonEncode->addKeyValue('Status', $this->c->httpResponse->httpStatus);
     }
 
@@ -227,6 +226,7 @@ class Microservices
      */
     public function outputResults()
     {
+        http_response_code($this->c->httpResponse->httpStatus);
         $this->c->httpResponse->jsonEncode->streamJson();
     }
 
