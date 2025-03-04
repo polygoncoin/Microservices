@@ -80,9 +80,18 @@ try {
     header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
     header("Pragma: no-cache");
 
-    $arr = [
-        'Status' => $e->getCode(),
-        'Message' => $e->getMessage()
-    ];
+    if ($e->getCode() == 429) {
+        header("Retry-After: {$e->getMessage()}");
+        $arr = [
+            'Status' => $e->getCode(),
+            'Message' => 'Too Many Requests',
+            'RetryAfter' => $e->getMessage()
+        ];
+    } else {
+        $arr = [
+            'Status' => $e->getCode(),
+            'Message' => $e->getMessage()
+        ];    
+    }
     echo json_encode($arr);
 }
