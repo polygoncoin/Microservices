@@ -301,7 +301,7 @@ class JsonEncode
     }
 
     /**
-     * Stream Json String
+     * Return Json String
      *
      * @return void
      */

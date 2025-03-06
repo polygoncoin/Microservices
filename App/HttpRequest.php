@@ -500,6 +500,11 @@ class HttpRequest
         }
     }
 
+    /**
+     * Set Cache prefix key
+     *
+     * @return void
+     */
     public function setDbCacheKey()
     {
         $clientId = $this->session['clientDetails']['client_id'];
@@ -507,6 +512,12 @@ class HttpRequest
         $this->dbCacheKey = DbCacheKey::Sql($clientId, $groupId);
     }
     
+    /**
+     * Set Cache prefix key
+     *
+     * @param string $cacheKey Cache Key from Queries configuration
+     * @return null|string
+     */
     public function getDqlCache($cacheKey)
     {
         if (is_null($this->dbCacheKey)) {
@@ -520,6 +531,13 @@ class HttpRequest
         }
     }
 
+    /**
+     * Set DQL Cache as JSON
+     *
+     * @param string $cacheKey Cache Key from Queries configuration
+     * @param string $json     JSON
+     * @return void
+     */
     public function setDqlCache($cacheKey, $json)
     {
         if (is_null($this->dbCacheKey)) {
@@ -529,6 +547,12 @@ class HttpRequest
         $this->cache->setCache($cacheKey, $json);
     }
 
+    /**
+     * Delete DQL Cache
+     *
+     * @param string $cacheKey Cache Key from Queries configuration
+     * @return void
+     */
     public function delDqlCache($cacheKey)
     {
         if (is_null($this->dbCacheKey)) {
