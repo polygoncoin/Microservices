@@ -6,7 +6,6 @@ use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
-use Microservices\App\Logs;
 
 /**
  * Microservices Class
@@ -48,7 +47,7 @@ class Microservices
      *
      * @var null|Common
      */
-    private $c = null;
+    public $c = null;
 
     /**
      * @var null|ApiGateway
@@ -265,15 +264,6 @@ class Microservices
      */
     private function log($e)
     {
-        $log = [
-            'datetime' => date('Y-m-d H:i:s'),
-            'conditions' => $this->c->httpRequest->session,
-            "code" => $e->getCode(),
-            "msg" => $e->getMessage(),
-            "e" => json_encode($e)
-        ];
-        (new Logs)->log('error', json_encode($log));
-
         throw new \Exception($e->getMessage(), $e->getCode());
     }
 }

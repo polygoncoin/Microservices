@@ -2,6 +2,7 @@
 namespace Microservices;
 
 use Microservices\Microservices;
+use Microservices\App\Logs;
 
 if ($_SERVER["HTTP_X_API_VERSION"] !== 'v1.0.0') {
     http_response_code(400);
@@ -74,8 +75,26 @@ try {
         $Microservices->outputResults();
     }
 } catch (\Exception $e) {
+    // Log request details
+    $logDetails = [
+        'LogType' => 'ERROR',
+        'DateTime' => date('Y-m-d H:i:s'),
+        'HttpDetails' => [
+            "HttpCode" => $e->getCode(),
+            "HttpMessage" => $e->getMessage()
+        ],
+        'Details' => [
+            '$_GET' => $_GET,
+            'php:input' => @file_get_contents('php://input'),
+            'session' => $Microservices->c->httpRequest->session
+        ]
+    ];
+    (new Logs)->log($logDetails);
+
+    // Set response code
     http_response_code($e->getCode());
 
+    // Set response headers
     header("Content-Type: application/json; charset=utf-8");
     header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
     header("Pragma: no-cache");
@@ -93,5 +112,7 @@ try {
             'Message' => $e->getMessage()
         ];    
     }
+
+    // Set response json
     echo json_encode($arr);
 }
