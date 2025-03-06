@@ -22,4 +22,5 @@ return [
         ]
     ],
     'fetchFrom' => 'Master',
+    'cacheKey' => 'category:1'
 ];

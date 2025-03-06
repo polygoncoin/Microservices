@@ -44,4 +44,5 @@ return [
     ],
     'useHierarchy' => true,
     'fetchFrom' => 'Master',
+    'cacheKey' => 'category'
 ];

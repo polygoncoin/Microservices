@@ -78,6 +78,13 @@ class Write
             $this->processWrite($writeSqlConfig, $useHierarchy);
         }
 
+        if (isset($writeSqlConfig['affectedCacheKeys'])) {
+            for ($i = 0, $iCount = count($writeSqlConfig['affectedCacheKeys']); $i < $iCount; $i++) {
+                $this->c->httpRequest->delDqlCache($writeSqlConfig['affectedCacheKeys'][$i]);
+                
+            }
+        }
+
         return true;
     }
 

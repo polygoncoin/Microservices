@@ -338,7 +338,15 @@ return [
             'errorMessage' => 'Invalid Group Id'
         ]
     ],
-    'useHierarchy' => true
+    'useHierarchy' => true,
+    // Use cacheKey option to cache and reuse results (Optional)
+    'cacheKey' => '<unique-key-for-redis-to-cache-results>(e.g, key:1)',
+    // List down keys which effects configured cacheKey on DML operation
+    'affectedCacheKeys' => [
+        '<unique-key-for-redis-to-drop-cached-results>(key:1)',
+        '<unique-key-for-redis-to-drop-cached-results>(category etc.)',
+        ...
+    ]
 ];
 ```
 
@@ -390,6 +398,7 @@ return [
             'errorMessage' => 'Invalid Group Id'
         ]
     ],
+    'cacheKey' => 'key:1',
 ];
 ```
 
@@ -453,7 +462,8 @@ return [
     ],
     // useHierarchy true represent data from higher hierarchy to be preserved
     // to be used used in sub queries
-    'useHierarchy' => true
+    'useHierarchy' => true,
+    'cacheKey' => 'key:2',
 ];
 ```
 
@@ -533,6 +543,10 @@ return [
             'errorMessage' => 'Invalid Group Id'
         ]
     ],
+    'affectedCacheKeys' => [
+        'key:1',
+        'key:2'
+    ]
 ];
 ```
 
@@ -639,7 +653,11 @@ return [
     // useHierarchy true represent data is in recursive format
     // In other words it is not presented in one simple key/value pair array
     // Instead the data is served as per the configured hierarchy with sub arrays
-    'useHierarchy' => true
+    'useHierarchy' => true,
+    'affectedCacheKeys' => [
+        'key:1',
+        'key:2'
+    ]
 ];
 ```
 

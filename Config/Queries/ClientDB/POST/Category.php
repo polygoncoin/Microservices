@@ -33,5 +33,9 @@ return [
             ]
         ]
     ],
-    'useHierarchy' => true
+    'useHierarchy' => true,
+    'affectedCacheKeys' => [
+        'category',
+        'category:1'
+    ]
 ];

@@ -4,6 +4,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
+use Microservices\App\DbCacheKey;
 use Microservices\App\Env;
 use Microservices\App\HttpResponse;
 use Microservices\App\HttpStatus;
@@ -102,7 +103,7 @@ class HttpRequest
     public $clientKey = null;
     public $groupKey = null;
     public $cidr_key = null;
-
+    public $dbCacheKey = null;
     /**
      * Payload stream
      */
@@ -497,5 +498,43 @@ class HttpRequest
             default:
                 throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", HttpStatus::$InternalServerError);
         }
+    }
+
+    public function setDbCacheKey()
+    {
+        $clientId = $this->session['clientDetails']['client_id'];
+        $groupId = $this->session['userDetails']['group_id'];
+        $this->dbCacheKey = DbCacheKey::Sql($clientId, $groupId);
+    }
+    
+    public function getDqlCache($cacheKey)
+    {
+        if (is_null($this->dbCacheKey)) {
+            $this->setDbCacheKey();
+        }
+        $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
+        if ($this->cache->cacheExists($cacheKey)) {
+            return $json = $this->cache->getCache($cacheKey);
+        } else {
+            return $json = null;
+        }
+    }
+
+    public function setDqlCache($cacheKey, $json)
+    {
+        if (is_null($this->dbCacheKey)) {
+            $this->setDbCacheKey();
+        }
+        $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
+        $this->cache->setCache($cacheKey, $json);
+    }
+
+    public function delDqlCache($cacheKey)
+    {
+        if (is_null($this->dbCacheKey)) {
+            $this->setDbCacheKey();
+        }
+        $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
+        $this->cache->deleteCache($cacheKey);
     }
 }

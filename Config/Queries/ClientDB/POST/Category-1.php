@@ -31,5 +31,9 @@ return [
                 ]
             ]
         ]
+    ],
+    'affectedCacheKeys' => [
+        'category',
+        'category:1'
     ]
 ];
