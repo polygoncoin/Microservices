@@ -34,7 +34,7 @@ class Logs
             mkdir($absLogsDir, 0755, true);
         }
 
-        $logFile = $absLogsDir . 'logs-' . date('YmdH');
+        $logFile = $absLogsDir . DIRECTORY_SEPARATOR . 'logs-' . date('YmdH');
         if (!file_exists($logFile)) {
             touch($logFile);
         }
