@@ -60,11 +60,18 @@ class HttpRequest
     public $clientDetails = null;
 
     /**
-     * Json Decode Object
+     * Caching Object
      *
      * @var null|Cache
      */
     public $cache = null;
+
+    /**
+     * Sql Data caching Object
+     *
+     * @var null|Cache
+     */
+    public $sqlCache = null;
 
     /**
      * Json Decode Object
@@ -138,7 +145,7 @@ class HttpRequest
         $this->jsonDecode = new JsonDecode($this->payloadStream);
         $this->jsonDecode->init();
 
-        $this->setCache(
+        $this->cache = $this->setCache(
             getenv('cacheType'),
             getenv('cacheHostname'),
             getenv('cachePort'),
@@ -427,13 +434,53 @@ class HttpRequest
     )
     {
         $cacheNS = 'Microservices\\App\\Servers\\Cache\\'.$cacheType;
-        $this->cache = new $cacheNS(
+        return new $cacheNS(
             $cacheHostname,
             $cachePort,
             $cacheUsername,
             $cachePassword,
             $cacheDatabase
         );
+    }
+
+    /**
+     * Init server connection based on $fetchFrom
+     *
+     * @param string $fetchFrom Master/Slave
+     * @return void
+     * @throws \Exception
+     */
+    public function setCacheConnection($fetchFrom)
+    {
+        if (is_null($this->session['clientDetails'])) {
+            throw new \Exception('Yet to set connection params', HttpStatus::$InternalServerError);
+        }
+
+        // Set Database credentials
+        switch ($fetchFrom) {
+            case 'Master':
+                $this->sqlCache = $this->setCache(
+                    getenv($this->session['clientDetails']['master_cache_server_type']),
+                    getenv($this->session['clientDetails']['master_cache_hostname']),
+                    getenv($this->session['clientDetails']['master_cache_port']),
+                    getenv($this->session['clientDetails']['master_cache_username']),
+                    getenv($this->session['clientDetails']['master_cache_password']),
+                    getenv($this->session['clientDetails']['master_cache_database'])
+                );
+                break;
+            case 'Slave':
+                $this->sqlCache = $this->setCache(
+                    getenv($this->session['clientDetails']['slave_cache_server_type']),
+                    getenv($this->session['clientDetails']['slave_cache_hostname']),
+                    getenv($this->session['clientDetails']['slave_cache_port']),
+                    getenv($this->session['clientDetails']['slave_cache_username']),
+                    getenv($this->session['clientDetails']['slave_cache_password']),
+                    getenv($this->session['clientDetails']['slave_cache_database'])
+                );
+                break;
+            default:
+                throw new \Exception("Invalid fetchFrom value '{$fetchFrom}'", HttpStatus::$InternalServerError);
+        }
     }
 
     /**
@@ -467,7 +514,7 @@ class HttpRequest
      * @return void
      * @throws \Exception
      */
-    public function setConnection($fetchFrom)
+    public function setDbConnection($fetchFrom)
     {
         if (is_null($this->session['clientDetails'])) {
             throw new \Exception('Yet to set connection params', HttpStatus::$InternalServerError);
@@ -520,12 +567,15 @@ class HttpRequest
      */
     public function getDqlCache($cacheKey)
     {
+        if (is_null($this->sqlCache)) {
+            $this->setCacheConnection('Slave');
+        }
         if (is_null($this->dbCacheKey)) {
             $this->setDbCacheKey();
         }
         $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
-        if ($this->cache->cacheExists($cacheKey)) {
-            return $json = $this->cache->getCache($cacheKey);
+        if ($this->sqlCache->cacheExists($cacheKey)) {
+            return $json = $this->sqlCache->getCache($cacheKey);
         } else {
             return $json = null;
         }
@@ -538,13 +588,16 @@ class HttpRequest
      * @param string $json     JSON
      * @return void
      */
-    public function setDqlCache($cacheKey, $json)
+    public function setDmlCache($cacheKey, $json)
     {
+        if (is_null($this->sqlCache)) {
+            $this->setCacheConnection('Master');
+        }
         if (is_null($this->dbCacheKey)) {
             $this->setDbCacheKey();
         }
         $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
-        $this->cache->setCache($cacheKey, $json);
+        $this->sqlCache->setCache($cacheKey, $json);
     }
 
     /**
@@ -553,12 +606,15 @@ class HttpRequest
      * @param string $cacheKey Cache Key from Queries configuration
      * @return void
      */
-    public function delDqlCache($cacheKey)
+    public function delDmlCache($cacheKey)
     {
+        if (is_null($this->sqlCache)) {
+            $this->setCacheConnection('Master');
+        }
         if (is_null($this->dbCacheKey)) {
             $this->setDbCacheKey();
         }
         $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
-        $this->cache->deleteCache($cacheKey);
+        $this->sqlCache->deleteCache($cacheKey);
     }
 }

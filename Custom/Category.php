@@ -38,7 +38,7 @@ class Category implements CustomInterface
     public function __construct(&$common)
     {
         $this->c = &$common;
-        $this->c->httpRequest->setConnection($fetchFrom = 'Slave');
+        $this->c->httpRequest->setDbConnection($fetchFrom = 'Slave');
     }
 
     /**

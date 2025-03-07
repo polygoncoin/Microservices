@@ -38,7 +38,7 @@ class Module1 implements UploadInterface
     public function __construct(&$common)
     {
         $this->c = &$common;
-        $this->c->httpRequest->setConnection($fetchFrom = 'Master');
+        $this->c->httpRequest->setDbConnection($fetchFrom = 'Master');
     }
 
     /**

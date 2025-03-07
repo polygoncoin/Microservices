@@ -65,7 +65,7 @@ class Write
         $writeSqlConfig = include $this->c->httpRequest->__file__;
 
         // Set Server mode to execute query on - Read / Write Server
-        $this->c->httpRequest->setConnection('Master');
+        $this->c->httpRequest->setDbConnection('Master');
 
         // Use results in where clause of sub queries recursively
         $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
@@ -80,7 +80,7 @@ class Write
 
         if (isset($writeSqlConfig['affectedCacheKeys'])) {
             for ($i = 0, $iCount = count($writeSqlConfig['affectedCacheKeys']); $i < $iCount; $i++) {
-                $this->c->httpRequest->delDqlCache($writeSqlConfig['affectedCacheKeys'][$i]);
+                $this->c->httpRequest->delDmlCache($writeSqlConfig['affectedCacheKeys'][$i]);
                 
             }
         }

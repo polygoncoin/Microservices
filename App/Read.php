@@ -93,7 +93,7 @@ class Read
 
         // Set Server mode to execute query on - Read / Write Server
         $fetchFrom = (isset($readSqlConfig['fetchFrom'])) ? $readSqlConfig['fetchFrom'] : 'Slave';
-        $this->c->httpRequest->setConnection($fetchFrom);
+        $this->c->httpRequest->setDbConnection($fetchFrom);
 
         // Use results in where clause of sub queries recursively
         $useHierarchy = $this->getUseHierarchy($readSqlConfig);
@@ -108,7 +108,7 @@ class Read
 
         if ($tobeCached) {
             $json = $this->jsonEncode->getJson();
-            $this->c->httpRequest->setDqlCache($readSqlConfig['cacheKey'], $json);
+            $this->c->httpRequest->setDmlCache($readSqlConfig['cacheKey'], $json);
             $this->c->httpResponse->jsonEncode->appendJson($json);
         }
 

@@ -39,6 +39,6 @@ class Logs
             touch($logFile);
         }
 
-        file_put_contents($logFile, $logContent . PHP_EOL, FILE_APPEND);
+        file_put_contents($logFile, json_encode($logDetails) . PHP_EOL, FILE_APPEND);
     }
 }
