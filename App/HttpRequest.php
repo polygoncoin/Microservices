@@ -4,7 +4,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
-use Microservices\App\DbCacheKey;
+use Microservices\App\DatabaseCacheKey;
 use Microservices\App\Env;
 use Microservices\App\HttpResponse;
 use Microservices\App\HttpStatus;
@@ -552,11 +552,12 @@ class HttpRequest
      *
      * @return void
      */
-    public function setDbCacheKey()
+    public function setDatabaseCacheKey()
     {
         $clientId = $this->session['clientDetails']['client_id'];
         $groupId = $this->session['userDetails']['group_id'];
-        $this->dbCacheKey = DbCacheKey::Sql($clientId, $groupId);
+        $userId = $this->session['userDetails']['user_id'];
+        DatabaseCacheKey::init($clientId, $groupId, $userId);
     }
     
     /**
@@ -571,7 +572,7 @@ class HttpRequest
             $this->setCacheConnection('Slave');
         }
         if (is_null($this->dbCacheKey)) {
-            $this->setDbCacheKey();
+            $this->setDatabaseCacheKey();
         }
         $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
         if ($this->sqlCache->cacheExists($cacheKey)) {
@@ -594,7 +595,7 @@ class HttpRequest
             $this->setCacheConnection('Master');
         }
         if (is_null($this->dbCacheKey)) {
-            $this->setDbCacheKey();
+            $this->setDatabaseCacheKey();
         }
         $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
         $this->sqlCache->setCache($cacheKey, $json);
@@ -612,7 +613,7 @@ class HttpRequest
             $this->setCacheConnection('Master');
         }
         if (is_null($this->dbCacheKey)) {
-            $this->setDbCacheKey();
+            $this->setDatabaseCacheKey();
         }
         $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
         $this->sqlCache->deleteCache($cacheKey);
