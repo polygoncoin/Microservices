@@ -35,7 +35,7 @@ return [
     ],
     'useHierarchy' => true,
     'affectedCacheKeys' => [
-        'category',
-        'category:1'
+        DatabaseCacheKey::$Category,
+        DatabaseCacheKey::$Category1
     ]
 ];

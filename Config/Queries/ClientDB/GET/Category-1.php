@@ -23,5 +23,5 @@ return [
         ]
     ],
     'fetchFrom' => 'Master',
-    'cacheKey' => DatabaseCacheKey::$App . ':' . DatabaseCacheKey::$Client . ':' . DatabaseCacheKey::$Group . ':' . 'category:1'
+    'cacheKey' => DatabaseCacheKey::$Category1
 ];

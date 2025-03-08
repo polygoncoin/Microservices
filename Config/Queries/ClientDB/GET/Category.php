@@ -45,5 +45,5 @@ return [
     ],
     'useHierarchy' => true,
     'fetchFrom' => 'Master',
-    'cacheKey' => DatabaseCacheKey::$App . ':' . DatabaseCacheKey::$Client . ':' . DatabaseCacheKey::$Group . ':' . 'category'
+    'cacheKey' => DatabaseCacheKey::$Category
 ];

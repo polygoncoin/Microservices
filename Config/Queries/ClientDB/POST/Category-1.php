@@ -34,7 +34,7 @@ return [
         ]
     ],
     'affectedCacheKeys' => [
-        DatabaseCacheKey::$App . ':' . DatabaseCacheKey::$Client . ':' . DatabaseCacheKey::$Group . ':' . 'category',
-        DatabaseCacheKey::$App . ':' . DatabaseCacheKey::$Client . ':' . DatabaseCacheKey::$Group . ':' . 'category:1',
+        DatabaseCacheKey::$Category,
+        DatabaseCacheKey::$Category1
     ]
 ];

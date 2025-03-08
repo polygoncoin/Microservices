@@ -20,6 +20,9 @@ class DatabaseCacheKey
     static public $Group = null;
     static public $User = null;
 
+    static public $Category = null;
+    static public $Category1 = null;
+
     /**
      * Get Database Cache Key
      *
@@ -33,5 +36,8 @@ class DatabaseCacheKey
         self::$Client = !is_null($clientId) ? ":c:{$clientId}": '';
         self::$Group = !is_null($groupId) ? ":g:{$groupId}": '';
         self::$User = !is_null($userId) ? ":u:{$userId}": '';
+
+        self::$Category = self::$App . ':' . self::$Client . ':' . self::$Group . ':' . 'category';
+        self::$Category1 = self::$App . ':' . self::$Client . ':' . self::$Group . ':' . 'category:1';
     }
 }
