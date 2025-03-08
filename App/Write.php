@@ -68,7 +68,7 @@ class Write
         $this->c->httpRequest->setDbConnection('Master');
 
         // Use results in where clause of sub queries recursively
-        $useHierarchy = $this->getUseHierarchy($writeSqlConfig);
+        $useHierarchy = $this->getUseHierarchy($writeSqlConfig, 'useHierarchy');
 
         if (
             (Env::$allowConfigRequest && Env::$isConfigRequest)
@@ -302,7 +302,7 @@ class Write
                 } else {
                     $_required = $required;
                 }
-                $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($_writeSqlConfig);
+                $_useHierarchy = $useHierarchy ?? $this->getUseHierarchy($_writeSqlConfig, 'useHierarchy');
                 if ($isAssoc) {
                     $response[$module] = [];
                     $_response = &$response[$module];

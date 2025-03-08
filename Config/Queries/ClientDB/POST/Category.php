@@ -24,8 +24,8 @@ return [
                 'subsub' => [
                     'query' => "INSERT INTO `category` SET __SET__",
                     '__SET__' => [
-                        // 'name' => ['payload', 'subsubname'],
-                        'name' => ['hierarchyData', 'return:sub:subname'],
+                        'name' => ['payload', 'subsubname'],
+                        // 'name' => ['useResultSet', 'return:sub:subname'],
                         'parent_id' => ['insertIdParams', 'sub:id'],
                     ],
                     'insertId' => 'subsub:id',
