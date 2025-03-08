@@ -110,7 +110,7 @@ class HttpRequest
     public $clientKey = null;
     public $groupKey = null;
     public $cidr_key = null;
-    public $dbCacheKey = null;
+
     /**
      * Payload stream
      */
@@ -187,6 +187,7 @@ class HttpRequest
                 throw new \Exception('Token expired', HttpStatus::$BadRequest);
             }
             $this->session['userDetails'] = json_decode($this->cache->getCache($this->tokenKey), true);
+            $this->setDatabaseCacheKey();
         }
         if (empty($this->session['token'])) {
             throw new \Exception('Token missing', HttpStatus::$BadRequest);
@@ -571,10 +572,6 @@ class HttpRequest
         if (is_null($this->sqlCache)) {
             $this->setCacheConnection('Slave');
         }
-        if (is_null($this->dbCacheKey)) {
-            $this->setDatabaseCacheKey();
-        }
-        $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
         if ($this->sqlCache->cacheExists($cacheKey)) {
             return $json = $this->sqlCache->getCache($cacheKey);
         } else {
@@ -594,10 +591,6 @@ class HttpRequest
         if (is_null($this->sqlCache)) {
             $this->setCacheConnection('Master');
         }
-        if (is_null($this->dbCacheKey)) {
-            $this->setDatabaseCacheKey();
-        }
-        $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
         $this->sqlCache->setCache($cacheKey, $json);
     }
 
@@ -612,10 +605,6 @@ class HttpRequest
         if (is_null($this->sqlCache)) {
             $this->setCacheConnection('Master');
         }
-        if (is_null($this->dbCacheKey)) {
-            $this->setDatabaseCacheKey();
-        }
-        $cacheKey = "{$this->dbCacheKey}:{$cacheKey}";
         $this->sqlCache->deleteCache($cacheKey);
     }
 }
