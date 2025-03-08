@@ -285,19 +285,29 @@ class JsonEncode
     public function streamJson()
     {
         // Log request details
-        if ($this->httpRequestDetails['server']['request_method'] !== 'GET') {
+        if ($this->httpRequestDetails['server']['request_method'] === 'GET') {
+            $logDetails = [
+                'LogType' => 'INFO',
+                'DateTime' => date('Y-m-d H:i:s'),
+                'Details' => [
+                    'httpMethod' => $this->httpRequestDetails['server']['request_method'],
+                    '$_GET' => $_GET
+                ]
+            ];
+        } else {
             rewind($this->tempStream);
             $logDetails = [
                 'LogType' => 'INFO',
                 'DateTime' => date('Y-m-d H:i:s'),
                 'Details' => [
+                    'httpMethod' => $this->httpRequestDetails['server']['request_method'],
                     '$_GET' => $_GET,
                     'php:input' => @file_get_contents('php://input'),
                     'php:output' => stream_get_contents($this->tempStream)
                 ]
             ];
-            (new Logs)->log($logDetails);
         }
+        (new Logs)->log($logDetails);
 
         // Stream JSON
         rewind($this->tempStream);

@@ -27,7 +27,7 @@ class Logs
      * @param array $logDetails
      * @return void
      */
-    public function log($logDetails)
+    public function log(&$logDetails)
     {
         $absLogsDir = Constants::$DOC_ROOT . $this->logsDir;
         if (!is_dir($absLogsDir)) {
