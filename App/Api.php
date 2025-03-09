@@ -76,6 +76,9 @@ class Api
         if (!Env::$isConfigRequest) {
             $this->c->httpRequest->loadPayload();
         }
+        if (!is_null($this->c->httpRequest->hashJson)) {
+            return true;
+        }
 
         $class = null;
         switch ($this->c->httpRequest->REQUEST_METHOD) {

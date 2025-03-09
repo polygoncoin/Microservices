@@ -225,8 +225,21 @@ class Microservices
      */
     public function outputResults()
     {
+        if (!is_null($this->c->httpRequest->hashJson)) {
+            $json = $this->c->httpRequest->hashJson;
+        } else {
+            // $this->c->httpResponse->jsonEncode->streamJson();
+            $json = $this->c->httpResponse->jsonEncode->getJson();
+            if (!is_null($this->c->httpRequest->hashKey)) {
+                $this->c->httpRequest->cache->setCache($this->c->httpRequest->hashKey, $json, getenv('IdempotentWindow'));
+            }
+        }
+        
         http_response_code($this->c->httpResponse->httpStatus);
-        $this->c->httpResponse->jsonEncode->streamJson();
+        
+        $outputStream = fopen('php://output', 'wb');
+        fwrite($outputStream, $json);
+        fclose($outputStream);
     }
 
     /**

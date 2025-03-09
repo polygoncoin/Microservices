@@ -52,12 +52,20 @@ class HttpRequest
      */
     public $session = null;
 
-    /**
-     * Client details
-     *
-     * @var null|array
-     */
-    public $clientDetails = null;
+    /** @var null|integer */
+    public $clientId = null;
+
+    /** @var null|integer */
+    public $groupId = null;
+
+    /** @var null|integer */
+    public $userId = null;
+
+    /** @var null|string */
+    public $hashKey = null;
+
+    /** @var null|string */
+    public $hashJson = null;
 
     /**
      * Caching Object
@@ -170,6 +178,7 @@ class HttpRequest
         }
 
         $this->session['clientDetails'] = json_decode($this->cache->getCache($this->clientKey), true);
+        $this->clientId = $this->session['clientDetails']['client_id'];
     }
 
     /**
@@ -187,6 +196,9 @@ class HttpRequest
                 throw new \Exception('Token expired', HttpStatus::$BadRequest);
             }
             $this->session['userDetails'] = json_decode($this->cache->getCache($this->tokenKey), true);
+            $this->groupId = $this->session['userDetails']['group_id'];
+            $this->userId = $this->session['userDetails']['user_id'];
+    
             $this->setDatabaseCacheKey();
         }
         if (empty($this->session['token'])) {
@@ -381,9 +393,26 @@ class HttpRequest
             $this->session['payloadType'] = 'Object';
             $this->session['payload'] = !empty($_GET) ? $_GET : [];
         } else {
-            // Load Payload
-            $this->jsonDecode->indexJSON();
-            $this->session['payloadType'] = $this->jsonDecode->jsonType();
+            rewind($this->payloadStream);
+            $payloadSignature = [
+                'httpMethod' => $this->REQUEST_METHOD,
+                '$_GET' => $this->httpRequestDetails['get'],
+                'clientId' => $this->clientId,
+                'groupId' => $this->groupId,
+                'userId' => $this->userId,
+                'payload' => stream_get_contents($this->payloadStream)
+            ];
+
+            $hash = hash_hmac('sha256', json_encode($payloadSignature), getenv('IdempotentSecret'));
+            $this->hashKey = md5($hash);
+            if ($this->cache->cacheExists($this->hashKey)) {
+                $this->hashJson = $this->cache->getCache($this->hashKey);
+            } else {
+                // Load Payload
+                rewind($this->payloadStream);
+                $this->jsonDecode->indexJSON();
+                $this->session['payloadType'] = $this->jsonDecode->jsonType();
+            }
         }
     }
 
