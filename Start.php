@@ -4,16 +4,6 @@ namespace Microservices;
 use Microservices\Microservices;
 use Microservices\App\Logs;
 
-if ($_SERVER["HTTP_X_API_VERSION"] !== 'v1.0.0') {
-    http_response_code(400);
-
-    header("Content-Type: application/json; charset=utf-8");
-    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-    header("Pragma: no-cache");
-
-    die('{"Status":400,"Message":"Bad Request"}');
-}
-
 /**
  * Class to autoload class files
  *
@@ -54,6 +44,11 @@ $httpRequestDetails['get'] = &$_GET;
 
 // Code to Initialize / Start the service
 try {
+    // Check version
+    if (!isset($_SERVER["HTTP_X_API_VERSION"]) || $_SERVER["HTTP_X_API_VERSION"] !== 'v1.0.0') {
+        throw new \Exception('Bad Request', 400);
+    }
+
     $Microservices = new Microservices($httpRequestDetails);
 
     // Setting CORS
@@ -75,21 +70,23 @@ try {
         $Microservices->outputResults();
     }
 } catch (\Exception $e) {
-    // Log request details
-    $logDetails = [
-        'LogType' => 'ERROR',
-        'DateTime' => date('Y-m-d H:i:s'),
-        'HttpDetails' => [
-            "HttpCode" => $e->getCode(),
-            "HttpMessage" => $e->getMessage()
-        ],
-        'Details' => [
-            '$_GET' => $_GET,
-            'php:input' => @file_get_contents('php://input'),
-            'session' => $Microservices->c->httpRequest->session
-        ]
-    ];
-    (new Logs)->log($logDetails);
+    if ($e->getCode() !== 400) {
+        // Log request details
+        $logDetails = [
+            'LogType' => 'ERROR',
+            'DateTime' => date('Y-m-d H:i:s'),
+            'HttpDetails' => [
+                "HttpCode" => $e->getCode(),
+                "HttpMessage" => $e->getMessage()
+            ],
+            'Details' => [
+                '$_GET' => $_GET,
+                'php:input' => @file_get_contents('php://input'),
+                'session' => $Microservices->c->httpRequest->session
+            ]
+        ];
+        (new Logs)->log($logDetails);
+    }
 
     // Set response code
     http_response_code($e->getCode());
