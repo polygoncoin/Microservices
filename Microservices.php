@@ -229,7 +229,7 @@ class Microservices
             $json = $this->c->httpRequest->hashJson;
         } else {
             // $this->c->httpResponse->jsonEncode->streamJson();
-            $json = $this->c->httpResponse->jsonEncode->getJson();
+            $json = $this->c->httpResponse->jsonEncode->streamJson();
             if (!is_null($this->c->httpRequest->hashKey)) {
                 $this->c->httpRequest->cache->setCache($this->c->httpRequest->hashKey, $json, getenv('IdempotentWindow'));
             }

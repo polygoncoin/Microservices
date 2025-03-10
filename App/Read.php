@@ -99,7 +99,7 @@ class Read
         $useResultSet = $this->getUseHierarchy($readSqlConfig, 'useResultSet');
 
         if (
-            (Env::$allowConfigRequest && Env::$isConfigRequest)
+            (Env::$allowConfigRequest && $this->c->httpRequest->isConfigRequest)
         ) {
             $this->processReadConfig($readSqlConfig, $useResultSet);
         } else {

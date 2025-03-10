@@ -73,7 +73,7 @@ class Api
         }
 
         // Load Payloads
-        if (!Env::$isConfigRequest) {
+        if (!$this->c->httpRequest->isConfigRequest) {
             $this->c->httpRequest->loadPayload();
         }
         if (!is_null($this->c->httpRequest->hashJson)) {

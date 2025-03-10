@@ -310,9 +310,14 @@ class JsonEncode
         (new Logs)->log($logDetails);
 
         // Stream JSON
+        // rewind($this->tempStream);
+        // $outputStream = fopen('php://output', 'wb');
+        // stream_copy_to_stream($this->tempStream, $outputStream);
         rewind($this->tempStream);
-        $outputStream = fopen('php://output', 'wb');
-        stream_copy_to_stream($this->tempStream, $outputStream);
+        $json = stream_get_contents($this->tempStream);
+        fclose($this->tempStream);
+        
+        return $json;
     }
 
     /**

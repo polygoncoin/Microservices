@@ -39,6 +39,13 @@ class HttpRequest
     public $routeElements = [];
 
     /**
+     * Is a config request flag
+     *
+     * @var boolean
+     */
+    public $isConfigRequest = false;
+
+    /**
      * Locaton of File containing code for route
      *
      * @var string
@@ -292,7 +299,7 @@ class HttpRequest
                     && Env::$allowConfigRequest == 1
                     && Env::$configRequestUriKeyword === $element
                 ) {
-                    Env::$isConfigRequest = true;
+                    $this->isConfigRequest = true;
                     break;
                 } else {
                     throw new \Exception('Route not supported', HttpStatus::$BadRequest);
@@ -395,6 +402,8 @@ class HttpRequest
         } else {
             rewind($this->payloadStream);
             $payloadSignature = [
+                'IdempotentSecret' => getenv('IdempotentSecret'),
+                'IdempotentWindow' => getenv('IdempotentWindow'),
                 'httpMethod' => $this->REQUEST_METHOD,
                 '$_GET' => $this->httpRequestDetails['get'],
                 'clientId' => $this->clientId,
@@ -584,10 +593,7 @@ class HttpRequest
      */
     public function setDatabaseCacheKey()
     {
-        $clientId = $this->session['clientDetails']['client_id'];
-        $groupId = $this->session['userDetails']['group_id'];
-        $userId = $this->session['userDetails']['user_id'];
-        DatabaseCacheKey::init($clientId, $groupId, $userId);
+        DatabaseCacheKey::init($this->clientId, $this->groupId, $this->userId);
     }
     
     /**
