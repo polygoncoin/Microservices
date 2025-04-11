@@ -8,7 +8,7 @@ function getCurlConfig($method, $route, $header = [], $json = '')
     $curlConfig[CURLOPT_HTTPHEADER] = $header;
     $curlConfig[CURLOPT_HTTPHEADER][] = "X-API-Version: v1.0.0";
     $curlConfig[CURLOPT_HTTPHEADER][] = "Cache-Control: no-cache";
-    
+
     switch ($method) {
         case 'GET':
             break;
@@ -71,7 +71,7 @@ $res = trigger('POST', '/login', [], '{"username":"client_1_group_1_user_1", "pa
 if ($res) {
     $response[] = $res;
     $token = $res['Results']['Token'];
-    $header = ["Authorization: Bearer {$token}"];    
+    $header = ["Authorization: Bearer {$token}"];
 
     $response[] = trigger('GET', '/routes', $header, '');
     $response[] = trigger('POST', '/category-1', $header, '[{"name":"ramesh0","subname":"ramesh1","subsubname":"ramesh2"},{"name":"ramesh0","subname":"ramesh1","subsubname":"ramesh2"}]');

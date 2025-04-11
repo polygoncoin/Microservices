@@ -16,6 +16,12 @@ use Microservices\App\Logs;
  */
 class Autoload
 {
+    /**
+     * Autoload Register function
+     *
+     * @param string $className
+     * @return void
+     */
     static public function register($className)
     {
         $className = substr($className, strlen(__NAMESPACE__));
@@ -52,7 +58,7 @@ try {
     $Microservices = new Microservices($httpRequestDetails);
 
     // Setting CORS
-    foreach ($Microservices->getCors() as $k => $v) {
+    foreach ($Microservices->getHeaders() as $k => $v) {
         header("{$k}: {$v}");
     }
     if ($httpRequestDetails['server']['request_method'] == 'OPTIONS') {
@@ -107,7 +113,7 @@ try {
         $arr = [
             'Status' => $e->getCode(),
             'Message' => $e->getMessage()
-        ];    
+        ];
     }
 
     // Set response json

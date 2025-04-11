@@ -256,7 +256,13 @@ class Login
         $this->c->httpResponse->jsonEncode->addKeyValue('Results', $output);
     }
 
-    private function updateDB($tokenDetails)
+    /**
+     * Update token details in DB for respective account
+     *
+     * @param array $tokenDetails
+     * @return void
+     */
+    private function updateDB(&$tokenDetails)
     {
         $this->c->httpRequest->setDbConnection('Master');
 
