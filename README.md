@@ -85,14 +85,6 @@ dbPasswordClient001='shames11'
 dbDatabaseClient001='client_001'
 ```
 
-### Dedicated application database/server for client 2
-```ini
-dbHostnameClient002='127.0.0.1'
-dbUsernameClient002='root'
-dbPasswordClient002='shames11'
-dbDatabaseClient002='client_002'
-```
-
 ### Additional client database details
 ```ini
 clientMasterDbName='client_master'  ;contains all entities required for a new client.
