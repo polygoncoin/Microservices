@@ -22,6 +22,13 @@ use Microservices\App\HttpStatus;
 class Login
 {
     /**
+     * Database Object
+     *
+     * @var null|Database
+     */
+    public $db = null;
+
+    /**
      * Username for login
      *
      * @var null|string
@@ -208,7 +215,7 @@ class Login
             $token = bin2hex(random_bytes(32));
             $this->tokenKey = CacheKey::Token($token);
             if (!$this->c->httpRequest->cache->cacheExists($this->tokenKey)) {
-                $this->c->httpRequest->cache->setCache($this->tokenKey, '{}', Constants::$TOKEN_EXPIRY_TIME);
+                $this->c->httpRequest->cache->connectCache($this->tokenKey, '{}', Constants::$TOKEN_EXPIRY_TIME);
                 $tokenDetails = ['token' => $token, 'timestamp' => $this->timestamp];
                 break;
             }
@@ -242,9 +249,9 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs
-            $this->c->httpRequest->cache->setCache($this->userTokenKey, json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->c->httpRequest->cache->connectCache($this->userTokenKey, json_encode($tokenDetails), Constants::$TOKEN_EXPIRY_TIME);
             $this->tokenKey = CacheKey::Token($tokenDetails['token']);
-            $this->c->httpRequest->cache->setCache($this->tokenKey, json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
+            $this->c->httpRequest->cache->connectCache($this->tokenKey, json_encode($this->userDetails), Constants::$TOKEN_EXPIRY_TIME);
             $this->updateDB($tokenDetails);
         }
 
@@ -264,10 +271,11 @@ class Login
      */
     private function updateDB(&$tokenDetails)
     {
-        $this->c->httpRequest->setDbConnection('Master');
+        $this->c->httpRequest->db = $this->c->httpRequest->setDbConnection('Master');
+        $this->db = &$this->c->httpRequest->db;
 
         $userTable = Env::$client_users;
-        $this->c->httpRequest->db->execDbQuery("
+        $this->db->execDbQuery("
         UPDATE
             `{$userTable}`
         SET

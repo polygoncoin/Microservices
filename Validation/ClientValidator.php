@@ -24,6 +24,13 @@ class ClientValidator implements ValidatorInterface
     use ValidatorTrait;
 
     /**
+     * Database Object
+     *
+     * @var null|Database
+     */
+    public $db = null;
+
+    /**
      * Microservices Collection of Common Objects
      *
      * @var null|Common
@@ -38,6 +45,7 @@ class ClientValidator implements ValidatorInterface
     public function __construct(&$common)
     {
         $this->c = &$common;
+        $this->db = &$this->c->httpRequest->db;
     }
 
     /**
@@ -91,10 +99,10 @@ class ClientValidator implements ValidatorInterface
      */
     private function getPrimaryCount(&$table, &$primary, &$id)
     {
-        $db = $this->c->httpRequest->db->database;
+        $db = $this->db->database;
         $sql = "SELECT count(1) as `count` FROM `{$db}`.`{$table}` WHERE `{$primary}` = ?";
         $params = [$id];
-        $this->c->httpRequest->db->execDbQuery($sql, $params);
+        $this->db->execDbQuery($sql, $params);
         return ($this->db->fetch())['count'];
     }
 
@@ -109,9 +117,9 @@ class ClientValidator implements ValidatorInterface
         extract($args);
         $sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
         $params = [$id];
-        $this->c->httpRequest->db->execDbQuery($sql, $params);
-        $row = $this->c->httpRequest->db->fetch();
-        $this->c->httpRequest->db->closeCursor();
+        $this->db->execDbQuery($sql, $params);
+        $row = $this->db->fetch();
+        $this->db->closeCursor();
         return ($row['count'] === 0) ? false : true;
     }
 }

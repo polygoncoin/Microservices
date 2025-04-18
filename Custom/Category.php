@@ -24,6 +24,13 @@ class Category implements CustomInterface
     use CustomTrait;
 
     /**
+     * Database Object
+     *
+     * @var null|Database
+     */
+    public $db = null;
+
+    /**
      * Microservices Collection of Common Objects
      *
      * @var null|Common
@@ -38,7 +45,8 @@ class Category implements CustomInterface
     public function __construct(&$common)
     {
         $this->c = &$common;
-        $this->c->httpRequest->setDbConnection($fetchFrom = 'Slave');
+        $this->c->httpRequest->db = $this->c->httpRequest->setDbConnection($fetchFrom = 'Slave');
+        $this->db = &$this->c->httpRequest->db;
     }
 
     /**
@@ -63,9 +71,9 @@ class Category implements CustomInterface
             ':is_deleted' => 'No',
             ':parent_id' => 0,
         ];
-        $this->c->httpRequest->db->execDbQuery($sql, $sqlParams);
-        $rows = $this->c->httpRequest->db->fetchAll();
-        $this->c->httpRequest->db->closeCursor();
+        $this->db->execDbQuery($sql, $sqlParams);
+        $rows = $this->db->fetchAll();
+        $this->db->closeCursor();
         $this->c->httpResponse->jsonEncode->addKeyValue('Results', $rows);
         return true;
     }

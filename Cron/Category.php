@@ -42,7 +42,7 @@ class Category implements CronInterface
     public function __construct(&$common)
     {
         $this->c = &$common;
-        $this->c->httpRequest->setDbConnection($fetchFrom = 'Slave');
+        $this->c->httpRequest->db = $this->c->httpRequest->setDbConnection($fetchFrom = 'Slave');
     }
 
     /**

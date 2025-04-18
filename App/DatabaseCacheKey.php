@@ -23,11 +23,14 @@ class DatabaseCacheKey
     static public $Category = null;
     static public $Category1 = null;
 
+    static public $OpenCategory1 = null;
+
     /**
      * Get Database Cache Key
      *
      * @param null|int $clientId
      * @param null|int $groupId
+     * @param null|int $userId
      * @return string
      */
     static public function init($clientId = null, $groupId = null, $userId = null)
@@ -37,7 +40,9 @@ class DatabaseCacheKey
         self::$Group = !is_null($groupId) ? ":g:{$groupId}": '';
         self::$User = !is_null($userId) ? ":u:{$userId}": '';
 
-        self::$Category = self::$App . ':' . self::$Client . ':' . self::$Group . ':' . 'category';
-        self::$Category1 = self::$App . ':' . self::$Client . ':' . self::$Group . ':' . 'category:1';
+        self::$Category = self::$App . ':' . self::$Client . self::$Group . ':category';
+        self::$Category1 = self::$App . ':' . self::$Client . self::$Group . ':category:1';
+
+        self::$OpenCategory1 = 'Open:' . self::$App . ':' . self::$Client . ':category:1';
     }
 }

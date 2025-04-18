@@ -36,6 +36,13 @@ class ApiGateway extends DbFunctions
     private $httpRequestDetails = null;
 
     /**
+     * Open To World Request
+     *
+     * @var boolean
+     */
+    private $open = false;
+
+    /**
      * Caching Object
      *
      * @var null|Cache
@@ -95,19 +102,15 @@ class ApiGateway extends DbFunctions
 
         $this->HOST = $this->httpRequestDetails['server']['host'];
         $this->REQUEST_METHOD = $this->httpRequestDetails['server']['request_method'];
-        if (isset($this->httpRequestDetails['header']['authorization'])) {
+        if (
+            isset($this->httpRequestDetails['header'])
+            && isset($this->httpRequestDetails['header']['authorization'])
+        ) {
             $this->HTTP_AUTHORIZATION = $this->httpRequestDetails['header']['authorization'];
+        } else {
+            $this->open = true;
         }
         $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
-
-        $this->cache = $this->setCache(
-            getenv('cacheType'),
-            getenv('cacheHostname'),
-            getenv('cachePort'),
-            getenv('cacheUsername'),
-            getenv('cachePassword'),
-            getenv('cacheDatabase')
-        );
     }
 
     /**
@@ -117,9 +120,20 @@ class ApiGateway extends DbFunctions
      */
     public function init()
     {
+        $this->cache = $this->connectCache(
+            getenv('cacheType'),
+            getenv('cacheHostname'),
+            getenv('cachePort'),
+            getenv('cacheUsername'),
+            getenv('cachePassword'),
+            getenv('cacheDatabase')
+        );
         $this->checkHost();
-        $this->checkToken();
-        $this->checkRemoteIp();
+
+        if (!$this->open) {
+            $this->checkToken();
+            $this->checkRemoteIp();
+        }
         $this->checkRateLimits();
     }
 
@@ -210,6 +224,7 @@ class ApiGateway extends DbFunctions
         $this->rateLimiter = new RateLimiter();
 
         $rateLimitChecked = false;
+
         // Client Rate Limiting
         if (
             !empty($this->clientDetails['rateLimiterMaxRequests'])
@@ -223,30 +238,32 @@ class ApiGateway extends DbFunctions
             );
         }
 
-        // Group Rate Limiting
-        if (
-            !empty($this->groupDetails['rateLimiterMaxRequests'])
-            && !empty($this->groupDetails['rateLimiterSecondsWindow'])
-        ) {
-            $rateLimitChecked = $this-checkRateLimit(
-                $RateLimiterGroupPrefix = getenv('RateLimiterGroupPrefix'),
-                $RateLimiterMaxRequests = $this->groupDetails['rateLimiterMaxRequests'],
-                $RateLimiterSecondsWindow = $this->groupDetails['rateLimiterSecondsWindow'],
-                $key = $this->clientDetails['client_id'] . ':' . $this->userDetails['group_id']
-            );
-        }
+        if (!$this->open) {
+            // Group Rate Limiting
+            if (
+                !empty($this->groupDetails['rateLimiterMaxRequests'])
+                && !empty($this->groupDetails['rateLimiterSecondsWindow'])
+            ) {
+                $rateLimitChecked = $this-checkRateLimit(
+                    $RateLimiterGroupPrefix = getenv('RateLimiterGroupPrefix'),
+                    $RateLimiterMaxRequests = $this->groupDetails['rateLimiterMaxRequests'],
+                    $RateLimiterSecondsWindow = $this->groupDetails['rateLimiterSecondsWindow'],
+                    $key = $this->clientDetails['client_id'] . ':' . $this->userDetails['group_id']
+                );
+            }
 
-        // User Rate Limiting
-        if (
-            !empty($this->userDetails['rateLimiterMaxRequests'])
-            && !empty($this->userDetails['rateLimiterSecondsWindow'])
-        ) {
-            $rateLimitChecked = $this->checkRateLimit(
-                $RateLimiterUserPrefix = getenv('RateLimiterUserPrefix'),
-                $RateLimiterMaxRequests = $this->groupDetails['rateLimiterMaxRequests'],
-                $RateLimiterSecondsWindow = $this->groupDetails['rateLimiterSecondsWindow'],
-                $key = $this->clientDetails['client_id'] . ':' . $this->userDetails['group_id'] . ':' . $this->userDetails['user_id']
-            );
+            // User Rate Limiting
+            if (
+                !empty($this->userDetails['rateLimiterMaxRequests'])
+                && !empty($this->userDetails['rateLimiterSecondsWindow'])
+            ) {
+                $rateLimitChecked = $this->checkRateLimit(
+                    $RateLimiterUserPrefix = getenv('RateLimiterUserPrefix'),
+                    $RateLimiterMaxRequests = $this->groupDetails['rateLimiterMaxRequests'],
+                    $RateLimiterSecondsWindow = $this->groupDetails['rateLimiterSecondsWindow'],
+                    $key = $this->clientDetails['client_id'] . ':' . $this->userDetails['group_id'] . ':' . $this->userDetails['user_id']
+                );
+            }
         }
 
         // Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)

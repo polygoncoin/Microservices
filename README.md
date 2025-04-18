@@ -347,7 +347,8 @@ return [
         '<unique-key-for-redis-to-drop-cached-results>(key:1)',
         '<unique-key-for-redis-to-drop-cached-results>(category etc.)',
         ...
-    ]
+    ],
+    "idempotentWindow" => 3 // Idempotent Window for DML operartion (seconds)
 ];
 ```
 

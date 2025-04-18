@@ -24,7 +24,7 @@ class DbFunctions
      *
      * @return void
      */
-    public function setCache(
+    public function connectCache(
         $cacheType,
         $cacheHostname,
         $cachePort,
@@ -59,7 +59,7 @@ class DbFunctions
         // Set Database credentials
         switch ($fetchFrom) {
             case 'Master':
-                $this->sqlCache = $this->setCache(
+                return $this->connectCache(
                     getenv($this->session['clientDetails']['master_cache_server_type']),
                     getenv($this->session['clientDetails']['master_cache_hostname']),
                     getenv($this->session['clientDetails']['master_cache_port']),
@@ -69,7 +69,7 @@ class DbFunctions
                 );
                 break;
             case 'Slave':
-                $this->sqlCache = $this->setCache(
+                return $this->connectCache(
                     getenv($this->session['clientDetails']['slave_cache_server_type']),
                     getenv($this->session['clientDetails']['slave_cache_hostname']),
                     getenv($this->session['clientDetails']['slave_cache_port']),
@@ -88,7 +88,7 @@ class DbFunctions
      *
      * @return void
      */
-    public function setDb(
+    public function connectDb(
         $dbType,
         $dbHostname,
         $dbPort,
@@ -98,7 +98,7 @@ class DbFunctions
     )
     {
         $dbNS = 'Microservices\\App\\Servers\\Database\\'.$dbType;
-        $this->db = new $dbNS(
+        return new $dbNS(
             $dbHostname,
             $dbPort,
             $dbUsername,
@@ -123,7 +123,7 @@ class DbFunctions
         // Set Database credentials
         switch ($fetchFrom) {
             case 'Master':
-                $this->setDb(
+                return $this->connectDb(
                     getenv($this->session['clientDetails']['master_db_server_type']),
                     getenv($this->session['clientDetails']['master_db_hostname']),
                     getenv($this->session['clientDetails']['master_db_port']),
@@ -133,7 +133,7 @@ class DbFunctions
                 );
                 break;
             case 'Slave':
-                $this->setDb(
+                return $this->connectDb(
                     getenv($this->session['clientDetails']['slave_db_server_type']),
                     getenv($this->session['clientDetails']['slave_db_hostname']),
                     getenv($this->session['clientDetails']['slave_db_port']),
@@ -166,10 +166,11 @@ class DbFunctions
     public function getDqlCache(&$cacheKey)
     {
         if (is_null($this->sqlCache)) {
-            $this->setCacheConnection('Slave');
+            $this->sqlCache = $this->setCacheConnection('Slave');
         }
-        if ($this->sqlCache->cacheExists($cacheKey)) {
-            return $json = $this->sqlCache->getCache($cacheKey);
+        $key = ($this->open) ? "open:$cacheKey" : $cacheKey;
+        if ($this->sqlCache->cacheExists($key)) {
+            return $json = $this->sqlCache->getCache($key);
         } else {
             return $json = null;
         }
@@ -185,9 +186,10 @@ class DbFunctions
     public function setDmlCache(&$cacheKey, &$json)
     {
         if (is_null($this->sqlCache)) {
-            $this->setCacheConnection('Master');
+            $this->sqlCache = $this->setCacheConnection('Master');
         }
-        $this->sqlCache->setCache($cacheKey, $json);
+        $key = ($this->open) ? "open:$cacheKey" : $cacheKey;
+        $this->sqlCache->connectCache($key, $json);
     }
 
     /**
@@ -199,8 +201,9 @@ class DbFunctions
     public function delDmlCache(&$cacheKey)
     {
         if (is_null($this->sqlCache)) {
-            $this->setCacheConnection('Master');
+            $this->sqlCache = $this->setCacheConnection('Master');
         }
-        $this->sqlCache->deleteCache($cacheKey);
+        $key = ($this->open) ? "open:$cacheKey" : $cacheKey;
+        $this->sqlCache->deleteCache($key);
     }
 }

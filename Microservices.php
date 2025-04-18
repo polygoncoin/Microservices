@@ -152,11 +152,11 @@ class Microservices
 
             // Requires auth token
             default:
-                if (isset($this->httpRequestDetails['header']['authorization'])) {
+                // if (isset($this->httpRequestDetails['header']['authorization'])) {
                     $this->apiGateway->init();
                     $class = __NAMESPACE__ . '\\App\\Api';
                     break;
-                }
+                // }
         }
         $this->apiGateway = null;
 
@@ -225,21 +225,8 @@ class Microservices
      */
     public function outputResults()
     {
-        if (!is_null($this->c->httpRequest->hashJson)) {
-            $json = $this->c->httpRequest->hashJson;
-        } else {
-            // $this->c->httpResponse->jsonEncode->streamJson();
-            $json = $this->c->httpResponse->jsonEncode->streamJson();
-            if (!is_null($this->c->httpRequest->hashKey)) {
-                $this->c->httpRequest->cache->setCache($this->c->httpRequest->hashKey, $json, getenv('IdempotentWindow'));
-            }
-        }
-
         http_response_code($this->c->httpResponse->httpStatus);
-
-        $outputStream = fopen('php://output', 'wb');
-        fwrite($outputStream, $json);
-        fclose($outputStream);
+        $this->c->httpResponse->jsonEncode->streamJson();
     }
 
     /**

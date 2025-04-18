@@ -67,12 +67,6 @@ class HttpRequest extends RouteParser
     /** @var null|integer */
     public $userId = null;
 
-    /** @var null|string */
-    public $hashKey = null;
-
-    /** @var null|string */
-    public $hashJson = null;
-
     /**
      * Caching Object
      *
@@ -88,7 +82,7 @@ class HttpRequest extends RouteParser
     public $sqlCache = null;
 
     /**
-     * Json Decode Object
+     * Database Object
      *
      * @var null|Database
      */
@@ -107,6 +101,13 @@ class HttpRequest extends RouteParser
      * @var null|array
      */
     public $httpRequestDetails = null;
+
+    /**
+     * Open To World Request
+     *
+     * @var boolean
+     */
+    public $open = false;
 
     /**
      * Details var from $httpRequestDetails
@@ -151,15 +152,19 @@ class HttpRequest extends RouteParser
         $this->REQUEST_METHOD = $this->httpRequestDetails['server']['request_method'];
         if (isset($this->httpRequestDetails['header']['authorization'])) {
             $this->HTTP_AUTHORIZATION = $this->httpRequestDetails['header']['authorization'];
+        } else {
+            $this->open = true;
         }
         $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
         $this->ROUTE = '/' . trim($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM], '/');
 
-        $this->payloadStream = fopen('php://input', 'rb');
-        $this->jsonDecode = new JsonDecode($this->payloadStream);
-        $this->jsonDecode->init();
+        if ($this->REQUEST_METHOD !== 'GET') {
+            $this->payloadStream = fopen('php://input', 'rb');
+            $this->jsonDecode = new JsonDecode($this->payloadStream);
+            $this->jsonDecode->init();    
+        }
 
-        $this->cache = $this->setCache(
+        $this->cache = $this->connectCache(
             getenv('cacheType'),
             getenv('cacheHostname'),
             getenv('cachePort'),
@@ -244,32 +249,10 @@ class HttpRequest extends RouteParser
             $this->session['payloadType'] = 'Object';
             $this->session['payload'] = !empty($_GET) ? $_GET : [];
         } else {
+            // Load Payload
             rewind($this->payloadStream);
-            $payloadSignature = [
-                'IdempotentSecret' => getenv('IdempotentSecret'),
-                'IdempotentWindow' => getenv('IdempotentWindow'),
-                'httpMethod' => $this->REQUEST_METHOD,
-                '$_GET' => $this->httpRequestDetails['get'],
-                'clientId' => $this->clientId,
-                'groupId' => $this->groupId,
-                'userId' => $this->userId,
-                'payload' => stream_get_contents($this->payloadStream)
-            ];
-
-            $hash = hash_hmac('sha256', json_encode($payloadSignature), getenv('IdempotentSecret'));
-            $this->hashKey = md5($hash);
-            if ($this->cache->cacheExists($this->hashKey)) {
-                $this->hashJson = str_replace(
-                    'JSON',
-                    $this->cache->getCache($this->hashKey),
-                    '{"Idempotent": JSON, "Status": 200}'
-                );
-            } else {
-                // Load Payload
-                rewind($this->payloadStream);
-                $this->jsonDecode->indexJSON();
-                $this->session['payloadType'] = $this->jsonDecode->jsonType();
-            }
+            $this->jsonDecode->indexJSON();
+            $this->session['payloadType'] = $this->jsonDecode->jsonType();
         }
     }
 

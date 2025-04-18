@@ -24,6 +24,20 @@ class Reload
     use AppTrait;
 
     /**
+     * Database Object
+     *
+     * @var null|Database
+     */
+    public $db = null;
+
+    /**
+     * Caching Object
+     *
+     * @var null|Cache
+     */
+    public $cache = null;
+
+    /**
      * Microservices Collection of Common Objects
      *
      * @var null|Common
@@ -57,6 +71,15 @@ class Reload
      */
     public function process()
     {
+        $this->cache = $this->c->httpRequest->connectCache(
+            getenv('cacheType'),
+            getenv('cacheHostname'),
+            getenv('cachePort'),
+            getenv('cacheUsername'),
+            getenv('cachePassword'),
+            getenv('cacheDatabase')
+        );
+
         $this->processDomainAndUser();
         $this->processGroup();
 
@@ -70,7 +93,7 @@ class Reload
      */
     private function processDomainAndUser()
     {
-        $this->c->httpRequest->setDb(
+        $this->c->httpRequest->db = $this->c->httpRequest->connectDb(
             getenv('globalType'),
             getenv('globalHostname'),
             getenv('globalPort'),
@@ -78,19 +101,20 @@ class Reload
             getenv('globalPassword'),
             getenv('globalDatabase')
         );
+        $this->db = &$this->c->httpRequest->db;
 
-        $this->c->httpRequest->db->execDbQuery("
+        $this->db->execDbQuery("
             SELECT
                 *
             FROM
                 `{$this->execPhpFunc(getenv('clients'))}` C
             ", []);
-        $crows = $this->c->httpRequest->db->fetchAll();
-        $this->c->httpRequest->db->closeCursor();
+        $crows = $this->db->fetchAll();
+        $this->db->closeCursor();
         for ($ci = 0, $ci_count = count($crows); $ci < $ci_count; $ci++) {
             $c_key = CacheKey::Client($crows[$ci]['api_domain']);
-            $this->c->httpRequest->cache->setCache($c_key, json_encode($crows[$ci]));
-            $this->c->httpRequest->setDb(
+            $this->cache->connectCache($c_key, json_encode($crows[$ci]));
+            $this->c->httpRequest->db = $this->c->httpRequest->connectDb(
                 getenv($crows[$ci]['master_db_server_type']),
                 getenv($crows[$ci]['master_db_hostname']),
                 getenv($crows[$ci]['master_db_port']),
@@ -98,17 +122,18 @@ class Reload
                 getenv($crows[$ci]['master_db_password']),
                 getenv($crows[$ci]['master_db_database'])
             );
-            $this->c->httpRequest->db->execDbQuery("
+
+            $this->db->execDbQuery("
                 SELECT
                     *
                 FROM
                     `{$this->execPhpFunc(getenv('client_users'))}` U
                 ", []);
-            $urows = $this->c->httpRequest->db->fetchAll();
-            $this->c->httpRequest->db->closeCursor();
+            $urows = $this->db->fetchAll();
+            $this->db->closeCursor();
             for ($ui = 0, $ui_count = count($urows); $ui < $ui_count; $ui++) {
                 $cu_key = CacheKey::ClientUser($crows[$ci]['client_id'], $urows[$ui]['username']);
-                $this->c->httpRequest->cache->setCache($cu_key, json_encode($urows[$ui]));
+                $this->cache->connectCache($cu_key, json_encode($urows[$ui]));
             }
         }
     }
@@ -120,7 +145,7 @@ class Reload
      */
     private function processGroup()
     {
-        $this->c->httpRequest->setDb(
+        $this->c->httpRequest->db = $this->c->httpRequest->connectDb(
             getenv('globalType'),
             getenv('globalHostname'),
             getenv('globalPort'),
@@ -129,25 +154,25 @@ class Reload
             getenv('globalDatabase')
         );
 
-        $this->c->httpRequest->db->execDbQuery("
+        $this->db->execDbQuery("
             SELECT
                 *
             FROM
                 `{$this->execPhpFunc(getenv('groups'))}` G
             ", []);
 
-        while($row = $this->c->httpRequest->db->fetch(\PDO::FETCH_ASSOC)) {
+        while($row = $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $g_key = CacheKey::Group($row['group_id']);
-            $this->c->httpRequest->cache->setCache($g_key, json_encode($row));
+            $this->cache->connectCache($g_key, json_encode($row));
             if (!empty($row['allowed_ips'])) {
                 $cidrs = $this->cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
                     $cidr_key = CacheKey::CIDR($row['group_id']);
-                    $this->c->httpRequest->cache->setCache($cidr_key, json_encode($cidrs));
+                    $this->cache->connectCache($cidr_key, json_encode($cidrs));
                 }
             }
         }
-        $this->c->httpRequest->db->closeCursor();
+        $this->db->closeCursor();
     }
 
     /**
@@ -158,7 +183,7 @@ class Reload
      */
     private function processToken($token)
     {
-        $this->c->httpRequest->cache->deleteCache("t:$token");
+        $this->cache->deleteCache("t:$token");
     }
 
 
