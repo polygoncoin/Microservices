@@ -52,7 +52,12 @@ $httpRequestDetails['get'] = &$_GET;
 try {
     // Check version
     if (!isset($_SERVER["HTTP_X_API_VERSION"]) || $_SERVER["HTTP_X_API_VERSION"] !== 'v1.0.0') {
-        throw new \Exception('Bad Request', 400);
+        // Set response headers
+        header("Content-Type: application/json; charset=utf-8");
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Pragma: no-cache");
+
+        die('{"Status": 400, "Message": "Bad Request"}');
     }
 
     $Microservices = new Microservices($httpRequestDetails);
@@ -96,11 +101,6 @@ try {
 
     // Set response code
     http_response_code($e->getCode());
-
-    // Set response headers
-    header("Content-Type: application/json; charset=utf-8");
-    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-    header("Pragma: no-cache");
 
     if ($e->getCode() == 429) {
         header("Retry-After: {$e->getMessage()}");
