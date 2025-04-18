@@ -8,6 +8,7 @@ use Microservices\App\Env;
 use Microservices\App\JsonEncode;
 use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
+use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
  * Class to initialize DB Read operation
@@ -28,7 +29,7 @@ class Read
     /**
      * Database Object
      *
-     * @var null|Database
+     * @var null|AbstractDatabase
      */
     public $db = null;
 

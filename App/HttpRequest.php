@@ -8,6 +8,8 @@ use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\JsonDecode;
 use Microservices\App\RouteParser;
+use Microservices\App\Servers\Cache\AbstractCache;
+use Microservices\App\Servers\Database\AbstractDatabase;
 
 /*
  * Class handling details of HTTP request
@@ -70,21 +72,21 @@ class HttpRequest extends RouteParser
     /**
      * Caching Object
      *
-     * @var null|Cache
+     * @var null|AbstractCache
      */
     public $cache = null;
 
     /**
      * Sql Data caching Object
      *
-     * @var null|Cache
+     * @var null|AbstractCache
      */
     public $sqlCache = null;
 
     /**
      * Database Object
      *
-     * @var null|Database
+     * @var null|AbstractDatabase
      */
     public $db = null;
 

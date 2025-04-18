@@ -5,6 +5,7 @@ use Microservices\App\CacheKey;
 use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\App\RateLimiter;
+use Microservices\App\Servers\Cache\AbstractCache;
 
 /**
  * Microservices Class
@@ -45,7 +46,7 @@ class ApiGateway extends DbFunctions
     /**
      * Caching Object
      *
-     * @var null|Cache
+     * @var null|AbstractCache
      */
     public $cache = null;
 

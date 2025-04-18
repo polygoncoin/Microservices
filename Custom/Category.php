@@ -4,6 +4,7 @@ namespace Microservices\Custom;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\Servers\Database\AbstractDatabase;
 use Microservices\Custom\CustomInterface;
 use Microservices\Custom\CustomTrait;
 
@@ -26,7 +27,7 @@ class Category implements CustomInterface
     /**
      * Database Object
      *
-     * @var null|Database
+     * @var null|AbstractDatabase
      */
     public $db = null;
 

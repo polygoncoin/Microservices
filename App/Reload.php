@@ -1,11 +1,13 @@
 <?php
 namespace Microservices\App;
 
+use Microservices\App\AppTrait;
 use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\AppTrait;
+use Microservices\App\Servers\Cache\AbstractCache;
+use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
  * Updates cache
@@ -26,14 +28,14 @@ class Reload
     /**
      * Database Object
      *
-     * @var null|Database
+     * @var null|AbstractDatabase
      */
     public $db = null;
 
     /**
      * Caching Object
      *
-     * @var null|Cache
+     * @var null|AbstractCache
      */
     public $cache = null;
 

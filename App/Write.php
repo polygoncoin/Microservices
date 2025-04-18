@@ -7,6 +7,7 @@ use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
+use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
  * Class to initialize DB Write operation
@@ -27,7 +28,7 @@ class Write
     /**
      * Database Object
      *
-     * @var null|Database
+     * @var null|AbstractDatabase
      */
     public $db = null;
 
