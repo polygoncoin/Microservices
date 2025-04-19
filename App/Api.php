@@ -58,6 +58,7 @@ class Api
         }
 
         $this->c->httpRequest->parseRoute();
+        $this->c->httpRequest->setDatabaseCacheKey();
 
         return true;
     }

@@ -163,7 +163,7 @@ class DbFunctions
      * @param string $cacheKey Cache Key from Queries configuration
      * @return null|string
      */
-    public function getDqlCache(&$cacheKey)
+    public function getDqlCache($cacheKey)
     {
         if (is_null($this->sqlCache)) {
             $this->sqlCache = $this->setCacheConnection('Slave');
@@ -183,7 +183,7 @@ class DbFunctions
      * @param string $json     JSON
      * @return void
      */
-    public function setDmlCache(&$cacheKey, &$json)
+    public function setDmlCache($cacheKey, &$json)
     {
         if (is_null($this->sqlCache)) {
             $this->sqlCache = $this->setCacheConnection('Master');
@@ -198,7 +198,7 @@ class DbFunctions
      * @param string $cacheKey Cache Key from Queries configuration
      * @return void
      */
-    public function delDmlCache(&$cacheKey)
+    public function delDmlCache($cacheKey)
     {
         if (is_null($this->sqlCache)) {
             $this->sqlCache = $this->setCacheConnection('Master');

@@ -23,5 +23,5 @@ return [
         ]
     ],
     'fetchFrom' => 'Master',
-    'cacheKey' => DatabaseCacheKey::$Category1
+    'cacheKey' => DatabaseCacheKey::$OpenCategory1
 ];

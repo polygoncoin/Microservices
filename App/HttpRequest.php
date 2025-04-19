@@ -210,8 +210,6 @@ class HttpRequest extends RouteParser
             $this->session['userDetails'] = json_decode($this->cache->getCache($this->tokenKey), true);
             $this->groupId = $this->session['userDetails']['group_id'];
             $this->userId = $this->session['userDetails']['user_id'];
-
-            $this->setDatabaseCacheKey();
         }
         if (empty($this->session['token'])) {
             throw new \Exception('Token missing', HttpStatus::$BadRequest);
