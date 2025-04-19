@@ -85,6 +85,8 @@ class Read
         if (isset($readSqlConfig['cacheKey'])) {
             $json = $this->c->httpRequest->getDqlCache($readSqlConfig['cacheKey']);
             if (!is_null($json)) {
+                $cacheHitJson = '"cacheHit": true';
+                $this->c->httpResponse->jsonEncode->appendJson($cacheHitJson);
                 $this->c->httpResponse->jsonEncode->appendJson($json);
                 return true;
             } else {
