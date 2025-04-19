@@ -195,6 +195,9 @@ class Write
                         'Payload' => $this->c->httpRequest->jsonDecode->getCompleteArray(implode(':', $_payloadIndexes)),
                         'Response' => &$response
                     ];
+                    if ($this->idempotentWindow) {
+                        $this->c->httpRequest->cache->connectCache($hashKey, json_encode($arr), $this->idempotentWindow);
+                    }
                 } else {
                     $this->c->httpResponse->httpStatus = HttpStatus::$BadRequest;
                     $arr = [
@@ -202,9 +205,6 @@ class Write
                         'Payload' => $this->c->httpRequest->jsonDecode->getCompleteArray(implode(':', $_payloadIndexes)),
                         'Error' => &$response
                     ];
-                }
-                if ($this->idempotentWindow) {
-                    $this->c->httpRequest->cache->connectCache($hashKey, json_encode($arr), $this->idempotentWindow);
                 }
             } else {
                 $arr = json_decode($hashJson, true);
