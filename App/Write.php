@@ -196,7 +196,7 @@ class Write
                         'Response' => &$response
                     ];
                     if ($this->idempotentWindow) {
-                        $this->c->httpRequest->cache->connectCache($hashKey, json_encode($arr), $this->idempotentWindow);
+                        $this->c->httpRequest->cache->setCache($hashKey, json_encode($arr), $this->idempotentWindow);
                     }
                 } else {
                     $this->c->httpResponse->httpStatus = HttpStatus::$BadRequest;

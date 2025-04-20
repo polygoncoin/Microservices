@@ -53,7 +53,7 @@ abstract class AbstractCache
      * @param integer $expire Seconds to expire. Default 0 - doesnt expire
      * @return integer
      */
-    abstract public function connectCache($key, $value, $expire = null);
+    abstract public function setCache($key, $value, $expire = null);
 
     /**
      * Delete cache on basis of key

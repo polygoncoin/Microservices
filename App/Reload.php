@@ -114,8 +114,12 @@ class Reload
         $crows = $this->db->fetchAll();
         $this->db->closeCursor();
         for ($ci = 0, $ci_count = count($crows); $ci < $ci_count; $ci++) {
+            if (!empty($crows[$ci]['open_api_domain'])) {
+                $c_key = CacheKey::ClientOpenToWeb($crows[$ci]['open_api_domain']);
+                $this->cache->setCache($c_key, json_encode($crows[$ci]));
+            }
             $c_key = CacheKey::Client($crows[$ci]['api_domain']);
-            $this->cache->connectCache($c_key, json_encode($crows[$ci]));
+            $this->cache->setCache($c_key, json_encode($crows[$ci]));
             $this->c->httpRequest->db = $this->c->httpRequest->connectDb(
                 getenv($crows[$ci]['master_db_server_type']),
                 getenv($crows[$ci]['master_db_hostname']),
@@ -135,7 +139,7 @@ class Reload
             $this->db->closeCursor();
             for ($ui = 0, $ui_count = count($urows); $ui < $ui_count; $ui++) {
                 $cu_key = CacheKey::ClientUser($crows[$ci]['client_id'], $urows[$ui]['username']);
-                $this->cache->connectCache($cu_key, json_encode($urows[$ui]));
+                $this->cache->setCache($cu_key, json_encode($urows[$ui]));
             }
         }
     }
@@ -165,12 +169,12 @@ class Reload
 
         while($row = $this->db->fetch(\PDO::FETCH_ASSOC)) {
             $g_key = CacheKey::Group($row['group_id']);
-            $this->cache->connectCache($g_key, json_encode($row));
+            $this->cache->setCache($g_key, json_encode($row));
             if (!empty($row['allowed_ips'])) {
                 $cidrs = $this->cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
                     $cidr_key = CacheKey::CIDR($row['group_id']);
-                    $this->cache->connectCache($cidr_key, json_encode($cidrs));
+                    $this->cache->setCache($cidr_key, json_encode($cidrs));
                 }
             }
         }

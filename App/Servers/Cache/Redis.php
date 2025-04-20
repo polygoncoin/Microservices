@@ -172,7 +172,7 @@ class Redis extends AbstractCache
      * @param integer $expire Seconds to expire. Default 0 - doesnt expire
      * @return integer
      */
-    public function connectCache($key, $value, $expire = null)
+    public function setCache($key, $value, $expire = null)
     {
         $this->useDatabase();
 

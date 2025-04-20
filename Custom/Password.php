@@ -90,7 +90,7 @@ class Password implements CustomInterface
             if ($this->c->httpRequest->cache->cacheExists($cu_key)) {
                 $userDetails = json_decode($this->c->httpRequest->cache->getCache($cu_key), true);
                 $userDetails['password_hash'] = $newPasswordHash;
-                $this->c->httpRequest->cache->connectCache($cu_key, json_encode($userDetails));
+                $this->c->httpRequest->cache->setCache($cu_key, json_encode($userDetails));
                 $this->c->httpRequest->cache->deleteCache(CacheKey::Token($this->c->httpRequest->session['token']));
             }
 

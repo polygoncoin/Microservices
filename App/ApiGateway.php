@@ -146,7 +146,11 @@ class ApiGateway extends DbFunctions
      */
     public function checkHost()
     {
-        $this->clientKey = CacheKey::Client($this->HOST);
+        if ($this->open) {
+            $this->clientKey = CacheKey::ClientOpenToWeb($this->HOST);
+        } else {
+            $this->clientKey = CacheKey::Client($this->HOST);
+        }
         if (!$this->cache->cacheExists($this->clientKey)) {
             throw new \Exception("Invalid Host '{$this->HOST}'", HttpStatus::$InternalServerError);
         }

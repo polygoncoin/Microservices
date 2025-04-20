@@ -105,7 +105,8 @@ client_users='master_users'         ;Table in client database containing user de
 
 ## Routes Folder
 
-- **/Config/Routes/&lt;GroupName&gt;**
+- **/Config/Routes/Auth/&lt;GroupName&gt;**
+- **/Config/Routes/Open**
 
 **&lt;GroupName&gt;** is the group user belongs to for accessing the API's
 
@@ -180,8 +181,9 @@ return [
 
 ## Queries Folder
 
-- **/Config/Queries/GlobalDB** for global database.
-- **/Config/Queries/ClientDB** for Clients (including all hosts and their databases).
+- **/Config/Queries/Auth/GlobalDB** for global database.
+- **/Config/Queries/Auth/ClientDB** for Clients (including all hosts and their databases).
+- **/Config/Queries/Open** for Open to Web API's (No Authentication).
 
 ### Files
 
