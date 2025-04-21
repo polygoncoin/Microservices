@@ -28,6 +28,7 @@ class ApiGateway extends DbFunctions
     public $REQUEST_METHOD = null;
     public $HTTP_AUTHORIZATION = null;
     public $REMOTE_ADDR = null;
+    public $ROUTE = null;    
 
     /**
      * Microservices Request Details
@@ -103,15 +104,16 @@ class ApiGateway extends DbFunctions
 
         $this->HOST = $this->httpRequestDetails['server']['host'];
         $this->REQUEST_METHOD = $this->httpRequestDetails['server']['request_method'];
-        if (
-            isset($this->httpRequestDetails['header'])
-            && isset($this->httpRequestDetails['header']['authorization'])
-        ) {
+        $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
+        $this->ROUTE = '/' . trim($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM], '/');
+
+        if (isset($this->httpRequestDetails['header']['authorization'])) {
             $this->HTTP_AUTHORIZATION = $this->httpRequestDetails['header']['authorization'];
+        } elseif ($this->ROUTE === '/login') {
+            $this->open = false;
         } else {
             $this->open = true;
         }
-        $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
     }
 
     /**

@@ -189,7 +189,7 @@ class DbFunctions
             $this->sqlCache = $this->setCacheConnection('Master');
         }
         $key = ($this->open) ? "open:$cacheKey" : $cacheKey;
-        $this->sqlCache->connectCache($key, $json);
+        $this->sqlCache->setCache($key, $json);
     }
 
     /**

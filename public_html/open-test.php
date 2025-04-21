@@ -2,7 +2,7 @@
 
 function getCurlConfig($method, $route, $header = [], $json = '')
 {
-    $homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
+    $homeURL = 'http://public.localhost/Microservices/public_html/index.php';
 
     $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}";
     $curlConfig[CURLOPT_HTTPHEADER] = $header;
