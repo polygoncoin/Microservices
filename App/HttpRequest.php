@@ -4,9 +4,11 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\DatabaseCacheKey;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\JsonDecode;
+use Microservices\App\RateLimiter;
 use Microservices\App\RouteParser;
 use Microservices\App\Servers\Cache\AbstractCache;
 use Microservices\App\Servers\Database\AbstractDatabase;
@@ -107,9 +109,9 @@ class HttpRequest extends RouteParser
     /**
      * Open To World Request
      *
-     * @var boolean
+     * @var null|boolean
      */
-    public $open = false;
+    public $open = null;
 
     /**
      * Details var from $httpRequestDetails
@@ -123,10 +125,39 @@ class HttpRequest extends RouteParser
     /**
      * Cache Keys
      */
-    public $tokenKey = null;
-    public $clientKey = null;
-    public $groupKey = null;
-    public $cidr_key = null;
+    private $tokenKey = null;
+    private $clientKey = null;
+    private $groupKey = null;
+    private $cidrKey = null;
+    private $cidrChecked = false;
+
+    /**
+     * Client Info
+     *
+     * @var null|array
+     */
+    public $clientDetails = null;
+
+    /**
+     * Group Info
+     *
+     * @var null|array
+     */
+    public $groupDetails = null;
+
+    /**
+     * User Info
+     *
+     * @var null|array
+     */
+    public $userDetails = null;
+
+    /**
+     * Rate Limiter
+     *
+     * @var null|RateLimiter
+     */
+    private $rateLimiter = null;
 
     /**
      * Payload stream
@@ -141,42 +172,49 @@ class HttpRequest extends RouteParser
     public function __construct(&$httpRequestDetails)
     {
         $this->httpRequestDetails = &$httpRequestDetails;
-    }
 
-    /**
-     * Initialize
-     *
-     * @return boolean
-     */
-    public function init()
-    {
         $this->HOST = $this->httpRequestDetails['server']['host'];
         $this->REQUEST_METHOD = $this->httpRequestDetails['server']['request_method'];
         $this->REMOTE_ADDR = $this->httpRequestDetails['server']['remote_addr'];
         $this->ROUTE = '/' . trim($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM], '/');
 
-        if (isset($this->httpRequestDetails['header']['authorization'])) {
+        if (
+            isset($this->httpRequestDetails['header'])
+            && isset($this->httpRequestDetails['header']['authorization'])
+        ) {
             $this->HTTP_AUTHORIZATION = $this->httpRequestDetails['header']['authorization'];
+            $this->open = false;
         } elseif ($this->ROUTE === '/login') {
             $this->open = false;
         } else {
             $this->open = true;
         }
+    }
 
-        if ($this->REQUEST_METHOD !== 'GET') {
-            $this->payloadStream = fopen('php://input', 'rb');
-            $this->jsonDecode = new JsonDecode($this->payloadStream);
-            $this->jsonDecode->init();    
+    /**
+     * Initialize
+     *
+     * @return void
+     */
+    public function init()
+    {
+        return true;
+    }
+
+    /**
+     * Initialize Gateway
+     *
+     * @return void
+     */
+    public function initGateway()
+    {
+        $this->loadClientDetails();
+
+        if (!$this->open) {
+            $this->loadUserDetails();
+            $this->checkRemoteIp();
         }
-
-        $this->cache = $this->connectCache(
-            getenv('cacheType'),
-            getenv('cacheHostname'),
-            getenv('cachePort'),
-            getenv('cacheUsername'),
-            getenv('cachePassword'),
-            getenv('cacheDatabase')
-        );
+        $this->checkRateLimits();
     }
 
     /**
@@ -187,6 +225,10 @@ class HttpRequest extends RouteParser
      */
     public function loadClientDetails()
     {
+        if (!is_null($this->clientDetails)) return;
+
+        $this->loadCache();
+
         if ($this->open) {
             $this->clientKey = CacheKey::ClientOpenToWeb($this->HOST);
         } else {
@@ -196,7 +238,7 @@ class HttpRequest extends RouteParser
             throw new \Exception("Invalid Host '{$this->HOST}'", HttpStatus::$InternalServerError);
         }
 
-        $this->session['clientDetails'] = json_decode($this->cache->getCache($this->clientKey), true);
+        $this->clientDetails = $this->session['clientDetails'] = json_decode($this->cache->getCache($this->clientKey), true);
         $this->clientId = $this->session['clientDetails']['client_id'];
     }
 
@@ -208,13 +250,21 @@ class HttpRequest extends RouteParser
      */
     public function loadUserDetails()
     {
-        if (preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)) {
+        if (!is_null($this->userDetails)) return;
+
+        $this->loadCache();
+
+        if (
+            !$this->open
+            && !is_null($this->HTTP_AUTHORIZATION)
+            && preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)
+        ) {
             $this->session['token'] = $matches[1];
             $this->tokenKey = CacheKey::Token($this->session['token']);
             if (!$this->cache->cacheExists($this->tokenKey)) {
                 throw new \Exception('Token expired', HttpStatus::$BadRequest);
             }
-            $this->session['userDetails'] = json_decode($this->cache->getCache($this->tokenKey), true);
+            $this->userDetails = $this->session['userDetails'] = json_decode($this->cache->getCache($this->tokenKey), true);
             $this->groupId = $this->session['userDetails']['group_id'];
             $this->userId = $this->session['userDetails']['user_id'];
         }
@@ -231,6 +281,10 @@ class HttpRequest extends RouteParser
      */
     public function loadGroupDetails()
     {
+        if (!is_null($this->groupDetails)) return;
+
+        $this->loadCache();
+
         // Load groupDetails
         if (empty($this->session['userDetails']['user_id']) || empty($this->session['userDetails']['group_id'])) {
             throw new \Exception('Invalid session', HttpStatus::$InternalServerError);
@@ -241,7 +295,7 @@ class HttpRequest extends RouteParser
             throw new \Exception("Cache '{$this->groupKey}' missing", HttpStatus::$InternalServerError);
         }
 
-        $this->session['groupDetails'] = json_decode($this->cache->getCache($this->groupKey), true);
+        $this->groupDetails = $this->session['groupDetails'] = json_decode($this->cache->getCache($this->groupKey), true);
     }
 
     /**
@@ -256,10 +310,142 @@ class HttpRequest extends RouteParser
             $this->session['payloadType'] = 'Object';
             $this->session['payload'] = !empty($_GET) ? $_GET : [];
         } else {
-            // Load Payload
+            $this->payloadStream = fopen('php://input', 'rb');
+            $this->jsonDecode = new JsonDecode($this->payloadStream);
+            $this->jsonDecode->init();
+
             rewind($this->payloadStream);
             $this->jsonDecode->indexJSON();
             $this->session['payloadType'] = $this->jsonDecode->jsonType();
+        }
+    }
+
+    /**
+     * Validate request IP
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function checkRemoteIp()
+    {
+        $groupId = $this->userDetails['group_id'];
+
+        $this->cidrKey = CacheKey::CIDR($this->userDetails['group_id']);
+        if ($this->cache->cacheExists($this->cidrKey)) {
+            $this->cidrChecked = true;
+            $cidrs = json_decode($this->cache->getCache($this->cidrKey), true);
+            $ipNumber = ip2long($this->REMOTE_ADDR);
+            $isValidIp = false;
+            foreach ($cidrs as $cidr) {
+                if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
+                    $isValidIp = true;
+                    break;
+                }
+            }
+            if (!$isValidIp) {
+                throw new \Exception('IP not supported', HttpStatus::$BadRequest);
+            }
+        }
+    }
+
+    /**
+     * Check Rate Limits
+     *
+     * @return void
+     */
+    private function checkRateLimits()
+    {
+        $this->rateLimiter = new RateLimiter();
+
+        $rateLimitChecked = false;
+
+        // Client Rate Limiting
+        if (
+            !empty($this->clientDetails['rateLimiterMaxRequests'])
+            && !empty($this->clientDetails['rateLimiterSecondsWindow'])
+        ) {
+            $rateLimitChecked = $this-checkRateLimit(
+                $RateLimiterGroupPrefix = getenv('RateLimiterClientPrefix'),
+                $RateLimiterMaxRequests = $this->clientDetails['rateLimiterMaxRequests'],
+                $RateLimiterSecondsWindow = $this->clientDetails['rateLimiterSecondsWindow'],
+                $key = $this->clientDetails['client_id']
+            );
+        }
+
+        if (!$this->open) {
+            // Group Rate Limiting
+            if (
+                !empty($this->groupDetails['rateLimiterMaxRequests'])
+                && !empty($this->groupDetails['rateLimiterSecondsWindow'])
+            ) {
+                $rateLimitChecked = $this-checkRateLimit(
+                    $RateLimiterGroupPrefix = getenv('RateLimiterGroupPrefix'),
+                    $RateLimiterMaxRequests = $this->groupDetails['rateLimiterMaxRequests'],
+                    $RateLimiterSecondsWindow = $this->groupDetails['rateLimiterSecondsWindow'],
+                    $key = $this->clientDetails['client_id'] . ':' . $this->userDetails['group_id']
+                );
+            }
+
+            // User Rate Limiting
+            if (
+                !empty($this->userDetails['rateLimiterMaxRequests'])
+                && !empty($this->userDetails['rateLimiterSecondsWindow'])
+            ) {
+                $rateLimitChecked = $this->checkRateLimit(
+                    $RateLimiterUserPrefix = getenv('RateLimiterUserPrefix'),
+                    $RateLimiterMaxRequests = $this->groupDetails['rateLimiterMaxRequests'],
+                    $RateLimiterSecondsWindow = $this->groupDetails['rateLimiterSecondsWindow'],
+                    $key = $this->clientDetails['client_id'] . ':' . $this->userDetails['group_id'] . ':' . $this->userDetails['user_id']
+                );
+            }
+        }
+
+        // Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)
+        if ($this->cidrChecked === false && $rateLimitChecked === false) {
+            $this->checkRateLimit(
+                $RateLimiterIPPrefix = getenv('RateLimiterIPPrefix'),
+                $RateLimiterIPMaxRequests = getenv('RateLimiterIPMaxRequests'),
+                $RateLimiterIPSecondsWindow = getenv('RateLimiterIPSecondsWindow'),
+                $key = $this->REMOTE_ADDR
+            );
+        }
+    }
+
+    /**
+     * Check Rate Limit
+     *
+     * @param string $RateLimiterPrefix
+     * @param int    $RateLimiterMaxRequests
+     * @param int    $RateLimiterSecondsWindow
+     * @param string $key
+     * @return void
+     * @throws \Exception
+     */
+    private function checkRateLimit(
+        $RateLimiterPrefix,
+        $RateLimiterMaxRequests,
+        $RateLimiterSecondsWindow,
+        $key
+    ) {
+        try {
+            $result = $this->rateLimiter->check(
+                $RateLimiterPrefix,
+                $RateLimiterMaxRequests,
+                $RateLimiterSecondsWindow,
+                $key
+            );
+
+            if ($result['allowed']) {
+                // Process the request
+                return true;
+            } else {
+                // Return 429 Too Many Requests
+                throw new \Exception($result['resetAt'] - time(), HttpStatus::$TooManyRequests);
+            }
+
+        } catch (\Exception $e) {
+            // Handle connection errors
+            throw new \Exception($e->getMessage(), $e->getCode());
         }
     }
 
@@ -294,5 +480,21 @@ class HttpRequest extends RouteParser
                 $arr = $decodedVal;
             }
         }
+    }
+
+    private function loadCache()
+    {
+        if (!is_null($this->cache)) {
+            return;
+        }
+
+        $this->cache = $this->connectCache(
+            getenv('cacheType'),
+            getenv('cacheHostname'),
+            getenv('cachePort'),
+            getenv('cacheUsername'),
+            getenv('cachePassword'),
+            getenv('cacheDatabase')
+        );
     }
 }

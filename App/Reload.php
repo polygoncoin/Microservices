@@ -173,8 +173,8 @@ class Reload
             if (!empty($row['allowed_ips'])) {
                 $cidrs = $this->cidrsIpNumber($row['allowed_ips']);
                 if (count($cidrs)>0) {
-                    $cidr_key = CacheKey::CIDR($row['group_id']);
-                    $this->cache->setCache($cidr_key, json_encode($cidrs));
+                    $cidrKey = CacheKey::CIDR($row['group_id']);
+                    $this->cache->setCache($cidrKey, json_encode($cidrs));
                 }
             }
         }

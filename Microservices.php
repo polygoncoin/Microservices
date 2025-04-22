@@ -1,7 +1,6 @@
 <?php
 namespace Microservices;
 
-use Microservices\App\ApiGateway;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
@@ -50,11 +49,6 @@ class Microservices
     public $c = null;
 
     /**
-     * @var null|ApiGateway
-     */
-    private $apiGateway = null;
-
-    /**
      * Constructor
      *
      * @param array $httpRequestDetails
@@ -75,8 +69,6 @@ class Microservices
     {
         Constants::init();
         Env::init();
-
-        $this->apiGateway = new ApiGateway($this->httpRequestDetails);
 
         $this->c = new Common($this->httpRequestDetails);
         $this->c->init();
@@ -150,15 +142,12 @@ class Microservices
                 $class = __NAMESPACE__ . '\\App\\Login';
                 break;
 
-            // Requires auth token
+            // Default - Auth based and Open to web API's
             default:
-                // if (isset($this->httpRequestDetails['header']['authorization'])) {
-                    $this->apiGateway->init();
-                    $class = __NAMESPACE__ . '\\App\\Api';
-                    break;
-                // }
+                $this->c->httpRequest->initGateway();
+                $class = __NAMESPACE__ . '\\App\\Api';
+                break;
         }
-        $this->apiGateway = null;
 
         // Class found
         try {
