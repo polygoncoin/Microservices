@@ -1,10 +1,8 @@
 <?php
 namespace Microservices\App;
 
-use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\DatabaseCacheKey;
-use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 
 /*
