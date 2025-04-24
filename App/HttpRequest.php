@@ -211,8 +211,10 @@ class HttpRequest extends Gateway
             throw new \Exception("Invalid Host '{$this->HOST}'", HttpStatus::$InternalServerError);
         }
 
-        $this->clientDetails = $this->session['clientDetails'] = json_decode($this->cache->getCache($this->clientKey), true);
-        $this->clientId = $this->session['clientDetails']['client_id'];
+        $this->clientDetails = json_decode($this->cache->getCache($this->clientKey), true);
+        $this->clientId = $this->clientDetails['client_id'];
+
+        $this->session['clientDetails'] = &$this->clientDetails;
     }
 
     /**
@@ -237,9 +239,11 @@ class HttpRequest extends Gateway
             if (!$this->cache->cacheExists($this->tokenKey)) {
                 throw new \Exception('Token expired', HttpStatus::$BadRequest);
             }
-            $this->userDetails = $this->session['userDetails'] = json_decode($this->cache->getCache($this->tokenKey), true);
-            $this->groupId = $this->session['userDetails']['group_id'];
-            $this->userId = $this->session['userDetails']['user_id'];
+            $this->userDetails = json_decode($this->cache->getCache($this->tokenKey), true);
+            $this->groupId = $this->userDetails['group_id'];
+            $this->userId = $this->userDetails['user_id'];
+
+            $this->session['userDetails'] = &$this->userDetails;
         }
         if (empty($this->session['token'])) {
             throw new \Exception('Token missing', HttpStatus::$BadRequest);
@@ -259,16 +263,18 @@ class HttpRequest extends Gateway
         $this->loadCache();
 
         // Load groupDetails
-        if (empty($this->session['userDetails']['user_id']) || empty($this->session['userDetails']['group_id'])) {
+        if (empty($this->userDetails['user_id']) || empty($this->userDetails['group_id'])) {
             throw new \Exception('Invalid session', HttpStatus::$InternalServerError);
         }
 
-        $this->groupKey = CacheKey::Group($this->session['userDetails']['group_id']);
+        $this->groupKey = CacheKey::Group($this->userDetails['group_id']);
         if (!$this->cache->cacheExists($this->groupKey)) {
             throw new \Exception("Cache '{$this->groupKey}' missing", HttpStatus::$InternalServerError);
         }
 
-        $this->groupDetails = $this->session['groupDetails'] = json_decode($this->cache->getCache($this->groupKey), true);
+        $this->groupDetails = json_decode($this->cache->getCache($this->groupKey), true);
+
+        $this->session['userDetails'] = &$this->groupDetails;
     }
 
     /**
@@ -278,6 +284,8 @@ class HttpRequest extends Gateway
      */
     public function loadPayload()
     {
+        if (isset($this->session['payloadType'])) return;
+
         if ($this->REQUEST_METHOD === Constants::$GET) {
             $this->urlDecode($_GET);
             $this->session['payloadType'] = 'Object';
