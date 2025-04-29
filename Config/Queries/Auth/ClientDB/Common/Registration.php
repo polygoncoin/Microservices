@@ -1,9 +1,7 @@
 <?php
 namespace Microservices\Config\Queries\Auth\ClientDB\Common;
 
-use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
-use Microservices\App\Env;
 
 return [
     'query' => "UPDATE `registration` SET __SET__ WHERE __WHERE__",

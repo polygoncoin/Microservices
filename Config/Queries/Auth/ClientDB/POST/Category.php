@@ -1,10 +1,8 @@
 <?php
 namespace Microservices\Config\Queries\Auth\ClientDB\POST;
 
-use Microservices\App\Constants;
 use Microservices\App\DatabaseCacheKey;
 use Microservices\App\DatabaseDataTypes;
-use Microservices\App\Env;
 
 return [
     'query' => "INSERT INTO `category` SET __SET__",

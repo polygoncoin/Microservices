@@ -1,9 +1,7 @@
 <?php
 namespace Microservices\Config\Queries\Auth\ClientDB\PUT;
 
-use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
-use Microservices\App\Env;
 
 return [
     'query' => "UPDATE `registration` SET firstname = :firstname WHERE id = :id",

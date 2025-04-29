@@ -82,7 +82,10 @@ class Read
 
         // Check for cache
         $tobeCached = false;
-        if (isset($readSqlConfig['cacheKey'])) {
+        if (
+            isset($readSqlConfig['cacheKey'])
+            && !isset($this->c->httpRequest->session['payload']['orderBy'])
+        ) {
             $json = $this->c->httpRequest->getDqlCache($readSqlConfig['cacheKey']);
             if (!is_null($json)) {
                 $cacheHitJson = '"cacheHit": true';
@@ -190,15 +193,19 @@ class Read
                 // Query will return multiple rows
                 case 'multipleRowFormat':
                     if ($isFirstCall) {
+                        $this->jsonEncode->startObject('Results');
                         if (isset($readSqlConfig['countQuery'])) {
                             $this->fetchRowsCount($readSqlConfig);
                         }
-                        $this->jsonEncode->startArray('Results');
+                        $this->jsonEncode->startArray('Data');
                     } else {
                         $this->jsonEncode->startArray($configKeys[count($configKeys)-1]);
                     }
                     $this->fetchMultipleRows($readSqlConfig, $isFirstCall, $configKeys, $useResultSet);
                     $this->jsonEncode->endArray();
+                    if ($isFirstCall && isset($readSqlConfig['countQuery'])) {
+                        $this->jsonEncode->endObject();
+                    }
                     break;
             }
         }
@@ -304,9 +311,9 @@ class Read
         }
 
         if ($isFirstCall) {
-            if (isset($this->c->httpRequest->session['payload']['orderby'])) {
+            if (isset($this->c->httpRequest->session['payload']['orderBy'])) {
                 $orderByStrArr = [];
-                $orderByArr = $this->c->httpRequest->session['payload']['orderby'];
+                $orderByArr = $this->c->httpRequest->session['payload']['orderBy'];
                 foreach ($orderByArr as $k => $v) {
                     $k = str_replace(['`',' '], '', $k);
                     $v = strtoupper($v);

@@ -51,7 +51,10 @@ $httpRequestDetails['get'] = &$_GET;
 // Code to Initialize / Start the service
 try {
     // Check version
-    if (!isset($_SERVER["HTTP_X_API_VERSION"]) || $_SERVER["HTTP_X_API_VERSION"] !== 'v1.0.0') {
+    if (
+        (!isset($httpRequestDetails['server']) && !isset($httpRequestDetails['server']['api_version']))
+        || $httpRequestDetails['server']['api_version'] !== 'v1.0.0'
+    ) {
         // Set response headers
         header("Content-Type: application/json; charset=utf-8");
         header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");

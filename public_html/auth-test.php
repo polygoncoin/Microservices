@@ -51,7 +51,13 @@ function trigger($method, $route, $header = [], $json = '')
         echo "cURL Error #:" . $err;
     } else {
         $response = json_decode($responseJSON, true);
-        if (!empty($response) && isset($response['Status']) && $response['Status'] == 200) {
+        if (
+            !empty($response)
+            && (
+                (isset($response['Status']) && $response['Status'] == 200)
+                || (isset($response['Results']['Status']) && $response['Results']['Status'] == 200)
+            )
+        ) {
             echo 'Sucess:'.$route . PHP_EOL . PHP_EOL;
         } else {
             echo 'Failed:'.$route . PHP_EOL;
@@ -65,21 +71,20 @@ function trigger($method, $route, $header = [], $json = '')
 $response = [];
 echo '<pre>';
 
-$response[] = trigger('GET', '/reload', [], '');
+$response[] = trigger('GET', '/reload', [], $jsonPayload = '');
 
-$res = trigger('POST', '/login', [], '{"username":"client_1_group_1_user_1", "password":"shames11"}');
+$res = trigger('POST', '/login', [], $jsonPayload = '{"username":"client_1_group_1_user_1", "password":"shames11"}');
 if ($res) {
     $response[] = $res;
     $token = $res['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 
-    $response[] = trigger('GET', '/routes', $header, '');
-    $response[] = trigger('POST', '/category-1', $header, '[{"name":"ramesh0","subname":"ramesh1","subsubname":"ramesh2"},{"name":"ramesh0","subname":"ramesh1","subsubname":"ramesh2"}]');
-    $response[] = trigger('GET', '/category-1', $header, '');
-    $response[] = trigger('POST', '/category', $header, '[{"name":"ramesh0","sub":{"subname":"ramesh1","subsub":[{"subsubname":"ramesh"},{"subsubname":"ramesh"}]}},{"name":"ramesh1","sub":{"subname":"ramesh1","subsub":{"subsubname":"ramesh"}}}]');
-    $response[] = trigger('GET', '/category&orderby={"id":"DESC"}', $header, '');
-    $response[] = trigger('GET', '/category&orderby={"id":"ASC"}', $header, '');
-    $response[] = trigger('POST', '/category/config', $header, '');
+    $response[] = trigger('GET', '/routes', $header, $jsonPayload = '');
+    $response[] = trigger('POST', '/category', $header, $jsonPayload = '[{"name":"ramesh0","sub":{"subname":"ramesh1","subsub":[{"subsubname":"ramesh"},{"subsubname":"ramesh"}]}},{"name":"ramesh1","sub":{"subname":"ramesh1","subsub":{"subsubname":"ramesh"}}}]');
+    $response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/category', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $jsonPayload = '');
+    $response[] = trigger('POST', '/category/config', $header, $jsonPayload = '');
 }
 
 print_r($response);

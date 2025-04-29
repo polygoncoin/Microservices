@@ -5,7 +5,6 @@ use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
-use Microservices\App\Logs;
 
 /**
  * Creates JSON
@@ -139,16 +138,30 @@ class JsonEncode
     /**
      * Append raw json string
      *
-     * @param $json
+     * @param string $json JSON
      * @return void
      */
     public function appendJson(&$json)
     {
         if ($this->currentObject) {
             $this->write($this->currentObject->comma);
+            $this->write($json);
+            $this->currentObject->comma = ',';
         }
-        $this->write($json);
-        if ($this->currentObject) {
+    }
+
+    /**
+     * Append raw json string
+     *
+     * @param string $key  key of associative array
+     * @param string $json JSON
+     * @return void
+     */
+    public function appendKeyJson($key, &$json)
+    {
+        if ($this->currentObject && $this->currentObject->mode === 'Object') {
+            $this->write($this->currentObject->comma);
+            $this->write($this->escape($key) . ':' . $json);
             $this->currentObject->comma = ',';
         }
     }

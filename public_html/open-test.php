@@ -51,7 +51,13 @@ function trigger($method, $route, $header = [], $json = '')
         echo "cURL Error #:" . $err;
     } else {
         $response = json_decode($responseJSON, true);
-        if (!empty($response) && isset($response['Status']) && $response['Status'] == 200) {
+        if (
+            !empty($response)
+            && (
+                (isset($response['Status']) && $response['Status'] == 200)
+                || (isset($response['Results']['Status']) && $response['Results']['Status'] == 200)
+            )
+        ) {
             echo 'Sucess:'.$route . PHP_EOL . PHP_EOL;
         } else {
             echo 'Failed:'.$route . PHP_EOL;
@@ -66,6 +72,8 @@ $response = [];
 $header = [];
 echo '<pre>';
 
-$response[] = trigger('GET', '/category-1', $header, '');
+$response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');
+$response[] = trigger('GET', '/category', $header, $jsonPayload = '');
+$response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $jsonPayload = '');
 
 print_r($response);

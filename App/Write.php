@@ -260,7 +260,6 @@ class Write
 
             $this->c->httpRequest->session['payload'] = $this->c->httpRequest->jsonDecode->get($payloadIndex);
 
-
             if (count($required)) {
                 $this->c->httpRequest->session['required'] = $required;
             } else {

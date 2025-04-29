@@ -274,7 +274,7 @@ class HttpRequest extends Gateway
 
         $this->groupDetails = json_decode($this->cache->getCache($this->groupKey), true);
 
-        $this->session['userDetails'] = &$this->groupDetails;
+        $this->session['groupDetails'] = &$this->groupDetails;
     }
 
     /**

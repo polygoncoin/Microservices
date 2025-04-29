@@ -1,9 +1,7 @@
 <?php
 namespace Microservices\Config\Queries\Auth\ClientDB\POST;
 
-use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
-use Microservices\App\Env;
 
 return [
     'query' => "INSERT INTO `address` SET __SET__",

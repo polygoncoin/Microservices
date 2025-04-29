@@ -1,10 +1,7 @@
 <?php
 namespace Microservices\Config\Queries\Open\GET;
 
-use Microservices\App\Constants;
 use Microservices\App\DatabaseCacheKey;
-use Microservices\App\DatabaseDataTypes;
-use Microservices\App\Env;
 
 return [
     'query' => "SELECT * FROM `category` WHERE __WHERE__",
