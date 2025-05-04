@@ -72,7 +72,11 @@ $response = [];
 $header = [];
 echo '<pre>';
 
+$response[] = trigger('POST', '/registration', $header, $jsonPayload = '{"firstname":"12","lastname":"12","email":"12@test.com","username":"test","password":"shames11"}');
+$response[] = trigger('POST', '/registration-with-address', $header, $jsonPayload = '{"firstname":"12","lastname":"12","email":"12@test.com","username":"test","password":"shames11", "address" : {"address":"a203"}}');
+
 $response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');
+// $response[] = trigger('GET', '/category/search', $header, $jsonPayload = '');
 $response[] = trigger('GET', '/category', $header, $jsonPayload = '');
 $response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $jsonPayload = '');
 

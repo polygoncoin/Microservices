@@ -232,7 +232,7 @@ static public $CustomINT = [
 #### Available configuration options
 
 ```PHP
-//return represents root for resultSetData
+//return represents root for sqlResults
 return [
     // Required to implementing pagination
     'countQuery' => "Count SQL",
@@ -251,7 +251,7 @@ return [
             return 'value';
         }],
         'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['insertIdParams', '<key>'],        // previous Insert ids
+        'column' => ['insertId', '<key>'],        // previous Insert ids
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // Where clause of the Query to perform task
@@ -269,7 +269,7 @@ return [
         'column' => ['userDetails', '<key>'],           // From user session
         'column' => ['custom', '<static-value>'],       // Static values
     ],
-    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
+    // Last insert id to be made available as $session['insertId'][uniqueParamString];
     'insertId' => '<keyName>:id',
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     'mode' => 'singleRowFormat/multipleRowFormat',
@@ -298,8 +298,10 @@ return [
                 ],
                 ...
                 ...
-                'column' => ['resultSetData', '<return:keys>'], // Only for GET
-                'column' => ['insertIdParams', '<keyName>:id'], // previous Insert ids
+                'column' => ['sqlInputs', '<return:keys>'], // Available for both DQL & DML operations
+                'column' => ['sqlResults', '<return:keys>'], // Available for DQL operations
+                'column' => ['sqlPayload', '<return:keys>'], // Available for DML operations
+                'column' => ['insertId', '<keyName>:id'], // SQL Insert id
             ],
             '__WHERE__' => [
                 ...
@@ -314,7 +316,7 @@ return [
                 ],
                 ...
                 ...
-                'column' => ['resultSetData', '<return:keys>'], // Only for GET
+                'column' => ['sqlResults', '<return:keys>'], // Only for GET
             ],
         ],
         '<sub-key>' => [
@@ -342,7 +344,7 @@ return [
         '<unique-key-for-redis-to-drop-cached-results>(category etc.)',
         ...
     ],
-    "idempotentWindow" => 3 // Idempotent Window for DML operartion (seconds)
+    'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
 ];
 ```
 
@@ -401,7 +403,7 @@ return [
 #### GET method configuration with useResultSet
 
 ```PHP
-//return represents root for resultSetData
+//return represents root for sqlResults
 return [
     // Required to implementing pagination
     'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__",
@@ -438,7 +440,7 @@ return [
             ... // Recursive
             '__WHERE__' => [
                 ...
-                'column' => ['resultSetData', '<return:keys>'],
+                'column' => ['sqlResults', '<return:keys>'],
             ]
         ],
         '<sub-key>' => [
@@ -485,7 +487,7 @@ return [
             return 'value';
         }],
         'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['insertIdParams', '<key>'],        // previous Insert ids
+        'column' => ['insertId', '<key>'],        // previous Insert ids
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // Where clause of the Query to perform task
@@ -504,7 +506,7 @@ return [
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // To be used only for INSERT queries
-    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
+    // Last insert id to be made available as $session['insertId'][uniqueParamString];
     'insertId' => '<keyName>:id',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
@@ -521,7 +523,7 @@ return [
             '__SET__' => [
                 ...
                 ...
-                'column' => ['insertIdParams', '<keyName>:id'], // previous Insert ids
+                'column' => ['insertId', '<keyName>:id'], // previous Insert ids
             ],
         ],
         '<sub-key>' => [
@@ -549,7 +551,7 @@ return [
 #### POST/PUT/PATCH/DELETE method configuration with useHierarchy
 
 ```PHP
-//return represents root for resultSetData
+//return represents root for sqlResults
 return [
     // Query to perform task
     'query' => "INSERT INTO `TableName` SET __SET__",
@@ -569,7 +571,7 @@ return [
             return 'value';
         }],
         'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['insertIdParams', '<key>'],        // previous Insert ids
+        'column' => ['insertId', '<key>'],        // previous Insert ids
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // Where clause of the Query to perform task
@@ -588,7 +590,7 @@ return [
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // To be used only for INSERT queries
-    // Last insert id to be made available as $session['insertIdParams'][uniqueParamString];
+    // Last insert id to be made available as $session['insertId'][uniqueParamString];
     'insertId' => '<keyName>:id',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
@@ -614,8 +616,8 @@ return [
                 ],
                 ...
                 ...
-                'column' => ['insertIdParams', '<keyName>:id'], // previous Insert ids
-                'column' => ['resultSetData', '<return:keys>'],
+                'column' => ['insertId', '<keyName>:id'], // previous Insert ids
+                'column' => ['sqlResults', '<return:keys>'],
             ],
             '__WHERE__' => [
                 ...
@@ -628,7 +630,7 @@ return [
                     DatabaseDataTypes::$PrimaryKey,             // key data type
                     Constants::$REQUIRED                        // Represents required field
                 ],
-                'column' => ['resultSetData', '<return:keys>'],
+                'column' => ['sqlResults', '<return:keys>'],
             ],
         ],
         '<sub-key>' => [
@@ -782,10 +784,10 @@ var payload = [
 - **$session\['payload'\]** Request data.
 > For **GET** method, the **$\_GET** is the payload.
 
-* **$session\['insertIdParams'\]** Insert ids Data as per configuration.
->For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertIdParams contains the insert ids of the executed INSERT queries.
+* **$session\['insertId'\]** Insert ids Data as per configuration.
+>For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertId contains the insert ids of the executed INSERT queries.
 
-* **$session\['resultSetData'\]** Hierarchy data.
+* **$session\['sqlResults'\]** Hierarchy data.
 >For **GET** method, one can use previous query results if configured to use hierarchy.
 
 ## Hierarchy Data
@@ -794,7 +796,7 @@ var payload = [
 >In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
 
 ```PHP
-'parent_id' => ['resultSetData', 'return:id'],
+'parent_id' => ['sqlResults', 'return:id'],
 ```
 
 - Config/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
@@ -812,7 +814,7 @@ return [
             'query' => "INSERT INTO `category` SET SET",
             '__SET__' => [
                 'name' => ['payload', 'subname'],
-                'parent_id' => ['insertIdParams', 'category:id'],
+                'parent_id' => ['insertId', 'category:id'],
             ],
             'insertId' => 'sub:id',
         ]
