@@ -25,8 +25,11 @@ return [
                 'address' => ['payload', 'address']
             ],
             'insertId' => 'address:id',
+            'payloadType' => 'Array',
+            'maxPayloadObjects' => 2
         ]
     ],
     'useHierarchy' => true,
+    'payloadType' => 'Object',
     'idempotentWindow' => 10
 ];
