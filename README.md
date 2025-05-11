@@ -1,6 +1,6 @@
-# PHP Microservices Framework
+# PHP Low code API generator
 
-This is very light & easy **Microservices Framework**. It can be used to create API's in very short time once you are done with your database.
+This is light & easy Low code API generator. It can be used to create API's in very short time once you are done with your database.
 
 ## Contents
 
@@ -93,12 +93,12 @@ client_users='master_users'         ;Table in client database containing user de
 
 ## Folders
 
-- **App** Basic Microservices application folder
-- **Config** Basic Microservices configuration folder
+- **App** Basic application folder
+- **Config** Basic configuration folder
 - **Crons** Contains classes for cron API's
 - **Custom** Contains classes for custom API's
 - **Dropbox** Folder for uploaded files.
-- **public\_html** Microservices doc root folder
+- **public\_html** Applicatipn doc root folder
 - **ThirdParty** Contains classes for third-party API's
 - **Upload** Contains classes for upload file API's
 - **Validation** Contains validation classes.
