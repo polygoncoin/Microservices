@@ -251,7 +251,7 @@ return [
             return 'value';
         }],
         'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['__INSERT-ID__', '<key>'],        // previous Insert ids
+        'column' => ['__INSERT-IDs__', '<key>'],        // previous Insert ids
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // Where clause of the Query to perform task
@@ -269,18 +269,18 @@ return [
         'column' => ['userDetails', '<key>'],           // From user session
         'column' => ['custom', '<static-value>'],       // Static values
     ],
-    // Last insert id to be made available as $session['__INSERT-ID__'][uniqueParamString];
-    '__INSERT-ID__' => '<keyName>:id',
+    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
+    '__INSERT-IDs__' => '<keyName>:id',
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     '__MODE__' => 'singleRowFormat/multipleRowFormat',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
-     * query,
+     * __QUERY__,
      * __SET__,
      * __WHERE__,
-     * mode,
-     * insertId,
-     * subQuery
+     * __MODE__,
+     * __INSERT-IDs__,
+     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
@@ -301,7 +301,7 @@ return [
                 'column' => ['sqlInputs', '<return:keys>'], // Available for both DQL & DML operations
                 'column' => ['sqlResults', '<return:keys>'], // Available for DQL operations
                 'column' => ['sqlPayload', '<return:keys>'], // Available for DML operations
-                'column' => ['__INSERT-ID__', '<keyName>:id'], // SQL Insert id
+                'column' => ['__INSERT-IDs__', '<keyName>:id'], // SQL Insert id
             ],
             '__WHERE__' => [
                 ...
@@ -367,10 +367,10 @@ return [
 ```PHP
 return [
     // Required to implementing pagination
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__",
+    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__", // OR
     'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND column2 = :column2",
     // Query to perform task
-    '__QUERY__' => "SELECT columns FROM TableName WHERE __WHERE__",
+    '__QUERY__' => "SELECT columns FROM TableName WHERE __WHERE__", // OR
     '__QUERY__' => "SELECT columns FROM TableName WHERE column1 = :column1 AND column2 = :column2",
     // Where clause of the Query to perform task
     '__WHERE__' => [
@@ -501,7 +501,7 @@ return [
             return 'value';
         }],
         'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['__INSERT-ID__', '<key>'],        // previous Insert ids
+        'column' => ['__INSERT-IDs__', '<key>'],        // previous Insert ids
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // Where clause of the Query to perform task
@@ -520,8 +520,8 @@ return [
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // To be used only for INSERT queries
-    // Last insert id to be made available as $session['__INSERT-ID__'][uniqueParamString];
-    '__INSERT-ID__' => '<keyName>:id',
+    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
+    '__INSERT-IDs__' => '<keyName>:id',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
      * query,
@@ -537,7 +537,7 @@ return [
             '__SET__' => [
                 ...
                 ...
-                'column' => ['__INSERT-ID__', '<keyName>:id'], // previous Insert ids
+                'column' => ['__INSERT-IDs__', '<keyName>:id'], // previous Insert ids
             ],
         ],
         '<sub-key>' => [
@@ -585,7 +585,7 @@ return [
             return 'value';
         }],
         'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['__INSERT-ID__', '<key>'],        // previous Insert ids
+        'column' => ['__INSERT-IDs__', '<key>'],        // previous Insert ids
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // Where clause of the Query to perform task
@@ -604,8 +604,8 @@ return [
         'column' => ['custom', '<static-value>'],       // Static values
     ],
     // To be used only for INSERT queries
-    // Last insert id to be made available as $session['__INSERT-ID__'][uniqueParamString];
-    '__INSERT-ID__' => '<keyName>:id',
+    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
+    '__INSERT-IDs__' => '<keyName>:id',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
      * query,
@@ -630,7 +630,7 @@ return [
                 ],
                 ...
                 ...
-                'column' => ['__INSERT-ID__', '<keyName>:id'], // previous Insert ids
+                'column' => ['__INSERT-IDs__', '<keyName>:id'], // previous Insert ids
                 'column' => ['sqlResults', '<return:keys>'],
             ],
             '__WHERE__' => [
@@ -798,7 +798,7 @@ var payload = [
 - **$session\['payload'\]** Request data.
 > For **GET** method, the **$\_GET** is the payload.
 
-* **$session\['__INSERT-ID__'\]** Insert ids Data as per configuration.
+* **$session\['__INSERT-IDs__'\]** Insert ids Data as per configuration.
 >For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertId contains the insert ids of the executed INSERT queries.
 
 * **$session\['sqlResults'\]** Hierarchy data.
@@ -822,15 +822,15 @@ return [
         'name' => ['payload', 'name'],
         'parent_id' => ['custom', 0],
     ],
-    '__INSERT-ID__' => 'category:id',
+    '__INSERT-IDs__' => 'category:id',
     '__SUB-QUERY__' => [
         'module1' => [
             '__QUERY__' => "INSERT INTO `category` SET SET",
             '__SET__' => [
                 'name' => ['payload', 'subname'],
-                'parent_id' => ['__INSERT-ID__', 'category:id'],
+                'parent_id' => ['__INSERT-IDs__', 'category:id'],
             ],
-            '__INSERT-ID__' => 'sub:id',
+            '__INSERT-IDs__' => 'sub:id',
         ]
     ],
     'useHierarchy' => true
