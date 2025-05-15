@@ -6,8 +6,8 @@ function getCurlConfig($method, $route, $header = [], $json = '')
 
     $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}";
     $curlConfig[CURLOPT_HTTPHEADER] = $header;
-    $curlConfig[CURLOPT_HTTPHEADER][] = "X-API-Version: v1.0.0";
-    $curlConfig[CURLOPT_HTTPHEADER][] = "Cache-Control: no-cache";
+    $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
+    $curlConfig[CURLOPT_HTTPHEADER][] = 'Cache-Control: no-cache';
 
     switch ($method) {
         case 'GET':
@@ -48,7 +48,7 @@ function trigger($method, $route, $header = [], $json = '')
     curl_close($curl);
 
     if ($err) {
-        echo "cURL Error #:" . $err;
+        echo 'cURL Error #:' . $err;
     } else {
         $response = json_decode($responseJSON, true);
         if (
@@ -72,8 +72,26 @@ $response = [];
 $header = [];
 echo '<pre>';
 
-$response[] = trigger('POST', '/registration', $header, $jsonPayload = '{"firstname":"12","lastname":"12","email":"12@test.com","username":"test","password":"shames11"}');
-$response[] = trigger('POST', '/registration-with-address', $header, $jsonPayload = '{"firstname":"12","lastname":"12","email":"12@test.com","username":"test","password":"shames11", "address" : {"address":"a203"}}');
+$payload = [
+    'firstname' => 'Ramesh',
+    'lastname' => 'Jangid',
+    'email' => 'ramesh@test.com',
+    'username' => 'test',
+    'password' => 'shames11'
+];
+$response[] = trigger('POST', '/registration', $header, $jsonPayload = json_encode($payload));
+
+$payload = [
+    'firstname' => 'Ramesh',
+    'lastname' => 'Jangid',
+    'email' => 'ramesh@test.com',
+    'username' => 'test',
+    'password' => 'shames11',
+    'address' => [
+        'address' => 'A-203'
+    ]
+];
+$response[] = trigger('POST', '/registration-with-address', $header, $jsonPayload = json_encode($payload));
 
 $response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');
 // $response[] = trigger('GET', '/category/search', $header, $jsonPayload = '');
