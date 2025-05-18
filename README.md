@@ -95,12 +95,13 @@ client_users='master_users'         ;Table in client database containing user de
 
 - **App** Basic application folder
 - **Config** Basic configuration folder
-- **Crons** Contains classes for cron API's
-- **Custom** Contains classes for custom API's
 - **Dropbox** Folder for uploaded files.
+- **Hooks** Hooks.
 - **public\_html** Applicatipn doc root folder
-- **ThirdParty** Contains classes for third-party API's
-- **Upload** Contains classes for upload file API's
+- **Supplement/Crons** Contains classes for cron API's
+- **Supplement/Custom** Contains classes for custom API's
+- **Supplement/ThirdParty** Contains classes for third-party API's
+- **Supplement/Upload** Contains classes for upload file API's
 - **Validation** Contains validation classes.
 
 ## Routes Folder
