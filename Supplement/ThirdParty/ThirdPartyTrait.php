@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\ThirdParty;
+namespace Microservices\Supplement\ThirdParty;
 
 /**
  * @category   Third Party Trait

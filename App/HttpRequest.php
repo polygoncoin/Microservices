@@ -6,6 +6,7 @@ use Microservices\App\CacheKey;
 use Microservices\App\Gateway;
 use Microservices\App\HttpStatus;
 use Microservices\App\JsonDecode;
+use Microservices\App\Middleware\Auth;
 use Microservices\App\Servers\Cache\AbstractCache;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
@@ -68,18 +69,19 @@ class HttpRequest extends Gateway
     public $userId = null;
 
     /**
-     * Caching Object
-     *
      * @var null|AbstractCache
      */
     public $cache = null;
 
     /**
-     * Sql Data caching Object
-     *
      * @var null|AbstractCache
      */
     public $sqlCache = null;
+
+    /**
+     * @var null|Auth
+     */
+    public $auth = null;
 
     /**
      * Database Object
@@ -178,6 +180,9 @@ class HttpRequest extends Gateway
         } else {
             $this->open = true;
         }
+        if (!$this->open) {
+            $this->auth = new Auth($this);
+        }
     }
 
     /**
@@ -215,66 +220,6 @@ class HttpRequest extends Gateway
         $this->clientId = $this->clientDetails['client_id'];
 
         $this->session['clientDetails'] = &$this->clientDetails;
-    }
-
-    /**
-     * Load User Details
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function loadUserDetails()
-    {
-        if (!is_null($this->userDetails)) return;
-
-        $this->loadCache();
-
-        if (
-            !$this->open
-            && !is_null($this->HTTP_AUTHORIZATION)
-            && preg_match('/Bearer\s(\S+)/', $this->HTTP_AUTHORIZATION, $matches)
-        ) {
-            $this->session['token'] = $matches[1];
-            $this->tokenKey = CacheKey::Token($this->session['token']);
-            if (!$this->cache->cacheExists($this->tokenKey)) {
-                throw new \Exception('Token expired', HttpStatus::$BadRequest);
-            }
-            $this->userDetails = json_decode($this->cache->getCache($this->tokenKey), true);
-            $this->groupId = $this->userDetails['group_id'];
-            $this->userId = $this->userDetails['user_id'];
-
-            $this->session['userDetails'] = &$this->userDetails;
-        }
-        if (empty($this->session['token'])) {
-            throw new \Exception('Token missing', HttpStatus::$BadRequest);
-        }
-    }
-
-    /**
-     * Load User Details
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function loadGroupDetails()
-    {
-        if (!is_null($this->groupDetails)) return;
-
-        $this->loadCache();
-
-        // Load groupDetails
-        if (empty($this->userDetails['user_id']) || empty($this->userDetails['group_id'])) {
-            throw new \Exception('Invalid session', HttpStatus::$InternalServerError);
-        }
-
-        $this->groupKey = CacheKey::Group($this->userDetails['group_id']);
-        if (!$this->cache->cacheExists($this->groupKey)) {
-            throw new \Exception("Cache '{$this->groupKey}' missing", HttpStatus::$InternalServerError);
-        }
-
-        $this->groupDetails = json_decode($this->cache->getCache($this->groupKey), true);
-
-        $this->session['groupDetails'] = &$this->groupDetails;
     }
 
     /**

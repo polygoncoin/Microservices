@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\Upload;
+namespace Microservices\Supplement\Upload;
 
 /**
  * @category   Upload Trait

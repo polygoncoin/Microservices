@@ -1,12 +1,12 @@
 <?php
-namespace Microservices\ThirdParty;
+namespace Microservices\Supplement\ThirdParty;
 
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
-use Microservices\ThirdParty\ThirdPartyInterface;
-use Microservices\ThirdParty\ThirdPartyTrait;
+use Microservices\Supplement\ThirdParty\ThirdPartyInterface;
+use Microservices\Supplement\ThirdParty\ThirdPartyTrait;
 
 
 /**

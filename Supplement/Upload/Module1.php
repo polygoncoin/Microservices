@@ -1,11 +1,11 @@
 <?php
-namespace Microservices\Upload;
+namespace Microservices\Supplement\Upload;
 
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\Upload\UploadInterface;
-use Microservices\Upload\UploadTrait;
+use Microservices\Supplement\Upload\UploadInterface;
+use Microservices\Supplement\Upload\UploadTrait;
 
 /**
  * Class is used for file uploads
