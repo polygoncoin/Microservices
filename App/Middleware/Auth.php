@@ -6,9 +6,7 @@ use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
 
 /*
- * Class handling details of HTTP request
- *
- * This class is built to process and handle HTTP request
+ * Class handling details for Auth middleware
  *
  * @category   Auth Middleware
  * @package    Microservices
