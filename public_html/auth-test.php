@@ -192,7 +192,7 @@ if ($res) {
     $response[] = trigger('GET', '/routes', $header, $jsonPayload = '');
 
     $response[] = trigger('DELETE', '/category/truncate', $header, $jsonPayload = '');
-    
+
     $payload = [
         [
             'name' => 'ramesh0',
@@ -246,7 +246,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger('POST', '/registration-with-address', $header, $jsonPayload = json_encode($payload));
-    
+
     $response[] = trigger('GET', '/category', $header, $jsonPayload = '');
     // $response[] = trigger('GET', '/category/search', $header, $jsonPayload = '');
     $response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');

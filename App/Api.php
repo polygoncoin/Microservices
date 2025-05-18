@@ -54,7 +54,7 @@ class Api
 
         if (!$this->c->httpRequest->open) {
             $this->c->httpRequest->auth->loadUserDetails();
-            $this->c->httpRequest->auth->loadGroupDetails();    
+            $this->c->httpRequest->auth->loadGroupDetails();
         }
 
         $this->c->httpRequest->parseRoute();

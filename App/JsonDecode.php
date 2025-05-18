@@ -518,7 +518,7 @@ class JsonDecodeEngine
         } else {
             $offset = $this->_s_ !== null ? $this->_s_ : 0;
             $length = $this->_e_ - $offset + 1;
-            return stream_get_contents($this->jsonFileHandle, $length, $offset);    
+            return stream_get_contents($this->jsonFileHandle, $length, $offset);
         }
     }
 

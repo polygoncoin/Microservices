@@ -452,7 +452,6 @@ trait AppTrait
      */
     private function rateLimitRoute(&$sqlConfig)
     {
-        // 
         if (
             isset($sqlConfig['rateLimiterMaxRequests'])
             && isset($sqlConfig['rateLimiterSecondsWindow'])
@@ -468,7 +467,7 @@ trait AppTrait
             // $hash = hash_hmac('sha256', json_encode($payloadSignature), getenv('IdempotentSecret'));
             $hash = json_encode($payloadSignature);
             $hashKey = md5($hash);
-            
+
             // @throws \Exception
             $rateLimitChecked = $this->c->httpRequest->checkRateLimit(
                 $RateLimiterRoutePrefix = getenv('RateLimiterRoutePrefix'),
