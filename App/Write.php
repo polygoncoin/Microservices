@@ -122,17 +122,17 @@ class Write
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
         // Check for payloadType
-        if (isset($writeSqlConfig['payloadType'])) {
-            if ($this->c->httpRequest->session['payloadType'] !== $writeSqlConfig['payloadType']) {
+        if (isset($writeSqlConfig['__PayloadType__'])) {
+            if ($this->c->httpRequest->session['__PayloadType__'] !== $writeSqlConfig['__PayloadType__']) {
                 throw new \Exception('Invalid paylaod type', HttpStatus::$BadRequest);
             }
             // Check for maximum number of objects supported when payloadType is Array
             if (
-                $writeSqlConfig['payloadType'] === 'Array'
-                && isset($writeSqlConfig['maxPayloadObjects'])
-                && ($this->c->httpRequest->jsonDecode->count() > $writeSqlConfig['maxPayloadObjects'])
+                $writeSqlConfig['__PayloadType__'] === 'Array'
+                && isset($writeSqlConfig['__MaxPayloadObjects__'])
+                && ($this->c->httpRequest->jsonDecode->count() > $writeSqlConfig['__MaxPayloadObjects__'])
             ) {
-                throw new \Exception('Maximum supported paylaod count is ' . $writeSqlConfig['maxPayloadObjects'], HttpStatus::$BadRequest);
+                throw new \Exception('Maximum supported paylaod count is ' . $writeSqlConfig['__MaxPayloadObjects__'], HttpStatus::$BadRequest);
             }
         }
 

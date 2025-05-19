@@ -241,34 +241,67 @@ return [
     '__QUERY__' => "SQL",
     // Details of data to be set by Query to perform task
     '__SET__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return 'value';
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['__INSERT-IDs__', '<key>'],        // previous Insert ids
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // Where clause of the Query to perform task
     '__WHERE__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return 'value';
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
@@ -291,33 +324,56 @@ return [
                 ...
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                'column' => [
-                    'uriParams',
-                    '<key>',
-                    DatabaseDataTypes::$PrimaryKey,             // key data type
-                    Constants::$REQUIRED                        // Represents required field
+                [ // Fatch value of last insert ids
+                    'column' => 'user_id',
+                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
+                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
                 ...
                 ...
-                'column' => ['sqlParams', '<return:keys>'], // Available for both DQL & DML operations
-                'column' => ['sqlResults', '<return:keys>'], // Available for DQL operations
-                'column' => ['sqlPayload', '<return:keys>'], // Available for both DQL & DML operations
-                'column' => ['__INSERT-IDs__', '<keyName>:id'], // SQL Insert id
+                [ // Fatch values of params from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlParams',                     // sqlParams
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                [ // Fatch values of sql results from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                [ // Fatch values of sql payload for previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
             ],
             '__WHERE__' => [
                 ...
                 ...
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                'column' => [
-                    'uriParams',
-                    '<key>',
-                    DatabaseDataTypes::$PrimaryKey,             // key data type
-                    Constants::$REQUIRED                        // Represents required field
+                [ // Fatch value of last insert ids
+                    'column' => 'user_id',
+                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
+                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
                 ...
                 ...
-                'column' => ['sqlResults', '<return:keys>'], // Only for GET
+                [ // Fatch values of params from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlParams',                     // sqlParams
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                [ // Fatch values of sql results from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                [ // Fatch values of sql payload for previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
             ],
         ],
         '<sub-key>' => [
@@ -356,8 +412,8 @@ return [
     ],
     // Limiting payload mode
     // Allow single "Object" / "Array" of Object
-    'payloadType' => 'Object', // Object / Array (if not set will accept both)
-    'maxPayloadObjects' => 2 // Max number of allowed Objects in Array type Payload
+    '__PayloadType__' => 'Object', // Object / Array (if not set will accept both)
+    '__MaxPayloadObjects__' => 2 // Max number of allowed Objects in Array type Payload
     // Limiting duplicates
     'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
 ];
@@ -375,22 +431,44 @@ return [
     '__QUERY__' => "SELECT columns FROM TableName WHERE column1 = :column1 AND column2 = :column2",
     // Where clause of the Query to perform task
     '__WHERE__' => [
-        'column' => ['uriParams', '<key>'],             // Fatch value from parsed route
-        'column' => ['payload', '<key>'],               // Fetch value from Payload ($_GET)
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return $session['payload']['password'];
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
+        ],
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     '__MODE__' => 'singleRowFormat / multipleRowFormat',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
-     * query,
+     * __QUERY__,
      * __WHERE__,
-     * mode,
-     * subQuery
+     * __MODE__,
+     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
@@ -428,34 +506,56 @@ return [
     '__QUERY__' => "SELECT columns FROM TableName WHERE column1 = :column1 AND column2 = :column2",
     // Where clause of the Query to perform task
     '__WHERE__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload ($_GET)
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return $session['payload']['password'];
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     '__MODE__' => 'singleRowFormat/multipleRowFormat',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
-     * query,
+     * __QUERY__,
      * __WHERE__,
-     * mode,
-     * subQuery
+     * __MODE__,
+     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
             ... // Recursive
             '__WHERE__' => [
                 ...
-                'column' => ['sqlResults', '<return:keys>'],
+                [ // Fatch values of sql results from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                ...
             ]
         ],
         '<sub-key>' => [
@@ -491,45 +591,78 @@ return [
     '__QUERY__' => "UPDATE `TableName` SET column1 = :column1, column2 = :column2 WHERE column3 = :column3 AND column4 = :column4",
     // Details of data to be set by Query to perform task
     '__SET__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return 'value';
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['__INSERT-IDs__', '<key>'],        // previous Insert ids
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // Where clause of the Query to perform task
     '__WHERE__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return password_hash($session['payload']['password'], PASSWORD_DEFAULT);
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // To be used only for INSERT queries
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
-     * query,
+     * __QUERY__,
      * __SET__,
      * __WHERE__,
-     * insertId,
-     * subQuery
+     * __INSERT-IDs__,
+     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
@@ -537,8 +670,12 @@ return [
             ...
             '__SET__' => [
                 ...
+                [ // Fatch value of last insert ids
+                    'column' => 'user_id',
+                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
+                    'fetchFromValue' => '<keyName>:id'              // previous Insert ids
+                ],
                 ...
-                'column' => ['__INSERT-IDs__', '<keyName>:id'], // previous Insert ids
             ],
         ],
         '<sub-key>' => [
@@ -575,45 +712,78 @@ return [
     '__QUERY__' => "UPDATE `TableName` SET column1 = :column1, column2 = :column2 WHERE column3 = :column3 AND column4 = :column4",
     // Details of data to be set by Query to perform task
     '__SET__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload
-        'column' => ['function', function($session) {       // Perform a function and use returned value
-            return 'value';
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['__INSERT-IDs__', '<key>'],        // previous Insert ids
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // Where clause of the Query to perform task
     '__WHERE__' => [
-        'column' => [ // Fatch value from parsed route
-            'uriParams',                                // uriParams / payload
-            '<key-1>',                                  // key
-            DatabaseDataTypes::$PrimaryKey,             // key data type
-            Constants::$REQUIRED                        // Represents required field
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
         ],
-        'column' => ['payload', '<key>'],               // Fetch value from Payload
-        'column' => ['function', function($session) {   // Perform a function and use returned value
-            return password_hash($session['payload']['password'], PASSWORD_DEFAULT);
-        }],
-        'column' => ['userDetails', '<key>'],           // From user session
-        'column' => ['custom', '<static-value>'],       // Static values
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from userDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
     ],
     // To be used only for INSERT queries
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
-     * query,
+     * __QUERY__,
      * __SET__,
      * __WHERE__,
-     * insertId,
-     * subQuery
+     * __INSERT-IDs__,
+     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
@@ -623,29 +793,46 @@ return [
                 ...
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                'column' => [
-                    'uriParams',
-                    '<key>',
-                    DatabaseDataTypes::$PrimaryKey,             // key data type
-                    Constants::$REQUIRED                        // Represents required field
+                [ // Fatch value of last insert ids
+                    'column' => 'user_id',
+                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
+                    'fetchFromValue' => '<keyName>:id'              // previous Insert ids
                 ],
                 ...
                 ...
-                'column' => ['__INSERT-IDs__', '<keyName>:id'], // previous Insert ids
-                'column' => ['sqlResults', '<return:keys>'],
+                [ // Fatch values of params from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlParams',                     // sqlParams
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                [ // Fatch values of sql payload for previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
             ],
             '__WHERE__' => [
                 ...
                 ...
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                'column' => [
-                    'uriParams',
-                    '<key>',
-                    DatabaseDataTypes::$PrimaryKey,             // key data type
-                    Constants::$REQUIRED                        // Represents required field
+                [ // Fatch value of last insert ids
+                    'column' => 'user_id',
+                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
+                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
-                'column' => ['sqlResults', '<return:keys>'],
+                ...
+                ...
+                [ // Fatch values of params from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlParams',                     // sqlParams
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
+                [ // Fatch values of sql payload for previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
+                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                ],
             ],
         ],
         '<sub-key>' => [
@@ -831,7 +1018,7 @@ return [
                 ['column' => 'name', 'fetchFrom' => 'payload', 'fetchFromValue' => 'subname'],
                 ['column' => 'parent_id', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'category:id'],
             ],
-            '__INSERT-IDs__' => 'sub:id',
+            '__INSERT-IDs__' => 'sub-category:id',
         ]
     ],
     'useHierarchy' => true
