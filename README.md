@@ -811,7 +811,7 @@ var payload = [
 >In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
 
 ```PHP
-'parent_id' => ['sqlResults', 'return:id'],
+['column' => 'parent_id', 'fetchFrom' => 'sqlResults', 'fetchFromValue' => 'return:id'],
 ```
 
 - Config/Queries/ClientDB/POST/Category.php .Here a request can handle the hierarchy for write operations.
@@ -820,16 +820,16 @@ var payload = [
 return [
     '__QUERY__' => "INSERT INTO `category` SET SET",
     '__SET__' => [
-        'name' => ['payload', 'name'],
-        'parent_id' => ['custom', 0],
+        ['column' => 'name', 'fetchFrom' => 'payload', 'fetchFromValue' => 'name'],
+        ['column' => 'parent_id', 'fetchFrom' => 'custom', 'fetchFromValue' => 0],
     ],
     '__INSERT-IDs__' => 'category:id',
     '__SUB-QUERY__' => [
         'module1' => [
             '__QUERY__' => "INSERT INTO `category` SET SET",
             '__SET__' => [
-                'name' => ['payload', 'subname'],
-                'parent_id' => ['__INSERT-IDs__', 'category:id'],
+                ['column' => 'name', 'fetchFrom' => 'payload', 'fetchFromValue' => 'subname'],
+                ['column' => 'parent_id', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'category:id'],
             ],
             '__INSERT-IDs__' => 'sub:id',
         ]
