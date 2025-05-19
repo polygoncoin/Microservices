@@ -313,8 +313,8 @@ return [
      * __SET__,
      * __WHERE__,
      * __MODE__,
+     * __SUB-QUERY__,
      * __INSERT-IDs__,
-     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
@@ -661,8 +661,8 @@ return [
      * __QUERY__,
      * __SET__,
      * __WHERE__,
+     * __SUB-QUERY__,
      * __INSERT-IDs__,
-     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
@@ -782,8 +782,8 @@ return [
      * __QUERY__,
      * __SET__,
      * __WHERE__,
+     * __SUB-QUERY__,
      * __INSERT-IDs__,
-     * __SUB-QUERY__
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
