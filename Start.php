@@ -85,10 +85,13 @@ try {
     }
 } catch (\Exception $e) {
     if ($e->getCode() !== 400) {
+        list($usec, $sec) = explode(' ', microtime());
+        $dateTime = date('Y-m-d H:i:s', $sec) . substr($usec, 1);
+
         // Log request details
         $logDetails = [
             'LogType' => 'ERROR',
-            'DateTime' => date('Y-m-d H:i:s'),
+            'DateTime' => $dateTime,
             'HttpDetails' => [
                 "HttpCode" => $e->getCode(),
                 "HttpMessage" => $e->getMessage()

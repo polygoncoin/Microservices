@@ -899,6 +899,7 @@ RateLimiterIPPrefix='IPRL:'     ; IP based Rate Limitng (IPRL) key prefix used i
 RateLimiterClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
 RateLimiterGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
 RateLimiterUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
+RateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
 ```
 
 #### Rate Limit at group level (global database)
