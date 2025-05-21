@@ -126,7 +126,7 @@ client_users='master_users'         ;Table in client database containing user de
 return [
     'tableName' => [
         'parts' => [
-            '__file__' => 'SQL file location'
+            '__FILE__' => 'SQL file location'
         ]
     ]
 ];
@@ -137,7 +137,7 @@ return [
 return [
     'tableName' => [
         '{id:int}' => [
-            '__file__' => 'SQL file location'
+            '__FILE__' => 'SQL file location'
         ]
     ]
 ];
@@ -148,10 +148,10 @@ return [
 return [
     'tableName' => [
         '{id:int}' => [
-            '__file__' => 'SQL file location for integer data type'
+            '__FILE__' => 'SQL file location for integer data type'
         ],
         '{id:string}' => [
-            '__file__' => 'SQL file location for string data type'
+            '__FILE__' => 'SQL file location for string data type'
         ]
     ]
 ];
@@ -162,7 +162,7 @@ return [
 return [
     '{tableName:string|admin,group,client,routes}' => [
         '{id:int}' => [
-            '__file__' => 'SQL file location'
+            '__FILE__' => 'SQL file location'
         ]
     ]
 ];
@@ -173,7 +173,7 @@ return [
 return [
     '{tableName:string}' => [
         '{id:int|!0}' => [
-            '__file__' => 'SQL file location'
+            '__FILE__' => 'SQL file location'
         ]
     ]
 ];

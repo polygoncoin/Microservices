@@ -70,7 +70,7 @@ class Write
         $session = &$this->c->httpRequest->session;
 
         // Load Queries
-        $writeSqlConfig = include $this->c->httpRequest->__file__;
+        $writeSqlConfig = include $this->c->httpRequest->__FILE__;
 
         // Set Server mode to execute query on - Read / Write Server
         $this->c->httpRequest->db = $this->c->httpRequest->setDbConnection('Master');

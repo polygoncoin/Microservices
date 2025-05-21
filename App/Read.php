@@ -79,7 +79,7 @@ class Read
         $session = &$this->c->httpRequest->session;
 
         // Load Queries
-        $readSqlConfig = include $this->c->httpRequest->__file__;
+        $readSqlConfig = include $this->c->httpRequest->__FILE__;
 
         // Rate Limiting request if configured for Route Queries.
         $this->rateLimitRoute($readSqlConfig);

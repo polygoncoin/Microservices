@@ -50,7 +50,7 @@ class HttpRequest extends Gateway
      *
      * @var string
      */
-    public $__file__ = null;
+    public $__FILE__ = null;
 
     /**
      * Session detials of a request

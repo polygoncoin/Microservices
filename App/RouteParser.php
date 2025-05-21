@@ -60,8 +60,8 @@ class RouteParser extends DbFunctions
                 continue;
             } else {
                 if (
-                    (isset($routes['__file__']) && count($routes) > 1)
-                    || (!isset($routes['__file__']) && count($routes) > 0)
+                    (isset($routes['__FILE__']) && count($routes) > 1)
+                    || (!isset($routes['__FILE__']) && count($routes) > 0)
                 ) {
                     $foundIntRoute = false;
                     $foundIntParamName = false;
@@ -169,10 +169,10 @@ class RouteParser extends DbFunctions
     private function validateConfigFile(&$routes)
     {
         // Set route code file
-        if (!(isset($routes['__file__']) && ($routes['__file__'] === false || file_exists($routes['__file__'])))) {
+        if (!(isset($routes['__FILE__']) && ($routes['__FILE__'] === false || file_exists($routes['__FILE__'])))) {
             throw new \Exception('Missing route configuration file for ' . $this->REQUEST_METHOD . ' method', HttpStatus::$InternalServerError);
         }
 
-        $this->__file__ = $routes['__file__'];
+        $this->__FILE__ = $routes['__FILE__'];
     }
 }
