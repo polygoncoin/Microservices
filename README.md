@@ -1,6 +1,6 @@
-# PHP Low code API generator
+# PHP low code API generator
 
-This is light & easy low code API generator. It can be used to create API's in very short time once you are done with your database.
+This is light & easy low code API generator uxing configuration arrays. It can be used to create API's in very short time once you are done with your database.
 
 ## Contents
 
