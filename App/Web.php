@@ -107,14 +107,34 @@ class Web
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
             eval('$route = "' . $triggerConfig['__ROUTE__'] . '";');
-            $payload = (isset($triggerConfig['__PAYLOAD__'])) ? $this->getTriggerPayload($triggerConfig['__PAYLOAD__']) : [];
-            $response = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+            
+            if (isset($triggerConfig['__PAYLOAD__'])) {
+                list($payload, $errors) = $this->getTriggerPayload($triggerConfig['__PAYLOAD__']);
+            } else {
+                $payload = $errors = [];
+            }
+            
+            if (empty($errors)) {
+                $response = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+            } else {
+                $response = $errors;
+            }
         } else {
             foreach ($triggerConfig as &$config) {
                 $method = $config['__METHOD__'];
                 eval('$route = "' . $config['__ROUTE__'] . '";');
-                $payload = (isset($config['__PAYLOAD__'])) ? $this->getTriggerPayload($config['__PAYLOAD__']) : [];
-                $response[] = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+
+                if (isset($config['__PAYLOAD__'])) {
+                    list($payload, $errors) = $this->getTriggerPayload($config['__PAYLOAD__']);
+                } else {
+                    $payload = $errors = [];
+                }
+                
+                if (empty($errors)) {
+                    $response[] = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+                } else {
+                    $response[] = $errors;
+                }
             }
         }
 
@@ -167,6 +187,6 @@ class Web
             }
         }
 
-        return $sqlParams;
+        return [$sqlParams, $errors];
     }
 }
