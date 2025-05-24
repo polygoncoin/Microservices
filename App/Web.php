@@ -33,9 +33,9 @@ class Web
         $this->c = &$common;
     }
 
-    private function getCurlConfig($homeURL, $method, $route, $header = [], $json = '')
+    private function getCurlConfig($homeURL, $method, $route, $queryString, $header = [], $json = '')
     {
-        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}";
+        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}&{$queryString}";
         $curlConfig[CURLOPT_HTTPHEADER] = $header;
 
         switch ($method) {
@@ -67,10 +67,10 @@ class Web
         return $curlConfig;
     }
 
-    private function trigger($homeURL, $method, $route, $header = [], $json = '')
+    private function trigger($homeURL, $method, $route, $queryString, $header = [], $json = '')
     {
         $curl = curl_init();
-        $curlConfig = $this->getCurlConfig($homeURL, $method, $route, $header, $json);
+        $curlConfig = $this->getCurlConfig($homeURL, $method, $route, $queryString, $header, $json);
         curl_setopt_array($curl, $curlConfig);
         $responseJSON = curl_exec($curl);
         $err = curl_error($curl);
@@ -106,32 +106,66 @@ class Web
 
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
-            eval('$route = "' . $triggerConfig['__ROUTE__'] . '";');
+            list($routeElementsArr, $errors) = $this->getTriggerPayload($triggerConfig['__ROUTE__']);
             
-            if (isset($triggerConfig['__PAYLOAD__'])) {
-                list($payload, $errors) = $this->getTriggerPayload($triggerConfig['__PAYLOAD__']);
+            if (empty($errors)) {
+                $route = '/' . implode('/',$routeElementsArr);
             } else {
-                $payload = $errors = [];
+                $response[] = $errors;
+            }
+
+            if (isset($triggerConfig['__QUERY-STRING__'])) {
+                list($queryStringArr, $errors) = $this->getTriggerPayload($triggerConfig['__QUERY-STRING__']);
+
+                if (empty($errors)) {
+                    $queryString = http_build_query($queryStringArr);
+                } else {
+                    $response[] = $errors;
+                }
+            }
+
+            if (isset($triggerConfig['__PAYLOAD__'])) {
+                list($payloadArr, $errors) = $this->getTriggerPayload($triggerConfig['__PAYLOAD__']);
+            } else {
+                $payloadArr = $errors = [];
             }
             
             if (empty($errors)) {
-                $response = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+                $response = $this->trigger($homeURL, $method, $route, $queryString, $header, $jsonPayload = json_encode($payloadArr));
             } else {
                 $response = $errors;
             }
         } else {
             foreach ($triggerConfig as &$config) {
                 $method = $config['__METHOD__'];
-                eval('$route = "' . $config['__ROUTE__'] . '";');
+                list($routeElementsArr, $errors) = $this->getTriggerPayload($config['__ROUTE__']);
+
+                if (empty($errors)) {
+                    $route = '/' . implode('/',$routeElementsArr);
+                } else {
+                    $response[] = $errors;
+                    continue;
+                }
+
+                if (isset($config['__QUERY-STRING__'])) {
+                    list($queryStringArr, $errors) = $this->getTriggerPayload($config['__QUERY-STRING__']);
+
+                    if (empty($errors)) {
+                        $queryString = http_build_query($queryStringArr);
+                    } else {
+                        $response[] = $errors;
+                        continue;
+                    }
+                }
 
                 if (isset($config['__PAYLOAD__'])) {
-                    list($payload, $errors) = $this->getTriggerPayload($config['__PAYLOAD__']);
+                    list($payloadArr, $errors) = $this->getTriggerPayload($config['__PAYLOAD__']);
                 } else {
-                    $payload = $errors = [];
+                    $payloadArr = $errors = [];
                 }
                 
                 if (empty($errors)) {
-                    $response[] = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+                    $response[] = $this->trigger($homeURL, $method, $route, $queryString, $header, $jsonPayload = json_encode($payloadArr));
                 } else {
                     $response[] = $errors;
                 }
@@ -155,13 +189,22 @@ class Web
 
         // Collect param values as per config respectively
         foreach ($payloadConfig as &$config) {
-            $var = $config['column'];
+            if (isset($config['column'])) {
+                $var = $config['column'];
+            } else {
+                $var = null;
+            }
+            
             $dataPayloadType = $config['fetchFrom'];
             $dataPayloadTypeKey = $config['fetchFromValue'];
             if ($dataPayloadType === 'function') {
                 $function = $dataPayloadTypeKey;
                 $value = $function($this->c->httpRequest->session);
-                $sqlParams[$var] = $value;
+                if (is_null($var)) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
                 continue;
             } else if (in_array($dataPayloadType, ['sqlResults', 'sqlParams', 'sqlPayload'])) {
                 $dataPayloadTypeKeys = explode(':',$dataPayloadTypeKey);
@@ -172,14 +215,27 @@ class Web
                     }
                     $value = $value[$key];
                 }
-                $sqlParams[$var] = $value;
+                if (is_null($var)) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
                 continue;
             } else if ($dataPayloadType === 'custom') {
                 $value = $dataPayloadTypeKey;
-                $sqlParams[$var] = $value;
+                if (is_null($var)) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
                 continue;
             } else if (isset($this->c->httpRequest->session[$dataPayloadType][$dataPayloadTypeKey])) {
-                $sqlParams[$var] = $this->c->httpRequest->session[$dataPayloadType][$dataPayloadTypeKey];
+                $value = $this->c->httpRequest->session[$dataPayloadType][$dataPayloadTypeKey];
+                if (is_null($var)) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
                 continue;
             } else {
                 $errors[] = "Invalid configuration of '{$dataPayloadType}' for '{$dataPayloadTypeKey}'";
