@@ -77,22 +77,9 @@ class Web
         curl_close($curl);
 
         if ($err) {
-            echo 'cURL Error #:' . $err;
+            $response = ['cURL Error #:' . $err];
         } else {
             $response = json_decode($responseJSON, true);
-            if (
-                !empty($response)
-                && (
-                    (isset($response['Status']) && $response['Status'] == 200)
-                    || (isset($response['Results']['Status']) && in_array($response['Results']['Status'], [200, 201]))
-                )
-            ) {
-                $response['echo'] = 'Sucess:' . $method . $route . PHP_EOL . PHP_EOL;
-            } else {
-                $response = false;
-                $response['echo'] = 'Failed:' . $method . $route . PHP_EOL;
-                $response['O/P'] = 'O/P:' . $responseJSON . PHP_EOL . PHP_EOL;
-            }
         }
 
         return $response;

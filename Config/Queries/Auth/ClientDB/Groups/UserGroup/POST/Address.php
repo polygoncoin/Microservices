@@ -15,7 +15,7 @@ return [
             '__ROUTE__' => '/address/{$session[\'__INSERT-IDs__\'][\'address:id\']}',
             '__METHOD__' => 'PATCH',
             '__PAYLOAD__' => [
-                ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'ramesh-address']
+                ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'updated-address']
             ]
         ]
     ],
