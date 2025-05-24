@@ -380,7 +380,18 @@ return [
             ...
         ],
         ...
-    ]
+    ],
+    '__TRIGGERS__' => [// Array of triggers
+        [
+            '__ROUTE__' => '/address/{$session[\'__INSERT-IDs__\'][\'address:id\']}',
+            '__METHOD__' => 'PATCH',
+            '__PAYLOAD__' => [
+                ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'ramesh-address']
+            ]
+        ],
+        ...
+    ],
+    'isTransaction' => false,
     // Array of validation functions to be performed
     '__VALIDATE__' => [
         [

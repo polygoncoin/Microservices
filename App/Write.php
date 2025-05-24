@@ -7,6 +7,7 @@ use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
+use Microservices\App\Web;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
@@ -40,6 +41,20 @@ class Write
     private $c = null;
 
     /**
+     * Trigger Web API Object
+     *
+     * @var null|Web
+     */
+    private $web = null;
+
+    /**
+     * Operate DML As Transactions
+     *
+     * @var null|Web
+     */
+    private $operateAsTransaction = null;
+
+    /**
      * Constructor
      *
      * @param Common $common
@@ -71,6 +86,15 @@ class Write
 
         // Load Queries
         $writeSqlConfig = include $this->c->httpRequest->__FILE__;
+
+        // Rate Limiting request if configured for Route Queries.
+        $this->rateLimitRoute($writeSqlConfig);
+
+        // Lag Response
+        $this->lagResponse($writeSqlConfig);
+
+        // Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
+        $this->operateAsTransaction = isset($writeSqlConfig['isTransaction']) ? $writeSqlConfig['isTransaction'] : false;
 
         // Set Server mode to execute query on - Read / Write Server
         $this->c->httpRequest->db = $this->c->httpRequest->setDbConnection('Master');
@@ -166,19 +190,15 @@ class Write
             // Check for Idempotent Window
             list($idempotentWindow, $hashKey, $hashJson) = $this->checkIdempotent($writeSqlConfig, $_payloadIndexes);
 
-            // Rate Limiting request if configured for Route Queries.
-            $this->rateLimitRoute($writeSqlConfig);
-
-            // Lag Response
-            $this->lagResponse($writeSqlConfig);
-
             // Begin DML operation
             if (is_null($hashJson)) {
-                $this->db->begin();
+                if ($this->operateAsTransaction) {$this->db->begin();}
                 $response = [];
                 $this->writeDB($writeSqlConfig, $_payloadIndexes, $_configKeys, $useHierarchy, $response, $this->c->httpRequest->session['requiredArr']);
-                if ($this->db->beganTransaction === true) { // Success
-                    $this->db->commit();
+                if (!$this->operateAsTransaction || ($this->operateAsTransaction && $this->db->beganTransaction === true)) { // Success
+                    if ($this->operateAsTransaction) {
+                        $this->db->commit();
+                    }
                     $arr = [
                         'Status' => HttpStatus::$Created,
                         'Payload' => $this->c->httpRequest->jsonDecode->getCompleteArray(implode(':', $_payloadIndexes)),
@@ -240,7 +260,7 @@ class Write
         $counter = 0;
         for ($i=0; $i < $i_count; $i++) {
             $_payloadIndexes = $payloadIndexes;
-            if (!$this->db->beganTransaction) {
+            if ($this->operateAsTransaction && !$this->db->beganTransaction) {
                 $response['Error'] = 'Transaction rolled back';
                 return;
             }
@@ -281,7 +301,7 @@ class Write
 
             // Execute Query
             $this->db->execDbQuery($sql, $sqlParams);
-            if (!$this->db->beganTransaction) {
+            if ($this->operateAsTransaction && !$this->db->beganTransaction) {
                 $response['Error'] = 'Something went wrong';
                 return;
             }
@@ -305,6 +325,18 @@ class Write
                 }
             }
             $this->db->closeCursor();
+
+            // triggers
+            if (isset($writeSqlConfig['__TRIGGERS__'])) {
+                if (is_null($this->web)) {
+                    $this->web = new Web($this->c);
+                }
+                if ($isAssoc) {
+                    $response['__TRIGGERS__'] = $this->web->triggerConfig($writeSqlConfig['__TRIGGERS__']);
+                } else {
+                    $response[$counter]['__TRIGGERS__'] = $this->web->triggerConfig($writeSqlConfig['__TRIGGERS__']);
+                }
+            }
 
             // subQuery for payload
             if (isset($writeSqlConfig['__SUB-QUERY__'])) {

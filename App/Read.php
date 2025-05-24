@@ -8,6 +8,7 @@ use Microservices\App\Env;
 use Microservices\App\JsonEncode;
 use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
+use Microservices\App\Web;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
@@ -39,6 +40,13 @@ class Read
      * @var null|Common
      */
     private $c = null;
+
+    /**
+     * Trigger Web API Object
+     *
+     * @var null|Web
+     */
+    private $web = null;
 
     /**
      * Json Encode Object
@@ -215,6 +223,14 @@ class Read
                     }
                     break;
             }
+        }
+
+        // triggers
+        if (isset($readSqlConfig['__TRIGGERS__'])) {
+            if (is_null($this->web)) {
+                $this->web = new Web($this->c);
+            }
+            $this->web->triggerConfig($readSqlConfig['__TRIGGERS__']);
         }
     }
 

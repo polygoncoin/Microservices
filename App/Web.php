@@ -1,0 +1,185 @@
+<?php
+namespace Microservices\App;
+
+use Microservices\App\Common;
+use Microservices\App\HttpStatus;
+
+/**
+ * Web class
+ *
+ * @category   Web class
+ * @package    Microservices
+ * @author     Ramesh Narayan Jangid
+ * @copyright  Ramesh Narayan Jangid
+ * @version    Release: @1.0.0@
+ * @since      Class available since Release 1.0.0
+ */
+class Web
+{
+    /**
+     * Microservices Collection of Common Objects
+     *
+     * @var null|Common
+     */
+    private $c = null;
+
+    /**
+     * Constructor
+     *
+     * @param Common $common
+     */
+    public function __construct(&$common)
+    {
+        $this->c = &$common;
+    }
+
+    private function getCurlConfig($homeURL, $method, $route, $header = [], $json = '')
+    {
+        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}";
+        $curlConfig[CURLOPT_HTTPHEADER] = $header;
+
+        switch ($method) {
+            case 'GET':
+                break;
+            case 'POST':
+                $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
+                $curlConfig[CURLOPT_POST] = true;
+                $curlConfig[CURLOPT_POSTFIELDS] = $json;
+                break;
+            case 'PUT':
+                $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
+                $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PUT';
+                $curlConfig[CURLOPT_POSTFIELDS] = $json;
+                break;
+            case 'PATCH':
+                $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
+                $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PATCH';
+                $curlConfig[CURLOPT_POSTFIELDS] = $json;
+                break;
+            case 'DELETE':
+                $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
+                $curlConfig[CURLOPT_CUSTOMREQUEST] = 'DELETE';
+                $curlConfig[CURLOPT_POSTFIELDS] = $json;
+                break;
+        }
+        $curlConfig[CURLOPT_RETURNTRANSFER] = true;
+
+        return $curlConfig;
+    }
+
+    private function trigger($homeURL, $method, $route, $header = [], $json = '')
+    {
+        $curl = curl_init();
+        $curlConfig = $this->getCurlConfig($homeURL, $method, $route, $header, $json);
+        curl_setopt_array($curl, $curlConfig);
+        $responseJSON = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+            echo 'cURL Error #:' . $err;
+        } else {
+            $response = json_decode($responseJSON, true);
+            if (
+                !empty($response)
+                && (
+                    (isset($response['Status']) && $response['Status'] == 200)
+                    || (isset($response['Results']['Status']) && in_array($response['Results']['Status'], [200, 201]))
+                )
+            ) {
+                $response['echo'] = 'Sucess:' . $method . $route . PHP_EOL . PHP_EOL;
+            } else {
+                $response = false;
+                $response['echo'] = 'Failed:' . $method . $route . PHP_EOL;
+                $response['O/P'] = 'O/P:' . $responseJSON . PHP_EOL . PHP_EOL;
+            }
+        }
+
+        return $response;
+    }
+
+    public function triggerConfig($triggerConfig)
+    {
+        if (!isset($this->c->httpRequest->session['token'])) {
+            throw new \Exception('Missing token', HttpStatus::$InternalServerError);
+        }
+
+        $assoc = (!isset($triggerConfig[0])) ? true : false;
+
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+        $homeURL = $protocol . '://' . $this->c->httpRequestDetails['server']['host'] . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+        $header = [];
+        $header[] = 'X-API-Version: v1.0.0';
+        $header[] = 'Cache-Control: no-cache';
+        $header[] = 'Authorization: Bearer ' . $this->c->httpRequest->session['token'];
+
+        $response = [];
+        $session = &$this->c->httpRequest->session;
+
+        if ($assoc) {
+            $method = $triggerConfig['__METHOD__'];
+            eval('$route = "' . $triggerConfig['__ROUTE__'] . '";');
+            $payload = (isset($triggerConfig['__PAYLOAD__'])) ? $this->getTriggerPayload($triggerConfig['__PAYLOAD__']) : [];
+            $response = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+        } else {
+            foreach ($triggerConfig as &$config) {
+                $method = $config['__METHOD__'];
+                eval('$route = "' . $config['__ROUTE__'] . '";');
+                $payload = (isset($config['__PAYLOAD__'])) ? $this->getTriggerPayload($config['__PAYLOAD__']) : [];
+                $response[] = $this->trigger($homeURL, $method, $route, $header, $jsonPayload = json_encode($payload));
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Generates Params for statement to execute
+     *
+     * @param array $payloadConfig API Payload configuration
+     * @return array
+     * @throws \Exception
+     */
+    private function getTriggerPayload(&$payloadConfig)
+    {
+        $sqlParams = [];
+        $errors = [];
+
+        // Collect param values as per config respectively
+        foreach ($payloadConfig as &$config) {
+            $var = $config['column'];
+            $dataPayloadType = $config['fetchFrom'];
+            $dataPayloadTypeKey = $config['fetchFromValue'];
+            if ($dataPayloadType === 'function') {
+                $function = $dataPayloadTypeKey;
+                $value = $function($this->c->httpRequest->session);
+                $sqlParams[$var] = $value;
+                continue;
+            } else if (in_array($dataPayloadType, ['sqlResults', 'sqlParams', 'sqlPayload'])) {
+                $dataPayloadTypeKeys = explode(':',$dataPayloadTypeKey);
+                $value = $this->c->httpRequest->session[$dataPayloadType];
+                foreach($dataPayloadTypeKeys as $key) {
+                    if (!isset($value[$key])) {
+                        throw new \Exception('Invalid hierarchy:  Missing hierarchy data', HttpStatus::$InternalServerError);
+                    }
+                    $value = $value[$key];
+                }
+                $sqlParams[$var] = $value;
+                continue;
+            } else if ($dataPayloadType === 'custom') {
+                $value = $dataPayloadTypeKey;
+                $sqlParams[$var] = $value;
+                continue;
+            } else if (isset($this->c->httpRequest->session[$dataPayloadType][$dataPayloadTypeKey])) {
+                $sqlParams[$var] = $this->c->httpRequest->session[$dataPayloadType][$dataPayloadTypeKey];
+                continue;
+            } else {
+                $errors[] = "Invalid configuration of '{$dataPayloadType}' for '{$dataPayloadTypeKey}'";
+                continue;
+            }
+        }
+
+        return $sqlParams;
+    }
+}
