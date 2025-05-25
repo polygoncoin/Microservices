@@ -5,6 +5,7 @@ use Microservices\App\AppTrait;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
 use Microservices\App\Web;
@@ -46,6 +47,13 @@ class Write
      * @var null|Web
      */
     private $web = null;
+
+    /**
+     * Hook Object
+     *
+     * @var null|Hook
+     */
+    private $hook = null;
 
     /**
      * Operate DML As Transactions
@@ -291,6 +299,14 @@ class Write
                 continue;
             }
 
+            // Execute Pre Sql Hooks
+            if (isset($writeSqlConfig['__PRE-SQL-HOOKS__'])) {
+                if (is_null($this->hook)) {
+                    $this->hook = new Hook($this->c);
+                }
+                $this->hook->triggerHook($writeSqlConfig['__PRE-SQL-HOOKS__']);
+            }
+
             // Get Sql and Params
             list($sql, $sqlParams, $errors) = $this->getSqlAndParams($writeSqlConfig);
             if (!empty($errors)) {
@@ -336,6 +352,14 @@ class Write
                 } else {
                     $response[$counter]['__TRIGGERS__'] = $this->web->triggerConfig($writeSqlConfig['__TRIGGERS__']);
                 }
+            }
+
+            // Execute Post Sql Hooks
+            if (isset($writeSqlConfig['__POST-SQL-HOOKS__'])) {
+                if (is_null($this->hook)) {
+                    $this->hook = new Hook($this->c);
+                }
+                $this->hook->triggerHook($writeSqlConfig['__POST-SQL-HOOKS__']);
             }
 
             // subQuery for payload

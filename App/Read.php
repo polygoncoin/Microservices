@@ -6,6 +6,7 @@ use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\JsonEncode;
+use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
 use Microservices\App\Validator;
 use Microservices\App\Web;
@@ -47,6 +48,13 @@ class Read
      * @var null|Web
      */
     private $web = null;
+
+    /**
+     * Hook Object
+     *
+     * @var null|Hook
+     */
+    private $hook = null;
 
     /**
      * Json Encode Object
@@ -193,6 +201,15 @@ class Read
     private function readDB(&$readSqlConfig, $isFirstCall, &$configKeys, $useResultSet)
     {
         $isAssoc = $this->isAssoc($readSqlConfig);
+
+        // Execute Pre Sql Hooks
+        if (isset($readSqlConfig['__PRE-SQL-HOOKS__'])) {
+            if (is_null($this->hook)) {
+                $this->hook = new Hook($this->c);
+            }
+            $this->hook->triggerHook($readSqlConfig['__PRE-SQL-HOOKS__']);
+        }
+
         if ($isAssoc) {
             switch ($readSqlConfig['__MODE__']) {
                 // Query will return single row
@@ -231,6 +248,14 @@ class Read
                 $this->web = new Web($this->c);
             }
             $this->web->triggerConfig($readSqlConfig['__TRIGGERS__']);
+        }
+
+        // Execute Post Sql Hooks
+        if (isset($readSqlConfig['__POST-SQL-HOOKS__'])) {
+            if (is_null($this->hook)) {
+                $this->hook = new Hook($this->c);
+            }
+            $this->hook->triggerHook($readSqlConfig['__POST-SQL-HOOKS__']);
         }
     }
 

@@ -316,6 +316,8 @@ return [
      * __SUB-QUERY__,
      * __INSERT-IDs__,
      * __TRIGGERS__,
+     * __PRE-SQL-HOOKS__,
+     * __POST-SQL-HOOKS__,
      * __VALIDATE__,
      * __PayloadType__,
      * __MaxPayloadObjects__,
@@ -402,6 +404,14 @@ return [
         ]
         ...
     ],
+    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example1',
+        ...
+    ],
+    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example2',
+        ...
+    ],
     'isTransaction' => false,
     // Array of validation functions to be performed
     '__VALIDATE__' => [
@@ -485,17 +495,6 @@ return [
     ],
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     '__MODE__' => 'singleRowFormat / multipleRowFormat',
-    // subQuery is a keyword to perform recursive operations
-    /** Supported configuration for recursive operations are :
-     * __QUERY__,
-     * __WHERE__,
-     * __MODE__,
-     * __SUB-QUERY__,
-     * __TRIGGERS__,
-     * __VALIDATE__,
-     * __PayloadType__,
-     * __MaxPayloadObjects__,
-     */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
             ...
@@ -504,7 +503,15 @@ return [
             ...
         ],
         ...
-    ]
+    ],
+    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example1',
+        ...
+    ],
+    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example2',
+        ...
+    ],
     // Array of validation functions to be performed
     '__VALIDATE__' => [
         [
@@ -564,17 +571,6 @@ return [
     ],
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     '__MODE__' => 'singleRowFormat/multipleRowFormat',
-    // subQuery is a keyword to perform recursive operations
-    /** Supported configuration for recursive operations are :
-     * __QUERY__,
-     * __WHERE__,
-     * __MODE__,
-     * __SUB-QUERY__,
-     * __TRIGGERS__,
-     * __VALIDATE__,
-     * __PayloadType__,
-     * __MaxPayloadObjects__,
-     */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
             ... // Recursive
@@ -592,7 +588,15 @@ return [
             ...
         ],
         ...
-    ]
+    ],
+    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example1',
+        ...
+    ],
+    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example2',
+        ...
+    ],
     // Array of validation functions to be performed
     '__VALIDATE__' => [
         [
@@ -686,18 +690,6 @@ return [
     // To be used only for INSERT queries
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
-    // subQuery is a keyword to perform recursive operations
-    /** Supported configuration for recursive operations are :
-     * __QUERY__,
-     * __SET__,
-     * __WHERE__,
-     * __SUB-QUERY__,
-     * __INSERT-IDs__,
-     * __TRIGGERS__,
-     * __VALIDATE__,
-     * __PayloadType__,
-     * __MaxPayloadObjects__,
-     */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
             ...
@@ -716,7 +708,15 @@ return [
             ...
         ],
         ...
-    ]
+    ],
+    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example1',
+        ...
+    ],
+    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example2',
+        ...
+    ],
     // Array of validation functions to be performed
     '__VALIDATE__' => [
         [
@@ -811,18 +811,6 @@ return [
     // To be used only for INSERT queries
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
-    // subQuery is a keyword to perform recursive operations
-    /** Supported configuration for recursive operations are :
-     * __QUERY__,
-     * __SET__,
-     * __WHERE__,
-     * __SUB-QUERY__,
-     * __INSERT-IDs__,
-     * __TRIGGERS__,
-     * __VALIDATE__,
-     * __PayloadType__,
-     * __MaxPayloadObjects__,
-     */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
             ... // Recursive
@@ -877,7 +865,15 @@ return [
             ...
         ],
         ...
-    ]
+    ],
+    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example1',
+        ...
+    ],
+    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example2',
+        ...
+    ],
     // Array of validation functions to be performed
     '__VALIDATE__' => [
         [
