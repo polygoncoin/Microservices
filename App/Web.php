@@ -111,29 +111,31 @@ class Web
             if (empty($errors)) {
                 $route = '/' . implode('/',$routeElementsArr);
             } else {
-                $response[] = $errors;
+                $response = $errors;
             }
 
-            if (isset($triggerConfig['__QUERY-STRING__'])) {
+            if (empty($response) && isset($triggerConfig['__QUERY-STRING__'])) {
                 list($queryStringArr, $errors) = $this->getTriggerPayload($triggerConfig['__QUERY-STRING__']);
 
                 if (empty($errors)) {
                     $queryString = http_build_query($queryStringArr);
                 } else {
-                    $response[] = $errors;
+                    $response = $errors;
                 }
             }
 
-            if (isset($triggerConfig['__PAYLOAD__'])) {
-                list($payloadArr, $errors) = $this->getTriggerPayload($triggerConfig['__PAYLOAD__']);
-            } else {
-                $payloadArr = $errors = [];
-            }
-            
-            if (empty($errors)) {
-                $response = $this->trigger($homeURL, $method, $route, $queryString, $header, $jsonPayload = json_encode($payloadArr));
-            } else {
-                $response = $errors;
+            if (empty($response)) {
+                if (isset($triggerConfig['__PAYLOAD__'])) {
+                    list($payloadArr, $errors) = $this->getTriggerPayload($triggerConfig['__PAYLOAD__']);
+                } else {
+                    $payloadArr = $errors = [];
+                }
+                
+                if (empty($errors)) {
+                    $response = $this->trigger($homeURL, $method, $route, $queryString, $header, $jsonPayload = json_encode($payloadArr));
+                } else {
+                    $response = $errors;
+                }
             }
         } else {
             foreach ($triggerConfig as &$config) {

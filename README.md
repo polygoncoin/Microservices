@@ -315,6 +315,10 @@ return [
      * __MODE__,
      * __SUB-QUERY__,
      * __INSERT-IDs__,
+     * __TRIGGERS__,
+     * __VALIDATE__,
+     * __PayloadType__,
+     * __MaxPayloadObjects__,
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
@@ -486,7 +490,11 @@ return [
      * __QUERY__,
      * __WHERE__,
      * __MODE__,
-     * __SUB-QUERY__
+     * __SUB-QUERY__,
+     * __TRIGGERS__,
+     * __VALIDATE__,
+     * __PayloadType__,
+     * __MaxPayloadObjects__,
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
@@ -561,7 +569,11 @@ return [
      * __QUERY__,
      * __WHERE__,
      * __MODE__,
-     * __SUB-QUERY__
+     * __SUB-QUERY__,
+     * __TRIGGERS__,
+     * __VALIDATE__,
+     * __PayloadType__,
+     * __MaxPayloadObjects__,
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [
@@ -681,6 +693,10 @@ return [
      * __WHERE__,
      * __SUB-QUERY__,
      * __INSERT-IDs__,
+     * __TRIGGERS__,
+     * __VALIDATE__,
+     * __PayloadType__,
+     * __MaxPayloadObjects__,
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [// Recursive
@@ -802,6 +818,10 @@ return [
      * __WHERE__,
      * __SUB-QUERY__,
      * __INSERT-IDs__,
+     * __TRIGGERS__,
+     * __VALIDATE__,
+     * __PayloadType__,
+     * __MaxPayloadObjects__,
      */
     '__SUB-QUERY__' => [
         '<sub-key>' => [

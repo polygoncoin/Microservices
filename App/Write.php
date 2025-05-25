@@ -147,7 +147,7 @@ class Write
     {
         // Check for payloadType
         if (isset($writeSqlConfig['__PayloadType__'])) {
-            if ($this->c->httpRequest->session['__PayloadType__'] !== $writeSqlConfig['__PayloadType__']) {
+            if ($this->c->httpRequest->session['payloadType'] !== $writeSqlConfig['__PayloadType__']) {
                 throw new \Exception('Invalid paylaod type', HttpStatus::$BadRequest);
             }
             // Check for maximum number of objects supported when payloadType is Array
