@@ -25,11 +25,11 @@ return [
                 ['column' => 'address', 'fetchFrom' => 'payload', 'fetchFromValue' => 'address']
             ],
             '__INSERT-IDs__' => 'address:id',
-            '__PayloadType__' => 'Array',
-            '__MaxPayloadObjects__' => 2
+            '__PAYLOAD-TYPE__' => 'Array',
+            '__MAX-PAYLOAD-OBJECTS__' => 2
         ]
     ],
     'useHierarchy' => true,
-    '__PayloadType__' => 'Object',
+    '__PAYLOAD-TYPE__' => 'Object',
     'idempotentWindow' => 10
 ];

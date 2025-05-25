@@ -17,6 +17,6 @@ return [
         ['column' => 'group_id', 'fetchFrom' => 'custom', 'fetchFromValue' => '1'],
     ],
     '__INSERT-IDs__' => 'registration:id',
-    '__PayloadType__' => 'Object',
+    '__PAYLOAD-TYPE__' => 'Object',
     'idempotentWindow' => 10
 ];

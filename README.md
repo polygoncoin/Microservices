@@ -236,9 +236,13 @@ static public $CustomINT = [
 //return represents root for sqlResults
 return [
     // Required to implementing pagination
-    'countQuery' => "Count SQL",
+    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__", // OR
+    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND  id = :id",
+
     // Query to perform task
-    '__QUERY__' => "SQL",
+    '__QUERY__' => "SELECT columns FROM TableName WHERE __WHERE__", // OR
+    '__QUERY__' => "SELECT columns FROM TableName WHERE column1 = :column1 AND id = :id",
+
     // Details of data to be set by Query to perform task
     '__SET__' => [
         [ // Fatch value from parsed route
@@ -271,6 +275,7 @@ return [
             'fetchFromValue' => '<static-value>'            // Static values
         ]
     ],
+
     // Where clause of the Query to perform task
     '__WHERE__' => [
         [ // Fatch value from parsed route
@@ -303,10 +308,13 @@ return [
             'fetchFromValue' => '<static-value>'            // Static values
         ]
     ],
+
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
+
     // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
     '__MODE__' => 'singleRowFormat/multipleRowFormat',
+
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
      * __QUERY__,
@@ -319,15 +327,16 @@ return [
      * __PRE-SQL-HOOKS__,
      * __POST-SQL-HOOKS__,
      * __VALIDATE__,
-     * __PayloadType__,
-     * __MaxPayloadObjects__,
+     * __PAYLOAD-TYPE__,
+     * __MAX-PAYLOAD-OBJECTS__,
      */
+
     '__SUB-QUERY__' => [
         '<sub-key>' => [
-            ... // Recursive
-            '__SET__' => [
-                ...
-                ...
+            // Query to perform task
+            '__QUERY__' => "SQL",
+            '__SET__/__WHERE__' => [
+                [...]
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
                 [ // Fatch value of last insert ids
@@ -335,58 +344,37 @@ return [
                     'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
                     'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
-                ...
-                ...
                 [ // Fatch values of params from previous queries
                     'column' => 'user_id',
-                    'fetchFrom' => 'sqlParams',                     // sqlParams
+                    'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
                     'fetchFromValue' => '<return:keys-seperated-by-colon>'
                 ],
                 [ // Fatch values of sql results from previous queries
                     'column' => 'user_id',
-                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations
+                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
                     'fetchFromValue' => '<return:keys-seperated-by-colon>'
                 ],
                 [ // Fatch values of sql payload for previous queries
                     'column' => 'user_id',
-                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
+                    'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
                     'fetchFromValue' => '<return:keys-seperated-by-colon>'
                 ],
             ],
-            '__WHERE__' => [
-                ...
-                ...
-                // Database DataTypes settings required when useHierarchy is true
-                // to validate each data set before procedding forward
-                [ // Fatch value of last insert ids
-                    'column' => 'user_id',
-                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
-                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
-                ],
-                ...
-                ...
-                [ // Fatch values of params from previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlParams',                     // sqlParams
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-                [ // Fatch values of sql results from previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-                [ // Fatch values of sql payload for previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-            ],
+            '__TRIGGERS__' => [...],
+            '__PRE-SQL-HOOKS__' => [...],
+            '__POST-SQL-HOOKS__' => [...],
+            '__VALIDATE__' => [...],
+            '__PAYLOAD-TYPE__' => 'Object/Array',
+            '__MAX-PAYLOAD-OBJECTS__' => 'Integer',
+            '__SUB-QUERY__' => [...],
         ],
         '<sub-key>' => [
-            ...
+            [...]
         ],
-        ...
+        [...]
     ],
+
+    // Trigger set of routes
     '__TRIGGERS__' => [// Array of triggers
         [
             '__ROUTE__' => [
@@ -402,17 +390,19 @@ return [
                 ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'updated-address']
             ]
         ]
-        ...
+        [...]
     ],
+    
+    // Hooks
     '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
         'Hook_Example1',
-        ...
+        '...'
     ],
     '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
         'Hook_Example2',
-        ...
+        '...'
     ],
-    'isTransaction' => false,
+
     // Array of validation functions to be performed
     '__VALIDATE__' => [
         [
@@ -421,477 +411,40 @@ return [
                 'group_id' => ['payload', 'group_id']
             ],
             'errorMessage' => 'Invalid Group Id'
-        ]
+        ],
+        [...]
     ],
+
+    '__PAYLOAD-TYPE__' => 'Object', // Allow single "Object" / "Array" of Object (if not set will accept both)
+    '__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
+
+    'isTransaction' => false, // Flag to follow transaction Begin, Commit and rollback on error
+
     'useHierarchy' => true, // For DML
     'useResultSet' => true, // For DQL
+
     // Rate Limiting Route access
     'rateLimiterMaxRequests' => 1, // Allowed number of request in defined seconds window
     'rateLimiterSecondsWindow' => 3600, // Seconds Window for restricting number of request
+    
     // Control response time as per number of hits by configuring lags in seconds as below
     'responseLag' => [
         // No of Requests => Seconds Lag
         0 => 0,
         2 => 10,
     ],
+    
     // Any among below can be used for DML operations (These are Optional keys)
     // Caching
     'cacheKey' => '<unique-key-for-redis-to-cache-results>(e.g, key:1)', // Use cacheKey to cache and reuse results (Optional)
     'affectedCacheKeys' => [ // List down keys which effects configured cacheKey on DML operation
         '<unique-key-for-redis-to-drop-cached-results>(key:1)',
         '<unique-key-for-redis-to-drop-cached-results>(category etc.)',
-        ...
+        '...'
     ],
-    // Limiting payload mode
-    // Allow single "Object" / "Array" of Object
-    '__PayloadType__' => 'Object', // Object / Array (if not set will accept both)
-    '__MaxPayloadObjects__' => 2 // Max number of allowed Objects in Array type Payload
+    
     // Limiting duplicates
     'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
-];
-```
-
-#### GET method configuration without useResultSet
-
-```PHP
-return [
-    // Required to implementing pagination
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__", // OR
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND column2 = :column2",
-    // Query to perform task
-    '__QUERY__' => "SELECT columns FROM TableName WHERE __WHERE__", // OR
-    '__QUERY__' => "SELECT columns FROM TableName WHERE column1 = :column1 AND column2 = :column2",
-    // Where clause of the Query to perform task
-    '__WHERE__' => [
-        [ // Fatch value from parsed route
-            'column' => 'id',
-            'fetchFrom' => 'uriParams',                     // uriParams / payload
-            'fetchFromValue' => 'id',                       // key (id)
-            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
-            'required' => Constants::$REQUIRED              // Represents required field
-        ],
-        [ // Fatch value from payload
-            'column' => 'id',
-            'fetchFrom' => 'payload',                       // payload
-            'fetchFromValue' => '<key>',                    // key (<key>)
-        ],
-        [ // Fatch value from function
-            'column' => 'password',
-            'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
-                return 'value';
-            }
-        ],
-        [ // Fatch value from userDetails session
-            'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
-        ],
-        [ // Fatch value of last insert ids
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',                        // custom
-            'fetchFromValue' => '<static-value>'            // Static values
-        ]
-    ],
-    // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
-    '__MODE__' => 'singleRowFormat / multipleRowFormat',
-    '__SUB-QUERY__' => [
-        '<sub-key>' => [// Recursive
-            ...
-        ],
-        '<sub-key>' => [
-            ...
-        ],
-        ...
-    ],
-    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example1',
-        ...
-    ],
-    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example2',
-        ...
-    ],
-    // Array of validation functions to be performed
-    '__VALIDATE__' => [
-        [
-            'fn' => 'validateGroupId',
-            'fnArgs' => [
-                'group_id' => ['payload', 'group_id']
-            ],
-            'errorMessage' => 'Invalid Group Id'
-        ]
-    ],
-    'cacheKey' => 'key:1',
-];
-```
-
-#### GET method configuration with useResultSet
-
-```PHP
-//return represents root for sqlResults
-return [
-    // Required to implementing pagination
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__",
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND column2 = :column2",
-    // Query to perform task
-    '__QUERY__' => "SELECT columns FROM TableName WHERE __WHERE__",
-    '__QUERY__' => "SELECT columns FROM TableName WHERE column1 = :column1 AND column2 = :column2",
-    // Where clause of the Query to perform task
-    '__WHERE__' => [
-        [ // Fatch value from parsed route
-            'column' => 'id',
-            'fetchFrom' => 'uriParams',                     // uriParams / payload
-            'fetchFromValue' => 'id',                       // key (id)
-            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
-            'required' => Constants::$REQUIRED              // Represents required field
-        ],
-        [ // Fatch value from payload
-            'column' => 'id',
-            'fetchFrom' => 'payload',                       // payload
-            'fetchFromValue' => '<key>',                    // key (<key>)
-        ],
-        [ // Fatch value from function
-            'column' => 'password',
-            'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
-                return 'value';
-            }
-        ],
-        [ // Fatch value from userDetails session
-            'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
-        ],
-        [ // Fatch value of last insert ids
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',                        // custom
-            'fetchFromValue' => '<static-value>'            // Static values
-        ]
-    ],
-    // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
-    '__MODE__' => 'singleRowFormat/multipleRowFormat',
-    '__SUB-QUERY__' => [
-        '<sub-key>' => [
-            ... // Recursive
-            '__WHERE__' => [
-                ...
-                [ // Fatch values of sql results from previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-                ...
-            ]
-        ],
-        '<sub-key>' => [
-            ...
-        ],
-        ...
-    ],
-    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example1',
-        ...
-    ],
-    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example2',
-        ...
-    ],
-    // Array of validation functions to be performed
-    '__VALIDATE__' => [
-        [
-            'fn' => 'validateGroupId',
-            'fnArgs' => [
-                'group_id' => ['payload', 'group_id']
-            ],
-            'errorMessage' => 'Invalid Group Id'
-        ]
-    ],
-    // useResultSet true represent data from higher hierarchy to be preserved
-    // to be used used in sub queries
-    'useResultSet' => true,
-    'cacheKey' => 'key:2',
-];
-```
-
-#### POST/PUT/PATCH/DELETE method configuration without useHierarchy
-
-```PHP
-return [
-    // Query to perform task
-    '__QUERY__' => "INSERT INTO `TableName` SET __SET__",
-    '__QUERY__' => "INSERT INTO `TableName` SET column1 = :column1, column2 = :column2",
-    '__QUERY__' => "UPDATE `TableName` SET __SET__ WHERE __WHERE__",
-    '__QUERY__' => "UPDATE `TableName` SET column1 = :column1, column2 = :column2 WHERE column3 = :column3 AND column4 = :column4",
-    // Details of data to be set by Query to perform task
-    '__SET__' => [
-        [ // Fatch value from parsed route
-            'column' => 'id',
-            'fetchFrom' => 'uriParams',                     // uriParams / payload
-            'fetchFromValue' => 'id',                       // key (id)
-            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
-            'required' => Constants::$REQUIRED              // Represents required field
-        ],
-        [ // Fatch value from payload
-            'column' => 'id',
-            'fetchFrom' => 'payload',                       // payload
-            'fetchFromValue' => '<key>',                    // key (<key>)
-        ],
-        [ // Fatch value from function
-            'column' => 'password',
-            'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
-                return 'value';
-            }
-        ],
-        [ // Fatch value from userDetails session
-            'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
-        ],
-        [ // Fatch value of last insert ids
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',                        // custom
-            'fetchFromValue' => '<static-value>'            // Static values
-        ]
-    ],
-    // Where clause of the Query to perform task
-    '__WHERE__' => [
-        [ // Fatch value from parsed route
-            'column' => 'id',
-            'fetchFrom' => 'uriParams',                     // uriParams / payload
-            'fetchFromValue' => 'id',                       // key (id)
-            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
-            'required' => Constants::$REQUIRED              // Represents required field
-        ],
-        [ // Fatch value from payload
-            'column' => 'id',
-            'fetchFrom' => 'payload',                       // payload
-            'fetchFromValue' => '<key>',                    // key (<key>)
-        ],
-        [ // Fatch value from function
-            'column' => 'password',
-            'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
-                return 'value';
-            }
-        ],
-        [ // Fatch value from userDetails session
-            'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
-        ],
-        [ // Fatch value of last insert ids
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',                        // custom
-            'fetchFromValue' => '<static-value>'            // Static values
-        ]
-    ],
-    // To be used only for INSERT queries
-    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
-    '__INSERT-IDs__' => '<keyName>:id',
-    '__SUB-QUERY__' => [
-        '<sub-key>' => [// Recursive
-            ...
-            ...
-            '__SET__' => [
-                ...
-                [ // Fatch value of last insert ids
-                    'column' => 'user_id',
-                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
-                    'fetchFromValue' => '<keyName>:id'              // previous Insert ids
-                ],
-                ...
-            ],
-        ],
-        '<sub-key>' => [
-            ...
-        ],
-        ...
-    ],
-    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example1',
-        ...
-    ],
-    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example2',
-        ...
-    ],
-    // Array of validation functions to be performed
-    '__VALIDATE__' => [
-        [
-            'fn' => 'validateGroupId',
-            'fnArgs' => [
-                'group_id' => ['payload', 'group_id']
-            ],
-            'errorMessage' => 'Invalid Group Id'
-        ]
-    ],
-    'affectedCacheKeys' => [
-        'key:1',
-        'key:2'
-    ]
-];
-```
-
-#### POST/PUT/PATCH/DELETE method configuration with useHierarchy
-
-```PHP
-//return represents root for sqlResults
-return [
-    // Query to perform task
-    '__QUERY__' => "INSERT INTO `TableName` SET __SET__",
-    '__QUERY__' => "INSERT INTO `TableName` SET column1 = :column1, column2 = :column2",
-    '__QUERY__' => "UPDATE `TableName` SET __SET__ WHERE __WHERE__",
-    '__QUERY__' => "UPDATE `TableName` SET column1 = :column1, column2 = :column2 WHERE column3 = :column3 AND column4 = :column4",
-    // Details of data to be set by Query to perform task
-    '__SET__' => [
-        [ // Fatch value from parsed route
-            'column' => 'id',
-            'fetchFrom' => 'uriParams',                     // uriParams / payload
-            'fetchFromValue' => 'id',                       // key (id)
-            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
-            'required' => Constants::$REQUIRED              // Represents required field
-        ],
-        [ // Fatch value from payload
-            'column' => 'id',
-            'fetchFrom' => 'payload',                       // payload
-            'fetchFromValue' => '<key>',                    // key (<key>)
-        ],
-        [ // Fatch value from function
-            'column' => 'password',
-            'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
-                return 'value';
-            }
-        ],
-        [ // Fatch value from userDetails session
-            'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
-        ],
-        [ // Fatch value of last insert ids
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',                        // custom
-            'fetchFromValue' => '<static-value>'            // Static values
-        ]
-    ],
-    // Where clause of the Query to perform task
-    '__WHERE__' => [
-        [ // Fatch value from parsed route
-            'column' => 'id',
-            'fetchFrom' => 'uriParams',                     // uriParams / payload
-            'fetchFromValue' => 'id',                       // key (id)
-            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
-            'required' => Constants::$REQUIRED              // Represents required field
-        ],
-        [ // Fatch value from payload
-            'column' => 'id',
-            'fetchFrom' => 'payload',                       // payload
-            'fetchFromValue' => '<key>',                    // key (<key>)
-        ],
-        [ // Fatch value from function
-            'column' => 'password',
-            'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
-                return 'value';
-            }
-        ],
-        [ // Fatch value from userDetails session
-            'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
-        ],
-        [ // Fatch value of last insert ids
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',                        // custom
-            'fetchFromValue' => '<static-value>'            // Static values
-        ]
-    ],
-    // To be used only for INSERT queries
-    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
-    '__INSERT-IDs__' => '<keyName>:id',
-    '__SUB-QUERY__' => [
-        '<sub-key>' => [
-            ... // Recursive
-            '__SET__' => [
-                ...
-                ...
-                // Database DataTypes settings required when useHierarchy is true
-                // to validate each data set before procedding forward
-                [ // Fatch value of last insert ids
-                    'column' => 'user_id',
-                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
-                    'fetchFromValue' => '<keyName>:id'              // previous Insert ids
-                ],
-                ...
-                ...
-                [ // Fatch values of params from previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlParams',                     // sqlParams
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-                [ // Fatch values of sql payload for previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-            ],
-            '__WHERE__' => [
-                ...
-                ...
-                // Database DataTypes settings required when useHierarchy is true
-                // to validate each data set before procedding forward
-                [ // Fatch value of last insert ids
-                    'column' => 'user_id',
-                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
-                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
-                ],
-                ...
-                ...
-                [ // Fatch values of params from previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlParams',                     // sqlParams
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-                [ // Fatch values of sql payload for previous queries
-                    'column' => 'user_id',
-                    'fetchFrom' => 'sqlPayload',                    // sqlPayload
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
-                ],
-            ],
-        ],
-        '<sub-key>' => [
-            ...
-        ],
-        ...
-    ],
-    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example1',
-        ...
-    ],
-    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
-        'Hook_Example2',
-        ...
-    ],
-    // Array of validation functions to be performed
-    '__VALIDATE__' => [
-        [
-            'fn' => 'validateGroupId',
-            'fnArgs' => [
-                'group_id' => ['payload', 'group_id']
-            ],
-            'errorMessage' => 'Invalid Group Id'
-        ]
-    ],
-    // useHierarchy true represent data is in recursive format
-    // In other words it is not presented in one simple key/value pair array
-    // Instead the data is served as per the configured hierarchy with sub arrays
-    'useHierarchy' => true,
-    'affectedCacheKeys' => [
-        'key:1',
-        'key:2'
-    ]
 ];
 ```
 

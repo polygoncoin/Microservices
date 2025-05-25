@@ -154,17 +154,17 @@ class Write
     private function processWrite(&$writeSqlConfig, $useHierarchy)
     {
         // Check for payloadType
-        if (isset($writeSqlConfig['__PayloadType__'])) {
-            if ($this->c->httpRequest->session['payloadType'] !== $writeSqlConfig['__PayloadType__']) {
+        if (isset($writeSqlConfig['__PAYLOAD-TYPE__'])) {
+            if ($this->c->httpRequest->session['payloadType'] !== $writeSqlConfig['__PAYLOAD-TYPE__']) {
                 throw new \Exception('Invalid paylaod type', HttpStatus::$BadRequest);
             }
             // Check for maximum number of objects supported when payloadType is Array
             if (
-                $writeSqlConfig['__PayloadType__'] === 'Array'
-                && isset($writeSqlConfig['__MaxPayloadObjects__'])
-                && ($this->c->httpRequest->jsonDecode->count() > $writeSqlConfig['__MaxPayloadObjects__'])
+                $writeSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
+                && isset($writeSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
+                && ($this->c->httpRequest->jsonDecode->count() > $writeSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
             ) {
-                throw new \Exception('Maximum supported paylaod count is ' . $writeSqlConfig['__MaxPayloadObjects__'], HttpStatus::$BadRequest);
+                throw new \Exception('Maximum supported paylaod count is ' . $writeSqlConfig['__MAX-PAYLOAD-OBJECTS__'], HttpStatus::$BadRequest);
             }
         }
 
