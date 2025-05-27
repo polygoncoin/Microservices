@@ -53,6 +53,13 @@ class HttpRequest extends Gateway
     public $__FILE__ = null;
 
     /**
+     * Pre / Post hooks defined in respective Route file
+     *
+     * @var string
+     */
+    public $routeHook = null;
+
+    /**
      * Session detials of a request
      *
      * @var null|array

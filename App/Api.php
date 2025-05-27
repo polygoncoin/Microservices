@@ -4,6 +4,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\Hook;
 
 /**
  * Class to initialize api HTTP request
@@ -32,6 +33,13 @@ class Api
      * @var null|Common
      */
     private $c = null;
+
+    /**
+     * Hook Object
+     *
+     * @var null|Hook
+     */
+    private $hook = null;
 
     /**
      * Constructor
@@ -70,11 +78,16 @@ class Api
      */
     public function process()
     {
-        // Check & Process Upload
-        {
-            if ($this->processBeforePayload()) {
-                return true;
+        // Execute Pre Route Hooks
+        if (isset($this->c->httpRequest->routeHook['__PRE-ROUTE-HOOKS__'])) {
+            if (is_null($this->hook)) {
+                $this->hook = new Hook($this->c);
             }
+            $this->hook->triggerHook($this->c->httpRequest->routeHook['__PRE-ROUTE-HOOKS__']);
+        }
+
+        if ($this->processBeforePayload()) {
+            return true;
         }
 
         // Load Payloads
@@ -104,6 +117,14 @@ class Api
 
         // Check & Process Cron / ThirdParty calls
         $this->processAfterPayload();
+
+        // Execute Post Route Hooks
+        if (isset($this->c->httpRequest->routeHook['__POST-ROUTE-HOOKS__'])) {
+            if (is_null($this->hook)) {
+                $this->hook = new Hook($this->c);
+            }
+            $this->hook->triggerHook($this->c->httpRequest->routeHook['__POST-ROUTE-HOOKS__']);
+        }
 
         return true;
     }

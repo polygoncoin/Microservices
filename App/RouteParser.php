@@ -49,6 +49,10 @@ class RouteParser extends DbFunctions
         $configuredUri = [];
 
         foreach($this->routeElements as $key => $element) {
+            if (in_array($key, ['__PRE-ROUTE-HOOKS__', '__POST-ROUTE-HOOKS__'])) {
+                $this->routeHook[$key] = $element;
+                continue;
+            }
             $pos = false;
             if (isset($routes[$element])) {
                 $configuredUri[] = $element;
