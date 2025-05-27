@@ -124,8 +124,9 @@ These DB/Cache configurations can be set in below columns respectively for each 
 `m001_master_clients`.`slave_cache_database` varchar(255) NOT NULL,
 ```
 
-The Rate Limiting configurations can be set as below.
+### The Rate Limiting configurations can be set as below.
 
+#### Cache server configuration for Rate Limiting
 ```ini
 ; ---- Rate Limit Server Details (Redis)
 ;used to save Rate Limiting related details
@@ -133,21 +134,21 @@ RateLimiterHost='127.0.0.1'     ; Redis host dealing with Rate limit
 RateLimiterHostPort=6379        ; Redis host port
 ```
 
-IP based Rate Limiting
+#### IP based Rate Limiting
 ```ini
 RateLimiterIPMaxRequests=600    ; Max request allowed per IP
 RateLimiterIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
 RateLimiterIPPrefix='IPRL:'     ; Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)
 ```
 
-Client/Group/User based Rate Limiting
+#### Client/Group/User based Rate Limiting
 ```ini
 RateLimiterClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
 RateLimiterGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
 RateLimiterUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
 ```
 
-Configure these in tables below
+##### Configure these in tables below
 ```SQL
 # Client level
 `m001_master_clients`.`rateLimiterMaxRequests` int DEFAULT NULL,
@@ -162,12 +163,12 @@ Configure these in tables below
 `master_users`.`rateLimiterSecondsWindow` int DEFAULT NULL,
 ```
 
-Route based Rate Limiting
+#### Route based Rate Limiting
 ```ini
 RateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
 ```
 
-Configure these in SQL configuration as below
+##### Configure these in SQL configuration as below
 ```PHP
 return [
     [...]
