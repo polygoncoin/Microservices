@@ -77,12 +77,12 @@ defaultDbPassword='shames11'
 defaultDbDatabase='global'
 ```
 
-### Seperate database for client 1 on Default database server
+### Example of seperate database for client 1 on Default database server
 ```ini
 dbDatabaseClient001='client_001'
 ```
 
-### Dedicated database server for client 1
+### Example of a dedicated database server for client 1
 ```ini
 dbHostnameClient001='127.0.0.1'
 dbUsernameClient001='root'
