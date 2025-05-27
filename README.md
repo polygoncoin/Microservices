@@ -146,6 +146,8 @@ RateLimiterClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix use
 RateLimiterGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
 RateLimiterUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
 ```
+
+Configure these in tables below
 ```SQL
 # Client level
 `m001_master_clients`.`rateLimiterMaxRequests` int DEFAULT NULL,
@@ -165,6 +167,7 @@ Route based Rate Limiting
 RateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
 ```
 
+Configure these in SQL configuration as below
 ```PHP
 return [
     [...]
