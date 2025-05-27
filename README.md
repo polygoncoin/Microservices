@@ -125,6 +125,27 @@ These DB/Cache configurations can be set in below columns respectively for each 
 ```
 
 The Rate Limiting configurations can be set as below.
+
+```ini
+; ---- Rate Limit Server Details (Redis)
+;used to save Rate Limiting related details
+RateLimiterHost='127.0.0.1'     ; Redis host dealing with Rate limit
+RateLimiterHostPort=6379        ; Redis host port
+```
+
+IP based Rate Limiting
+```ini
+RateLimiterIPMaxRequests=600    ; Max request allowed per IP
+RateLimiterIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
+RateLimiterIPPrefix='IPRL:'     ; Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)
+```
+
+Client/Group/User based Rate Limiting
+```ini
+RateLimiterClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
+RateLimiterGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
+RateLimiterUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
+```
 ```SQL
 # Client level
 `m001_master_clients`.`rateLimiterMaxRequests` int DEFAULT NULL,
@@ -137,6 +158,20 @@ The Rate Limiting configurations can be set as below.
 # User level
 `master_users`.`rateLimiterMaxRequests` int DEFAULT NULL,
 `master_users`.`rateLimiterSecondsWindow` int DEFAULT NULL,
+```
+
+Route based Rate Limiting
+```ini
+RateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
+```
+
+```PHP
+return [
+    [...]
+    'rateLimiterMaxRequests' => 1, // Allowed number of requests
+    'rateLimiterSecondsWindow' => 3600, // Window in Seconds for allowed number of requests
+    [...]
+];
 ```
 
 ## Folders
