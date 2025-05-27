@@ -90,7 +90,7 @@ dbPasswordClient001='shames11'
 dbDatabaseClient001='client_001'
 ```
 
-### Additional table details for client database
+### Additional table details for database server
 ```ini
 clientMasterDbName='client_master'  ;contains all entities required for a new client.
 client_users='master_users'         ;Table in client database containing user details.
