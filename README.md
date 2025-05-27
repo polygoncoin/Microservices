@@ -67,7 +67,7 @@ groups='m002_master_groups'
 clients='m001_master_clients'
 ```
 
-### Default application database/server for clients
+### Default database shared by most of the clients
 ```ini
 defaultDbType='MySql'
 defaultDbHostname='127.0.0.1'
@@ -77,7 +77,12 @@ defaultDbPassword='shames11'
 defaultDbDatabase='global'
 ```
 
-### Dedicated application database/server for client 1
+### Seperate database for client 1 on Default database server
+```ini
+dbDatabaseClient001='client_001'
+```
+
+### Dedicated database server for client 1
 ```ini
 dbHostnameClient001='127.0.0.1'
 dbUsernameClient001='root'
@@ -85,10 +90,53 @@ dbPasswordClient001='shames11'
 dbDatabaseClient001='client_001'
 ```
 
-### Additional client database details
+### Additional table details for client database
 ```ini
 clientMasterDbName='client_master'  ;contains all entities required for a new client.
 client_users='master_users'         ;Table in client database containing user details.
+```
+
+These DB/Cache configurations can be set in below columns respectively for each client.
+```SQL
+`m001_master_clients`.`master_db_server_type` varchar(255) NOT NULL,
+`m001_master_clients`.`master_db_hostname` varchar(255) NOT NULL,
+`m001_master_clients`.`master_db_port` varchar(255) NOT NULL,
+`m001_master_clients`.`master_db_username` varchar(255) NOT NULL,
+`m001_master_clients`.`master_db_password` varchar(255) NOT NULL,
+`m001_master_clients`.`master_db_database` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_db_server_type` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_db_hostname` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_db_port` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_db_username` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_db_password` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_db_database` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_server_type` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_hostname` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_port` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_username` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_password` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_database` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_server_type` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_hostname` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_port` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_username` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_password` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_database` varchar(255) NOT NULL,
+```
+
+The Rate Limiting configurations can be set as below.
+```SQL
+# Client level
+`m001_master_clients`.`rateLimiterMaxRequests` int DEFAULT NULL,
+`m001_master_clients`.`rateLimiterSecondsWindow` int DEFAULT NULL,
+
+# Group level
+`m002_master_groups`.`rateLimiterMaxRequests` int DEFAULT NULL,
+`m002_master_groups`.`rateLimiterSecondsWindow` int DEFAULT NULL,
+
+# User level
+`master_users`.`rateLimiterMaxRequests` int DEFAULT NULL,
+`master_users`.`rateLimiterSecondsWindow` int DEFAULT NULL,
 ```
 
 ## Folders
