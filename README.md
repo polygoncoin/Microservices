@@ -265,6 +265,29 @@ return [
     ]
 ];
 ```
+
+> Hooks
+```PHP
+return [
+    '{tableName:string}' => [
+        '__FILE__' => 'SQL file location',
+        '__PRE-ROUTE-HOOKS__' => [// These will apply recursively
+            'Hook_1',
+            '...'
+        ],
+        '__POST-ROUTE-HOOKS__' => [// These will apply recursively
+            'Hook_1',
+            '...'
+        ]
+        '{id:int|!0}' => [
+            '__FILE__' => 'SQL file location',
+            '__PRE-ROUTE-HOOKS__' => [], // For noi hooks
+            '__POST-ROUTE-HOOKS__' => [] // For noi hooks
+        ]
+    ]
+];
+```
+
 > This '{id:int|!0}' means id is integer but can't be zero.
 
 ## Queries Folder
