@@ -395,7 +395,7 @@ class Read
                 $i++;
             }
             if ($singleColumn) {
-                $this->dataEncode->write($row[key($row)]);
+                $this->dataEncode->encode($row[key($row)]);
             } else if (isset($readSqlConfig['__SUB-QUERY__'])) {
                 $this->dataEncode->startObject();
                 foreach($row as $key => $value) {

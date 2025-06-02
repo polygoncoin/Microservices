@@ -132,17 +132,6 @@ class DataEncode extends AbstractDataEncode
     }
 
     /**
-     * Write to temporary stream
-     *
-     * @param string|array $data Representation Data
-     * @return void
-     */
-    public function write($data)
-    {
-        $this->dataEncoder->write($data);
-    }
-
-    /**
      * Encodes both simple and associative array to json
      *
      * @param string|array $data Representation Data

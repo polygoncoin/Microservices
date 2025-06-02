@@ -76,7 +76,7 @@ class JsonEncode extends AbstractDataEncode
      * @param string $data Representation Data
      * @return void
      */
-    public function write($data)
+    private function write($data)
     {
         fwrite($this->tempStream, $data);
     }

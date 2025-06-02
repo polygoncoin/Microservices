@@ -66,14 +66,6 @@ abstract class AbstractDataEncode
     abstract public function endObject();
 
     /**
-     * Write to temporary stream
-     *
-     * @param string|array $data Representation Data
-     * @return void
-     */
-    abstract public function write($data);
-
-    /**
      * Encodes both simple and associative array to json
      *
      * @param string|array $data Representation Data
