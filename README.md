@@ -23,9 +23,9 @@ This is a light & easy low code API generator using configuration arrays. It can
 ## Important Files
 
 - **.env.example** Create a copy of this file as **.env**
-- **global.sql** Import this SQL file on your **MySql global** instance
-- **client\_master.sql** Import this SQL file on your **MySql client** instance
-- **cache.sql** Import this SQL file for cache in **MySql cache** instance if Redis is not the choice (To be configured in .env)
+- **Sql/global.sql** Import this SQL file on your **MySql global** instance
+- **Sql/client\_master.sql** Import this SQL file on your **MySql client** instance
+- **Sql/cache.sql** Import this SQL file for cache in **MySql cache** instance if Redis is not the choice (To be configured in .env)
 
 > **Note**: One can import all three sql's in a single database to start with. Just configure the same details in the .env file.
 
@@ -180,18 +180,28 @@ return [
 
 ## Folders
 
-- **App** Basic application folder
-- **Config** Basic configuration folder
+### Files Folder
+
 - **Dropbox** Folder for uploaded files.
+- **Logs** Folder for application Logs.
+
+### public\_html Folder
+
+- **Config** Basic configuration folder
 - **Hooks** Hooks.
-- **public\_html** Applicatipn doc root folder
-- **Supplement/Crons** Contains classes for cron API's
-- **Supplement/Custom** Contains classes for custom API's
-- **Supplement/ThirdParty** Contains classes for third-party API's
-- **Supplement/Upload** Contains classes for upload file API's
+- **Supplement** Customised coding for APIs
 - **Validation** Contains validation classes.
 
+#### public\_html/Supplement Folder
+
+- **Crons** Contains classes for cron API's
+- **Custom** Contains classes for custom API's
+- **ThirdParty** Contains classes for third-party API's
+- **Upload** Contains classes for upload file API's
+
 ## Routes Folder
+
+### public\_html/Config/Routes
 
 - **/Config/Routes/Auth/&lt;GroupName&gt;**
 - **/Config/Routes/Open**
@@ -291,6 +301,8 @@ return [
 > This '{id:int|!0}' means id is integer but can't be zero.
 
 ## Queries Folder
+
+### public\_html/Config/Queries
 
 - **/Config/Queries/Auth/GlobalDB** for global database.
 - **/Config/Queries/Auth/ClientDB** for Clients (including all hosts and their databases).
