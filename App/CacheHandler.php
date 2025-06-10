@@ -37,7 +37,7 @@ class CacheHandler
      *
      * @var string
      */
-    private $cacheLocation = DIRECTORY_SEPARATOR . 'Dropbox';
+    private $cacheLocation = DIRECTORY_SEPARATOR . 'Files' . DIRECTORY_SEPARATOR . 'Dropbox';
 
     /**
      * Microservices Collection of Common Objects

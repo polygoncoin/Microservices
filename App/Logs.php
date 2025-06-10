@@ -19,7 +19,7 @@ use Microservices\App\HttpStatus;
  */
 class Logs
 {
-    private string $logsDir = DIRECTORY_SEPARATOR . 'Logs';
+    private string $logsDir = DIRECTORY_SEPARATOR . 'Files' .  DIRECTORY_SEPARATOR . 'Logs';
 
     /**
      * Validates password from its hash present in cache

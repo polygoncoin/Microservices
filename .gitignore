@@ -1,5 +1,2 @@
 .env
-Logs/*
-Dropbox/*
-
 /vendor/
