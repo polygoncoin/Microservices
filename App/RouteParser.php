@@ -32,9 +32,9 @@ class RouteParser extends DbFunctions
 
         if (is_null($routeFileLocation)) {
             if ($this->open) {
-                $routeFileLocation = Constants::$DOC_ROOT . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Routes' . DIRECTORY_SEPARATOR . 'Open' . DIRECTORY_SEPARATOR . $this->REQUEST_METHOD . 'routes.php';
+                $routeFileLocation = Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Routes' . DIRECTORY_SEPARATOR . 'Open' . DIRECTORY_SEPARATOR . $this->REQUEST_METHOD . 'routes.php';
             } else {
-                $routeFileLocation = Constants::$DOC_ROOT . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Routes' . DIRECTORY_SEPARATOR . 'Auth' . DIRECTORY_SEPARATOR . 'ClientDB' . DIRECTORY_SEPARATOR . 'Groups' . DIRECTORY_SEPARATOR . $this->session['groupDetails']['name'] . DIRECTORY_SEPARATOR . $this->REQUEST_METHOD . 'routes.php';
+                $routeFileLocation = Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Routes' . DIRECTORY_SEPARATOR . 'Auth' . DIRECTORY_SEPARATOR . 'ClientDB' . DIRECTORY_SEPARATOR . 'Groups' . DIRECTORY_SEPARATOR . $this->session['groupDetails']['name'] . DIRECTORY_SEPARATOR . $this->REQUEST_METHOD . 'routes.php';
             }
         }
 

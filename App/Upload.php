@@ -4,7 +4,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\Supplement\Upload\UploadInterface;
+use Microservices\public_html\Supplement\Upload\UploadInterface;
 
 /**
  * Class is used for file uploads
@@ -59,7 +59,7 @@ class Upload
      */
     public function process()
     {
-        $class = 'Microservices\\Supplement\\Upload\\' . ucfirst($this->c->httpRequest->routeElements[1]);
+        $class = 'Microservices\\public_html\\Supplement\\Upload\\' . ucfirst($this->c->httpRequest->routeElements[1]);
 
         $this->api = new $class($this->c);
         if ($this->api->init()) {

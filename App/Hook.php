@@ -40,7 +40,7 @@ class Hook
                 $hook = $hookConfig[$i];
                 $hookFile = Constants::$DOC_ROOT . DIRECTORY_SEPARATOR . 'Hooks' . DIRECTORY_SEPARATOR . $hook . '.php';
                 if (file_exists($hookFile)) {
-                    $hookClass = 'Microservices\\Hooks\\'.$hook;
+                    $hookClass = 'Microservices\\public_html\\Hooks\\'.$hook;
                     $hookObj = new $hookClass($this->c);
                     if ($hookObj->init()) {
                         $hookObj->process();

@@ -28,6 +28,7 @@ class Constants
     static public $REQUIRED = true;
 
     static public $DOC_ROOT = null;
+    static public $PUBLIC_HTML = null;
     static public $ROUTE_URL_PARAM = 'r';
 
     static private $initialized = false;
@@ -37,6 +38,7 @@ class Constants
         if (self::$initialized) return;
 
         self::$DOC_ROOT = dirname(__DIR__ . '..' . DIRECTORY_SEPARATOR);
+        self::$PUBLIC_HTML = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'public_html';
         self::$initialized = true;
     }
 }

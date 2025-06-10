@@ -4,9 +4,9 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\Validation\ClientValidator;
-use Microservices\Validation\GlobalValidator;
-use Microservices\Validation\ValidatorInterface;
+use Microservices\public_html\Validation\ClientValidator;
+use Microservices\public_html\Validation\GlobalValidator;
+use Microservices\public_html\Validation\ValidatorInterface;
 
 /**
  * Validator
