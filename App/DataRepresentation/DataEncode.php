@@ -60,7 +60,17 @@ class DataEncode extends AbstractDataEncode
         } else {
             $this->tempStream = fopen("php://memory", "rw+b");
         }
-        $this->dataEncoder = new JsonEncode($this->tempStream);
+        switch (getenv('outputDataRepresentation')) {
+            case 'Xml':
+                $this->dataEncoder = new XmlEncode($this->tempStream);
+                break;
+            case 'Json':
+                $this->dataEncoder = new JsonEncode($this->tempStream);
+                break;
+            default:
+                $this->dataEncoder = new JsonEncode($this->tempStream);
+                break;
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 namespace Microservices\public_html\Config\Queries\Open\GET;
 
+use Microservices\App\Constants;
 use Microservices\App\DatabaseOpenCacheKey;
 
 return [
@@ -48,5 +49,6 @@ return [
         // No of Requests => Seconds Lag
         0 => 0,
         // 2 => 10,
-    ]
+    ],
+    'XLST' => Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'XSLT' . DIRECTORY_SEPARATOR . 'Category.xls'
 ];

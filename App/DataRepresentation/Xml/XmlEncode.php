@@ -45,6 +45,8 @@ class XmlEncode extends AbstractDataEncode
     public function __construct(&$tempStream)
     {
         $this->tempStream = &$tempStream;
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        $this->write($xml);
     }
 
     /**
@@ -66,16 +68,25 @@ class XmlEncode extends AbstractDataEncode
      */
     public function encode($data)
     {
-        if ($this->currentObject) {
-            $this->write($this->currentObject->comma);
-        }
         if (is_array($data)) {
-            $this->write(json_encode($data));
+            $isAssoc = (isset($data[0])) ? false : true;
+            if (!$isAssoc) {
+                $this->write("<Rows>");    
+            }
+            $this->write("<Row>");
+            foreach ($data as $key => $value) {
+                if (!is_array($value)) {
+                    $this->write("<field name=\"{$this->escape($key)}\">{$this->escape($value)}</field>");
+                } else {
+                    $this->addKeyData($key, $value);
+                }
+            }
+            $this->write("</Row>");
+            if (!$isAssoc) {
+                $this->write("</Rows>");    
+            }
         } else {
             $this->write($this->escape($data));
-        }
-        if ($this->currentObject) {
-            $this->currentObject->comma = ',';
         }
     }
 
@@ -88,8 +99,7 @@ class XmlEncode extends AbstractDataEncode
     private function escape($data)
     {
         if (is_null($data)) return 'null';
-        $data = htmlspecialchars($data);
-        return "\"{$data}\"";
+        return htmlspecialchars($data);
     }
 
     /**
@@ -101,25 +111,21 @@ class XmlEncode extends AbstractDataEncode
     public function appendData(&$data)
     {
         if ($this->currentObject) {
-            $this->write($this->currentObject->comma);
             $this->write($data);
-            $this->currentObject->comma = ',';
         }
     }
 
     /**
      * Append raw Xml string
      *
-     * @param string $key  key of associative array
+     * @param string $tag  Tag of associative array
      * @param string $data Reference of Representation Data
      * @return void
      */
-    public function appendKeyData($key, &$data)
+    public function appendKeyData($tag, &$data)
     {
         if ($this->currentObject && $this->currentObject->mode === 'Object') {
-            $this->write($this->currentObject->comma);
-            $this->write($this->escape($key) . ':' . $data);
-            $this->currentObject->comma = ',';
+            $this->write("<{$tag}>{$this->escape($data)}</{$tag}>");
         }
     }
 
@@ -141,39 +147,37 @@ class XmlEncode extends AbstractDataEncode
     /**
      * Add simple array/value as in the Xml format
      *
-     * @param string       $key  Key of associative array
+     * @param string       $tag  Tag of associative array
      * @param string|array $data Representation Data
      * @return void
      * @throws \Exception
      */
-    public function addKeyData($key, $data)
+    public function addKeyData($tag, $data)
     {
         if ($this->currentObject->mode !== 'Object') {
             throw new \Exception('Mode should be Object', HttpStatus::$InternalServerError);
         }
-        $this->write($this->currentObject->comma);
-        $this->write($this->escape($key) . ':');
-        $this->currentObject->comma = '';
+        $this->write("<{$tag}>");
         $this->encode($data);
+        $this->write("</{$tag}>");
     }
 
     /**
      * Start simple array
      *
-     * @param null|string $key Used while creating simple array inside an associative array and $key is the key
+     * @param null|string $tag Used while creating simple array inside an associative array and $tag is the key
      * @return void
      */
-    public function startArray($key = null)
+    public function startArray($tag = null)
     {
+        if (is_null($tag)) {
+            $tag = 'Rows';
+        }
         if ($this->currentObject) {
-            $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
-        $this->currentObject = new XmlEncoderObject('Array');
-        if (!is_null($key)) {
-            $this->write($this->escape($key) . ':');
-        }
-        $this->write('[');
+        $this->currentObject = new XmlEncoderObject('Array', $tag);
+        $this->write("<{$tag}>");
     }
 
     /**
@@ -183,35 +187,33 @@ class XmlEncode extends AbstractDataEncode
      */
     public function endArray()
     {
-        $this->write(']');
+        $this->write("</{$this->currentObject->tag}>");
         $this->currentObject = null;
         if (count($this->objects)>0) {
             $this->currentObject = array_pop($this->objects);
-            $this->currentObject->comma = ',';
         }
     }
 
     /**
      * Start simple array
      *
-     * @param null|string $key Used while creating associative array inside an associative array and $key is the key
+     * @param null|string $tag Used while creating associative array inside an associative array and $tag is the key
      * @return void
      * @throws \Exception
      */
-    public function startObject($key = null)
+    public function startObject($tag = null)
     {
+        if (is_null($tag)) {
+            $tag = 'Resultset';
+        }
         if ($this->currentObject) {
-            if ($this->currentObject->mode === 'Object' && is_null($key)) {
+            if ($this->currentObject->mode === 'Object' && is_null($tag)) {
                 throw new \Exception('Object inside an Object should be supported with a Key', HttpStatus::$InternalServerError);
             }
-            $this->write($this->currentObject->comma);
             array_push($this->objects, $this->currentObject);
         }
-        $this->currentObject = new XmlEncoderObject('Object');
-        if (!is_null($key)) {
-            $this->write($this->escape($key) . ':');
-        }
-        $this->write('{');
+        $this->currentObject = new XmlEncoderObject('Object', $tag);
+        $this->write("<{$tag}>");
     }
 
     /**
@@ -221,11 +223,10 @@ class XmlEncode extends AbstractDataEncode
      */
     public function endObject()
     {
-        $this->write('}');
+        $this->write("</{$this->currentObject->tag}>");
         $this->currentObject = null;
         if (count($this->objects)>0) {
             $this->currentObject = array_pop($this->objects);
-            $this->currentObject->comma = ',';
         }
     }
 
@@ -264,15 +265,16 @@ class XmlEncode extends AbstractDataEncode
 class XmlEncoderObject
 {
     public $mode = '';
-    public $comma = '';
+    public $tag = '';
 
     /**
      * Constructor
      *
      * @param string $mode Values can be one among Array/Object
      */
-    public function __construct($mode)
+    public function __construct($mode, $tag)
     {
         $this->mode = $mode;
+        $this->tag = $tag;
     }
 }

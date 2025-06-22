@@ -50,6 +50,9 @@ class Env
     static public $allowCacheRequest = null;
     static public $cacheRequestUriPrefix = null;
 
+    static public $inputDataRepresentation = null;
+    static public $outputDataRepresentation = null;
+
     static private $initialized = false;
 
     static public function init()
@@ -90,6 +93,21 @@ class Env
 
         self::$allowCacheRequest = getenv('allowCacheRequest');
         self::$cacheRequestUriPrefix = getenv('cacheRequestUriPrefix');
+
+        $inputDataRepresentation = isset($_GET['inputDataRepresentation']) ? $_GET['inputDataRepresentation'] : null;
+        $outputDataRepresentation = isset($_GET['outputDataRepresentation']) ? $_GET['outputDataRepresentation'] : null;
+
+        if (in_array($inputDataRepresentation, ['Json', 'Xml'])) {
+            self::$inputDataRepresentation = $inputDataRepresentation;
+        } else {
+            self::$inputDataRepresentation = getenv('inputDataRepresentation');
+        }
+
+        if (in_array($outputDataRepresentation, ['Json', 'Xml'])) {
+            self::$outputDataRepresentation = $outputDataRepresentation;
+        } else {
+            self::$outputDataRepresentation = getenv('outputDataRepresentation');
+        }
 
         self::$initialized = true;
     }
