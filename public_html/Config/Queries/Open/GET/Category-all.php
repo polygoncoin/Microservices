@@ -50,5 +50,5 @@ return [
         0 => 0,
         // 2 => 10,
     ],
-    'XLST' => Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'XSLT' . DIRECTORY_SEPARATOR . 'Category.xls'
+    'XSLT' => Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'XSLT' . DIRECTORY_SEPARATOR . 'Category.xls'
 ];

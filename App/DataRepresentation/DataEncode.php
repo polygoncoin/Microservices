@@ -4,6 +4,7 @@ namespace Microservices\App\DataRepresentation;
 use Microservices\App\DataRepresentation\AbstractDataEncode;
 use Microservices\App\DataRepresentation\Json\JsonEncode;
 use Microservices\App\DataRepresentation\Xml\XmlEncode;
+use Microservices\App\Env;
 
 /**
  * Creates Data Representation Output
@@ -39,6 +40,13 @@ class DataEncode extends AbstractDataEncode
     private $dataEncoder = null;
 
     /**
+     * XSLT
+     *
+     * @var null|string
+     */
+    public $XSLT = null;
+
+    /**
      * DataEncode constructor
      *
      * @param array $httpRequestDetails
@@ -60,7 +68,7 @@ class DataEncode extends AbstractDataEncode
         } else {
             $this->tempStream = fopen("php://memory", "rw+b");
         }
-        switch (getenv('outputDataRepresentation')) {
+        switch (Env::$outputDataRepresentation) {
             case 'Xml':
                 $this->dataEncoder = new XmlEncode($this->tempStream);
                 break;
@@ -193,11 +201,26 @@ class DataEncode extends AbstractDataEncode
     public function streamData()
     {
         $this->end();
-
         rewind($this->tempStream);
-        $outputStream = fopen('php://output', 'wb');
-        stream_copy_to_stream($this->tempStream, $outputStream);
-        fclose($outputStream);
+
+        if (
+            Env::$outputDataRepresentation === 'Xml'
+            && !is_null($this->XSLT)
+            && file_exists($this->XSLT)
+        ) {
+            $xml = new \DOMDocument;
+            $xml->loadXML(stream_get_contents($this->tempStream));
+
+            $xslt = new \XSLTProcessor();
+            $XSL = new \DOMDocument();
+            $XSL->load($this->XSLT);
+            $xslt->importStylesheet($XSL);
+            echo $xslt->transformToXML($xml);
+        } else {
+            $outputStream = fopen('php://output', 'wb');
+            stream_copy_to_stream($this->tempStream, $outputStream);
+            fclose($outputStream);
+        }
         fclose($this->tempStream);
     }
 

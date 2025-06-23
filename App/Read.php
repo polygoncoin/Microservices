@@ -127,6 +127,7 @@ class Read
         } else {
             $this->dataEncode = &$this->c->httpResponse->dataEncode;
         }
+        $this->dataEncode->XSLT = isset($readSqlConfig['XSLT']) ? $readSqlConfig['XSLT'] : null;
 
         // Set Server mode to execute query on - Read / Write Server
         $fetchFrom = (isset($readSqlConfig['fetchFrom'])) ? $readSqlConfig['fetchFrom'] : 'Slave';
