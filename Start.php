@@ -84,7 +84,7 @@ try {
         $Microservices->outputResults();
     }
 } catch (\Exception $e) {
-    if ($e->getCode() !== 400) {
+    if (!in_array($e->getCode(), [400, 429])) {
         list($usec, $sec) = explode(' ', microtime());
         $dateTime = date('Y-m-d H:i:s', $sec) . substr($usec, 1);
 
