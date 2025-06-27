@@ -63,6 +63,12 @@ try {
         die('{"Status": 400, "Message": "Bad Request"}');
     }
 
+    // Load .env
+    $env = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . '.env');
+    foreach ($env as $key => $value) {
+        putenv("{$key}={$value}");
+    }
+
     $Microservices = new Microservices($httpRequestDetails);
 
     // Setting CORS
@@ -71,12 +77,6 @@ try {
     }
     if ($httpRequestDetails['server']['request_method'] == 'OPTIONS') {
         exit();
-    }
-
-    // Load .env
-    $env = parse_ini_file(__DIR__ . DIRECTORY_SEPARATOR . '.env');
-    foreach ($env as $key => $value) {
-        putenv("{$key}={$value}");
     }
 
     if ($Microservices->init()) {

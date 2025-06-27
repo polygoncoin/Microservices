@@ -57,6 +57,7 @@ class Microservices
     public function __construct(&$httpRequestDetails)
     {
         $this->httpRequestDetails = &$httpRequestDetails;
+
         Constants::init();
         Env::init();
     }
