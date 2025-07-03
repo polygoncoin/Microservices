@@ -42,11 +42,13 @@ class XmlEncode extends AbstractDataEncode
      *
      * @param resource $tempStream
      */
-    public function __construct(&$tempStream)
+    public function __construct(&$tempStream, $header = true)
     {
         $this->tempStream = &$tempStream;
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
-        $this->write($xml);
+        if ($header) {
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+            $this->write($xml);
+        }
     }
 
     /**
@@ -76,7 +78,7 @@ class XmlEncode extends AbstractDataEncode
             $this->write("<Row>");
             foreach ($data as $key => $value) {
                 if (!is_array($value)) {
-                    $this->write("<field name=\"{$this->escape($key)}\">{$this->escape($value)}</field>");
+                    $this->write("<{$this->escape($key)}>{$this->escape($value)}</{$this->escape($key)}>");
                 } else {
                     $this->addKeyData($key, $value);
                 }
@@ -204,7 +206,7 @@ class XmlEncode extends AbstractDataEncode
     public function startObject($tag = null)
     {
         if (is_null($tag)) {
-            $tag = 'Resultset';
+            $tag = (is_null($this->currentObject)) ? 'Resultset' : 'Row';
         }
         if ($this->currentObject) {
             if ($this->currentObject->mode === 'Object' && is_null($tag)) {

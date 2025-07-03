@@ -112,8 +112,8 @@ class Read
         ) {
             $json = $this->c->httpRequest->getDqlCache($readSqlConfig['cacheKey']);
             if (!is_null($json)) {
-                $cacheHitJson = '"cacheHit": true';
-                $this->c->httpResponse->dataEncode->appendData($cacheHitJson);
+                $cacheHit = 'true';
+                $this->c->httpResponse->dataEncode->appendKeyData('cacheHit', $cacheHit);
                 $this->c->httpResponse->dataEncode->appendData($json);
                 return true;
             } else {
@@ -123,7 +123,7 @@ class Read
 
         if ($tobeCached) {
             $this->dataEncode = new DataEncode($this->c->httpRequestDetails);
-            $this->dataEncode->init();
+            $this->dataEncode->init($header = false);
         } else {
             $this->dataEncode = &$this->c->httpResponse->dataEncode;
         }

@@ -61,7 +61,7 @@ class DataEncode extends AbstractDataEncode
      *
      * @return boolean
      */
-    public function init()
+    public function init($header = true)
     {
         if ($this->httpRequestDetails['server']['request_method'] === 'GET') {
             $this->tempStream = fopen("php://temp", "rw+b");
@@ -70,13 +70,13 @@ class DataEncode extends AbstractDataEncode
         }
         switch (Env::$outputDataRepresentation) {
             case 'Xml':
-                $this->dataEncoder = new XmlEncode($this->tempStream);
+                $this->dataEncoder = new XmlEncode($this->tempStream, $header);
                 break;
             case 'Json':
-                $this->dataEncoder = new JsonEncode($this->tempStream);
+                $this->dataEncoder = new JsonEncode($this->tempStream, $header);
                 break;
             default:
-                $this->dataEncoder = new JsonEncode($this->tempStream);
+                $this->dataEncoder = new JsonEncode($this->tempStream, $header);
                 break;
         }
     }
