@@ -1,6 +1,6 @@
 <?php
 
-function getCurlConfig($method, $route, $header = [], $json = '')
+function getCurlConfig($method, $route, $header = [], $payload = '')
 {
     $homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
 
@@ -8,6 +8,7 @@ function getCurlConfig($method, $route, $header = [], $json = '')
     $curlConfig[CURLOPT_HTTPHEADER] = $header;
     $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
     $curlConfig[CURLOPT_HTTPHEADER][] = 'Cache-Control: no-cache';
+    $curlConfig[CURLOPT_HEADER] = 1;
 
     switch ($method) {
         case 'GET':
@@ -15,22 +16,22 @@ function getCurlConfig($method, $route, $header = [], $json = '')
         case 'POST':
             $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_POST] = true;
-            $curlConfig[CURLOPT_POSTFIELDS] = $json;
+            $curlConfig[CURLOPT_POSTFIELDS] = $payload;
             break;
         case 'PUT':
             $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PUT';
-            $curlConfig[CURLOPT_POSTFIELDS] = $json;
+            $curlConfig[CURLOPT_POSTFIELDS] = $payload;
             break;
         case 'PATCH':
             $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PATCH';
-            $curlConfig[CURLOPT_POSTFIELDS] = $json;
+            $curlConfig[CURLOPT_POSTFIELDS] = $payload;
             break;
         case 'DELETE':
             $curlConfig[CURLOPT_HTTPHEADER][] = 'Content-Type: text/plain; charset=utf-8';
             $curlConfig[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-            $curlConfig[CURLOPT_POSTFIELDS] = $json;
+            $curlConfig[CURLOPT_POSTFIELDS] = $payload;
             break;
     }
     $curlConfig[CURLOPT_RETURNTRANSFER] = true;
@@ -38,19 +39,24 @@ function getCurlConfig($method, $route, $header = [], $json = '')
     return $curlConfig;
 }
 
-function trigger($method, $route, $header = [], $json = '')
+function trigger($method, $route, $header = [], $payload = '')
 {
     $curl = curl_init();
-    $curlConfig = getCurlConfig($method, $route, $header, $json);
+    $curlConfig = getCurlConfig($method, $route, $header, $payload);
     curl_setopt_array($curl, $curlConfig);
-    $responseJSON = curl_exec($curl);
-    $err = curl_error($curl);
+    $curlResponse = curl_exec($curl);
+
+    $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+    $responseHeaders = http_parse_headers(substr($curlResponse, 0, $headerSize));
+    $responseBody = substr($curlResponse, $headerSize);
+    
+    $error = curl_error($curl);
     curl_close($curl);
 
-    if ($err) {
-        echo 'cURL Error #:' . $err;
+    if ($error) {
+        $response = ['cURL Error #:' . $error];
     } else {
-        $response = json_decode($responseJSON, true);
+        $response = json_decode($responseBody, true);
         if (
             !empty($response)
             && (
@@ -61,32 +67,68 @@ function trigger($method, $route, $header = [], $json = '')
             echo 'Sucess:'.$method.$route . PHP_EOL . PHP_EOL;
         } else {
             echo 'Failed:'.$method.$route . PHP_EOL;
-            echo 'O/P:' . $responseJSON . PHP_EOL . PHP_EOL;
+            echo 'O/P:' . $responseBody . PHP_EOL . PHP_EOL;
             $response = false;
         }
     }
-    return $response;
+
+    return [
+        'headers' => $responseHeaders,
+        'body' => $response
+    ];
+}
+
+if (!function_exists('http_parse_headers')) {
+    function http_parse_headers($raw_headers) {
+        $headers = array();
+        $key = '';
+
+        foreach(explode("\n", $raw_headers) as $i => $h) {
+            $h = explode(':', $h, 2);
+
+            if (isset($h[1])) {
+                if (!isset($headers[$h[0]]))
+                    $headers[$h[0]] = trim($h[1]);
+                elseif (is_array($headers[$h[0]])) {
+                    $headers[$h[0]] = array_merge($headers[$h[0]], array(trim($h[1])));
+                }
+                else {
+                    $headers[$h[0]] = array_merge(array($headers[$h[0]]), array(trim($h[1])));
+                }
+
+                $key = $h[0];
+            }
+            else { 
+                if (substr($h[0], 0, 1) == "\t")
+                    $headers[$key] .= "\r\n\t".trim($h[0]);
+                elseif (!$key) 
+                    $headers[0] = trim($h[0]); 
+            }
+        }
+        
+        return $headers;
+    }
 }
 
 $response = [];
 echo '<pre>';
 
-$response[] = trigger('GET', '/reload', [], $jsonPayload = '');
+$response[] = trigger('GET', '/reload', [], $payload = '');
 
 // Client User
-$payload = [
+$params = [
     'username' => 'client_1_group_1_user_1',
     'password' => 'shames11'
 ];
-$res = trigger('POST', '/login', [], $jsonPayload = json_encode($payload));
+$res = trigger('POST', '/login', [], $payload = json_encode($params));
 if ($res) {
     $response[] = $res;
-    $token = $res['Results']['Token'];
+    $token = $res['body']['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 
-    $response[] = trigger('GET', '/routes', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/routes', $header, $payload = '');
 
-    $payload = [
+    $params = [
         [
             'name' => 'ramesh0',
             'sub' => [
@@ -111,24 +153,24 @@ if ($res) {
             ]
         ]
     ];
-    $response[] = trigger('POST', '/category', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/category', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
         'username' => 'test',
         'password' => 'shames11'
     ];
-    $response[] = trigger('POST', '/registration', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/registration', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'user_id' => 1,
         'address' => '203'
     ];
-    $response[] = trigger('POST', '/address', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/address', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
@@ -138,62 +180,62 @@ if ($res) {
             'address' => 'A-203'
         ]
     ];
-    $response[] = trigger('POST', '/registration-with-address', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/registration-with-address', $header, $payload = json_encode($params));
 
-    $response[] = trigger('GET', '/category', $header, $jsonPayload = '');
-    // $response[] = trigger('GET', '/category/search', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/category', $header, $payload = '');
+    // $response[] = trigger('GET', '/category/search', $header, $payload = '');
+    $response[] = trigger('GET', '/category/1', $header, $payload = '');
+    $response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $payload = '');
 
-    $response[] = trigger('GET', '/registration/1', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/address/1', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/registration-with-address/1', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/registration/1', $header, $payload = '');
+    $response[] = trigger('GET', '/address/1', $header, $payload = '');
+    $response[] = trigger('GET', '/registration-with-address/1', $header, $payload = '');
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
         'username' => 'test',
         'password' => 'shames11'
     ];
-    $response[] = trigger('PUT', '/registration/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PUT', '/registration/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'user_id' => 1,
         'address' => '203'
     ];
-    $response[] = trigger('PUT', '/address/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PUT', '/address/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh_test@test.com'
     ];
-    $response[] = trigger('PATCH', '/registration/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PATCH', '/registration/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'address' => '203'
     ];
-    $response[] = trigger('PATCH', '/address/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PATCH', '/address/1', $header, $payload = json_encode($params));
 
-    $response[] = trigger('DELETE', '/registration/1', $header, $jsonPayload = '');
-    $response[] = trigger('DELETE', '/address/1', $header, $jsonPayload = '');
+    $response[] = trigger('DELETE', '/registration/1', $header, $payload = '');
+    $response[] = trigger('DELETE', '/address/1', $header, $payload = '');
 
-    $response[] = trigger('POST', '/category/config', $header, $jsonPayload = '');
+    $response[] = trigger('POST', '/category/config', $header, $payload = '');
 }
 
 // Admin User
-$res = trigger('POST', '/login', [], $jsonPayload = '{"username":"client_1_admin_1", "password":"shames11"}');
+$res = trigger('POST', '/login', [], $payload = '{"username":"client_1_admin_1", "password":"shames11"}');
 if ($res) {
     $response[] = $res;
-    $token = $res['Results']['Token'];
+    $token = $res['body']['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 
-    $response[] = trigger('GET', '/routes', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/routes', $header, $payload = '');
 
-    $response[] = trigger('DELETE', '/category/truncate', $header, $jsonPayload = '');
+    $response[] = trigger('DELETE', '/category/truncate', $header, $payload = '');
 
-    $payload = [
+    $params = [
         [
             'name' => 'ramesh0',
             'sub' => [
@@ -218,24 +260,24 @@ if ($res) {
             ]
         ]
     ];
-    $response[] = trigger('POST', '/category', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/category', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
         'username' => 'test',
         'password' => 'shames11'
     ];
-    $response[] = trigger('POST', '/registration', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/registration', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'user_id' => 1,
         'address' => '203'
     ];
-    $response[] = trigger('POST', '/address', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/address', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
@@ -245,38 +287,38 @@ if ($res) {
             'address' => 'A-203'
         ]
     ];
-    $response[] = trigger('POST', '/registration-with-address', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('POST', '/registration-with-address', $header, $payload = json_encode($params));
 
-    $response[] = trigger('GET', '/category', $header, $jsonPayload = '');
-    // $response[] = trigger('GET', '/category/search', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/category/1', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/category', $header, $payload = '');
+    // $response[] = trigger('GET', '/category/search', $header, $payload = '');
+    $response[] = trigger('GET', '/category/1', $header, $payload = '');
+    $response[] = trigger('GET', '/category&orderBy={"id":"DESC"}', $header, $payload = '');
 
-    $response[] = trigger('GET', '/registration', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/registration/1', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/registration', $header, $payload = '');
+    $response[] = trigger('GET', '/registration/1', $header, $payload = '');
 
-    $response[] = trigger('GET', '/address', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/address/1', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/address', $header, $payload = '');
+    $response[] = trigger('GET', '/address/1', $header, $payload = '');
 
-    $response[] = trigger('GET', '/registration-with-address', $header, $jsonPayload = '');
-    $response[] = trigger('GET', '/registration-with-address/1', $header, $jsonPayload = '');
+    $response[] = trigger('GET', '/registration-with-address', $header, $payload = '');
+    $response[] = trigger('GET', '/registration-with-address/1', $header, $payload = '');
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
         'username' => 'test',
         'password' => 'shames11'
     ];
-    $response[] = trigger('PUT', '/registration/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PUT', '/registration/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'user_id' => 1,
         'address' => '203'
     ];
-    $response[] = trigger('PUT', '/address/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PUT', '/address/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
@@ -287,21 +329,21 @@ if ($res) {
             'address' => 'a-203'
         ]
     ];
-    $response[] = trigger('PUT', '/registration-with-address/1', $header, json_encode($payload));
+    $response[] = trigger('PUT', '/registration-with-address/1', $header, json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh_test@test.com'
     ];
-    $response[] = trigger('PATCH', '/registration/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PATCH', '/registration/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'address' => '203'
     ];
-    $response[] = trigger('PATCH', '/address/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PATCH', '/address/1', $header, $payload = json_encode($params));
 
-    $payload = [
+    $params = [
         'firstname' => 'Ramesh',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
@@ -310,19 +352,19 @@ if ($res) {
             'address' => 'a-203'
         ]
     ];
-    $response[] = trigger('PATCH', '/registration-with-address/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('PATCH', '/registration-with-address/1', $header, $payload = json_encode($params));
 
-    $response[] = trigger('DELETE', '/registration/1', $header, $jsonPayload = '');
-    $response[] = trigger('DELETE', '/address/1', $header, $jsonPayload = '');
+    $response[] = trigger('DELETE', '/registration/1', $header, $payload = '');
+    $response[] = trigger('DELETE', '/address/1', $header, $payload = '');
 
-    $payload = [
+    $params = [
         'address' => [
             'user_id' => 1
         ]
     ];
-    $response[] = trigger('DELETE', '/registration-with-address/1', $header, $jsonPayload = json_encode($payload));
+    $response[] = trigger('DELETE', '/registration-with-address/1', $header, $payload = json_encode($params));
 
-    $response[] = trigger('POST', '/category/config', $header, $jsonPayload = '');
+    $response[] = trigger('POST', '/category/config', $header, $payload = '');
 }
 
 // print_r($response);
