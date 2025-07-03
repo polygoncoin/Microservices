@@ -75,10 +75,13 @@ class Web
         curl_setopt_array($curl, $curlConfig);
         $curlResponse = curl_exec($curl);
 
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
+
         $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $responseHeaders = $this->http_parse_headers(substr($curlResponse, 0, $headerSize));
         $responseBody = substr($curlResponse, $headerSize);
-        
+
         $error = curl_error($curl);
         curl_close($curl);
 
@@ -89,6 +92,8 @@ class Web
         }
 
         return [
+            'httpCode' => $httpCode,
+            'contentType' => $contentType,
             'headers' => $responseHeaders,
             'body' => $response
         ];
