@@ -136,7 +136,7 @@ class JsonDecode extends AbstractDataDecode
     {
         $return = true;
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!is_null($keys) && strlen($keys) !== 0) {
+        if (!is_null($keys) && strlen($keys) > 0) {
             foreach (explode(':', $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];
@@ -158,7 +158,7 @@ class JsonDecode extends AbstractDataDecode
     public function dataType($keys = null)
     {
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!empty($keys) && strlen($keys) > 0) {
+        if (!is_null($keys) && strlen($keys) > 0) {
             foreach (explode(':', $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];
@@ -189,7 +189,7 @@ class JsonDecode extends AbstractDataDecode
     public function count($keys = null)
     {
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!is_null($keys) && strlen($keys) !== 0) {
+        if (!is_null($keys) && strlen($keys) > 0) {
             foreach (explode(':', $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];
@@ -260,7 +260,7 @@ class JsonDecode extends AbstractDataDecode
             return;
         }
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!is_null($keys) && strlen($keys) !== 0) {
+        if (!is_null($keys) && strlen($keys) > 0) {
             foreach (explode(':', $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];

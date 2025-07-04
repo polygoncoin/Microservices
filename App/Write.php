@@ -186,7 +186,10 @@ class Write
         if ($this->c->httpRequest->session['payloadType'] === 'Object') {
             $this->dataEncode->startObject('Results');
         } else {
-            $this->dataEncode->startArray('Results');
+            $this->dataEncode->startObject('Results');
+            if (Env::$outputDataRepresentation === 'Xml') {
+                $this->dataEncode->startArray('Rows');
+            }
         }
 
         // Perform action
@@ -243,14 +246,24 @@ class Write
                     $this->dataEncode->addKeyData($k, $v);
                 }
             } else {
-                $this->dataEncode->encode($arr);
+                if (Env::$outputDataRepresentation === 'Xml') {
+                    $this->dataEncode->startObject('Row');
+                    $this->dataEncode->encode($arr);
+                    $this->dataEncode->endObject('Row');
+                } else {
+                    $this->dataEncode->encode($arr);
+                }
+
             }
         }
 
         if ($this->c->httpRequest->session['payloadType'] === 'Object') {
             $this->dataEncode->endObject();
         } else {
-            $this->dataEncode->endArray();
+            if (Env::$outputDataRepresentation === 'Xml') {
+                $this->dataEncode->endArray();
+            }
+            $this->dataEncode->endObject();
         }
     }
 
