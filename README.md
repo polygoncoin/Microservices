@@ -39,6 +39,11 @@ OUTPUT_PERFORMANCE_STATS=1      ;Add Performance Stats in Json output: 1 = true 
 allowConfigRequest=1            ;Allow config request (global flag): 1 = true / 0 = false
 cronRestrictedIp='127.0.0.1'    ;Crons Details
 maxPerpage=10000                ;Maximum value of perpage (records per page)
+
+;Data Representation: Json/Xml
+;To override below setting pass below params with route seperated with &
+inputDataRepresentation='Json'
+outputDataRepresentation='Json'
 ```
 
 ### Cache Server Details (Redis)
@@ -938,6 +943,54 @@ var payload = {
 
 xmlhttp . send( JSON.stringify(payload) );
 ```
+
+* XML Request example
+
+```javascript
+var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&inputDataRepresentation=Xml&outputDataRepresentation=Xml";
+
+var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
+'<Paylaod>' +
+'    <Rows>' +
+'        <Row>' +
+'            <firstname>Ramesh-1</firstname>' +
+'            <lastname>Jangid</lastname>' +
+'            <email>ramesh@test.com</email>' +
+'            <username>test</username>' +
+'            <password>shames11</password>' +
+'            <address>' +
+'                <address>A-203</address>' +
+'            </address>' +
+'        </Row>' +
+'        <Row>' +
+'            <firstname>Ramesh-2</firstname>' +
+'            <lastname>Jangid</lastname>' +
+'            <email>ramesh@test.com</email>' +
+'            <username>test</username>' +
+'            <password>shames11</password>' +
+'            <address>' +
+'                <address>A-203</address>' +
+'            </address>' +
+'        </Row>' +
+'    </Rows>' +
+'</Paylaod>';
+
+
+var xmlhttp = new XMLHttpRequest();
+
+xmlhttp . open( "POST", handlerUrl );
+xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
+xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
+
+xmlhttp . onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText);
+    }
+};
+
+xmlhttp . send( payload );
+```
+
 ## License
 
 [MIT](License)
