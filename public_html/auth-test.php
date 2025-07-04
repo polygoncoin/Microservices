@@ -4,7 +4,7 @@ function getCurlConfig($method, $route, $header = [], $payload = '')
 {
     $homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
 
-    $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}";
+    $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}&inputDataRepresentation=Json&outputDataRepresentation=XJson";
     $curlConfig[CURLOPT_HTTPHEADER] = $header;
     $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
     $curlConfig[CURLOPT_HTTPHEADER][] = 'Cache-Control: no-cache';

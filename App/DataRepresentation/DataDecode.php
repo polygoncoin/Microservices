@@ -4,6 +4,7 @@ namespace Microservices\App\DataRepresentation;
 use Microservices\App\DataRepresentation\AbstractDataDecode;
 use Microservices\App\DataRepresentation\Json\JsonDecode;
 use Microservices\App\DataRepresentation\Xml\XmlDecode;
+use Microservices\App\Env;
 
 /**
  * Creates Data Representation Output
@@ -40,7 +41,11 @@ class DataDecode extends AbstractDataDecode
     public function __construct(&$dataFileHandle)
     {
         $this->dataFileHandle = &$dataFileHandle;
-        $this->dataDecoder = new JsonDecode($this->dataFileHandle);
+        if (Env::$inputDataRepresentation === 'Json') {
+            $this->dataDecoder = new JsonDecode($this->dataFileHandle);
+        } else {
+            $this->dataDecoder = new XmlDecode($this->dataFileHandle);
+        }
     }
 
     /**

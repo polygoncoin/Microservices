@@ -1,8 +1,9 @@
 <?php
 namespace Microservices;
 
-use Microservices\Microservices;
 use Microservices\App\Logs;
+use Microservices\App\DataRepresentation\DataEncode;
+use Microservices\Microservices;
 
 /**
  * Class to autoload class files
@@ -122,6 +123,9 @@ try {
         ];
     }
 
-    // Set response json
-    echo json_encode($arr);
+    $dataEncode = new DataEncode($httpRequestDetails);
+    $dataEncode->init();
+    $dataEncode->startObject();
+    $dataEncode->addKeyData('Error', $arr);
+    $dataEncode->streamData();
 }

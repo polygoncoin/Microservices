@@ -73,19 +73,18 @@ class XmlEncode extends AbstractDataEncode
         if (is_array($data)) {
             $isAssoc = (isset($data[0])) ? false : true;
             if (!$isAssoc) {
-                $this->write("<Rows>");    
+                $this->write("<{$this->currentObject->tag}>");
             }
-            $this->write("<Row>");
-            foreach ($data as $key => $value) {
+            foreach ($data as $tag => $value) {
                 if (!is_array($value)) {
-                    $this->write("<{$this->escape($key)}>{$this->escape($value)}</{$this->escape($key)}>");
+                    $tag = $this->excapeTag($tag);
+                    $this->write("<{$tag}>{$this->escape($value)}</{$tag}>");
                 } else {
-                    $this->addKeyData($key, $value);
+                    $this->addKeyData($tag, $value);
                 }
             }
-            $this->write("</Row>");
             if (!$isAssoc) {
-                $this->write("</Rows>");    
+                $this->write("</{$this->currentObject->tag}>");    
             }
         } else {
             $this->write($this->escape($data));
@@ -127,6 +126,7 @@ class XmlEncode extends AbstractDataEncode
     public function appendKeyData($tag, &$data)
     {
         if ($this->currentObject && $this->currentObject->mode === 'Object') {
+            $tag = $this->excapeTag($tag);
             $this->write("<{$tag}>{$this->escape($data)}</{$tag}>");
         }
     }
@@ -159,9 +159,9 @@ class XmlEncode extends AbstractDataEncode
         if ($this->currentObject->mode !== 'Object') {
             throw new \Exception('Mode should be Object', HttpStatus::$InternalServerError);
         }
-        $this->write("<{$tag}>");
+        $this->startObject($tag);
         $this->encode($data);
-        $this->write("</{$tag}>");
+        $this->endObject();
     }
 
     /**
@@ -179,7 +179,7 @@ class XmlEncode extends AbstractDataEncode
             array_push($this->objects, $this->currentObject);
         }
         $this->currentObject = new XmlEncoderObject('Array', $tag);
-        $this->write("<{$tag}>");
+        $this->write("<{$this->currentObject->tag}>");
     }
 
     /**
@@ -215,7 +215,7 @@ class XmlEncode extends AbstractDataEncode
             array_push($this->objects, $this->currentObject);
         }
         $this->currentObject = new XmlEncoderObject('Object', $tag);
-        $this->write("<{$tag}>");
+        $this->write("<{$this->currentObject->tag}>");
     }
 
     /**
@@ -250,6 +250,11 @@ class XmlEncode extends AbstractDataEncode
             }
         }
     }
+
+    private function excapeTag($tag)
+    {
+        return str_replace(':', '-', $tag);
+    }
 }
 
 /**
@@ -277,6 +282,6 @@ class XmlEncoderObject
     public function __construct($mode, $tag)
     {
         $this->mode = $mode;
-        $this->tag = $tag;
+        $this->tag = !is_null($tag) ? str_replace(':', '-', $tag) : $tag;
     }
 }

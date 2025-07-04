@@ -62,6 +62,7 @@ class JsonDecode extends AbstractDataDecode
             throw new \Exception('Invalid file', HttpStatus::$BadRequest);
         }
         $this->jsonFileHandle = &$jsonFileHandle;
+        rewind($this->jsonFileHandle);
 
         // File Stats - Check for size
         $fileStats = fstat($this->jsonFileHandle);
