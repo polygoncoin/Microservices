@@ -84,7 +84,7 @@ class XmlEncode extends AbstractDataEncode
                 }
             }
             if (!$isAssoc) {
-                $this->write("</{$this->currentObject->tag}>");    
+                $this->write("</{$this->currentObject->tag}>");
             }
         } else {
             $this->write($this->escape($data));
@@ -156,9 +156,6 @@ class XmlEncode extends AbstractDataEncode
      */
     public function addKeyData($tag, $data)
     {
-        if ($this->currentObject->mode !== 'Object') {
-            throw new \Exception('Mode should be Object', HttpStatus::$InternalServerError);
-        }
         $this->startObject($tag);
         $this->encode($data);
         $this->endObject();

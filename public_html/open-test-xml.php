@@ -52,7 +52,7 @@ function trigger($method, $route, $header = [], $payload = '')
     $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $responseHeaders = http_parse_headers(substr($curlResponse, 0, $headerSize));
     $responseBody = substr($curlResponse, $headerSize);
-    
+
     $error = curl_error($curl);
     curl_close($curl);
 
@@ -93,30 +93,58 @@ if (!function_exists('http_parse_headers')) {
 
                 $key = $h[0];
             }
-            else { 
+            else {
                 if (substr($h[0], 0, 1) == "\t")
                     $headers[$key] .= "\r\n\t".trim($h[0]);
-                elseif (!$key) 
-                    $headers[0] = trim($h[0]); 
+                elseif (!$key)
+                    $headers[0] = trim($h[0]);
             }
         }
-        
+
         return $headers;
     }
 }
 
-function genXmlPayload(&$params, &$payload)
+function genXmlPayload(&$params, &$payload, $rowsFlag = false)
 {
-    foreach ($params as $key => $value) {
-        if (is_array($value)) {
-            $payload .= "<{$key}>";
-            genXmlPayload($value, $payload);
-            $payload .= "</{$key}>";
-        } else {
-            $payload .= "<{$key}>";
-            $payload .= htmlspecialchars($value);
-            $payload .= "</{$key}>";
+    if (empty($params)) {
+        return;
+    }
+
+    $rows = false;
+
+    $isAssoc = (isset($params[0])) ? false : true;
+
+    if (!$isAssoc && count($params) === 1) {
+        $params = $params[0];
+        if (empty($params)) {
+            return;
         }
+        $isAssoc = true;
+    }
+
+    if (!$isAssoc) {
+        $payload .= "<Rows>";
+        $rows = true;
+    }
+
+    if ($rowsFlag) {
+        $payload .= "<Row>";
+    }
+    foreach ($params as $key => &$value) {
+        if ($isAssoc) {$payload .= "<{$key}>";}
+        if (is_array($value)) {
+            genXmlPayload($value, $payload, $rows);
+        } else {
+            $payload .= htmlspecialchars($value);
+        }
+        if ($isAssoc) {$payload .= "</{$key}>";}
+    }
+    if ($rowsFlag) {
+        $payload .= "</Row>";
+    }
+    if (!$isAssoc) {
+        $payload .= "</Rows>";
     }
 }
 
@@ -125,7 +153,7 @@ $header = [];
 
 $params = [
     'Paylaod' => [
-        'firstname' => 'Ramesh',
+        'firstname' => 'Ramesh1',
         'lastname' => 'Jangid',
         'email' => 'ramesh@test.com',
         'username' => 'test',
@@ -138,6 +166,7 @@ $params = [
 
 $payload = '<?xml version="1.0" encoding="UTF-8" ?>';
 genXmlPayload($params, $payload);
+
 $response = trigger('POST', '/registration-with-address', $header, $payload);
 
 header("Content-type: text/xml");

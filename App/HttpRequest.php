@@ -252,7 +252,7 @@ class HttpRequest extends Gateway
                 $jsonString = json_encode($xml);
                 $array = json_decode($jsonString, true);
                 $jsonString = null;
-                
+
                 $tempFile = tempnam(sys_get_temp_dir(), 'Xml');
                 $this->payloadStream = fopen($tempFile, 'rwb+');
                 $result = [];
@@ -279,6 +279,17 @@ class HttpRequest extends Gateway
      */
     private function formatXmlArray(&$array, &$result)
     {
+        if (isset($array['Rows']['Row'])) {
+            $array = &$array['Rows']['Row'];
+        }
+
+        if (isset($array[0]) && is_array($array[0]) && count($array) === 1) {
+            $array = &$array[0];
+            if (empty($array)) {
+                return;
+            }
+        }
+
         if (!is_array($array)) {
             return;
         }

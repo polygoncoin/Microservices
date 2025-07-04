@@ -121,7 +121,7 @@ class Web
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
             list($routeElementsArr, $errors) = $this->getTriggerPayload($triggerConfig['__ROUTE__']);
-            
+
             if (empty($errors)) {
                 $route = '/' . implode('/',$routeElementsArr);
             } else {
@@ -144,7 +144,7 @@ class Web
                 } else {
                     $payloadArr = $errors = [];
                 }
-                
+
                 if (empty($errors)) {
                     $response = $this->trigger($homeURL, $method, $route, $queryString, $header, $payload = json_encode($payloadArr));
                 } else {
@@ -179,7 +179,7 @@ class Web
                 } else {
                     $payloadArr = $errors = [];
                 }
-                
+
                 if (empty($errors)) {
                     $response[] = $this->trigger($homeURL, $method, $route, $queryString, $header, $payload = json_encode($payloadArr));
                 } else {
@@ -210,7 +210,7 @@ class Web
             } else {
                 $var = null;
             }
-            
+
             $dataPayloadType = $config['fetchFrom'];
             $dataPayloadTypeKey = $config['fetchFromValue'];
             if ($dataPayloadType === 'function') {
@@ -281,14 +281,14 @@ class Web
 
                 $key = $h[0];
             }
-            else { 
+            else {
                 if (substr($h[0], 0, 1) == "\t")
                     $headers[$key] .= "\r\n\t".trim($h[0]);
-                elseif (!$key) 
-                    $headers[0] = trim($h[0]); 
+                elseif (!$key)
+                    $headers[0] = trim($h[0]);
             }
         }
-        
+
         return $headers;
     }
 }

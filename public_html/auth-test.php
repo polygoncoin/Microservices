@@ -52,7 +52,7 @@ function trigger($method, $route, $header = [], $payload = '')
     $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
     $responseHeaders = http_parse_headers(substr($curlResponse, 0, $headerSize));
     $responseBody = substr($curlResponse, $headerSize);
-    
+
     $error = curl_error($curl);
     curl_close($curl);
 
@@ -103,14 +103,14 @@ if (!function_exists('http_parse_headers')) {
 
                 $key = $h[0];
             }
-            else { 
+            else {
                 if (substr($h[0], 0, 1) == "\t")
                     $headers[$key] .= "\r\n\t".trim($h[0]);
-                elseif (!$key) 
-                    $headers[0] = trim($h[0]); 
+                elseif (!$key)
+                    $headers[0] = trim($h[0]);
             }
         }
-        
+
         return $headers;
     }
 }
