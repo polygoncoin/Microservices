@@ -279,8 +279,12 @@ class HttpRequest extends Gateway
      */
     private function formatXmlArray(&$array, &$result)
     {
-        if (isset($array['Rows']['Row'])) {
-            $array = &$array['Rows']['Row'];
+        if (isset($array['Rows']) && is_array($array['Rows'])) {
+            $array = &$array['Rows'];
+        }
+
+        if (isset($array['Row']) && is_array($array['Row'])) {
+            $array = &$array['Row'];
         }
 
         if (isset($array[0]) && is_array($array[0]) && count($array) === 1) {
