@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\POST;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\AdminGroup\PATCH;
 
 use Microservices\App\DatabaseDataTypes;
 

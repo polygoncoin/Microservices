@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\PATCH;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\PATCH;
 
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;

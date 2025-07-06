@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\GET;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\AdminGroup\GET;
 
 use Microservices\App\DatabaseDataTypes;
 

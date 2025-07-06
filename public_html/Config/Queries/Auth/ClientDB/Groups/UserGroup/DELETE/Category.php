@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\DELETE;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\DELETE;
 
 use Microservices\App\Constants;
 

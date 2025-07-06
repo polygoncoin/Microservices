@@ -1,5 +1,5 @@
 <?php
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\POST;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\POST;
 
 use Microservices\App\DatabaseDataTypes;
 
