@@ -249,17 +249,17 @@ class HttpRequest extends Gateway
                 $this->payloadStream = fopen('php://input', 'rb');
             } else {
                 $xml = simplexml_load_string(file_get_contents('php://input'));
-                $jsonString = json_encode($xml);
-                $array = json_decode($jsonString, true);
-                $jsonString = null;
+                $array = json_decode(json_encode($xml), true);
+                unset($xml);
 
-                $tempFile = tempnam(sys_get_temp_dir(), 'Xml');
-                $this->payloadStream = fopen($tempFile, 'rwb+');
                 $result = [];
                 $this->formatXmlArray($array, $result);
-                $array = null;
+
+                $this->payloadStream = fopen("php://memory", "rw+b");
                 fwrite($this->payloadStream, json_encode($result));
-                $result = null;
+
+                unset($array);
+                unset($result);
             }
             $this->dataDecode = new DataDecode($this->payloadStream);
             $this->dataDecode->init();
