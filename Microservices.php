@@ -59,7 +59,7 @@ class Microservices
         $this->httpRequestDetails = &$httpRequestDetails;
 
         Constants::init();
-        Env::init();
+        Env::init($httpRequestDetails);
     }
 
     /**
