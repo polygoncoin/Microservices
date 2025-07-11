@@ -42,8 +42,8 @@ maxPerpage=10000                ;Maximum value of perpage (records per page)
 
 ;Data Representation: Json/Xml
 ;To override below setting pass below params with route seperated with &
-inputDataRepresentation='Json'
-outputDataRepresentation='Json'
+inputRepresentation='Json'
+outputRepresentation='Json'
 ```
 
 ### Cache Server Details (Redis)
@@ -947,7 +947,7 @@ xmlhttp . send( JSON.stringify(payload) );
 * XML Request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&inputDataRepresentation=Xml&outputDataRepresentation=Xml";
+var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&inputRepresentation=Xml&outputRepresentation=Xml";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Paylaod>' +

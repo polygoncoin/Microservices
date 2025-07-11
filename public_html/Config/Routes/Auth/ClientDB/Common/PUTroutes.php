@@ -1,15 +1,43 @@
 <?php
+/**
+ * API Route config
+ * php version 8.3
+ *
+ * @category  API_Route_Config
+ * @package   Microservices
+ * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
+ * @copyright 2025 Ramesh N Jangid
+ * @license   MIT https://opensource.org/license/mit
+ * @link      https://github.com/polygoncoin/Microservices
+ * @since     Class available since Release 1.0.0
+ */
 namespace Microservices\public_html\Config\Routes\Auth\CommonRoutes\Client;
 
 return [
     'registration' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Queries' . DIRECTORY_SEPARATOR . 'Auth' . DIRECTORY_SEPARATOR . 'ClientDB' . DIRECTORY_SEPARATOR . 'Groups' . DIRECTORY_SEPARATOR . 'UserGroup' . DIRECTORY_SEPARATOR . 'PUT' . DIRECTORY_SEPARATOR . 'Registration.php',
+            '__FILE__' => $Constants::$PUBLIC_HTML .
+                DIRECTORY_SEPARATOR . 'Config' .
+                DIRECTORY_SEPARATOR . 'Queries' .
+                DIRECTORY_SEPARATOR . 'Auth' .
+                DIRECTORY_SEPARATOR . 'ClientDB' .
+                DIRECTORY_SEPARATOR . 'Groups' .
+                DIRECTORY_SEPARATOR . 'UserGroup' .
+                DIRECTORY_SEPARATOR . 'PUT' .
+                DIRECTORY_SEPARATOR . 'Registration.php',
         ],
     ],
     'address' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Queries' . DIRECTORY_SEPARATOR . 'Auth' . DIRECTORY_SEPARATOR . 'ClientDB' . DIRECTORY_SEPARATOR . 'Groups' . DIRECTORY_SEPARATOR . 'UserGroup' . DIRECTORY_SEPARATOR . 'PUT' . DIRECTORY_SEPARATOR . 'Address.php',
+            '__FILE__' => $Constants::$PUBLIC_HTML .
+                DIRECTORY_SEPARATOR . 'Config' .
+                DIRECTORY_SEPARATOR . 'Queries' .
+                DIRECTORY_SEPARATOR . 'Auth' .
+                DIRECTORY_SEPARATOR . 'ClientDB' .
+                DIRECTORY_SEPARATOR . 'Groups' .
+                DIRECTORY_SEPARATOR . 'UserGroup' .
+                DIRECTORY_SEPARATOR . 'PUT' .
+                DIRECTORY_SEPARATOR . 'Address.php',
         ],
     ]
 ];

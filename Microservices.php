@@ -1,4 +1,16 @@
 <?php
+/**
+ * Service
+ * php version 8.3
+ *
+ * @category  Microservices
+ * @package   Microservices
+ * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
+ * @copyright 2025 Ramesh N Jangid
+ * @license   MIT https://opensource.org/license/mit
+ * @link      https://github.com/polygoncoin/Microservices
+ * @since     Class available since Release 1.0.0
+ */
 namespace Microservices;
 
 use Microservices\App\Constants;
@@ -7,42 +19,42 @@ use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 
 /**
- * Microservices Class
+ * Service
+ * php version 8.3
  *
- * Class to start Services
- *
- * @category   Microservices
- * @package    Microservices
- * @author     Ramesh Narayan Jangid
- * @copyright  Ramesh Narayan Jangid
- * @version    Release: @1.0.0@
- * @since      Class available since Release 1.0.0
+ * @category  Microservices
+ * @package   Microservices
+ * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
+ * @copyright 2025 Ramesh N Jangid
+ * @license   MIT https://opensource.org/license/mit
+ * @link      https://github.com/polygoncoin/Microservices
+ * @since     Class available since Release 1.0.0
  */
 class Microservices
 {
     /**
      * Start micro timestamp;
      *
-     * @var null|integer
+     * @var null|int
      */
-    private $tsStart = null;
+    private $_tsStart = null;
 
     /**
      * End micro timestamp;
      *
-     * @var null|integer
+     * @var null|int
      */
-    private $tsEnd = null;
+    private $_tsEnd = null;
 
     /**
      * Microservices Request Details
      *
      * @var null|array
      */
-    public $httpRequestDetails = null;
+    public $http = null;
 
     /**
-     * Microservices Collection of Common Objects
+     * Common Object
      *
      * @var null|Common
      */
@@ -51,34 +63,37 @@ class Microservices
     /**
      * Constructor
      *
-     * @param array $httpRequestDetails
+     * @param array $http HTTP request details
+     *
      * @return void
      */
-    public function __construct(&$httpRequestDetails)
+    public function __construct(&$http)
     {
-        $this->httpRequestDetails = &$httpRequestDetails;
+        $this->http = &$http;
 
         Constants::init();
-        Env::init($httpRequestDetails);
+        Env::init(http: $http);
     }
 
     /**
      * Initialize
      *
-     * @return boolean
-     * @throws \Exception
+     * @return bool
      */
-    public function init()
+    public function init(): bool
     {
-        $this->c = new Common($this->httpRequestDetails);
+        $this->c = new Common(http: $this->http);
         $this->c->init();
 
-        if (!isset($this->httpRequestDetails['get'][Constants::$ROUTE_URL_PARAM])) {
-            throw new \Exception('Missing route', HttpStatus::$NotFound);
+        if (!isset($this->http['get'][Constants::$ROUTE_URL_PARAM])) {
+            throw new \Exception(
+                message: 'Missing route',
+                code: HttpStatus::$NotFound
+            );
         }
 
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
-            $this->tsStart = microtime(true);
+            $this->_tsStart = microtime(as_float: true);
         }
 
         return true;
@@ -87,9 +102,9 @@ class Microservices
     /**
      * Process
      *
-     * @return boolean
+     * @return bool
      */
-    public function process()
+    public function process(): bool
     {
         $this->startJson();
         $this->processApi();
@@ -105,60 +120,68 @@ class Microservices
      *
      * @return void
      */
-    public function startJson()
+    public function startJson(): void
     {
-        $this->c->httpResponse->dataEncode->startObject();
+        $this->c->res->dataEncode->startObject();
     }
 
     /**
      * Process API request
      *
-     * @throws \Exception
-     * @return boolean
+     * @return bool
      */
-    public function processApi()
+    public function processApi(): bool
     {
         $class = null;
 
         switch (true) {
 
-            case Env::$allowCronRequest && strpos($this->c->httpRequest->ROUTE, '/'.Env::$cronRequestUriPrefix) === 0:
-                if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
-                    throw new \Exception('Source IP is not supported', HttpStatus::$NotFound);
-                }
-                $class = __NAMESPACE__ . '\\App\\Cron';
-                break;
+        case Env::$allowCronRequest && strpos(
+            haystack: $this->c->req->ROUTE,
+            needle: '/' . Env::$cronRequestUriPrefix
+        ) === 0:
+            if ($this->c->req->REMOTE_ADDR !== Env::$cronRestrictedIp) {
+                throw new \Exception(
+                    message: 'Source IP is not supported',
+                    code: HttpStatus::$NotFound
+                );
+            }
+            $class = __NAMESPACE__ . '\\App\\Cron';
+            break;
 
-            // Requires HTTP auth username and password
-            case $this->c->httpRequest->ROUTE === '/reload':
-                if ($this->c->httpRequest->REMOTE_ADDR !== Env::$cronRestrictedIp) {
-                    throw new \Exception('Source IP is not supported', HttpStatus::$NotFound);
-                }
-                $class = __NAMESPACE__ . '\\App\\Reload';
-                break;
+        // Requires HTTP auth username and password
+        case $this->c->req->ROUTE === '/reload':
+            if ($this->c->req->REMOTE_ADDR !== Env::$cronRestrictedIp) {
+                throw new \Exception(
+                    message: 'Source IP is not supported',
+                    code: HttpStatus::$NotFound
+                );
+            }
+            $class = __NAMESPACE__ . '\\App\\Reload';
+            break;
 
-            // Generates auth token
-            case $this->c->httpRequest->ROUTE === '/login':
-                $class = __NAMESPACE__ . '\\App\\Login';
-                break;
+        // Generates auth token
+        case $this->c->req->ROUTE === '/login':
+            $class = __NAMESPACE__ . '\\App\\Login';
+            break;
 
-            // Default - Auth based and Open to web API's
-            default:
-                $this->c->httpRequest->initGateway();
-                $class = __NAMESPACE__ . '\\App\\Api';
-                break;
+        // Requires auth token
+        default:
+            $this->c->req->initGateway();
+            $class = __NAMESPACE__ . '\\App\\Api';
+            break;
         }
 
         // Class found
         try {
-            if (!is_null($class)) {
+            if (!is_null(value: $class)) {
                 $api = new $class($this->c);
                 if ($api->init()) {
                     $api->process();
                 }
             }
         } catch (\Exception $e) {
-            $this->log($e);
+            $this->_log($e);
         }
 
         return true;
@@ -169,9 +192,12 @@ class Microservices
      *
      * @return void
      */
-    public function endOutputJson()
+    public function endOutputJson(): void
     {
-        $this->c->httpResponse->dataEncode->addKeyData('Status', $this->c->httpResponse->httpStatus);
+        $this->c->res->dataEncode->addKeyData(
+            key: 'Status',
+            data: $this->c->res->httpStatus
+        );
     }
 
     /**
@@ -179,20 +205,29 @@ class Microservices
      *
      * @return void
      */
-    public function addPerformance()
+    public function addPerformance(): void
     {
         if (Env::$OUTPUT_PERFORMANCE_STATS) {
-            $this->tsEnd = microtime(true);
-            $time = ceil(($this->tsEnd - $this->tsStart) * 1000);
-            $memory = ceil(memory_get_peak_usage() / 1000);
+            $this->_tsEnd = microtime(as_float: true);
+            $time = ceil(num: ($this->_tsEnd - $this->_tsStart) * 1000);
+            $memory = ceil(num: memory_get_peak_usage() / 1000);
 
-            $this->c->httpResponse->dataEncode->startObject('Stats');
-            $this->c->httpResponse->dataEncode->startObject('Performance');
-            $this->c->httpResponse->dataEncode->addKeyData('total-time-taken', "{$time} ms");
-            $this->c->httpResponse->dataEncode->addKeyData('peak-memory-usage', "{$memory} KB");
-            $this->c->httpResponse->dataEncode->endObject();
-            $this->c->httpResponse->dataEncode->addKeyData('getrusage', getrusage());
-            $this->c->httpResponse->dataEncode->endObject();
+            $this->c->res->dataEncode->startObject(key: 'Stats');
+            $this->c->res->dataEncode->startObject(key: 'Performance');
+            $this->c->res->dataEncode->addKeyData(
+                key: 'total-time-taken',
+                data: "{$time} ms"
+            );
+            $this->c->res->dataEncode->addKeyData(
+                key: 'peak-memory-usage',
+                data: "{$memory} KB"
+            );
+            $this->c->res->dataEncode->endObject();
+            $this->c->res->dataEncode->addKeyData(
+                key: 'getrusage',
+                data: getrusage()
+            );
+            $this->c->res->dataEncode->endObject();
         }
     }
 
@@ -201,10 +236,10 @@ class Microservices
      *
      * @return void
      */
-    public function endJson()
+    public function endJson(): void
     {
-        $this->c->httpResponse->dataEncode->endObject();
-        $this->c->httpResponse->dataEncode->end();
+        $this->c->res->dataEncode->endObject();
+        $this->c->res->dataEncode->end();
     }
 
     /**
@@ -212,21 +247,21 @@ class Microservices
      *
      * @return void
      */
-    public function outputResults()
+    public function outputResults(): void
     {
-        http_response_code($this->c->httpResponse->httpStatus);
-        $this->c->httpResponse->dataEncode->streamData();
+        http_response_code(response_code: $this->c->res->httpStatus);
+        $this->c->res->dataEncode->streamData();
     }
 
     /**
      * Headers / CORS
      *
-     * @return void
+     * @return array
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $headers = [];
-        $headers['Access-Control-Allow-Origin'] = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['HTTP_HOST']}";
+        $headers['Access-Control-Allow-Origin'] = $this->http['server']['host'];
         $headers['Vary'] = 'Origin';
         $headers['Access-Control-Allow-Headers'] = '*';
 
@@ -238,16 +273,18 @@ class Microservices
         $headers['Cross-Origin-Opener-Policy'] = 'unsafe-none';
 
         // Access-Control headers are received during OPTIONS requests
-        if ($this->httpRequestDetails['server']['request_method'] == 'OPTIONS') {
+        if ($this->http['server']['request_method'] == 'OPTIONS') {
             // may also be using PUT, PATCH, HEAD etc
-            $headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+            $methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+            $headers['Access-Control-Allow-Methods'] = $methods;
         } else {
-            if (Env::$outputDataRepresentation === 'Xml') { // XML headers
+            if (Env::$outputRepresentation === 'Xml') { // XML headers
                 $headers['Content-Type'] = 'text/xml; charset=utf-8';
             } else { // JSON headers
                 $headers['Content-Type'] = 'application/json; charset=utf-8';
             }
-            $headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
+            $cacheControl = 'no-store, no-cache, must-revalidate, max-age=0';
+            $headers['Cache-Control'] = $cacheControl;
             $headers['Pragma'] = 'no-cache';
         }
 
@@ -257,12 +294,15 @@ class Microservices
     /**
      * Log error
      *
-     * @param \Exception $e
+     * @param \Exception $e Exception
+     *
      * @return void
-     * @throws \Exception
      */
-    private function log($e)
+    private function _log($e): never
     {
-        throw new \Exception($e->getMessage(), $e->getCode());
+        throw new \Exception(
+            message: $e->getMessage(),
+            code: $e->getCode()
+        );
     }
 }
