@@ -33,7 +33,7 @@ use Microservices\App\Env;
 class DataDecode extends AbstractDataDecode
 {
     /**
-     * Json File Handle
+     * JSON File Handle
      *
      * @var null|resource
      */
@@ -55,7 +55,7 @@ class DataDecode extends AbstractDataDecode
     {
         $this->_dataFileHandle = &$dataFileHandle;
 
-        if (Env::$inputRepresentation === 'Json') {
+        if (Env::$inputRepresentation === 'JSON') {
             $this->_dataDecoder = new JsonDecode(
                 jsonFileHandle: $this->_dataFileHandle
             );

@@ -103,6 +103,7 @@ function getCurlConfig(
 /**
  * Trigger cURL
  *
+ * @param string $homeURL Site URL
  * @param string $method  HTTP method
  * @param string $route   Route
  * @param array  $header  Header
@@ -111,16 +112,12 @@ function getCurlConfig(
  * @return mixed
  */
 function trigger(
+    $homeURL,
     $method,
     $route,
     $header = [],
     $payload = ''
 ): mixed {
-    // Open
-    $homeURL='http://public.localhost/Microservices/public_html/index.php';
-    // Auth
-    // $homeURL='http://api.client001.localhost/Microservices/public_html/index.php';
-
     $curl = curl_init();
     $curlConfig = getCurlConfig(
         homeURL: $homeURL,

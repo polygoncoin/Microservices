@@ -59,19 +59,27 @@ class Common
     public function __construct(&$http)
     {
         $this->http = &$http;
+        $this->req = new HttpRequest(http: $this->http);
+        $this->res = new HttpResponse(http: $this->http);
     }
 
     /**
-     * Initialize
+     * Initialize Request
      *
      * @return bool
      */
-    public function init(): void
+    public function initRequest(): void
     {
-        $this->req = new HttpRequest(http: $this->http);
         $this->req->init();
+    }
 
-        $this->res = new HttpResponse(http: $this->http);
+    /**
+     * Initialize Response
+     *
+     * @return bool
+     */
+    public function initResponse(): void
+    {
         $this->res->init();
     }
 }

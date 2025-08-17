@@ -62,7 +62,7 @@ class Cron
      */
     public function init(): bool
     {
-        $this->_c->req->init();
+        $this->_c->initRequest();
 
         $routeFileLocation = Constants::$PUBLIC_HTML .
             DIRECTORY_SEPARATOR . 'Config' .

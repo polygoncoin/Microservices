@@ -338,6 +338,8 @@ class Login
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
         ];
 
+        $this->_c->initResponse();
+        $this->_c->res->dataEncode->startObject();
         $this->_c->res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 

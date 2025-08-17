@@ -32,7 +32,7 @@ use Microservices\App\HttpStatus;
 class JsonDecode extends AbstractDataDecode
 {
     /**
-     * Json File Handle
+     * JSON File Handle
      *
      * @var null|resource
      */
@@ -54,7 +54,7 @@ class JsonDecode extends AbstractDataDecode
     private $_allowedPayloadLength = 100 * 1024 * 1024; // 100 MB
 
     /**
-     * Json Decode Engine Object
+     * JSON Decode Engine Object
      *
      * @var null|JsonDecodeEngine
      */
@@ -94,7 +94,7 @@ class JsonDecode extends AbstractDataDecode
      */
     public function init(): void
     {
-        // Init Json Decode Engine
+        // Init JSON Decode Engine
         $this->_jsonDecodeEngine = new JsonDecodeEngine(
             jsonFileHandle: $this->_jsonFileHandle
         );

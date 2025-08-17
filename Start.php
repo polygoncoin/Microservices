@@ -78,9 +78,9 @@ try {
         || $http['server']['api_version'] !== 'v1.0.0'
     ) {
         // Set response headers
-        header("Content-Type: application/json; charset=utf-8");
-        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-        header("Pragma: no-cache");
+        header(header: "Content-Type: application/json; charset=utf-8");
+        header(header: "Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header(header: "Pragma: no-cache");
 
         die('{"Status": 400, "Message": "Bad Request"}');
     }
@@ -93,15 +93,19 @@ try {
 
     $Microservices = new Microservices(http: $http);
 
-    // Setting CORS
-    foreach ($Microservices->getHeaders() as $k => $v) {
-        header("{$k}: {$v}");
-    }
     if ($http['server']['request_method'] == 'OPTIONS') {
+        // Setting CORS
+        foreach ($Microservices->getHeaders() as $k => $v) {
+            header(header: "{$k}: {$v}");
+        }
         exit();
     }
 
     if ($Microservices->init()) {
+        // Setting CORS
+        foreach ($Microservices->getHeaders() as $k => $v) {
+            header(header: "{$k}: {$v}");
+        }
         $Microservices->process();
         $Microservices->outputResults();
     }

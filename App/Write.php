@@ -81,7 +81,7 @@ class Write
     private $_operateAsTransaction = null;
 
     /**
-     * Json Encode Object
+     * JSON Encode Object
      *
      * @var null|AbstractDataEncode
      */
@@ -242,7 +242,7 @@ class Write
             $this->dataEncode->startObject(key: 'Results');
         } else {
             $this->dataEncode->startObject(key: 'Results');
-            if (Env::$outputRepresentation === 'Xml') {
+            if (Env::$outputRepresentation === 'XML') {
                 $this->dataEncode->startArray(key: 'Rows');
             }
         }
@@ -330,7 +330,7 @@ class Write
                     $this->dataEncode->addKeyData(key: $k, data: $v);
                 }
             } else {
-                if (Env::$outputRepresentation === 'Xml') {
+                if (Env::$outputRepresentation === 'XML') {
                     $this->dataEncode->startObject(key: 'Row');
                     $this->dataEncode->encode(data: $arr);
                     $this->dataEncode->endObject();
@@ -344,7 +344,7 @@ class Write
         if ($this->_sess['payloadType'] === 'Object') {
             $this->dataEncode->endObject();
         } else {
-            if (Env::$outputRepresentation === 'Xml') {
+            if (Env::$outputRepresentation === 'XML') {
                 $this->dataEncode->endArray();
             }
             $this->dataEncode->endObject();

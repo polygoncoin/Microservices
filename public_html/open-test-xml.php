@@ -1,6 +1,8 @@
 <?php
 require __DIR__ ."/testFunctions.php"; // phpcs:ignore PEAR.Commenting.FileComment.Missing
 
+$homeURL='http://public.localhost/Microservices/public_html/index.php';
+
 $response = [];
 $header = [];
 
@@ -21,8 +23,9 @@ $payload = '<?xml version="1.0" encoding="UTF-8" ?>';
 genXmlPayload(params: $params, payload: $payload);
 
 $response = trigger(
+    homeURL: $homeURL,
     method: 'POST',
-    route: '/registration-with-address&inputRepresentation=Xml&outputRepresentation=Xml',
+    route: '/registration-with-address&inputRepresentation=XML&outputRepresentation=XML',
     header: $header,
     payload: $payload
 );

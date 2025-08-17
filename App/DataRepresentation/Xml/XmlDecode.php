@@ -1,6 +1,6 @@
 <?php
 /**
- * Decodes Xml
+ * Decodes XML
  * php version 8.3
  *
  * @category  DataDecode
@@ -16,7 +16,7 @@ namespace Microservices\App\DataRepresentation\Xml;
 use Microservices\App\DataRepresentation\Json\JsonDecode;
 
 /**
- * Decodes Xml
+ * Decodes XML
  * php version 8.3
  *
  * @category  DataDecode_XML

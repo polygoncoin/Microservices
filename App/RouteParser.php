@@ -152,7 +152,25 @@ class RouteParser extends DbFunctions
                         code: HttpStatus::$BadRequest
                     );
                 }
+                if (isset($routes['inputRepresentation'])
+                    && Env::isValidDataRep(
+                        dataRepresentation: $routes['inputRepresentation']
+                    )
+                ) {
+                    Env::$inputRepresentation = $routes['inputRepresentation'];
+                }
             }
+        }
+
+        // Input data representation over rides global and routes settings
+        // Switch Input data representation if set in URL param
+        if (Env::$allowGetRepresentation == 1
+            && isset($this->http['get']['inputRepresentation'])
+            && Env::isValidDataRep(
+                dataRepresentation: $this->http['get']['inputRepresentation']
+            )
+        ) {
+            Env::$inputRepresentation = $this->http['get']['inputRepresentation'];
         }
 
         $this->configuredUri = '/' . implode(separator: '/', array: $configuredUri);
@@ -269,6 +287,31 @@ class RouteParser extends DbFunctions
             );
         }
 
-        $this->sqlConfigFile = $routes['__FILE__'];
+        if (!empty($routes['__FILE__'])
+            && file_exists(filename: $routes['__FILE__'])
+        ) {
+            $this->sqlConfigFile = $routes['__FILE__'];
+
+            // Output data representation over rides global
+            // Output data representation set in Query config file
+            $sqlConfig = include $this->sqlConfigFile;
+            if (isset($sqlConfig['outputRepresentation'])
+                && Env::isValidDataRep(
+                    dataRepresentation: $sqlConfig['outputRepresentation']
+                )
+            ) {
+                Env::$outputRepresentation = $sqlConfig['outputRepresentation'];
+            }
+        }
+
+        // Switch Output data representation if set in URL param
+        if (Env::$allowGetRepresentation == 1
+            && isset($this->http['get']['outputRepresentation'])
+            && Env::isValidDataRep(
+                dataRepresentation: $this->http['get']['outputRepresentation']
+            )
+        ) {
+            Env::$outputRepresentation = $this->http['get']['outputRepresentation'];
+        }
     }
 }

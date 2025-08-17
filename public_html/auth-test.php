@@ -1,10 +1,13 @@
 <?php
 require __DIR__ ."/testFunctions.php"; // phpcs:ignore PEAR.Commenting.FileComment.Missing
 
+$homeURL='http://api.client001.localhost/Microservices/public_html/index.php';
+
 $response = [];
 echo '<pre>';
 
 $response[] = trigger(
+    homeURL: $homeURL,
     method: 'GET',
     route: '/reload',
     header: [],
@@ -17,6 +20,7 @@ $params = [
     'password' => 'shames11'
 ];
 $res = trigger(
+    homeURL: $homeURL,
     method: 'POST',
     route: '/login',
     header: [],
@@ -29,6 +33,7 @@ if ($res) {
     $header = ["Authorization: Bearer {$token}"];
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/routes',
         header: $header,
@@ -61,6 +66,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/category',
         header: $header,
@@ -75,6 +81,7 @@ if ($res) {
         'password' => 'shames11'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/registration',
         header: $header,
@@ -86,6 +93,7 @@ if ($res) {
         'address' => '203'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/address',
         header: $header,
@@ -103,6 +111,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/registration-with-address',
         header: $header,
@@ -110,19 +119,28 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/category',
         header: $header,
         payload: ''
     );
-    // $response[] = trigger('GET', '/category/search', $header, $payload = '');
+    // $response[] = trigger(
+    // homeURL: $homeURL,
+    // 'GET', 
+    // '/category/search', 
+    // $header, 
+    // $payload = ''
+    // );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/category/1',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/category&orderBy={"id":"DESC"}',
         header: $header,
@@ -130,18 +148,21 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/registration/1',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/address/1',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/registration-with-address/1',
         header: $header,
@@ -156,6 +177,7 @@ if ($res) {
         'password' => 'shames11'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PUT',
         route: '/registration/1',
         header: $header,
@@ -167,6 +189,7 @@ if ($res) {
         'address' => '203'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PUT',
         route: '/address/1',
         header: $header,
@@ -179,6 +202,7 @@ if ($res) {
         'email' => 'ramesh_test@test.com'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PATCH',
         route: '/registration/1',
         header: $header,
@@ -189,6 +213,7 @@ if ($res) {
         'address' => '203'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PATCH',
         route: '/address/1',
         header: $header,
@@ -196,12 +221,14 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'DELETE',
         route: '/registration/1',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'DELETE',
         route: '/address/1',
         header: $header,
@@ -209,6 +236,7 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/category/config',
         header: $header,
@@ -218,6 +246,7 @@ if ($res) {
 
 // Admin User
 $res = trigger(
+    homeURL: $homeURL,
     method: 'POST',
     route: '/login',
     header: [],
@@ -230,6 +259,7 @@ if ($res) {
     $header = ["Authorization: Bearer {$token}"];
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/routes',
         header: $header,
@@ -237,6 +267,7 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'DELETE',
         route: '/category/truncate',
         header: $header,
@@ -269,6 +300,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/category',
         header: $header,
@@ -283,6 +315,7 @@ if ($res) {
         'password' => 'shames11'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/registration',
         header: $header,
@@ -294,6 +327,7 @@ if ($res) {
         'address' => '203'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/address',
         header: $header,
@@ -311,6 +345,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/registration-with-address',
         header: $header,
@@ -318,19 +353,27 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/category',
         header: $header,
         payload: ''
     );
-    // $response[] = trigger('GET', '/category/search', $header, $payload = '');
+    // $response[] = trigger(
+    // homeURL: $homeURL, 
+    // 'GET', 
+    // '/category/search', 
+    // $header, 
+    // $payload = '');
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/category/1',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/category&orderBy={"id":"DESC"}',
         header: $header,
@@ -338,12 +381,14 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/registration',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/registration/1',
         header: $header,
@@ -351,12 +396,14 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/address',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/address/1',
         header: $header,
@@ -364,12 +411,14 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/registration-with-address',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'GET',
         route: '/registration-with-address/1',
         header: $header,
@@ -384,6 +433,7 @@ if ($res) {
         'password' => 'shames11'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PUT',
         route: '/registration/1',
         header: $header,
@@ -395,6 +445,7 @@ if ($res) {
         'address' => '203'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PUT',
         route: '/address/1',
         header: $header,
@@ -413,6 +464,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PUT',
         route: '/registration-with-address/1',
         header: $header,
@@ -425,6 +477,7 @@ if ($res) {
         'email' => 'ramesh_test@test.com'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PATCH',
         route: '/registration/1',
         header: $header,
@@ -435,6 +488,7 @@ if ($res) {
         'address' => '203'
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PATCH',
         route: '/address/1',
         header: $header,
@@ -451,6 +505,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'PATCH',
         route: '/registration-with-address/1',
         header: $header,
@@ -458,12 +513,14 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'DELETE',
         route: '/registration/1',
         header: $header,
         payload: ''
     );
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'DELETE',
         route: '/address/1',
         header: $header,
@@ -476,6 +533,7 @@ if ($res) {
         ]
     ];
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'DELETE',
         route: '/registration-with-address/1',
         header: $header,
@@ -483,6 +541,7 @@ if ($res) {
     );
 
     $response[] = trigger(
+        homeURL: $homeURL,
         method: 'POST',
         route: '/category/config',
         header: $header,

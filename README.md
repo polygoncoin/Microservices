@@ -35,15 +35,16 @@ Below are the configuration settings details in .env
 
 ```ini
 ENVIRONMENT=0                   ;Environment PRODUCTION = 1 / DEVELOPMENT = 0
-OUTPUT_PERFORMANCE_STATS=1      ;Add Performance Stats in Json output: 1 = true / 0 = false
+OUTPUT_PERFORMANCE_STATS=1      ;Add Performance Stats in JSON output: 1 = true / 0 = false
 allowConfigRequest=1            ;Allow config request (global flag): 1 = true / 0 = false
 cronRestrictedIp='127.0.0.1'    ;Crons Details
 maxPerpage=10000                ;Maximum value of perpage (records per page)
 
-;Data Representation: Json/Xml
+;Data Representation: JSON/XML
 ;To override below setting pass below params with route seperated with &
-inputRepresentation='Json'
-outputRepresentation='Json'
+inputRepresentation='JSON'
+outputRepresentation='JSON'
+allowGetRepresentation=1
 ```
 
 ### Cache Server Details (Redis)
@@ -298,7 +299,10 @@ return [
             '__FILE__' => 'SQL file location',
             '__PRE-ROUTE-HOOKS__' => [], // For noi hooks
             '__POST-ROUTE-HOOKS__' => [] // For noi hooks
-        ]
+        ],
+
+        // Input Data Representation
+        'inputRepresentation' => 'XML' // JSON/XML - Defaults to JSON
     ]
 ];
 ```
@@ -570,7 +574,10 @@ return [
         '...'
     ],
 
+    // Data Representation
+    'outputRepresentation' => 'XML', // JSON/XML - Defaults to JSON
     // Limiting duplicates
+    
     'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
 ];
 ```
@@ -947,7 +954,7 @@ xmlhttp . send( JSON.stringify(payload) );
 * XML Request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&inputRepresentation=Xml&outputRepresentation=Xml";
+var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&inputRepresentation=XML&outputRepresentation=XML";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Paylaod>' +

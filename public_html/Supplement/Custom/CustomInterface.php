@@ -27,4 +27,17 @@ namespace Microservices\public_html\Supplement\Custom;
  */
 interface CustomInterface
 {
+    /**
+     * Initialize
+     *
+     * @return bool
+     */
+    public function init(): bool;
+
+    /**
+     * Process
+     *
+     * @return bool
+     */
+    public function process(): bool;
 }

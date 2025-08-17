@@ -1,6 +1,8 @@
 <?php
 require __DIR__ ."/testFunctions.php"; // phpcs:ignore PEAR.Commenting.FileComment.Missing
 
+$homeURL='http://public.localhost/Microservices/public_html/index.php';
+
 $response = [];
 $header = [];
 echo '<pre>';
@@ -13,10 +15,12 @@ $params = [
     'password' => 'shames11'
 ];
 $response[] = trigger(
+    homeURL: $homeURL,
     method: 'POST',
     route: '/registration',
     header: $header,
-    payload: json_encode(value: $params));
+    payload: json_encode(value: $params)
+);
 
 $params = [
     'firstname' => 'Ramesh',
@@ -29,6 +33,7 @@ $params = [
     ]
 ];
 $response[] = trigger(
+    homeURL: $homeURL,
     method: 'POST',
     route: '/registration-with-address',
     header: $header,
@@ -36,19 +41,22 @@ $response[] = trigger(
 );
 
 $response[] = trigger(
+    homeURL: $homeURL,
     method: 'GET',
     route: '/category/1',
     header: $header,
     payload: ''
 );
-// $response[] = trigger('GET', '/category/search', $header, $payload = '');
+// $response[] = trigger(homeURL: $homeURL, 'GET', '/category/search', $header, $payload = '');
 $response[] = trigger(
+    homeURL: $homeURL,
     method: 'GET',
     route: '/category',
     header: $header,
     payload: ''
 );
 $response[] = trigger(
+    homeURL: $homeURL,
     method: 'GET',
     route: '/category&orderBy={"id":"DESC"}',
     header: $header,

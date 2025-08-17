@@ -85,13 +85,13 @@ class DataEncode extends AbstractDataEncode
             $this->_tempStream = fopen(filename: "php://memory", mode: "rw+b");
         }
         switch (Env::$outputRepresentation) {
-        case 'Xml':
+        case 'XML':
             $this->_dataEncoder = new XmlEncode(
                 tempStream: $this->_tempStream,
                 header: $header
             );
             break;
-        case 'Json':
+        case 'JSON':
             $this->_dataEncoder = new JsonEncode(
                 tempStream: $this->_tempStream,
                 header: $header
@@ -229,7 +229,7 @@ class DataEncode extends AbstractDataEncode
         $this->end();
         rewind(stream: $this->_tempStream);
 
-        if (Env::$outputRepresentation === 'Xml'
+        if (Env::$outputRepresentation === 'XML'
             && !is_null(value: $this->XSLT)
             && file_exists(filename: $this->XSLT)
         ) {
@@ -250,7 +250,7 @@ class DataEncode extends AbstractDataEncode
     }
 
     /**
-     * Return Json String
+     * Return JSON String
      *
      * @return bool|string
      */

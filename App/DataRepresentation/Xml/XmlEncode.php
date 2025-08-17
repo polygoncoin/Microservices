@@ -17,7 +17,7 @@ use Microservices\App\DataRepresentation\AbstractDataEncode;
 use Microservices\App\HttpStatus;
 
 /**
- * Generates Xml
+ * Generates XML
  * php version 8.3
  *
  * @category  Xml_Encoder
@@ -79,7 +79,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Encodes both simple and associative array to Xml
+     * Encodes both simple and associative array to XML
      *
      * @param string|array $data Representation Data
      *
@@ -111,7 +111,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Escape the Xml string value
+     * Escape the XML string value
      *
      * @param null|string $data Representation Data
      *
@@ -124,7 +124,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Append raw Xml string
+     * Append raw XML string
      *
      * @param string $data Reference of Representation Data
      *
@@ -138,7 +138,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Append raw Xml string
+     * Append raw XML string
      *
      * @param string $key  Tag of associative array
      * @param string $data Reference of Representation Data
@@ -154,7 +154,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Add simple array/value as in the Xml format
+     * Add simple array/value as in the XML format
      *
      * @param string|array $data Representation Data
      *
@@ -173,7 +173,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Add simple array/value as in the Xml format
+     * Add simple array/value as in the XML format
      *
      * @param string       $key  Tag of associative array
      * @param string|array $data Representation Data
@@ -262,7 +262,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Checks Xml was properly closed
+     * Checks XML was properly closed
      *
      * @return void
      */
@@ -281,7 +281,7 @@ class XmlEncode extends AbstractDataEncode
     }
 
     /**
-     * Checks Xml was properly closed
+     * Checks XML was properly closed
      *
      * @param null|string $key Used while creating associative array inside an object
      *
@@ -294,7 +294,7 @@ class XmlEncode extends AbstractDataEncode
 }
 
 /**
- * Xml Object
+ * XML Object
  *
  * This class is built to help maintain state of simple/associative array
  * php version 8.3

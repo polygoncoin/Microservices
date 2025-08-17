@@ -68,7 +68,7 @@ class Read
     private $_hook = null;
 
     /**
-     * Json Encode Object
+     * JSON Encode Object
      *
      * @var null|AbstractDataEncode
      */
