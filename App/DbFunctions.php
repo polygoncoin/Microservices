@@ -71,7 +71,7 @@ class DbFunctions
      */
     public function setCacheConnection($fetchFrom): object
     {
-        if (is_null(value: $this->sess['clientDetails'])) {
+        if ($this->sess['clientDetails'] === null) {
             throw new \Exception(
                 message: 'Yet to set connection params',
                 code: HttpStatus::$InternalServerError
@@ -170,7 +170,7 @@ class DbFunctions
      */
     public function setDbConnection($fetchFrom): object
     {
-        if (is_null(value: $this->sess['clientDetails'])) {
+        if ($this->sess['clientDetails'] === null) {
             throw new \Exception(
                 message: 'Yet to set connection params',
                 code: HttpStatus::$InternalServerError
@@ -256,7 +256,7 @@ class DbFunctions
      */
     public function getDqlCache($cacheKey): mixed
     {
-        if (is_null(value: $this->sqlCache)) {
+        if ($this->sqlCache === null) {
             $this->sqlCache = $this->setCacheConnection(fetchFrom: 'Slave');
         }
 
@@ -277,7 +277,7 @@ class DbFunctions
      */
     public function setDmlCache($cacheKey, &$json): void
     {
-        if (is_null(value: $this->sqlCache)) {
+        if ($this->sqlCache === null) {
             $this->sqlCache = $this->setCacheConnection(fetchFrom: 'Master');
         }
 
@@ -293,7 +293,7 @@ class DbFunctions
      */
     public function delDmlCache($cacheKey): void
     {
-        if (is_null(value: $this->sqlCache)) {
+        if ($this->sqlCache === null) {
             $this->sqlCache = $this->setCacheConnection(fetchFrom: 'Master');
         }
 

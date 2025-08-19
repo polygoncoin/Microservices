@@ -120,7 +120,7 @@ class Read
             $json = $this->_c->req->getDqlCache(
                 cacheKey: $rSqlConfig['cacheKey']
             );
-            if (!is_null(value: $json)) {
+            if ($json !== null) {
                 $cacheHit = 'true';
                 $this->_c->res->dataEncode->appendKeyData(
                     key: 'cacheHit',
@@ -256,7 +256,7 @@ class Read
 
         // Execute Pre Sql Hooks
         if (isset($rSqlConfig['__PRE-SQL-HOOKS__'])) {
-            if (is_null(value: $this->_hook)) {
+            if ($this->_hook === null) {
                 $this->_hook = new Hook(common: $this->_c);
             }
             $this->_hook->triggerHook(
@@ -310,7 +310,7 @@ class Read
 
         // triggers
         if (isset($rSqlConfig['__TRIGGERS__'])) {
-            if (is_null(value: $this->_web)) {
+            if ($this->_web === null) {
                 $this->_web = new Web(common: $this->_c);
             }
             $this->dataEncode->addKeyData(
@@ -323,7 +323,7 @@ class Read
 
         // Execute Post Sql Hooks
         if (isset($rSqlConfig['__POST-SQL-HOOKS__'])) {
-            if (is_null(value: $this->_hook)) {
+            if ($this->_hook === null) {
                 $this->_hook = new Hook(common: $this->_c);
             }
             $this->_hook->triggerHook(

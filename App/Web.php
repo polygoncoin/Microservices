@@ -333,7 +333,7 @@ class Web
             if ($fetchFrom === 'function') {
                 $function = $fKey;
                 $value = $function($this->_c->req->sess);
-                if (is_null(value: $var)) {
+                if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
                     $sqlParams[$var] = $value;
@@ -355,7 +355,7 @@ class Web
                     }
                     $value = $value[$key];
                 }
-                if (is_null(value: $var)) {
+                if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
                     $sqlParams[$var] = $value;
@@ -363,7 +363,7 @@ class Web
                 continue;
             } elseif ($fetchFrom === 'custom') {
                 $value = $fKey;
-                if (is_null(value: $var)) {
+                if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
                     $sqlParams[$var] = $value;
@@ -371,7 +371,7 @@ class Web
                 continue;
             } elseif (isset($this->_c->req->sess[$fetchFrom][$fKey])) {
                 $value = $this->_c->req->sess[$fetchFrom][$fKey];
-                if (is_null(value: $var)) {
+                if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
                     $sqlParams[$var] = $value;

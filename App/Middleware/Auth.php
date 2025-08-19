@@ -56,11 +56,11 @@ class Auth
      */
     public function loadUserDetails(): void
     {
-        if (!is_null(value: $this->_req->userDetails)) {
+        if ($this->_req->userDetails !== null) {
              return;
         }
 
-        if (!is_null(value: $this->_req->HTTP_AUTHORIZATION)
+        if ($this->_req->HTTP_AUTHORIZATION !== null
             && preg_match(
                 pattern: '/Bearer\s(\S+)/',
                 subject: $this->_req->HTTP_AUTHORIZATION,
@@ -104,7 +104,7 @@ class Auth
      */
     public function loadGroupDetails()
     {
-        if (!is_null(value: $this->_req->groupDetails)) {
+        if ($this->_req->groupDetails !== null) {
              return;
         }
 

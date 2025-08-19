@@ -164,7 +164,7 @@ trait AppTrait
      */
     public function validate(&$validationConfig): array
     {
-        if (is_null(value: $this->validator)) {
+        if ($this->validator === null) {
             $this->validator = new Validator(common: $this->_c);
         }
 
@@ -556,9 +556,9 @@ trait AppTrait
             $payloadSignature = [
                 'IP' => $this->_c->req->REMOTE_ADDR,
                 'clientId' => $this->_c->req->clientId,
-                'groupId' => (!is_null(value: $this->_c->req->groupId) ?
+                'groupId' => ($this->_c->req->groupId !== null ?
                     $this->_c->req->groupId : 0),
-                'userId' => (!is_null(value: $this->_c->req->userId) ?
+                'userId' => ($this->_c->req->userId !== null ?
                     $this->_c->req->userId : 0),
                 'httpMethod' => $this->_c->req->REQUEST_METHOD,
                 'Route' => $this->_c->req->ROUTE,
@@ -605,9 +605,9 @@ trait AppTrait
                     'idempotentWindow' => $idempotentWindow,
                     'IP' => $this->_c->req->REMOTE_ADDR,
                     'clientId' => $this->_c->req->clientId,
-                    'groupId' => (!is_null(value: $this->_c->req->groupId) ?
+                    'groupId' => ($this->_c->req->groupId !== null ?
                         $this->_c->req->groupId : 0),
-                    'userId' => (!is_null(value: $this->_c->req->userId) ?
+                    'userId' => ($this->_c->req->userId !== null ?
                         $this->_c->req->userId : 0),
                     'httpMethod' => $this->_c->req->REQUEST_METHOD,
                     'Route' => $this->_c->req->ROUTE,
@@ -646,9 +646,9 @@ trait AppTrait
             $payloadSignature = [
                 'IP' => $this->_c->req->REMOTE_ADDR,
                 'clientId' => $this->_c->req->clientId,
-                'groupId' => (!is_null(value: $this->_c->req->groupId) ?
+                'groupId' => ($this->_c->req->groupId !== null ?
                     $this->_c->req->groupId : 0),
-                'userId' => (!is_null(value: $this->_c->req->userId) ?
+                'userId' => ($this->_c->req->userId !== null ?
                     $this->_c->req->userId : 0),
                 'httpMethod' => $this->_c->req->REQUEST_METHOD,
                 'Route' => $this->_c->req->ROUTE,

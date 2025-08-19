@@ -38,10 +38,10 @@ ENVIRONMENT=0                   ;Environment PRODUCTION = 1 / DEVELOPMENT = 0
 OUTPUT_PERFORMANCE_STATS=1      ;Add Performance Stats in JSON output: 1 = true / 0 = false
 allowConfigRequest=1            ;Allow config request (global flag): 1 = true / 0 = false
 cronRestrictedIp='127.0.0.1'    ;Crons Details
-maxPerpage=10000                ;Maximum value of perpage (records per page)
+maxPerPage=10000                ;Maximum value of per page (records per page)
 
 ;Data Representation: JSON/XML
-;To override below setting pass below params with route seperated with &
+;To override below setting pass below params with route separated with &
 inputRepresentation='JSON'
 outputRepresentation='JSON'
 allowGetRepresentation=1
@@ -478,17 +478,17 @@ return [
                 [ // Fatch values of params from previous queries
                     'column' => 'user_id',
                     'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                    'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
                 [ // Fatch values of sql results from previous queries
                     'column' => 'user_id',
                     'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                    'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
                 [ // Fatch values of sql payload for previous queries
                     'column' => 'user_id',
                     'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
-                    'fetchFromValue' => '<return:keys-seperated-by-colon>'
+                    'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
             ],
             '__TRIGGERS__' => [...],
@@ -576,8 +576,8 @@ return [
 
     // Data Representation
     'outputRepresentation' => 'XML', // JSON/XML - Defaults to JSON
+
     // Limiting duplicates
-    
     'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
 ];
 ```
@@ -599,7 +599,7 @@ return [
 
 ### Allowed IPs
 
-Classless Inter-Domain Routing (CIDR) is a method for assigning IP addresses to devices on the internet. Multiple CIDR seperated by comma can be set in (groups table) in **global** database.
+Classless Inter-Domain Routing (CIDR) is a method for assigning IP addresses to devices on the internet. Multiple CIDR separated by comma can be set in (groups table) in **global** database.
 
 ```SQL
 `m002_master_groups`.`allowed_ips` text
@@ -658,7 +658,7 @@ One can set these details for respective user in master_users table of respectiv
 Requires **countQuery** SQL in the configuration for GET request
 ```ini
 defaultPerpage=10
-maxPerpage=1000
+maxPerPage=1000
 ```
 
 - [http://localhost/Microservices/public\_html/index.php?r=/tableName?page=1](http://localhost/Microservices/public_html/index.php?r=/tableName/1?page=1)

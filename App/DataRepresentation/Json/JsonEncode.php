@@ -81,13 +81,25 @@ class JsonEncode extends AbstractDataEncode
     }
 
     /**
+     * Initialize
+     *
+     * @param bool $header Append XML header flag
+     *
+     * @return void
+     */
+    public function init($header = true): void
+    {
+        
+    }
+
+    /**
      * Write to temporary stream
      *
      * @param string $data Representation Data
      *
      * @return void
      */
-    private function _write($data)
+    private function _write($data): void
     {
         fwrite(stream: $this->_tempStream, data: $data);
     }
@@ -123,7 +135,9 @@ class JsonEncode extends AbstractDataEncode
      */
     private function _escape($data): string
     {
-        if (is_null(value: $data)) return 'null';
+        if ($data === null) {
+            return 'null';
+        }
         $data = str_replace(
             search: $this->_escapers,
             replace: $this->_replacements,
@@ -221,7 +235,7 @@ class JsonEncode extends AbstractDataEncode
             array_push($this->_objects, $this->_currentObject);
         }
         $this->_currentObject = new JsonEncoderObject(mode: 'Array');
-        if (!is_null(value: $key)) {
+        if ($key !== null) {
             $this->_write(data: $this->_escape(data: $key) . ':');
         }
         $this->_write(data: '[');
@@ -253,7 +267,7 @@ class JsonEncode extends AbstractDataEncode
     public function startObject($key = null): void
     {
         if ($this->_currentObject) {
-            if ($this->_currentObject->mode === 'Object' && is_null(value: $key)) {
+            if ($this->_currentObject->mode === 'Object' && $key === null) {
                 throw new \Exception(
                     message: 'Object inside an Object should be supported with Key',
                     code: HttpStatus::$InternalServerError
@@ -263,7 +277,7 @@ class JsonEncode extends AbstractDataEncode
             array_push($this->_objects, $this->_currentObject);
         }
         $this->_currentObject = new JsonEncoderObject(mode: 'Object');
-        if (!is_null(value: $key)) {
+        if ($key !== null) {
             $this->_write(data: $this->_escape(data: $key) . ':');
         }
         $this->_write(data: '{');
@@ -276,7 +290,7 @@ class JsonEncode extends AbstractDataEncode
      */
     public function endObject(): void
     {
-        $this->_write('}');
+        $this->_write(data: '}');
         $this->_currentObject = null;
         if (count(value: $this->_objects)>0) {
             $this->_currentObject = array_pop(array: $this->_objects);

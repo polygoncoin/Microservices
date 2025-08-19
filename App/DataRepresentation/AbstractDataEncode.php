@@ -28,6 +28,15 @@ namespace Microservices\App\DataRepresentation;
 abstract class AbstractDataEncode
 {
     /**
+     * Initialize
+     *
+     * @param bool $header Append XML header flag
+     *
+     * @return void
+     */
+    abstract public function init($header = true): void;
+
+    /**
      * Start simple array
      *
      * @param null|string $key Used while creating simple array inside an object

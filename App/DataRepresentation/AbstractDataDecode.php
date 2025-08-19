@@ -28,6 +28,13 @@ namespace Microservices\App\DataRepresentation;
 abstract class AbstractDataDecode
 {
     /**
+     * Initialize
+     *
+     * @return void
+     */
+    abstract public function init(): void;
+
+    /**
      * Validates data
      *
      * @return void

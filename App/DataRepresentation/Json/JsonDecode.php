@@ -154,7 +154,7 @@ class JsonDecode extends AbstractDataDecode
     {
         $return = true;
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!is_null(value: $keys) && strlen(string: $keys) !== 0) {
+        if ($keys !== null && strlen(string: $keys) !== 0) {
             foreach (explode(separator: ':', string: $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];
@@ -208,7 +208,7 @@ class JsonDecode extends AbstractDataDecode
     public function count($keys = null): int
     {
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!is_null(value: $keys) && strlen(string: $keys) !== 0) {
+        if ($keys !== null && strlen(string: $keys) !== 0) {
             foreach (explode(separator: ':', string: $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];
@@ -284,7 +284,7 @@ class JsonDecode extends AbstractDataDecode
             return;
         }
         $jsonFileIndex = &$this->jsonFileIndex;
-        if (!is_null(value: $keys) && strlen(string: $keys) !== 0) {
+        if ($keys !== null && strlen(string: $keys) !== 0) {
             foreach (explode(separator: ':', string: $keys) as $key) {
                 if (isset($jsonFileIndex[$key])) {
                     $jsonFileIndex = &$jsonFileIndex[$key];
@@ -467,7 +467,7 @@ class JsonDecodeEngine
                     break;
 
                 // Check for null values
-                case $char === ', ' && !is_null(value: $nullStr):
+                case $char === ', ' && $nullStr !== null:
                     $nullStr = $this->_checkNullStr(nullStr: $nullStr);
                     switch ($this->_currentObject->mode) {
                     case 'Array':
@@ -574,7 +574,7 @@ class JsonDecodeEngine
      */
     public function getJsonString(): bool|string
     {
-        if (is_null(value: $this->sIndex) && is_null(value: $this->eIndex)) {
+        if ($this->sIndex === null && $this->eIndex === null) {
             rewind(stream: $this->_jsonFileHandle);
             return stream_get_contents(stream: $this->_jsonFileHandle);
         } else {
@@ -625,7 +625,7 @@ class JsonDecodeEngine
         case ']':
             if (!empty($keyValue)) {
                 $this->_currentObject->arrayValues[] = $keyValue;
-                if (is_null(value: $this->_currentObject->arrayKey)) {
+                if ($this->_currentObject->arrayKey === null) {
                     $this->_currentObject->arrayKey = 0;
                 } else {
                     $this->_currentObject->arrayKey++;
@@ -743,12 +743,12 @@ class JsonDecodeEngine
     {
         if ($this->_currentObject) {
             if ($this->_currentObject->mode === 'Assoc'
-                && (is_null(value: $key) || empty(trim(string: $key)))
+                && ($key === null || empty(trim(string: $key)))
             ) {
                 $this->_isBadJson(str: $key);
             }
             if ($this->_currentObject->mode === 'Array'
-                && (is_null(value: $key) || empty(trim(string: $key)))
+                && ($key === null || empty(trim(string: $key)))
             ) {
                 $this->_isBadJson(str: $key);
             }
@@ -777,10 +777,10 @@ class JsonDecodeEngine
      */
     private function _increment(): void
     {
-        if (!is_null(value: $this->_currentObject)
+        if ($this->_currentObject !== null
             && $this->_currentObject->mode === 'Array'
         ) {
-            if (is_null(value: $this->_currentObject->arrayKey)) {
+            if ($this->_currentObject->arrayKey === null) {
                 $this->_currentObject->arrayKey = 0;
             } else {
                 $this->_currentObject->arrayKey++;
@@ -796,7 +796,7 @@ class JsonDecodeEngine
     private function _getObjectValues(): array|bool
     {
         $arr = false;
-        if (!is_null(value: $this->_currentObject)
+        if ($this->_currentObject !== null
             && $this->_currentObject->mode === 'Assoc'
             && count(value: $this->_currentObject->assocValues) > 0
         ) {
@@ -815,7 +815,7 @@ class JsonDecodeEngine
      */
     private function _isBadJson($str): void
     {
-        $str =  !is_null(value: $str) ? trim(string: $str) : $str;
+        $str =  $str !== null ? trim(string: $str) : $str;
         if (!empty($str)) {
             throw new \Exception(
                 message: "Invalid JSON: {$str}",
@@ -838,15 +838,15 @@ class JsonDecodeEngine
             for ($i=0; $i<$objCount; $i++) {
                 switch ($this->_objects[$i]->mode) {
                 case 'Assoc':
-                    if (!is_null(value: $this->_objects[$i]->assocKey)) {
+                    if ($this->_objects[$i]->assocKey !== null) {
                         $keys[] = $this->_objects[$i]->assocKey;
                     }
                     break;
                 case 'Array':
-                    if (!is_null(value: $this->_objects[$i]->assocKey)) {
+                    if ($this->_objects[$i]->assocKey !== null) {
                         $keys[] = $this->_objects[$i]->assocKey;
                     }
-                    if (!is_null(value: $this->_objects[$i]->arrayKey)) {
+                    if ($this->_objects[$i]->arrayKey !== null) {
                         $keys[] = $this->_objects[$i]->arrayKey;
                     }
                     break;
@@ -856,12 +856,12 @@ class JsonDecodeEngine
         if ($this->_currentObject) {
             switch ($this->_currentObject->mode) {
             case 'Assoc':
-                if (!is_null(value: $this->_currentObject->assocKey)) {
+                if ($this->_currentObject->assocKey !== null) {
                     $keys[] = $this->_currentObject->assocKey;
                 }
                 break;
             case 'Array':
-                if (!is_null(value: $this->_currentObject->assocKey)) {
+                if ($this->_currentObject->assocKey !== null) {
                     $keys[] = $this->_currentObject->assocKey;
                 }
                 break;
@@ -944,7 +944,7 @@ class JsonDecodeObject
     {
         $this->mode = $mode;
 
-        $assocKey = !is_null(value: $assocKey) ? trim(string: $assocKey) : $assocKey;
+        $assocKey = $assocKey !== null ? trim(string: $assocKey) : $assocKey;
         $this->assocKey = !empty($assocKey) ? $assocKey : null;
     }
 }

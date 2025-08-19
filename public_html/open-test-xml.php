@@ -25,7 +25,8 @@ genXmlPayload(params: $params, payload: $payload);
 $response = trigger(
     homeURL: $homeURL,
     method: 'POST',
-    route: '/registration-with-address&inputRepresentation=XML&outputRepresentation=XML',
+    route: '/registration-with-address' . 
+        '&inputRepresentation=XML&outputRepresentation=XML',
     header: $header,
     payload: $payload
 );

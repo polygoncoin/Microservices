@@ -79,6 +79,7 @@ class Microservices
      * Initialize
      *
      * @return bool
+     * @throws \Exception
      */
     public function init(): bool
     {
@@ -125,6 +126,7 @@ class Microservices
      * Process API request
      *
      * @return bool
+     * @throws \Exception
      */
     public function processApi(): bool
     {
@@ -170,7 +172,7 @@ class Microservices
 
         // Class found
         try {
-            if (!is_null(value: $class)) {
+            if ($class !== null) {
                 $api = new $class($this->c);
                 if ($api->init()) {
                     $this->c->initResponse();
@@ -297,7 +299,8 @@ class Microservices
      *
      * @param \Exception $e Exception
      *
-     * @return void
+     * @return never
+     * @throws \Exception
      */
     private function _log($e): never
     {

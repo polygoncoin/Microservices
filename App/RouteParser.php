@@ -45,7 +45,7 @@ class RouteParser extends DbFunctions
         $Constants = __NAMESPACE__ . '\Constants';
         $Env = __NAMESPACE__ . '\Env';
 
-        if (is_null(value: $routeFileLocation)) {
+        if ($routeFileLocation === null) {
             if ($this->open) {
                 $routeFileLocation = Constants::$PUBLIC_HTML .
                     DIRECTORY_SEPARATOR . 'Config' .

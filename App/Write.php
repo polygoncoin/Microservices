@@ -273,7 +273,7 @@ class Write
             );
 
             // Begin DML operation
-            if (is_null(value: $hashJson)) {
+            if ($hashJson === null) {
                 if ($this->_operateAsTransaction) {
                     $this->db->begin();
                 }
@@ -427,7 +427,7 @@ class Write
 
             // Execute Pre Sql Hooks
             if (isset($wSqlConfig['__PRE-SQL-HOOKS__'])) {
-                if (is_null(value: $this->_hook)) {
+                if ($this->_hook === null) {
                     $this->_hook = new Hook(common: $this->_c);
                 }
                 $this->_hook->triggerHook(
@@ -474,7 +474,7 @@ class Write
 
             // triggers
             if (isset($wSqlConfig['__TRIGGERS__'])) {
-                if (is_null(value: $this->_web)) {
+                if ($this->_web === null) {
                     $this->_web = new Web(common: $this->_c);
                 }
                 if ($isAssoc) {
@@ -490,7 +490,7 @@ class Write
 
             // Execute Post Sql Hooks
             if (isset($wSqlConfig['__POST-SQL-HOOKS__'])) {
-                if (is_null(value: $this->_hook)) {
+                if ($this->_hook === null) {
                     $this->_hook = new Hook(common: $this->_c);
                 }
                 $this->_hook->triggerHook(
