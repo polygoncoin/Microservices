@@ -171,11 +171,13 @@ function trigger(
         $response = $responseBody;
     }
 
+    $queryString = empty($queryString) ? '' : '&' . $queryString;
+
     return [
-        'route' => "{$homeURL}?r={$route}&{$queryString}",
+        'route' => htmlspecialchars(string: "{$homeURL}?r={$route}{$queryString}"),
         'httpMethod' => $method,
         'requestHeaders' => $curlConfig[CURLOPT_HTTPHEADER],
-        'requestPayload' => $payload,
+        'requestPayload' => htmlspecialchars(string: $payload),
         'responseHttpCode' => $responseHttpCode,
         'responseHeaders' => $responseHeaders,
         'responseContentType' => $responseContentType,
