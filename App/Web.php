@@ -190,7 +190,7 @@ class Web
      */
     public function triggerConfig($triggerConfig): mixed
     {
-        if (!isset($this->_c->req->sess['token'])) {
+        if (!isset($this->_c->req->session['token'])) {
             throw new \Exception(
                 message: 'Missing token',
                 code: HttpStatus::$InternalServerError
@@ -205,18 +205,21 @@ class Web
             $assoc = true;
         }
 
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-        $homeURL = $protocol . '://' . $this->c->httpRequestDetails['server']['host'] . parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
+             "https" : "http";
+        $homeURL = $protocol . '://' . 
+            $this->_c->http['server']['host'] . 
+            parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
 
         $header = [];
         $header[] = 'x-api-version: v1.0.0';
         $header[] = 'Cache-Control: no-cache';
-        $header[] = 'Authorization: Bearer ' . $this->_c->req->sess['token'];
+        $header[] = 'Authorization: Bearer ' . $this->_c->req->session['token'];
 
         $response = [];
 
         // For use in function configuration
-        $sess = &$this->_c->req->sess;
+        $sess = &$this->_c->req->session;
 
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
@@ -332,7 +335,7 @@ class Web
             $fKey = $config['fetchFromValue'];
             if ($fetchFrom === 'function') {
                 $function = $fKey;
-                $value = $function($this->_c->req->sess);
+                $value = $function($this->_c->req->session);
                 if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
@@ -345,7 +348,7 @@ class Web
             )
             ) {
                 $fetchFromKeys = explode(separator: ':', string: $fKey);
-                $value = $this->_c->req->sess[$fetchFrom];
+                $value = $this->_c->req->session[$fetchFrom];
                 foreach ($fetchFromKeys as $key) {
                     if (!isset($value[$key])) {
                         throw new \Exception(
@@ -369,8 +372,8 @@ class Web
                     $sqlParams[$var] = $value;
                 }
                 continue;
-            } elseif (isset($this->_c->req->sess[$fetchFrom][$fKey])) {
-                $value = $this->_c->req->sess[$fetchFrom][$fKey];
+            } elseif (isset($this->_c->req->session[$fetchFrom][$fKey])) {
+                $value = $this->_c->req->session[$fetchFrom][$fKey];
                 if ($var === null) {
                     $sqlParams[] = $value;
                 } else {

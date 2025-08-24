@@ -100,8 +100,8 @@ class XmlEncode extends AbstractDataEncode
     public function encode($data): void
     {
         if (is_array(value: $data)) {
-            $isAssoc = (isset($data[0])) ? false : true;
-            if (!$isAssoc) {
+            $isObject = (isset($data[0])) ? false : true;
+            if (!$isObject) {
                 $this->_write(data: "<{$this->_currentObject->key}>");
             }
             foreach ($data as $key => $value) {
@@ -114,7 +114,7 @@ class XmlEncode extends AbstractDataEncode
                     $this->addKeyData(key: $key, data: $value);
                 }
             }
-            if (!$isAssoc) {
+            if (!$isObject) {
                 $this->_write(data: "</{$this->_currentObject->key}>");
             }
         } else {
@@ -249,7 +249,7 @@ class XmlEncode extends AbstractDataEncode
             $key = ($this->_currentObject === null) ? 'Resultset' : 'Row';
         }
         if ($this->_currentObject) {
-            if ($this->_currentObject->mode === 'Object' && $key === null) {
+            if ($this->_currentObject->mode === 'Object' && ($key === null)) {
                 throw new \Exception(
                     message: 'Object inside an Object should be supported with Key',
                     code: HttpStatus::$InternalServerError

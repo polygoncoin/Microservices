@@ -76,7 +76,7 @@ class HttpRequest extends Gateway
      *
      * @var null|array
      */
-    public $sess = null;
+    public $session = null;
 
     /**
      * Client Id
@@ -268,7 +268,7 @@ class HttpRequest extends Gateway
         );
         $this->clientId = $this->clientDetails['client_id'];
 
-        $this->sess['clientDetails'] = &$this->clientDetails;
+        $this->session['clientDetails'] = &$this->clientDetails;
     }
 
     /**
@@ -278,14 +278,14 @@ class HttpRequest extends Gateway
      */
     public function loadPayload(): void
     {
-        if (isset($this->sess['payloadType'])) {
+        if (isset($this->session['payloadType'])) {
             return;
         }
 
         if ($this->REQUEST_METHOD === Constants::$GET) {
             $this->urlDecode(arr: $_GET);
-            $this->sess['payloadType'] = 'Object';
-            $this->sess['payload'] = !empty($_GET) ? $_GET : [];
+            $this->session['payloadType'] = 'Object';
+            $this->session['payload'] = !empty($_GET) ? $_GET : [];
         } else {
             $this->payloadStream = fopen(filename: 'php://input', mode: 'rb');
 
@@ -310,6 +310,7 @@ class HttpRequest extends Gateway
                     stream: $this->payloadStream,
                     data: json_encode(value: $result)
                 );
+                rewind(stream: $this->_jsonFileHandle);
 
                 unset($array);
                 unset($result);
@@ -322,7 +323,7 @@ class HttpRequest extends Gateway
 
             rewind(stream: $this->payloadStream);
             $this->dataDecode->indexData();
-            $this->sess['payloadType'] = $this->dataDecode->dataType();
+            $this->session['payloadType'] = $this->dataDecode->dataType();
         }
     }
 

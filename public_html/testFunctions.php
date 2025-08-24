@@ -156,8 +156,18 @@ function trigger(
     curl_close(handle: $curl);
 
     if ($error) {
-        $response = 'cURL Error #:' . $error;
+        $response = [
+            'cURL Error #:' . $error,
+            $responseBody
+        ];
     } else {
+        if (strpos(
+            haystack: $responseContentType,
+            needle: 'application/json;'
+        ) !== false
+        ) {
+            $responseBody = json_decode(json: $responseBody, associative: true);
+        }
         $response = $responseBody;
     }
 
@@ -193,17 +203,17 @@ function genXmlPayload(&$params, &$payload, $rowsFlag = false): void
 
     $rows = false;
 
-    $isAssoc = (isset($params[0])) ? false : true;
+    $isObject = (isset($params[0])) ? false : true;
 
-    if (!$isAssoc && count(value: $params) === 1) {
+    if (!$isObject && count(value: $params) === 1) {
         $params = $params[0];
         if (empty($params)) {
             return;
         }
-        $isAssoc = true;
+        $isObject = true;
     }
 
-    if (!$isAssoc) {
+    if (!$isObject) {
         $payload .= "<Rows>";
         $rows = true;
     }
@@ -212,7 +222,7 @@ function genXmlPayload(&$params, &$payload, $rowsFlag = false): void
         $payload .= "<Row>";
     }
     foreach ($params as $key => &$value) {
-        if ($isAssoc) {
+        if ($isObject) {
             $payload .= "<{$key}>";
         }
         if (is_array(value: $value)) {
@@ -220,14 +230,14 @@ function genXmlPayload(&$params, &$payload, $rowsFlag = false): void
         } else {
             $payload .= htmlspecialchars(string: $value);
         }
-        if ($isAssoc) {
+        if ($isObject) {
             $payload .= "</{$key}>";
         }
     }
     if ($rowsFlag) {
         $payload .= "</Row>";
     }
-    if (!$isAssoc) {
+    if (!$isObject) {
         $payload .= "</Rows>";
     }
 }

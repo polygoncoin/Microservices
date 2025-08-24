@@ -267,7 +267,7 @@ class JsonEncode extends AbstractDataEncode
     public function startObject($key = null): void
     {
         if ($this->_currentObject) {
-            if ($this->_currentObject->mode === 'Object' && $key === null) {
+            if ($this->_currentObject->mode === 'Object' && ($key === null)) {
                 throw new \Exception(
                     message: 'Object inside an Object should be supported with Key',
                     code: HttpStatus::$InternalServerError

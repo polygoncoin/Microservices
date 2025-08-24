@@ -59,7 +59,7 @@ class RouteParser extends DbFunctions
                     DIRECTORY_SEPARATOR . 'Auth' .
                     DIRECTORY_SEPARATOR . 'ClientDB' .
                     DIRECTORY_SEPARATOR . 'Groups' .
-                    DIRECTORY_SEPARATOR . $this->sess['groupDetails']['name'] .
+                    DIRECTORY_SEPARATOR . $this->session['groupDetails']['name'] .
                     DIRECTORY_SEPARATOR . $this->REQUEST_METHOD . 'routes.php';
             }
         }
@@ -99,7 +99,7 @@ class RouteParser extends DbFunctions
                         offset: 1,
                         length: strpos(haystack: $element, needle: ':') - 1
                     );
-                    $this->sess['uriParams'][$param] = $element;
+                    $this->session['uriParams'][$param] = $element;
                 }
                 continue;
             } else {
@@ -125,10 +125,10 @@ class RouteParser extends DbFunctions
                     }
                     if ($foundIntRoute) {
                         $configuredUri[] = $foundIntRoute;
-                        $this->sess['uriParams'][$foundIntParamName] = (int)$element;
+                        $this->session['uriParams'][$foundIntParamName] = (int)$element;
                     } elseif ($foundStringRoute) {
                         $configuredUri[] = $foundStringRoute;
-                        $this->sess['uriParams'][$foundStringParamName] = urldecode(
+                        $this->session['uriParams'][$foundStringParamName] = urldecode(
                             string: $element
                         );
                     } else {

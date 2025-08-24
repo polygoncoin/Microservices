@@ -57,7 +57,7 @@ class Write
      *
      * @var null|array
      */
-    private $_sess = null;
+    private $_s = null;
 
     /**
      * Trigger Web API Object
@@ -95,7 +95,7 @@ class Write
     public function __construct(Common &$common)
     {
         $this->_c = &$common;
-        $this->_sess = &$this->_c->req->sess;
+        $this->_s = &$this->_c->req->session;
         $this->dataEncode = &$this->_c->res->dataEncode;
     }
 
@@ -124,8 +124,7 @@ class Write
         // Rate Limiting request if configured for Route Queries.
         $this->_rateLimitRoute(sqlConfig: $wSqlConfig);
 
-        $this->dataEncode->XSLT = isset($wSqlConfig['XSLT']) ?
-            $wSqlConfig['XSLT'] : null;
+        $this->dataEncode->XSLT = $wSqlConfig['XSLT'] ?? null;
 
         // Lag Response
         $this->_lagResponse(sqlConfig: $wSqlConfig);
@@ -210,7 +209,7 @@ class Write
     {
         // Check for payloadType
         if (isset($wSqlConfig['__PAYLOAD-TYPE__'])) {
-            $payloadType = $this->_sess['payloadType'];
+            $payloadType = $this->_s['payloadType'];
             if ($payloadType !== $wSqlConfig['__PAYLOAD-TYPE__']) {
                 throw new \Exception(
                     message: 'Invalid payload type',
@@ -232,13 +231,13 @@ class Write
         }
 
         // Set necessary fields
-        $this->_sess['necessaryArr'] = $this->_getRequired(
+        $this->_s['necessaryArr'] = $this->_getRequired(
             sqlConfig: $wSqlConfig,
             isFirstCall: true,
             flag: $useHierarchy
         );
 
-        if ($this->_sess['payloadType'] === 'Object') {
+        if ($this->_s['payloadType'] === 'Object') {
             $this->dataEncode->startObject(key: 'Results');
         } else {
             $this->dataEncode->startObject(key: 'Results');
@@ -248,16 +247,14 @@ class Write
         }
 
         // Perform action
-        $i_count = $this->_sess['payloadType'] === 'Object' ?
+        $iCount = $this->_s['payloadType'] === 'Object' ?
             1 : $this->_c->req->dataDecode->count();
 
-        $configKeys = [];
-        $payloadIndexes = [];
-        for ($i=0; $i < $i_count; $i++) {
-            $_configKeys = $configKeys;
-            $_payloadIndexes = $payloadIndexes;
+        for ($i=0; $i < $iCount; $i++) {
+            $_configKeys = [];
+            $_payloadIndexes = [];
             if ($i === 0) {
-                if ($this->_sess['payloadType'] === 'Object') {
+                if ($this->_s['payloadType'] === 'Object') {
                     $_payloadIndexes[] = '';
                 } else {
                     $_payloadIndexes[] = "{$i}";
@@ -284,7 +281,7 @@ class Write
                     configKeys: $_configKeys,
                     useHierarchy: $useHierarchy,
                     response: $response,
-                    necessary: $this->_sess['necessaryArr']
+                    necessary: $this->_s['necessaryArr']
                 );
                 $bool = $this->_operateAsTransaction
                     && ($this->db->beganTransaction === true);
@@ -300,7 +297,7 @@ class Write
                                 array: $_payloadIndexes
                             )
                         ),
-                        'Response' => &$response
+                        'Response' => $response
                     ];
                     if ($idempotentWindow) {
                         $this->_c->req->cache->setCache(
@@ -319,29 +316,31 @@ class Write
                                 array: $_payloadIndexes
                             )
                         ),
-                        'Error' => &$response
+                        'Error' => $response
                     ];
                 }
             } else {
                 $arr = json_decode(json: $hashJson, associative: true);
             }
-            if (isset($_payloadIndexes[$i]) && $_payloadIndexes[$i] === '') {
+
+            if ($_payloadIndexes[0] === '') {
                 foreach ($arr as $k => $v) {
                     $this->dataEncode->addKeyData(key: $k, data: $v);
                 }
             } else {
                 if (Env::$outputRepresentation === 'XML') {
                     $this->dataEncode->startObject(key: 'Row');
-                    $this->dataEncode->encode(data: $arr);
+                    foreach ($arr as $k => $v) {
+                        $this->dataEncode->addKeyData(key: $k, data: $v);
+                    }
                     $this->dataEncode->endObject();
                 } else {
-                    $this->dataEncode->encode(data: $arr);
+                    $this->dataEncode->addKeyData(key: $i, data: $arr);
                 }
-
             }
         }
 
-        if ($this->_sess['payloadType'] === 'Object') {
+        if ($this->_s['payloadType'] === 'Object') {
             $this->dataEncode->endObject();
         } else {
             if (Env::$outputRepresentation === 'XML') {
@@ -372,32 +371,35 @@ class Write
         &$response,
         &$necessary
     ): void {
-        if (isset($payloadIndexes[0]) && $payloadIndexes[0] === '') {
-            $payloadIndexes = array_shift($payloadIndexes);
-        }
-        if (!is_array(value: $payloadIndexes)) $payloadIndexes = [];
-
         $payloadIndex = is_array(value: $payloadIndexes) ?
-            implode(separator: ':', array: $payloadIndexes) : '';
-        $isAssoc = $this->_c->req->dataDecode->dataType(
+            trim(
+                string: implode(
+                    separator: ':', 
+                    array: $payloadIndexes
+                ), 
+                characters: ':'
+            ) : '';
+        
+        $isObject = $this->_c->req->dataDecode->dataType(
             keys: $payloadIndex
         ) === 'Object';
-        $i_count = $isAssoc ?
+
+        $iCount = $isObject ?
             1 : $this->_c->req->dataDecode->count(keys: $payloadIndex);
 
-        $counter = 0;
-        for ($i=0; $i < $i_count; $i++) {
+        $counter = -1;
+        for ($i=0; $i < $iCount; $i++) {
             $_payloadIndexes = $payloadIndexes;
             if ($this->_operateAsTransaction && !$this->db->beganTransaction) {
                 $response['Error'] = 'Transaction rolled back';
                 return;
             }
 
-            if ($isAssoc && $i > 0) {
+            if ($isObject && $i > 0) {
                 return;
             }
 
-            if (!$isAssoc && !$useHierarchy) {
+            if (!$isObject && !$useHierarchy) {
                 array_push($_payloadIndexes, $i);
             }
             $payloadIndex = is_array(value: $_payloadIndexes) ?
@@ -410,14 +412,14 @@ class Write
                 );
             }
 
-            $this->_sess['payload'] = $this->_c->req->dataDecode->get(
+            $this->_s['payload'] = $this->_c->req->dataDecode->get(
                 keys: $payloadIndex
             );
 
             if (count(value: $necessary)) {
-                $this->_sess['necessary'] = $necessary;
+                $this->_s['necessary'] = $necessary;
             } else {
-                $this->_sess['necessary'] = [];
+                $this->_s['necessary'] = [];
             }
 
             // Validation
@@ -439,6 +441,7 @@ class Write
             [$sql, $sqlParams, $errors] = $this->_getSqlAndParams(
                 sqlDetails: $wSqlConfig
             );
+
             if (!empty($errors)) {
                 $response['Error'] = $errors;
                 $this->db->rollback();
@@ -451,20 +454,24 @@ class Write
                 $response['Error'] = 'Something went wrong';
                 return;
             }
-            if (!$isAssoc && !isset($response[$counter])) {
-                $response[$counter] = [];
+
+            if ($isObject) {
+                $counter = 0;
+            } else {
+                $response[++$counter] = [];
             }
+
             if (isset($wSqlConfig['__INSERT-IDs__'])) {
                 $id = $this->db->lastInsertId();
-                if ($isAssoc) {
+                if ($isObject) {
                     $response[$wSqlConfig['__INSERT-IDs__']] = $id;
                 } else {
                     $response[$counter][$wSqlConfig['__INSERT-IDs__']] = $id;
                 }
-                $this->_sess['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
+                $this->_s['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
             } else {
                 $affectedRows = $this->db->affectedRows();
-                if ($isAssoc) {
+                if ($isObject) {
                     $response['affectedRows'] = $affectedRows;
                 } else {
                     $response[$counter]['affectedRows'] = $affectedRows;
@@ -477,7 +484,7 @@ class Write
                 if ($this->_web === null) {
                     $this->_web = new Web(common: $this->_c);
                 }
-                if ($isAssoc) {
+                if ($isObject) {
                     $response['__TRIGGERS__'] = $this->_web->triggerConfig(
                         triggerConfig: $wSqlConfig['__TRIGGERS__']
                     );
@@ -501,7 +508,6 @@ class Write
             // subQuery for payload
             if (isset($wSqlConfig['__SUB-QUERY__'])) {
                 $this->_callWriteDB(
-                    isAssoc: $isAssoc,
                     wSqlConfig: $wSqlConfig,
                     payloadIndexes: $_payloadIndexes,
                     configKeys: $configKeys,
@@ -510,17 +516,12 @@ class Write
                     necessary: $necessary
                 );
             }
-
-            if (!$isAssoc) {
-                $counter++;
-            }
         }
     }
 
     /**
      * Validate and call _writeDB
      *
-     * @param bool  $isAssoc        Is Associative array
      * @param array $wSqlConfig     Config from file
      * @param array $payloadIndexes Payload Indexes
      * @param array $configKeys     Config Keys
@@ -531,7 +532,6 @@ class Write
      * @return void
      */
     private function _callWriteDB(
-        $isAssoc,
         &$wSqlConfig,
         $payloadIndexes,
         $configKeys,
@@ -540,7 +540,7 @@ class Write
         &$necessary
     ): void {
         if ($useHierarchy) {
-            $row = $this->_sess['payload'];
+            $row = $this->_s['payload'];
             $this->_resetFetchData(
                 fetchFrom: 'sqlPayload',
                 keys: $configKeys,
@@ -554,7 +554,7 @@ class Write
         if (!is_array(value: $payloadIndexes)) $payloadIndexes = [];
 
         if (isset($wSqlConfig['__SUB-QUERY__'])
-            && $this->_isAssoc(arr: $wSqlConfig['__SUB-QUERY__'])
+            && $this->_isObject(arr: $wSqlConfig['__SUB-QUERY__'])
         ) {
             foreach ($wSqlConfig['__SUB-QUERY__'] as $module => &$_wSqlConfig) {
                 $_payloadIndexes = $payloadIndexes;
@@ -613,7 +613,7 @@ class Write
                 $this->dataEncode->startObject();
                 $this->dataEncode->addKeyData(
                     key: 'Payload',
-                    data: $this->_sess['payload']
+                    data: $this->_s['payload']
                 );
                 $this->dataEncode->addKeyData(key: 'Error', data: $errors);
                 $this->dataEncode->endObject();

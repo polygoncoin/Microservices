@@ -28,7 +28,6 @@ $res = trigger(
 );
 if ($res) {
     $response[] = $res;
-    $res = json_decode(json: $res, associative: true);
     $token = $res['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 
@@ -254,7 +253,6 @@ $res = trigger(
 );
 if ($res) {
     $response[] = $res;
-    $res = json_decode(json: $res, associative: true);
     $token = $res['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 

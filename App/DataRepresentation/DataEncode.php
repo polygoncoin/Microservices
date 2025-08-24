@@ -230,7 +230,7 @@ class DataEncode extends AbstractDataEncode
         rewind(stream: $this->_tempStream);
 
         if (Env::$outputRepresentation === 'XML'
-            && $this->XSLT !== null
+            && ($this->XSLT !== null)
             && file_exists(filename: $this->XSLT)
         ) {
             $xml = new \DOMDocument;

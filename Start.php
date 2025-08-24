@@ -128,7 +128,7 @@ try {
             'Details' => [
                 '$_GET' => $_GET,
                 'php:input' => @file_get_contents(filename: 'php://input'),
-                'session' => $Microservices->c->req->sess
+                'session' => $Microservices->c->req->session
             ]
         ];
         (new Logs)->log(logDetails: $logDetails);

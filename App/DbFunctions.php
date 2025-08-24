@@ -71,7 +71,7 @@ class DbFunctions
      */
     public function setCacheConnection($fetchFrom): object
     {
-        if ($this->sess['clientDetails'] === null) {
+        if ($this->session['clientDetails'] === null) {
             throw new \Exception(
                 message: 'Yet to set connection params',
                 code: HttpStatus::$InternalServerError
@@ -83,43 +83,43 @@ class DbFunctions
         case 'Master':
             return $this->connectCache(
                 cacheType: getenv(
-                    name: $this->sess['clientDetails']['master_cache_server_type']
+                    name: $this->session['clientDetails']['master_cache_server_type']
                 ),
                 cacheHostname: getenv(
-                    name: $this->sess['clientDetails']['master_cache_hostname']
+                    name: $this->session['clientDetails']['master_cache_hostname']
                 ),
                 cachePort: getenv(
-                    name: $this->sess['clientDetails']['master_cache_port']
+                    name: $this->session['clientDetails']['master_cache_port']
                 ),
                 cacheUsername: getenv(
-                    name: $this->sess['clientDetails']['master_cache_username']
+                    name: $this->session['clientDetails']['master_cache_username']
                 ),
                 cachePassword: getenv(
-                    name: $this->sess['clientDetails']['master_cache_password']
+                    name: $this->session['clientDetails']['master_cache_password']
                 ),
                 cacheDatabase: getenv(
-                    name: $this->sess['clientDetails']['master_cache_database']
+                    name: $this->session['clientDetails']['master_cache_database']
                 )
             );
         case 'Slave':
             return $this->connectCache(
                 cacheType: getenv(
-                    name: $this->sess['clientDetails']['slave_cache_server_type']
+                    name: $this->session['clientDetails']['slave_cache_server_type']
                 ),
                 cacheHostname: getenv(
-                    name: $this->sess['clientDetails']['slave_cache_hostname']
+                    name: $this->session['clientDetails']['slave_cache_hostname']
                 ),
                 cachePort: getenv(
-                    name: $this->sess['clientDetails']['slave_cache_port']
+                    name: $this->session['clientDetails']['slave_cache_port']
                 ),
                 cacheUsername: getenv(
-                    name: $this->sess['clientDetails']['slave_cache_username']
+                    name: $this->session['clientDetails']['slave_cache_username']
                 ),
                 cachePassword: getenv(
-                    name: $this->sess['clientDetails']['slave_cache_password']
+                    name: $this->session['clientDetails']['slave_cache_password']
                 ),
                 cacheDatabase: getenv(
-                    name: $this->sess['clientDetails']['slave_cache_database']
+                    name: $this->session['clientDetails']['slave_cache_database']
                 )
             );
         default:
@@ -170,7 +170,7 @@ class DbFunctions
      */
     public function setDbConnection($fetchFrom): object
     {
-        if ($this->sess['clientDetails'] === null) {
+        if ($this->session['clientDetails'] === null) {
             throw new \Exception(
                 message: 'Yet to set connection params',
                 code: HttpStatus::$InternalServerError
@@ -182,43 +182,43 @@ class DbFunctions
         case 'Master':
             return $this->connectDb(
                 dbType: getenv(
-                    name: $this->sess['clientDetails']['master_db_server_type']
+                    name: $this->session['clientDetails']['master_db_server_type']
                 ),
                 dbHostname: getenv(
-                    name: $this->sess['clientDetails']['master_db_hostname']
+                    name: $this->session['clientDetails']['master_db_hostname']
                 ),
                 dbPort: getenv(
-                    name: $this->sess['clientDetails']['master_db_port']
+                    name: $this->session['clientDetails']['master_db_port']
                 ),
                 dbUsername: getenv(
-                    name: $this->sess['clientDetails']['master_db_username']
+                    name: $this->session['clientDetails']['master_db_username']
                 ),
                 dbPassword: getenv(
-                    name: $this->sess['clientDetails']['master_db_password']
+                    name: $this->session['clientDetails']['master_db_password']
                 ),
                 dbDatabase: getenv(
-                    name: $this->sess['clientDetails']['master_db_database']
+                    name: $this->session['clientDetails']['master_db_database']
                 )
             );
         case 'Slave':
             return $this->connectDb(
                 dbType: getenv(
-                    name: $this->sess['clientDetails']['slave_db_server_type']
+                    name: $this->session['clientDetails']['slave_db_server_type']
                 ),
                 dbHostname: getenv(
-                    name: $this->sess['clientDetails']['slave_db_hostname']
+                    name: $this->session['clientDetails']['slave_db_hostname']
                 ),
                 dbPort: getenv(
-                    name: $this->sess['clientDetails']['slave_db_port']
+                    name: $this->session['clientDetails']['slave_db_port']
                 ),
                 dbUsername: getenv(
-                    name: $this->sess['clientDetails']['slave_db_username']
+                    name: $this->session['clientDetails']['slave_db_username']
                 ),
                 dbPassword: getenv(
-                    name: $this->sess['clientDetails']['slave_db_password']
+                    name: $this->session['clientDetails']['slave_db_password']
                 ),
                 dbDatabase: getenv(
-                    name: $this->sess['clientDetails']['slave_db_database']
+                    name: $this->session['clientDetails']['slave_db_database']
                 )
             );
         default:
