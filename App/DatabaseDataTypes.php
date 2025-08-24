@@ -381,7 +381,7 @@ class DatabaseDataTypes
      * @param bool|float|int|string|null $data     Data
      * @param array                      $dataType Custom data type
      *
-     * @return bool
+     * @return bool|float|int|string|null
      * @throws \Exception
      */
     public static function validateDataType(

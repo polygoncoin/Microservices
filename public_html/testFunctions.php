@@ -171,18 +171,16 @@ function trigger(
         $response = $responseBody;
     }
 
-    // return [
-    //     'route' => "{$homeURL}?r={$route}&{$queryString}",
-    //     'httpMethod' => $method,
-    //     'requestHeaders' => $curlConfig[CURLOPT_HTTPHEADER],
-    //     'requestPayload' => $payload,
-    //     'responseHttpCode' => $responseHttpCode,
-    //     'responseHeaders' => $responseHeaders,
-    //     'responseContentType' => $responseContentType,
-    //     'responseBody' => $response
-    // ];
-
-    return $response;
+    return [
+        'route' => "{$homeURL}?r={$route}&{$queryString}",
+        'httpMethod' => $method,
+        'requestHeaders' => $curlConfig[CURLOPT_HTTPHEADER],
+        'requestPayload' => $payload,
+        'responseHttpCode' => $responseHttpCode,
+        'responseHeaders' => $responseHeaders,
+        'responseContentType' => $responseContentType,
+        'responseBody' => $response
+    ];
 }
 
 /**

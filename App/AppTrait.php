@@ -325,10 +325,13 @@ trait AppTrait
                 $sqlParams[$var] = $value;
                 continue;
             } elseif (isset($this->_c->req->session[$fetchFrom][$fKey])) {
-                $sqlParams[$var] = DatabaseDataTypes::validateDataType(
+                if (DatabaseDataTypes::validateDataType(
                     data: $this->_c->req->session[$fetchFrom][$fKey],
                     dataType: $this->_c->req->session['necessary'][$fetchFrom][$fKey]
-                );
+                )
+                ) {
+                    $sqlParams[$var] = $this->_c->req->session[$fetchFrom][$fKey];
+                }
                 continue;
             } elseif ($this->_c->req->session['necessary'][$fetchFrom][$fKey]['nec']) {
                 $errors[] = "Missing necessary field '{$fetchFrom}' for '{$fKey}'";

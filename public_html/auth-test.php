@@ -28,7 +28,7 @@ $res = trigger(
 );
 if ($res) {
     $response[] = $res;
-    $token = $res['Results']['Token'];
+    $token = $res['responseBody']['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 
     $response[] = trigger(
@@ -185,7 +185,7 @@ if ($res) {
 
     $params = [
         'user_id' => 1,
-        'address' => '203'
+        'address' => 'A-203'
     ];
     $response[] = trigger(
         homeURL: $homeURL,
@@ -253,7 +253,7 @@ $res = trigger(
 );
 if ($res) {
     $response[] = $res;
-    $token = $res['Results']['Token'];
+    $token = $res['responseBody']['Results']['Token'];
     $header = ["Authorization: Bearer {$token}"];
 
     $response[] = trigger(
