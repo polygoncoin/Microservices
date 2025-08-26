@@ -1,9 +1,9 @@
 <?php
 /**
- * Validator
+ * TestCases
  * php version 8.3
  *
- * @category  Validator
+ * @category  TestCases
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -11,7 +11,13 @@
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-namespace Microservices\public_html;
+namespace Microservices\TestCases;
+
+define(constant_name: 'GET', value: __DIR__ . DIRECTORY_SEPARATOR . 'GET');
+define(constant_name: 'POST', value: __DIR__ . DIRECTORY_SEPARATOR . 'POST');
+define(constant_name: 'PUT', value: __DIR__ . DIRECTORY_SEPARATOR . 'PUT');
+define(constant_name: 'PATCH', value: __DIR__ . DIRECTORY_SEPARATOR . 'PATCH');
+define(constant_name: 'DELETE', value: __DIR__ . DIRECTORY_SEPARATOR . 'DELETE');
 
 /**
  * Generates raw headers into array
