@@ -100,7 +100,8 @@ if (!function_exists(function: 'getCurlConfig')) {
         $header = [],
         $payload = ''
     ): array {
-        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}&{$queryString}";
+        $queryString = empty($queryString) ? '' : '&' . $queryString;
+        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}{$queryString}";
         $curlConfig[CURLOPT_HTTPHEADER] = $header;
         $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
         $curlConfig[CURLOPT_HTTPHEADER][] = 'Cache-Control: no-cache';
