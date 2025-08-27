@@ -437,7 +437,7 @@ class JsonDecodeEngine
                 (
                     ($this->eIndex === null)
                     || (
-                        ($this->eIndex !== null) 
+                        ($this->eIndex !== null)
                         && $this->_charCounter <= $this->eIndex
                     )
                 )

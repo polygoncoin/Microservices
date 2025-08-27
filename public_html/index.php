@@ -17,7 +17,7 @@ ini_set(option: 'display_errors', value: true);
 error_reporting(error_level: E_ALL);
 
 define(
-    constant_name: 'PUBLIC_HTML', 
+    constant_name: 'PUBLIC_HTML',
     value: realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..')
 );
 

@@ -75,7 +75,7 @@ class XmlEncode extends AbstractDataEncode
      */
     public function init($header = true): void
     {
-        
+
     }
 
     /**

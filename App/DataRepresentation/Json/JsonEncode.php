@@ -89,7 +89,7 @@ class JsonEncode extends AbstractDataEncode
      */
     public function init($header = true): void
     {
-        
+
     }
 
     /**
