@@ -355,6 +355,7 @@ class Read
             configKeys: $configKeys,
             flag: $useResultSet
         );
+
         if (!empty($errors)) {
             throw new \Exception(
                 message: $errors,
@@ -364,6 +365,9 @@ class Read
 
         $this->db->execDbQuery(sql: $sql, params: $sqlParams);
         if ($row =  $this->db->fetch()) {
+            foreach ($row as $key => $value) {
+                $this->dataEncode->addKeyData(key: $key, data: $value);
+            }
             // check if selected column-name mismatches or conflicts with
             // configured module/submodule names
             if (isset($rSqlConfig['__SUB-QUERY__'])) {
@@ -377,11 +381,6 @@ class Read
                     }
                 }
             }
-        } else {
-            $row = [];
-        }
-        foreach ($row as $key => $value) {
-            $this->dataEncode->addKeyData(key: $key, data: $value);
         }
         $this->db->closeCursor();
 
