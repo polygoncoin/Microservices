@@ -13,7 +13,7 @@
  */
 namespace Microservices\TestCases;
 
-require_once __DIR__ . '/TestFunctions.php';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'TestFunctions.php';
 
 $header = [];
 $response = [];
@@ -93,11 +93,6 @@ $response[] = include DELETE . DIRECTORY_SEPARATOR . 'Address.php';
 $response[] = include DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
 
 $response[] = include POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
-
-// header(header: "Content-Type: application/json; charset=utf-8");
-// header(header: "Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-// header(header: "Pragma: no-cache");
-// echo json_encode(value: $response);
 
 echo '<pre>';
 print_r(value: $response);

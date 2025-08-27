@@ -206,7 +206,7 @@ class Web
         }
 
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ?
-             "https" : "http";
+             'https' : 'http';
         $homeURL = $protocol . '://' .
             $this->_c->http['server']['host'] .
             parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);

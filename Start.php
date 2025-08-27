@@ -28,7 +28,7 @@ $http['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
-$http['server']['api_version'] = $_SERVER["HTTP_X_API_VERSION"];
+$http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
 $http['get'] = &$_GET;
 
 
@@ -38,9 +38,9 @@ try {
         || $http['server']['api_version'] !== 'v1.0.0'
     ) {
         // Set response headers
-        header(header: "Content-Type: application/json; charset=utf-8");
-        header(header: "Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-        header(header: "Pragma: no-cache");
+        header(header: 'Content-Type: application/json; charset=utf-8');
+        header(header: 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header(header: 'Pragma: no-cache');
 
         die('{"Status": 400, "Message": "Bad Request"}');
     }
@@ -82,8 +82,8 @@ try {
             'LogType' => 'ERROR',
             'DateTime' => $dateTime,
             'HttpDetails' => [
-                "HttpCode" => $e->getCode(),
-                "HttpMessage" => $e->getMessage()
+                'HttpCode' => $e->getCode(),
+                'HttpMessage' => $e->getMessage()
             ],
             'Details' => [
                 '$_GET' => $_GET,

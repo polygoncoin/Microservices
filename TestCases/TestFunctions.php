@@ -256,12 +256,12 @@ if (!function_exists(function: 'genXmlPayload')) {
         }
 
         if (!$isObject) {
-            $payload .= "<Rows>";
+            $payload .= '<Rows>';
             $rows = true;
         }
 
         if ($rowsFlag) {
-            $payload .= "<Row>";
+            $payload .= '<Row>';
         }
         foreach ($params as $key => &$value) {
             if ($isObject) {
@@ -277,10 +277,10 @@ if (!function_exists(function: 'genXmlPayload')) {
             }
         }
         if ($rowsFlag) {
-            $payload .= "</Row>";
+            $payload .= '</Row>';
         }
         if (!$isObject) {
-            $payload .= "</Rows>";
+            $payload .= '</Rows>';
         }
     }
 }
