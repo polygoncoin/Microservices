@@ -103,14 +103,6 @@ class HttpRequest extends DbFunctions
     public $ROUTE = null;
 
     /**
-     * Cache Keys
-     */
-    public $tKey = null;
-    public $cKey = null;
-    public $gKey = null;
-    public $cidrKey = null;
-
-    /**
      * Payload stream
      */
     public $payloadStream = null;
@@ -182,11 +174,11 @@ class HttpRequest extends DbFunctions
         $this->_loadCache();
 
         if ($this->open) {
-            $this->cKey = CacheKey::clientOpenToWeb(hostname: $this->HOST);
+            $cKey = CacheKey::clientOpenToWeb(hostname: $this->HOST);
         } else {
-            $this->cKey = CacheKey::client(hostname: $this->HOST);
+            $cKey = CacheKey::client(hostname: $this->HOST);
         }
-        if (!$this->cache->cacheExists(key: $this->cKey)) {
+        if (!$this->cache->cacheExists(key: $cKey)) {
             throw new \Exception(
                 message: "Invalid Host '{$this->HOST}'",
                 code: HttpStatus::$InternalServerError
@@ -195,7 +187,7 @@ class HttpRequest extends DbFunctions
 
         $this->s['cDetails'] = json_decode(
             json: $this->cache->getCache(
-                key: $this->cKey
+                key: $cKey
             ),
             associative: true
         );

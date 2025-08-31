@@ -221,14 +221,14 @@ class Gateway
      */
     public function checkRemoteIp(): void
     {
-        $this->_req->cidrKey = CacheKey::cidr(
+        $cidrKey = CacheKey::cidr(
             gID: $this->_req->s['uDetails']['group_id']
         );
-        if ($this->_req->cache->cacheExists(key: $this->_req->cidrKey)) {
+        if ($this->_req->cache->cacheExists(key: $cidrKey)) {
             $this->cidrChecked = true;
             $cidrs = json_decode(
                 json: $this->_req->cache->getCache(
-                    key: $this->_req->cidrKey
+                    key: $cidrKey
                 ),
                 associative: true
             );

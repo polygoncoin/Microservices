@@ -68,10 +68,12 @@ class Auth
             )
         ) {
             $this->_req->s['token'] = $matches[1];
-            $this->_req->tKey = CacheKey::token(
-                token: $this->_req->s['token']
-            );
-            if (!$this->_req->cache->cacheExists(key: $this->_req->tKey)) {
+            if (!$this->_req->cache->cacheExists(
+                key: CacheKey::token(
+                    token: $this->_req->s['token']
+                )
+            )
+            ) {
                 throw new \Exception(
                     message: 'Token expired',
                     code: HttpStatus::$BadRequest
@@ -79,7 +81,9 @@ class Auth
             }
             $this->_req->s['uDetails'] = json_decode(
                 json: $this->_req->cache->getCache(
-                    key: $this->_req->tKey
+                    key: CacheKey::token(
+                        token: $this->_req->s['token']
+                    )
                 ),
                 associative: true
             );
@@ -114,19 +118,19 @@ class Auth
             );
         }
 
-        $this->_req->gKey = CacheKey::group(
+        $gKey = CacheKey::group(
             gID: $this->_req->s['uDetails']['group_id']
         );
-        if (!$this->_req->cache->cacheExists(key: $this->_req->gKey)) {
+        if (!$this->_req->cache->cacheExists(key: $gKey)) {
             throw new \Exception(
-                message: "Cache '{$this->_req->gKey}' missing",
+                message: "Cache '{$gKey}' missing",
                 code: HttpStatus::$InternalServerError
             );
         }
 
         $this->_req->s['gDetails'] = json_decode(
             json: $this->_req->cache->getCache(
-                key: $this->_req->gKey
+                key: $gKey
             ),
             associative: true
         );

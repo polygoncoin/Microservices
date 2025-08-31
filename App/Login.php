@@ -87,7 +87,6 @@ class Login
      * Cache Keys
      */
     private $_clientUserKey = null;
-    private $_tKey = null;
     private $_userTokenKey = null;
     private $_cidrKey = null;
 
@@ -270,10 +269,13 @@ class Login
         //generates a crypto-secure 64 characters long
         while (true) {
             $token = bin2hex(string: random_bytes(length: 32));
-            $this->_tKey = CacheKey::token(token: $token);
-            if (!$this->_c->req->cache->cacheExists(key: $this->_tKey)) {
+
+            if (!$this->_c->req->cache->cacheExists(
+                key: CacheKey::token(token: $token)
+            )
+            ) {
                 $this->_c->req->cache->setCache(
-                    key: $this->_tKey,
+                    key: CacheKey::token(token: $token),
                     value: '{}',
                     expire: Constants::$TOKEN_EXPIRY_TIME
                 );
@@ -307,13 +309,22 @@ class Login
                 ),
                 associative: true
             );
-            $this->_tKey = CacheKey::token(token: $tokenDetails['token']);
-            if ($this->_c->req->cache->cacheExists(key: $this->_tKey)) {
+
+            if ($this->_c->req->cache->cacheExists(
+                key: CacheKey::token(
+                    token: $tokenDetails['token']
+                )
+            )
+            ) {
                 $time = $this->_timestamp - $tokenDetails['timestamp'];
                 if ((Constants::$TOKEN_EXPIRY_TIME - $time) > 0) {
                     $tokenFound = true;
                 } else {
-                    $this->_c->req->cache->deleteCache(key: $this->_tKey);
+                    $this->_c->req->cache->deleteCache(
+                        key: CacheKey::token(
+                            token: $tokenDetails['token']
+                        )
+                    );
                 }
             }
         }
@@ -328,10 +339,9 @@ class Login
                 ),
                 expire: Constants::$TOKEN_EXPIRY_TIME
             );
-            $this->_tKey = CacheKey::token(token: $tokenDetails['token']);
             unset($this->_userDetails['password_hash']);
             $this->_c->req->cache->setCache(
-                key: $this->_tKey,
+                key: CacheKey::token(token: $tokenDetails['token']),
                 value: json_encode(
                     value: $this->_userDetails
                 ),
