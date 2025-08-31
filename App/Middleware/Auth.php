@@ -56,7 +56,7 @@ class Auth
      */
     public function loadUserDetails(): void
     {
-        if ($this->_req->uDetails !== null) {
+        if (isset($this->_req->s['uDetails'])) {
              return;
         }
 
@@ -77,16 +77,12 @@ class Auth
                     code: HttpStatus::$BadRequest
                 );
             }
-            $this->_req->uDetails = json_decode(
+            $this->_req->s['uDetails'] = json_decode(
                 json: $this->_req->cache->getCache(
                     key: $this->_req->tKey
                 ),
                 associative: true
             );
-            $this->_req->gID = $this->_req->uDetails['group_id'];
-            $this->_req->uID = $this->_req->uDetails['user_id'];
-
-            $this->_req->s['uDetails'] = &$this->_req->uDetails;
         }
         if (empty($this->_req->s['token'])) {
             throw new \Exception(
@@ -104,13 +100,13 @@ class Auth
      */
     public function loadGroupDetails(): void
     {
-        if ($this->_req->gDetails !== null) {
+        if (isset($this->_req->s['gDetails'])) {
              return;
         }
 
         // Load gDetails
-        if (empty($this->_req->uDetails['user_id'])
-            || empty($this->_req->uDetails['group_id'])
+        if (empty($this->_req->s['uDetails']['id'])
+            || empty($this->_req->s['uDetails']['id'])
         ) {
             throw new \Exception(
                 message: 'Invalid session',
@@ -119,7 +115,7 @@ class Auth
         }
 
         $this->_req->gKey = CacheKey::group(
-            gID: $this->_req->uDetails['group_id']
+            gID: $this->_req->s['uDetails']['group_id']
         );
         if (!$this->_req->cache->cacheExists(key: $this->_req->gKey)) {
             throw new \Exception(
@@ -128,13 +124,11 @@ class Auth
             );
         }
 
-        $this->_req->gDetails = json_decode(
+        $this->_req->s['gDetails'] = json_decode(
             json: $this->_req->cache->getCache(
                 key: $this->_req->gKey
             ),
             associative: true
         );
-
-        $this->_req->s['gDetails'] = &$this->_req->gDetails;
     }
 }

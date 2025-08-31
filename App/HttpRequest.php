@@ -45,27 +45,6 @@ class HttpRequest extends DbFunctions
     public $s = null;
 
     /**
-     * Client Id
-     *
-     * @var null|int
-     */
-    public $cID = null;
-
-    /**
-     * Group Id
-     *
-     * @var null|int
-     */
-    public $gID = null;
-
-    /**
-     * User Id
-     *
-     * @var null|int
-     */
-    public $uID = null;
-
-    /**
      * Cache Object
      *
      * @var null|AbstractCache
@@ -132,27 +111,6 @@ class HttpRequest extends DbFunctions
     public $cidrKey = null;
 
     /**
-     * Client Info
-     *
-     * @var null|array
-     */
-    public $cDetails = null;
-
-    /**
-     * Group Info
-     *
-     * @var null|array
-     */
-    public $gDetails = null;
-
-    /**
-     * User Info
-     *
-     * @var null|array
-     */
-    public $uDetails = null;
-
-    /**
      * Payload stream
      */
     public $payloadStream = null;
@@ -217,7 +175,7 @@ class HttpRequest extends DbFunctions
      */
     public function loadClientDetails(): void
     {
-        if ($this->cDetails !== null) {
+        if (isset($this->s['cDetails'])) {
             return;
         }
 
@@ -235,15 +193,12 @@ class HttpRequest extends DbFunctions
             );
         }
 
-        $this->cDetails = json_decode(
+        $this->s['cDetails'] = json_decode(
             json: $this->cache->getCache(
                 key: $this->cKey
             ),
             associative: true
         );
-        $this->cID = $this->cDetails['client_id'];
-
-        $this->s['cDetails'] = &$this->cDetails;
     }
 
     /**

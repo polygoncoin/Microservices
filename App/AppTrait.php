@@ -558,11 +558,11 @@ trait AppTrait
         ) {
             $payloadSignature = [
                 'IP' => $this->_c->req->IP,
-                'cID' => $this->_c->req->cID,
-                'gID' => ($this->_c->req->gID !== null ?
-                    $this->_c->req->gID : 0),
-                'uID' => ($this->_c->req->uID !== null ?
-                    $this->_c->req->uID : 0),
+                'cID' => $this->_c->req->s['cDetails']['id'],
+                'gID' => ($this->_c->req->s['gDetails']['id'] !== null ?
+                    $this->_c->req->s['gDetails']['id'] : 0),
+                'uID' => ($this->_c->req->s['uDetails']['id'] !== null ?
+                    $this->_c->req->s['uDetails']['id'] : 0),
                 'httpMethod' => $this->_c->req->METHOD,
                 'Route' => $this->_c->req->ROUTE,
             ];
@@ -607,11 +607,11 @@ trait AppTrait
                     'IdempotentSecret' => getenv(name: 'IdempotentSecret'),
                     'idempotentWindow' => $idempotentWindow,
                     'IP' => $this->_c->req->IP,
-                    'cID' => $this->_c->req->cID,
-                    'gID' => ($this->_c->req->gID !== null ?
-                        $this->_c->req->gID : 0),
-                    'uID' => ($this->_c->req->uID !== null ?
-                        $this->_c->req->uID : 0),
+                    'cID' => $this->_c->req->s['cDetails']['id'],
+                    'gID' => ($this->_c->req->s['gDetails']['id'] !== null ?
+                        $this->_c->req->s['gDetails']['id'] : 0),
+                    'uID' => ($this->_c->req->s['uDetails']['id'] !== null ?
+                        $this->_c->req->s['uDetails']['id'] : 0),
                     'httpMethod' => $this->_c->req->METHOD,
                     'Route' => $this->_c->req->ROUTE,
                     'payload' => $this->_c->req->dataDecode->get(
@@ -648,11 +648,11 @@ trait AppTrait
         ) {
             $payloadSignature = [
                 'IP' => $this->_c->req->IP,
-                'cID' => $this->_c->req->cID,
-                'gID' => ($this->_c->req->gID !== null ?
-                    $this->_c->req->gID : 0),
-                'uID' => ($this->_c->req->uID !== null ?
-                    $this->_c->req->uID : 0),
+                'cID' => $this->_c->req->s['cDetails']['id'],
+                'gID' => ($this->_c->req->s['gDetails']['id'] !== null ?
+                    $this->_c->req->s['gDetails']['id'] : 0),
+                'uID' => ($this->_c->req->s['uDetails']['id'] !== null ?
+                    $this->_c->req->s['uDetails']['id'] : 0),
                 'httpMethod' => $this->_c->req->METHOD,
                 'Route' => $this->_c->req->ROUTE,
             ];

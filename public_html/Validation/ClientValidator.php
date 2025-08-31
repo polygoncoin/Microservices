@@ -97,13 +97,13 @@ class ClientValidator implements ValidatorInterface
      *
      * @return int 0/1
      */
-    public function cIDExist(&$args): int
+    public function cIdExist(&$args): int
     {
         extract(array: $args);
         return $this->_getPrimaryCount(
             table: Env::$clients,
-            primary: 'client_id',
-            id: $client_id
+            primary: 'id',
+            id: $id
         );
     }
 

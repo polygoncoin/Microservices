@@ -398,9 +398,9 @@ return [
             }
         ],
         [ // Fatch value from uDetails session
-            'column' => 'user_id',
+            'column' => 'id',
             'fetchFrom' => 'uDetails',                   // uDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
+            'fetchFromValue' => 'id'                   // id Key
         ],
         [ // Fatch value of last insert ids
             'column' => 'is_deleted',
@@ -431,9 +431,9 @@ return [
             }
         ],
         [ // Fatch value from uDetails session
-            'column' => 'user_id',
+            'column' => 'id',
             'fetchFrom' => 'uDetails',                   // uDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
+            'fetchFromValue' => 'id'                   // id Key
         ],
         [ // Fatch value of last insert ids
             'column' => 'is_deleted',
@@ -475,22 +475,22 @@ return [
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
                 [ // Fatch value of last insert ids
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
                     'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
                 [ // Fatch values of params from previous queries
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
                 [ // Fatch values of sql results from previous queries
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
                 [ // Fatch values of sql payload for previous queries
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
@@ -543,7 +543,7 @@ return [
         [
             'fn' => 'validateGroupId',
             'fnArgs' => [
-                'group_id' => ['payload', 'group_id']
+                'id' => ['payload', 'id']
             ],
             'errorMessage' => 'Invalid Group Id'
         ],
@@ -628,9 +628,9 @@ return [
             }
         ],
         [ // Fatch value from uDetails session
-            'column' => 'user_id',
+            'column' => 'id',
             'fetchFrom' => 'uDetails',                   // uDetails from session
-            'fetchFromValue' => 'user_id'                   // user_id Key
+            'fetchFromValue' => 'id'                   // id Key
         ],
         [ // Fatch value of last insert ids
             'column' => 'is_deleted',
@@ -667,22 +667,22 @@ return [
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
                 [ // Fatch value of last insert ids
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
                     'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
                 [ // Fatch values of params from previous queries
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
                 [ // Fatch values of sql results from previous queries
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
                 [ // Fatch values of sql payload for previous queries
-                    'column' => 'user_id',
+                    'column' => 'id',
                     'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
@@ -735,7 +735,7 @@ return [
         [
             'fn' => 'validateGroupId',
             'fnArgs' => [
-                'group_id' => ['payload', 'group_id']
+                'id' => ['payload', 'id']
             ],
             'errorMessage' => 'Invalid Group Id'
         ],

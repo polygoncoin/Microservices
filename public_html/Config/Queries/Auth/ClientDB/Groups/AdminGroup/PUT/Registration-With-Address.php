@@ -56,7 +56,7 @@ return [
             'fetchFromValue' => 'No'
         ],
         [
-            'column' => 'user_id',
+            'column' => 'id',
             'fetchFrom' => 'uriParams',
             'fetchFromValue' => 'id',
             'dataType' => DatabaseDataTypes::$PrimaryKey
@@ -92,7 +92,7 @@ return [
             'fn' => '_primaryKeyExist',
             'fnArgs' => [
                 'table' => ['custom', 'master_users'],
-                'primary' => ['custom', 'user_id'],
+                'primary' => ['custom', 'id'],
                 'id' => ['uriParams', 'id']
             ],
             'errorMessage' => 'Invalid registration id'

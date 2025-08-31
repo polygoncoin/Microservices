@@ -256,12 +256,12 @@ class DbFunctions
     public function setDatabaseCacheKey(): void
     {
         if ($this->_req->open) {
-            DatabaseOpenCacheKey::init(cID: $this->_req->cID);
+            DatabaseOpenCacheKey::init(cID: $this->_req->s['cDetails']['id']);
         } else {
             DatabaseCacheKey::init(
-                cID: $this->_req->cID,
-                gID: $this->_req->gID,
-                uID: $this->_req->uID
+                cID: $this->_req->s['cDetails']['id'],
+                gID: $this->_req->s['gDetails']['id'],
+                uID: $this->_req->s['uDetails']['id']
             );
         }
     }

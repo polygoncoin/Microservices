@@ -90,14 +90,14 @@ class Gateway
         $rateLimitChecked = false;
 
         // Client Rate Limiting
-        if (!empty($this->_req->cDetails['rateLimitMaxRequests'])
-            && !empty($this->_req->cDetails['rateLimitSecondsWindow'])
+        if (!empty($this->_req->s['cDetails']['rateLimitMaxRequests'])
+            && !empty($this->_req->s['cDetails']['rateLimitSecondsWindow'])
         ) {
             $rateLimitClientPrefix = getenv(name: 'rateLimitClientPrefix');
-            $rateLimitMaxRequests = $this->_req->cDetails['rateLimitMaxRequests'];
+            $rateLimitMaxRequests = $this->_req->s['cDetails']['rateLimitMaxRequests'];
             $rateLimitSecondsWindow
-                = $this->_req->cDetails['rateLimitSecondsWindow'];
-            $key = $this->_req->cDetails['client_id'];
+                = $this->_req->s['cDetails']['rateLimitSecondsWindow'];
+            $key = $this->_req->s['cDetails']['id'];
 
             $rateLimitChecked = $this->checkRateLimit(
                 rateLimitPrefix: $rateLimitClientPrefix,
@@ -109,17 +109,17 @@ class Gateway
 
         if (!$this->_req->open) {
             // Group Rate Limiting
-            if (!empty($this->_req->gDetails['rateLimitMaxRequests'])
-                && !empty($this->_req->gDetails['rateLimitSecondsWindow'])
+            if (!empty($this->_req->s['gDetails']['rateLimitMaxRequests'])
+                && !empty($this->_req->s['gDetails']['rateLimitSecondsWindow'])
             ) {
                 $rateLimitGroupPrefix
                     = getenv(name: 'rateLimitGroupPrefix');
                 $rateLimitMaxRequests
-                    = $this->_req->gDetails['rateLimitMaxRequests'];
+                    = $this->_req->s['gDetails']['rateLimitMaxRequests'];
                 $rateLimitSecondsWindow
-                    = $this->_req->gDetails['rateLimitSecondsWindow'];
-                $key = $this->_req->cDetails['client_id'] . ':' .
-                    $this->_req->uDetails['group_id'];
+                    = $this->_req->s['gDetails']['rateLimitSecondsWindow'];
+                $key = $this->_req->s['cDetails']['id'] . ':' .
+                    $this->_req->s['uDetails']['id'];
 
                 $rateLimitChecked = $this->checkRateLimit(
                     rateLimitPrefix: $rateLimitGroupPrefix,
@@ -130,17 +130,17 @@ class Gateway
             }
 
             // User Rate Limiting
-            if (!empty($this->_req->uDetails['rateLimitMaxRequests'])
-                && !empty($this->_req->uDetails['rateLimitSecondsWindow'])
+            if (!empty($this->_req->s['uDetails']['rateLimitMaxRequests'])
+                && !empty($this->_req->s['uDetails']['rateLimitSecondsWindow'])
             ) {
                 $rateLimitUserPrefix = getenv(name: 'rateLimitUserPrefix');
                 $rateLimitMaxRequests
-                    = $this->_req->gDetails['rateLimitMaxRequests'];
+                    = $this->_req->s['gDetails']['rateLimitMaxRequests'];
                 $rateLimitSecondsWindow
-                    = $this->_req->gDetails['rateLimitSecondsWindow'];
-                $key = $this->_req->cDetails['client_id'] . ':' .
-                    $this->_req->uDetails['group_id'] . ':' .
-                    $this->_req->uDetails['user_id'];
+                    = $this->_req->s['gDetails']['rateLimitSecondsWindow'];
+                $key = $this->_req->s['cDetails']['id'] . ':' .
+                    $this->_req->s['uDetails']['id'] . ':' .
+                    $this->_req->s['uDetails']['user_id'];
 
                 $rateLimitChecked = $this->checkRateLimit(
                     rateLimitPrefix: $rateLimitUserPrefix,
@@ -221,10 +221,8 @@ class Gateway
      */
     public function checkRemoteIp(): void
     {
-        $gID = $this->_req->uDetails['group_id'];
-
         $this->_req->cidrKey = CacheKey::cidr(
-            gID: $this->_req->uDetails['group_id']
+            gID: $this->_req->s['uDetails']['group_id']
         );
         if ($this->_req->cache->cacheExists(key: $this->_req->cidrKey)) {
             $this->cidrChecked = true;

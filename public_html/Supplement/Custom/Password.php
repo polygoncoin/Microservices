@@ -102,7 +102,7 @@ class Password implements CustomInterface
             $this->_c->req->db->execDbQuery(sql: $sql, params: $sqlParams);
             $this->_c->req->db->closeCursor();
 
-            $cID = $this->_c->req->s['cDetails']['client_id'];
+            $cID = $this->_c->req->s['cDetails']['id'];
             $cu_key = CacheKey::clientUser(
                 cID: $cID,
                 username: $userName

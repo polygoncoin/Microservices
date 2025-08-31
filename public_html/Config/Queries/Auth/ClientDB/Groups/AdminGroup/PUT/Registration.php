@@ -59,14 +59,16 @@ return array_merge(
         ],
         '__WHERE__' => [
             [
-            'column' => 'is_deleted',
-            'fetchFrom' => 'custom',
-            'fetchFromValue' => 'No'],
+                'column' => 'is_deleted',
+                'fetchFrom' => 'custom',
+                'fetchFromValue' => 'No'
+            ],
             [
-            'column' => 'user_id',
-            'fetchFrom' => 'uriParams',
-            'fetchFromValue' => 'id',
-            'dataType' => DatabaseDataTypes::$PrimaryKey]
+                'column' => 'id',
+                'fetchFrom' => 'uriParams',
+                'fetchFromValue' => 'id',
+                'dataType' => DatabaseDataTypes::$PrimaryKey
+            ]
         ],
     ]
 );

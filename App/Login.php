@@ -177,7 +177,7 @@ class Login
      */
     private function _loadUserDetails(): void
     {
-        $cID = $this->_c->req->s['cDetails']['client_id'];
+        $cID = $this->_c->req->s['cDetails']['id'];
         $this->_clientUserKey = CacheKey::clientUser(
             cID: $cID,
             username: $this->_payload['username']
@@ -195,8 +195,8 @@ class Login
             ),
             associative: true
         );
-        if (empty($this->_userDetails['user_id'])
-            || empty($this->_userDetails['group_id'])
+        if (empty($this->_userDetails['id'])
+            || empty($this->_userDetails['id'])
         ) {
             throw new \Exception(
                 message: 'Invalid credentials',
@@ -298,7 +298,7 @@ class Login
         $tokenFound = false;
 
         $this->_userTokenKey = CacheKey::userToken(
-            uID: $this->_userDetails['user_id']
+            uID: $this->_userDetails['id']
         );
         if ($this->_c->req->cache->cacheExists(key: $this->_userTokenKey)) {
             $tokenDetails = json_decode(
@@ -372,11 +372,11 @@ class Login
                     `token` = :token,
                     `token_ts` = :token_ts
                 WHERE
-                    user_id = :user_id",
+                    id = :id",
             params: [
                 ':token' => $tokenDetails['token'],
                 ':token_ts' => $tokenDetails['timestamp'],
-                ':user_id' => $this->_userDetails['user_id']
+                ':id' => $this->_userDetails['id']
             ]
         );
     }
