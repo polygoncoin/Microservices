@@ -68,7 +68,7 @@ class GlobalValidator implements ValidatorInterface
      */
     public function validate(&$validationConfig): array
     {
-        $sess = &$this->_c->req->s;
+        $session = &$this->_c->req->s;
         $isValidData = true;
         $errors = [];
         foreach ($validationConfig as &$v) {

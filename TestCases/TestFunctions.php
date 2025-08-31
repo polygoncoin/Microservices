@@ -100,7 +100,6 @@ if (!function_exists(function: 'getCurlConfig')) {
         $header = [],
         $payload = ''
     ): array {
-        $queryString = empty($queryString) ? '' : '&' . $queryString;
         $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}{$queryString}";
         $curlConfig[CURLOPT_HTTPHEADER] = $header;
         $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
@@ -158,6 +157,8 @@ if (!function_exists(function: 'trigger')) {
         $header = [],
         $payload = ''
     ): mixed {
+        $queryString = empty($queryString) ? '' : "&{$queryString}";
+
         $curl = curl_init();
         $curlConfig = getCurlConfig(
             homeURL: $homeURL,
@@ -211,10 +212,10 @@ if (!function_exists(function: 'trigger')) {
             $response = $responseBody;
         }
 
-        $queryString = empty($queryString) ? '' : '&' . $queryString;
-
         return [
-            'route' => htmlspecialchars(string: "{$homeURL}?r={$route}{$queryString}"),
+            'route' => htmlspecialchars(
+                string: "{$homeURL}?r={$route}{$queryString}"
+            ),
             'httpMethod' => $method,
             'requestHeaders' => $curlConfig[CURLOPT_HTTPHEADER],
             'requestPayload' => htmlspecialchars(string: $payload),

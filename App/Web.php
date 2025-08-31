@@ -67,7 +67,7 @@ class Web
         $header = [],
         $payload = ''
     ): array {
-        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}&{$queryString}";
+        $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}{$queryString}";
         $curlConfig[CURLOPT_HTTPHEADER] = $header;
         $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
         $curlConfig[CURLOPT_HTTPHEADER][] = 'Cache-Control: no-cache';
@@ -124,6 +124,8 @@ class Web
         $header = [],
         $payload = ''
     ): mixed {
+        $queryString = empty($queryString) ? '' : '&' . $queryString;
+
         $curl = curl_init();
         $curlConfig = $this->_getCurlConfig(
             homeURL: $homeURL,
@@ -168,7 +170,7 @@ class Web
         }
 
         // return [
-        //     'route' => "{$homeURL}?r={$route}&{$queryString}",
+        //     'route' => "{$homeURL}?r={$route}{$queryString}",
         //     'httpMethod' => $method,
         //     'requestHeaders' => $curlConfig[CURLOPT_HTTPHEADER],
         //     'requestPayload' => $payload,
@@ -219,7 +221,7 @@ class Web
         $response = [];
 
         // For use in function configuration
-        $sess = &$this->_c->req->s;
+        $session = &$this->_c->req->s;
 
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
@@ -335,7 +337,7 @@ class Web
             $fKey = $config['fetchFromValue'];
             if ($fetchFrom === 'function') {
                 $function = $fKey;
-                $value = $function ($this->_c->req->s);
+                $value = $function($this->_c->req->s);
                 if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
