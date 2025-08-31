@@ -42,8 +42,8 @@ maxPerPage=10000                ;Maximum value of per page (records per page)
 
 ;Data Representation: JSON/XML
 ;To override below setting pass below params with route separated with &
-inputRepresentation='JSON'
-outputRepresentation='JSON'
+iRepresentation='JSON'
+oRepresentation='JSON'
 allowGetRepresentation=1
 ```
 
@@ -136,50 +136,50 @@ These DB/Cache configurations can be set in below columns respectively for each 
 ```ini
 ; ---- Rate Limit Server Details (Redis)
 ;used to save Rate Limiting related details
-rateLimiterHost='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimiterHostPort=6379        ; Redis host port
+rateLimitHost='127.0.0.1'     ; Redis host dealing with Rate limit
+rateLimitHostPort=6379        ; Redis host port
 ```
 
 #### IP based Rate Limiting
 ```ini
-rateLimiterIPMaxRequests=600    ; Max request allowed per IP
-rateLimiterIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
-rateLimiterIPPrefix='IPRL:'     ; Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)
+rateLimitIPMaxRequests=600    ; Max request allowed per IP
+rateLimitIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
+rateLimitIPPrefix='IPRL:'     ; Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)
 ```
 
 #### Client/Group/User based Rate Limiting
 ```ini
-rateLimiterClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
-rateLimiterGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
-rateLimiterUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
+rateLimitClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
+rateLimitGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
+rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
 ```
 
 ##### Configure these in tables below
 ```SQL
 # Client level
-`m001_master_clients`.`rateLimiterMaxRequests` int DEFAULT NULL,
-`m001_master_clients`.`rateLimiterSecondsWindow` int DEFAULT NULL,
+`m001_master_clients`.`rateLimitMaxRequests` int DEFAULT NULL,
+`m001_master_clients`.`rateLimitSecondsWindow` int DEFAULT NULL,
 
 # Group level
-`m002_master_groups`.`rateLimiterMaxRequests` int DEFAULT NULL,
-`m002_master_groups`.`rateLimiterSecondsWindow` int DEFAULT NULL,
+`m002_master_groups`.`rateLimitMaxRequests` int DEFAULT NULL,
+`m002_master_groups`.`rateLimitSecondsWindow` int DEFAULT NULL,
 
 # User level
-`master_users`.`rateLimiterMaxRequests` int DEFAULT NULL,
-`master_users`.`rateLimiterSecondsWindow` int DEFAULT NULL,
+`master_users`.`rateLimitMaxRequests` int DEFAULT NULL,
+`master_users`.`rateLimitSecondsWindow` int DEFAULT NULL,
 ```
 
 #### Route based Rate Limiting
 ```ini
-rateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
+rateLimitRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
 ```
 
 ##### Configure these in SQL configuration as below
 ```PHP
 return [
     [...]
-    'rateLimiterMaxRequests' => 1, // Allowed number of requests
-    'rateLimiterSecondsWindow' => 3600, // Window in Seconds for allowed number of requests
+    'rateLimitMaxRequests' => 1, // Allowed number of requests
+    'rateLimitSecondsWindow' => 3600, // Window in Seconds for allowed number of requests
     [...]
 ];
 ```
@@ -302,7 +302,7 @@ return [
         ],
 
         // Input Data Representation
-        'inputRepresentation' => 'XML' // JSON/XML - Defaults to JSON
+        'iRepresentation' => 'XML' // JSON/XML - Defaults to JSON
     ]
 ];
 ```
@@ -367,12 +367,14 @@ static public $CustomINT = [
 //return represents root for sqlResults
 return [
     // Required to implementing pagination
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE __WHERE__", // OR
-    'countQuery' => "SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND  id = :id",
+    '__COUNT-SQL-COMMENT__' => '',
+    'countQuery' => 'SELECT count(1) as `count` FROM TableName WHERE __WHERE__', // OR
+    'countQuery' => 'SELECT count(1) as `count` FROM TableName WHERE column1 = :column1 AND  id = :id',
 
     // Query to perform task
-    '__QUERY__' => 'SELECT columns FROM TableName WHERE __WHERE__", // OR
-    '__QUERY__' => 'SELECT columns FROM TableName WHERE column1 = :column1 AND id = :id",
+    '__SQL-COMMENT__' => 'Comment prepended to query for monitoring queries in logs',
+    '__QUERY__' => 'SELECT columns FROM TableName WHERE __WHERE__', // OR
+    '__QUERY__' => 'SELECT columns FROM TableName WHERE column1 = :column1 AND id = :id',
 
     // Details of data to be set by Query to perform task
     '__SET__' => [
@@ -391,13 +393,13 @@ return [
         [ // Fatch value from function
             'column' => 'password',
             'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
+            'fetchFromValue' => function ($session) {        // execute a function and return value
                 return 'value';
             }
         ],
-        [ // Fatch value from userDetails session
+        [ // Fatch value from uDetails session
             'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFrom' => 'uDetails',                   // uDetails from session
             'fetchFromValue' => 'user_id'                   // user_id Key
         ],
         [ // Fatch value of last insert ids
@@ -424,13 +426,13 @@ return [
         [ // Fatch value from function
             'column' => 'password',
             'fetchFrom' => 'function',                      // function
-            'fetchFromValue' => function($session) {        // execute a function and return value
+            'fetchFromValue' => function ($session) {        // execute a function and return value
                 return 'value';
             }
         ],
-        [ // Fatch value from userDetails session
+        [ // Fatch value from uDetails session
             'column' => 'user_id',
-            'fetchFrom' => 'userDetails',                   // userDetails from session
+            'fetchFrom' => 'uDetails',                   // uDetails from session
             'fetchFromValue' => 'user_id'                   // user_id Key
         ],
         [ // Fatch value of last insert ids
@@ -443,11 +445,12 @@ return [
     // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
     '__INSERT-IDs__' => '<keyName>:id',
 
-    // Indicator to generate JSON in Single(Object) row / Mulple(Array) rows format.
+    // Indicator to generate JSON in Single(Object) row / Multiple(Array) rows format.
     '__MODE__' => 'singleRowFormat/multipleRowFormat',
 
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
+     * __SQL-COMMENT__,
      * __QUERY__,
      * __SET__,
      * __WHERE__,
@@ -465,14 +468,15 @@ return [
     '__SUB-QUERY__' => [
         '<sub-key>' => [
             // Query to perform task
-            '__QUERY__' => 'SQL",
+            '__QUERY__' => 'SQL',
+            '__SQL-COMMENT__' => 'Comment prepended to query for monitoring queries in logs',
             '__SET__/__WHERE__' => [
                 [...]
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
                 [ // Fatch value of last insert ids
                     'column' => 'user_id',
-                    'fetchFrom' => '__INSERT-IDs__',                // userDetails from session
+                    'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
                     'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
                 [ // Fatch values of params from previous queries
@@ -546,7 +550,7 @@ return [
         [...]
     ],
 
-    '__PAYLOAD-TYPE__' => 'Object', // Allow single "Object" / "Array" of Object (if not set will accept both)
+    '__PAYLOAD-TYPE__' => 'Object', // Allow single 'Object' / 'Array' of Object (if not set will accept both)
     '__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
 
     'isTransaction' => false, // Flag to follow transaction Begin, Commit and rollback on error
@@ -555,8 +559,8 @@ return [
     'useResultSet' => true, // For DQL
 
     // Rate Limiting Route access
-    'rateLimiterMaxRequests' => 1, // Allowed number of request in defined seconds window
-    'rateLimiterSecondsWindow' => 3600, // Seconds Window for restricting number of request
+    'rateLimitMaxRequests' => 1, // Allowed number of request in defined seconds window
+    'rateLimitSecondsWindow' => 3600, // Seconds Window for restricting number of request
 
     // Control response time as per number of hits by configuring lags in seconds as below
     'responseLag' => [
@@ -575,7 +579,7 @@ return [
     ],
 
     // Data Representation
-    'outputRepresentation' => 'XML', // JSON/XML - Defaults to JSON
+    'oRepresentation' => 'XML', // JSON/XML - Defaults to JSON
 
     // Limiting duplicates
     'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
@@ -595,6 +599,185 @@ return [
 
 > For POST, PUT, PATCH, and DELETE methods one can configure both INSERT as well as UPDATE queries if required for sub modules.
 
+#### Available configuration options for Supplement
+
+> Here one can configure and collect payload to perform customized operations (for Supplement folder in public_html)
+
+```PHP
+//return represents root for sqlResults
+return [
+    // Details of data to perform task
+    '__PAYLOAD__' => [
+        [ // Fatch value from parsed route
+            'column' => 'id',
+            'fetchFrom' => 'uriParams',                     // uriParams / payload
+            'fetchFromValue' => 'id',                       // key (id)
+            'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
+            'required' => Constants::$REQUIRED              // Represents required field
+        ],
+        [ // Fatch value from payload
+            'column' => 'id',
+            'fetchFrom' => 'payload',                       // payload
+            'fetchFromValue' => '<key>',                    // key (<key>)
+        ],
+        [ // Fatch value from function
+            'column' => 'password',
+            'fetchFrom' => 'function',                      // function
+            'fetchFromValue' => function ($session) {        // execute a function and return value
+                return 'value';
+            }
+        ],
+        [ // Fatch value from uDetails session
+            'column' => 'user_id',
+            'fetchFrom' => 'uDetails',                   // uDetails from session
+            'fetchFromValue' => 'user_id'                   // user_id Key
+        ],
+        [ // Fatch value of last insert ids
+            'column' => 'is_deleted',
+            'fetchFrom' => 'custom',                        // custom
+            'fetchFromValue' => '<static-value>'            // Static values
+        ]
+    ],
+
+    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
+    '__INSERT-IDs__' => '<keyName>:id',
+
+    // Indicator to generate JSON in Single(Object) row / Multiple(Array) rows format.
+    '__MODE__' => 'singleRowFormat/multipleRowFormat',
+
+    // subQuery is a keyword to perform recursive operations
+    /** Supported configuration for recursive operations are :
+     * __PAYLOAD__,
+     * __MODE__,
+     * __SUB-PAYLOAD__,
+     * __INSERT-IDs__,
+     * __TRIGGERS__,
+     * __PRE-SQL-HOOKS__,
+     * __POST-SQL-HOOKS__,
+     * __VALIDATE__,
+     * __PAYLOAD-TYPE__,
+     * __MAX-PAYLOAD-OBJECTS__,
+     */
+
+    '__SUB-PAYLOAD__' => [
+        '<sub-key>' => [
+            // Payload to perform task
+            '__PAYLOAD__' => [
+                [...]
+                // Database DataTypes settings required when useHierarchy is true
+                // to validate each data set before procedding forward
+                [ // Fatch value of last insert ids
+                    'column' => 'user_id',
+                    'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
+                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
+                ],
+                [ // Fatch values of params from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
+                    'fetchFromValue' => '<return:keys-separated-by-colon>'
+                ],
+                [ // Fatch values of sql results from previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
+                    'fetchFromValue' => '<return:keys-separated-by-colon>'
+                ],
+                [ // Fatch values of sql payload for previous queries
+                    'column' => 'user_id',
+                    'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
+                    'fetchFromValue' => '<return:keys-separated-by-colon>'
+                ],
+            ],
+            '__TRIGGERS__' => [...],
+            '__PRE-SQL-HOOKS__' => [...],
+            '__POST-SQL-HOOKS__' => [...],
+            '__VALIDATE__' => [...],
+            '__PAYLOAD-TYPE__' => 'Object/Array',
+            '__MAX-PAYLOAD-OBJECTS__' => 'Integer',
+            '__SUB-QUERY__' => [...],
+        ],
+        '<sub-key>' => [
+            [...]
+        ],
+        [...]
+    ],
+
+    // Trigger set of routes
+    '__TRIGGERS__' => [// Array of triggers
+        [
+            '__ROUTE__' => [
+                ['fetchFrom' => 'custom', 'fetchFromValue' => 'address'],
+                ['fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id']
+            ],
+            '__QUERY-STRING__' => [
+                ['column' => 'param-1', 'fetchFrom' => 'custom', 'fetchFromValue' => 'address'],
+                ['column' => 'param-2', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id']
+            ],
+            '__METHOD__' => 'PATCH',
+            '__PAYLOAD__' => [
+                ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'updated-address']
+            ]
+        ]
+        [...]
+    ],
+
+    // Hooks
+    '__PRE-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example1',
+        '...'
+    ],
+    '__POST-SQL-HOOKS__' => [// Array of Hooks class name in exec order
+        'Hook_Example2',
+        '...'
+    ],
+
+    // Array of validation functions to be performed
+    '__VALIDATE__' => [
+        [
+            'fn' => 'validateGroupId',
+            'fnArgs' => [
+                'group_id' => ['payload', 'group_id']
+            ],
+            'errorMessage' => 'Invalid Group Id'
+        ],
+        [...]
+    ],
+
+    '__PAYLOAD-TYPE__' => 'Object', // Allow single 'Object' / 'Array' of Object (if not set will accept both)
+    '__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
+
+    'isTransaction' => false, // Flag to follow transaction Begin, Commit and rollback on error
+
+    'useHierarchy' => true, // For DML
+    'useResultSet' => true, // For DQL
+
+    // Rate Limiting Route access
+    'rateLimitMaxRequests' => 1, // Allowed number of request in defined seconds window
+    'rateLimitSecondsWindow' => 3600, // Seconds Window for restricting number of request
+
+    // Control response time as per number of hits by configuring lags in seconds as below
+    'responseLag' => [
+        // No of Requests => Seconds Lag
+        0 => 0,
+        2 => 10,
+    ],
+
+    // Any among below can be used for DML operations (These are Optional keys)
+    // Caching
+    'cacheKey' => '<unique-key-for-redis-to-cache-results>(e.g, key:1)', // Use cacheKey to cache and reuse results (Optional)
+    'affectedCacheKeys' => [ // List down keys which effects configured cacheKey on DML operation
+        '<unique-key-for-redis-to-drop-cached-results>(key:1)',
+        '<unique-key-for-redis-to-drop-cached-results>(category etc.)',
+        '...'
+    ],
+
+    // Data Representation
+    'oRepresentation' => 'XML', // JSON/XML - Defaults to JSON
+
+    // Limiting duplicates
+    'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
+];
+```
+
 ## Security
 
 ### Allowed IPs
@@ -612,15 +795,15 @@ One can configure Rate Limiting server details in **.env** file.
 #### Rate Limit Server(Redis) Configuration in .env
 
 ```ini
-rateLimiterHost='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimiterHostPort=6379        ; Redis host port
-rateLimiterIPMaxRequests=600    ; Max request allowed per IP
-rateLimiterIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
-rateLimiterIPPrefix='IPRL:'     ; IP based Rate Limitng (IPRL) key prefix used in Redis
-rateLimiterClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
-rateLimiterGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
-rateLimiterUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
-rateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
+rateLimitHost='127.0.0.1'     ; Redis host dealing with Rate limit
+rateLimitHostPort=6379        ; Redis host port
+rateLimitIPMaxRequests=600    ; Max request allowed per IP
+rateLimitIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
+rateLimitIPPrefix='IPRL:'     ; IP based Rate Limitng (IPRL) key prefix used in Redis
+rateLimitClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
+rateLimitGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
+rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
+rateLimitRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
 ```
 
 #### Rate Limit at group level (global database)
@@ -628,8 +811,8 @@ rateLimiterRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix use
 One can set these details for respective group in m002_master_groups table of global database
 
 ```SQL
-`m002_master_groups`.`rateLimiterMaxRequests` int DEFAULT NULL
-`m002_master_groups`.`rateLimiterSecondsWindow` int DEFAULT NULL
+`m002_master_groups`.`rateLimitMaxRequests` int DEFAULT NULL
+`m002_master_groups`.`rateLimitSecondsWindow` int DEFAULT NULL
 ```
 
 #### Rate Limit at user account level (client database)
@@ -637,11 +820,11 @@ One can set these details for respective group in m002_master_groups table of gl
 One can set these details for respective user in master_users table of respective client database
 
 ```SQL
-`master_users`.`rateLimiterMaxRequests` int DEFAULT NULL
-`master_users`.`rateLimiterSecondsWindow` int DEFAULT NULL
+`master_users`.`rateLimitMaxRequests` int DEFAULT NULL
+`master_users`.`rateLimitSecondsWindow` int DEFAULT NULL
 ```
 
-> DEFAULT NULL represents "no restrictions"
+> DEFAULT NULL represents 'no restrictions'
 
 ## HTTP Request
 
@@ -699,7 +882,7 @@ var payload = [
 
 ### HttpRequest Variables
 
-- **$session\['userDetails'\]** Session Data.
+- **$session\['uDetails'\]** Session Data.
 > This remains same for every request and contains keys like id, group\_id, client\_id
 
 - **$session\['uriParams'\]** Data passed in URI.
@@ -727,7 +910,7 @@ var payload = [
 
 ```PHP
 return [
-    '__QUERY__' => 'INSERT INTO `category` SET SET",
+    '__QUERY__' => 'INSERT INTO `category` SET SET',
     '__SET__' => [
         ['column' => 'name', 'fetchFrom' => 'payload', 'fetchFromValue' => 'name'],
         ['column' => 'parent_id', 'fetchFrom' => 'custom', 'fetchFromValue' => 0],
@@ -735,7 +918,7 @@ return [
     '__INSERT-IDs__' => 'category:id',
     '__SUB-QUERY__' => [
         'module1' => [
-            '__QUERY__' => 'INSERT INTO `category` SET SET",
+            '__QUERY__' => 'INSERT INTO `category` SET SET',
             '__SET__' => [
                 ['column' => 'name', 'fetchFrom' => 'payload', 'fetchFromValue' => 'subname'],
                 ['column' => 'parent_id', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'category:id'],
@@ -855,7 +1038,7 @@ xmlhttp . open( "POST", handlerUrl );
 xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 
-xmlhttp . onreadystatechange = function() {
+xmlhttp . onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         var responseJson = this.responseText;
         var responseArr = JSON.parse(responseJson);
@@ -886,7 +1069,7 @@ xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', 'Bearer <Token-from-login-api>');
 
-xmlhttp . onreadystatechange = function() {
+xmlhttp . onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         var responseJson = this.responseText;
         var responseArr = JSON.parse(responseJson);
@@ -908,7 +1091,7 @@ xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 
-xmlhttp . onreadystatechange = function() {
+xmlhttp . onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         var responseJson = this.responseText;
         var responseArr = JSON.parse(responseJson);
@@ -935,7 +1118,7 @@ xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 
-xmlhttp . onreadystatechange = function() {
+xmlhttp . onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         var responseJson = this.responseText;
         var responseArr = JSON.parse(responseJson);
@@ -954,7 +1137,7 @@ xmlhttp . send( JSON.stringify(payload) );
 * XML Request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&inputRepresentation=XML&outputRepresentation=XML";
+var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&iRepresentation=XML&oRepresentation=XML";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Paylaod>' +
@@ -989,7 +1172,7 @@ xmlhttp . open( "POST", handlerUrl );
 xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 
-xmlhttp . onreadystatechange = function() {
+xmlhttp . onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         console.log(this.responseText);
     }

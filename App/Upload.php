@@ -72,7 +72,7 @@ class Upload
     public function process(): bool
     {
         $class = 'Microservices\\public_html\\Supplement\\Upload\\' .
-            ucfirst(string: $this->_c->req->routeElements[1]);
+            ucfirst(string: $this->_c->req->rParser->routeElements[1]);
 
         $this->_api = new $class(common: $this->_c);
         if ($this->_api->init()) {

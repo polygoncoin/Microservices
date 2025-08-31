@@ -190,7 +190,7 @@ class Web
      */
     public function triggerConfig($triggerConfig): mixed
     {
-        if (!isset($this->_c->req->session['token'])) {
+        if (!isset($this->_c->req->s['token'])) {
             throw new \Exception(
                 message: 'Missing token',
                 code: HttpStatus::$InternalServerError
@@ -214,12 +214,12 @@ class Web
         $header = [];
         $header[] = 'x-api-version: v1.0.0';
         $header[] = 'Cache-Control: no-cache';
-        $header[] = 'Authorization: Bearer ' . $this->_c->req->session['token'];
+        $header[] = 'Authorization: Bearer ' . $this->_c->req->s['token'];
 
         $response = [];
 
         // For use in function configuration
-        $sess = &$this->_c->req->session;
+        $sess = &$this->_c->req->s;
 
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
@@ -335,7 +335,7 @@ class Web
             $fKey = $config['fetchFromValue'];
             if ($fetchFrom === 'function') {
                 $function = $fKey;
-                $value = $function($this->_c->req->session);
+                $value = $function ($this->_c->req->s);
                 if ($var === null) {
                     $sqlParams[] = $value;
                 } else {
@@ -348,7 +348,7 @@ class Web
             )
             ) {
                 $fetchFromKeys = explode(separator: ':', string: $fKey);
-                $value = $this->_c->req->session[$fetchFrom];
+                $value = $this->_c->req->s[$fetchFrom];
                 foreach ($fetchFromKeys as $key) {
                     if (!isset($value[$key])) {
                         throw new \Exception(
@@ -372,8 +372,8 @@ class Web
                     $sqlParams[$var] = $value;
                 }
                 continue;
-            } elseif (isset($this->_c->req->session[$fetchFrom][$fKey])) {
-                $value = $this->_c->req->session[$fetchFrom][$fKey];
+            } elseif (isset($this->_c->req->s[$fetchFrom][$fKey])) {
+                $value = $this->_c->req->s[$fetchFrom][$fKey];
                 if ($var === null) {
                     $sqlParams[] = $value;
                 } else {

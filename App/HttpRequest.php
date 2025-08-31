@@ -16,9 +16,10 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\DataRepresentation\DataDecode;
-use Microservices\App\Gateway;
+use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\App\Middleware\Auth;
+use Microservices\App\RouteParser;
 use Microservices\App\Servers\Cache\AbstractCache;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
@@ -34,70 +35,35 @@ use Microservices\App\Servers\Database\AbstractDatabase;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class HttpRequest extends Gateway
+class HttpRequest extends DbFunctions
 {
-    /**
-     * Raw route / Configured Uri
-     *
-     * @var string
-     */
-    public $configuredUri = '';
-
-    /**
-     * Array containing details of received route elements
-     *
-     * @var string[]
-     */
-    public $routeElements = [];
-
-    /**
-     * Is a config request flag
-     *
-     * @var bool
-     */
-    public $isConfigRequest = false;
-
-    /**
-     * Location of File containing code for route
-     *
-     * @var string
-     */
-    public $sqlConfigFile = null;
-
-    /**
-     * Pre / Post hooks defined in respective Route file
-     *
-     * @var string
-     */
-    public $routeHook = null;
-
     /**
      * Session details of a request
      *
      * @var null|array
      */
-    public $session = null;
+    public $s = null;
 
     /**
      * Client Id
      *
      * @var null|int
      */
-    public $clientId = null;
+    public $cID = null;
 
     /**
      * Group Id
      *
      * @var null|int
      */
-    public $groupId = null;
+    public $gID = null;
 
     /**
      * User Id
      *
      * @var null|int
      */
-    public $userId = null;
+    public $uID = null;
 
     /**
      * Cache Object
@@ -152,17 +118,17 @@ class HttpRequest extends Gateway
      * Details variable from $http
      */
     public $HOST = null;
-    public $REQUEST_METHOD = null;
+    public $METHOD = null;
     public $HTTP_AUTHORIZATION = null;
-    public $REMOTE_ADDR = null;
+    public $IP = null;
     public $ROUTE = null;
 
     /**
      * Cache Keys
      */
-    public $tokenKey = null;
-    public $clientKey = null;
-    public $groupKey = null;
+    public $tKey = null;
+    public $cKey = null;
+    public $gKey = null;
     public $cidrKey = null;
     public $cidrChecked = false;
 
@@ -171,26 +137,33 @@ class HttpRequest extends Gateway
      *
      * @var null|array
      */
-    public $clientDetails = null;
+    public $cDetails = null;
 
     /**
      * Group Info
      *
      * @var null|array
      */
-    public $groupDetails = null;
+    public $gDetails = null;
 
     /**
      * User Info
      *
      * @var null|array
      */
-    public $userDetails = null;
+    public $uDetails = null;
 
     /**
      * Payload stream
      */
     public $payloadStream = null;
+
+    /**
+     * Route Parser Object
+     *
+     * @var null|RouteParser
+     */
+    public $rParser = null;
 
     /**
      * Constructor
@@ -200,10 +173,11 @@ class HttpRequest extends Gateway
     public function __construct(&$http)
     {
         $this->http = &$http;
+        parent::__construct(req: $this);
 
         $this->HOST = $this->http['server']['host'];
-        $this->REQUEST_METHOD = $this->http['server']['request_method'];
-        $this->REMOTE_ADDR = $this->http['server']['remote_addr'];
+        $this->METHOD = $this->http['server']['method'];
+        $this->IP = $this->http['server']['ip'];
         $this->ROUTE = '/' . trim(
             string: $this->http['get'][Constants::$ROUTE_URL_PARAM],
             characters: '/'
@@ -222,6 +196,8 @@ class HttpRequest extends Gateway
         if (!$this->open) {
             $this->auth = new Auth(req: $this);
         }
+
+        $this->rParser = new RouteParser(req: $this);
     }
 
     /**
@@ -242,33 +218,33 @@ class HttpRequest extends Gateway
      */
     public function loadClientDetails(): void
     {
-        if ($this->clientDetails !== null) {
+        if ($this->cDetails !== null) {
             return;
         }
 
         $this->_loadCache();
 
         if ($this->open) {
-            $this->clientKey = CacheKey::clientOpenToWeb(hostname: $this->HOST);
+            $this->cKey = CacheKey::clientOpenToWeb(hostname: $this->HOST);
         } else {
-            $this->clientKey = CacheKey::client(hostname: $this->HOST);
+            $this->cKey = CacheKey::client(hostname: $this->HOST);
         }
-        if (!$this->cache->cacheExists(key: $this->clientKey)) {
+        if (!$this->cache->cacheExists(key: $this->cKey)) {
             throw new \Exception(
                 message: "Invalid Host '{$this->HOST}'",
                 code: HttpStatus::$InternalServerError
             );
         }
 
-        $this->clientDetails = json_decode(
+        $this->cDetails = json_decode(
             json: $this->cache->getCache(
-                key: $this->clientKey
+                key: $this->cKey
             ),
             associative: true
         );
-        $this->clientId = $this->clientDetails['client_id'];
+        $this->cID = $this->cDetails['client_id'];
 
-        $this->session['clientDetails'] = &$this->clientDetails;
+        $this->s['cDetails'] = &$this->cDetails;
     }
 
     /**
@@ -278,18 +254,18 @@ class HttpRequest extends Gateway
      */
     public function loadPayload(): void
     {
-        if (isset($this->session['payloadType'])) {
+        if (isset($this->s['payloadType'])) {
             return;
         }
 
-        if ($this->REQUEST_METHOD === Constants::$GET) {
+        if ($this->METHOD === Constants::$GET) {
             $this->urlDecode(arr: $_GET);
-            $this->session['payloadType'] = 'Object';
-            $this->session['payload'] = !empty($_GET) ? $_GET : [];
+            $this->s['payloadType'] = 'Object';
+            $this->s['payload'] = !empty($_GET) ? $_GET : [];
         } else {
             $this->payloadStream = fopen(filename: 'php://input', mode: 'rb');
 
-            if (Env::$inputRepresentation === 'XML') {
+            if (Env::$iRepresentation === 'XML') {
                 $xml = simplexml_load_string(
                     data: file_get_contents(filename: 'php://input')
                 );
@@ -310,7 +286,7 @@ class HttpRequest extends Gateway
                     stream: $this->payloadStream,
                     data: json_encode(value: $result)
                 );
-                rewind(stream: $this->_jsonFileHandle);
+                rewind(stream: $this->payloadStream);
 
                 unset($array);
                 unset($result);
@@ -323,7 +299,7 @@ class HttpRequest extends Gateway
 
             rewind(stream: $this->payloadStream);
             $this->dataDecode->indexData();
-            $this->session['payloadType'] = $this->dataDecode->dataType();
+            $this->s['payloadType'] = $this->dataDecode->dataType();
         }
     }
 

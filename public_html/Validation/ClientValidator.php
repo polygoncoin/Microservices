@@ -69,7 +69,7 @@ class ClientValidator implements ValidatorInterface
      */
     public function validate(&$validationConfig): array
     {
-        $sess = &$this->_c->req->session;
+        $sess = &$this->_c->req->s;
         $isValidData = true;
         $errors = [];
         foreach ($validationConfig as &$v) {
@@ -78,7 +78,7 @@ class ClientValidator implements ValidatorInterface
                 if ($mode === 'custom') {
                     $args[$attr] = $key;
                 } else {
-                    $args[$attr] = $sess[$mode][$key];
+                    $args[$attr] = $session[$mode][$key];
                 }
             }
             $fn = $v['fn'];
@@ -97,7 +97,7 @@ class ClientValidator implements ValidatorInterface
      *
      * @return int 0/1
      */
-    public function clientIdExist(&$args): int
+    public function cIDExist(&$args): int
     {
         extract(array: $args);
         return $this->_getPrimaryCount(

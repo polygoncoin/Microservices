@@ -87,7 +87,7 @@ class Login
      * Cache Keys
      */
     private $_clientUserKey = null;
-    private $_tokenKey = null;
+    private $_tKey = null;
     private $_userTokenKey = null;
     private $_cidrKey = null;
 
@@ -120,6 +120,14 @@ class Login
      */
     public function process(): bool
     {
+        // Check request method is POST
+        if ($this->_c->req->METHOD !== Constants::$POST) {
+            throw new \Exception(
+                message: 'Invalid request method',
+                code: HttpStatus::$NotFound
+            );
+        }
+
         $this->_loadPayload();
         $this->_loadUserDetails();
         $this->_validateRequestIp();
@@ -138,7 +146,7 @@ class Login
     private function _loadPayload(): void
     {
         // Check request method is POST
-        if ($this->_c->req->REQUEST_METHOD !== Constants::$POST) {
+        if ($this->_c->req->METHOD !== Constants::$POST) {
             throw new \Exception(
                 message: 'Invalid request method',
                 code: HttpStatus::$NotFound
@@ -169,9 +177,9 @@ class Login
      */
     private function _loadUserDetails(): void
     {
-        $clientId = $this->_c->req->session['clientDetails']['client_id'];
+        $cID = $this->_c->req->s['cDetails']['client_id'];
         $this->_clientUserKey = CacheKey::clientUser(
-            clientId: $clientId,
+            cID: $cID,
             username: $this->_payload['username']
         );
         // Redis - one can find the userID from client username
@@ -206,7 +214,7 @@ class Login
     private function _validateRequestIp(): void
     {
         // Redis - one can find the userID from username
-        $this->_cidrKey = CacheKey::cidr(groupId: $this->_userDetails['group_id']);
+        $this->_cidrKey = CacheKey::cidr(gID: $this->_userDetails['group_id']);
         if ($this->_c->req->cache->cacheExists(key: $this->_cidrKey)) {
             $cidrs = json_decode(
                 json: $this->_c->req->cache->getCache(
@@ -214,7 +222,7 @@ class Login
                 ),
                 associative: true
             );
-            $ipNumber = ip2long(ip: $this->_c->req->REMOTE_ADDR);
+            $ipNumber = ip2long(ip: $this->_c->req->IP);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
                 if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
@@ -262,10 +270,10 @@ class Login
         //generates a crypto-secure 64 characters long
         while (true) {
             $token = bin2hex(string: random_bytes(length: 32));
-            $this->_tokenKey = CacheKey::token(token: $token);
-            if (!$this->_c->req->cache->cacheExists(key: $this->_tokenKey)) {
+            $this->_tKey = CacheKey::token(token: $token);
+            if (!$this->_c->req->cache->cacheExists(key: $this->_tKey)) {
                 $this->_c->req->cache->setCache(
-                    key: $this->_tokenKey,
+                    key: $this->_tKey,
                     value: '{}',
                     expire: Constants::$TOKEN_EXPIRY_TIME
                 );
@@ -290,7 +298,7 @@ class Login
         $tokenFound = false;
 
         $this->_userTokenKey = CacheKey::userToken(
-            userId: $this->_userDetails['user_id']
+            uID: $this->_userDetails['user_id']
         );
         if ($this->_c->req->cache->cacheExists(key: $this->_userTokenKey)) {
             $tokenDetails = json_decode(
@@ -299,13 +307,13 @@ class Login
                 ),
                 associative: true
             );
-            $this->_tokenKey = CacheKey::token(token: $tokenDetails['token']);
-            if ($this->_c->req->cache->cacheExists(key: $this->_tokenKey)) {
+            $this->_tKey = CacheKey::token(token: $tokenDetails['token']);
+            if ($this->_c->req->cache->cacheExists(key: $this->_tKey)) {
                 $time = $this->_timestamp - $tokenDetails['timestamp'];
                 if ((Constants::$TOKEN_EXPIRY_TIME - $time) > 0) {
                     $tokenFound = true;
                 } else {
-                    $this->_c->req->cache->deleteCache(key: $this->_tokenKey);
+                    $this->_c->req->cache->deleteCache(key: $this->_tKey);
                 }
             }
         }
@@ -320,10 +328,10 @@ class Login
                 ),
                 expire: Constants::$TOKEN_EXPIRY_TIME
             );
-            $this->_tokenKey = CacheKey::token(token: $tokenDetails['token']);
+            $this->_tKey = CacheKey::token(token: $tokenDetails['token']);
             unset($this->_userDetails['password_hash']);
             $this->_c->req->cache->setCache(
-                key: $this->_tokenKey,
+                key: $this->_tKey,
                 value: json_encode(
                     value: $this->_userDetails
                 ),

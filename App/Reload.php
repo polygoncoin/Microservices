@@ -163,7 +163,7 @@ class Reload
             $this->db->closeCursor();
             for ($ui = 0, $uiCount = count(value: $urows); $ui < $uiCount; $ui++) {
                 $cu_key = CacheKey::clientUser(
-                    clientId: $crows[$ci]['client_id'],
+                    cID: $crows[$ci]['client_id'],
                     username: $urows[$ui]['username']
                 );
                 $this->cache->setCache(
@@ -201,12 +201,12 @@ class Reload
         );
 
         while ($row = $this->db->fetch(\PDO::FETCH_ASSOC)) {
-            $g_key = CacheKey::group(groupId: $row['group_id']);
+            $g_key = CacheKey::group(gID: $row['group_id']);
             $this->cache->setCache(key: $g_key, value: json_encode(value: $row));
             if (!empty($row['allowed_ips'])) {
                 $cidrs = $this->_cidrsIpNumber(cidrs: $row['allowed_ips']);
                 if (count(value: $cidrs)>0) {
-                    $cidrKey = CacheKey::cidr(groupId: $row['group_id']);
+                    $cidrKey = CacheKey::cidr(gID: $row['group_id']);
                     $this->cache->setCache(
                         key: $cidrKey,
                         value: json_encode(value: $cidrs)
@@ -288,12 +288,5 @@ class Reload
         }
 
         return $response;
-    }
-
-    /**
-     * Destructor
-     */
-    public function __destruct()
-    {
     }
 }

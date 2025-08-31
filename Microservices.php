@@ -16,6 +16,7 @@ namespace Microservices;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
+use Microservices\App\Gateway;
 use Microservices\App\HttpStatus;
 
 /**
@@ -138,7 +139,7 @@ class Microservices
             haystack: $this->c->req->ROUTE,
             needle: '/' . Env::$cronRequestUriPrefix
         ) === 0:
-            if ($this->c->req->REMOTE_ADDR !== Env::$cronRestrictedIp) {
+            if ($this->c->req->IP !== Env::$cronRestrictedIp) {
                 throw new \Exception(
                     message: 'Source IP is not supported',
                     code: HttpStatus::$NotFound
@@ -149,7 +150,7 @@ class Microservices
 
         // Requires HTTP auth username and password
         case $this->c->req->ROUTE === '/reload':
-            if ($this->c->req->REMOTE_ADDR !== Env::$cronRestrictedIp) {
+            if ($this->c->req->IP !== Env::$cronRestrictedIp) {
                 throw new \Exception(
                     message: 'Source IP is not supported',
                     code: HttpStatus::$NotFound
@@ -165,7 +166,8 @@ class Microservices
 
         // Requires auth token
         default:
-            $this->c->req->initGateway();
+            $gateway = new Gateway(req: $this->c->req);
+            $gateway->initGateway();
             $class = __NAMESPACE__ . '\\App\\Api';
             break;
         }
@@ -276,12 +278,12 @@ class Microservices
         $headers['Cross-Origin-Opener-Policy'] = 'unsafe-none';
 
         // Access-Control headers are received during OPTIONS requests
-        if ($this->http['server']['request_method'] == 'OPTIONS') {
+        if ($this->http['server']['method'] == 'OPTIONS') {
             // may also be using PUT, PATCH, HEAD etc
             $methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
             $headers['Access-Control-Allow-Methods'] = $methods;
         } else {
-            if (Env::$outputRepresentation === 'XML') { // XML headers
+            if (Env::$oRepresentation === 'XML') { // XML headers
                 $headers['Content-Type'] = 'text/xml; charset=utf-8';
             } else { // JSON headers
                 $headers['Content-Type'] = 'application/json; charset=utf-8';

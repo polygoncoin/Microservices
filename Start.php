@@ -23,8 +23,8 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'Autoload.php';
 $http = [];
 
 $http['server']['host'] = $_SERVER['HTTP_HOST'];
-$http['server']['request_method'] = $_SERVER['REQUEST_METHOD'];
-$http['server']['remote_addr'] = $_SERVER['REMOTE_ADDR'];
+$http['server']['method'] = $_SERVER['REQUEST_METHOD'];
+$http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
@@ -53,7 +53,7 @@ try {
 
     $Microservices = new Microservices(http: $http);
 
-    if ($http['server']['request_method'] == 'OPTIONS') {
+    if ($http['server']['method'] == 'OPTIONS') {
         // Setting CORS
         foreach ($Microservices->getHeaders() as $k => $v) {
             header(header: "{$k}: {$v}");
@@ -88,7 +88,7 @@ try {
             'Details' => [
                 '$_GET' => $_GET,
                 'php:input' => @file_get_contents(filename: 'php://input'),
-                'session' => $Microservices->c->req->session
+                'session' => $Microservices->c->req->s
             ]
         ];
         (new Logs)->log(logDetails: $logDetails);

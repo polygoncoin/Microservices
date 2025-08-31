@@ -28,7 +28,7 @@ return [
         ],
         [
             'column' => 'created_by',
-            'fetchFrom' => 'userDetails',
+            'fetchFrom' => 'uDetails',
             'fetchFromValue' => 'user_id'
         ],
         [
