@@ -32,6 +32,13 @@ use Microservices\App\RateLimiter;
 class Gateway
 {
     /**
+     * CIDR checked boolean flag
+     *
+     * @var bool
+     */
+    public $cidrChecked = false;
+
+    /**
      * Rate Limiter
      *
      * @var null|RateLimiter
@@ -66,7 +73,7 @@ class Gateway
 
         if (!$this->_req->open) {
             $this->_req->auth->loadUserDetails();
-            $this->_req->auth->checkRemoteIp();
+            $this->checkRemoteIp();
         }
         $this->_checkRateLimits();
     }
@@ -146,7 +153,7 @@ class Gateway
 
         // Rate limit open traffic (not limited by allowed IPs/CIDR and allowed
         // Rate Limits to users)
-        if ($this->_req->cidrChecked === false && $rateLimitChecked === false) {
+        if ($this->cidrChecked === false && $rateLimitChecked === false) {
             $rateLimitIPPrefix = getenv(name: 'rateLimitIPPrefix');
             $rateLimitIPMaxRequests = getenv(name: 'rateLimitIPMaxRequests');
             $rateLimitIPSecondsWindow = getenv(name: 'rateLimitIPSecondsWindow');
@@ -203,6 +210,44 @@ class Gateway
                 message: $e->getMessage(),
                 code: $e->getCode()
             );
+        }
+    }
+
+    /**
+     * Validate request IP
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function checkRemoteIp(): void
+    {
+        $gID = $this->_req->uDetails['group_id'];
+
+        $this->_req->cidrKey = CacheKey::cidr(
+            gID: $this->_req->uDetails['group_id']
+        );
+        if ($this->_req->cache->cacheExists(key: $this->_req->cidrKey)) {
+            $this->cidrChecked = true;
+            $cidrs = json_decode(
+                json: $this->_req->cache->getCache(
+                    key: $this->_req->cidrKey
+                ),
+                associative: true
+            );
+            $ipNumber = ip2long(ip: $this->_req->IP);
+            $isValidIp = false;
+            foreach ($cidrs as $cidr) {
+                if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
+                    $isValidIp = true;
+                    break;
+                }
+            }
+            if (!$isValidIp) {
+                throw new \Exception(
+                    message: 'IP not supported',
+                    code: HttpStatus::$BadRequest
+                );
+            }
         }
     }
 }

@@ -137,42 +137,4 @@ class Auth
 
         $this->_req->s['gDetails'] = &$this->_req->gDetails;
     }
-
-    /**
-     * Validate request IP
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function checkRemoteIp(): void
-    {
-        $gID = $this->_req->uDetails['group_id'];
-
-        $this->_req->cidrKey = CacheKey::cidr(
-            gID: $this->_req->uDetails['group_id']
-        );
-        if ($this->_req->cache->cacheExists(key: $this->_req->cidrKey)) {
-            $this->_req->cidrChecked = true;
-            $cidrs = json_decode(
-                json: $this->_req->cache->getCache(
-                    key: $this->_req->cidrKey
-                ),
-                associative: true
-            );
-            $ipNumber = ip2long(ip: $this->_req->IP);
-            $isValidIp = false;
-            foreach ($cidrs as $cidr) {
-                if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
-                    $isValidIp = true;
-                    break;
-                }
-            }
-            if (!$isValidIp) {
-                throw new \Exception(
-                    message: 'IP not supported',
-                    code: HttpStatus::$BadRequest
-                );
-            }
-        }
-    }
 }

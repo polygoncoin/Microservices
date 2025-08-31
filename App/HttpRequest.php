@@ -130,7 +130,6 @@ class HttpRequest extends DbFunctions
     public $cKey = null;
     public $gKey = null;
     public $cidrKey = null;
-    public $cidrChecked = false;
 
     /**
      * Client Info

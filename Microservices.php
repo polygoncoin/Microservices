@@ -168,6 +168,8 @@ class Microservices
         default:
             $gateway = new Gateway(req: $this->c->req);
             $gateway->initGateway();
+            $gateway = null;
+
             $class = __NAMESPACE__ . '\\App\\Api';
             break;
         }
