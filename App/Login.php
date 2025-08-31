@@ -84,13 +84,6 @@ class Login
     private $_c = null;
 
     /**
-     * Cache Keys
-     */
-    private $_clientUserKey = null;
-    private $_userTokenKey = null;
-    private $_cidrKey = null;
-
-    /**
      * Constructor
      *
      * @param Common $common Common object
@@ -177,12 +170,12 @@ class Login
     private function _loadUserDetails(): void
     {
         $cID = $this->_c->req->s['cDetails']['id'];
-        $this->_clientUserKey = CacheKey::clientUser(
+        $clientUserKey = CacheKey::clientUser(
             cID: $cID,
             username: $this->_payload['username']
         );
         // Redis - one can find the userID from client username
-        if (!$this->_c->req->cache->cacheExists(key: $this->_clientUserKey)) {
+        if (!$this->_c->req->cache->cacheExists(key: $clientUserKey)) {
             throw new \Exception(
                 message: 'Invalid credentials',
                 code: HttpStatus::$Unauthorized
@@ -190,7 +183,7 @@ class Login
         }
         $this->_userDetails = json_decode(
             json: $this->_c->req->cache->getCache(
-                key: $this->_clientUserKey
+                key: $clientUserKey
             ),
             associative: true
         );
@@ -213,11 +206,11 @@ class Login
     private function _validateRequestIp(): void
     {
         // Redis - one can find the userID from username
-        $this->_cidrKey = CacheKey::cidr(gID: $this->_userDetails['group_id']);
-        if ($this->_c->req->cache->cacheExists(key: $this->_cidrKey)) {
+        $cidrKey = CacheKey::cidr(gID: $this->_userDetails['group_id']);
+        if ($this->_c->req->cache->cacheExists(key: $cidrKey)) {
             $cidrs = json_decode(
                 json: $this->_c->req->cache->getCache(
-                    key: $this->_cidrKey
+                    key: $cidrKey
                 ),
                 associative: true
             );
@@ -299,13 +292,13 @@ class Login
         $this->_timestamp = time();
         $tokenFound = false;
 
-        $this->_userTokenKey = CacheKey::userToken(
+        $userTokenKey = CacheKey::userToken(
             uID: $this->_userDetails['id']
         );
-        if ($this->_c->req->cache->cacheExists(key: $this->_userTokenKey)) {
+        if ($this->_c->req->cache->cacheExists(key: $userTokenKey)) {
             $tokenDetails = json_decode(
                 json: $this->_c->req->cache->getCache(
-                    key: $this->_userTokenKey
+                    key: $userTokenKey
                 ),
                 associative: true
             );
@@ -333,7 +326,7 @@ class Login
             $tokenDetails = $this->_generateToken();
             // We set this to have a check first if multiple request/attack occurs
             $this->_c->req->cache->setCache(
-                key: $this->_userTokenKey,
+                key: $userTokenKey,
                 value: json_encode(
                     value: $tokenDetails
                 ),

@@ -68,10 +68,11 @@ class Auth
             )
         ) {
             $this->_req->s['token'] = $matches[1];
+            $tokenKey = CacheKey::token(
+                token: $this->_req->s['token']
+            );
             if (!$this->_req->cache->cacheExists(
-                key: CacheKey::token(
-                    token: $this->_req->s['token']
-                )
+                key: $tokenKey
             )
             ) {
                 throw new \Exception(
@@ -81,9 +82,7 @@ class Auth
             }
             $this->_req->s['uDetails'] = json_decode(
                 json: $this->_req->cache->getCache(
-                    key: CacheKey::token(
-                        token: $this->_req->s['token']
-                    )
+                    key: $tokenKey
                 ),
                 associative: true
             );
