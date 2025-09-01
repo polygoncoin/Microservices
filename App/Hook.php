@@ -59,8 +59,7 @@ class Hook
         if (is_array(value: $hookConfig)) {
             for ($i = 0, $iCount = count(value: $hookConfig); $i < $iCount; $i++) {
                 $hook = $hookConfig[$i];
-                $hookFile = Constants::$DOC_ROOT .
-                    DIRECTORY_SEPARATOR . 'public_html' .
+                $hookFile = Constants::$PUBLIC_HTML .
                     DIRECTORY_SEPARATOR . 'Hooks' .
                     DIRECTORY_SEPARATOR . $hook . '.php';
                 if (file_exists(filename: $hookFile)) {
