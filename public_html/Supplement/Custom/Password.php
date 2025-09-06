@@ -35,7 +35,7 @@ class Password implements CustomInterface
     use CustomTrait;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */
@@ -65,9 +65,11 @@ class Password implements CustomInterface
     /**
      * Process
      *
-     * @return bool
+     * @param array $payload Payload
+     *
+     * @return array
      */
-    public function process(): bool
+    public function process(array $payload = []): array
     {
         if ($this->_c->req->s['payloadType'] === 'Object') {
             $payload = $this->_c->req->dataDecode->get();
@@ -130,6 +132,6 @@ class Password implements CustomInterface
             );
         }
 
-        return true;
+        return [true];
     }
 }

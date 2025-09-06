@@ -1,9 +1,9 @@
 <?php
 /**
- * Write APIs
+ * Supplement APIs
  * php version 8.3
  *
- * @category  WriteAPI
+ * @category  Supplement
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -23,10 +23,10 @@ use Microservices\App\Web;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
- * Write APIs
+ * Supplement APIs
  * php version 8.3
  *
- * @category  WriteAPIs
+ * @category  Supplement
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -34,7 +34,7 @@ use Microservices\App\Servers\Database\AbstractDatabase;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Write
+class Supplement
 {
     use AppTrait;
 
@@ -88,6 +88,13 @@ class Write
     public $dataEncode = null;
 
     /**
+     * Supplement Class object
+     * 
+     * @var null|object
+     */
+    public $supplementApiClassObj = null;
+
+    /**
      * Constructor
      *
      * @param Common $common Common object
@@ -102,10 +109,13 @@ class Write
     /**
      * Initialize
      *
+     * @param object $supplementApiClassObj Supplement API object
+     *
      * @return bool
      */
-    public function init(): bool
+    public function init(&$supplementApiClassObj): bool
     {
+        $this->supplementApiClassObj = &$supplementApiClassObj;
         return true;
     }
 
@@ -119,19 +129,19 @@ class Write
         $Env = __NAMESPACE__ . '\Env';
 
         // Load Queries
-        $wSqlConfig = include $this->_c->req->rParser->sqlConfigFile;
+        $sSqlConfig = include $this->_c->req->rParser->sqlConfigFile;
 
         // Rate Limiting request if configured for Route Queries.
-        $this->_rateLimitRoute(sqlConfig: $wSqlConfig);
+        $this->_rateLimitRoute(sqlConfig: $sSqlConfig);
 
-        $this->dataEncode->XSLT = $wSqlConfig['XSLT'] ?? null;
+        $this->dataEncode->XSLT = $sSqlConfig['XSLT'] ?? null;
 
         // Lag Response
-        $this->_lagResponse(sqlConfig: $wSqlConfig);
+        $this->_lagResponse(sqlConfig: $sSqlConfig);
 
         // Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
-        $this->_operateAsTransaction = isset($wSqlConfig['isTransaction']) ?
-            $wSqlConfig['isTransaction'] : false;
+        $this->_operateAsTransaction = isset($sSqlConfig['isTransaction']) ?
+            $sSqlConfig['isTransaction'] : false;
 
         // Set Server mode to execute query on - Read / Write Server
         $this->_c->req->db = $this->_c->req->setDbConnection(fetchFrom: 'Master');
@@ -139,30 +149,30 @@ class Write
 
         // Use results in where clause of sub queries recursively
         $useHierarchy = $this->_getUseHierarchy(
-            sqlConfig: $wSqlConfig,
+            sqlConfig: $sSqlConfig,
             keyword: 'useHierarchy'
         );
 
         if (Env::$allowConfigRequest && $this->_c->req->rParser->isConfigRequest) {
-            $this->_processWriteConfig(
-                wSqlConfig: $wSqlConfig,
+            $this->_processSupplementConfig(
+                sSqlConfig: $sSqlConfig,
                 useHierarchy: $useHierarchy
             );
         } else {
-            $this->_processWrite(
-                wSqlConfig: $wSqlConfig,
+            $this->_processSupplement(
+                sSqlConfig: $sSqlConfig,
                 useHierarchy: $useHierarchy
             );
         }
 
-        if (isset($wSqlConfig['affectedCacheKeys'])) {
+        if (isset($sSqlConfig['affectedCacheKeys'])) {
             for (
-                $i = 0, $iCount = count(value: $wSqlConfig['affectedCacheKeys']);
+                $i = 0, $iCount = count(value: $sSqlConfig['affectedCacheKeys']);
                 $i < $iCount;
                 $i++
             ) {
                 $this->_c->req->delDmlCache(
-                    cacheKey: $wSqlConfig['affectedCacheKeys'][$i]
+                    cacheKey: $sSqlConfig['affectedCacheKeys'][$i]
                 );
             }
         }
@@ -173,12 +183,12 @@ class Write
     /**
      * Process write function for configuration
      *
-     * @param array $wSqlConfig   Config from file
+     * @param array $sSqlConfig   Config from file
      * @param bool  $useHierarchy Use results in where clause of sub queries
      *
      * @return void
      */
-    private function _processWriteConfig(&$wSqlConfig, $useHierarchy): void
+    private function _processSupplementConfig(&$sSqlConfig, $useHierarchy): void
     {
         $this->dataEncode->startObject(key: 'Config');
         $this->dataEncode->addKeyData(
@@ -188,7 +198,7 @@ class Write
         $this->dataEncode->addKeyData(
             key: 'Payload',
             data: $this->_getConfigParams(
-                sqlConfig: $wSqlConfig,
+                sqlConfig: $sSqlConfig,
                 isFirstCall: true,
                 flag: $useHierarchy
             )
@@ -199,32 +209,32 @@ class Write
     /**
      * Process Function to insert/update
      *
-     * @param array $wSqlConfig   Config from file
+     * @param array $sSqlConfig   Config from file
      * @param bool  $useHierarchy Use results in where clause of sub queries
      *
      * @return void
      * @throws \Exception
      */
-    private function _processWrite(&$wSqlConfig, $useHierarchy): void
+    private function _processSupplement(&$sSqlConfig, $useHierarchy): void
     {
         // Check for payloadType
-        if (isset($wSqlConfig['__PAYLOAD-TYPE__'])) {
+        if (isset($sSqlConfig['__PAYLOAD-TYPE__'])) {
             $payloadType = $this->_s['payloadType'];
-            if ($payloadType !== $wSqlConfig['__PAYLOAD-TYPE__']) {
+            if ($payloadType !== $sSqlConfig['__PAYLOAD-TYPE__']) {
                 throw new \Exception(
                     message: 'Invalid payload type',
                     code: HttpStatus::$BadRequest
                 );
             }
             // Check for maximum objects supported when payloadType is Array
-            if ($wSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
-                && isset($wSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
+            if ($sSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
+                && isset($sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
                 && ($objCount = $this->_c->req->dataDecode->count())
-                && ($objCount > $wSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
+                && ($objCount > $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
             ) {
                 throw new \Exception(
                     message: 'Maximum supported payload count is ' .
-                        $wSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
+                        $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
                     code: HttpStatus::$BadRequest
                 );
             }
@@ -232,7 +242,7 @@ class Write
 
         // Set necessary fields
         $this->_s['necessaryArr'] = $this->_getRequired(
-            sqlConfig: $wSqlConfig,
+            sqlConfig: $sSqlConfig,
             isFirstCall: true,
             flag: $useHierarchy
         );
@@ -265,7 +275,7 @@ class Write
 
             // Check for Idempotent Window
             [$idempotentWindow, $hashKey, $hashJson] = $this->_checkIdempotent(
-                sqlConfig: $wSqlConfig,
+                sqlConfig: $sSqlConfig,
                 _payloadIndexes: $_payloadIndexes
             );
 
@@ -275,8 +285,8 @@ class Write
                     $this->db->begin();
                 }
                 $response = [];
-                $this->_writeDB(
-                    wSqlConfig: $wSqlConfig,
+                $this->_execSupplement(
+                    sSqlConfig: $sSqlConfig,
                     payloadIndexes: $_payloadIndexes,
                     configKeys: $_configKeys,
                     useHierarchy: $useHierarchy,
@@ -351,9 +361,9 @@ class Write
     }
 
     /**
-     * Function to insert/update sub queries recursively
+     * Function to execute supplement recursively
      *
-     * @param array $wSqlConfig     Config from file
+     * @param array $sSqlConfig     Config from file
      * @param array $payloadIndexes Payload Indexes
      * @param array $configKeys     Config Keys
      * @param bool  $useHierarchy   Use results in where clause of sub queries
@@ -363,14 +373,19 @@ class Write
      * @return void
      * @throws \Exception
      */
-    private function _writeDB(
-        &$wSqlConfig,
+    private function _execSupplement(
+        &$sSqlConfig,
         $payloadIndexes,
         $configKeys,
         $useHierarchy,
         &$response,
         &$necessary
     ): void {
+        // Return if function is not set
+        if (!isset($sSqlConfig['__FUNCTION__'])) {
+            return;
+        }
+
         $payloadIndex = is_array(value: $payloadIndexes) ?
             trim(
                 string: implode(
@@ -423,33 +438,24 @@ class Write
             }
 
             // Validation
-            if (!$this->_isValidPayload(wSqlConfig: $wSqlConfig)) {
+            if (!$this->_isValidPayload(sSqlConfig: $sSqlConfig)) {
                 continue;
             }
 
             // Execute Pre Sql Hooks
-            if (isset($wSqlConfig['__PRE-SQL-HOOKS__'])) {
+            if (isset($sSqlConfig['__PRE-SQL-HOOKS__'])) {
                 if ($this->_hook === null) {
                     $this->_hook = new Hook(common: $this->_c);
                 }
                 $this->_hook->triggerHook(
-                    hookConfig: $wSqlConfig['__PRE-SQL-HOOKS__']
+                    hookConfig: $sSqlConfig['__PRE-SQL-HOOKS__']
                 );
             }
 
-            // Get Sql and Params
-            [$sql, $sqlParams, $errors] = $this->_getSqlAndParams(
-                sqlDetails: $wSqlConfig
-            );
+            // Execute function
+            $function = $sSqlConfig['__FUNCTION__'];
+            $results = $this->supplementApiClassObj->$function($this->_s['payload']);
 
-            if (!empty($errors)) {
-                $response['Error'] = $errors;
-                $this->db->rollback();
-                return;
-            }
-
-            // Execute Query
-            $this->db->execDbQuery(sql: $sql, params: $sqlParams);
             if ($this->_operateAsTransaction && !$this->db->beganTransaction) {
                 $response['Error'] = 'Something went wrong';
                 return;
@@ -461,54 +467,44 @@ class Write
                 $response[++$counter] = [];
             }
 
-            if (isset($wSqlConfig['__INSERT-IDs__'])) {
-                $id = $this->db->lastInsertId();
-                if ($isObject) {
-                    $response[$wSqlConfig['__INSERT-IDs__']] = $id;
-                } else {
-                    $response[$counter][$wSqlConfig['__INSERT-IDs__']] = $id;
-                }
-                $this->_s['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
+            if ($isObject) {
+                $response = $results;
             } else {
-                $affectedRows = $this->db->affectedRows();
-                if ($isObject) {
-                    $response['affectedRows'] = $affectedRows;
-                } else {
-                    $response[$counter]['affectedRows'] = $affectedRows;
-                }
+                $response[$counter] = $results;
             }
+
             $this->db->closeCursor();
 
             // triggers
-            if (isset($wSqlConfig['__TRIGGERS__'])) {
+            if (isset($sSqlConfig['__TRIGGERS__'])) {
                 if ($this->_web === null) {
                     $this->_web = new Web(common: $this->_c);
                 }
                 if ($isObject) {
                     $response['__TRIGGERS__'] = $this->_web->triggerConfig(
-                        triggerConfig: $wSqlConfig['__TRIGGERS__']
+                        triggerConfig: $sSqlConfig['__TRIGGERS__']
                     );
                 } else {
                     $response[$counter]['__TRIGGERS__'] = $this->_web->triggerConfig(
-                        triggerConfig: $wSqlConfig['__TRIGGERS__']
+                        triggerConfig: $sSqlConfig['__TRIGGERS__']
                     );
                 }
             }
 
             // Execute Post Sql Hooks
-            if (isset($wSqlConfig['__POST-SQL-HOOKS__'])) {
+            if (isset($sSqlConfig['__POST-SQL-HOOKS__'])) {
                 if ($this->_hook === null) {
                     $this->_hook = new Hook(common: $this->_c);
                 }
                 $this->_hook->triggerHook(
-                    hookConfig: $wSqlConfig['__POST-SQL-HOOKS__']
+                    hookConfig: $sSqlConfig['__POST-SQL-HOOKS__']
                 );
             }
 
             // subQuery for payload
-            if (isset($wSqlConfig['__SUB-QUERY__'])) {
-                $this->_callWriteDB(
-                    wSqlConfig: $wSqlConfig,
+            if (isset($sSqlConfig['__SUB-PAYLOAD__'])) {
+                $this->_callExecSupplement(
+                    sSqlConfig: $sSqlConfig,
                     payloadIndexes: $_payloadIndexes,
                     configKeys: $configKeys,
                     useHierarchy: $useHierarchy,
@@ -522,7 +518,7 @@ class Write
     /**
      * Validate and call _writeDB
      *
-     * @param array $wSqlConfig     Config from file
+     * @param array $sSqlConfig     Config from file
      * @param array $payloadIndexes Payload Indexes
      * @param array $configKeys     Config Keys
      * @param bool  $useHierarchy   Use results in where clause of sub queries
@@ -531,8 +527,8 @@ class Write
      *
      * @return void
      */
-    private function _callWriteDB(
-        &$wSqlConfig,
+    private function _callExecSupplement(
+        &$sSqlConfig,
         $payloadIndexes,
         $configKeys,
         $useHierarchy,
@@ -553,10 +549,10 @@ class Write
         }
         if (!is_array(value: $payloadIndexes)) $payloadIndexes = [];
 
-        if (isset($wSqlConfig['__SUB-QUERY__'])
-            && $this->_isObject(arr: $wSqlConfig['__SUB-QUERY__'])
+        if (isset($sSqlConfig['__SUB-PAYLOAD__'])
+            && $this->_isObject(arr: $sSqlConfig['__SUB-PAYLOAD__'])
         ) {
-            foreach ($wSqlConfig['__SUB-QUERY__'] as $module => &$_wSqlConfig) {
+            foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$_sSqlConfig) {
                 $_payloadIndexes = $payloadIndexes;
                 $_configKeys = $configKeys;
                 $modulePayloadKey = is_array(value: $_payloadIndexes) ?
@@ -576,13 +572,13 @@ class Write
                     $_necessary = $necessary;
                 }
                 $_useHierarchy = $useHierarchy ?? $this->_getUseHierarchy(
-                    sqlConfig: $_wSqlConfig,
+                    sqlConfig: $_sSqlConfig,
                     keyword: 'useHierarchy'
                 );
                 $response[$module] = [];
                 $_response = &$response[$module];
-                $this->_writeDB(
-                    wSqlConfig: $_wSqlConfig,
+                $this->_execSupplement(
+                    sSqlConfig: $_sSqlConfig,
                     payloadIndexes: $_payloadIndexes,
                     configKeys: $_configKeys,
                     useHierarchy: $_useHierarchy,
@@ -596,17 +592,17 @@ class Write
     /**
      * Checks if the payload is valid
      *
-     * @param array $wSqlConfig Config from file
+     * @param array $sSqlConfig Config from file
      *
      * @return bool
      */
-    private function _isValidPayload($wSqlConfig): bool
+    private function _isValidPayload($sSqlConfig): bool
     {
         $return = true;
         $isValidData = true;
-        if (isset($wSqlConfig['__VALIDATE__'])) {
+        if (isset($sSqlConfig['__VALIDATE__'])) {
             [$isValidData, $errors] = $this->validate(
-                validationConfig: $wSqlConfig['__VALIDATE__']
+                validationConfig: $sSqlConfig['__VALIDATE__']
             );
             if ($isValidData !== true) {
                 $this->_c->res->httpStatus = HttpStatus::$BadRequest;

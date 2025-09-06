@@ -31,14 +31,14 @@ use Microservices\public_html\Supplement\Upload\UploadInterface;
 class Upload
 {
     /**
-     * Upload API Object
+     * Upload API object
      *
      * @var null|UploadInterface
      */
     private $_api = null;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */

@@ -34,14 +34,14 @@ use Microservices\public_html\Validation\ValidatorInterface;
 class Validator
 {
     /**
-     * Validator Object
+     * Validator object
      *
      * @var null|ValidatorInterface
      */
     private $_v = null;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */

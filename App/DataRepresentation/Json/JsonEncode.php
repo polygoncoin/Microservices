@@ -319,7 +319,7 @@ class JsonEncode extends AbstractDataEncode
 }
 
 /**
- * JSON Object
+ * JSON object
  *
  * This class is built to help maintain state of simple/associative array
  * php version 8.3
@@ -340,7 +340,7 @@ class JsonEncoderObject
     /**
      * Constructor
      *
-     * @param string $mode Values can be one among Array/Object
+     * @param string $mode Values can be one among Array/object
      */
     public function __construct($mode)
     {

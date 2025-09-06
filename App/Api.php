@@ -17,6 +17,8 @@ use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\Hook;
+use Microservices\App\Supplement;
+
 
 /**
  * Class to initialize api HTTP request
@@ -40,14 +42,14 @@ class Api
     private $_beforePayload = null;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */
     private $_c = null;
 
     /**
-     * Hook Object
+     * Hook object
      *
      * @var null|Hook
      */
@@ -100,13 +102,13 @@ class Api
             );
         }
 
-        if ($this->_processBeforePayload()) {
-            return true;
-        }
-
         // Load Payloads
         if (!$this->_c->req->rParser->isConfigRequest) {
             $this->_c->req->loadPayload();
+        }
+
+        if ($this->_processBeforePayload()) {
+            return true;
         }
 
         $class = null;
@@ -152,37 +154,43 @@ class Api
      */
     private function _processBeforePayload(): bool
     {
-        $class = null;
+        $supplementApiClass = null;
+        $__sNAMESPACE__ = 'Microservices\\public_html\\Supplement';
 
         switch ($this->_c->req->rParser->routeElements[0]) {
         case Env::$allowRoutesRequest
             && Env::$routesRequestUri === $this->_c->req->rParser->routeElements[0]:
-            $class = __NAMESPACE__ . '\\Routes';
+            $supplementApiClass = __NAMESPACE__ . '\\Routes';
             break;
         case Env::$allowCustomRequest
             && Env::$customRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $class = __NAMESPACE__ . '\\Custom';
+            $supplementApiClass = $__sNAMESPACE__ . '\\Custom\\' .
+                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
             break;
         case Env::$allowUploadRequest
             && Env::$uploadRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $class = __NAMESPACE__ . '\\Upload';
+            $supplementApiClass = $__sNAMESPACE__ . '\\Upload' .
+                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
             break;
         case Env::$allowThirdPartyRequest
             && Env::$thirdPartyRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $class = __NAMESPACE__ . '\\ThirdParty';
+            $supplementApiClass = $__sNAMESPACE__ . '\\ThirdParty' .
+                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
             break;
         case Env::$allowCacheRequest
             && Env::$cacheRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $class = __NAMESPACE__ . '\\CacheHandler';
+            $supplementApiClass = $__sNAMESPACE__ . '\\CacheHandler' .
+                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
             break;
         }
 
         $foundClass = false;
-        if (!empty($class)) {
+        if (!empty($supplementApiClass)) {
             $this->_beforePayload = true;
-            $api = new $class(common: $this->_c);
-            if ($api->init()) {
-                $api->process();
+            $supplement = new Supplement(common: $this->_c);
+            $supplementApiClassObj = new $supplementApiClass(common: $this->_c);
+            if ($supplement->init(supplementApiClassObj: $supplementApiClassObj)) {
+                $supplement->process();
             }
             $foundClass = true;
         }

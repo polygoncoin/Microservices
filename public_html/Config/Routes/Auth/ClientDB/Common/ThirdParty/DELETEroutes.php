@@ -16,7 +16,9 @@ namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Common\ThirdPart
 return [
     $Env::$thirdPartyRequestUriPrefix => [
         '{thirdParty:string}' => [
-            '__FILE__' => false
+            '{id:int|!0}'  => [
+                '__FILE__' => false
+            ]
         ]
     ]
 ];

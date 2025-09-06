@@ -31,14 +31,14 @@ use Microservices\public_html\Supplement\Custom\CustomInterface;
 class Custom
 {
     /**
-     * Custom API Object
+     * Custom API object
      *
      * @var null|CustomInterface
      */
     private $_api = null;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */

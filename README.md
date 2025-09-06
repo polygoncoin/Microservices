@@ -378,31 +378,31 @@ return [
 
     // Details of data to be set by Query to perform task
     '__SET__' => [
-        [ // Fatch value from parsed route
+        [ // Fetch value from parsed route
             'column' => 'id',
             'fetchFrom' => 'uriParams',                     // uriParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
         ],
-        [ // Fatch value from payload
+        [ // Fetch value from payload
             'column' => 'id',
             'fetchFrom' => 'payload',                       // payload
             'fetchFromValue' => '<key>',                    // key (<key>)
         ],
-        [ // Fatch value from function
+        [ // Fetch value from function
             'column' => 'password',
             'fetchFrom' => 'function',                      // function
             'fetchFromValue' => function ($session) {        // execute a function and return value
                 return 'value';
             }
         ],
-        [ // Fatch value from uDetails session
+        [ // Fetch value from uDetails session
             'column' => 'id',
             'fetchFrom' => 'uDetails',                   // uDetails from session
             'fetchFromValue' => 'id'                   // id Key
         ],
-        [ // Fatch value of last insert ids
+        [ // Fetch value of last insert ids
             'column' => 'is_deleted',
             'fetchFrom' => 'custom',                        // custom
             'fetchFromValue' => '<static-value>'            // Static values
@@ -411,31 +411,31 @@ return [
 
     // Where clause of the Query to perform task
     '__WHERE__' => [
-        [ // Fatch value from parsed route
+        [ // Fetch value from parsed route
             'column' => 'id',
             'fetchFrom' => 'uriParams',                     // uriParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
         ],
-        [ // Fatch value from payload
+        [ // Fetch value from payload
             'column' => 'id',
             'fetchFrom' => 'payload',                       // payload
             'fetchFromValue' => '<key>',                    // key (<key>)
         ],
-        [ // Fatch value from function
+        [ // Fetch value from function
             'column' => 'password',
             'fetchFrom' => 'function',                      // function
             'fetchFromValue' => function ($session) {        // execute a function and return value
                 return 'value';
             }
         ],
-        [ // Fatch value from uDetails session
+        [ // Fetch value from uDetails session
             'column' => 'id',
             'fetchFrom' => 'uDetails',                   // uDetails from session
             'fetchFromValue' => 'id'                   // id Key
         ],
-        [ // Fatch value of last insert ids
+        [ // Fetch value of last insert ids
             'column' => 'is_deleted',
             'fetchFrom' => 'custom',                        // custom
             'fetchFromValue' => '<static-value>'            // Static values
@@ -474,22 +474,22 @@ return [
                 [...]
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                [ // Fatch value of last insert ids
+                [ // Fetch value of last insert ids
                     'column' => 'id',
                     'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
                     'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
-                [ // Fatch values of params from previous queries
+                [ // Fetch values of params from previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
-                [ // Fatch values of sql results from previous queries
+                [ // Fetch values of sql results from previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
-                [ // Fatch values of sql payload for previous queries
+                [ // Fetch values of sql payload for previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
@@ -513,16 +513,28 @@ return [
     '__TRIGGERS__' => [// Array of triggers
         [
             '__ROUTE__' => [
-                ['fetchFrom' => 'custom', 'fetchFromValue' => 'address'],
-                ['fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id']
+                [
+                    'fetchFrom' => 'custom', 'fetchFromValue' => 'address'
+                ],
+                [
+                    'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id'
+                ]
             ],
             '__QUERY-STRING__' => [
-                ['column' => 'param-1', 'fetchFrom' => 'custom', 'fetchFromValue' => 'address'],
-                ['column' => 'param-2', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id']
+                [
+                    'column' => 'param-1', 'fetchFrom' => 'custom', 'fetchFromValue' => 'address'
+                ],
+                [
+                    'column' => 'param-2', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id'
+                ]
             ],
             '__METHOD__' => 'PATCH',
             '__PAYLOAD__' => [
-                ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'updated-address']
+                [
+                    'column' => 'address',
+                    'fetchFrom' => 'custom',
+                    'fetchFromValue' => 'updated-address'
+                ]
             ]
         ]
         [...]
@@ -582,7 +594,7 @@ return [
     'oRepresentation' => 'XML', // JSON/XML - Defaults to JSON
 
     // Limiting duplicates
-    'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
+    'idempotentWindow' => 3 // Idempotent Window for DML operation (seconds)
 ];
 ```
 
@@ -608,49 +620,41 @@ return [
 return [
     // Details of data to perform task
     '__PAYLOAD__' => [
-        [ // Fatch value from parsed route
+        [ // Fetch value from parsed route
             'column' => 'id',
             'fetchFrom' => 'uriParams',                     // uriParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
         ],
-        [ // Fatch value from payload
+        [ // Fetch value from payload
             'column' => 'id',
             'fetchFrom' => 'payload',                       // payload
             'fetchFromValue' => '<key>',                    // key (<key>)
         ],
-        [ // Fatch value from function
+        [ // Fetch value from function
             'column' => 'password',
             'fetchFrom' => 'function',                      // function
             'fetchFromValue' => function ($session) {        // execute a function and return value
                 return 'value';
             }
         ],
-        [ // Fatch value from uDetails session
+        [ // Fetch value from uDetails session
             'column' => 'id',
             'fetchFrom' => 'uDetails',                   // uDetails from session
             'fetchFromValue' => 'id'                   // id Key
         ],
-        [ // Fatch value of last insert ids
+        [ // Fetch value of last insert ids
             'column' => 'is_deleted',
             'fetchFrom' => 'custom',                        // custom
             'fetchFromValue' => '<static-value>'            // Static values
         ]
     ],
 
-    // Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
-    '__INSERT-IDs__' => '<keyName>:id',
-
-    // Indicator to generate JSON in Single(Object) row / Multiple(Array) rows format.
-    '__MODE__' => 'singleRowFormat/multipleRowFormat',
-
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
      * __PAYLOAD__,
-     * __MODE__,
      * __SUB-PAYLOAD__,
-     * __INSERT-IDs__,
      * __TRIGGERS__,
      * __PRE-SQL-HOOKS__,
      * __POST-SQL-HOOKS__,
@@ -666,22 +670,22 @@ return [
                 [...]
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                [ // Fatch value of last insert ids
+                [ // Fetch value of last insert ids
                     'column' => 'id',
                     'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
                     'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
                 ],
-                [ // Fatch values of params from previous queries
+                [ // Fetch values of params from previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
-                [ // Fatch values of sql results from previous queries
+                [ // Fetch values of sql results from previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
-                [ // Fatch values of sql payload for previous queries
+                [ // Fetch values of sql payload for previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
@@ -693,7 +697,7 @@ return [
             '__VALIDATE__' => [...],
             '__PAYLOAD-TYPE__' => 'Object/Array',
             '__MAX-PAYLOAD-OBJECTS__' => 'Integer',
-            '__SUB-QUERY__' => [...],
+            '__SUB-PAYLOAD__' => [...],
         ],
         '<sub-key>' => [
             [...]
@@ -705,16 +709,28 @@ return [
     '__TRIGGERS__' => [// Array of triggers
         [
             '__ROUTE__' => [
-                ['fetchFrom' => 'custom', 'fetchFromValue' => 'address'],
-                ['fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id']
+                [
+                    'fetchFrom' => 'custom', 'fetchFromValue' => 'address'
+                ],
+                [
+                    'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id'
+                ]
             ],
             '__QUERY-STRING__' => [
-                ['column' => 'param-1', 'fetchFrom' => 'custom', 'fetchFromValue' => 'address'],
-                ['column' => 'param-2', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id']
+                [
+                    'column' => 'param-1', 'fetchFrom' => 'custom', 'fetchFromValue' => 'address'
+                ],
+                [
+                    'column' => 'param-2', 'fetchFrom' => '__INSERT-IDs__', 'fetchFromValue' => 'address:id'
+                ]
             ],
             '__METHOD__' => 'PATCH',
             '__PAYLOAD__' => [
-                ['column' => 'address', 'fetchFrom' => 'custom', 'fetchFromValue' => 'updated-address']
+                [
+                    'column' => 'address',
+                    'fetchFrom' => 'custom',
+                    'fetchFromValue' => 'updated-address'
+                ]
             ]
         ]
         [...]
@@ -748,7 +764,6 @@ return [
     'isTransaction' => false, // Flag to follow transaction Begin, Commit and rollback on error
 
     'useHierarchy' => true, // For DML
-    'useResultSet' => true, // For DQL
 
     // Rate Limiting Route access
     'rateLimitMaxRequests' => 1, // Allowed number of request in defined seconds window
@@ -774,7 +789,7 @@ return [
     'oRepresentation' => 'XML', // JSON/XML - Defaults to JSON
 
     // Limiting duplicates
-    'idempotentWindow' => 3 // Idempotent Window for DML operartion (seconds)
+    'idempotentWindow' => 3 // Idempotent Window for DML operation (seconds)
 ];
 ```
 

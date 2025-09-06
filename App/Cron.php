@@ -32,14 +32,14 @@ use Microservices\public_html\Supplement\Cron\CronInterface;
 class Cron
 {
     /**
-     * Cron API Object
+     * Cron API object
      *
      * @var null|CronInterface
      */
     private $_api = null;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */

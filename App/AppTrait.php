@@ -65,7 +65,7 @@ trait AppTrait
     {
         $necessaryFields = [];
 
-        foreach (['__SET__', '__WHERE__'] as $options) {
+        foreach (['__PAYLOAD__', '__SET__', '__WHERE__'] as $options) {
             if (isset($sqlConfig[$options])) {
                 foreach ($sqlConfig[$options] as $config) {
                     $fetchFrom = $config['fetchFrom'];
@@ -123,28 +123,44 @@ trait AppTrait
         }
 
         // Check in subQuery
-        if (isset($sqlConfig['__SUB-QUERY__'])) {
-            if (!$this->_isObject($sqlConfig['__SUB-QUERY__'])) {
+        if (isset($sqlConfig['__SUB-QUERY__'])
+            || isset($sqlConfig['__SUB-PAYLOAD__'])
+        ) {
+            if (isset($sqlConfig['__SUB-QUERY__'])
+                && !$this->_isObject($sqlConfig['__SUB-QUERY__'])
+            ) {
                 throw new \Exception(
                     message: 'Sub-Query should be an associative array',
                     code: HttpStatus::$InternalServerError
                 );
             }
-            foreach ($sqlConfig['__SUB-QUERY__'] as $module => &$sqlDetails) {
-                $_flag = ($flag) ?? $this->_getUseHierarchy($sqlDetails);
-                $sub_necessaryFields = $this->_getRequired(
-                    $sqlDetails, false, $_flag
+            if (isset($sqlConfig['__SUB-PAYLOAD__'])
+                && !$this->_isObject($sqlConfig['__SUB-PAYLOAD__'])
+            ) {
+                throw new \Exception(
+                    message: 'Sub-Payload should be an associative array',
+                    code: HttpStatus::$InternalServerError
                 );
-                if ($_flag) {
-                    $necessaryFields[$module] = $sub_necessaryFields;
-                } else {
-                    foreach ($sub_necessaryFields as $fetchFrom => &$fields) {
-                        if (!isset($necessaryFields[$fetchFrom])) {
-                            $necessaryFields[$fetchFrom] = [];
-                        }
-                        foreach ($fields as $fKey => $field) {
-                            if (!isset($necessaryFields[$fetchFrom][$fKey])) {
-                                $necessaryFields[$fetchFrom][$fKey] = $field;
+            }
+            foreach (['__SUB-QUERY__', '__SUB-PAYLOAD__'] as $options) {
+                if (isset($sqlConfig[$options])) {
+                    foreach ($sqlConfig[$options] as $module => &$sqlDetails) {
+                        $_flag = ($flag) ?? $this->_getUseHierarchy($sqlDetails);
+                        $sub_necessaryFields = $this->_getRequired(
+                            $sqlDetails, false, $_flag
+                        );
+                        if ($_flag) {
+                            $necessaryFields[$module] = $sub_necessaryFields;
+                        } else {
+                            foreach ($sub_necessaryFields as $fetchFrom => &$fields) {
+                                if (!isset($necessaryFields[$fetchFrom])) {
+                                    $necessaryFields[$fetchFrom] = [];
+                                }
+                                foreach ($fields as $fKey => $field) {
+                                    if (!isset($necessaryFields[$fetchFrom][$fKey])) {
+                                        $necessaryFields[$fetchFrom][$fKey] = $field;
+                                    }
+                                }
                             }
                         }
                     }

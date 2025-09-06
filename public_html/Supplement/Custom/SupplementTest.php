@@ -1,9 +1,9 @@
 <?php
 /**
- * Initialize ThirdParty
+ * CustomAPI
  * php version 8.3
  *
- * @category  ThirdParty
+ * @category  CustomAPI
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -11,16 +11,18 @@
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-namespace Microservices\App;
+namespace Microservices\public_html\Supplement\Custom;
 
 use Microservices\App\Common;
-use Microservices\public_html\Supplement\ThirdParty\ThirdPartyInterface;
+use Microservices\App\Servers\Database\AbstractDatabase;
+use Microservices\public_html\Supplement\Custom\CustomInterface;
+use Microservices\public_html\Supplement\Custom\CustomTrait;
 
 /**
- * ThirdParty API
+ * CustomAPI Supplement Test
  * php version 8.3
  *
- * @category  ThirdPartyAPI
+ * @category  CustomAPI_SupplementTest
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -28,14 +30,16 @@ use Microservices\public_html\Supplement\ThirdParty\ThirdPartyInterface;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class ThirdParty
+class SupplementTest implements CustomInterface
 {
+    use CustomTrait;
+
     /**
-     * ThirdParty API object
+     * Database object
      *
-     * @var null|ThirdPartyInterface
+     * @var null|AbstractDatabase
      */
-    private $_api = null;
+    public $db = null;
 
     /**
      * Common object
@@ -47,11 +51,13 @@ class ThirdParty
     /**
      * Constructor
      *
-     * @param Common $common Common object
+     * @param Common $common Common object Common object
      */
     public function __construct(Common &$common)
     {
         $this->_c = &$common;
+        $this->_c->req->db = $this->_c->req->setDbConnection(fetchFrom: $fetchFrom = 'Slave');
+        $this->db = &$this->_c->req->db;
     }
 
     /**
@@ -67,18 +73,12 @@ class ThirdParty
     /**
      * Process
      *
-     * @return bool
+     * @param array $payload Payload
+     *
+     * @return array
      */
-    public function process(): bool
+    public function process(array $payload = []): array
     {
-        $class = 'Microservices\\public_html\\Supplement\\ThirdParty\\' .
-            ucfirst(string: $this->_c->req->rParser->routeElements[1]);
-
-        $this->_api = new $class(common: $this->_c);
-        if ($this->_api->init()) {
-            $this->_api->process();
-        }
-
-        return true;
+        return $payload;
     }
 }

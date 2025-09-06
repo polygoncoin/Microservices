@@ -15,6 +15,11 @@ namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Common\Custom;
 
 return [
     $Env::$customRequestUriPrefix => [
-        '__FILE__' => false
+        '{custom:string}' => [
+            '__FILE__' => false,
+            '{id:int|!0}'  => [
+                '__FILE__' => false
+            ]
+        ]
     ]
 ];

@@ -55,7 +55,7 @@ class Microservices
     public $http = null;
 
     /**
-     * Common Object
+     * Common object
      *
      * @var null|Common
      */

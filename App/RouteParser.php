@@ -84,7 +84,7 @@ class RouteParser
     /**
      * Constructor
      *
-     * @param HttpRequest $req HTTP Request Object
+     * @param HttpRequest $req HTTP Request object
      */
     public function __construct(&$req)
     {
@@ -198,7 +198,7 @@ class RouteParser
                         );
                     }
                     $routes = &$routes[
-                        ($foundIntRoute ?? $foundStringRoute)
+                        ($foundIntRoute ? $foundIntRoute : $foundStringRoute)
                     ];
                 } elseif ($key === $routeLastElementPos
                     && Env::$allowConfigRequest == 1
