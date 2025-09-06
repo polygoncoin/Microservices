@@ -16,6 +16,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
 use Microservices\App\HttpStatus;
+use Microservices\App\RateLimiter;
 use Microservices\App\Validator;
 
 /**
@@ -32,6 +33,13 @@ use Microservices\App\Validator;
  */
 trait AppTrait
 {
+    /**
+     * Rate Limiter
+     *
+     * @var null|RateLimiter
+     */
+    private $_rateLimiter = null;
+
     /**
      * Validator class object
      *
@@ -152,12 +160,15 @@ trait AppTrait
                         if ($_flag) {
                             $necessaryFields[$module] = $sub_necessaryFields;
                         } else {
-                            foreach ($sub_necessaryFields as $fetchFrom => &$fields) {
+                            foreach (
+                                $sub_necessaryFields as $fetchFrom => &$fields
+                            ) {
                                 if (!isset($necessaryFields[$fetchFrom])) {
                                     $necessaryFields[$fetchFrom] = [];
                                 }
                                 foreach ($fields as $fKey => $field) {
-                                    if (!isset($necessaryFields[$fetchFrom][$fKey])) {
+                                    if (!isset($necessaryFields[$fetchFrom][$fKey])
+                                    ) {
                                         $necessaryFields[$fetchFrom][$fKey] = $field;
                                     }
                                 }
@@ -315,7 +326,7 @@ trait AppTrait
             $fKey = $config['fetchFromValue'];
             if ($fetchFrom === 'function') {
                 $function = $fKey;
-                $value = $function ($this->_c->req->s);
+                $value = $function($this->_c->req->s);
                 $sqlParams[$var] = $value;
                 continue;
             } elseif (in_array(
@@ -591,7 +602,7 @@ trait AppTrait
             $hashKey = md5(string: $hash);
 
             // @throws \Exception
-            $rateLimitChecked = $this->_c->req->checkRateLimit(
+            $rateLimitChecked = $this->checkRateLimit(
                 rateLimitPrefix: getenv(name: 'rateLimitRoutePrefix'),
                 rateLimitMaxRequests: $sqlConfig['rateLimitMaxRequests'],
                 rateLimitSecondsWindow: $sqlConfig['rateLimitSecondsWindow'],
@@ -701,6 +712,55 @@ trait AppTrait
             if ($lag > 0) {
                 sleep(seconds: $lag);
             }
+        }
+    }
+
+    /**
+     * Check Rate Limit
+     *
+     * @param string $rateLimitPrefix        Prefix
+     * @param int    $rateLimitMaxRequests   Max request
+     * @param int    $rateLimitSecondsWindow Window in seconds
+     * @param string $key                    Key
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function checkRateLimit(
+        $rateLimitPrefix,
+        $rateLimitMaxRequests,
+        $rateLimitSecondsWindow,
+        $key
+    ): bool {
+        if ($this->_rateLimiter === null) {
+            $this->_rateLimiter = new RateLimiter();
+        }
+
+        try {
+            $result = $this->_rateLimiter->check(
+                prefix: $rateLimitPrefix,
+                maxRequests: $rateLimitMaxRequests,
+                secondsWindow: $rateLimitSecondsWindow,
+                key: $key
+            );
+
+            if ($result['allowed']) {
+                // Process the request
+                return true;
+            } else {
+                // Return 429 Too Many Requests
+                throw new \Exception(
+                    message: $result['resetAt'] - time(),
+                    code: HttpStatus::$TooManyRequests
+                );
+            }
+
+        } catch (\Exception $e) {
+            // Handle connection errors
+            throw new \Exception(
+                message: $e->getMessage(),
+                code: $e->getCode()
+            );
         }
     }
 }
