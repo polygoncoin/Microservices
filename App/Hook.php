@@ -15,6 +15,7 @@ namespace Microservices\App;
 
 use Microservices\App\Common;
 use Microservices\App\Constants;
+use Microservices\App\HttpStatus;
 
 /**
  * Executes configured hooks
@@ -68,6 +69,11 @@ class Hook
                     if ($hookObj->init()) {
                         $hookObj->process();
                     }
+                } else {
+                    throw new \Exception(
+                        message: "Hook '{$hook}' missing",
+                        code: HttpStatus::$InternalServerError
+                    );
                 }
             }
         }

@@ -220,9 +220,6 @@ class Web
 
         $response = [];
 
-        // For use in function configuration
-        $session = &$this->_c->req->s;
-
         if ($assoc) {
             $method = $triggerConfig['__METHOD__'];
             [$routeElementsArr, $errors] = $this->_getTriggerPayload(

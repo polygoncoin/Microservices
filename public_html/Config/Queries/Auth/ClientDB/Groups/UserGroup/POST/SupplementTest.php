@@ -52,5 +52,9 @@ return [
             '__FUNCTION__' => 'processSub',
         ]
     ],
+    '__PRE-SQL-HOOKS__' => [
+        'Hook_Example',
+    ],
+
     // 'useHierarchy' => true
 ];
