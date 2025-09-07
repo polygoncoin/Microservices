@@ -76,7 +76,7 @@ class JsonDecode extends AbstractDataDecode
         $this->_jsonFileHandle = &$jsonFileHandle;
 
         // File Stats - Check for size
-        $fileStats = fstat($this->_jsonFileHandle);
+        $fileStats = fstat(stream: $this->_jsonFileHandle);
         if (isset($fileStats['size'])
             && $fileStats['size'] > $this->_allowedPayloadLength
         ) {
@@ -120,7 +120,7 @@ class JsonDecode extends AbstractDataDecode
     public function indexData(): void
     {
         $this->jsonFileIndex = null;
-        foreach ($this->_jsonDecodeEngine->process(true) as $keys => $val) {
+        foreach ($this->_jsonDecodeEngine->process(index: true) as $keys => $val) {
             if (isset($val['sIndex']) && isset($val['eIndex'])) {
                 $jsonFileIndex = &$this->jsonFileIndex;
                 for ($i=0, $iCount = count(value: $keys); $i < $iCount; $i++) {
@@ -183,7 +183,7 @@ class JsonDecode extends AbstractDataDecode
                     $jsonFileIndex = &$jsonFileIndex[$key];
                 } else {
                     throw new \Exception(
-                        message: "Invalid key {$key}",
+                        message: "Key '{$key}' not found",
                         code: HttpStatus::$BadRequest
                     );
                 }
@@ -213,7 +213,7 @@ class JsonDecode extends AbstractDataDecode
                     $jsonFileIndex = &$jsonFileIndex[$key];
                 } else {
                     throw new \Exception(
-                        message: "Invalid key {$key}",
+                        message: "Key '{$key}' not found",
                         code: HttpStatus::$BadRequest
                     );
                 }
@@ -292,7 +292,7 @@ class JsonDecode extends AbstractDataDecode
                     $jsonFileIndex = &$jsonFileIndex[$key];
                 } else {
                     throw new \Exception(
-                        message: "Invalid key {$key}",
+                        message: "Key '{$key}' not found",
                         code: HttpStatus::$BadRequest
                     );
                 }
@@ -315,7 +315,7 @@ class JsonDecode extends AbstractDataDecode
  *
  * This class is built to decode large json string or file
  * (which leads to memory limit issues for larger data set)
- * This class gives access to create obects from JSON string
+ * This class gives access to create objects from JSON string
  * in parts for what ever smallest part of data
  * php version 8.3
  *
@@ -355,18 +355,18 @@ class JsonDecodeEngine
      *
      * @var string[]
      */
-    private $_escapers = array(
+    private $_escapers = [
         "\\", "\"", "\n", "\r", "\t", "\x08", "\x0c", ' '
-    );
+    ];
 
     /**
      * Characters that are escaped with for $escapers while creating JSON
      *
      * @var string[]
      */
-    private $_replacements = array(
+    private $_replacements = [
         "\\\\", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b", ' '
-    );
+    ];
 
     /**
      * JSON file start position
@@ -523,7 +523,11 @@ class JsonDecodeEngine
                         needle: $strToEscape . $char,
                         haystack: $this->_replacements
                     ):
-                    $$varMode .= str_replace(search: $this->_replacements, replace: $this->_escapers, subject: $strToEscape . $char);
+                    $$varMode .= str_replace(
+                        search: $this->_replacements, 
+                        replace: $this->_escapers, 
+                        subject: $strToEscape . $char
+                    );
                     $strToEscape = '';
                     $prevIsEscape = false;
                     break;
@@ -535,7 +539,11 @@ class JsonDecodeEngine
                         needle: $strToEscape,
                         haystack: $this->_replacements
                     ):
-                    $$varMode .= str_replace(search: $this->_replacements, replace: $this->_escapers, subject: $strToEscape) . $char;
+                    $$varMode .= str_replace(
+                        search: $this->_replacements, 
+                        replace: $this->_escapers, 
+                        subject: $strToEscape
+                    ) . $char;
                     $strToEscape = '';
                     $prevIsEscape = false;
                     break;
