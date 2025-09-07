@@ -417,14 +417,19 @@ class Supplement
             if (!$isObject && !$useHierarchy) {
                 array_push($_payloadIndexes, $i);
             }
+
             $payloadIndex = is_array(value: $_payloadIndexes) ?
                 implode(separator: ':', array: $_payloadIndexes) : '';
 
             if (!$this->_c->req->dataDecode->isset(keys: $payloadIndex)) {
-                throw new \Exception(
-                    message: "Payload key '{$payloadIndex}' not set",
-                    code: HttpStatus::$NotFound
-                );
+                if ($useHierarchy) {
+                    throw new \Exception(
+                        message: "Payload key '{$payloadIndex}' not set",
+                        code: HttpStatus::$NotFound
+                    );
+                } else {
+                    continue;
+                }
             }
 
             $this->_s['payload'] = $this->_c->req->dataDecode->get(
@@ -467,13 +472,9 @@ class Supplement
                 $counter = 0;
             } else {
                 $response[++$counter] = [];
+                $response = &$response[$counter];
             }
-
-            if ($isObject) {
-                $response = $results;
-            } else {
-                $response[$counter] = $results;
-            }
+            $response = $results;
 
             $this->db->closeCursor();
 
@@ -482,15 +483,9 @@ class Supplement
                 if ($this->_web === null) {
                     $this->_web = new Web(common: $this->_c);
                 }
-                if ($isObject) {
-                    $response['__TRIGGERS__'] = $this->_web->triggerConfig(
-                        triggerConfig: $sSqlConfig['__TRIGGERS__']
-                    );
-                } else {
-                    $response[$counter]['__TRIGGERS__'] = $this->_web->triggerConfig(
-                        triggerConfig: $sSqlConfig['__TRIGGERS__']
-                    );
-                }
+                $response['__TRIGGERS__'] = $this->_web->triggerConfig(
+                    triggerConfig: $sSqlConfig['__TRIGGERS__']
+                );
             }
 
             // Execute Post Sql Hooks
@@ -549,44 +544,47 @@ class Supplement
         if (isset($payloadIndexes[0]) && $payloadIndexes[0] === '') {
             $payloadIndexes = array_shift($payloadIndexes);
         }
-        if (!is_array(value: $payloadIndexes)) $payloadIndexes = [];
+        if (!is_array(value: $payloadIndexes)) {
+             $payloadIndexes = [];
+        }
 
         if (isset($sSqlConfig['__SUB-PAYLOAD__'])
             && $this->_isObject(arr: $sSqlConfig['__SUB-PAYLOAD__'])
         ) {
             foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$_sSqlConfig) {
+                $dataExists = false;
                 $_payloadIndexes = $payloadIndexes;
                 $_configKeys = $configKeys;
+                array_push($_payloadIndexes, $module);
+                array_push($_configKeys, $module);
                 $modulePayloadKey = is_array(value: $_payloadIndexes) ?
                     implode(separator: ':', array: $_payloadIndexes) : '';
-                if ($useHierarchy) { // use parent data of a payload
-                    array_push($_payloadIndexes, $module);
-                    array_push($_configKeys, $module);
-                    if ($this->_c->req->dataDecode->isset(keys: $modulePayloadKey)) {
-                        $_necessary = &$necessary[$module] ?? [];
-                    } else {
-                        throw new \Exception(
-                            message: "Invalid payload: Module '{$module}' missing",
-                            code: HttpStatus::$NotFound
-                        );
-                    }
-                } else {
-                    $_necessary = $necessary;
+                $dataExists = $this->_c->req->dataDecode->isset(
+                    keys: $modulePayloadKey
+                );
+                if ($useHierarchy && !$dataExists) { // use parent data of a payload
+                    throw new \Exception(
+                        message: "Invalid payload: Module '{$module}' missing",
+                        code: HttpStatus::$NotFound
+                    );
                 }
-                $_useHierarchy = $useHierarchy ?? $this->_getUseHierarchy(
-                    sqlConfig: $_sSqlConfig,
-                    keyword: 'useHierarchy'
-                );
-                $response[$module] = [];
-                $_response = &$response[$module];
-                $this->_execSupplement(
-                    sSqlConfig: $_sSqlConfig,
-                    payloadIndexes: $_payloadIndexes,
-                    configKeys: $_configKeys,
-                    useHierarchy: $_useHierarchy,
-                    response: $_response,
-                    necessary: $_necessary
-                );
+                if ($dataExists) {
+                    $_necessary = $necessary[$module] ?? $necessary;
+                    $_useHierarchy = $useHierarchy ?? $this->_getUseHierarchy(
+                        sqlConfig: $_sSqlConfig,
+                        keyword: 'useHierarchy'
+                    );
+                    $response[$module] = [];
+                    $_response = &$response[$module];
+                    $this->_execSupplement(
+                        sSqlConfig: $_sSqlConfig,
+                        payloadIndexes: $_payloadIndexes,
+                        configKeys: $_configKeys,
+                        useHierarchy: $_useHierarchy,
+                        response: $_response,
+                        necessary: $_necessary
+                    );
+                }
             }
         }
     }

@@ -14,8 +14,30 @@
 namespace Microservices\TestCases;
 
 $params = [
-    'payload-id-1' => 1,
-    'payload-param-1' => 'payload-param-1-value'
+    [
+        'payload-id-1' => 1,
+        'payload-param-1' => 'payload-param-1-value',
+        'sub' => [
+            'sub-payload-id-1' => 1,
+            'sub-payload-param-1' => 'sub-payload-param-1-value'
+        ]
+    ],
+    [
+        'payload-id-1' => 2,
+        'payload-param-1' => 'payload-param-2-value'
+    ],
+    [
+        'payload-id-1' => 3,
+        'payload-param-1' => 'payload-param-3-value',
+        'sub' => [
+            'sub-payload-id-1' => 2,
+            'sub-payload-param-1' => 'sub-payload-param-2-value'
+        ]
+    ],
+    [
+        'payload-id-1' => 4,
+        'payload-param-1' => 'payload-param-4-value'
+    ],
 ];
 
 return trigger(

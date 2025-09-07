@@ -35,4 +35,22 @@ return [
         ],
     ],
     '__FUNCTION__' => 'process',
+    '__SUB-PAYLOAD__' => [
+        'sub' => [
+            '__PAYLOAD__' => [
+                [
+                    'column' => 'sub-id',
+                    'fetchFrom' => 'payload',
+                    'fetchFromValue' => 'sub-payload-id-1',
+                ],
+                [
+                    'column' => 'sub-column-1',
+                    'fetchFrom' => 'payload',
+                    'fetchFromValue' => 'sub-payload-param-1',
+                ],
+            ],
+            '__FUNCTION__' => 'processSub',
+        ]
+    ],
+    // 'useHierarchy' => true
 ];

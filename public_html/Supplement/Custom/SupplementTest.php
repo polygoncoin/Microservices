@@ -81,4 +81,16 @@ class SupplementTest implements CustomInterface
     {
         return $payload;
     }
+
+    /**
+     * Process Sub
+     *
+     * @param array $payload Payload
+     *
+     * @return array
+     */
+    public function processSub(array $payload = []): array
+    {
+        return $payload;
+    }
 }
