@@ -89,7 +89,7 @@ class Supplement
 
     /**
      * Supplement Class object
-     * 
+     *
      * @var null|object
      */
     public $supplementObj = null;

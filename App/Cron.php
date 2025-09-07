@@ -74,7 +74,7 @@ class Cron
             DIRECTORY_SEPARATOR . $this->_c->req->METHOD . 'routes.php';
         $this->_c->req->rParser->parseRoute(routeFileLocation: $routeFileLocation);
 
-        $class = 'Microservices\\Supplement\\Cron\\' .
+        $class = 'Microservices\\public_html\\Supplement\\Cron\\' .
             ucfirst(string: $this->_c->req->rParser->routeElements[1]);
 
         $this->_api = new $class(common: $this->_c);
@@ -87,7 +87,7 @@ class Cron
      *
      * @param string $function Function
      * @param array  $payload  Payload
-     * 
+     *
      * @return array
      */
     public function process($function, $payload): array

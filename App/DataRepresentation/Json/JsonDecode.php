@@ -524,8 +524,8 @@ class JsonDecodeEngine
                         haystack: $this->_replacements
                     ):
                     $$varMode .= str_replace(
-                        search: $this->_replacements, 
-                        replace: $this->_escapers, 
+                        search: $this->_replacements,
+                        replace: $this->_escapers,
                         subject: $strToEscape . $char
                     );
                     $strToEscape = '';
@@ -540,8 +540,8 @@ class JsonDecodeEngine
                         haystack: $this->_replacements
                     ):
                     $$varMode .= str_replace(
-                        search: $this->_replacements, 
-                        replace: $this->_escapers, 
+                        search: $this->_replacements,
+                        replace: $this->_escapers,
                         subject: $strToEscape
                     ) . $char;
                     $strToEscape = '';

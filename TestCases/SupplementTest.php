@@ -29,7 +29,6 @@ $payload = [
 ];
 $response[] = include POST . DIRECTORY_SEPARATOR . 'Login.php';
 
-// $header = ["Authorization: Bearer c74d9e34179184a9ab8b19da31aaba10b431325b1e65350bba9da5efc86da1ff"];
 $response[] = include POST . DIRECTORY_SEPARATOR . 'SupplementTest.php';
 
 echo '<pre>';

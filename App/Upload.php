@@ -65,7 +65,7 @@ class Upload
             ucfirst(string: $this->_c->req->rParser->routeElements[1]);
 
         $this->_api = new $class(common: $this->_c);
-        
+
         return $this->_api->init();
     }
 
@@ -74,7 +74,7 @@ class Upload
      *
      * @param string $function Function
      * @param array  $payload  Payload
-     * 
+     *
      * @return array
      */
     public function process($function, $payload): array

@@ -74,7 +74,7 @@ class ThirdParty
      *
      * @param string $function Function
      * @param array  $payload  Payload
-     * 
+     *
      * @return array
      */
     public function process($function, $payload): array
