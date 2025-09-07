@@ -155,7 +155,6 @@ class Api
     private function _processBeforePayload(): bool
     {
         $supplementApiClass = null;
-        $__sNAMESPACE__ = 'Microservices\\public_html\\Supplement';
 
         switch ($this->_c->req->rParser->routeElements[0]) {
         case Env::$allowRoutesRequest
@@ -164,32 +163,29 @@ class Api
             break;
         case Env::$allowCustomRequest
             && Env::$customRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $supplementApiClass = $__sNAMESPACE__ . '\\Custom\\' .
-                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
+            $supplementApiClass = __NAMESPACE__ . '\\Custom';
             break;
         case Env::$allowUploadRequest
             && Env::$uploadRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $supplementApiClass = $__sNAMESPACE__ . '\\Upload' .
-                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
+            $supplementApiClass = __NAMESPACE__ . '\\Upload';
             break;
         case Env::$allowThirdPartyRequest
             && Env::$thirdPartyRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $supplementApiClass = $__sNAMESPACE__ . '\\ThirdParty' .
-                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
+            $supplementApiClass = __NAMESPACE__ . '\\ThirdParty';
             break;
         case Env::$allowCacheRequest
             && Env::$cacheRequestUriPrefix === $this->_c->req->rParser->routeElements[0]:
-            $supplementApiClass = $__sNAMESPACE__ . '\\CacheHandler' .
-                ucfirst(string: $this->_c->req->rParser->routeElements[1]);
+            $supplementApiClass = __NAMESPACE__ . '\\CacheHandler';
             break;
         }
 
         $foundClass = false;
         if (!empty($supplementApiClass)) {
             $this->_beforePayload = true;
+            $supplementObj = new $supplementApiClass(common: $this->_c);
+            $supplementObj->init();
             $supplement = new Supplement(common: $this->_c);
-            $supplementApiClassObj = new $supplementApiClass(common: $this->_c);
-            if ($supplement->init(supplementApiClassObj: $supplementApiClassObj)) {
+            if ($supplement->init(supplementObj: $supplementObj)) {
                 $supplement->process();
             }
             $foundClass = true;

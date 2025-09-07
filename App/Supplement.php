@@ -92,7 +92,7 @@ class Supplement
      * 
      * @var null|object
      */
-    public $supplementApiClassObj = null;
+    public $supplementObj = null;
 
     /**
      * Constructor
@@ -109,13 +109,13 @@ class Supplement
     /**
      * Initialize
      *
-     * @param object $supplementApiClassObj Supplement API object
+     * @param object $supplementObj Supplement API object
      *
      * @return bool
      */
-    public function init(&$supplementApiClassObj): bool
+    public function init(&$supplementObj): bool
     {
-        $this->supplementApiClassObj = &$supplementApiClassObj;
+        $this->supplementObj = &$supplementObj;
         return true;
     }
 
@@ -453,8 +453,10 @@ class Supplement
             }
 
             // Execute function
-            $function = $sSqlConfig['__FUNCTION__'];
-            $results = $this->supplementApiClassObj->$function($this->_s['payload']);
+            $results = $this->supplementObj->process(
+                $sSqlConfig['__FUNCTION__'],
+                $this->_s['payload']
+            );
 
             if ($this->_operateAsTransaction && !$this->db->beganTransaction) {
                 $response['Error'] = 'Something went wrong';
