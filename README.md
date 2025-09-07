@@ -650,10 +650,11 @@ return [
             'fetchFromValue' => '<static-value>'            // Static values
         ]
     ],
-
+    '__FUNCTION__' => 'process',
     // subQuery is a keyword to perform recursive operations
     /** Supported configuration for recursive operations are :
      * __PAYLOAD__,
+     * __FUNCTION__,
      * __SUB-PAYLOAD__,
      * __TRIGGERS__,
      * __PRE-SQL-HOOKS__,
@@ -691,6 +692,7 @@ return [
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
             ],
+            '__FUNCTION__' => 'subProcess',
             '__TRIGGERS__' => [...],
             '__PRE-SQL-HOOKS__' => [...],
             '__POST-SQL-HOOKS__' => [...],
