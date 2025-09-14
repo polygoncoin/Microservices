@@ -31,6 +31,7 @@ $response[] = include POST . DIRECTORY_SEPARATOR . 'Login.php';
 
 $response[] = include GET . DIRECTORY_SEPARATOR . 'Routes.php';
 
+$response[] = include POST . DIRECTORY_SEPARATOR . 'Config.php';
 $response[] = include POST . DIRECTORY_SEPARATOR . 'Category.php';
 $response[] = include POST . DIRECTORY_SEPARATOR . 'Registration.php';
 $response[] = include POST . DIRECTORY_SEPARATOR . 'Address.php';
