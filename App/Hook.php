@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hook
  * php version 8.3
@@ -11,6 +12,7 @@
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
+
 namespace Microservices\App;
 
 use Microservices\App\Common;
@@ -36,7 +38,7 @@ class Hook
      *
      * @var null|Common
      */
-    private $_c = null;
+    private $c = null;
 
     /**
      * Constructor
@@ -45,7 +47,7 @@ class Hook
      */
     public function __construct(Common &$common)
     {
-        $this->_c = &$common;
+        $this->c = &$common;
     }
 
     /**
@@ -64,8 +66,8 @@ class Hook
                     DIRECTORY_SEPARATOR . 'Hooks' .
                     DIRECTORY_SEPARATOR . $hook . '.php';
                 if (file_exists(filename: $hookFile)) {
-                    $hookClass = 'Microservices\\public_html\\Hooks\\'.$hook;
-                    $hookObj = new $hookClass(common: $this->_c);
+                    $hookClass = 'Microservices\\public_html\\Hooks\\' . $hook;
+                    $hookObj = new $hookClass(common: $this->c);
                     if ($hookObj->init()) {
                         $hookObj->process();
                     }

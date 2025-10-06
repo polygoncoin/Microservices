@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Autoload
  * php version 8.3
@@ -11,6 +12,7 @@
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
+
 namespace Microservices;
 
 /**
@@ -34,7 +36,7 @@ class Autoload
      *
      * @return void
      */
-    static public function register($className): void
+    public static function register($className): void
     {
         $className = substr(
             string: $className,

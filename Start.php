@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Start
  * php version 8.3
@@ -11,6 +12,7 @@
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
+
 namespace Microservices;
 
 use Microservices\App\Logs;
@@ -31,10 +33,13 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 $http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
 $http['get'] = &$_GET;
 
-
 try {
     // Check version
-    if ((!isset($http['server']) && !isset($http['server']['api_version']))
+    if (
+        (
+            !isset($http['server'])
+            && !isset($http['server']['api_version'])
+        )
         || $http['server']['api_version'] !== 'v1.0.0'
     ) {
         // Set response headers

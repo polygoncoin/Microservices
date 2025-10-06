@@ -1,4 +1,5 @@
 <?php
+
 /**
  * TestCases
  * php version 8.3
@@ -11,6 +12,7 @@
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
+
 namespace Microservices\TestCases;
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'TestFunctions.php';
@@ -18,7 +20,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'TestFunctions.php';
 $header = [];
 $response = [];
 
-$homeURL='http://api.client001.localhost/Microservices/public_html/index.php';
+$homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
 
 $response[] = include GET . DIRECTORY_SEPARATOR . 'Reload.php';
 

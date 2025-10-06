@@ -332,7 +332,7 @@ return [
 ### Database Field DataTypes Configuration in DatabaseDataTypes class
 
 ```PHP
-static public $CustomINT = [
+public static $CustomINT = [
 
     // Required param
 
@@ -1181,7 +1181,6 @@ var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '        </Row>' +
 '    </Rows>' +
 '</Paylaod>';
-
 
 var xmlhttp = new XMLHttpRequest();
 
