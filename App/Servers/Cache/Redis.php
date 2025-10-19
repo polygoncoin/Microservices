@@ -83,8 +83,13 @@ class Redis extends AbstractCache
      * @param string $password Password .env string
      * @param string $database Database .env string
      */
-    public function __construct($hostname, $port, $username, $password, $database)
-    {
+    public function __construct(
+        $hostname,
+        $port,
+        $username = '',
+        $password = '',
+        $database = 0
+    ) {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
@@ -116,14 +121,22 @@ class Redis extends AbstractCache
 
         try {
             // https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
-            $this->cache = new \Redis(
-                [
-                    'host' => $this->hostname,
-                    'port' => (int)$this->port,
-                    'connectTimeout' => 2.5,
-                    'auth' => [$this->username, $this->password],
-                ]
-            );
+            $connParams = [
+                'host' => $this->hostname,
+                'port' => (int)$this->port,
+                'connectTimeout' => 2.5
+            ];
+
+            if (
+                !in_array($this->username, ['', 'null'])
+                && !in_array($this->password, ['', 'null'])
+            ) {
+                $connParams['auth'] = [
+                    $this->username,
+                    $this->password
+                ];
+            }
+            $this->cache = new \Redis($connParams);
 
             if ($this->database !== null) {
                 $this->useDatabase();
@@ -151,6 +164,7 @@ class Redis extends AbstractCache
     public function useDatabase(): void
     {
         $this->connect();
+
         if ($this->database !== null) {
             $this->cache->select($this->database);
         }
@@ -166,6 +180,7 @@ class Redis extends AbstractCache
     public function cacheExists($key): mixed
     {
         $this->useDatabase();
+
         return $this->cache->exists($key);
     }
 
@@ -179,6 +194,7 @@ class Redis extends AbstractCache
     public function getCache($key): mixed
     {
         $this->useDatabase();
+
         return $this->cache->get($key);
     }
 
@@ -200,6 +216,21 @@ class Redis extends AbstractCache
         } else {
             return $this->cache->set($key, $value, $expire);
         }
+    }
+
+    /**
+     * Increment Key value with offset
+     *
+     * @param string $key    Cache key
+     * @param int    $offset Offset
+     *
+     * @return int
+     */
+    public function incrementCache($key, $offset = 1): int
+    {
+        $this->useDatabase();
+
+        return $this->cache->incrBy($key, $offset);
     }
 
     /**

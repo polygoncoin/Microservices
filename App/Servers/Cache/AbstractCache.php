@@ -73,6 +73,16 @@ abstract class AbstractCache
     abstract public function setCache($key, $value, $expire = null): mixed;
 
     /**
+     * Increment Key value with offset
+     *
+     * @param string $key    Cache key
+     * @param int    $offset Offset
+     *
+     * @return int
+     */
+    abstract public function incrementCache($key, $offset = 1): int;
+
+    /**
      * Delete cache on basis of key
      *
      * @param string $key Cache key

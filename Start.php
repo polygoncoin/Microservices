@@ -96,7 +96,8 @@ try {
                 'session' => $Microservices->c->req->s
             ]
         ];
-        (new Logs)->log(logDetails: $logDetails);
+        $logsObj = new Logs();
+        $logsObj->log(logDetails: $logDetails);
     }
 
     // Set response code

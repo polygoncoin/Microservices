@@ -58,9 +58,17 @@ class Memcached extends AbstractCache
      *
      * @param string $hostname Hostname .env string
      * @param string $port     Port .env string
+     * @param string $username Username .env string
+     * @param string $password Password .env string
+     * @param string $database Database .env string
      */
-    public function __construct($hostname, $port)
-    {
+    public function __construct(
+        $hostname,
+        $port,
+        $username = '',
+        $password = '',
+        $database = ''
+    ) {
         $this->hostname = $hostname;
         $this->port = $port;
     }
@@ -103,10 +111,6 @@ class Memcached extends AbstractCache
      */
     public function useDatabase(): void
     {
-        throw new \Exception(
-            message: 'No database support',
-            code: HttpStatus::$InternalServerError
-        );
     }
 
     /**
@@ -119,6 +123,7 @@ class Memcached extends AbstractCache
     public function cacheExists($key): mixed
     {
         $this->connect();
+
         return $this->getCache(key: $key) !== false;
     }
 
@@ -132,6 +137,7 @@ class Memcached extends AbstractCache
     public function getCache($key): mixed
     {
         $this->connect();
+
         return $this->cache->get($key);
     }
 
@@ -156,6 +162,21 @@ class Memcached extends AbstractCache
     }
 
     /**
+     * Increment Key value with offset
+     *
+     * @param string $key    Cache key
+     * @param int    $offset Offset
+     *
+     * @return int
+     */
+    public function incrementCache($key, $offset = 1): int
+    {
+        $this->connect();
+
+        return $this->cache->increment($key, $offset);
+    }
+
+    /**
      * Delete basis of key
      *
      * @param string $key Cache key
@@ -165,6 +186,7 @@ class Memcached extends AbstractCache
     public function deleteCache($key): mixed
     {
         $this->connect();
+
         return $this->cache->delete($key);
     }
 }

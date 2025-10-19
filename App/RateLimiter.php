@@ -15,6 +15,8 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Servers\Cache\AbstractCache;
+
 /**
  * Rate Limiter
  * php version 8.3
@@ -30,11 +32,11 @@ namespace Microservices\App;
 class RateLimiter
 {
     /**
-     * Cache connection
+     * Caching object
      *
-     * @var null|\Redis
+     * @var null|AbstractCache
      */
-    private $redis = null;
+    private $cache = null;
 
     /**
      * Current timestamp
@@ -50,17 +52,14 @@ class RateLimiter
      */
     public function __construct()
     {
-        if (!extension_loaded(extension: 'redis')) {
-            throw new \Exception(
-                message: 'Unable to find Redis extension',
-                code: HttpStatus::$InternalServerError
-            );
-        }
+        $rateLimitHostType = getenv(name: 'rateLimitHostType');
+        $rateLimitHost = getenv(name: 'rateLimitHost');
+        $rateLimitHostPort = getenv(name: 'rateLimitHostPort');
 
-        $this->redis = new \Redis();
-        $this->redis->connect(
-            getenv(name: 'rateLimitHost'),
-            (int)getenv(name: 'rateLimitHostPort')
+        $this->cache = $this->connectCache(
+            $rateLimitHostType,
+            $rateLimitHost,
+            $rateLimitHostPort
         );
 
         $this->currentTimestamp = time();
@@ -90,11 +89,11 @@ class RateLimiter
 
         $key = $prefix . $key;
 
-        if ($this->redis->exists($key)) {
-            $requestCount = (int)$this->redis->get($key);
+        if ($this->cache->cacheExists($key)) {
+            $requestCount = (int)$this->cache->getCache($key);
         } else {
             $requestCount = 0;
-            $this->redis->set($key, $requestCount, $remainder);
+            $this->cache->setCache($key, $requestCount, $remainder);
         }
         $requestCount++;
 
@@ -103,7 +102,7 @@ class RateLimiter
         $resetAt = $this->currentTimestamp + $remainder;
 
         if ($allowed) {
-            $this->redis->incr($key);
+            $this->cache->incrementCache($key);
         }
 
         return [
@@ -111,5 +110,26 @@ class RateLimiter
             'remaining' => $remaining,
             'resetAt' => $resetAt
         ];
+    }
+
+    /**
+     * Connect and get cache server object
+     *
+     * @param string $cacheType     Cache type
+     * @param string $cacheHostname Hostname
+     * @param int    $cachePort     Port
+     *
+     * @return object
+     */
+    private function connectCache(
+        $cacheType,
+        $cacheHostname,
+        $cachePort
+    ): object {
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
+        return new $cacheNS(
+            $cacheHostname,
+            $cachePort
+        );
     }
 }

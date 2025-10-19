@@ -52,8 +52,8 @@ allowGetRepresentation=1
 cacheType='Redis'
 cacheHostname='127.0.0.1'
 cachePort=6379
-cacheUsername='ramesh'
-cachePassword='shames11'
+cacheUsername=''
+cachePassword=''
 cacheDatabase=0
 ```
 
@@ -1157,7 +1157,7 @@ xmlhttp . send( JSON.stringify(payload) );
 var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&iRepresentation=XML&oRepresentation=XML";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
-'<Paylaod>' +
+'<Payload>' +
 '    <Rows>' +
 '        <Row>' +
 '            <firstname>Ramesh-1</firstname>' +
@@ -1180,7 +1180,7 @@ var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '            </address>' +
 '        </Row>' +
 '    </Rows>' +
-'</Paylaod>';
+'</Payload>';
 
 var xmlhttp = new XMLHttpRequest();
 
