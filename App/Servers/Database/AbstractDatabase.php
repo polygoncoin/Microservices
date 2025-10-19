@@ -76,7 +76,7 @@ abstract class AbstractDatabase
      *
      * @return void
      */
-    abstract public function rollback(): void;
+    abstract public function rollBack(): void;
 
     /**
      * Affected Rows by PDO

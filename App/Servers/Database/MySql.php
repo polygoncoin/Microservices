@@ -169,7 +169,7 @@ class MySql extends AbstractDatabase
         } catch (\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {
                 $this->log(e: $e);
-                $this->rollback();
+                $this->rollBack();
             }
         }
     }
@@ -217,12 +217,12 @@ class MySql extends AbstractDatabase
      *
      * @return void
      */
-    public function rollback(): void
+    public function rollBack(): void
     {
         try {
             if ($this->beganTransaction) {
                 $this->beganTransaction = false;
-                $this->pdo->rollback();
+                $this->pdo->rollBack();
             }
         } catch (\PDOException $e) {
             if ((int)$this->pdo->errorCode()) {
@@ -244,7 +244,7 @@ class MySql extends AbstractDatabase
             }
         } catch (\PDOException $e) {
             if ($this->beganTransaction) {
-                $this->rollback();
+                $this->rollBack();
             }
             if ((int)$this->pdo->errorCode()) {
                 $this->log(e: $e);
@@ -266,7 +266,7 @@ class MySql extends AbstractDatabase
             }
         } catch (\PDOException $e) {
             if ($this->beganTransaction) {
-                $this->rollback();
+                $this->rollBack();
             }
             if ((int)$this->pdo->errorCode()) {
                 $this->log(e: $e);
@@ -301,7 +301,7 @@ class MySql extends AbstractDatabase
             }
         } catch (\PDOException $e) {
             if ($this->beganTransaction) {
-                $this->rollback();
+                $this->rollBack();
             }
             if ((int)$this->pdo->errorCode()) {
                 $this->log(e: $e);

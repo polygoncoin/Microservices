@@ -446,7 +446,7 @@ class Write
 
             if (!empty($errors)) {
                 $response['Error'] = $errors;
-                $this->db->rollback();
+                $this->db->rollBack();
                 return;
             }
 
