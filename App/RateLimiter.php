@@ -15,7 +15,7 @@
 
 namespace Microservices\App;
 
-use Microservices\App\Servers\Cache\AbstractCache;
+use Microservices\App\Servers\Containers\NoSql\AbstractCache;
 
 /**
  * Rate Limiter
@@ -57,9 +57,9 @@ class RateLimiter
         $rateLimitHostPort = getenv(name: 'rateLimitHostPort');
 
         $this->cache = $this->connectCache(
-            $rateLimitHostType,
-            $rateLimitHost,
-            $rateLimitHostPort
+            cacheType: $rateLimitHostType,
+            cacheHostname: $rateLimitHost,
+            cachePort: $rateLimitHostPort
         );
 
         $this->currentTimestamp = time();
@@ -115,21 +115,21 @@ class RateLimiter
     /**
      * Connect and get cache server object
      *
-     * @param string $globalCacheType     Cache type
-     * @param string $globalCacheHostname Hostname
-     * @param int    $globalCachePort     Port
+     * @param string $cacheType     Cache type
+     * @param string $cacheHostname Hostname
+     * @param int    $cachePort     Port
      *
      * @return object
      */
     private function connectCache(
-        $globalCacheType,
-        $globalCacheHostname,
-        $globalCachePort
+        $cacheType,
+        $cacheHostname,
+        $cachePort
     ): object {
-        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $globalCacheType;
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
         return new $cacheNS(
-            $globalCacheHostname,
-            $globalCachePort
+            $cacheHostname,
+            $cachePort
         );
     }
 }

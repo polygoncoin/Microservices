@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Database;
+namespace Microservices\App\Servers\Containers\Sql;
 
 /**
  * Database Abstract Class

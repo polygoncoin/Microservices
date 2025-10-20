@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Cache via PostgreSql
+ * Handling Query Cache via MySQL
  * php version 8.3
  *
- * @category  Cache
+ * @category  QueryCache
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,17 +13,17 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Cache;
+namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
-use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
+use Microservices\App\Servers\Cache\AbstractQueryCache;
+use Microservices\App\Servers\Database\MySql as DB_MySql;
 
 /**
- * Caching via PostgreSql
+ * Query Caching via MySQL
  * php version 8.3
  *
- * @category  Cache_PostgreSql
+ * @category  QueryCache_MySQL
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -31,7 +31,7 @@ use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql extends AbstractCache
+class MySql extends AbstractQueryCache
 {
     /**
      * Cache hostname
@@ -71,7 +71,7 @@ class PostgreSql extends AbstractCache
     /**
      * Cache connection
      *
-     * @var null|DB_PostgreSql
+     * @var null|DB_MySql
      */
     private $cache = null;
 
@@ -86,7 +86,7 @@ class PostgreSql extends AbstractCache
      * Cache connection
      *
      * @param string $hostname Hostname .env string
-     * @param string $port     Port .env string
+     * @param int    $port     Port .env string
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
@@ -113,11 +113,11 @@ class PostgreSql extends AbstractCache
     public function connect(): void
     {
         if ($this->cache !== null) {
-            return;
+             return;
         }
 
         try {
-            $this->cache = new DB_PostgreSql(
+            $this->cache = new DB_MySql(
                 hostname: $this->hostname,
                 port: $this->port,
                 username: $this->username,
@@ -150,9 +150,9 @@ class PostgreSql extends AbstractCache
      *
      * @param string $key Cache key
      *
-     * @return bool
+     * @return mixed
      */
-    public function cacheExists($key): bool
+    public function cacheExists($key): mixed
     {
         $this->useDatabase();
         $keyDetails = $this->getKeyDetails(key: $key);
@@ -179,7 +179,7 @@ class PostgreSql extends AbstractCache
                 WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
             ";
             $params = [$keyDetails['key'], $this->ts];
-            $this->cache->execDbQuery($sql, $params);
+            $this->cache->execDbQuery(sql: $sql, params: $params);
             $row = $this->cache->fetch();
             $this->cache->closeCursor();
             return $row['value'];
@@ -195,9 +195,9 @@ class PostgreSql extends AbstractCache
      * @param string   $value  Cache value
      * @param null|int $expire Seconds to expire. Default 0 - doesn't expire
      *
-     * @return void
+     * @return mixed
      */
-    public function setCache($key, $value, $expire = null): void
+    public function setCache($key, $value, $expire = null): mixed
     {
         $this->useDatabase();
 
@@ -206,7 +206,7 @@ class PostgreSql extends AbstractCache
         if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
             $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
             $params = [$keyDetails['key']];
-            $this->cache->execDbQuery($sql, $params);
+            $this->cache->execDbQuery(sql: $sql, params: $params);
             $this->cache->closeCursor();
         }
 
@@ -220,8 +220,10 @@ class PostgreSql extends AbstractCache
             $params = [$value, $this->ts + $expire, $keyDetails['key']];
         }
 
-        $this->cache->execDbQuery($sql, $params);
+        $this->cache->execDbQuery(sql: $sql, params: $params);
         $this->cache->closeCursor();
+
+        return true;
     }
 
     /**
@@ -240,13 +242,13 @@ class PostgreSql extends AbstractCache
         if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
             $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
             $params = [$keyDetails['key']];
-            $this->cache->execDbQuery($sql, $params);
+            $this->cache->execDbQuery(sql: $sql, params: $params);
             $this->cache->closeCursor();
         }
     }
 
     /**
-     * Get Key Details
+     * Get Details of key
      *
      * @param string $key Cache key
      *
@@ -290,7 +292,7 @@ class PostgreSql extends AbstractCache
         ";
         $params = [$keyDetails['key'], $this->ts];
 
-        $this->cache->execDbQuery($sql, $params);
+        $this->cache->execDbQuery(sql: $sql, params: $params);
         $row = $this->cache->fetch();
         $this->cache->closeCursor();
 

@@ -24,7 +24,6 @@ $homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
 
 $response[] = include GET . DIRECTORY_SEPARATOR . 'Reload.php';
 
-// Client login
 $payload = [
     'username' => 'client_1_group_1_user_1',
     'password' => 'shames11'

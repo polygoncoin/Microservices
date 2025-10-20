@@ -22,8 +22,8 @@ use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\App\Middleware\Auth;
 use Microservices\App\RouteParser;
-use Microservices\App\Servers\Cache\AbstractCache;
-use Microservices\App\Servers\Database\AbstractDatabase;
+use Microservices\App\Servers\Containers\NoSql\AbstractCache;
+use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * HTTP Request
@@ -359,12 +359,12 @@ class HttpRequest extends DbFunctions
         }
 
         $this->cache = $this->connectCache(
-            globalCacheType: getenv(name: 'globalCacheType'),
-            globalCacheHostname: getenv(name: 'globalCacheHostname'),
-            globalCachePort: getenv(name: 'globalCachePort'),
-            globalCacheUsername: getenv(name: 'globalCacheUsername'),
-            globalCachePassword: getenv(name: 'globalCachePassword'),
-            globalCacheDatabase: getenv(name: 'globalCacheDatabase')
+            cacheType: getenv(name: 'globalCacheType'),
+            cacheHostname: getenv(name: 'globalCacheHostname'),
+            cachePort: getenv(name: 'globalCachePort'),
+            cacheUsername: getenv(name: 'globalCacheUsername'),
+            cachePassword: getenv(name: 'globalCachePassword'),
+            cacheDatabase: getenv(name: 'cacheDatabase')
         );
     }
 }

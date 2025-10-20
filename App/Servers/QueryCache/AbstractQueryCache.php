@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Cache
+ * Query Cache
  * php version 8.3
  *
- * @category  Cache
+ * @category  QueryCache
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,13 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Cache;
+namespace Microservices\App\Servers\QueryCache;
 
 /**
- * Cache Abstract class
+ * Query Cache Abstract class
  * php version 8.3
  *
- * @category  Cache_Abstract_Class
+ * @category  Query_Cache_Abstract_Class
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -27,7 +27,7 @@ namespace Microservices\App\Servers\Cache;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-abstract class AbstractCache
+abstract class QueryCacheCache
 {
     /**
      * Cache connection

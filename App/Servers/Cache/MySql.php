@@ -16,8 +16,8 @@
 namespace Microservices\App\Servers\Cache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Cache\AbstractCache;
-use Microservices\App\Servers\Database\MySql as DB_MySql;
+use Microservices\App\Servers\Containers\NoSql\AbstractCache;
+use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
  * Caching via MySQL

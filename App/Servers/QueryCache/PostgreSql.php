@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Cache via PostgreSql
+ * Handling Query Cache via PostgreSql
  * php version 8.3
  *
- * @category  Cache
+ * @category  QueryCache
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,17 +13,17 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Cache;
+namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
-use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
+use Microservices\App\Servers\Cache\AbstractQueryCache;
+use Microservices\App\Servers\Database\PostgreSql as DB_PostgreSql;
 
 /**
- * Caching via PostgreSql
+ * Query Caching via PostgreSql
  * php version 8.3
  *
- * @category  Cache_PostgreSql
+ * @category  QueryCache_PostgreSql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -31,7 +31,7 @@ use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql extends AbstractCache
+class PostgreSql extends AbstractQueryCache
 {
     /**
      * Cache hostname
@@ -71,7 +71,7 @@ class PostgreSql extends AbstractCache
     /**
      * Cache connection
      *
-     * @var null|DB_PostgreSql
+     * @var null|Pg_MySql
      */
     private $cache = null;
 

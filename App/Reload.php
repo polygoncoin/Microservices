@@ -18,8 +18,8 @@ namespace Microservices\App;
 use Microservices\App\AppTrait;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
-use Microservices\App\Servers\Cache\AbstractCache;
-use Microservices\App\Servers\Database\AbstractDatabase;
+use Microservices\App\Servers\Containers\NoSql\AbstractCache;
+use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * Load CacheServerKeys_Required
@@ -86,12 +86,12 @@ class Reload
     public function process(): bool
     {
         $this->cache = $this->c->req->connectCache(
-            globalCacheType: getenv(name: 'globalCacheType'),
-            globalCacheHostname: getenv(name: 'globalCacheHostname'),
-            globalCachePort: getenv(name: 'globalCachePort'),
-            globalCacheUsername: getenv(name: 'globalCacheUsername'),
-            globalCachePassword: getenv(name: 'globalCachePassword'),
-            globalCacheDatabase: getenv(name: 'globalCacheDatabase')
+            cacheType: getenv(name: 'globalCacheType'),
+            cacheHostname: getenv(name: 'globalCacheHostname'),
+            cachePort: getenv(name: 'globalCachePort'),
+            cacheUsername: getenv(name: 'globalCacheUsername'),
+            cachePassword: getenv(name: 'globalCachePassword'),
+            cacheDatabase: getenv(name: 'globalCacheDatabase')
         );
 
         $this->processDomainAndUser();

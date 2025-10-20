@@ -19,7 +19,7 @@ use Microservices\App\DatabaseCacheKey;
 use Microservices\App\DatabaseOpenCacheKey;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Cache\AbstractCache;
+use Microservices\App\Servers\Containers\NoSql\AbstractCache;
 
 /**
  * DB Functions
@@ -55,30 +55,30 @@ class DbFunctions
     /**
      * Set Cache
      *
-     * @param string $globalCacheType     Cache type
-     * @param string $globalCacheHostname Hostname
-     * @param int    $globalCachePort     Port
-     * @param string $globalCacheUsername Username
-     * @param string $globalCachePassword Password
-     * @param string $globalCacheDatabase Database
+     * @param string $cacheType     Cache type
+     * @param string $cacheHostname Hostname
+     * @param int    $cachePort     Port
+     * @param string $cacheUsername Username
+     * @param string $cachePassword Password
+     * @param string $cacheDatabase Database
      *
      * @return object
      */
     public function connectCache(
-        $globalCacheType,
-        $globalCacheHostname,
-        $globalCachePort,
-        $globalCacheUsername,
-        $globalCachePassword,
-        $globalCacheDatabase
+        $cacheType,
+        $cacheHostname,
+        $cachePort,
+        $cacheUsername,
+        $cachePassword,
+        $cacheDatabase
     ): object {
-        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $globalCacheType;
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
         return new $cacheNS(
-            $globalCacheHostname,
-            $globalCachePort,
-            $globalCacheUsername,
-            $globalCachePassword,
-            $globalCacheDatabase
+            $cacheHostname,
+            $cachePort,
+            $cacheUsername,
+            $cachePassword,
+            $cacheDatabase
         );
     }
 
@@ -103,43 +103,43 @@ class DbFunctions
         switch ($fetchFrom) {
             case 'Master':
                 return $this->connectCache(
-                    globalCacheType: getenv(
+                    cacheType: getenv(
                         name: $this->req->s['cDetails']['master_cache_server_type']
                     ),
-                    globalCacheHostname: getenv(
+                    cacheHostname: getenv(
                         name: $this->req->s['cDetails']['master_cache_hostname']
                     ),
-                    globalCachePort: getenv(
+                    cachePort: getenv(
                         name: $this->req->s['cDetails']['master_cache_port']
                     ),
-                    globalCacheUsername: getenv(
+                    cacheUsername: getenv(
                         name: $this->req->s['cDetails']['master_cache_username']
                     ),
-                    globalCachePassword: getenv(
+                    cachePassword: getenv(
                         name: $this->req->s['cDetails']['master_cache_password']
                     ),
-                    globalCacheDatabase: getenv(
+                    cacheDatabase: getenv(
                         name: $this->req->s['cDetails']['master_cache_database']
                     )
                 );
             case 'Slave':
                 return $this->connectCache(
-                    globalCacheType: getenv(
+                    cacheType: getenv(
                         name: $this->req->s['cDetails']['slave_cache_server_type']
                     ),
-                    globalCacheHostname: getenv(
+                    cacheHostname: getenv(
                         name: $this->req->s['cDetails']['slave_cache_hostname']
                     ),
-                    globalCachePort: getenv(
+                    cachePort: getenv(
                         name: $this->req->s['cDetails']['slave_cache_port']
                     ),
-                    globalCacheUsername: getenv(
+                    cacheUsername: getenv(
                         name: $this->req->s['cDetails']['slave_cache_username']
                     ),
-                    globalCachePassword: getenv(
+                    cachePassword: getenv(
                         name: $this->req->s['cDetails']['slave_cache_password']
                     ),
-                    globalCacheDatabase: getenv(
+                    cacheDatabase: getenv(
                         name: $this->req->s['cDetails']['slave_cache_database']
                     )
                 );
