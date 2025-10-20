@@ -150,7 +150,7 @@ class MySqlQueryCache implements QueryCacheInterface
         $sql = "
             SELECT count(1) as count
             FROM {$this->table}
-            WHERE key = :key
+            WHERE `key` = :key
         ";
         $params = [':key' => $key];
 
@@ -175,7 +175,7 @@ class MySqlQueryCache implements QueryCacheInterface
         $sql = "
             SELECT value
             FROM {$this->table}
-            WHERE key = :key
+            WHERE `key` = :key
         ";
         $params = [':key' => $key];
 
@@ -203,7 +203,7 @@ class MySqlQueryCache implements QueryCacheInterface
 
         $sql = "
             INSERT INTO {$this->table}
-            SET key = :key, value = :value
+            SET `key` = :key, value = :value
         ";
         $params = [':key' => $key, ':value' => $value];
 
@@ -224,7 +224,7 @@ class MySqlQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        $sql = "DELETE FROM {$this->table} WHERE key = :key";
+        $sql = "DELETE FROM {$this->table} WHERE `key` = :key";
         $params = [':key' => $key];
 
         $this->cache->execDbQuery(sql: $sql, params: $params);
