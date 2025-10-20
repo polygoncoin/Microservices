@@ -49,22 +49,22 @@ allowGetRepresentation=1
 
 ### Cache Server Details (Redis)
 ```ini
-cacheType='Redis'
-cacheHostname='127.0.0.1'
-cachePort=6379
-cacheUsername=''
-cachePassword=''
-cacheDatabase=0
+globalCacheType='Redis'
+globalCacheHostname='127.0.0.1'
+globalCachePort=6379
+globalCacheUsername=''
+globalCachePassword=''
+globalCacheDatabase=0
 ```
 
 ### Global Database details - global.sql
 ```ini
-globalType='MySql'
-globalHostname='127.0.0.1'
-globalPort=3306
-globalUsername='root'
-globalPassword='shames11'
-globalDatabase='global'
+globalDbType='MySql'
+globalDbHostname='127.0.0.1'
+globalDbPort=3306
+globalDbUsername='root'
+globalDbPassword='shames11'
+globalDbDatabase='global'
 ```
 
 ### global Database tables details

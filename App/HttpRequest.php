@@ -359,12 +359,12 @@ class HttpRequest extends DbFunctions
         }
 
         $this->cache = $this->connectCache(
-            cacheType: getenv(name: 'cacheType'),
-            cacheHostname: getenv(name: 'cacheHostname'),
-            cachePort: getenv(name: 'cachePort'),
-            cacheUsername: getenv(name: 'cacheUsername'),
-            cachePassword: getenv(name: 'cachePassword'),
-            cacheDatabase: getenv(name: 'cacheDatabase')
+            globalCacheType: getenv(name: 'globalCacheType'),
+            globalCacheHostname: getenv(name: 'globalCacheHostname'),
+            globalCachePort: getenv(name: 'globalCachePort'),
+            globalCacheUsername: getenv(name: 'globalCacheUsername'),
+            globalCachePassword: getenv(name: 'globalCachePassword'),
+            globalCacheDatabase: getenv(name: 'globalCacheDatabase')
         );
     }
 }

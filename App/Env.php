@@ -29,8 +29,8 @@ namespace Microservices\App;
  */
 class Env
 {
-    public static $globalDatabase = null;
-    public static $cacheDatabase = null;
+    public static $globalDbDatabase = null;
+    public static $globalCacheDatabase = null;
 
     public static $ENVIRONMENT = null;
     public static $OUTPUT_PERFORMANCE_STATS = null;
@@ -80,8 +80,8 @@ class Env
      */
     public static function init(&$http): void
     {
-        self::$globalDatabase = getenv(name: 'globalDatabase');
-        self::$cacheDatabase = getenv(name: 'cacheDatabase');
+        self::$globalDbDatabase = getenv(name: 'globalDbDatabase');
+        self::$globalCacheDatabase = getenv(name: 'globalCacheDatabase');
 
         self::$ENVIRONMENT = getenv(name: 'ENVIRONMENT');
         self::$OUTPUT_PERFORMANCE_STATS = getenv(name: 'OUTPUT_PERFORMANCE_STATS');

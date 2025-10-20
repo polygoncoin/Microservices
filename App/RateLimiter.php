@@ -115,21 +115,21 @@ class RateLimiter
     /**
      * Connect and get cache server object
      *
-     * @param string $cacheType     Cache type
-     * @param string $cacheHostname Hostname
-     * @param int    $cachePort     Port
+     * @param string $globalCacheType     Cache type
+     * @param string $globalCacheHostname Hostname
+     * @param int    $globalCachePort     Port
      *
      * @return object
      */
     private function connectCache(
-        $cacheType,
-        $cacheHostname,
-        $cachePort
+        $globalCacheType,
+        $globalCacheHostname,
+        $globalCachePort
     ): object {
-        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $globalCacheType;
         return new $cacheNS(
-            $cacheHostname,
-            $cachePort
+            $globalCacheHostname,
+            $globalCachePort
         );
     }
 }

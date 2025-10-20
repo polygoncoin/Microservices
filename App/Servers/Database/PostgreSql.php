@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Database via pgsql
+ * Handling Database via PostgreSql
  * php version 8.3
  *
  * @category  Database
@@ -19,10 +19,10 @@ use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Database\AbstractDatabase;
 
 /**
- * PgSQL Database
+ * PostgreSql Database
  * php version 8.3
  *
- * @category  Database_PgSQL
+ * @category  Database_PostgreSql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -30,7 +30,7 @@ use Microservices\App\Servers\Database\AbstractDatabase;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PgSql extends AbstractDatabase
+class PostgreSql extends AbstractDatabase
 {
     /**
      * Database hostname

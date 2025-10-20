@@ -55,30 +55,30 @@ class DbFunctions
     /**
      * Set Cache
      *
-     * @param string $cacheType     Cache type
-     * @param string $cacheHostname Hostname
-     * @param int    $cachePort     Port
-     * @param string $cacheUsername Username
-     * @param string $cachePassword Password
-     * @param string $cacheDatabase Database
+     * @param string $globalCacheType     Cache type
+     * @param string $globalCacheHostname Hostname
+     * @param int    $globalCachePort     Port
+     * @param string $globalCacheUsername Username
+     * @param string $globalCachePassword Password
+     * @param string $globalCacheDatabase Database
      *
      * @return object
      */
     public function connectCache(
-        $cacheType,
-        $cacheHostname,
-        $cachePort,
-        $cacheUsername,
-        $cachePassword,
-        $cacheDatabase
+        $globalCacheType,
+        $globalCacheHostname,
+        $globalCachePort,
+        $globalCacheUsername,
+        $globalCachePassword,
+        $globalCacheDatabase
     ): object {
-        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $globalCacheType;
         return new $cacheNS(
-            $cacheHostname,
-            $cachePort,
-            $cacheUsername,
-            $cachePassword,
-            $cacheDatabase
+            $globalCacheHostname,
+            $globalCachePort,
+            $globalCacheUsername,
+            $globalCachePassword,
+            $globalCacheDatabase
         );
     }
 
@@ -103,43 +103,43 @@ class DbFunctions
         switch ($fetchFrom) {
             case 'Master':
                 return $this->connectCache(
-                    cacheType: getenv(
+                    globalCacheType: getenv(
                         name: $this->req->s['cDetails']['master_cache_server_type']
                     ),
-                    cacheHostname: getenv(
+                    globalCacheHostname: getenv(
                         name: $this->req->s['cDetails']['master_cache_hostname']
                     ),
-                    cachePort: getenv(
+                    globalCachePort: getenv(
                         name: $this->req->s['cDetails']['master_cache_port']
                     ),
-                    cacheUsername: getenv(
+                    globalCacheUsername: getenv(
                         name: $this->req->s['cDetails']['master_cache_username']
                     ),
-                    cachePassword: getenv(
+                    globalCachePassword: getenv(
                         name: $this->req->s['cDetails']['master_cache_password']
                     ),
-                    cacheDatabase: getenv(
+                    globalCacheDatabase: getenv(
                         name: $this->req->s['cDetails']['master_cache_database']
                     )
                 );
             case 'Slave':
                 return $this->connectCache(
-                    cacheType: getenv(
+                    globalCacheType: getenv(
                         name: $this->req->s['cDetails']['slave_cache_server_type']
                     ),
-                    cacheHostname: getenv(
+                    globalCacheHostname: getenv(
                         name: $this->req->s['cDetails']['slave_cache_hostname']
                     ),
-                    cachePort: getenv(
+                    globalCachePort: getenv(
                         name: $this->req->s['cDetails']['slave_cache_port']
                     ),
-                    cacheUsername: getenv(
+                    globalCacheUsername: getenv(
                         name: $this->req->s['cDetails']['slave_cache_username']
                     ),
-                    cachePassword: getenv(
+                    globalCachePassword: getenv(
                         name: $this->req->s['cDetails']['slave_cache_password']
                     ),
-                    cacheDatabase: getenv(
+                    globalCacheDatabase: getenv(
                         name: $this->req->s['cDetails']['slave_cache_database']
                     )
                 );

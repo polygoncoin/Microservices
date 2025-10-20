@@ -86,12 +86,12 @@ class Reload
     public function process(): bool
     {
         $this->cache = $this->c->req->connectCache(
-            cacheType: getenv(name: 'cacheType'),
-            cacheHostname: getenv(name: 'cacheHostname'),
-            cachePort: getenv(name: 'cachePort'),
-            cacheUsername: getenv(name: 'cacheUsername'),
-            cachePassword: getenv(name: 'cachePassword'),
-            cacheDatabase: getenv(name: 'cacheDatabase')
+            globalCacheType: getenv(name: 'globalCacheType'),
+            globalCacheHostname: getenv(name: 'globalCacheHostname'),
+            globalCachePort: getenv(name: 'globalCachePort'),
+            globalCacheUsername: getenv(name: 'globalCacheUsername'),
+            globalCachePassword: getenv(name: 'globalCachePassword'),
+            globalCacheDatabase: getenv(name: 'globalCacheDatabase')
         );
 
         $this->processDomainAndUser();
@@ -108,12 +108,12 @@ class Reload
     private function processDomainAndUser(): void
     {
         $this->c->req->db = $this->c->req->connectDb(
-            dbType: getenv(name: 'globalType'),
-            dbHostname: getenv(name: 'globalHostname'),
-            dbPort: getenv(name: 'globalPort'),
-            dbUsername: getenv(name: 'globalUsername'),
-            dbPassword: getenv(name: 'globalPassword'),
-            dbDatabase: getenv(name: 'globalDatabase')
+            dbType: getenv(name: 'globalDbType'),
+            dbHostname: getenv(name: 'globalDbHostname'),
+            dbPort: getenv(name: 'globalDbPort'),
+            dbUsername: getenv(name: 'globalDbUsername'),
+            dbPassword: getenv(name: 'globalDbPassword'),
+            dbDatabase: getenv(name: 'globalDbDatabase')
         );
         $this->db = &$this->c->req->db;
 
@@ -184,12 +184,12 @@ class Reload
     private function processGroup(): void
     {
         $this->c->req->db = $this->c->req->connectDb(
-            dbType: getenv(name: 'globalType'),
-            dbHostname: getenv(name: 'globalHostname'),
-            dbPort: getenv(name: 'globalPort'),
-            dbUsername: getenv(name: 'globalUsername'),
-            dbPassword: getenv(name: 'globalPassword'),
-            dbDatabase: getenv(name: 'globalDatabase')
+            dbType: getenv(name: 'globalDbType'),
+            dbHostname: getenv(name: 'globalDbHostname'),
+            dbPort: getenv(name: 'globalDbPort'),
+            dbUsername: getenv(name: 'globalDbUsername'),
+            dbPassword: getenv(name: 'globalDbPassword'),
+            dbDatabase: getenv(name: 'globalDbDatabase')
         );
 
         $this->db->execDbQuery(

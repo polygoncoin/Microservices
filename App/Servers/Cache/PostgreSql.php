@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Cache via pgsql
+ * Handling Cache via PostgreSql
  * php version 8.3
  *
  * @category  Cache
@@ -17,13 +17,13 @@ namespace Microservices\App\Servers\Cache;
 
 use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Cache\AbstractCache;
-use Microservices\App\Servers\Database\PgSql as DB_PgSQL;
+use Microservices\App\Servers\Database\PostgreSql as DB_PostgreSql;
 
 /**
- * Caching via pgsql
+ * Caching via PostgreSql
  * php version 8.3
  *
- * @category  Cache_PgSQL
+ * @category  Cache_PostgreSql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -31,7 +31,7 @@ use Microservices\App\Servers\Database\PgSql as DB_PgSQL;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PgSql extends AbstractCache
+class PostgreSql extends AbstractCache
 {
     /**
      * Cache hostname
@@ -117,7 +117,7 @@ class PgSql extends AbstractCache
         }
 
         try {
-            $this->cache = new DB_PgSql(
+            $this->cache = new DB_PostgreSql(
                 hostname: $this->hostname,
                 port: $this->port,
                 username: $this->username,
