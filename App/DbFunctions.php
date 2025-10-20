@@ -20,6 +20,7 @@ use Microservices\App\DatabaseOpenCacheKey;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Containers\NoSql\AbstractCache;
+use Microservices\App\Servers\QueryCache\AbstractQueryCache;
 
 /**
  * DB Functions
@@ -43,6 +44,13 @@ class DbFunctions
     private $req = null;
 
     /**
+     * Query Cache Connection Object
+     *
+     * @var null|AbstractQueryCache
+     */
+    private $queryCacheConnection = null;
+
+    /**
      * Constructor
      *
      * @param HttpRequest $req HTTP Request object
@@ -50,6 +58,31 @@ class DbFunctions
     public function __construct(&$req)
     {
         $this->req = &$req;
+    }
+
+
+    /**
+     * Init server connection based on $fetchFrom
+     *
+     * @param string $fetchFrom Master/Slave
+     *
+     * @return void
+     */
+    public function setQueryCacheConnection(): void
+    {
+        if ($this->queryCacheConnection !== null) {
+            return;
+        }
+
+        $queryCacheNS = 'Microservices\\App\\Servers\\QueryCache\\' . getenv(name: 'queryCacheType');
+        $this->queryCacheConnection = new $cacheNS(
+            getenv(name: 'queryCacheHostname'),
+            getenv(name: 'queryCachePort'),
+            getenv(name: 'queryCacheUsername'),
+            getenv(name: 'queryCachePassword'),
+            getenv(name: 'queryCacheDatabase'),
+            getenv(name: 'queryCacheTable')
+        );
     }
 
     /**
@@ -277,12 +310,10 @@ class DbFunctions
      */
     public function getQueryCache($cacheKey): mixed
     {
-        if ($this->req->sqlCache === null) {
-            $this->req->sqlCache = $this->setCacheConnection(fetchFrom: 'Slave');
-        }
+        $this->setQueryCacheConnection();
 
-        if ($this->req->sqlCache->cacheExists(key: $cacheKey)) {
-            return $json = $this->req->sqlCache->getCache(key: $cacheKey);
+        if ($this->queryCacheConnection->cacheExists(key: $cacheKey)) {
+            return $json = $this->queryCacheConnection->getCache(key: $cacheKey);
         } else {
             return $json = null;
         }
@@ -298,11 +329,9 @@ class DbFunctions
      */
     public function setQueryCache($cacheKey, &$json): void
     {
-        if ($this->req->sqlCache === null) {
-            $this->req->sqlCache = $this->setCacheConnection(fetchFrom: 'Master');
-        }
+        $this->setQueryCacheConnection();
 
-        $this->req->sqlCache->setCache(key: $cacheKey, value: $json);
+        $this->queryCacheConnection->setCache(key: $cacheKey, value: $json);
     }
 
     /**
@@ -314,10 +343,8 @@ class DbFunctions
      */
     public function delQueryCache($cacheKey): void
     {
-        if ($this->req->sqlCache === null) {
-            $this->req->sqlCache = $this->setCacheConnection(fetchFrom: 'Master');
-        }
+        $this->setQueryCacheConnection();
 
-        $this->req->sqlCache->deleteCache(key: $cacheKey);
+        $this->queryCacheConnection->deleteCache(key: $cacheKey);
     }
 }

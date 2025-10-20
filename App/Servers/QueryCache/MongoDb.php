@@ -76,14 +76,14 @@ class MongoDb extends AbstractCache
      *
      * @var null|string
      */
-    public $collection = 'key_value';
+    public $table = 'key_value';
 
     /**
      * Cache Object
      *
      * @var null|\MongoDB\Client
      */
-    private $cacheObj = null;
+    private $cache = null;
 
     /**
      * Database Object
@@ -107,22 +107,22 @@ class MongoDb extends AbstractCache
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
+     * @param string $table    Table .env string
      */
     public function __construct(
         $hostname,
         $port,
-        $username = '',
-        $password = '',
-        $database = 0
+        $username,
+        $password,
+        $database,
+        $table
     ) {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-
-        if ($database !== null) {
-            $this->database = $database;
-        }
+        $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -133,7 +133,7 @@ class MongoDb extends AbstractCache
      */
     public function connect(): void
     {
-        if ($this->cacheObj !== null) {
+        if ($this->cache !== null) {
              return;
         }
 
@@ -146,13 +146,13 @@ class MongoDb extends AbstractCache
                 $this->uri = 'mongodb://' . $UP .
                     $this->hostname . ':' . $this->port;
             }
-            $this->cacheObj = new \MongoDB\Client($this->uri);
+            $this->cache = new \MongoDB\Client($this->uri);
 
             // Select a database
-            $this->databaseObj = $this->cacheObj->selectDatabase($this->database);
+            $this->databaseObj = $this->cache->selectDatabase($this->database);
 
             // Select a collection
-            $this->collectionObj = $this->databaseObj->selectCollection($this->collection);
+            $this->collectionObj = $this->databaseObj->selectCollection($this->table);
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),

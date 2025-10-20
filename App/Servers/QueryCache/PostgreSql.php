@@ -71,9 +71,9 @@ class PostgreSql extends AbstractQueryCache
     /**
      * Cache table
      *
-     * @var string
+     * @var null|string
      */
-    private $table = 'key_value';
+    private $table = null;
 
     /**
      * Cache connection
@@ -90,18 +90,22 @@ class PostgreSql extends AbstractQueryCache
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
+     * @param string $table    Table .env string
      */
-    public function __construct($hostname, $port, $username, $password, $database)
-    {
-        $this->ts = time();
+    public function __construct(
+        $hostname,
+        $port,
+        $username,
+        $password,
+        $database,
+        $table
+    ) {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-
-        if ($database !== null) {
-            $this->database = $database;
-        }
+        $this->database = $database;
+        $this->table = $table;
     }
 
     /**

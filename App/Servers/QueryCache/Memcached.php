@@ -61,13 +61,15 @@ class Memcached extends AbstractQueryCache
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
+     * @param string $table    Table .env string
      */
     public function __construct(
         $hostname,
         $port,
-        $username = '',
-        $password = '',
-        $database = ''
+        $username,
+        $password,
+        $database,
+        $table
     ) {
         $this->hostname = $hostname;
         $this->port = $port;
