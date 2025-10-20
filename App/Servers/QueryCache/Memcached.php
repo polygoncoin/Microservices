@@ -104,16 +104,6 @@ class Memcached extends AbstractQueryCache
     }
 
     /**
-     * Use Database
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function useDatabase(): void
-    {
-    }
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
@@ -146,34 +136,14 @@ class Memcached extends AbstractQueryCache
      *
      * @param string $key    Cache key
      * @param string $value  Cache value
-     * @param int    $expire Seconds to expire. Default 0 - doesn't expire
      *
      * @return mixed
      */
-    public function setCache($key, $value, $expire = null): mixed
+    public function setCache($key, $value): mixed
     {
         $this->connect();
 
-        if ($expire === null) {
-            return $this->cache->set($key, $value);
-        } else {
-            return $this->cache->set($key, $value, $expire);
-        }
-    }
-
-    /**
-     * Increment Key value with offset
-     *
-     * @param string $key    Cache key
-     * @param int    $offset Offset
-     *
-     * @return int
-     */
-    public function incrementCache($key, $offset = 1): int
-    {
-        $this->connect();
-
-        return $this->cache->increment($key, $offset);
+        return $this->cache->set($key, $value);
     }
 
     /**

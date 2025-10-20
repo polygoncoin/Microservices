@@ -128,8 +128,8 @@ class Redis extends AbstractQueryCache
             ];
 
             if (
-                !in_array($this->username, ['', 'null'])
-                && !in_array($this->password, ['', 'null'])
+                ($this->username !== '')
+                && ($this->password !== '')
             ) {
                 $connParams['auth'] = [
                     $this->username,
@@ -137,10 +137,6 @@ class Redis extends AbstractQueryCache
                 ];
             }
             $this->cache = new \Redis($connParams);
-
-            if ($this->database !== null) {
-                $this->useDatabase();
-            }
 
             if (!$this->cache->ping()) {
                 throw new \Exception(
@@ -157,20 +153,6 @@ class Redis extends AbstractQueryCache
     }
 
     /**
-     * Use Database
-     *
-     * @return void
-     */
-    public function useDatabase(): void
-    {
-        $this->connect();
-
-        if ($this->database !== null) {
-            $this->cache->select($this->database);
-        }
-    }
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
@@ -179,7 +161,7 @@ class Redis extends AbstractQueryCache
      */
     public function cacheExists($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
         return $this->cache->exists($key);
     }
@@ -193,7 +175,7 @@ class Redis extends AbstractQueryCache
      */
     public function getCache($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
         return $this->cache->get($key);
     }
@@ -209,28 +191,13 @@ class Redis extends AbstractQueryCache
      */
     public function setCache($key, $value, $expire = null): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
         if ($expire === null) {
             return $this->cache->set($key, $value);
         } else {
             return $this->cache->set($key, $value, $expire);
         }
-    }
-
-    /**
-     * Increment Key value with offset
-     *
-     * @param string $key    Cache key
-     * @param int    $offset Offset
-     *
-     * @return int
-     */
-    public function incrementCache($key, $offset = 1): int
-    {
-        $this->useDatabase();
-
-        return $this->cache->incrBy($key, $offset);
     }
 
     /**
@@ -242,7 +209,8 @@ class Redis extends AbstractQueryCache
      */
     public function deleteCache($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
+
         return $this->cache->del($key);
     }
 }

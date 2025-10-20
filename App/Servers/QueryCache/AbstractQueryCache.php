@@ -37,13 +37,6 @@ abstract class QueryCacheCache
     abstract public function connect(): void;
 
     /**
-     * Use Cache Database
-     *
-     * @return void
-     */
-    abstract public function useDatabase(): void;
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
@@ -71,16 +64,6 @@ abstract class QueryCacheCache
      * @return mixed
      */
     abstract public function setCache($key, $value, $expire = null): mixed;
-
-    /**
-     * Increment Key value with offset
-     *
-     * @param string $key    Cache key
-     * @param int    $offset Offset
-     *
-     * @return int
-     */
-    abstract public function incrementCache($key, $offset = 1): int;
 
     /**
      * Delete cache on basis of key

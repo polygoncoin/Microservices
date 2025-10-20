@@ -132,7 +132,7 @@ class Redis extends AbstractCache
             $this->cache = new \Redis($connParams);
 
             if ($this->database !== null) {
-                $this->useDatabase();
+                $this->cache->select($this->database);
             }
 
             if (!$this->cache->ping()) {
@@ -150,20 +150,6 @@ class Redis extends AbstractCache
     }
 
     /**
-     * Use Database
-     *
-     * @return void
-     */
-    public function useDatabase(): void
-    {
-        $this->connect();
-
-        if ($this->database !== null) {
-            $this->cache->select($this->database);
-        }
-    }
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
@@ -172,7 +158,7 @@ class Redis extends AbstractCache
      */
     public function cacheExists($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
         return $this->cache->exists($key);
     }
@@ -186,7 +172,7 @@ class Redis extends AbstractCache
      */
     public function getCache($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
         return $this->cache->get($key);
     }
@@ -202,7 +188,7 @@ class Redis extends AbstractCache
      */
     public function setCache($key, $value, $expire = null): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
         if ($expire === null) {
             return $this->cache->set($key, $value);
@@ -221,7 +207,7 @@ class Redis extends AbstractCache
      */
     public function incrementCache($key, $offset = 1): int
     {
-        $this->useDatabase();
+        $this->connect();
 
         return $this->cache->incrBy($key, $offset);
     }
@@ -235,7 +221,7 @@ class Redis extends AbstractCache
      */
     public function deleteCache($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
         return $this->cache->del($key);
     }
 }

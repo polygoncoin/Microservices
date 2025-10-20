@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Query Cache via PostgreSql
+ * Handling Cache via MongoDb
  * php version 8.3
  *
- * @category  QueryCache
+ * @category  Cache
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,17 +13,16 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\QueryCache;
+namespace Microservices\App\Servers\Containers\NoSql;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Cache\AbstractQueryCache;
-use Microservices\App\Servers\Database\PostgreSql as DB_PostgreSql;
+use Microservices\App\Servers\Containers\NoSql\AbstractCache;
 
 /**
- * Query Caching via PostgreSql
+ * Caching via MongoDb
  * php version 8.3
  *
- * @category  QueryCache_PostgreSql
+ * @category  Cache_MongoDb
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -31,8 +30,12 @@ use Microservices\App\Servers\Database\PostgreSql as DB_PostgreSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql extends AbstractQueryCache
+class MongoDb extends AbstractCache
 {
+    // "mongodb://<username>:<password>@<cluster-url>:<port>/<database-name>
+    // ?retryWrites=true&w=majority"
+    private $uri = null;
+
     /**
      * Cache hostname
      *
@@ -69,18 +72,32 @@ class PostgreSql extends AbstractQueryCache
     private $database = null;
 
     /**
-     * Cache table
+     * Cache collection
      *
-     * @var string
+     * @var null|string
      */
-    private $table = 'key_value';
+    public $collection = 'key_value';
 
     /**
-     * Cache connection
+     * Cache Object
      *
-     * @var null|Pg_MySql
+     * @var null|\MongoDB\Client
      */
-    private $cache = null;
+    private $cacheObj = null;
+
+    /**
+     * Database Object
+     *
+     * @var null|Object
+     */
+    private $databaseObj = null;
+
+    /**
+     * Collection Object
+     *
+     * @var null|Object
+     */
+    private $collectionObj = null;
 
     /**
      * Cache connection
@@ -91,9 +108,13 @@ class PostgreSql extends AbstractQueryCache
      * @param string $password Password .env string
      * @param string $database Database .env string
      */
-    public function __construct($hostname, $port, $username, $password, $database)
-    {
-        $this->ts = time();
+    public function __construct(
+        $hostname,
+        $port,
+        $username = '',
+        $password = '',
+        $database = 0
+    ) {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
@@ -112,18 +133,26 @@ class PostgreSql extends AbstractQueryCache
      */
     public function connect(): void
     {
-        if ($this->cache !== null) {
-            return;
+        if ($this->cacheObj !== null) {
+             return;
         }
 
         try {
-            $this->cache = new DB_PostgreSql(
-                hostname: $this->hostname,
-                port: $this->port,
-                username: $this->username,
-                password: $this->password,
-                database: $this->database
-            );
+            if ($this->uri === null) {
+                $UP = '';
+                if ($this->username !== null && $this->password !== null) {
+                    $UP = "{$this->username}:{$this->password}@";
+                }
+                $this->uri = 'mongodb://' . $UP .
+                    $this->hostname . ':' . $this->port;
+            }
+            $this->cacheObj = new \MongoDB\Client($this->uri);
+
+            // Select a database
+            $this->databaseObj = $this->cacheObj->selectDatabase($this->database);
+
+            // Select a collection
+            $this->collectionObj = $this->databaseObj->selectCollection($this->collection);
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -143,18 +172,12 @@ class PostgreSql extends AbstractQueryCache
     {
         $this->connect();
 
-        $sql = "
-            SELECT count(1) as count
-            FROM {$this->table}
-            WHERE key = :key
-        ";
-        $params = [':key' => $key];
+        $filter = ['key' => $key];
 
-        $this->cache->execDbQuery(sql: $sql, params: $params);
-        $row = $this->cache->fetch();
-        $this->cache->closeCursor();
-
-        return $row['count'] === 1;
+        if ($document = $this->collection->findOne($filter)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -168,44 +191,30 @@ class PostgreSql extends AbstractQueryCache
     {
         $this->connect();
 
-        $sql = "
-            SELECT value
-            FROM {$this->table}
-            WHERE key = :key
-        ";
-        $params = [':key' => $key];
-        $this->cache->execDbQuery(sql: $sql, params: $params);
-        if ($row = $this->cache->fetch()) {
-            $this->cache->closeCursor();
-            return $row['value'];
-        }
-        $this->cache->closeCursor();
-        return false;
+        $filter = ['key' => $key];
+        return $this->collection->findOne($filter);
     }
 
     /**
      * Set cache on basis of key
      *
-     * @param string   $key    Cache key
-     * @param string   $value  Cache value
+     * @param string $key    Cache key
+     * @param string $value  Cache value
      *
      * @return mixed
      */
     public function setCache($key, $value): mixed
     {
         $this->connect();
-        $this->deleteCache($key);
 
-        $sql = "
-            INSERT INTO {$this->table}
-            SET key = :value, value = :value
-        ";
-        $params = [':key' => $key, ':value' => $value];
-
-        $this->cache->execDbQuery(sql: $sql, params: $params);
-        $this->cache->closeCursor();
-
-        return true;
+        $document = [
+            'key' => $key,
+            'value' => $value
+        ];
+        if ($this->collection->insertOne($document)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -219,11 +228,10 @@ class PostgreSql extends AbstractQueryCache
     {
         $this->connect();
 
-        $sql = "DELETE FROM {$this->table} WHERE key = :key";
-        $params = [':key' => $key];
-        $this->cache->execDbQuery(sql: $sql, params: $params);
-        $this->cache->closeCursor();
-
-        return true;
+        $filter = ['key' => $key];
+        if ($this->collection->deleteOne($filter)) {
+            return true;
+        }
+        return false;
     }
 }

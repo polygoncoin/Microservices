@@ -104,16 +104,6 @@ class Memcached extends AbstractCache
     }
 
     /**
-     * Use Database
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function useDatabase(): void
-    {
-    }
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key

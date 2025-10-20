@@ -37,13 +37,6 @@ abstract class AbstractCache
     abstract public function connect(): void;
 
     /**
-     * Use Cache Database
-     *
-     * @return void
-     */
-    abstract public function useDatabase(): void;
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
