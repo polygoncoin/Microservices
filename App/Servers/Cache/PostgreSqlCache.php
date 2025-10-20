@@ -16,7 +16,6 @@
 namespace Microservices\App\Servers\Cache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
 use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
 
 /**
@@ -31,7 +30,7 @@ use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql extends AbstractCache
+class PostgreSqlCache implements CacheInterface
 {
     /**
      * Cache hostname

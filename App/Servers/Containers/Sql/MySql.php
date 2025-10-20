@@ -16,7 +16,6 @@
 namespace Microservices\App\Servers\Containers\Sql;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * MySQL Database
@@ -30,7 +29,7 @@ use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class MySql extends AbstractDatabase
+class MySql
 {
     /**
      * Database hostname

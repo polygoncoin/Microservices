@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Query Cache via Redis
+ * Handling Query Cache via MySQL
  * php version 8.3
  *
  * @category  QueryCache
@@ -16,13 +16,14 @@
 namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Cache\AbstractQueryCache;
+use Microservices\App\Servers\QueryCache\QueryCacheInterface;
+use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
- * Caching via Redis
+ * Query Caching via MySQL
  * php version 8.3
  *
- * @category  QueryCache_Redis
+ * @category  QueryCache_MySQL
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -30,7 +31,7 @@ use Microservices\App\Servers\Cache\AbstractQueryCache;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Redis extends AbstractQueryCache
+class MySqlQueryCache implements QueryCacheInterface
 {
     /**
      * Cache hostname
@@ -68,9 +69,16 @@ class Redis extends AbstractQueryCache
     private $database = null;
 
     /**
+     * Cache table
+     *
+     * @var null|string
+     */
+    private $table = null;
+
+    /**
      * Cache connection
      *
-     * @var null|\Redis
+     * @var null|DB_MySql
      */
     private $cache = null;
 
@@ -78,7 +86,7 @@ class Redis extends AbstractQueryCache
      * Cache connection
      *
      * @param string $hostname Hostname .env string
-     * @param string $port     Port .env string
+     * @param int    $port     Port .env string
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
@@ -97,6 +105,7 @@ class Redis extends AbstractQueryCache
         $this->username = $username;
         $this->password = $password;
         $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -111,38 +120,14 @@ class Redis extends AbstractQueryCache
              return;
         }
 
-        if (!extension_loaded(extension: 'redis')) {
-            throw new \Exception(
-                message: 'Unable to find Redis extension',
-                code: HttpStatus::$InternalServerError
-            );
-        }
-
         try {
-            // https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
-            $connParams = [
-                'host' => $this->hostname,
-                'port' => (int)$this->port,
-                'connectTimeout' => 2.5
-            ];
-
-            if (
-                ($this->username !== '')
-                && ($this->password !== '')
-            ) {
-                $connParams['auth'] = [
-                    $this->username,
-                    $this->password
-                ];
-            }
-            $this->cache = new \Redis($connParams);
-
-            if (!$this->cache->ping()) {
-                throw new \Exception(
-                    message: 'Unable to ping cache',
-                    code: HttpStatus::$InternalServerError
-                );
-            }
+            $this->cache = new DB_MySql(
+                hostname: $this->hostname,
+                port: $this->port,
+                username: $this->username,
+                password: $this->password,
+                database: $this->database
+            );
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -162,7 +147,18 @@ class Redis extends AbstractQueryCache
     {
         $this->connect();
 
-        return $this->cache->exists($key);
+        $sql = "
+            SELECT count(1) as count
+            FROM {$this->table}
+            WHERE key = :key
+        ";
+        $params = [':key' => $key];
+
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        $row = $this->cache->fetch();
+        $this->cache->closeCursor();
+
+        return $row['count'] === 1;
     }
 
     /**
@@ -176,27 +172,45 @@ class Redis extends AbstractQueryCache
     {
         $this->connect();
 
-        return $this->cache->get($key);
+        $sql = "
+            SELECT value
+            FROM {$this->table}
+            WHERE key = :key
+        ";
+        $params = [':key' => $key];
+
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        if ($row = $this->cache->fetch()) {
+            $this->cache->closeCursor();
+            return $row['value'];
+        }
+        $this->cache->closeCursor();
+        return false;
     }
 
     /**
      * Set cache on basis of key
      *
-     * @param string $key    Cache key
-     * @param string $value  Cache value
-     * @param int    $expire Seconds to expire. Default 0 - doesn't expire
+     * @param string   $key    Cache key
+     * @param string   $value  Cache value
      *
      * @return mixed
      */
-    public function setCache($key, $value, $expire = null): mixed
+    public function setCache($key, $value): mixed
     {
         $this->connect();
+        $this->deleteCache($key);
 
-        if ($expire === null) {
-            return $this->cache->set($key, $value);
-        } else {
-            return $this->cache->set($key, $value, $expire);
-        }
+        $sql = "
+            INSERT INTO {$this->table}
+            SET key = :key, value = :value
+        ";
+        $params = [':key' => $key, ':value' => $value];
+
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        $this->cache->closeCursor();
+
+        return true;
     }
 
     /**
@@ -210,6 +224,12 @@ class Redis extends AbstractQueryCache
     {
         $this->connect();
 
-        return $this->cache->del($key);
+        $sql = "DELETE FROM {$this->table} WHERE key = :key";
+        $params = [':key' => $key];
+
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        $this->cache->closeCursor();
+
+        return true;
     }
 }

@@ -19,8 +19,6 @@ use Microservices\App\DatabaseCacheKey;
 use Microservices\App\DatabaseOpenCacheKey;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
-use Microservices\App\Servers\QueryCache\AbstractQueryCache;
 
 /**
  * DB Functions
@@ -46,7 +44,7 @@ class DbFunctions
     /**
      * Query Cache Connection Object
      *
-     * @var null|AbstractQueryCache
+     * @var null|Object
      */
     private $queryCacheConnection = null;
 
@@ -74,8 +72,8 @@ class DbFunctions
             return;
         }
 
-        $queryCacheNS = 'Microservices\\App\\Servers\\QueryCache\\' . getenv(name: 'queryCacheType');
-        $this->queryCacheConnection = new $cacheNS(
+        $queryCacheNS = 'Microservices\\App\\Servers\\QueryCache\\' . getenv(name: 'queryCacheType') . 'QueryCache';
+        $this->queryCacheConnection = new $queryCacheNS(
             getenv(name: 'queryCacheHostname'),
             getenv(name: 'queryCachePort'),
             getenv(name: 'queryCacheUsername'),
@@ -105,7 +103,7 @@ class DbFunctions
         $cachePassword,
         $cacheDatabase
     ): object {
-        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
+        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType . 'Cache';
         return new $cacheNS(
             $cacheHostname,
             $cachePort,
@@ -204,7 +202,7 @@ class DbFunctions
         $dbPassword,
         $dbDatabase
     ): object {
-        $dbNS = 'Microservices\\App\\Servers\\Database\\' . $dbType;
+        $dbNS = 'Microservices\\App\\Servers\\Database\\' . $dbType . 'Database';
         return new $dbNS(
             $dbHostname,
             $dbPort,

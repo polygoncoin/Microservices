@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Cache via Redis
+ * Handling Cache via Memcached
  * php version 8.3
  *
  * @category  Cache
@@ -15,13 +15,14 @@
 
 namespace Microservices\App\Servers\Cache;
 
-use Microservices\App\Servers\Containers\NoSql\Redis as DB_Redis;
+use Microservices\App\Servers\Cache\CacheInterface;
+use Microservices\App\Servers\Containers\NoSql\Memcached as DB_Memcached;
 
 /**
- * Caching via Redis
+ * Caching via Memcached
  * php version 8.3
  *
- * @category  Cache_Redis
+ * @category  Cache_Memcached
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -29,6 +30,6 @@ use Microservices\App\Servers\Containers\NoSql\Redis as DB_Redis;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Redis extends DB_Redis
+class MemcachedCache extends DB_Memcached implements CacheInterface
 {
 }

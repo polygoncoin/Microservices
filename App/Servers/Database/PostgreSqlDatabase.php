@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Servers\Database;
 
+use Microservices\App\Servers\Database\DatabaseInterface;
 use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
 
 /**
@@ -29,6 +30,6 @@ use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql extends DB_PostgreSql
+class PostgreSqlDatabase extends DB_PostgreSql implements DatabaseInterface
 {
 }

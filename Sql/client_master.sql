@@ -62,6 +62,14 @@ CREATE TABLE `category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `api_cache`;
+
+CREATE TABLE IF NOT EXISTS `api_cache` (
+    `key` CHAR(64) NOT NULL,
+    `value` MEDIUMBLOB,
+    PRIMARY KEY (`key`)
+) ENGINE=InnoDB;
+
 LOCK TABLES `master_users` WRITE;
 /*!40000 ALTER TABLE `master_users` DISABLE KEYS */;
 INSERT INTO `master_users` VALUES

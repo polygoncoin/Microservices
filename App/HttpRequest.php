@@ -22,8 +22,6 @@ use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\App\Middleware\Auth;
 use Microservices\App\RouteParser;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
-use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * HTTP Request
@@ -49,14 +47,14 @@ class HttpRequest extends DbFunctions
     /**
      * Cache object
      *
-     * @var null|AbstractCache
+     * @var null|Object
      */
     public $cache = null;
 
     /**
      * SQL Cache object
      *
-     * @var null|AbstractCache
+     * @var null|Object
      */
     public $sqlCache = null;
 
@@ -70,7 +68,7 @@ class HttpRequest extends DbFunctions
     /**
      * Database object
      *
-     * @var null|AbstractDatabase
+     * @var null|Object
      */
     public $db = null;
 

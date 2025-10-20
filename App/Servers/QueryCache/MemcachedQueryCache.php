@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Cache via MongoDb
+ * Handling Query Cache via Memcached
  * php version 8.3
  *
- * @category  Cache
+ * @category  QueryCache
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,16 +13,16 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Containers\NoSql;
+namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
+use Microservices\App\Servers\QueryCache\QueryCacheInterface;
 
 /**
- * Caching via MongoDb
+ * Query Caching via Memcached
  * php version 8.3
  *
- * @category  Cache_MongoDb
+ * @category  QueryCache_Memcached
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -30,12 +30,8 @@ use Microservices\App\Servers\Containers\NoSql\AbstractCache;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class MongoDb extends AbstractCache
+class MemcachedQueryCache implements QueryCacheInterface
 {
-    // "mongodb://<username>:<password>@<cluster-url>:<port>/<database-name>
-    // ?retryWrites=true&w=majority"
-    private $uri = null;
-
     /**
      * Cache hostname
      *
@@ -51,53 +47,11 @@ class MongoDb extends AbstractCache
     private $port = null;
 
     /**
-     * Cache password
+     * Cache connection
      *
-     * @var null|string
-     */
-    private $username = null;
-
-    /**
-     * Cache password
-     *
-     * @var null|string
-     */
-    private $password = null;
-
-    /**
-     * Cache database
-     *
-     * @var null|string
-     */
-    private $database = null;
-
-    /**
-     * Cache collection
-     *
-     * @var null|string
-     */
-    public $table = 'key_value';
-
-    /**
-     * Cache Object
-     *
-     * @var null|\MongoDB\Client
+     * @var null|\Memcached
      */
     private $cache = null;
-
-    /**
-     * Database Object
-     *
-     * @var null|Object
-     */
-    private $databaseObj = null;
-
-    /**
-     * Collection Object
-     *
-     * @var null|Object
-     */
-    private $collectionObj = null;
 
     /**
      * Cache connection
@@ -119,10 +73,6 @@ class MongoDb extends AbstractCache
     ) {
         $this->hostname = $hostname;
         $this->port = $port;
-        $this->username = $username;
-        $this->password = $password;
-        $this->database = $database;
-        $this->table = $table;
     }
 
     /**
@@ -134,25 +84,19 @@ class MongoDb extends AbstractCache
     public function connect(): void
     {
         if ($this->cache !== null) {
-             return;
+            return;
+        }
+
+        if (!extension_loaded(extension: 'memcached')) {
+            throw new \Exception(
+                message: 'Unable to find Memcached extension',
+                code: HttpStatus::$InternalServerError
+            );
         }
 
         try {
-            if ($this->uri === null) {
-                $UP = '';
-                if ($this->username !== null && $this->password !== null) {
-                    $UP = "{$this->username}:{$this->password}@";
-                }
-                $this->uri = 'mongodb://' . $UP .
-                    $this->hostname . ':' . $this->port;
-            }
-            $this->cache = new \MongoDB\Client($this->uri);
-
-            // Select a database
-            $this->databaseObj = $this->cache->selectDatabase($this->database);
-
-            // Select a collection
-            $this->collectionObj = $this->databaseObj->selectCollection($this->table);
+            $this->cache = new \Memcached();
+            $this->cache->addServer($this->hostname, $this->port);
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -172,12 +116,7 @@ class MongoDb extends AbstractCache
     {
         $this->connect();
 
-        $filter = ['key' => $key];
-
-        if ($document = $this->collection->findOne($filter)) {
-            return true;
-        }
-        return false;
+        return $this->getCache(key: $key) !== false;
     }
 
     /**
@@ -191,8 +130,7 @@ class MongoDb extends AbstractCache
     {
         $this->connect();
 
-        $filter = ['key' => $key];
-        return $this->collection->findOne($filter);
+        return $this->cache->get($key);
     }
 
     /**
@@ -207,14 +145,7 @@ class MongoDb extends AbstractCache
     {
         $this->connect();
 
-        $document = [
-            'key' => $key,
-            'value' => $value
-        ];
-        if ($this->collection->insertOne($document)) {
-            return true;
-        }
-        return false;
+        return $this->cache->set($key, $value);
     }
 
     /**
@@ -228,10 +159,6 @@ class MongoDb extends AbstractCache
     {
         $this->connect();
 
-        $filter = ['key' => $key];
-        if ($this->collection->deleteOne($filter)) {
-            return true;
-        }
-        return false;
+        return $this->cache->delete($key);
     }
 }

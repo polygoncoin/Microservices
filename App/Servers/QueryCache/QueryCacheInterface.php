@@ -16,10 +16,10 @@
 namespace Microservices\App\Servers\QueryCache;
 
 /**
- * Query Cache Abstract class
+ * Query Cache Interface
  * php version 8.3
  *
- * @category  Query_Cache_Abstract_Class
+ * @category  Query_Cache_Interface
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -27,14 +27,14 @@ namespace Microservices\App\Servers\QueryCache;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-abstract class AbstractQueryCache
+interface QueryCacheInterface
 {
     /**
      * Cache connection
      *
      * @return void
      */
-    abstract public function connect(): void;
+    public function connect(): void;
 
     /**
      * Checks if cache key exist
@@ -43,7 +43,7 @@ abstract class AbstractQueryCache
      *
      * @return mixed
      */
-    abstract public function cacheExists($key): mixed;
+    public function cacheExists($key): mixed;
 
     /**
      * Get cache on basis of key
@@ -52,18 +52,17 @@ abstract class AbstractQueryCache
      *
      * @return mixed
      */
-    abstract public function getCache($key): mixed;
+    public function getCache($key): mixed;
 
     /**
      * Set cache on basis of key
      *
      * @param string $key    Cache key
      * @param string $value  Cache value
-     * @param int    $expire Seconds to expire. Default 0 - doesn't expire
      *
      * @return mixed
      */
-    abstract public function setCache($key, $value, $expire = null): mixed;
+    public function setCache($key, $value): mixed;
 
     /**
      * Delete cache on basis of key
@@ -72,5 +71,5 @@ abstract class AbstractQueryCache
      *
      * @return mixed
      */
-    abstract public function deleteCache($key): mixed;
+    public function deleteCache($key): mixed;
 }

@@ -15,8 +15,6 @@
 
 namespace Microservices\App;
 
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
-
 /**
  * Rate Limiter
  * php version 8.3
@@ -34,7 +32,7 @@ class RateLimiter
     /**
      * Caching object
      *
-     * @var null|AbstractCache
+     * @var null|Object
      */
     private $cache = null;
 
@@ -46,20 +44,32 @@ class RateLimiter
     private $currentTimestamp = null;
 
     /**
+     * Rate Limiter
+     *
+     * @var null|HttpRequest
+     */
+    private $req = null;
+
+    /**
      * Constructor
      *
-     * @throws \Exception
+     * @param HttpRequest $req HTTP Request object
      */
-    public function __construct()
+    public function __construct(&$req)
     {
+        $this->req = &$req;
+
         $rateLimitHostType = getenv(name: 'rateLimitHostType');
         $rateLimitHost = getenv(name: 'rateLimitHost');
         $rateLimitHostPort = getenv(name: 'rateLimitHostPort');
 
-        $this->cache = $this->connectCache(
+        $this->cache = $this->req->connectCache(
             cacheType: $rateLimitHostType,
             cacheHostname: $rateLimitHost,
-            cachePort: $rateLimitHostPort
+            cachePort: $rateLimitHostPort,
+            cacheUsername: '',
+            cachePassword: '',
+            cacheDatabase: ''
         );
 
         $this->currentTimestamp = time();
@@ -110,26 +120,5 @@ class RateLimiter
             'remaining' => $remaining,
             'resetAt' => $resetAt
         ];
-    }
-
-    /**
-     * Connect and get cache server object
-     *
-     * @param string $cacheType     Cache type
-     * @param string $cacheHostname Hostname
-     * @param int    $cachePort     Port
-     *
-     * @return object
-     */
-    private function connectCache(
-        $cacheType,
-        $cacheHostname,
-        $cachePort
-    ): object {
-        $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType;
-        return new $cacheNS(
-            $cacheHostname,
-            $cachePort
-        );
     }
 }

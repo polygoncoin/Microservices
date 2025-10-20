@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Cache via Memcached
+ * Handling Database via MySQL
  * php version 8.3
  *
- * @category  Cache
+ * @category  Database
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,15 +13,16 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Cache;
+namespace Microservices\App\Servers\Database;
 
-use Microservices\App\Servers\Containers\NoSql\Memcached as DB_Memcached;
+use Microservices\App\Servers\Database\DatabaseInterface;
+use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
- * Caching via Memcached
+ * MySQL Database
  * php version 8.3
  *
- * @category  Cache_Memcached
+ * @category  Database_MySQL
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -29,6 +30,6 @@ use Microservices\App\Servers\Containers\NoSql\Memcached as DB_Memcached;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Memcached extends DB_Memcached
+class MySqlDatabase extends DB_MySql implements DatabaseInterface
 {
 }

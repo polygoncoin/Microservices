@@ -16,7 +16,7 @@
 namespace Microservices\App\Servers\Cache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
+use Microservices\App\Servers\Cache\CacheInterface;
 use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
@@ -31,7 +31,7 @@ use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class MySql extends AbstractCache
+class MySqlCache implements CacheInterface
 {
     /**
      * Cache hostname

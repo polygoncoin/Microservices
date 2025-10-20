@@ -16,7 +16,6 @@
 namespace Microservices\App\Servers\Containers\NoSql;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
 
 /**
  * Caching via Redis
@@ -30,7 +29,7 @@ use Microservices\App\Servers\Containers\NoSql\AbstractCache;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Redis extends AbstractCache
+class Redis
 {
     /**
      * Cache hostname

@@ -17,7 +17,6 @@ namespace Microservices\public_html\Validation;
 
 use Microservices\App\Common;
 use Microservices\App\Env;
-use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 use Microservices\public_html\Validation\ValidatorInterface;
 use Microservices\public_html\Validation\ValidatorTrait;
 
@@ -40,7 +39,7 @@ class ClientValidator implements ValidatorInterface
     /**
      * Database object
      *
-     * @var null|AbstractDatabase
+     * @var null|Object
      */
     public $db = null;
 

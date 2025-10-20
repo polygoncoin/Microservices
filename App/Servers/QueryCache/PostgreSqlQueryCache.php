@@ -16,8 +16,8 @@
 namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Cache\AbstractQueryCache;
-use Microservices\App\Servers\Database\PostgreSql as DB_PostgreSql;
+use Microservices\App\Servers\QueryCache\QueryCacheInterface;
+use Microservices\App\Servers\Containers\Sql\PostgreSql as DB_PostgreSql;
 
 /**
  * Query Caching via PostgreSql
@@ -31,7 +31,7 @@ use Microservices\App\Servers\Database\PostgreSql as DB_PostgreSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql extends AbstractQueryCache
+class PostgreSqlQueryCache implements QueryCacheInterface
 {
     /**
      * Cache hostname

@@ -20,7 +20,6 @@ use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
-use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * Login
@@ -39,7 +38,7 @@ class Login
     /**
      * Database object
      *
-     * @var null|AbstractDatabase
+     * @var null|Object
      */
     public $db = null;
 

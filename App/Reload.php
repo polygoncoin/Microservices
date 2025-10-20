@@ -18,8 +18,6 @@ namespace Microservices\App;
 use Microservices\App\AppTrait;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
-use Microservices\App\Servers\Containers\NoSql\AbstractCache;
-use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * Load CacheServerKeys_Required
@@ -40,14 +38,14 @@ class Reload
     /**
      * Database object
      *
-     * @var null|AbstractDatabase
+     * @var null|Object
      */
     public $db = null;
 
     /**
      * Caching object
      *
-     * @var null|AbstractCache
+     * @var null|Object
      */
     public $cache = null;
 

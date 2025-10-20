@@ -13,13 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\Servers\Containers\NoSql;
+namespace Microservices\App\Servers\Cache;
 
 /**
- * NoSql Container (Cache) Abstract class
+ * NoSql Container (Cache) Interface
  * php version 8.3
  *
- * @category  Cache_Abstract_Class
+ * @category  Cache_Interface
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -27,14 +27,14 @@ namespace Microservices\App\Servers\Containers\NoSql;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-abstract class AbstractCache
+interface CacheInterface
 {
     /**
      * Cache connection
      *
      * @return void
      */
-    abstract public function connect(): void;
+    public function connect(): void;
 
     /**
      * Checks if cache key exist
@@ -43,7 +43,7 @@ abstract class AbstractCache
      *
      * @return mixed
      */
-    abstract public function cacheExists($key): mixed;
+    public function cacheExists($key): mixed;
 
     /**
      * Get cache on basis of key
@@ -52,7 +52,7 @@ abstract class AbstractCache
      *
      * @return mixed
      */
-    abstract public function getCache($key): mixed;
+    public function getCache($key): mixed;
 
     /**
      * Set cache on basis of key
@@ -63,7 +63,7 @@ abstract class AbstractCache
      *
      * @return mixed
      */
-    abstract public function setCache($key, $value, $expire = null): mixed;
+    public function setCache($key, $value, $expire = null): mixed;
 
     /**
      * Increment Key value with offset
@@ -73,7 +73,7 @@ abstract class AbstractCache
      *
      * @return int
      */
-    abstract public function incrementCache($key, $offset = 1): int;
+    public function incrementCache($key, $offset = 1): int;
 
     /**
      * Delete cache on basis of key
@@ -82,5 +82,5 @@ abstract class AbstractCache
      *
      * @return mixed
      */
-    abstract public function deleteCache($key): mixed;
+    public function deleteCache($key): mixed;
 }

@@ -22,7 +22,6 @@ use Microservices\App\Env;
 use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
 use Microservices\App\Web;
-use Microservices\App\Servers\Containers\Sql\AbstractDatabase;
 
 /**
  * Read APIs
@@ -43,7 +42,7 @@ class Read
     /**
      * Database object
      *
-     * @var null|AbstractDatabase
+     * @var null|Object
      */
     public $db = null;
 
