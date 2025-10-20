@@ -269,13 +269,13 @@ class DbFunctions
     }
 
     /**
-     * Set Cache prefix key
+     * Get Query cache
      *
      * @param string $cacheKey Cache Key from Queries configuration
      *
      * @return mixed
      */
-    public function getDqlCache($cacheKey): mixed
+    public function getQueryCache($cacheKey): mixed
     {
         if ($this->req->sqlCache === null) {
             $this->req->sqlCache = $this->setCacheConnection(fetchFrom: 'Slave');
@@ -289,14 +289,14 @@ class DbFunctions
     }
 
     /**
-     * Set DQL Cache as JSON
+     * Set Query cache
      *
      * @param string $cacheKey Cache Key from Queries configuration
      * @param string $json     JSON
      *
      * @return void
      */
-    public function setDmlCache($cacheKey, &$json): void
+    public function setQueryCache($cacheKey, &$json): void
     {
         if ($this->req->sqlCache === null) {
             $this->req->sqlCache = $this->setCacheConnection(fetchFrom: 'Master');
@@ -306,13 +306,13 @@ class DbFunctions
     }
 
     /**
-     * Delete DQL Cache
+     * Delete Query Cache
      *
      * @param string $cacheKey Cache Key from Queries configuration
      *
      * @return void
      */
-    public function delDmlCache($cacheKey): void
+    public function delQueryCache($cacheKey): void
     {
         if ($this->req->sqlCache === null) {
             $this->req->sqlCache = $this->setCacheConnection(fetchFrom: 'Master');

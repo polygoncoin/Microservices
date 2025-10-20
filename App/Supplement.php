@@ -171,7 +171,7 @@ class Supplement
                     $i < $iCount;
                     $i++
                 ) {
-                    $this->c->req->delDmlCache(
+                    $this->c->req->delQueryCache(
                         cacheKey: $sSqlConfig['affectedCacheKeys'][$i]
                     );
                 }

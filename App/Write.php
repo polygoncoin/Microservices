@@ -161,7 +161,7 @@ class Write
                     $i < $iCount;
                     $i++
                 ) {
-                    $this->c->req->delDmlCache(
+                    $this->c->req->delQueryCache(
                         cacheKey: $wSqlConfig['affectedCacheKeys'][$i]
                     );
                 }

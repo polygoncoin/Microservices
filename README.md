@@ -75,12 +75,12 @@ clients='m001_master_clients'
 
 ### Default database shared by most of the clients
 ```ini
-defaultDbType='MySql'
-defaultDbHostname='127.0.0.1'
-defaultDbPort=3306
-defaultDbUsername='root'
-defaultDbPassword='shames11'
-defaultDbDatabase='global'
+defaultClientDbType='MySql'
+defaultClientDbHostname='127.0.0.1'
+defaultClientDbPort=3306
+defaultClientDbUsername='root'
+defaultClientDbPassword='shames11'
+defaultClientDbDatabase='global'
 ```
 
 ### Example of seperate database for client 1 on Default database server
@@ -99,7 +99,7 @@ dbDatabaseClient001='client_001'
 ### Additional table details for database server
 ```ini
 clientMasterDbName='client_master'  ;contains all entities required for a new client.
-client_users='master_users'         ;Table in client database containing user details.
+clientUsers='master_users'         ;Table in client database containing user details.
 ```
 
 These DB/Cache configurations can be set in below columns respectively for each client.

@@ -157,7 +157,7 @@ class Reload
                     SELECT
                         *
                     FROM
-                        `{$this->execPhpFunc(param: getenv(name: 'client_users'))}` U
+                        `{$this->execPhpFunc(param: getenv(name: 'clientUsers'))}` U
                     ",
                 params: []
             );

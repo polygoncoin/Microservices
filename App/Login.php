@@ -372,7 +372,7 @@ class Login
         $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: 'Master');
         $this->db = &$this->c->req->db;
 
-        $userTable = Env::$client_users;
+        $userTable = Env::$clientUsers;
         $this->db->execDbQuery(
             sql: "
                 UPDATE

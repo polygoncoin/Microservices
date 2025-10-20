@@ -39,7 +39,7 @@ class Env
     public static $configRequestUriKeyword = null;
 
     public static $groups = null;
-    public static $client_users = null;
+    public static $clientUsers = null;
     public static $clients = null;
 
     public static $maxPerPage = null;
@@ -90,7 +90,7 @@ class Env
         self::$configRequestUriKeyword = getenv(name: 'configRequestUriKeyword');
 
         self::$groups = getenv(name: 'groups');
-        self::$client_users = getenv(name: 'client_users');
+        self::$clientUsers = getenv(name: 'clientUsers');
         self::$clients = getenv(name: 'clients');
 
         self::$maxPerPage = getenv(name: 'maxPerPage');
