@@ -78,7 +78,7 @@ class PostgreSqlQueryCache implements QueryCacheInterface
     /**
      * Cache connection
      *
-     * @var null|Pg_MySql
+     * @var null|DB_PostgreSql
      */
     private $cache = null;
 

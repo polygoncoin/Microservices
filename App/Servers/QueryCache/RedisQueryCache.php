@@ -17,6 +17,7 @@ namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
 use Microservices\App\Servers\QueryCache\QueryCacheInterface;
+use Microservices\App\Servers\Containers\NoSql\Redis as Cache_Redis;
 
 /**
  * Caching via Redis
@@ -68,9 +69,16 @@ class RedisQueryCache implements QueryCacheInterface
     private $database = null;
 
     /**
+     * Cache collection
+     *
+     * @var null|string
+     */
+    public $table = null;
+
+    /**
      * Cache connection
      *
-     * @var null|\Redis
+     * @var null|Cache_Redis
      */
     private $cache = null;
 
@@ -97,6 +105,7 @@ class RedisQueryCache implements QueryCacheInterface
         $this->username = $username;
         $this->password = $password;
         $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -111,38 +120,15 @@ class RedisQueryCache implements QueryCacheInterface
              return;
         }
 
-        if (!extension_loaded(extension: 'redis')) {
-            throw new \Exception(
-                message: 'Unable to find Redis extension',
-                code: HttpStatus::$InternalServerError
-            );
-        }
-
         try {
-            // https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
-            $connParams = [
-                'host' => $this->hostname,
-                'port' => (int)$this->port,
-                'connectTimeout' => 2.5
-            ];
-
-            if (
-                ($this->username !== '')
-                && ($this->password !== '')
-            ) {
-                $connParams['auth'] = [
-                    $this->username,
-                    $this->password
-                ];
-            }
-            $this->cache = new \Redis($connParams);
-
-            if (!$this->cache->ping()) {
-                throw new \Exception(
-                    message: 'Unable to ping cache',
-                    code: HttpStatus::$InternalServerError
-                );
-            }
+            $this->cache = new Cache_Redis(
+                hostname: $this->hostname,
+                port: $this->port,
+                username: $this->username,
+                password: $this->password,
+                database: $this->database,
+                table: $this->table
+            );
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -162,7 +148,7 @@ class RedisQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->exists($key);
+        return $this->cache->cacheExists(key: $key);
     }
 
     /**
@@ -176,7 +162,7 @@ class RedisQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->get($key);
+        return $this->cache->getCache($key);
     }
 
     /**
@@ -191,7 +177,7 @@ class RedisQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->set($key, $value);
+        return $this->cache->setCache($key, $value);
     }
 
     /**
@@ -205,6 +191,6 @@ class RedisQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->del($key);
+        return $this->cache->deleteCache($key);
     }
 }

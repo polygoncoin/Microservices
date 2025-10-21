@@ -17,6 +17,7 @@ namespace Microservices\App\Servers\Containers\NoSql;
 
 use Microservices\App\HttpStatus;
 use Microservices\App\Servers\QueryCache\QueryCacheInterface;
+use Microservices\App\Servers\Containers\NoSql\MongoDb as Cache_MongoDb;
 
 /**
  * Caching via MongoDb
@@ -76,12 +77,12 @@ class MongoDbQueryCache implements QueryCacheInterface
      *
      * @var null|string
      */
-    public $table = 'key_value';
+    public $table = null;
 
     /**
      * Cache Object
      *
-     * @var null|\MongoDB\Client
+     * @var null|Cache_MongoDb
      */
     private $cache = null;
 
@@ -138,21 +139,14 @@ class MongoDbQueryCache implements QueryCacheInterface
         }
 
         try {
-            if ($this->uri === null) {
-                $UP = '';
-                if ($this->username !== null && $this->password !== null) {
-                    $UP = "{$this->username}:{$this->password}@";
-                }
-                $this->uri = 'mongodb://' . $UP .
-                    $this->hostname . ':' . $this->port;
-            }
-            $this->cache = new \MongoDB\Client($this->uri);
-
-            // Select a database
-            $this->databaseObj = $this->cache->selectDatabase($this->database);
-
-            // Select a collection
-            $this->collectionObj = $this->databaseObj->selectCollection($this->table);
+            $this->cache = new Cache_MongoDb(
+                hostname: $this->hostname,
+                port: $this->port,
+                username: $this->username,
+                password: $this->password,
+                database: $this->database,
+                table: $this->table
+            );
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -172,12 +166,7 @@ class MongoDbQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        $filter = ['key' => $key];
-
-        if ($document = $this->collection->findOne($filter)) {
-            return true;
-        }
-        return false;
+        return $this->cache->cacheExists(key: $key);
     }
 
     /**
@@ -191,8 +180,7 @@ class MongoDbQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        $filter = ['key' => $key];
-        return $this->collection->findOne($filter);
+        return $this->cache->getCache($key);
     }
 
     /**
@@ -207,14 +195,7 @@ class MongoDbQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        $document = [
-            'key' => $key,
-            'value' => $value
-        ];
-        if ($this->collection->insertOne($document)) {
-            return true;
-        }
-        return false;
+        return $this->cache->setCache($key, $value);
     }
 
     /**
@@ -228,10 +209,6 @@ class MongoDbQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        $filter = ['key' => $key];
-        if ($this->collection->deleteOne($filter)) {
-            return true;
-        }
-        return false;
+        return $this->cache->deleteCache($key);
     }
 }

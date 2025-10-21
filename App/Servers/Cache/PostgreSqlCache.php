@@ -155,9 +155,9 @@ class PostgreSqlCache implements CacheInterface
         $this->connect();
 
         $sql = "
-            SELECT count(1) as `count`
-            FROM `{$this->table}`
-            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
+            SELECT count(1) as count
+            FROM {$this->table}
+            WHERE key = ? AND (ts = 0 OR ts > ?)
         ";
         $params = [$key, $this->ts];
 
@@ -180,9 +180,9 @@ class PostgreSqlCache implements CacheInterface
         $this->connect();
 
         $sql = "
-            SELECT `value`
-            FROM `{$this->table}`
-            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
+            SELECT value
+            FROM {$this->table}
+            WHERE key = ? AND (ts = 0 OR ts > ?)
         ";
         $params = [$key, $this->ts];
         $this->cache->execDbQuery(sql: $sql, params: $params);
@@ -208,8 +208,8 @@ class PostgreSqlCache implements CacheInterface
         $this->deleteCache($key);
 
         $sql = "
-            INSERT INTO `{$this->table}`
-            SET `value` = ?, `ts` = ?, `key` = ?
+            INSERT INTO {$this->table}
+            SET value = ?, ts = ?, key = ?
         ";
         if ($expire === null) {
             $params = [$value, 0, $key];
@@ -234,7 +234,7 @@ class PostgreSqlCache implements CacheInterface
     {
         $this->connect();
 
-        $sql = "DELETE FROM `{$this->table}` WHERE `key` = ?";
+        $sql = "DELETE FROM {$this->table} WHERE key = ?";
         $params = [$key];
         $this->cache->execDbQuery(sql: $sql, params: $params);
         $this->cache->closeCursor();

@@ -17,6 +17,7 @@ namespace Microservices\App\Servers\QueryCache;
 
 use Microservices\App\HttpStatus;
 use Microservices\App\Servers\QueryCache\QueryCacheInterface;
+use Microservices\App\Servers\Containers\NoSql\Memcached as Cache_Memcached;
 
 /**
  * Query Caching via Memcached
@@ -47,9 +48,37 @@ class MemcachedQueryCache implements QueryCacheInterface
     private $port = null;
 
     /**
+     * Cache password
+     *
+     * @var null|string
+     */
+    private $username = null;
+
+    /**
+     * Cache password
+     *
+     * @var null|string
+     */
+    private $password = null;
+
+    /**
+     * Cache database
+     *
+     * @var null|string
+     */
+    private $database = null;
+
+    /**
+     * Cache collection
+     *
+     * @var null|string
+     */
+    public $table = null;
+
+    /**
      * Cache connection
      *
-     * @var null|\Memcached
+     * @var null|Cache_Memcached
      */
     private $cache = null;
 
@@ -73,6 +102,10 @@ class MemcachedQueryCache implements QueryCacheInterface
     ) {
         $this->hostname = $hostname;
         $this->port = $port;
+        $this->username = $username;
+        $this->password = $password;
+        $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -87,16 +120,15 @@ class MemcachedQueryCache implements QueryCacheInterface
             return;
         }
 
-        if (!extension_loaded(extension: 'memcached')) {
-            throw new \Exception(
-                message: 'Unable to find Memcached extension',
-                code: HttpStatus::$InternalServerError
-            );
-        }
-
         try {
-            $this->cache = new \Memcached();
-            $this->cache->addServer($this->hostname, $this->port);
+            $this->cache = new Cache_Memcached(
+                hostname: $this->hostname,
+                port: $this->port,
+                username: $this->username,
+                password: $this->password,
+                database: $this->database,
+                table: $this->table
+            );
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -116,7 +148,7 @@ class MemcachedQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->getCache(key: $key) !== false;
+        return $this->cache->cacheExists(key: $key);
     }
 
     /**
@@ -130,7 +162,7 @@ class MemcachedQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->get($key);
+        return $this->cache->getCache($key);
     }
 
     /**
@@ -145,7 +177,7 @@ class MemcachedQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->set($key, $value);
+        return $this->cache->setCache($key, $value);
     }
 
     /**
@@ -159,6 +191,6 @@ class MemcachedQueryCache implements QueryCacheInterface
     {
         $this->connect();
 
-        return $this->cache->delete($key);
+        return $this->cache->deleteCache($key);
     }
 }

@@ -33,6 +33,7 @@ interface CacheInterface
      * Cache connection
      *
      * @return void
+     * @throws \Exception
      */
     public function connect(): void;
 
@@ -76,7 +77,7 @@ interface CacheInterface
     public function incrementCache($key, $offset = 1): int;
 
     /**
-     * Delete cache on basis of key
+     * Delete basis of key
      *
      * @param string $key Cache key
      *

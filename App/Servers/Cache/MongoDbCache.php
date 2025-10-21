@@ -16,7 +16,7 @@
 namespace Microservices\App\Servers\Cache;
 
 use Microservices\App\Servers\Cache\CacheInterface;
-use Microservices\App\Servers\Containers\NoSql\MongoDb as DB_MongoDb;
+use Microservices\App\Servers\Containers\NoSql\MongoDb as Cache_MongoDb;
 
 /**
  * Caching via MongoDb
@@ -30,7 +30,7 @@ use Microservices\App\Servers\Containers\NoSql\MongoDb as DB_MongoDb;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class MongoDbCache extends DB_MongoDb implements CacheInterface
+class MongoDbCache implements CacheInterface
 {
     /**
      * Cache hostname
@@ -68,31 +68,24 @@ class MongoDbCache extends DB_MongoDb implements CacheInterface
     private $database = null;
 
     /**
-     * Cache table
+     * Cache collection
      *
      * @var null|string
      */
-    private $table = null;
+    public $table = null;
 
     /**
      * Cache connection
      *
-     * @var null|DB_MySql
+     * @var null|Cache_MongoDb
      */
     private $cache = null;
-
-    /**
-     * Current timestamp
-     *
-     * @var null|int
-     */
-    private $ts = null;
 
     /**
      * Cache connection
      *
      * @param string $hostname Hostname .env string
-     * @param int    $port     Port .env string
+     * @param string $port     Port .env string
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
@@ -112,5 +105,107 @@ class MongoDbCache extends DB_MongoDb implements CacheInterface
         $this->password = $password;
         $this->database = $database;
         $this->table = $table;
+    }
+
+    /**
+     * Cache connection
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function connect(): void
+    {
+        if ($this->cache !== null) {
+            return;
+        }
+
+        try {
+            $this->cache = new Cache_MongoDb(
+                hostname: $this->hostname,
+                port: $this->port,
+                username: $this->username,
+                password: $this->password,
+                database: $this->database,
+                table: $this->table
+            );
+        } catch (\Exception $e) {
+            throw new \Exception(
+                message: $e->getMessage(),
+                code: HttpStatus::$InternalServerError
+            );
+        }
+    }
+
+    /**
+     * Checks if cache key exist
+     *
+     * @param string $key Cache key
+     *
+     * @return mixed
+     */
+    public function cacheExists($key): mixed
+    {
+        $this->connect();
+
+        return $this->cache->cacheExists(key: $key);
+    }
+
+    /**
+     * Get cache on basis of key
+     *
+     * @param string $key Cache key
+     *
+     * @return mixed
+     */
+    public function getCache($key): mixed
+    {
+        $this->connect();
+
+        return $this->cache->getCache($key);
+    }
+
+    /**
+     * Set cache on basis of key
+     *
+     * @param string $key    Cache key
+     * @param string $value  Cache value
+     * @param int    $expire Seconds to expire. Default 0 - doesn't expire
+     *
+     * @return mixed
+     */
+    public function setCache($key, $value, $expire = null): mixed
+    {
+        $this->connect();
+
+        return $this->cache->setCache($key, $value, $expire);
+    }
+
+    /**
+     * Increment Key value with offset
+     *
+     * @param string $key    Cache key
+     * @param int    $offset Offset
+     *
+     * @return int
+     */
+    public function incrementCache($key, $offset = 1): int
+    {
+        $this->connect();
+
+        return $this->cache->incrementCache($key, $offset);
+    }
+
+    /**
+     * Delete basis of key
+     *
+     * @param string $key Cache key
+     *
+     * @return mixed
+     */
+    public function deleteCache($key): mixed
+    {
+        $this->connect();
+
+        return $this->cache->deleteCache($key);
     }
 }
