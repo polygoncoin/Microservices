@@ -65,8 +65,8 @@ CREATE TABLE `category` (
 DROP TABLE IF EXISTS `api_cache`;
 
 CREATE TABLE IF NOT EXISTS `api_cache` (
-    `key` CHAR(64) NOT NULL,
-    `value` MEDIUMBLOB,
+    `key` CHAR(256) NOT NULL,
+    `value` BLOB,
     PRIMARY KEY (`key`)
 ) ENGINE=InnoDB;
 
