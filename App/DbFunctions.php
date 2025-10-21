@@ -72,7 +72,15 @@ class DbFunctions
             return;
         }
 
-        $queryCacheNS = 'Microservices\\App\\Servers\\QueryCache\\' . getenv(name: 'queryCacheType') . 'QueryCache';
+        $cacheType = getenv(name: 'queryCacheType');
+        if (!in_array($cacheType, ['Redis', 'Memcached', 'MongoDb', 'MySql', 'PostgreSql'])) {
+            throw new \Exception(
+                message: 'Invalid query cache type',
+                code: HttpStatus::$InternalServerError
+            );
+        }
+
+        $queryCacheNS = 'Microservices\\App\\Servers\\QueryCache\\' . $cacheType . 'QueryCache';
         $this->queryCacheConnection = new $queryCacheNS(
             getenv(name: 'queryCacheHostname'),
             getenv(name: 'queryCachePort'),
@@ -105,6 +113,12 @@ class DbFunctions
         $cacheDatabase,
         $cacheTable
     ): object {
+        if (!in_array($cacheType, ['Redis', 'Memcached', 'MongoDb'])) {
+            throw new \Exception(
+                message: 'Invalid Cache type',
+                code: HttpStatus::$InternalServerError
+            );
+        }
         $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType . 'Cache';
         return new $cacheNS(
             $cacheHostname,
@@ -211,6 +225,12 @@ class DbFunctions
         $dbPassword,
         $dbDatabase
     ): object {
+        if (!in_array($dbType, ['MySql', 'PostgreSql'])) {
+            throw new \Exception(
+                message: 'Invalid Database type',
+                code: HttpStatus::$InternalServerError
+            );
+        }
         $dbNS = 'Microservices\\App\\Servers\\Database\\' . $dbType . 'Database';
         return new $dbNS(
             $dbHostname,

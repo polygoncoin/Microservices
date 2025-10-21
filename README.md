@@ -122,12 +122,14 @@ These DB/Cache configurations can be set in below columns respectively for each 
 `m001_master_clients`.`master_cache_username` varchar(255) NOT NULL,
 `m001_master_clients`.`master_cache_password` varchar(255) NOT NULL,
 `m001_master_clients`.`master_cache_database` varchar(255) NOT NULL,
+`m001_master_clients`.`master_cache_table` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_server_type` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_hostname` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_port` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_username` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_password` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_database` varchar(255) NOT NULL,
+`m001_master_clients`.`slave_cache_table` varchar(255) NOT NULL,
 ```
 
 ### The Rate Limiting configurations can be set as below.
@@ -167,6 +169,19 @@ rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in
 # User level
 `master_users`.`rateLimitMaxRequests` int DEFAULT NULL,
 `master_users`.`rateLimitSecondsWindow` int DEFAULT NULL,
+```
+
+### For Cache hits configurations can be set as below.
+
+```ini
+; Supported Containers - Redis / Memcached / MySql / PostgreSql / MongoDb
+queryCacheType='Redis'
+queryCacheHostname='127.0.0.1'
+queryCachePort=6379
+queryCacheUsername='ramesh'
+queryCachePassword='shames11'
+queryCacheDatabase=0
+queryCacheTable='api_cache' ; For MySql / PostgreSql / MongoDb
 ```
 
 #### Route based Rate Limiting
