@@ -92,6 +92,7 @@ class DbFunctions
      * @param string $cacheUsername Username
      * @param string $cachePassword Password
      * @param string $cacheDatabase Database
+     * @param string $cacheTable    Table
      *
      * @return object
      */
@@ -101,7 +102,8 @@ class DbFunctions
         $cachePort,
         $cacheUsername,
         $cachePassword,
-        $cacheDatabase
+        $cacheDatabase,
+        $cacheTable
     ): object {
         $cacheNS = 'Microservices\\App\\Servers\\Cache\\' . $cacheType . 'Cache';
         return new $cacheNS(
@@ -109,7 +111,8 @@ class DbFunctions
             $cachePort,
             $cacheUsername,
             $cachePassword,
-            $cacheDatabase
+            $cacheDatabase,
+            $cacheTable
         );
     }
 
@@ -151,6 +154,9 @@ class DbFunctions
                     ),
                     cacheDatabase: getenv(
                         name: $this->req->s['cDetails']['master_cache_database']
+                    ),
+                    cacheTable:  getenv(
+                        name: $this->req->s['cDetails']['master_cache_table']
                     )
                 );
             case 'Slave':
@@ -172,6 +178,9 @@ class DbFunctions
                     ),
                     cacheDatabase: getenv(
                         name: $this->req->s['cDetails']['slave_cache_database']
+                    ),
+                    cacheTable:  getenv(
+                        name: $this->req->s['cDetails']['slave_cache_table']
                     )
                 );
             default:

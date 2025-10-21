@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Query Cache via MySQL
+ * Handling Query Cache via MySql
  * php version 8.3
  *
  * @category  QueryCache
@@ -20,10 +20,10 @@ use Microservices\App\Servers\QueryCache\QueryCacheInterface;
 use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
- * Query Caching via MySQL
+ * Query Caching via MySql
  * php version 8.3
  *
- * @category  QueryCache_MySQL
+ * @category  QueryCache_MySql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid

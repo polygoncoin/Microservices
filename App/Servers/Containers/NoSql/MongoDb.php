@@ -19,10 +19,10 @@ use Microservices\App\HttpStatus;
 use Microservices\App\Servers\Containers\NoSql\NoSqlInterface;
 
 /**
- * Redis
+ * MongoDb
  * php version 8.3
  *
- * @category  Redis
+ * @category  MongoDb
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -30,8 +30,12 @@ use Microservices\App\Servers\Containers\NoSql\NoSqlInterface;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Redis implements NoSqlInterface
+class MongoDb implements NoSqlInterface
 {
+    // "mongodb://<username>:<password>@<cluster-url>:<port>/<database-name>
+    // ?retryWrites=true&w=majority"
+    private $uri = null;
+
     /**
      * Cache hostname
      *
@@ -68,11 +72,32 @@ class Redis implements NoSqlInterface
     private $database = null;
 
     /**
-     * Cache connection
+     * Cache collection
      *
-     * @var null|\Redis
+     * @var null|string
+     */
+    public $table = null;
+
+    /**
+     * Cache Object
+     *
+     * @var null|\MongoDB\Client
      */
     private $cache = null;
+
+    /**
+     * Database Object
+     *
+     * @var null|Object
+     */
+    private $databaseObj = null;
+
+    /**
+     * Collection Object
+     *
+     * @var null|Object
+     */
+    private $collectionObj = null;
 
     /**
      * Cache connection
@@ -97,6 +122,7 @@ class Redis implements NoSqlInterface
         $this->username = $username;
         $this->password = $password;
         $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -112,34 +138,28 @@ class Redis implements NoSqlInterface
         }
 
         try {
-            // https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
-            $connParams = [
-                'host' => $this->hostname,
-                'port' => (int)$this->port,
-                'connectTimeout' => 2.5
-            ];
-
-            if (
-                ($this->username !== '')
-                && ($this->password !== '')
-            ) {
-                $connParams['auth'] = [
-                    $this->username,
-                    $this->password
-                ];
+            if ($this->uri === null) {
+                $UP = '';
+                if ($this->username !== null && $this->password !== null) {
+                    $UP = "{$this->username}:{$this->password}@";
+                }
+                $this->uri = 'mongodb://' . $UP .
+                    $this->hostname . ':' . $this->port;
             }
-            $this->cache = new \Redis($connParams);
+            $this->cache = new \MongoDB\Client($this->uri);
 
-            if ($this->database !== null) {
-                $this->cache->select($this->database);
-            }
+            // Select a database
+            $this->databaseObj = $this->cache->selectDatabase($this->database);
 
-            if (!$this->cache->ping()) {
-                throw new \Exception(
-                    message: 'Unable to ping cache',
-                    code: HttpStatus::$InternalServerError
-                );
-            }
+            // Select a collection
+            $this->collectionObj = $this->databaseObj->selectCollection($this->table);
+
+            // Create the TTL index
+            // Set the indexed field to 'expireAt' and expireAfterSeconds to 0
+            $this->collectionObj->createIndex(
+                ['expireAt' => 1],
+                ['expireAfterSeconds' => 0]
+            );
         } catch (\Exception $e) {
             throw new \Exception(
                 message: $e->getMessage(),
@@ -159,7 +179,12 @@ class Redis implements NoSqlInterface
     {
         $this->connect();
 
-        return $this->cache->exists($key);
+        $filter = ['key' => $key];
+
+        if ($document = $this->collectionObj->findOne($filter)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -173,7 +198,8 @@ class Redis implements NoSqlInterface
     {
         $this->connect();
 
-        return $this->cache->get($key);
+        $filter = ['key' => $key];
+        return $this->collectionObj->findOne($filter);
     }
 
     /**
@@ -189,11 +215,25 @@ class Redis implements NoSqlInterface
     {
         $this->connect();
 
+        $document = [
+            'key' => $key,
+            'value' => $value
+        ];
+
         if ($expire === null) {
-            return $this->cache->set($key, $value);
+            if ($this->collectionObj->insertOne($document)) {
+                return true;
+            }
         } else {
-            return $this->cache->set($key, $value, $expire);
+            // Current UTC timestamp
+            $document['expireAt'] = new MongoDB\BSON\UTCDateTime(
+                (time() + $expire) * 1000
+            );
+            if ($this->collectionObj->insertOne($document)) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -208,7 +248,11 @@ class Redis implements NoSqlInterface
     {
         $this->connect();
 
-        return $this->cache->incrBy($key, $offset);
+        $filter = ['key' => $key];
+        $update = ['$inc' => ['value' => $offset]];
+        $result = $collectionObj->updateOne($filter, $update);
+
+        return $result->getModifiedCount();
     }
 
     /**
@@ -222,6 +266,10 @@ class Redis implements NoSqlInterface
     {
         $this->connect();
 
-        return $this->cache->del($key);
+        $filter = ['key' => $key];
+        if ($this->collectionObj->deleteOne($filter)) {
+            return true;
+        }
+        return false;
     }
 }

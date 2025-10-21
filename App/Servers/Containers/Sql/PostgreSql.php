@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Database via PostgreSql
+ * Sql Database
  * php version 8.3
  *
- * @category  Database
+ * @category  Sql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -16,12 +16,13 @@
 namespace Microservices\App\Servers\Containers\Sql;
 
 use Microservices\App\HttpStatus;
+use Microservices\App\Servers\Containers\Sql\SqlInterface;
 
 /**
  * PostgreSql Database
  * php version 8.3
  *
- * @category  Database_PostgreSql
+ * @category  PostgreSql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -29,7 +30,7 @@ use Microservices\App\HttpStatus;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class PostgreSql
+class PostgreSql implements SqlInterface
 {
     /**
      * Database hostname
@@ -108,16 +109,13 @@ class PostgreSql
         $port,
         $username,
         $password,
-        $database = null
+        $database
     ) {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-
-        if ($database !== null) {
-            $this->database = $database;
-        }
+        $this->database = $database;
     }
 
     /**
@@ -163,7 +161,7 @@ class PostgreSql
      */
     public function begin(): void
     {
-        $this->useDatabase();
+        $this->connect();
 
         $this->beganTransaction = true;
         try {
@@ -268,7 +266,7 @@ class PostgreSql
      */
     public function execDbQuery($sql, $params = [], $pushPop = false): void
     {
-        $this->useDatabase();
+        $this->connect();
 
         try {
             if ($pushPop && $this->stmt) {

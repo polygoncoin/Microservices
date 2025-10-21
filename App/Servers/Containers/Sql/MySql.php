@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Database via MySQL
+ * Sql Database
  * php version 8.3
  *
- * @category  Database
+ * @category  Sql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -16,12 +16,13 @@
 namespace Microservices\App\Servers\Containers\Sql;
 
 use Microservices\App\HttpStatus;
+use Microservices\App\Servers\Containers\Sql\SqlInterface;
 
 /**
- * MySQL Database
+ * MySql Database
  * php version 8.3
  *
- * @category  Database_MySQL
+ * @category  MySql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -29,7 +30,7 @@ use Microservices\App\HttpStatus;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class MySql
+class MySql implements SqlInterface
 {
     /**
      * Database hostname
@@ -108,16 +109,13 @@ class MySql
         $port,
         $username,
         $password,
-        $database = null
+        $database
     ) {
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-
-        if ($database !== null) {
-            $this->database = $database;
-        }
+        $this->database = $database;
     }
 
     /**
@@ -180,7 +178,7 @@ class MySql
      */
     public function begin(): void
     {
-        $this->useDatabase();
+        $this->connect();
 
         $this->beganTransaction = true;
         try {
@@ -285,7 +283,7 @@ class MySql
      */
     public function execDbQuery($sql, $params = [], $pushPop = false): void
     {
-        $this->useDatabase();
+        $this->connect();
 
         try {
             if ($pushPop && $this->stmt) {

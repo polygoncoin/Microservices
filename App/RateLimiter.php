@@ -69,7 +69,8 @@ class RateLimiter
             cachePort: $rateLimitHostPort,
             cacheUsername: '',
             cachePassword: '',
-            cacheDatabase: ''
+            cacheDatabase: '',
+            cacheTable: ''
         );
 
         $this->currentTimestamp = time();

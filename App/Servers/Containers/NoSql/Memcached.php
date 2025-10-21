@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling Cache via Memcached
+ * NoSql Database
  * php version 8.3
  *
- * @category  Cache
+ * @category  NoSql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -16,12 +16,13 @@
 namespace Microservices\App\Servers\Containers\NoSql;
 
 use Microservices\App\HttpStatus;
+use Microservices\App\Servers\Containers\NoSql\NoSqlInterface;
 
 /**
- * Caching via Memcached
+ * Memcached
  * php version 8.3
  *
- * @category  Cache_Memcached
+ * @category  Memcached
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -29,7 +30,7 @@ use Microservices\App\HttpStatus;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Memcached
+class Memcached implements NoSqlInterface
 {
     /**
      * Cache hostname
@@ -60,13 +61,15 @@ class Memcached
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
+     * @param string $table    Table .env string
      */
     public function __construct(
         $hostname,
         $port,
-        $username = '',
-        $password = '',
-        $database = ''
+        $username,
+        $password,
+        $database,
+        $table
     ) {
         $this->hostname = $hostname;
         $this->port = $port;

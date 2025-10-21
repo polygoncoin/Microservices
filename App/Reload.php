@@ -89,7 +89,8 @@ class Reload
             cachePort: getenv(name: 'globalCachePort'),
             cacheUsername: getenv(name: 'globalCacheUsername'),
             cachePassword: getenv(name: 'globalCachePassword'),
-            cacheDatabase: getenv(name: 'globalCacheDatabase')
+            cacheDatabase: getenv(name: 'globalCacheDatabase'),
+            cacheTable: getenv(name: 'globalCacheTable')
         );
 
         $this->processDomainAndUser();

@@ -68,6 +68,13 @@ class PostgreSqlCache implements CacheInterface
     private $database = null;
 
     /**
+     * Cache table
+     *
+     * @var null|string
+     */
+    private $table = null;
+
+    /**
      * Cache connection
      *
      * @var null|DB_PostgreSql
@@ -89,18 +96,23 @@ class PostgreSqlCache implements CacheInterface
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
+     * @param string $table    Table .env string
      */
-    public function __construct($hostname, $port, $username, $password, $database)
-    {
+    public function __construct(
+        $hostname,
+        $port,
+        $username,
+        $password,
+        $database,
+        $table
+    ) {
         $this->ts = time();
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-
-        if ($database !== null) {
-            $this->database = $database;
-        }
+        $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -132,30 +144,28 @@ class PostgreSqlCache implements CacheInterface
     }
 
     /**
-     * Use Database
-     *
-     * @return void
-     */
-    public function useDatabase(): void
-    {
-        $this->connect();
-        if ($this->database !== null) {
-            $this->cache->useDatabase();
-        }
-    }
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
      *
-     * @return bool
+     * @return mixed
      */
-    public function cacheExists($key): bool
+    public function cacheExists($key): mixed
     {
-        $this->useDatabase();
-        $keyDetails = $this->getKeyDetails(key: $key);
-        return $keyDetails['count'] === 1;
+        $this->connect();
+
+        $sql = "
+            SELECT count(1) as `count`
+            FROM `{$this->table}`
+            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
+        ";
+        $params = [$key, $this->ts];
+
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        $row = $this->cache->fetch();
+        $this->cache->closeCursor();
+
+        return $row['count'] === 1;
     }
 
     /**
@@ -167,24 +177,20 @@ class PostgreSqlCache implements CacheInterface
      */
     public function getCache($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
-        $keyDetails = $this->getKeyDetails(key: $key);
-
-        if (isset($keyDetails['count']) && $keyDetails['count'] === 1) {
-            $sql = "
-                SELECT `value`
-                FROM `{$keyDetails['table']}`
-                WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
-            ";
-            $params = [$keyDetails['key'], $this->ts];
-            $this->cache->execDbQuery($sql, $params);
-            $row = $this->cache->fetch();
+        $sql = "
+            SELECT `value`
+            FROM `{$this->table}`
+            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
+        ";
+        $params = [$key, $this->ts];
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        if ($row = $this->cache->fetch()) {
             $this->cache->closeCursor();
             return $row['value'];
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -194,33 +200,27 @@ class PostgreSqlCache implements CacheInterface
      * @param string   $value  Cache value
      * @param null|int $expire Seconds to expire. Default 0 - doesn't expire
      *
-     * @return void
+     * @return mixed
      */
-    public function setCache($key, $value, $expire = null): void
+    public function setCache($key, $value, $expire = null): mixed
     {
-        $this->useDatabase();
-
-        $keyDetails = $this->getKeyDetails(key: $key);
-
-        if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
-            $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
-            $params = [$keyDetails['key']];
-            $this->cache->execDbQuery($sql, $params);
-            $this->cache->closeCursor();
-        }
+        $this->connect();
+        $this->deleteCache($key);
 
         $sql = "
-            INSERT INTO `{$keyDetails['table']}`
+            INSERT INTO `{$this->table}`
             SET `value` = ?, `ts` = ?, `key` = ?
         ";
         if ($expire === null) {
-            $params = [$value, 0, $keyDetails['key']];
+            $params = [$value, 0, $key];
         } else {
-            $params = [$value, $this->ts + $expire, $keyDetails['key']];
+            $params = [$value, $this->ts + $expire, $key];
         }
 
-        $this->cache->execDbQuery($sql, $params);
+        $this->cache->execDbQuery(sql: $sql, params: $params);
         $this->cache->closeCursor();
+
+        return true;
     }
 
     /**
@@ -232,69 +232,11 @@ class PostgreSqlCache implements CacheInterface
      */
     public function deleteCache($key): void
     {
-        $this->useDatabase();
+        $this->connect();
 
-        $keyDetails = $this->getKeyDetails(key: $key);
-
-        if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
-            $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
-            $params = [$keyDetails['key']];
-            $this->cache->execDbQuery($sql, $params);
-            $this->cache->closeCursor();
-        }
-    }
-
-    /**
-     * Get Key Details
-     *
-     * @param string $key Cache key
-     *
-     * @return array
-     */
-    public function getKeyDetails($key): array
-    {
-        $pos = strpos(haystack: $key, needle: ':');
-        $tableKey = substr(string: $key, offset: 0, length: $pos);
-
-        switch ($tableKey) {
-            case 'c':
-                $table = 'client';
-                break;
-            case 'cu':
-                $table = 'user';
-                break;
-            case 'g':
-                $table = 'group';
-                break;
-            case 'cidr':
-                $table = 'cidr';
-                break;
-            case 'ut':
-                $table = 'usertoken';
-                break;
-            case 't':
-                $table = 'token';
-                break;
-        }
-
-        $keyDetails = [
-            'table' => $table,
-            'key' => $key
-        ];
-
-        $sql = "
-            SELECT count(1) as `count`
-            FROM `{$keyDetails['table']}`
-            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
-        ";
-        $params = [$keyDetails['key'], $this->ts];
-
-        $this->cache->execDbQuery($sql, $params);
-        $row = $this->cache->fetch();
+        $sql = "DELETE FROM `{$this->table}` WHERE `key` = ?";
+        $params = [$key];
+        $this->cache->execDbQuery(sql: $sql, params: $params);
         $this->cache->closeCursor();
-
-        $keyDetails['count'] = $row['count'];
-
-        return $keyDetails;
     }
 }

@@ -362,7 +362,8 @@ class HttpRequest extends DbFunctions
             cachePort: getenv(name: 'globalCachePort'),
             cacheUsername: getenv(name: 'globalCacheUsername'),
             cachePassword: getenv(name: 'globalCachePassword'),
-            cacheDatabase: getenv(name: 'cacheDatabase')
+            cacheDatabase: getenv(name: 'globalCacheDatabase'),
+            cacheTable: getenv(name: 'globalCacheTable')
         );
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Cache via MySQL
+ * Handling Cache via MySql
  * php version 8.3
  *
  * @category  Cache
@@ -20,10 +20,10 @@ use Microservices\App\Servers\Cache\CacheInterface;
 use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
- * Caching via MySQL
+ * Caching via MySql
  * php version 8.3
  *
- * @category  Cache_MySQL
+ * @category  Cache_MySql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -69,6 +69,13 @@ class MySqlCache implements CacheInterface
     private $database = null;
 
     /**
+     * Cache table
+     *
+     * @var null|string
+     */
+    private $table = null;
+
+    /**
      * Cache connection
      *
      * @var null|DB_MySql
@@ -90,18 +97,23 @@ class MySqlCache implements CacheInterface
      * @param string $username Username .env string
      * @param string $password Password .env string
      * @param string $database Database .env string
+     * @param string $table    Table .env string
      */
-    public function __construct($hostname, $port, $username, $password, $database)
-    {
+    public function __construct(
+        $hostname,
+        $port,
+        $username,
+        $password,
+        $database,
+        $table
+    ) {
         $this->ts = time();
         $this->hostname = $hostname;
         $this->port = $port;
         $this->username = $username;
         $this->password = $password;
-
-        if ($database !== null) {
-            $this->database = $database;
-        }
+        $this->database = $database;
+        $this->table = $table;
     }
 
     /**
@@ -133,19 +145,6 @@ class MySqlCache implements CacheInterface
     }
 
     /**
-     * Use Database
-     *
-     * @return void
-     */
-    public function useDatabase(): void
-    {
-        $this->connect();
-        if ($this->database !== null) {
-            $this->cache->useDatabase();
-        }
-    }
-
-    /**
      * Checks if cache key exist
      *
      * @param string $key Cache key
@@ -154,9 +153,20 @@ class MySqlCache implements CacheInterface
      */
     public function cacheExists($key): mixed
     {
-        $this->useDatabase();
-        $keyDetails = $this->getKeyDetails(key: $key);
-        return $keyDetails['count'] === 1;
+        $this->connect();
+
+        $sql = "
+            SELECT count(1) as `count`
+            FROM `{$this->table}`
+            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
+        ";
+        $params = [$key, $this->ts];
+
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        $row = $this->cache->fetch();
+        $this->cache->closeCursor();
+
+        return $row['count'] === 1;
     }
 
     /**
@@ -168,24 +178,20 @@ class MySqlCache implements CacheInterface
      */
     public function getCache($key): mixed
     {
-        $this->useDatabase();
+        $this->connect();
 
-        $keyDetails = $this->getKeyDetails(key: $key);
-
-        if (isset($keyDetails['count']) && $keyDetails['count'] === 1) {
-            $sql = "
-                SELECT `value`
-                FROM `{$keyDetails['table']}`
-                WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
-            ";
-            $params = [$keyDetails['key'], $this->ts];
-            $this->cache->execDbQuery(sql: $sql, params: $params);
-            $row = $this->cache->fetch();
+        $sql = "
+            SELECT `value`
+            FROM `{$this->table}`
+            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
+        ";
+        $params = [$key, $this->ts];
+        $this->cache->execDbQuery(sql: $sql, params: $params);
+        if ($row = $this->cache->fetch()) {
             $this->cache->closeCursor();
             return $row['value'];
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -199,25 +205,17 @@ class MySqlCache implements CacheInterface
      */
     public function setCache($key, $value, $expire = null): mixed
     {
-        $this->useDatabase();
-
-        $keyDetails = $this->getKeyDetails(key: $key);
-
-        if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
-            $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
-            $params = [$keyDetails['key']];
-            $this->cache->execDbQuery(sql: $sql, params: $params);
-            $this->cache->closeCursor();
-        }
+        $this->connect();
+        $this->deleteCache($key);
 
         $sql = "
-            INSERT INTO `{$keyDetails['table']}`
+            INSERT INTO `{$this->table}`
             SET `value` = ?, `ts` = ?, `key` = ?
         ";
         if ($expire === null) {
-            $params = [$value, 0, $keyDetails['key']];
+            $params = [$value, 0, $key];
         } else {
-            $params = [$value, $this->ts + $expire, $keyDetails['key']];
+            $params = [$value, $this->ts + $expire, $key];
         }
 
         $this->cache->execDbQuery(sql: $sql, params: $params);
@@ -235,69 +233,11 @@ class MySqlCache implements CacheInterface
      */
     public function deleteCache($key): void
     {
-        $this->useDatabase();
+        $this->connect();
 
-        $keyDetails = $this->getKeyDetails(key: $key);
-
-        if (isset($keyDetails['count']) && $keyDetails['count'] > 0) {
-            $sql = "DELETE FROM `{$keyDetails['table']}` WHERE `key` = ?";
-            $params = [$keyDetails['key']];
-            $this->cache->execDbQuery(sql: $sql, params: $params);
-            $this->cache->closeCursor();
-        }
-    }
-
-    /**
-     * Get Details of key
-     *
-     * @param string $key Cache key
-     *
-     * @return array
-     */
-    public function getKeyDetails($key): array
-    {
-        $pos = strpos(haystack: $key, needle: ':');
-        $tableKey = substr(string: $key, offset: 0, length: $pos);
-
-        switch ($tableKey) {
-            case 'c':
-                $table = 'client';
-                break;
-            case 'cu':
-                $table = 'user';
-                break;
-            case 'g':
-                $table = 'group';
-                break;
-            case 'cidr':
-                $table = 'cidr';
-                break;
-            case 'ut':
-                $table = 'usertoken';
-                break;
-            case 't':
-                $table = 'token';
-                break;
-        }
-
-        $keyDetails = [
-            'table' => $table,
-            'key' => $key
-        ];
-
-        $sql = "
-            SELECT count(1) as `count`
-            FROM `{$keyDetails['table']}`
-            WHERE `key` = ? AND (`ts` = 0 OR `ts` > ?)
-        ";
-        $params = [$keyDetails['key'], $this->ts];
-
+        $sql = "DELETE FROM `{$this->table}` WHERE `key` = ?";
+        $params = [$key];
         $this->cache->execDbQuery(sql: $sql, params: $params);
-        $row = $this->cache->fetch();
         $this->cache->closeCursor();
-
-        $keyDetails['count'] = $row['count'];
-
-        return $keyDetails;
     }
 }

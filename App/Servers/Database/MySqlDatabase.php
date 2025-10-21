@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling Database via MySQL
+ * Handling Database via MySql
  * php version 8.3
  *
  * @category  Database
@@ -19,10 +19,10 @@ use Microservices\App\Servers\Database\DatabaseInterface;
 use Microservices\App\Servers\Containers\Sql\MySql as DB_MySql;
 
 /**
- * MySQL Database
+ * MySql Database
  * php version 8.3
  *
- * @category  Database_MySQL
+ * @category  Database_MySql
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
