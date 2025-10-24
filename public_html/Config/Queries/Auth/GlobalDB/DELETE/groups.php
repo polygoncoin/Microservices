@@ -52,7 +52,7 @@ return [
     ],
     '__VALIDATE__' => [
         [
-            'fn' => '_primaryKeyExist',
+            'fn' => 'primaryKeyExist',
             'fnArgs' => [
                 'table' => ['custom', Env::$groups],
                 'primary' => ['custom', 'id'],

@@ -13,10 +13,10 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation\Json;
+namespace Microservices\App\DataRepresentation\Encode;
 
-use Microservices\App\DataRepresentation\AbstractDataEncode;
-use Microservices\App\DataRepresentation\Json\JsonEncode\JsonEncodeObject;
+use Microservices\App\DataRepresentation\Encode\DataEncodeInterface;
+use Microservices\App\DataRepresentation\Encode\JsonEncode\JsonEncodeObject;
 use Microservices\App\HttpStatus;
 
 /**
@@ -31,7 +31,7 @@ use Microservices\App\HttpStatus;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class JsonEncode extends AbstractDataEncode
+class JsonEncode implements DataEncodeInterface
 {
     /**
      * Temporary Stream

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Handling JSON Encode
+ * Handling XML Encode
  * php version 8.3
  *
- * @category  DataEncode_JSON
+ * @category  DataEncode_XML
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,15 +13,15 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation\Json\JsonEncode;
+namespace Microservices\App\DataRepresentation\Encode\XmlEncoder;
 
 /**
- * JSON object
+ * XML object
  *
  * This class is built to help maintain state of simple/associative array
  * php version 8.3
  *
- * @category  Json_Encoder_Object
+ * @category  Xml_Encoder_Object
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -29,18 +29,24 @@ namespace Microservices\App\DataRepresentation\Json\JsonEncode;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class JsonEncodeObject
+class XmlEncoderObject
 {
     public $mode = '';
-    public $comma = '';
+    public $key = '';
 
     /**
      * Constructor
      *
-     * @param string $mode Values can be one among Array/object
+     * @param string      $mode Values can be one among Array/object
+     * @param null|string $key  Tag
      */
-    public function __construct($mode)
+    public function __construct($mode, $key)
     {
         $this->mode = $mode;
+        if ($key !== null) {
+            $this->key = str_replace(search: ':', replace: '-', subject: $key);
+        } else {
+            $this->key = $key;
+        }
     }
 }

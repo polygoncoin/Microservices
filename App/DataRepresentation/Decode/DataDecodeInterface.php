@@ -13,13 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation;
+namespace Microservices\App\DataRepresentation\Decode;
 
 /**
- * Data Decode Abstract class
+ * Data Decode Interface
  * php version 8.3
  *
- * @category  DataDecode_Abstract_Class
+ * @category  DataDecode_Interface
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -27,28 +27,28 @@ namespace Microservices\App\DataRepresentation;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-abstract class AbstractDataDecode
+interface DataDecodeInterface
 {
     /**
      * Initialize
      *
      * @return void
      */
-    abstract public function init(): void;
+    public function init(): void;
 
     /**
      * Validates data
      *
      * @return void
      */
-    abstract public function validate(): void;
+    public function validate(): void;
 
     /**
      * Index data
      *
      * @return void
      */
-    abstract public function indexData(): void;
+    public function indexData(): void;
 
     /**
      * Keys exist
@@ -57,7 +57,7 @@ abstract class AbstractDataDecode
      *
      * @return bool
      */
-    abstract public function isset($keys = null): bool;
+    public function isset($keys = null): bool;
 
     /**
      * Key exist
@@ -66,7 +66,7 @@ abstract class AbstractDataDecode
      *
      * @return string Object/Array
      */
-    abstract public function dataType($keys = null): string;
+    public function dataType($keys = null): string;
 
     /**
      * Count of array element
@@ -75,7 +75,7 @@ abstract class AbstractDataDecode
      *
      * @return int
      */
-    abstract public function count($keys = null): int;
+    public function count($keys = null): int;
 
     /**
      * Pass the keys and get whole data content belonging to keys
@@ -84,7 +84,7 @@ abstract class AbstractDataDecode
      *
      * @return mixed
      */
-    abstract public function get($keys = ''): mixed;
+    public function get($keys = ''): mixed;
 
     /**
      * Get complete Data for Kays
@@ -93,7 +93,7 @@ abstract class AbstractDataDecode
      *
      * @return mixed
      */
-    abstract public function getCompleteArray($keys = ''): mixed;
+    public function getCompleteArray($keys = ''): mixed;
 
     /**
      * Start processing the data string for a keys
@@ -104,5 +104,5 @@ abstract class AbstractDataDecode
      * @return void
      * @throws \Exception
      */
-    abstract public function load($keys): void;
+    public function load($keys): void;
 }

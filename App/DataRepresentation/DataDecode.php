@@ -15,9 +15,8 @@
 
 namespace Microservices\App\DataRepresentation;
 
-use Microservices\App\DataRepresentation\AbstractDataDecode;
-use Microservices\App\DataRepresentation\Json\JsonDecode;
-use Microservices\App\DataRepresentation\Xml\XmlDecode;
+use Microservices\App\DataRepresentation\Decode\JsonDecode;
+use Microservices\App\DataRepresentation\Decode\XmlDecode;
 use Microservices\App\Env;
 
 /**
@@ -32,7 +31,7 @@ use Microservices\App\Env;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class DataDecode extends AbstractDataDecode
+class DataDecode
 {
     /**
      * JSON File Handle
@@ -44,7 +43,7 @@ class DataDecode extends AbstractDataDecode
     /**
      * Temporary Stream
      *
-     * @var null|AbstractDataDecode
+     * @var null|Object
      */
     private $dataDecoder = null;
 

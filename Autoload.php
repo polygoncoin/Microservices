@@ -54,5 +54,3 @@ class Autoload
         include_once $file;
     }
 }
-
-spl_autoload_register(callback: __NAMESPACE__ . '\Autoload::register');

@@ -21,6 +21,8 @@ use Microservices\Microservices;
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'Autoload.php';
 
+spl_autoload_register(callback: __NAMESPACE__ . '\Autoload::register');
+
 // Process the request
 $http = [];
 

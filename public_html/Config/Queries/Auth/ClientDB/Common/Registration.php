@@ -19,7 +19,7 @@ return [
   '__QUERY__' => 'UPDATE `master_users` SET __SET__ WHERE __WHERE__',
   '__VALIDATE__' => [
     [
-      'fn' => '_primaryKeyExist',
+      'fn' => 'primaryKeyExist',
       'fnArgs' => [
                 'table' => ['custom', 'master_users'],
                 'primary' => ['custom', 'id'],

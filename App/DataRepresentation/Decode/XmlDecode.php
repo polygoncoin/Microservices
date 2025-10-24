@@ -13,9 +13,10 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation\Xml;
+namespace Microservices\App\DataRepresentation\Decode;
 
-use Microservices\App\DataRepresentation\Json\JsonDecode;
+use Microservices\App\DataRepresentation\Decode\DataDecodeInterface;
+use Microservices\App\DataRepresentation\Decode\JsonDecode;
 
 /**
  * Decodes XML
@@ -29,6 +30,6 @@ use Microservices\App\DataRepresentation\Json\JsonDecode;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class XmlDecode extends JsonDecode
+class XmlDecode extends JsonDecode implements DataEncodeInterface
 {
 }

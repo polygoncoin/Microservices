@@ -13,10 +13,10 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation\Json\JsonDecode;
+namespace Microservices\App\DataRepresentation\Decode\JsonDecode;
 
 use Generator;
-use Microservices\App\DataRepresentation\Json\JsonDecode\JsonDecodeObject;
+use Microservices\App\DataRepresentation\Decode\JsonDecode\JsonDecodeObject;
 use Microservices\App\HttpStatus;
 
 /**

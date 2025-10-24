@@ -13,13 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation;
+namespace Microservices\App\DataRepresentation\Encode;
 
 /**
- * Data Encode Abstract class
+ * Data Encode Interface
  * php version 8.3
  *
- * @category  DataEncode_Abstract_Class
+ * @category  DataEncode_Interface
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -27,7 +27,7 @@ namespace Microservices\App\DataRepresentation;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-abstract class AbstractDataEncode
+interface DataEncodeInterface
 {
     /**
      * Initialize
@@ -36,7 +36,7 @@ abstract class AbstractDataEncode
      *
      * @return void
      */
-    abstract public function init($header = true): void;
+    public function init($header = true): void;
 
     /**
      * Start simple array
@@ -45,7 +45,7 @@ abstract class AbstractDataEncode
      *
      * @return void
      */
-    abstract public function startArray($key = null): void;
+    public function startArray($key = null): void;
 
     /**
      * Add simple array/value as in the data format
@@ -55,14 +55,14 @@ abstract class AbstractDataEncode
      * @return void
      * @throws \Exception
      */
-    abstract public function addArrayData($data): void;
+    public function addArrayData($data): void;
 
     /**
      * End simple array
      *
      * @return void
      */
-    abstract public function endArray(): void;
+    public function endArray(): void;
 
     /**
      * Start simple array
@@ -72,7 +72,7 @@ abstract class AbstractDataEncode
      * @return void
      * @throws \Exception
      */
-    abstract public function startObject($key = null): void;
+    public function startObject($key = null): void;
 
     /**
      * Add simple array/value as in the data format
@@ -83,14 +83,14 @@ abstract class AbstractDataEncode
      * @return void
      * @throws \Exception
      */
-    abstract public function addKeyData($key, $data): void;
+    public function addKeyData($key, $data): void;
 
     /**
      * End associative array
      *
      * @return void
      */
-    abstract public function endObject(): void;
+    public function endObject(): void;
 
     /**
      * Encodes both simple and associative array to json
@@ -99,7 +99,7 @@ abstract class AbstractDataEncode
      *
      * @return void
      */
-    abstract public function encode($data): void;
+    public function encode($data): void;
 
     /**
      * Append raw data string
@@ -108,7 +108,7 @@ abstract class AbstractDataEncode
      *
      * @return void
      */
-    abstract public function appendData(&$data): void;
+    public function appendData(&$data): void;
 
     /**
      * Append raw data string
@@ -118,12 +118,12 @@ abstract class AbstractDataEncode
      *
      * @return void
      */
-    abstract public function appendKeyData($key, &$data): void;
+    public function appendKeyData($key, &$data): void;
 
     /**
      * Checks data was properly closed
      *
      * @return void
      */
-    abstract public function end(): void;
+    public function end(): void;
 }

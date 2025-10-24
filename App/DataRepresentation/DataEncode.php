@@ -15,9 +15,8 @@
 
 namespace Microservices\App\DataRepresentation;
 
-use Microservices\App\DataRepresentation\AbstractDataEncode;
-use Microservices\App\DataRepresentation\Json\JsonEncode;
-use Microservices\App\DataRepresentation\Xml\XmlEncode;
+use Microservices\App\DataRepresentation\Encode\JsonEncode;
+use Microservices\App\DataRepresentation\Encode\XmlEncode;
 use Microservices\App\Env;
 
 /**
@@ -32,7 +31,7 @@ use Microservices\App\Env;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class DataEncode extends AbstractDataEncode
+class DataEncode
 {
     /**
      * Temporary Stream
@@ -51,7 +50,7 @@ class DataEncode extends AbstractDataEncode
     /**
      * Temporary Stream
      *
-     * @var null|AbstractDataEncode
+     * @var null|Object
      */
     private $dataEncoder = null;
 

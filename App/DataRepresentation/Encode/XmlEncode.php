@@ -15,8 +15,8 @@
 
 namespace Microservices\App\DataRepresentation\Xml;
 
-use Microservices\App\DataRepresentation\AbstractDataEncode;
-use Microservices\App\DataRepresentation\Xml\XmlEncoder\XmlEncoderObject;
+use Microservices\App\DataRepresentation\Encode\DataEncodeInterface;
+use Microservices\App\DataRepresentation\Encode\XmlEncoder\XmlEncoderObject;
 use Microservices\App\HttpStatus;
 
 /**
@@ -31,7 +31,7 @@ use Microservices\App\HttpStatus;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class XmlEncode extends AbstractDataEncode
+class XmlEncode implements DataEncodeInterface
 {
     /**
      * Temporary Stream

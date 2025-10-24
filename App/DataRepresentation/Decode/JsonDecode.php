@@ -13,11 +13,11 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation\Json;
+namespace Microservices\App\DataRepresentation\Decode;
 
 use Generator;
-use Microservices\App\DataRepresentation\AbstractDataDecode;
-use Microservices\App\DataRepresentation\Json\JsonDecode\JsonDecodeEngine;
+use Microservices\App\DataRepresentation\Decode\DataDecodeInterface;
+use Microservices\App\DataRepresentation\Decode\JsonDecode\JsonDecodeEngine;
 use Microservices\App\HttpStatus;
 
 /**
@@ -32,7 +32,7 @@ use Microservices\App\HttpStatus;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class JsonDecode extends AbstractDataDecode
+class JsonDecode implements DataDecodeInterface
 {
     /**
      * JSON File Handle

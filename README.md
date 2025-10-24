@@ -62,8 +62,8 @@ globalCacheDatabase=0
 globalDbType='MySql'
 globalDbHostname='127.0.0.1'
 globalDbPort=3306
-globalDbUsername='root'
-globalDbPassword='shames11'
+globalDbUsername='username'
+globalDbPassword='password'
 globalDbDatabase='global'
 ```
 
@@ -78,8 +78,8 @@ clients='m001_master_clients'
 defaultClientDbType='MySql'
 defaultClientDbHostname='127.0.0.1'
 defaultClientDbPort=3306
-defaultClientDbUsername='root'
-defaultClientDbPassword='shames11'
+defaultClientDbUsername='username'
+defaultClientDbPassword='password'
 defaultClientDbDatabase='global'
 ```
 
@@ -91,8 +91,8 @@ dbDatabaseClient001='client_001'
 ### Example of a dedicated database server for client 1
 ```ini
 dbHostnameClient001='127.0.0.1'
-dbUsernameClient001='root'
-dbPasswordClient001='shames11'
+dbUsernameClient001='username'
+dbPasswordClient001='password'
 dbDatabaseClient001='client_001'
 ```
 
@@ -178,8 +178,8 @@ rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in
 queryCacheType='Redis'
 queryCacheHostname='127.0.0.1'
 queryCachePort=6379
-queryCacheUsername='ramesh'
-queryCachePassword='shames11'
+queryCacheUsername='username'
+queryCachePassword='password'
 queryCacheDatabase=0
 queryCacheTable='api_cache' ; For MySql / PostgreSql / MongoDb
 ```

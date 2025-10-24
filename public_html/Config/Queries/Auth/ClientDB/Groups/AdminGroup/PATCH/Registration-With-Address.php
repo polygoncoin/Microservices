@@ -76,7 +76,7 @@ return [
     ],
     '__VALIDATE__' => [
         [
-            'fn' => '_primaryKeyExist',
+            'fn' => 'primaryKeyExist',
             'fnArgs' => [
                 'table' => ['custom', 'master_users'],
                 'primary' => ['custom', 'id'],

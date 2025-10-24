@@ -20,7 +20,7 @@ return [
     '__QUERY__' => 'UPDATE `address` SET __SET__ WHERE __WHERE__',
     '__VALIDATE__' => [
         [
-            'fn' => '_primaryKeyExist',
+            'fn' => 'primaryKeyExist',
             'fnArgs' => [
                 'table' => ['custom', 'address'],
                 'primary' => ['custom', 'id'],
