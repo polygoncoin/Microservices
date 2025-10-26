@@ -61,13 +61,6 @@ class Supplement
     private $s = null;
 
     /**
-     * Trigger Web API object
-     *
-     * @var null|Web
-     */
-    private $web = null;
-
-    /**
      * Hook object
      *
      * @var null|Hook
@@ -294,12 +287,16 @@ class Supplement
                     response: $response,
                     necessary: $this->s['necessaryArr']
                 );
-                $bool = $this->operateAsTransaction
-                    && ($this->db->beganTransaction === true);
-                if (!$this->operateAsTransaction || $bool) {
-                    if ($this->operateAsTransaction) {
+
+                if ($this->c->res->httpStatus === HttpStatus::$Ok)
+                {
+                    if (
+                        $this->operateAsTransaction
+                        && ($this->db->beganTransaction === true)
+                    ) {
                         $this->db->commit();
                     }
+
                     $arr = [
                         'Status' => HttpStatus::$Created,
                         'Payload' => $this->c->req->dataDecode->getCompleteArray(
@@ -318,9 +315,8 @@ class Supplement
                         );
                     }
                 } else { // Failure
-                    $this->c->res->httpStatus = HttpStatus::$BadRequest;
                     $arr = [
-                        'Status' => HttpStatus::$BadRequest,
+                        'Status' => $this->c->res->httpStatus,
                         'Payload' => $this->c->req->dataDecode->getCompleteArray(
                             keys: implode(
                                 separator: ':',
@@ -403,11 +399,17 @@ class Supplement
         $iCount = $isObject ?
             1 : $this->c->req->dataDecode->count(keys: $payloadIndex);
 
-        $counter = -1;
         for ($i = 0; $i < $iCount; $i++) {
+            if ($isObject) {
+                $_response = &$response;
+            } else {
+                $response[$i] = [];
+                $_response = &$response[$i];
+            }
+
             $payloadIndexes = $payloadIndexes;
             if ($this->operateAsTransaction && !$this->db->beganTransaction) {
-                $response['Error'] = 'Transaction rolled back';
+                $_response['Error'] = 'Transaction rolled back';
                 return;
             }
 
@@ -444,7 +446,7 @@ class Supplement
             }
 
             // Validation
-            if (!$this->isValidPayload(sSqlConfig: $sSqlConfig)) {
+            if (!$this->isValidPayload(sSqlConfig: $sSqlConfig, response: $_response)) {
                 continue;
             }
 
@@ -459,33 +461,25 @@ class Supplement
             }
 
             // Execute function
-            $results = $this->supplementObj->process(
+            $_response = $this->supplementObj->process(
                 $sSqlConfig['__FUNCTION__'],
                 $this->s['payload']
             );
 
             if ($this->operateAsTransaction && !$this->db->beganTransaction) {
-                $response['Error'] = 'Something went wrong';
+                $_response['Error'] = 'Something went wrong';
                 return;
             }
-
-            if ($isObject) {
-                $counter = 0;
-            } else {
-                $response[++$counter] = [];
-                $response = &$response[$counter];
-            }
-            $response = $results;
 
             $this->db->closeCursor();
 
             // triggers
             if (isset($sSqlConfig['__TRIGGERS__'])) {
-                if ($this->web === null) {
-                    $this->web = new Web(common: $this->c);
-                }
-                $response['__TRIGGERS__'] = $this->web->triggerConfig(
-                    triggerConfig: $sSqlConfig['__TRIGGERS__']
+                $this->dataEncode->addKeyData(
+                    key: '__TRIGGERS__',
+                    data: $this->getTriggerData(
+                        triggerConfig: $sSqlConfig['__TRIGGERS__']
+                    )
                 );
             }
 
@@ -506,7 +500,7 @@ class Supplement
                     payloadIndexes: $payloadIndexes,
                     configKeys: $configKeys,
                     useHierarchy: $useHierarchy,
-                    response: $response,
+                    response: $_response,
                     necessary: $necessary
                 );
             }
@@ -595,10 +589,11 @@ class Supplement
      * Checks if the payload is valid
      *
      * @param array $sSqlConfig Config from file
+     * @param array $response   Response by reference
      *
      * @return bool
      */
-    private function isValidPayload($sSqlConfig): bool
+    private function isValidPayload($sSqlConfig, $response): bool
     {
         $return = true;
         $isValidData = true;
@@ -608,13 +603,7 @@ class Supplement
             );
             if ($isValidData !== true) {
                 $this->c->res->httpStatus = HttpStatus::$BadRequest;
-                $this->dataEncode->startObject();
-                $this->dataEncode->addKeyData(
-                    key: 'Payload',
-                    data: $this->s['payload']
-                );
-                $this->dataEncode->addKeyData(key: 'Error', data: $errors);
-                $this->dataEncode->endObject();
+                $response['Error'] = $errors;
                 $return = false;
             }
         }

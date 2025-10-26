@@ -235,13 +235,14 @@ trait AppTrait
         $errors = [];
         $row = [];
 
+        $missExecution = $wMissExecution = false;
         // Check __SET__
         if (
             isset($sqlDetails['__SET__'])
             && count(value: $sqlDetails['__SET__']) !== 0
         ) {
-            [$params, $errors] = $this->getSqlParams($sqlDetails['__SET__']);
-            if (empty($errors)) {
+            [$params, $errors, $missExecution] = $this->getSqlParams($sqlDetails['__SET__']);
+            if (empty($errors) && !$missExecution) {
                 if (!empty($params)) {
                     // __SET__ not compulsory in query
                     $found = strpos(haystack: $sql, needle: '__SET__') !== false;
@@ -273,14 +274,15 @@ trait AppTrait
         // Check __WHERE__
         if (
             empty($errors)
+            && !$missExecution
             && isset($sqlDetails['__WHERE__'])
             && count(value: $sqlDetails['__WHERE__']) !== 0
         ) {
             $wErrors = [];
-            [$sqlWhereParams, $wErrors] = $this->getSqlParams(
+            [$sqlWhereParams, $wErrors, $wMissExecution] = $this->getSqlParams(
                 $sqlDetails['__WHERE__']
             );
-            if (empty($wErrors)) {
+            if (empty($wErrors) && !$wMissExecution) {
                 if (!empty($sqlWhereParams)) {
                     // __WHERE__ not compulsory in query
                     $wfound = strpos(haystack: $sql, needle: '__WHERE__') !== false;
@@ -320,7 +322,7 @@ trait AppTrait
             $this->resetFetchData('sqlParams', $configKeys, $row);
         }
 
-        return [$sql, $sqlParams, $errors];
+        return [$sql, $sqlParams, $errors, ($missExecution || $wMissExecution)];
     }
 
     /**
@@ -333,6 +335,7 @@ trait AppTrait
      */
     private function getSqlParams(&$sqlConfig): array
     {
+        $missExecution = false;
         $sqlParams = [];
         $errors = [];
 
@@ -349,23 +352,35 @@ trait AppTrait
             } elseif (
                 in_array(
                     needle: $fetchFrom,
-                    haystack: ['sqlResults', 'sqlParams', 'sqlPayload']
+                    haystack: ['sqlParams', 'sqlPayload']
                 )
             ) {
                 if (!isset($this->c->req->s[$fetchFrom])) {
-                    throw new \Exception(
-                        message: "Undefined array key '{$fetchFrom}'",
-                        code: HttpStatus::$InternalServerError
-                    );
+                    $errors[] = "Missing key '{$fKey}' in '{$fetchFrom}'";
+                    continue;
                 }
                 $fetchFromKeys = explode(separator: ':', string: $fKey);
                 $value = $this->c->req->s[$fetchFrom];
                 foreach ($fetchFromKeys as $key) {
                     if (!isset($value[$key])) {
-                        throw new \Exception(
-                            message: 'Invalid hierarchy:  Missing hierarchy data',
-                            code: HttpStatus::$InternalServerError
-                        );
+                        $errors[] = "Missing hierarchy key '{$key}' of '{$fKey}' in '{$fetchFrom}'";
+                        continue;
+                    }
+                    $value = $value[$key];
+                }
+                $sqlParams[$var] = $value;
+                continue;
+            } elseif ($fetchFrom === 'sqlResults') {
+                if (!isset($this->c->req->s[$fetchFrom])) {
+                    $missExecution = true;
+                    continue;
+                }
+                $fetchFromKeys = explode(separator: ':', string: $fKey);
+                $value = $this->c->req->s[$fetchFrom];
+                foreach ($fetchFromKeys as $key) {
+                    if (!isset($value[$key])) {
+                        $missExecution = true;
+                        continue;
                     }
                     $value = $value[$key];
                 }
@@ -398,7 +413,7 @@ trait AppTrait
             }
         }
 
-        return [$sqlParams, $errors];
+        return [$sqlParams, $errors, $missExecution];
     }
 
     /**
@@ -410,17 +425,17 @@ trait AppTrait
      */
     private function isObject($arr): bool
     {
-        $assoc = false;
+        $isAssoc = false;
 
         $i = 0;
         foreach ($arr as $k => &$v) {
             if ($k !== $i++) {
-                $assoc = true;
+                $isAssoc = true;
                 break;
             }
         }
 
-        return $assoc;
+        return $isAssoc;
     }
 
     /**
@@ -800,5 +815,183 @@ trait AppTrait
                 code: $e->getCode()
             );
         }
+    }
+
+    /**
+     * Get Trigger Data
+     *
+     * @param array $triggerConfig Trigger Config
+     *
+     * @return mixed
+     */
+    public function getTriggerData($triggerConfig): mixed
+    {
+        if (!isset($this->c->req->s['token'])) {
+            throw new \Exception(
+                message: 'Missing token',
+                code: HttpStatus::$InternalServerError
+            );
+        }
+
+        $http = [];
+
+        $isAssoc = (!isset($triggerConfig[0])) ? true : false;
+        if (
+            !$isAssoc
+            && isset($triggerConfig[0])
+            && count(value: $triggerConfig) === 1
+        ) {
+            $triggerConfig = $triggerConfig[0];
+            $isAssoc = true;
+        }
+
+        $triggerOutput = [];
+        if ($isAssoc) {
+            $http = getTriggerDetails($triggerConfig);
+            $triggerOutput = Start($http);
+        } else {
+            for (
+                $iTrigger = 0, $iTriggerCount = count($triggerConfig);
+                $iTrigger < $iTriggerCount;
+                $iTrigger++
+            ) {
+                $http = getTriggerDetails($triggerConfig[$iTrigger]);
+                $triggerOutput[] = Start($http);
+            }
+        }
+
+        return $triggerOutput;
+    }
+
+    /**
+     * Get Trigger Details
+     *
+     * @param array $triggerConfig Trigger Config
+     *
+     * @return mixed
+     */
+    public function getTriggerDetails($triggerConfig)
+    {
+        $method = $triggerConfig['__METHOD__'];
+        [$routeElementsArr, $errors] = $this->getTriggerPayload(
+            payloadConfig: $triggerConfig['__ROUTE__']
+        );
+
+        if ($errors) {
+            return $errors;
+        }
+
+        $route = '/' . implode(separator: '/', array: $routeElementsArr);
+
+        $queryStringArr = [];
+        $payloadArr = [];
+
+        if (isset($triggerConfig['__QUERY-STRING__'])) {
+            [$queryStringArr, $errors] = $this->getTriggerPayload(
+                payloadConfig: $triggerConfig['__QUERY-STRING__']
+            );
+
+            if ($errors) {
+                return $errors;
+            }
+        }
+        if (isset($triggerConfig['__PAYLOAD__'])) {
+            [$payloadArr, $errors] = $this->getTriggerPayload(
+                payloadConfig: $triggerConfig['__PAYLOAD__']
+            );
+            if ($errors) {
+                return $errors;
+            }
+        }
+
+        $http['server']['host'] = $_SERVER['HTTP_HOST'];
+        $http['server']['method'] = $method;
+        $http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+        }
+        $http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
+        $http['post'] = $payloadArr;
+        $http['get'] = $queryStringArr;
+        $http['get'][Constants::$ROUTE_URL_PARAM] = $route;
+        $http['isWebRequest'] = false;
+
+        return $http;
+    }
+
+    /**
+     * Generates Params for statement to execute
+     *
+     * @param array $payloadConfig API Payload configuration
+     *
+     * @return array
+     * @throws \Exception
+     */
+    private function getTriggerPayload(&$payloadConfig): array
+    {
+        $sqlParams = [];
+        $errors = [];
+
+        // Collect param values as per config respectively
+        foreach ($payloadConfig as &$config) {
+            $var = $config['column'] ?? null;
+
+            $fetchFrom = $config['fetchFrom'];
+            $fKey = $config['fetchFromValue'];
+            if ($fetchFrom === 'function') {
+                $function = $fKey;
+                $value = $function($this->c->req->s);
+                if ($var === null) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
+                continue;
+            } elseif (
+                in_array(
+                    needle: $fetchFrom,
+                    haystack: ['sqlResults', 'sqlParams', 'sqlPayload']
+                )
+            ) {
+                $fetchFromKeys = explode(separator: ':', string: $fKey);
+                $value = $this->c->req->s[$fetchFrom];
+                foreach ($fetchFromKeys as $key) {
+                    if (!isset($value[$key])) {
+                        throw new \Exception(
+                            message: 'Invalid hierarchy:  Missing hierarchy data',
+                            code: HttpStatus::$InternalServerError
+                        );
+                    }
+                    $value = $value[$key];
+                }
+                if ($var === null) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
+                continue;
+            } elseif ($fetchFrom === 'custom') {
+                $value = $fKey;
+                if ($var === null) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
+                continue;
+            } elseif (isset($this->c->req->s[$fetchFrom][$fKey])) {
+                $value = $this->c->req->s[$fetchFrom][$fKey];
+                if ($var === null) {
+                    $sqlParams[] = $value;
+                } else {
+                    $sqlParams[$var] = $value;
+                }
+                continue;
+            } else {
+                $errors[] = "Invalid configuration of '{$fetchFrom}' for '{$fKey}'";
+                continue;
+            }
+        }
+
+        return [$sqlParams, $errors];
     }
 }

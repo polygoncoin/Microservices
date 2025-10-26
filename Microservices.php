@@ -262,6 +262,16 @@ class Microservices
     }
 
     /**
+     * Output
+     *
+     * @return bool|string
+     */
+    public function returnResults(): bool|string
+    {
+        return $this->c->res->dataEncode->getData();
+    }
+
+    /**
      * Headers / CORS
      *
      * @return array

@@ -61,13 +61,6 @@ class Write
     private $s = null;
 
     /**
-     * Trigger Web API object
-     *
-     * @var null|Web
-     */
-    private $web = null;
-
-    /**
      * Hook object
      *
      * @var null|Hook
@@ -284,37 +277,36 @@ class Write
                     response: $response,
                     necessary: $this->s['necessaryArr']
                 );
-                $bool = $this->operateAsTransaction
-                    && ($this->db->beganTransaction === true);
 
-                $arr = [];
-                if (!$this->operateAsTransaction || $bool) {
-                    if ($this->operateAsTransaction) {
+                if ($this->c->res->httpStatus === HttpStatus::$Ok)
+                {
+                    if (
+                        $this->operateAsTransaction
+                        && ($this->db->beganTransaction === true)
+                    ) {
                         $this->db->commit();
                     }
-                    if ($this->c->res->httpStatus === HttpStatus::$Ok) {
-                        $arr = [
-                            'Status' => HttpStatus::$Ok,
-                            'Payload' => $this->c->req->dataDecode->getCompleteArray(
-                                keys: implode(
-                                    separator: ':',
-                                    array: $payloadIndexes
-                                )
-                            ),
-                            'Response' => $response
-                        ];
-                        if ($idempotentWindow) {
-                            $this->c->req->cache->setCache(
-                                key: $hashKey,
-                                value: json_encode(value: $arr),
-                                expire: $idempotentWindow
-                            );
-                        }
-                    } // else error occured and output set.
-                } else { // Failure
-                    $this->c->res->httpStatus = HttpStatus::$BadRequest;
+
                     $arr = [
-                        'Status' => HttpStatus::$BadRequest,
+                        'Status' => HttpStatus::$Ok,
+                        'Payload' => $this->c->req->dataDecode->getCompleteArray(
+                            keys: implode(
+                                separator: ':',
+                                array: $payloadIndexes
+                            )
+                        ),
+                        'Response' => $response
+                    ];
+                    if ($idempotentWindow) {
+                        $this->c->req->cache->setCache(
+                            key: $hashKey,
+                            value: json_encode(value: $arr),
+                            expire: $idempotentWindow
+                        );
+                    }
+                } else { // Failure
+                    $arr = [
+                        'Status' => $this->c->res->httpStatus,
                         'Payload' => $this->c->req->dataDecode->getCompleteArray(
                             keys: implode(
                                 separator: ':',
@@ -328,21 +320,19 @@ class Write
                 $arr = json_decode(json: $hashJson, associative: true);
             }
 
-            if (!empty($arr)) {
-                if ($payloadIndexes[0] === '') {
+            if ($payloadIndexes[0] === '') {
+                foreach ($arr as $k => $v) {
+                    $this->dataEncode->addKeyData(key: $k, data: $v);
+                }
+            } else {
+                if (Env::$oRepresentation === 'XML') {
+                    $this->dataEncode->startObject(key: 'Row');
                     foreach ($arr as $k => $v) {
                         $this->dataEncode->addKeyData(key: $k, data: $v);
                     }
+                    $this->dataEncode->endObject();
                 } else {
-                    if (Env::$oRepresentation === 'XML') {
-                        $this->dataEncode->startObject(key: 'Row');
-                        foreach ($arr as $k => $v) {
-                            $this->dataEncode->addKeyData(key: $k, data: $v);
-                        }
-                        $this->dataEncode->endObject();
-                    } else {
-                        $this->dataEncode->addKeyData(key: $i, data: $arr);
-                    }
+                    $this->dataEncode->addKeyData(key: $i, data: $arr);
                 }
             }
         }
@@ -394,11 +384,17 @@ class Write
         $iCount = $isObject ?
             1 : $this->c->req->dataDecode->count(keys: $payloadIndex);
 
-        $counter = -1;
-        for ($i = 0; $i < $iCount; $i++, $counter++) {
+        for ($i = 0; $i < $iCount; $i++) {
+            if ($isObject) {
+                $_response = &$response;
+            } else {
+                $response[$i] = [];
+                $_response = &$response[$i];
+            }
+
             $payloadIndexes = $payloadIndexes;
             if ($this->operateAsTransaction && !$this->db->beganTransaction) {
-                $response['Error'] = 'Transaction rolled back';
+                $_response['Error'] = 'Transaction rolled back';
                 return;
             }
 
@@ -432,7 +428,7 @@ class Write
             // Validation
             if (
                 isset($wSqlConfig['__VALIDATE__'])
-                && !$this->isValidPayload(wSqlConfig: $wSqlConfig)
+                && !$this->isValidPayload(wSqlConfig: $wSqlConfig, response: $_response)
             ) {
                 continue;
             }
@@ -448,28 +444,25 @@ class Write
             }
 
             // Get Sql and Params
-            [$sql, $sqlParams, $errors] = $this->getSqlAndParams(
+            [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
                 sqlDetails: $wSqlConfig
             );
 
             if (!empty($errors)) {
-                $response['Error'] = $errors;
+                $_response['Error'] = $errors;
                 $this->db->rollBack();
+                return;
+            }
+
+            if ($missExecution) {
                 return;
             }
 
             // Execute Query
             $this->db->execDbQuery(sql: $sql, params: $sqlParams);
             if ($this->operateAsTransaction && !$this->db->beganTransaction) {
-                $response['Error'] = 'Something went wrong';
+                $_response['Error'] = 'Something went wrong';
                 return;
-            }
-
-            if ($isObject) {
-                $_response = &$response;
-            } else {
-                $response[$counter] = [];
-                $_response = &$response[$counter];
             }
 
             if (isset($wSqlConfig['__INSERT-IDs__'])) {
@@ -484,11 +477,11 @@ class Write
 
             // triggers
             if (isset($wSqlConfig['__TRIGGERS__'])) {
-                if ($this->web === null) {
-                    $this->web = new Web(common: $this->c);
-                }
-                $_response['__TRIGGERS__'] = $this->web->triggerConfig(
-                    triggerConfig: $wSqlConfig['__TRIGGERS__']
+                $this->dataEncode->addKeyData(
+                    key: '__TRIGGERS__',
+                    data: $this->getTriggerData(
+                        triggerConfig: $wSqlConfig['__TRIGGERS__']
+                    )
                 );
             }
 
@@ -598,10 +591,11 @@ class Write
      * Checks if the payload is valid
      *
      * @param array $wSqlConfig Config from file
+     * @param array $response   Response by reference
      *
      * @return bool
      */
-    private function isValidPayload($wSqlConfig): bool
+    private function isValidPayload($wSqlConfig, $response): bool
     {
         $return = true;
         $isValidData = true;
@@ -611,15 +605,7 @@ class Write
             );
             if ($isValidData !== true) {
                 $this->c->res->httpStatus = HttpStatus::$BadRequest;
-                $this->dataEncode->addKeyData(
-                    key: 'Status',
-                    data: $this->c->res->httpStatus
-                );
-                $this->dataEncode->addKeyData(
-                    key: 'Payload',
-                    data: $this->s['payload']
-                );
-                $this->dataEncode->addKeyData(key: 'Error', data: $errors);
+                $response['Error'] = $errors;
                 $return = false;
             }
         }

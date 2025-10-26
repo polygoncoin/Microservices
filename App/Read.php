@@ -54,13 +54,6 @@ class Read
     private $c = null;
 
     /**
-     * Trigger Web API object
-     *
-     * @var null|Web
-     */
-    private $web = null;
-
-    /**
      * Hook object
      *
      * @var null|Hook
@@ -310,12 +303,9 @@ class Read
 
         // triggers
         if (isset($rSqlConfig['__TRIGGERS__'])) {
-            if ($this->web === null) {
-                $this->web = new Web(common: $this->c);
-            }
             $this->dataEncode->addKeyData(
                 key: '__TRIGGERS__',
-                data: $this->web->triggerConfig(
+                data: $this->getTriggerData(
                     triggerConfig: $rSqlConfig['__TRIGGERS__']
                 )
             );
@@ -349,7 +339,7 @@ class Read
         &$configKeys,
         $useResultSet
     ): void {
-        [$sql, $sqlParams, $errors] = $this->getSqlAndParams(
+        [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
             sqlDetails: $rSqlConfig,
             isFirstCall: $isFirstCall,
             configKeys: $configKeys,
@@ -361,6 +351,10 @@ class Read
                 message: $errors,
                 code: HttpStatus::$InternalServerError
             );
+        }
+
+        if ($missExecution) {
+            return;
         }
 
         $this->db->execDbQuery(sql: $sql, params: $sqlParams);
@@ -429,7 +423,7 @@ class Read
             ($this->c->req->s['payload']['page'] - 1) *
             $this->c->req->s['payload']['perPage']
         );
-        [$sql, $sqlParams, $errors] = $this->getSqlAndParams(
+        [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
             sqlDetails: $rSqlConfig
         );
 
@@ -438,6 +432,10 @@ class Read
                 message: $errors,
                 code: HttpStatus::$InternalServerError
             );
+        }
+
+        if ($missExecution) {
+            return;
         }
 
         $this->db->execDbQuery(sql: $sql, params: $sqlParams);
@@ -484,17 +482,22 @@ class Read
         &$configKeys,
         $useResultSet
     ): void {
-        [$sql, $sqlParams, $errors] = $this->getSqlAndParams(
+        [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
             sqlDetails: $rSqlConfig,
             isFirstCall: $isFirstCall,
             configKeys: $configKeys,
             flag: $useResultSet
         );
+
         if (!empty($errors)) {
             throw new \Exception(
                 message: $errors,
                 code: HttpStatus::$InternalServerError
             );
+        }
+
+        if ($missExecution) {
+            return;
         }
 
         if ($isFirstCall) {
