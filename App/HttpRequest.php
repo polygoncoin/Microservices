@@ -235,9 +235,9 @@ class HttpRequest extends DbFunctions
             $content = $this->http['post'];
         } else {
             $content = file_get_contents(filename: 'php://input');
-        }
-        if (Env::$iRepresentation === 'XML') {
-            $content = convertXmlToJson(Xml: $content);
+            if (Env::$iRepresentation === 'XML') {
+                $content = $this->convertXmlToJson(Xml: $content);
+            }
         }
         $this->payloadStream = fopen(
             filename: "php://memory",
