@@ -28,20 +28,15 @@ function Start($http, $streamData = false)
     try {
         // Check version
         if (
-            $streamData &&
-            (
-                (
-                    !isset($http['server'])
-                    && !isset($http['server']['api_version'])
-                )
-                || $http['server']['api_version'] !== 'v1.0.0'
-            )
+            !isset($http['server']['api_version'])
+            || $http['server']['api_version'] !== 'v1.0.0'
         ) {
-            // Set response headers
-            header(header: 'Content-Type: application/json; charset=utf-8');
-            header(header: 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-            header(header: 'Pragma: no-cache');
-
+            if ($streamData) {
+                // Set response headers
+                header(header: 'Content-Type: application/json; charset=utf-8');
+                header(header: 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+                header(header: 'Pragma: no-cache');
+            }
             die('{"Status": 400, "Message": "Bad Request"}');
         }
 
@@ -57,9 +52,12 @@ function Start($http, $streamData = false)
 
         if ($Microservices->init()) {
             // Setting CORS
-            foreach ($Microservices->getHeaders() as $k => $v) {
-                header(header: "{$k}: {$v}");
+            if ($streamData) {
+                foreach ($Microservices->getHeaders() as $k => $v) {
+                    header(header: "{$k}: {$v}");
+                }
             }
+
             $Microservices->process();
             if ($streamData) {
                 $Microservices->outputResults();

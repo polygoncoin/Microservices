@@ -231,20 +231,22 @@ class HttpRequest extends DbFunctions
      */
     private function setPayloadStream(): void
     {
-        if (Env::$iRepresentation === 'XML') {
-            $this->payloadStream = fopen(
-                filename: "php://memory",
-                mode: "rw+b"
-            );
-            fwrite(
-                stream: $this->payloadStream,
-                data: $this->convertXmlToJson(
-                    Xml: file_get_contents(filename: 'php://input')
-                )
-            );
+        if (!$this->http['isWebRequest']) {
+            $content = $this->http['post'];
         } else {
-            $this->payloadStream = fopen(filename: 'php://input', mode: 'rb');
+            $content = file_get_contents(filename: 'php://input');
         }
+        if (Env::$iRepresentation === 'XML') {
+            $content = convertXmlToJson(Xml: $content);
+        }
+        $this->payloadStream = fopen(
+            filename: "php://memory",
+            mode: "rw+b"
+        );
+        fwrite(
+            stream: $this->payloadStream,
+            data: $content
+        );
     }
 
     /**

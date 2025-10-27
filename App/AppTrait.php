@@ -911,7 +911,7 @@ trait AppTrait
             $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
         }
         $http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
-        $http['post'] = $payloadArr;
+        $http['post'] = json_encode($payloadArr);
         $http['get'] = $queryStringArr;
         $http['get'][Constants::$ROUTE_URL_PARAM] = $route;
         $http['isWebRequest'] = false;
