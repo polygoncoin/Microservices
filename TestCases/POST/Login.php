@@ -23,7 +23,10 @@ $res = trigger(
     payload: json_encode(value: $payload)
 );
 
-if ($res) {
+if (
+    !isset($res['responseHeaders']['Set-Cookie'])
+    && $res
+) {
     $token = $res['responseBody']['Results']['Token'];
     $header[] = "Authorization: Bearer {$token}";
 }

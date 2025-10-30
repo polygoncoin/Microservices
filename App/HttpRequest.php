@@ -22,7 +22,7 @@ use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\App\Middleware\Auth;
 use Microservices\App\RouteParser;
-
+use Microservices\App\SessionHandlers\Session;
 /**
  * HTTP Request
  * php version 8.3
@@ -132,16 +132,41 @@ class HttpRequest extends DbFunctions
             characters: '/'
         );
 
-        if (
-            isset($this->http['header'])
-            && isset($this->http['header']['authorization'])
-        ) {
-            $this->HTTP_AUTHORIZATION = $this->http['header']['authorization'];
-            $this->open = false;
-        } elseif ($this->ROUTE === '/login') {
-            $this->open = false;
-        } else {
-            $this->open = true;
+        switch (Env::$authMode) {
+            case 'Token':
+                if (
+                    isset($this->http['header'])
+                    && isset($this->http['header']['authorization'])
+                ) {
+                    $this->HTTP_AUTHORIZATION = $this->http['header']['authorization'];
+                    $this->open = false;
+                } elseif ($this->ROUTE === '/login') {
+                    $this->open = false;
+                } else {
+                    $this->open = true;
+                }
+                break;
+            case 'Session':
+                // Session Runtime Configuration
+                $options = [];
+
+                // Initialize Session Handler
+                Session::initSessionHandler(sessionMode: Env::$sessionMode, options: $options);
+
+                // Start session in readonly mode
+                Session::sessionStartReadonly();
+
+                if (
+                    isset($_SESSION)
+                    && isset($_SESSION['id'])
+                ) {
+                    $this->open = false;
+                } elseif ($this->ROUTE === '/login') {
+                    $this->open = false;
+                } else {
+                    $this->open = true;
+                }
+                break;
         }
 
         if (!$this->open) {

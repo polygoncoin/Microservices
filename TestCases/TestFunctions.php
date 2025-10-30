@@ -136,6 +136,10 @@ if (!function_exists(function: 'getCurlConfig')) {
         }
         $curlConfig[CURLOPT_RETURNTRANSFER] = true;
 
+        $cookieFile = __DIR__ . '/cookies.txt';
+        $curlConfig[CURLOPT_COOKIEJAR] = $cookieFile; // Store cookies
+        $curlConfig[CURLOPT_COOKIEFILE] = $cookieFile; // Read cookies
+
         return $curlConfig;
     }
 }

@@ -20,6 +20,7 @@ use Microservices\App\CacheKey;
 use Microservices\App\Common;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
+use Microservices\App\SessionHandlers\Session;
 
 /**
  * Login
@@ -125,7 +126,15 @@ class Login
         $this->loadUserDetails();
         $this->validateRequestIp();
         $this->validatePassword();
-        $this->outputTokenDetails();
+        
+        switch (Env::$authMode) {
+            case 'Token':
+                $this->outputTokenDetails();
+                break;
+            case 'Session':
+                $this->startSession();
+                break;
+        }
 
         return true;
     }
@@ -387,5 +396,47 @@ class Login
                 ':id' => $this->userDetails['id']
             ]
         );
+    }
+
+    /**
+     * Outputs active/newly generated token details
+     *
+     * @return void
+     */
+    private function startSession(): void
+    {
+        // Session Runtime Configuration
+        $options = [];
+
+        // Initialize Session Handler
+        Session::initSessionHandler(sessionMode: Env::$sessionMode, options: $options);
+
+        // Start session in readonly mode
+        // Use when user is already logged in and we need to authorize the client cookie.
+        Session::sessionStartReadonly();
+
+        $isLoggedIn = false;
+        if (isset($_SESSION['id'])) {
+            $isLoggedIn = true;
+        }
+
+        if (!$isLoggedIn) {
+            // Start session in normal (read/write) mode.
+            // Use once client is authorized and want to make changes in $_SESSION
+            Session::sessionStartReadWrite();
+            $this->userDetails['timestamp'] = $this->timestamp;
+            $_SESSION = $this->userDetails;
+            $isLoggedIn = true;
+        }
+
+        $time = $this->timestamp - $_SESSION['timestamp'];
+        $output = [
+            'Session' => 'Active',
+            'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
+        ];
+
+        $this->c->initResponse();
+        $this->c->res->dataEncode->startObject();
+        $this->c->res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 }

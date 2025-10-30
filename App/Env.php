@@ -69,6 +69,9 @@ class Env
 
     public static $allowGetRepresentation = null;
 
+    public static $authMode = null;
+    public static $sessionMode = null;
+
     private static $allowedRepresentation = ['JSON', 'XML'];
 
     /**
@@ -134,6 +137,9 @@ class Env
         }
 
         self::$allowGetRepresentation = getenv(name: 'allowGetRepresentation');
+
+        self::$authMode = getenv(name: 'authMode');
+        self::$sessionMode = getenv(name: 'sessionMode');
     }
 
     /**

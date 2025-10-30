@@ -63,6 +63,12 @@ class Auth
         }
 
         if (
+            isset($_SESSION)
+            && isset($_SESSION['id'])
+        ) {
+            $this->req->s['uDetails'] = $_SESSION;
+            $this->req->s['token'] = 'sessions';
+        } elseif (
             ($this->req->HTTP_AUTHORIZATION !== null)
             && preg_match(
                 pattern: '/Bearer\s(\S+)/',
