@@ -127,6 +127,7 @@ class Login
         $this->validateRequestIp();
         $this->validatePassword();
         
+        $this->timestamp = time();
         switch (Env::$authMode) {
             case 'Token':
                 $this->outputTokenDetails();
@@ -302,7 +303,6 @@ class Login
      */
     private function outputTokenDetails(): void
     {
-        $this->timestamp = time();
         $tokenFound = false;
 
         $userTokenKey = CacheKey::userToken(

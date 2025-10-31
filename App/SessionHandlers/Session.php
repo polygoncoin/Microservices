@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandlers;
 
+use Microservices\App\Constants;
 use Microservices\App\SessionHandlers\CustomSessionHandler;
 use Microservices\App\SessionHandlers\Containers\SessionContainerInterface;
 
@@ -109,7 +110,7 @@ class Session
      *
      * @var integer
      */
-    public static $sessionMaxLifetime = 30 * 60; // 30 mins.
+    public static $sessionMaxLifetime = null;
 
     /**
      * File Session options
@@ -117,7 +118,7 @@ class Session
      *
      * @var null|string
      */
-    public static $sessionSavePath = null;
+    public static $sessionSavePath = __DIR__ . '/sessions';//null;
 
     /**
      * Session Handler mode
@@ -163,9 +164,6 @@ class Session
         }
         if (self::$sessionMode === 'Cookie' && empty(self::$sessionDataName)) {
             die('Invalid "sessionDataName"');
-        }
-        if (empty(self::$sessionMaxLifetime)) {
-            die('Invalid "sessionMaxLifetime"');
         }
 
         // Required parameters as per sessionMode
@@ -357,6 +355,8 @@ class Session
 
         if (isset($options['gc_maxlifetime'])) {
             self::$sessionMaxLifetime = $options['gc_maxlifetime'];
+        } else {
+            self::$sessionMaxLifetime = Constants::$TOKEN_EXPIRY_TIME;
         }
 
         self::$options = [ // always required.

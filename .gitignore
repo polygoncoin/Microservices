@@ -1,4 +1,5 @@
 .env
 /Logs/*
+/App/SessionHandlers/sessions/*
 /TestCases/cookies.txt
 /vendor/
