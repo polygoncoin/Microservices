@@ -16,17 +16,11 @@
 namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Groups\Client001UserGroup1;
 
 return array_merge (
-    require $Constants::$PUBLIC_HTML .
-        DIRECTORY_SEPARATOR . 'Config' .
-        DIRECTORY_SEPARATOR . 'Routes' .
-        DIRECTORY_SEPARATOR . 'Auth' .
+    require $Constants::$AUTH_ROUTES_DIR .
         DIRECTORY_SEPARATOR . 'ClientDB' .
         DIRECTORY_SEPARATOR . 'Common' .
         DIRECTORY_SEPARATOR . 'PUTroutes.php',
-    require $Constants::$PUBLIC_HTML .
-        DIRECTORY_SEPARATOR . 'Config' .
-        DIRECTORY_SEPARATOR . 'Routes' .
-        DIRECTORY_SEPARATOR . 'Auth' .
+    require $Constants::$AUTH_ROUTES_DIR .
         DIRECTORY_SEPARATOR . 'ClientDB' .
         DIRECTORY_SEPARATOR . 'Common' .
         DIRECTORY_SEPARATOR . 'Custom' .

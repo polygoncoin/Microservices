@@ -18,38 +18,26 @@ namespace Microservices\public_html\Config\Routes\Auth\CommonRoutes\GlobalDB;
 return [
     'group' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'GlobalDB' .
                 DIRECTORY_SEPARATOR . 'PATCH' .
                 DIRECTORY_SEPARATOR . 'groups.php',
             'approve'  => [
-                '__FILE__' => $Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Queries' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                     DIRECTORY_SEPARATOR . 'GlobalDB' .
                     DIRECTORY_SEPARATOR . 'PATCH' .
                     DIRECTORY_SEPARATOR . 'approve' .
                     DIRECTORY_SEPARATOR . 'groups.php',
             ],
             'disable'  => [
-                '__FILE__' => $Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Queries' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                     DIRECTORY_SEPARATOR . 'GlobalDB' .
                     DIRECTORY_SEPARATOR . 'PATCH' .
                     DIRECTORY_SEPARATOR . 'disable' .
                     DIRECTORY_SEPARATOR . 'groups.php',
             ],
             'enable'  => [
-                '__FILE__' => $Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Queries' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                     DIRECTORY_SEPARATOR . 'GlobalDB' .
                     DIRECTORY_SEPARATOR . 'PATCH' .
                     DIRECTORY_SEPARATOR . 'enable' .
@@ -59,38 +47,26 @@ return [
     ],
     'client' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'GlobalDB' .
                 DIRECTORY_SEPARATOR . 'PATCH' .
                 DIRECTORY_SEPARATOR . 'clients.php',
             'approve'  => [
-                '__FILE__' => $Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Queries' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                     DIRECTORY_SEPARATOR . 'GlobalDB' .
                     DIRECTORY_SEPARATOR . 'PATCH' .
                     DIRECTORY_SEPARATOR . 'approve' .
                     DIRECTORY_SEPARATOR . 'clients.php',
             ],
             'disable'  => [
-                '__FILE__' => $Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Queries' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                     DIRECTORY_SEPARATOR . 'GlobalDB' .
                     DIRECTORY_SEPARATOR . 'PATCH' .
                     DIRECTORY_SEPARATOR . 'disable' .
                     DIRECTORY_SEPARATOR . 'clients.php',
             ],
             'enable'  => [
-                '__FILE__' => $Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Queries' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                     DIRECTORY_SEPARATOR . 'GlobalDB' .
                     DIRECTORY_SEPARATOR . 'PATCH' .
                     DIRECTORY_SEPARATOR . 'enable' .

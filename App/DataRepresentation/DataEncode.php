@@ -87,6 +87,7 @@ class DataEncode
         }
         switch (Env::$oRepresentation) {
             case 'XML':
+            case 'HTML':
                 $this->dataEncoder = new XmlEncode(
                     tempStream: $this->tempStream,
                     header: $header
@@ -231,7 +232,7 @@ class DataEncode
         rewind(stream: $this->tempStream);
 
         if (
-            Env::$oRepresentation === 'XML'
+            in_array(Env::$oRepresentation, ['XML', 'HTML'])
             && ($this->XSLT !== null)
             && file_exists(filename: $this->XSLT)
         ) {

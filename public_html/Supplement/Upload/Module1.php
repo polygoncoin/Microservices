@@ -86,9 +86,7 @@ class Module1 implements UploadInterface
      */
     private function getLocation(): string
     {
-        return Constants::$DOC_ROOT .
-            DIRECTORY_SEPARATOR . 'Files' .
-            DIRECTORY_SEPARATOR . 'Dropbox' .
+        return Constants::$DROP_BOX_DIR .
             DIRECTORY_SEPARATOR . 'test.png';
     }
 }

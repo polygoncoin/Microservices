@@ -1,4 +1,4 @@
 .env
-/Files
+/Logs/*
 /TestCases/cookies.txt
 /vendor/

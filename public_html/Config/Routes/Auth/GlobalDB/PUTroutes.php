@@ -18,10 +18,7 @@ namespace Microservices\public_html\Config\Routes\Auth\CommonRoutes\GlobalDB;
 return [
     'group' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'GlobalDB' .
                 DIRECTORY_SEPARATOR . 'PUT' .
                 DIRECTORY_SEPARATOR . 'groups.php',
@@ -29,10 +26,7 @@ return [
     ],
     'client' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'GlobalDB' .
                 DIRECTORY_SEPARATOR . 'PUT' .
                 DIRECTORY_SEPARATOR . 'clients.php',

@@ -235,7 +235,7 @@ class Write
             $this->dataEncode->startObject(key: 'Results');
         } else {
             $this->dataEncode->startObject(key: 'Results');
-            if (Env::$oRepresentation === 'XML') {
+            if (in_array(Env::$oRepresentation, ['XML', 'HTML'])) {
                 $this->dataEncode->startArray(key: 'Rows');
             }
         }
@@ -325,7 +325,7 @@ class Write
                     $this->dataEncode->addKeyData(key: $k, data: $v);
                 }
             } else {
-                if (Env::$oRepresentation === 'XML') {
+                if (in_array(Env::$oRepresentation, ['XML', 'HTML'])) {
                     $this->dataEncode->startObject(key: 'Row');
                     foreach ($arr as $k => $v) {
                         $this->dataEncode->addKeyData(key: $k, data: $v);
@@ -340,7 +340,7 @@ class Write
         if ($this->s['payloadType'] === 'Object') {
             $this->dataEncode->endObject();
         } else {
-            if (Env::$oRepresentation === 'XML') {
+            if (in_array(Env::$oRepresentation, ['XML', 'HTML'])) {
                 $this->dataEncode->endArray();
             }
             $this->dataEncode->endObject();

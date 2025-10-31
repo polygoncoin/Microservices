@@ -109,16 +109,10 @@ class RouteParser
 
         if ($routeFileLocation === null) {
             if ($this->req->open) {
-                $routeFileLocation = Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Routes' .
-                    DIRECTORY_SEPARATOR . 'Open' .
+                $routeFileLocation = Constants::$OPEN_ROUTES_DIR .
                     DIRECTORY_SEPARATOR . $this->req->METHOD . 'routes.php';
             } else {
-                $routeFileLocation = Constants::$PUBLIC_HTML .
-                    DIRECTORY_SEPARATOR . 'Config' .
-                    DIRECTORY_SEPARATOR . 'Routes' .
-                    DIRECTORY_SEPARATOR . 'Auth' .
+                $routeFileLocation = Constants::$AUTH_ROUTES_DIR .
                     DIRECTORY_SEPARATOR . 'ClientDB' .
                     DIRECTORY_SEPARATOR . 'Groups' .
                     DIRECTORY_SEPARATOR . $this->s['gDetails']['name'] .

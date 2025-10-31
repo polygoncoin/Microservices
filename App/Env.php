@@ -72,7 +72,8 @@ class Env
     public static $authMode = null;
     public static $sessionMode = null;
 
-    private static $allowedRepresentation = ['JSON', 'XML'];
+    private static $iAllowedRepresentation = ['JSON', 'XML'];
+    private static $oAllowedRepresentation = ['JSON', 'XML', 'HTML'];
 
     /**
      * Initialize
@@ -123,7 +124,7 @@ class Env
         $iRepresentation = getenv(name: 'iRepresentation');
         if (
             $iRepresentation !== false
-            && self::isValidDataRep(dataRepresentation: $iRepresentation)
+            && self::isValidDataRep(dataRepresentation: $iRepresentation, mode: 'input')
         ) {
             self::$iRepresentation = getenv(name: 'iRepresentation');
         }
@@ -131,7 +132,7 @@ class Env
         $oRepresentation = getenv(name: 'oRepresentation');
         if (
             $oRepresentation !== false
-            && self::isValidDataRep(dataRepresentation: $oRepresentation)
+            && self::isValidDataRep(dataRepresentation: $oRepresentation, mode: 'output')
         ) {
             self::$oRepresentation = getenv(name: 'oRepresentation');
         }
@@ -146,24 +147,44 @@ class Env
      * Validate Data Representation
      *
      * @param string $dataRepresentation Data Representation
+     * @param string $mode               input / output
      *
      * @return bool
      * @throws \Exception
      */
-    public static function isValidDataRep($dataRepresentation): bool
+    public static function isValidDataRep($dataRepresentation, $mode): bool
     {
-        if (
-            in_array(
-                needle: $dataRepresentation,
-                haystack: self::$allowedRepresentation
-            )
-        ) {
-            return true;
-        } else {
-            throw new \Exception(
-                message: "Invalid Data Representation '{$dataRepresentation}'",
-                code: HttpStatus::$InternalServerError
-            );
+        switch ($mode) {
+            case 'input':
+                if (
+                    in_array(
+                        needle: $dataRepresentation,
+                        haystack: self::$iAllowedRepresentation
+                    )
+                ) {
+                    return true;
+                } else {
+                    throw new \Exception(
+                        message: "Invalid Data Representation '{$dataRepresentation}'",
+                        code: HttpStatus::$InternalServerError
+                    );
+                }
+                break;
+            case 'output':
+                if (
+                    in_array(
+                        needle: $dataRepresentation,
+                        haystack: self::$oAllowedRepresentation
+                    )
+                ) {
+                    return true;
+                } else {
+                    throw new \Exception(
+                        message: "Invalid Data Representation '{$dataRepresentation}'",
+                        code: HttpStatus::$InternalServerError
+                    );
+                }
+                break;
         }
     }
 }

@@ -18,10 +18,7 @@ namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Groups\AdminGrou
 return [
     'registration' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'AdminGroup' .
@@ -31,10 +28,7 @@ return [
     ],
     'address' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'AdminGroup' .
@@ -44,10 +38,7 @@ return [
     ],
     'registration-with-address' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$PUBLIC_HTML .
-                DIRECTORY_SEPARATOR . 'Config' .
-                DIRECTORY_SEPARATOR . 'Queries' .
-                DIRECTORY_SEPARATOR . 'Auth' .
+            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'AdminGroup' .

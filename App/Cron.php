@@ -66,10 +66,7 @@ class Cron
     {
         $this->c->initRequest();
 
-        $routeFileLocation = Constants::$PUBLIC_HTML .
-            DIRECTORY_SEPARATOR . 'Config' .
-            DIRECTORY_SEPARATOR . 'Routes' .
-            DIRECTORY_SEPARATOR . 'Auth' .
+        $routeFileLocation = Constants::$AUTH_ROUTES_DIR .
             DIRECTORY_SEPARATOR . 'ClientDB' .
             DIRECTORY_SEPARATOR . 'Common' .
             DIRECTORY_SEPARATOR . 'Cron' .

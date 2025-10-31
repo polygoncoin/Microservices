@@ -47,8 +47,7 @@ class CacheHandler
      *
      * @var string
      */
-    private $cacheLocation = DIRECTORY_SEPARATOR . 'Files' .
-        DIRECTORY_SEPARATOR . 'Dropbox';
+    private $cacheLocation = null;
 
     /**
      * Common object
@@ -74,7 +73,7 @@ class CacheHandler
      */
     public function init(): bool
     {
-        $this->cacheLocation = Constants::$DOC_ROOT . $this->cacheLocation;
+        $this->cacheLocation = Constants::$DROP_BOX_DIR;
         $this->filePath = DIRECTORY_SEPARATOR . trim(
             string: str_replace(
                 search: ['../', '..\\', '/', '\\'],

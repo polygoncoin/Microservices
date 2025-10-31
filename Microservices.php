@@ -296,10 +296,16 @@ class Microservices
             $methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
             $headers['Access-Control-Allow-Methods'] = $methods;
         } else {
-            if (Env::$oRepresentation === 'XML') { // XML headers
-                $headers['Content-Type'] = 'text/xml; charset=utf-8';
-            } else { // JSON headers
-                $headers['Content-Type'] = 'application/json; charset=utf-8';
+            switch (Env::$oRepresentation) {
+                case 'XML':
+                    $headers['Content-Type'] = 'text/xml; charset=utf-8';
+                    break;
+                case 'JSON':
+                    $headers['Content-Type'] = 'application/json; charset=utf-8';
+                    break;
+                case 'HTML':
+                    $headers['Content-Type'] = 'text/html; charset=utf-8';
+                    break;
             }
             $cacheControl = 'no-store, no-cache, must-revalidate, max-age=0';
             $headers['Cache-Control'] = $cacheControl;

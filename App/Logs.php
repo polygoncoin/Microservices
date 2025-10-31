@@ -42,8 +42,7 @@ class Logs
      */
     public function log(&$logDetails): void
     {
-        $absLogsDir = Constants::$DOC_ROOT . DIRECTORY_SEPARATOR .
-            'Files' . $this->logsDir;
+        $absLogsDir = Constants::$DOC_ROOT . $this->logsDir;
         if (!is_dir(filename: $absLogsDir)) {
             mkdir(directory: $absLogsDir, permissions: 0755, recursive: true);
         }
