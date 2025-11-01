@@ -424,43 +424,45 @@ class Login
             $userSessionIdKey = CacheKey::userSessionId(
                 uID: $this->userDetails['id']
             );
-            if (!$this->c->req->cache->cacheExists(key: $userSessionIdKey)) {
-                $this->c->req->cache->setCache(
-                    key: $userSessionIdKey,
-                    value: $this->timestamp,
-                    expire: Constants::$TOKEN_EXPIRY_TIME
+            if ($this->c->req->cache->cacheExists(key: $userSessionIdKey)) {
+                $userSessionIdKeyData = json_decode(
+                    json: $this->c->req->cache->getCache(
+                        key: $userSessionIdKey
+                    ),
+                    associative: true
                 );
-                unset($this->userDetails['password_hash']);
-                // Start session in normal (read/write) mode.
-                // Use once client is authorized and want to make changes in $_SESSION
-                Session::sessionStartReadWrite();
-                $this->userDetails['timestamp'] = $this->timestamp;
-                $_SESSION = $this->userDetails;
-                $isLoggedIn = true;
+                $this->c->req->cache->deleteCache(
+                    key: $userSessionIdKey
+                );
+                Session::deleteSession(sessionId: $userSessionIdKeyData['sessionId']);
             }
-        }
-
-        if (isset($_SESSION['id'])) {
-            $time = $this->timestamp - $_SESSION['timestamp'];
-            $output = [
-                'Session' => 'Active',
-                'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
-            ];
-
-            $this->c->initResponse();
-            $this->c->res->dataEncode->startObject();
-            $this->c->res->dataEncode->addKeyData(key: 'Results', data: $output);
-        } else {
-            $timestamp = $this->c->req->cache->getCache(
-                key: $userSessionIdKey
-            );
-            $time = $this->timestamp - $timestamp;
-
-            // Return 429 Too Many Requests
-            throw new \Exception(
-                message: (Constants::$TOKEN_EXPIRY_TIME - $time),
-                code: HttpStatus::$TooManyRequests
+            unset($this->userDetails['password_hash']);
+            // Start session in normal (read/write) mode.
+            // Use once client is authorized and want to make changes in $_SESSION
+            Session::sessionStartReadWrite();
+            $this->userDetails['timestamp'] = $this->timestamp;
+            $_SESSION = $this->userDetails;
+            $isLoggedIn = true;
+            $this->c->req->cache->setCache(
+                key: $userSessionIdKey,
+                value: json_encode(
+                    value: [
+                        'timestamp' => $this->timestamp,
+                        'sessionId' => session_id()
+                    ]
+                ),
+                expire: Constants::$TOKEN_EXPIRY_TIME
             );
         }
+
+        $time = $this->timestamp - $_SESSION['timestamp'];
+        $output = [
+            'Session' => 'Active',
+            'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
+        ];
+
+        $this->c->initResponse();
+        $this->c->res->dataEncode->startObject();
+        $this->c->res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 }
