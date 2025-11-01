@@ -476,7 +476,7 @@ class Session
     public static function deleteSessions($sessionIds): void
     {
         for ($i = 0, $iCount = count($sessionIds); $i < $iCount; $i++) {
-            self::$sessionContainer->deleteSession($sessionIds[$i]);
+            self::deleteSession($sessionIds[$i]);
         }
     }
 }
