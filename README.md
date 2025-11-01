@@ -36,15 +36,19 @@ Below are the configuration settings details in .env
 ```ini
 ENVIRONMENT=0                   ;Environment PRODUCTION = 1 / DEVELOPMENT = 0
 OUTPUT_PERFORMANCE_STATS=1      ;Add Performance Stats in JSON output: 1 = true / 0 = false
+
+; API authentication modes - Token / Session (Cookie based Sessions)
+authMode='Token'
+sessionMode='File'  ; For Cookie based Session - 'File', 'MySql', 'PostgreSql', 'MongoDb', 'Redis', 'Memcached', 'Cookie'
+
 allowConfigRequest=1            ;Allow config request (global flag): 1 = true / 0 = false
 cronRestrictedIp='127.0.0.1'    ;Crons Details
 maxPerPage=10000                ;Maximum value of per page (records per page)
 
-;Data Representation: JSON/XML
-;To override below setting pass below params with route separated with &
-iRepresentation='JSON'
-oRepresentation='JSON'
-allowGetRepresentation=1
+; Data Representation: JSON/XML/HTML
+iRepresentation='JSON'          ; JSON/XML - Input Data Representation
+oRepresentation='JSON'          ; JSON/XML/HTML - Output Data Representation
+allowGetRepresentation=1        ; Allow iRepresentation / oRepresentation as GET query params
 ```
 
 ### Cache Server Details (Redis)
