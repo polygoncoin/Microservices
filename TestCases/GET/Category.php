@@ -15,6 +15,11 @@
 
 namespace Microservices\TestCases;
 
+$header = $defaultHeaders;
+if (isset($token)) {
+    $header[] = "Authorization: Bearer {$token}";
+}
+
 return trigger(
     homeURL: $homeURL,
     method: 'GET',

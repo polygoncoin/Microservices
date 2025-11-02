@@ -149,6 +149,10 @@ class Microservices
                 $class = __NAMESPACE__ . '\\App\\Cron';
                 break;
 
+            case $this->c->req->ROUTE === '/logout':
+                $class = __NAMESPACE__ . '\\App\\Logout';
+                break;
+
             // Requires HTTP auth username and password
             case $this->c->req->ROUTE === '/reload':
                 if ($this->c->req->IP !== Env::$cronRestrictedIp) {

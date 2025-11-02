@@ -104,32 +104,24 @@ if (!function_exists(function: 'getCurlConfig')) {
     ): array {
         $curlConfig[CURLOPT_URL] = "{$homeURL}?r={$route}{$queryString}";
         $curlConfig[CURLOPT_HTTPHEADER] = $header;
-        $curlConfig[CURLOPT_HTTPHEADER][] = 'X-API-Version: v1.0.0';
-        $curlConfig[CURLOPT_HTTPHEADER][] = 'Cache-Control: no-cache';
         $curlConfig[CURLOPT_HEADER] = 1;
-
-        $contentType = 'Content-Type: text/plain; charset=utf-8';
 
         switch ($method) {
             case 'GET':
                 break;
             case 'POST':
-                $curlConfig[CURLOPT_HTTPHEADER][] = $contentType;
                 $curlConfig[CURLOPT_POST] = true;
                 $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 break;
             case 'PUT':
-                $curlConfig[CURLOPT_HTTPHEADER][] = $contentType;
                 $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PUT';
                 $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 break;
             case 'PATCH':
-                $curlConfig[CURLOPT_HTTPHEADER][] = $contentType;
                 $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PATCH';
                 $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 break;
             case 'DELETE':
-                $curlConfig[CURLOPT_HTTPHEADER][] = $contentType;
                 $curlConfig[CURLOPT_CUSTOMREQUEST] = 'DELETE';
                 $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 break;

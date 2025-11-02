@@ -424,6 +424,8 @@ class Login
             $userSessionIdKey = CacheKey::userSessionId(
                 uID: $this->userDetails['id']
             );
+            $expire = Constants::$TOKEN_EXPIRY_TIME;
+            $timestamp = $this->timestamp;
             if ($this->c->req->cache->cacheExists(key: $userSessionIdKey)) {
                 $userSessionIdKeyData = json_decode(
                     json: $this->c->req->cache->getCache(
@@ -435,24 +437,31 @@ class Login
                     key: $userSessionIdKey
                 );
                 Session::deleteSession(sessionId: $userSessionIdKeyData['sessionId']);
+                $expire = $this->timestamp - $userSessionIdKeyData['timestamp'];
+                $expire = ($expire > Constants::$TOKEN_EXPIRY_TIME)
+                    ? Constants::$TOKEN_EXPIRY_TIME : $expire;
+                $timestamp = $userSessionIdKeyData['timestamp'];
             }
             unset($this->userDetails['password_hash']);
+            $this->userDetails['timestamp'] = $timestamp;
+
             // Start session in normal (read/write) mode.
             // Use once client is authorized and want to make changes in $_SESSION
             Session::sessionStartReadWrite();
-            $this->userDetails['timestamp'] = $this->timestamp;
             $_SESSION = $this->userDetails;
-            $isLoggedIn = true;
+
             $this->c->req->cache->setCache(
                 key: $userSessionIdKey,
                 value: json_encode(
                     value: [
-                        'timestamp' => $this->timestamp,
+                        'timestamp' => $timestamp,
                         'sessionId' => session_id()
                     ]
                 ),
-                expire: Constants::$TOKEN_EXPIRY_TIME
+                expire: $expire
             );
+
+            $isLoggedIn = true;
         }
 
         $time = $this->timestamp - $_SESSION['timestamp'];

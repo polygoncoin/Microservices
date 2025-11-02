@@ -17,7 +17,16 @@ namespace Microservices\TestCases;
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'TestFunctions.php';
 
-$header = [];
+$apiVersion = 'X-API-Version: v1.0.0';
+$cacheControl = 'Cache-Control: no-cache';
+// $contentType = 'Content-Type: application/x-www-form-urlencoded; charset=utf-8';
+// $contentType = 'Content-Type: multipart/form-data; charset=utf-8';
+$contentType = 'Content-Type: text/plain; charset=utf-8';
+
+$defaultHeaders = [];
+$defaultHeaders[] = $apiVersion;
+$defaultHeaders[] = $cacheControl;
+
 $response = [];
 
 $homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
@@ -58,7 +67,6 @@ $response[] = include DELETE . DIRECTORY_SEPARATOR . 'Address.php';
 $response[] = include POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
 
 // Admin login
-$header = [];
 $payload = [
     'username' => 'client_1_admin_1',
     'password' => 'shames11'

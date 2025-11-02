@@ -17,7 +17,14 @@ namespace Microservices\TestCases;
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'TestFunctions.php';
 
-$header = [];
+$apiVersion = 'X-API-Version: v1.0.0';
+$cacheControl = 'Cache-Control: no-cache';
+$contentType = 'Content-Type: text/plain; charset=utf-8';
+
+$defaultHeaders = [];
+$defaultHeaders[] = $apiVersion;
+$defaultHeaders[] = $cacheControl;
+
 $response = [];
 
 $homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';

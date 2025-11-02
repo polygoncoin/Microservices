@@ -15,11 +15,14 @@
 
 namespace Microservices\TestCases;
 
+$header = $defaultHeaders;
+$header[] = $contentType;
+
 $res = trigger(
     homeURL: $homeURL,
     method: 'POST',
     route: '/login',
-    header: [],
+    header: $header,
     payload: json_encode(value: $payload)
 );
 
@@ -28,7 +31,6 @@ if (
     && $res
 ) {
     $token = $res['responseBody']['Results']['Token'];
-    $header[] = "Authorization: Bearer {$token}";
 }
 
 return $res;

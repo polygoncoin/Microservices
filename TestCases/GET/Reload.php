@@ -15,10 +15,12 @@
 
 namespace Microservices\TestCases;
 
+$header = $defaultHeaders;
+
 return trigger(
     homeURL: $homeURL,
     method: 'GET',
     route: '/reload',
-    header: [],
+    header: $header,
     payload: ''
 );
