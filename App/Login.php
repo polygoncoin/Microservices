@@ -126,7 +126,7 @@ class Login
         $this->loadUserDetails();
         $this->validateRequestIp();
         $this->validatePassword();
-        
+
         $this->timestamp = time();
         switch (Env::$authMode) {
             case 'Token':

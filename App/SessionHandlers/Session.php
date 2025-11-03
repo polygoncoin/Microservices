@@ -57,38 +57,38 @@ class Session
     public static $ENCRYPTION_IV = null;
 
     /* MySql Session config */
-    public static $MYSQL_HOSTNAME = 'localhost';
+    public static $MYSQL_HOSTNAME = '';
     public static $MYSQL_PORT = 3306;
-    public static $MYSQL_USERNAME = 'root';
-    public static $MYSQL_PASSWORD = 'shames11';
-    public static $MYSQL_DATABASE = 'session_db';
-    public static $MYSQL_TABLE = 'sessions';
+    public static $MYSQL_USERNAME = '';
+    public static $MYSQL_PASSWORD = '';
+    public static $MYSQL_DATABASE = '';
+    public static $MYSQL_TABLE = '';
 
     /* PostgreSql Session config */
-    public static $PGSQL_HOSTNAME = 'localhost';
+    public static $PGSQL_HOSTNAME = '';
     public static $PGSQL_PORT = 5432;
     public static $PGSQL_USERNAME = null;
     public static $PGSQL_PASSWORD = null;
-    public static $PGSQL_DATABASE = 'session_db';
-    public static $PGSQL_TABLE = 'sessions';
+    public static $PGSQL_DATABASE = '';
+    public static $PGSQL_TABLE = '';
 
     /* MongoDb Session config */
-    public static $MONGODB_HOSTNAME = 'localhost';
+    public static $MONGODB_HOSTNAME = '';
     public static $MONGODB_PORT = 27017;
     public static $MONGODB_USERNAME = null;
     public static $MONGODB_PASSWORD = null;
-    public static $MONGODB_DATABASE = 'session_db';
-    public static $MONGODB_COLLECTION = 'sessions';
+    public static $MONGODB_DATABASE = '';
+    public static $MONGODB_COLLECTION = '';
 
     /* Redis Session config */
-    public static $REDIS_HOSTNAME = 'localhost';
+    public static $REDIS_HOSTNAME = '';
     public static $REDIS_PORT = 6379;
     public static $REDIS_USERNAME = null;
     public static $REDIS_PASSWORD = null;
     public static $REDIS_DATABASE = 0;
 
     /* Memcached Session config */
-    public static $MEMCACHED_HOSTNAME = 'localhost';
+    public static $MEMCACHED_HOSTNAME = '';
     public static $MEMCACHED_PORT = 11211;
 
     /**
@@ -337,7 +337,7 @@ class Session
         if (self::$sessionMode === 'Cookie') {
             $customSessionHandler->sessionDataName = self::$sessionDataName;
         }
-        session_set_save_handler(open: $customSessionHandler, close: true);
+        session_set_save_handler($customSessionHandler, true);
     }
 
     /**
@@ -406,15 +406,28 @@ class Session
      */
     public static function initSessionHandler($sessionMode, $options = []): void
     {
+        $env = parse_ini_file(filename: Constants::$DOC_ROOT
+            . DIRECTORY_SEPARATOR . '.session.env'
+        );
+        foreach ($env as $var => $value) {
+            self::$$var = $value;
+        }
+
         self::$sessionMode = $sessionMode;
 
         // Set options from php.ini if not set in this class
         if (empty(self::$sessionName)) {
             self::$sessionName = session_name();
         }
-        if (self::$sessionMode === 'File' && empty(self::$sessionSavePath)) {
-            self::$sessionSavePath = (session_save_path() ?
-                session_save_path() : sys_get_temp_dir()) . '/session-files';
+        if (self::$sessionMode === 'File') {
+            if (empty(self::$sessionSavePath)) {
+                self::$sessionSavePath = (session_save_path() ?
+                    session_save_path() : sys_get_temp_dir()) . '/session-files';
+            }
+            if (strpos(self::$sessionSavePath, '/') !== 0) {
+                self::$sessionSavePath =
+                    __DIR__ . DIRECTORY_SEPARATOR . self::$sessionSavePath;
+            }
         }
 
         // Comment this call once you are done with validating settings part
