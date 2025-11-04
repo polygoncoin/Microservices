@@ -15,6 +15,7 @@
 
 namespace Microservices;
 
+use Microservices\App\CacheHandler;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
@@ -133,6 +134,16 @@ class Microservices
      */
     public function processApi(): bool
     {
+        if ($this->c->req->METHOD === Constants::$GET) {
+            $cacheHandler = new CacheHandler($this->c);
+            if ($cacheHandler->init(mode: 'Open')) {
+                // File exists - Serve from Dropbox
+                $cacheHandler->process();
+                return true;
+            }
+            $cacheHandler = null;
+        }
+
         $class = null;
 
         switch (true) {

@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CacheHandler;
 use Microservices\App\Constants;
 use Microservices\App\Common;
 use Microservices\App\Env;
@@ -93,6 +94,16 @@ class Api
      */
     public function process(): bool
     {
+        if ($this->c->req->METHOD === Constants::$GET) {
+            $cacheHandler = new CacheHandler($this->c);
+            if ($cacheHandler->init(mode: 'Closed')) {
+                // File exists - Serve from Dropbox
+                $cacheHandler->process();
+                return true;
+            }
+            $cacheHandler = null;
+        }
+
         // Execute Pre Route Hooks
         if (isset($this->c->req->rParser->routeHook['__PRE-ROUTE-HOOKS__'])) {
             if ($this->hook === null) {

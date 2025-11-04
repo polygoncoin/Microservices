@@ -69,12 +69,15 @@ class CacheHandler
     /**
      * Initialize check and serve file
      *
+     * @param string $mode Open (Public access) / Closed (Requires Auth)
+     *
      * @return bool
      */
-    public function init(): bool
+    public function init($mode): bool
     {
-        $this->cacheLocation = Constants::$DROP_BOX_DIR;
-        $this->filePath = DIRECTORY_SEPARATOR . trim(
+        $this->cacheLocation = Constants::$DROP_BOX_DIR .
+            DIRECTORY_SEPARATOR . $mode;
+        $filePath = DIRECTORY_SEPARATOR . trim(
             string: str_replace(
                 search: ['../', '..\\', '/', '\\'],
                 replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
@@ -83,9 +86,9 @@ class CacheHandler
             characters: './\\'
         );
         $this->validateFileRequest();
-        $this->fileLocation = $this->cacheLocation . $this->filePath;
+        $this->fileLocation = $this->cacheLocation . $filePath;
 
-        return true;
+        return file_exists($this->fileLocation);
     }
 
     /**
@@ -96,7 +99,7 @@ class CacheHandler
     public function validateFileRequest(): void
     {
         // check logic for user is allowed to access the file as per $this->c->req->s
-        // $this->filePath;
+        // $this->fileLocation;
     }
 
     /**
