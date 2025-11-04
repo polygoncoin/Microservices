@@ -339,7 +339,7 @@ class Read
         &$configKeys,
         $useResultSet
     ): void {
-        [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
             sqlDetails: $rSqlConfig,
             isFirstCall: $isFirstCall,
             configKeys: $configKeys,
@@ -423,7 +423,7 @@ class Read
             ($this->c->req->s['payload']['page'] - 1) *
             $this->c->req->s['payload']['perPage']
         );
-        [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
             sqlDetails: $rSqlConfig
         );
 
@@ -482,7 +482,7 @@ class Read
         &$configKeys,
         $useResultSet
     ): void {
-        [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
             sqlDetails: $rSqlConfig,
             isFirstCall: $isFirstCall,
             configKeys: $configKeys,

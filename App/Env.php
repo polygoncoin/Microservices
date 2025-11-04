@@ -38,9 +38,10 @@ class Env
     public static $allowConfigRequest = null;
     public static $configRequestUriKeyword = null;
 
+    public static $counter = null;
+    public static $clients = null;
     public static $groups = null;
     public static $clientUsers = null;
-    public static $clients = null;
 
     public static $maxPerPage = null;
     public static $defaultPerPage = null;
@@ -93,9 +94,10 @@ class Env
         self::$allowConfigRequest = getenv(name: 'allowConfigRequest');
         self::$configRequestUriKeyword = getenv(name: 'configRequestUriKeyword');
 
+        self::$counter = getenv(name: 'counter');
+        self::$clients = getenv(name: 'clients');
         self::$groups = getenv(name: 'groups');
         self::$clientUsers = getenv(name: 'clientUsers');
-        self::$clients = getenv(name: 'clients');
 
         self::$maxPerPage = getenv(name: 'maxPerPage');
         self::$defaultPerPage = getenv(name: 'defaultPerPage');
@@ -186,5 +188,6 @@ class Env
                 }
                 break;
         }
+        return false;
     }
 }

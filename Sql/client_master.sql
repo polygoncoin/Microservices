@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `master_users`;
 
 CREATE TABLE `master_users` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` BIGINT UNSIGNED NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE `master_users` (
 DROP TABLE IF EXISTS `address`;
 
 CREATE TABLE `address` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` BIGINT UNSIGNED NOT NULL,
   `user_id` int NOT NULL DEFAULT 0,
   `address` varchar(255) NOT NULL,
   `created_by` int DEFAULT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `address` (
 DROP TABLE IF EXISTS `category`;
 
 CREATE TABLE `category` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` BIGINT UNSIGNED NOT NULL,
   `parent_id` int NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL,
   `created_by` int DEFAULT NULL,

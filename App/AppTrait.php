@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Counter;
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
 use Microservices\App\HttpStatus;
@@ -222,6 +223,7 @@ trait AppTrait
         $configKeys = null,
         $flag = null
     ): array {
+        $id = null;
         $sql = '';
         /*!999999 comment goes here */
         if (isset($sqlDetails['__SQL-COMMENT__'])) {
@@ -259,13 +261,6 @@ trait AppTrait
                         }
                         $sqlParams[":{$param}"] = $v;
                         $row[$param] = $v;
-                    }
-                    if ($found) {
-                        $sql = str_replace(
-                            search: '__SET__',
-                            replace: implode(separator: ', ', array: $__SET__),
-                            subject: $sql
-                        );
                     }
                 }
             }
@@ -316,13 +311,30 @@ trait AppTrait
             } else {
                 $errors = array_merge($errors, $wErrors);
             }
+        } else {
+            if (
+                strpos(trim(strtolower($sql)), 'select') !== 0
+                && !isset($sqlParams[':id'])
+                && !isset($row['id'])
+            ) {
+                $id = Counter::getCounter($this->c);
+                $sqlParams[':id'] = $id;
+                $row['id'] = $id;
+            }
+
+            $__SET__[] = "`id` = :id";
+            $sql = str_replace(
+                search: '__SET__',
+                replace: implode(separator: ', ', array: $__SET__),
+                subject: $sql
+            );
         }
 
         if (!empty($row)) {
             $this->resetFetchData('sqlParams', $configKeys, $row);
         }
 
-        return [$sql, $sqlParams, $errors, ($missExecution || $wMissExecution)];
+        return [$id, $sql, $sqlParams, $errors, ($missExecution || $wMissExecution)];
     }
 
     /**
@@ -787,7 +799,7 @@ trait AppTrait
         $key
     ): bool {
         if ($this->rateLimiter === null) {
-            $this->rateLimiter = new RateLimiter();
+            $this->rateLimiter = new RateLimiter($this->c->req);
         }
 
         try {
@@ -847,7 +859,7 @@ trait AppTrait
 
         $triggerOutput = [];
         if ($isAssoc) {
-            $http = getTriggerDetails($triggerConfig);
+            $http = $this->getTriggerDetails($triggerConfig);
             $triggerOutput = Start($http);
         } else {
             for (
@@ -855,7 +867,7 @@ trait AppTrait
                 $iTrigger < $iTriggerCount;
                 $iTrigger++
             ) {
-                $http = getTriggerDetails($triggerConfig[$iTrigger]);
+                $http = $this->getTriggerDetails($triggerConfig[$iTrigger]);
                 $triggerOutput[] = Start($http);
             }
         }

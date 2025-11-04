@@ -1,7 +1,14 @@
+DROP TABLE IF EXISTS `m000_counter`;
+
+CREATE TABLE `m000_counter` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `m001_master_clients`;
 
 CREATE TABLE `m001_master_clients` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `api_domain` varchar(255) DEFAULT NULL,
   `open_api_domain` varchar(255) DEFAULT NULL,
@@ -49,7 +56,7 @@ CREATE TABLE `m001_master_clients` (
 DROP TABLE IF EXISTS `m002_master_groups`;
 
 CREATE TABLE `m002_master_groups` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `client_id` int DEFAULT NULL,
   `allowed_ips` text,

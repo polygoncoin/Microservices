@@ -444,7 +444,7 @@ class Write
             }
 
             // Get Sql and Params
-            [$sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
+            [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParams(
                 sqlDetails: $wSqlConfig
             );
 
@@ -466,7 +466,6 @@ class Write
             }
 
             if (isset($wSqlConfig['__INSERT-IDs__'])) {
-                $id = $this->db->lastInsertId();
                 $_response[$wSqlConfig['__INSERT-IDs__']] = $id;
                 $this->s['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
             } else {
