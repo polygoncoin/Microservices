@@ -19,10 +19,6 @@ use Microservices\App\Logs;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\Microservices;
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'Autoload.php';
-
-spl_autoload_register(callback: __NAMESPACE__ . '\Autoload::register');
-
 function Start($http, $streamData = false)
 {
     try {
@@ -122,24 +118,3 @@ function Start($http, $streamData = false)
         }
     }
 }
-
-// Process the request
-$http = [];
-
-$http['server']['host'] = $_SERVER['HTTP_HOST'];
-$http['server']['method'] = $_SERVER['REQUEST_METHOD'];
-$http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
-if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
-}
-$http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
-$http['get'] = &$_GET;
-$http['isWebRequest'] = true;
-
-// Load .env
-$env = parse_ini_file(filename: __DIR__ . DIRECTORY_SEPARATOR . '.env');
-foreach ($env as $key => $value) {
-    putenv(assignment: "{$key}={$value}");
-}
-
-Start($http, $streamData = true);

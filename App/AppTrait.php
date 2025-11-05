@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use function Microservices\Start;
 use Microservices\App\Counter;
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
@@ -313,21 +314,21 @@ trait AppTrait
             }
         } else {
             if (
-                strpos(trim(strtolower($sql)), 'select') !== 0
+                strpos(trim(strtolower($sql)), 'insert') === 0
                 && !isset($sqlParams[':id'])
                 && !isset($row['id'])
             ) {
                 $id = Counter::getCounter($this->c);
                 $sqlParams[':id'] = $id;
                 $row['id'] = $id;
-            }
 
-            $__SET__[] = "`id` = :id";
-            $sql = str_replace(
-                search: '__SET__',
-                replace: implode(separator: ', ', array: $__SET__),
-                subject: $sql
-            );
+                $__SET__[] = "`id` = :id";
+                $sql = str_replace(
+                    search: '__SET__',
+                    replace: implode(separator: ', ', array: $__SET__),
+                    subject: $sql
+                );
+            }
         }
 
         if (!empty($row)) {
