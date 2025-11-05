@@ -79,20 +79,10 @@ class Login
     private $payload = [];
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
     }
 
     /**
@@ -102,7 +92,7 @@ class Login
      */
     public function init(): bool
     {
-        $this->c->req->loadClientDetails();
+        Common::$req->loadClientDetails();
 
         return true;
     }
@@ -115,7 +105,7 @@ class Login
     public function process(): bool
     {
         // Check request method is POST
-        if ($this->c->req->METHOD !== Constants::$POST) {
+        if (Common::$req->METHOD !== Constants::$POST) {
             throw new \Exception(
                 message: 'Invalid request method',
                 code: HttpStatus::$NotFound
@@ -149,15 +139,15 @@ class Login
     private function loadPayload(): void
     {
         // Check request method is POST
-        if ($this->c->req->METHOD !== Constants::$POST) {
+        if (Common::$req->METHOD !== Constants::$POST) {
             throw new \Exception(
                 message: 'Invalid request method',
                 code: HttpStatus::$NotFound
             );
         }
 
-        $this->c->req->loadPayload();
-        $this->payload = $this->c->req->dataDecode->get();
+        Common::$req->loadPayload();
+        $this->payload = Common::$req->dataDecode->get();
 
         // Check for necessary conditions variables
         foreach (['username', 'password'] as $value) {
@@ -180,20 +170,20 @@ class Login
      */
     private function loadUserDetails(): void
     {
-        $cID = $this->c->req->s['cDetails']['id'];
+        $cID = Common::$req->s['cDetails']['id'];
         $clientUserKey = CacheKey::clientUser(
             cID: $cID,
             username: $this->payload['username']
         );
         // Redis - one can find the userID from client username
-        if (!$this->c->req->cache->cacheExists(key: $clientUserKey)) {
+        if (!Common::$req->cache->cacheExists(key: $clientUserKey)) {
             throw new \Exception(
                 message: 'Invalid credentials',
                 code: HttpStatus::$Unauthorized
             );
         }
         $this->userDetails = json_decode(
-            json: $this->c->req->cache->getCache(
+            json: Common::$req->cache->getCache(
                 key: $clientUserKey
             ),
             associative: true
@@ -219,14 +209,14 @@ class Login
     {
         // Redis - one can find the userID from username
         $cidrKey = CacheKey::cidr(gID: $this->userDetails['group_id']);
-        if ($this->c->req->cache->cacheExists(key: $cidrKey)) {
+        if (Common::$req->cache->cacheExists(key: $cidrKey)) {
             $cidrs = json_decode(
-                json: $this->c->req->cache->getCache(
+                json: Common::$req->cache->getCache(
                     key: $cidrKey
                 ),
                 associative: true
             );
-            $ipNumber = ip2long(ip: $this->c->req->IP);
+            $ipNumber = ip2long(ip: Common::$req->IP);
             $isValidIp = false;
             foreach ($cidrs as $cidr) {
                 if ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
@@ -277,11 +267,11 @@ class Login
             $token = bin2hex(string: random_bytes(length: 32));
 
             if (
-                !$this->c->req->cache->cacheExists(
+                !Common::$req->cache->cacheExists(
                     key: CacheKey::token(token: $token)
                 )
             ) {
-                $this->c->req->cache->setCache(
+                Common::$req->cache->setCache(
                     key: CacheKey::token(token: $token),
                     value: '{}',
                     expire: Constants::$TOKEN_EXPIRY_TIME
@@ -308,16 +298,16 @@ class Login
         $userTokenKey = CacheKey::userToken(
             uID: $this->userDetails['id']
         );
-        if ($this->c->req->cache->cacheExists(key: $userTokenKey)) {
+        if (Common::$req->cache->cacheExists(key: $userTokenKey)) {
             $tokenDetails = json_decode(
-                json: $this->c->req->cache->getCache(
+                json: Common::$req->cache->getCache(
                     key: $userTokenKey
                 ),
                 associative: true
             );
 
             if (
-                $this->c->req->cache->cacheExists(
+                Common::$req->cache->cacheExists(
                     key: CacheKey::token(
                         token: $tokenDetails['token']
                     )
@@ -327,7 +317,7 @@ class Login
                 if ((Constants::$TOKEN_EXPIRY_TIME - $time) > 0) {
                     $tokenFound = true;
                 } else {
-                    $this->c->req->cache->deleteCache(
+                    Common::$req->cache->deleteCache(
                         key: CacheKey::token(
                             token: $tokenDetails['token']
                         )
@@ -339,7 +329,7 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs
-            $this->c->req->cache->setCache(
+            Common::$req->cache->setCache(
                 key: $userTokenKey,
                 value: json_encode(
                     value: $tokenDetails
@@ -347,7 +337,7 @@ class Login
                 expire: Constants::$TOKEN_EXPIRY_TIME
             );
             unset($this->userDetails['password_hash']);
-            $this->c->req->cache->setCache(
+            Common::$req->cache->setCache(
                 key: CacheKey::token(token: $tokenDetails['token']),
                 value: json_encode(
                     value: $this->userDetails
@@ -363,9 +353,9 @@ class Login
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
         ];
 
-        $this->c->initResponse();
-        $this->c->res->dataEncode->startObject();
-        $this->c->res->dataEncode->addKeyData(key: 'Results', data: $output);
+        Common::initResponse();
+        Common::$res->dataEncode->startObject();
+        Common::$res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 
     /**
@@ -377,8 +367,8 @@ class Login
      */
     private function updateDB(&$tokenDetails): void
     {
-        $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: 'Master');
-        $this->db = &$this->c->req->db;
+        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Master');
+        $this->db = &Common::$req->db;
 
         $userTable = Env::$clientUsers;
         $this->db->execDbQuery(
@@ -426,14 +416,14 @@ class Login
             );
             $expire = Constants::$TOKEN_EXPIRY_TIME;
             $timestamp = $this->timestamp;
-            if ($this->c->req->cache->cacheExists(key: $userSessionIdKey)) {
+            if (Common::$req->cache->cacheExists(key: $userSessionIdKey)) {
                 $userSessionIdKeyData = json_decode(
-                    json: $this->c->req->cache->getCache(
+                    json: Common::$req->cache->getCache(
                         key: $userSessionIdKey
                     ),
                     associative: true
                 );
-                $this->c->req->cache->deleteCache(
+                Common::$req->cache->deleteCache(
                     key: $userSessionIdKey
                 );
                 Session::deleteSession(sessionId: $userSessionIdKeyData['sessionId']);
@@ -450,7 +440,7 @@ class Login
             Session::sessionStartReadWrite();
             $_SESSION = $this->userDetails;
 
-            $this->c->req->cache->setCache(
+            Common::$req->cache->setCache(
                 key: $userSessionIdKey,
                 value: json_encode(
                     value: [
@@ -470,8 +460,8 @@ class Login
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
         ];
 
-        $this->c->initResponse();
-        $this->c->res->dataEncode->startObject();
-        $this->c->res->dataEncode->addKeyData(key: 'Results', data: $output);
+        Common::initResponse();
+        Common::$res->dataEncode->startObject();
+        Common::$res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 }

@@ -47,20 +47,6 @@ class Supplement
     public $db = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
-     * Session variable
-     *
-     * @var null|array
-     */
-    private $s = null;
-
-    /**
      * Hook object
      *
      * @var null|Hook
@@ -90,14 +76,10 @@ class Supplement
 
     /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
-        $this->s = &$this->c->req->s;
-        $this->dataEncode = &$this->c->res->dataEncode;
+        $this->dataEncode = &Common::$res->dataEncode;
     }
 
     /**
@@ -123,7 +105,7 @@ class Supplement
         $Env = __NAMESPACE__ . '\Env';
 
         // Load Queries
-        $sSqlConfig = include $this->c->req->rParser->sqlConfigFile;
+        $sSqlConfig = include Common::$req->rParser->sqlConfigFile;
 
         // Rate Limiting request if configured for Route Queries.
         $this->rateLimitRoute(sqlConfig: $sSqlConfig);
@@ -138,8 +120,8 @@ class Supplement
             $sSqlConfig['isTransaction'] : false;
 
         // Set Server mode to execute query on - Read / Write Server
-        $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: 'Master');
-        $this->db = &$this->c->req->db;
+        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Master');
+        $this->db = &Common::$req->db;
 
         // Use results in where clause of sub queries recursively
         $useHierarchy = $this->getUseHierarchy(
@@ -147,7 +129,7 @@ class Supplement
             keyword: 'useHierarchy'
         );
 
-        if (Env::$allowConfigRequest && $this->c->req->rParser->isConfigRequest) {
+        if (Env::$allowConfigRequest && Common::$req->rParser->isConfigRequest) {
             $this->processSupplementConfig(
                 sSqlConfig: $sSqlConfig,
                 useHierarchy: $useHierarchy
@@ -163,7 +145,7 @@ class Supplement
                     $i < $iCount;
                     $i++
                 ) {
-                    $this->c->req->delQueryCache(
+                    Common::$req->delQueryCache(
                         cacheKey: $sSqlConfig['affectedCacheKeys'][$i]
                     );
                 }
@@ -186,7 +168,7 @@ class Supplement
         $this->dataEncode->startObject(key: 'Config');
         $this->dataEncode->addKeyData(
             key: 'Route',
-            data: $this->c->req->rParser->configuredUri
+            data: Common::$req->rParser->configuredUri
         );
         $this->dataEncode->addKeyData(
             key: 'Payload',
@@ -212,7 +194,7 @@ class Supplement
     {
         // Check for payloadType
         if (isset($sSqlConfig['__PAYLOAD-TYPE__'])) {
-            $payloadType = $this->s['payloadType'];
+            $payloadType = Common::$req->s['payloadType'];
             if ($payloadType !== $sSqlConfig['__PAYLOAD-TYPE__']) {
                 throw new \Exception(
                     message: 'Invalid payload type',
@@ -223,7 +205,7 @@ class Supplement
             if (
                 $sSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
                 && isset($sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
-                && ($objCount = $this->c->req->dataDecode->count())
+                && ($objCount = Common::$req->dataDecode->count())
                 && ($objCount > $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
             ) {
                 throw new \Exception(
@@ -235,13 +217,13 @@ class Supplement
         }
 
         // Set necessary fields
-        $this->s['necessaryArr'] = $this->getRequired(
+        Common::$req->s['necessaryArr'] = $this->getRequired(
             sqlConfig: $sSqlConfig,
             isFirstCall: true,
             flag: $useHierarchy
         );
 
-        if ($this->s['payloadType'] === 'Object') {
+        if (Common::$req->s['payloadType'] === 'Object') {
             $this->dataEncode->startObject(key: 'Results');
         } else {
             $this->dataEncode->startObject(key: 'Results');
@@ -251,14 +233,14 @@ class Supplement
         }
 
         // Perform action
-        $iCount = $this->s['payloadType'] === 'Object' ?
-            1 : $this->c->req->dataDecode->count();
+        $iCount = Common::$req->s['payloadType'] === 'Object' ?
+            1 : Common::$req->dataDecode->count();
 
         for ($i = 0; $i < $iCount; $i++) {
             $configKeys = [];
             $payloadIndexes = [];
             if ($i === 0) {
-                if ($this->s['payloadType'] === 'Object') {
+                if (Common::$req->s['payloadType'] === 'Object') {
                     $payloadIndexes[] = '';
                 } else {
                     $payloadIndexes[] = "{$i}";
@@ -285,10 +267,10 @@ class Supplement
                     configKeys: $configKeys,
                     useHierarchy: $useHierarchy,
                     response: $response,
-                    necessary: $this->s['necessaryArr']
+                    necessary: Common::$req->s['necessaryArr']
                 );
 
-                if ($this->c->res->httpStatus === HttpStatus::$Ok)
+                if (Common::$res->httpStatus === HttpStatus::$Ok)
                 {
                     if (
                         $this->operateAsTransaction
@@ -299,7 +281,7 @@ class Supplement
 
                     $arr = [
                         'Status' => HttpStatus::$Created,
-                        'Payload' => $this->c->req->dataDecode->getCompleteArray(
+                        'Payload' => Common::$req->dataDecode->getCompleteArray(
                             keys: implode(
                                 separator: ':',
                                 array: $payloadIndexes
@@ -308,7 +290,7 @@ class Supplement
                         'Response' => $response
                     ];
                     if ($idempotentWindow) {
-                        $this->c->req->cache->setCache(
+                        Common::$req->cache->setCache(
                             key: $hashKey,
                             value: json_encode(value: $arr),
                             expire: $idempotentWindow
@@ -316,8 +298,8 @@ class Supplement
                     }
                 } else { // Failure
                     $arr = [
-                        'Status' => $this->c->res->httpStatus,
-                        'Payload' => $this->c->req->dataDecode->getCompleteArray(
+                        'Status' => Common::$res->httpStatus,
+                        'Payload' => Common::$req->dataDecode->getCompleteArray(
                             keys: implode(
                                 separator: ':',
                                 array: $payloadIndexes
@@ -347,7 +329,7 @@ class Supplement
             }
         }
 
-        if ($this->s['payloadType'] === 'Object') {
+        if (Common::$req->s['payloadType'] === 'Object') {
             $this->dataEncode->endObject();
         } else {
             if (in_array(Env::$oRepresentation, ['XML', 'HTML'])) {
@@ -392,12 +374,12 @@ class Supplement
                 characters: ':'
             ) : '';
 
-        $isObject = $this->c->req->dataDecode->dataType(
+        $isObject = Common::$req->dataDecode->dataType(
             keys: $payloadIndex
         ) === 'Object';
 
         $iCount = $isObject ?
-            1 : $this->c->req->dataDecode->count(keys: $payloadIndex);
+            1 : Common::$req->dataDecode->count(keys: $payloadIndex);
 
         for ($i = 0; $i < $iCount; $i++) {
             if ($isObject) {
@@ -424,7 +406,7 @@ class Supplement
             $payloadIndex = is_array(value: $payloadIndexes) ?
                 implode(separator: ':', array: $payloadIndexes) : '';
 
-            if (!$this->c->req->dataDecode->isset(keys: $payloadIndex)) {
+            if (!Common::$req->dataDecode->isset(keys: $payloadIndex)) {
                 if ($useHierarchy) {
                     throw new \Exception(
                         message: "Payload key '{$payloadIndex}' not set",
@@ -435,14 +417,14 @@ class Supplement
                 }
             }
 
-            $this->s['payload'] = $this->c->req->dataDecode->get(
+            Common::$req->s['payload'] = Common::$req->dataDecode->get(
                 keys: $payloadIndex
             );
 
             if (count(value: $necessary)) {
-                $this->s['necessary'] = $necessary;
+                Common::$req->s['necessary'] = $necessary;
             } else {
-                $this->s['necessary'] = [];
+                Common::$req->s['necessary'] = [];
             }
 
             // Validation
@@ -453,7 +435,7 @@ class Supplement
             // Execute Pre Sql Hooks
             if (isset($sSqlConfig['__PRE-SQL-HOOKS__'])) {
                 if ($this->hook === null) {
-                    $this->hook = new Hook(common: $this->c);
+                    $this->hook = new Hook();
                 }
                 $this->hook->triggerHook(
                     hookConfig: $sSqlConfig['__PRE-SQL-HOOKS__']
@@ -463,7 +445,7 @@ class Supplement
             // Execute function
             $_response = $this->supplementObj->process(
                 $sSqlConfig['__FUNCTION__'],
-                $this->s['payload']
+                Common::$req->s['payload']
             );
 
             if ($this->operateAsTransaction && !$this->db->beganTransaction) {
@@ -486,7 +468,7 @@ class Supplement
             // Execute Post Sql Hooks
             if (isset($sSqlConfig['__POST-SQL-HOOKS__'])) {
                 if ($this->hook === null) {
-                    $this->hook = new Hook(common: $this->c);
+                    $this->hook = new Hook();
                 }
                 $this->hook->triggerHook(
                     hookConfig: $sSqlConfig['__POST-SQL-HOOKS__']
@@ -528,7 +510,7 @@ class Supplement
         &$necessary
     ): void {
         if ($useHierarchy) {
-            $row = $this->s['payload'];
+            $row = Common::$req->s['payload'];
             $this->resetFetchData(
                 fetchFrom: 'sqlPayload',
                 keys: $configKeys,
@@ -555,7 +537,7 @@ class Supplement
                 array_push($configKeys, $module);
                 $modulePayloadKey = is_array(value: $payloadIndexes) ?
                     implode(separator: ':', array: $payloadIndexes) : '';
-                $dataExists = $this->c->req->dataDecode->isset(
+                $dataExists = Common::$req->dataDecode->isset(
                     keys: $modulePayloadKey
                 );
                 if ($useHierarchy && !$dataExists) { // use parent data of a payload
@@ -602,7 +584,7 @@ class Supplement
                 validationConfig: $sSqlConfig['__VALIDATE__']
             );
             if ($isValidData !== true) {
-                $this->c->res->httpStatus = HttpStatus::$BadRequest;
+                Common::$res->httpStatus = HttpStatus::$BadRequest;
                 $response['Error'] = $errors;
                 $return = false;
             }

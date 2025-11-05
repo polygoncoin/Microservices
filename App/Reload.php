@@ -50,20 +50,10 @@ class Reload
     public $cache = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
     }
 
     /**
@@ -83,7 +73,7 @@ class Reload
      */
     public function process(): bool
     {
-        $this->cache = $this->c->req->connectCache(
+        $this->cache = Common::$req->connectCache(
             cacheType: getenv(name: 'globalCacheType'),
             cacheHostname: getenv(name: 'globalCacheHostname'),
             cachePort: getenv(name: 'globalCachePort'),
@@ -106,7 +96,7 @@ class Reload
      */
     private function processDomainAndUser(): void
     {
-        $this->c->req->db = $this->c->req->connectDb(
+        Common::$req->db = Common::$req->connectDb(
             dbType: getenv(name: 'globalDbType'),
             dbHostname: getenv(name: 'globalDbHostname'),
             dbPort: getenv(name: 'globalDbPort'),
@@ -114,7 +104,7 @@ class Reload
             dbPassword: getenv(name: 'globalDbPassword'),
             dbDatabase: getenv(name: 'globalDbDatabase')
         );
-        $this->db = &$this->c->req->db;
+        $this->db = &Common::$req->db;
 
         $this->db->execDbQuery(
             sql: "
@@ -142,7 +132,7 @@ class Reload
                 key: $c_key,
                 value: json_encode(value: $cRows[$ci])
             );
-            $this->c->req->db = $this->c->req->connectDb(
+            Common::$req->db = Common::$req->connectDb(
                 dbType: getenv(name: $cRows[$ci]['master_db_server_type']),
                 dbHostname: getenv(name: $cRows[$ci]['master_db_hostname']),
                 dbPort: getenv(name: $cRows[$ci]['master_db_port']),
@@ -182,7 +172,7 @@ class Reload
      */
     private function processGroup(): void
     {
-        $this->c->req->db = $this->c->req->connectDb(
+        Common::$req->db = Common::$req->connectDb(
             dbType: getenv(name: 'globalDbType'),
             dbHostname: getenv(name: 'globalDbHostname'),
             dbPort: getenv(name: 'globalDbPort'),

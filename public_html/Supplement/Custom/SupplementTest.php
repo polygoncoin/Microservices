@@ -43,22 +43,12 @@ class SupplementTest implements CustomInterface
     public $db = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
-        $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: $fetchFrom = 'Slave');
-        $this->db = &$this->c->req->db;
+        Common::$req->db = Common::$req->setDbConnection(fetchFrom: $fetchFrom = 'Slave');
+        $this->db = &Common::$req->db;
     }
 
     /**

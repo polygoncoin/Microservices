@@ -15,9 +15,9 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Common;
 use Microservices\App\DatabaseCacheKey;
 use Microservices\App\DatabaseOpenCacheKey;
-use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
 
 /**
@@ -35,13 +35,6 @@ use Microservices\App\HttpStatus;
 class DbFunctions
 {
     /**
-     * Rate Limiter
-     *
-     * @var null|HttpRequest
-     */
-    private $req = null;
-
-    /**
      * Query Cache Connection Object
      *
      * @var null|Object
@@ -50,12 +43,9 @@ class DbFunctions
 
     /**
      * Constructor
-     *
-     * @param HttpRequest $req HTTP Request object
      */
-    public function __construct(&$req)
+    public function __construct()
     {
-        $this->req = &$req;
     }
 
 
@@ -140,7 +130,7 @@ class DbFunctions
      */
     public function setCacheConnection($fetchFrom): object
     {
-        if ($this->req->s['cDetails'] === null) {
+        if (Common::$req->s['cDetails'] === null) {
             throw new \Exception(
                 message: 'Yet to set connection params',
                 code: HttpStatus::$InternalServerError
@@ -152,49 +142,49 @@ class DbFunctions
             case 'Master':
                 return $this->connectCache(
                     cacheType: getenv(
-                        name: $this->req->s['cDetails']['master_cache_server_type']
+                        name: Common::$req->s['cDetails']['master_cache_server_type']
                     ),
                     cacheHostname: getenv(
-                        name: $this->req->s['cDetails']['master_cache_hostname']
+                        name: Common::$req->s['cDetails']['master_cache_hostname']
                     ),
                     cachePort: getenv(
-                        name: $this->req->s['cDetails']['master_cache_port']
+                        name: Common::$req->s['cDetails']['master_cache_port']
                     ),
                     cacheUsername: getenv(
-                        name: $this->req->s['cDetails']['master_cache_username']
+                        name: Common::$req->s['cDetails']['master_cache_username']
                     ),
                     cachePassword: getenv(
-                        name: $this->req->s['cDetails']['master_cache_password']
+                        name: Common::$req->s['cDetails']['master_cache_password']
                     ),
                     cacheDatabase: getenv(
-                        name: $this->req->s['cDetails']['master_cache_database']
+                        name: Common::$req->s['cDetails']['master_cache_database']
                     ),
                     cacheTable:  getenv(
-                        name: $this->req->s['cDetails']['master_cache_table']
+                        name: Common::$req->s['cDetails']['master_cache_table']
                     )
                 );
             case 'Slave':
                 return $this->connectCache(
                     cacheType: getenv(
-                        name: $this->req->s['cDetails']['slave_cache_server_type']
+                        name: Common::$req->s['cDetails']['slave_cache_server_type']
                     ),
                     cacheHostname: getenv(
-                        name: $this->req->s['cDetails']['slave_cache_hostname']
+                        name: Common::$req->s['cDetails']['slave_cache_hostname']
                     ),
                     cachePort: getenv(
-                        name: $this->req->s['cDetails']['slave_cache_port']
+                        name: Common::$req->s['cDetails']['slave_cache_port']
                     ),
                     cacheUsername: getenv(
-                        name: $this->req->s['cDetails']['slave_cache_username']
+                        name: Common::$req->s['cDetails']['slave_cache_username']
                     ),
                     cachePassword: getenv(
-                        name: $this->req->s['cDetails']['slave_cache_password']
+                        name: Common::$req->s['cDetails']['slave_cache_password']
                     ),
                     cacheDatabase: getenv(
-                        name: $this->req->s['cDetails']['slave_cache_database']
+                        name: Common::$req->s['cDetails']['slave_cache_database']
                     ),
                     cacheTable:  getenv(
-                        name: $this->req->s['cDetails']['slave_cache_table']
+                        name: Common::$req->s['cDetails']['slave_cache_table']
                     )
                 );
             default:
@@ -251,7 +241,7 @@ class DbFunctions
      */
     public function setDbConnection($fetchFrom): object
     {
-        if ($this->req->s['cDetails'] === null) {
+        if (Common::$req->s['cDetails'] === null) {
             throw new \Exception(
                 message: 'Yet to set connection params',
                 code: HttpStatus::$InternalServerError
@@ -263,43 +253,43 @@ class DbFunctions
             case 'Master':
                 return $this->connectDb(
                     dbType: getenv(
-                        name: $this->req->s['cDetails']['master_db_server_type']
+                        name: Common::$req->s['cDetails']['master_db_server_type']
                     ),
                     dbHostname: getenv(
-                        name: $this->req->s['cDetails']['master_db_hostname']
+                        name: Common::$req->s['cDetails']['master_db_hostname']
                     ),
                     dbPort: getenv(
-                        name: $this->req->s['cDetails']['master_db_port']
+                        name: Common::$req->s['cDetails']['master_db_port']
                     ),
                     dbUsername: getenv(
-                        name: $this->req->s['cDetails']['master_db_username']
+                        name: Common::$req->s['cDetails']['master_db_username']
                     ),
                     dbPassword: getenv(
-                        name: $this->req->s['cDetails']['master_db_password']
+                        name: Common::$req->s['cDetails']['master_db_password']
                     ),
                     dbDatabase: getenv(
-                        name: $this->req->s['cDetails']['master_db_database']
+                        name: Common::$req->s['cDetails']['master_db_database']
                     )
                 );
             case 'Slave':
                 return $this->connectDb(
                     dbType: getenv(
-                        name: $this->req->s['cDetails']['slave_db_server_type']
+                        name: Common::$req->s['cDetails']['slave_db_server_type']
                     ),
                     dbHostname: getenv(
-                        name: $this->req->s['cDetails']['slave_db_hostname']
+                        name: Common::$req->s['cDetails']['slave_db_hostname']
                     ),
                     dbPort: getenv(
-                        name: $this->req->s['cDetails']['slave_db_port']
+                        name: Common::$req->s['cDetails']['slave_db_port']
                     ),
                     dbUsername: getenv(
-                        name: $this->req->s['cDetails']['slave_db_username']
+                        name: Common::$req->s['cDetails']['slave_db_username']
                     ),
                     dbPassword: getenv(
-                        name: $this->req->s['cDetails']['slave_db_password']
+                        name: Common::$req->s['cDetails']['slave_db_password']
                     ),
                     dbDatabase: getenv(
-                        name: $this->req->s['cDetails']['slave_db_database']
+                        name: Common::$req->s['cDetails']['slave_db_database']
                     )
                 );
             default:
@@ -317,13 +307,13 @@ class DbFunctions
      */
     public function setDatabaseCacheKey(): void
     {
-        if ($this->req->open) {
-            DatabaseOpenCacheKey::init(cID: $this->req->s['cDetails']['id']);
+        if (Common::$req->open) {
+            DatabaseOpenCacheKey::init(cID: Common::$req->s['cDetails']['id']);
         } else {
             DatabaseCacheKey::init(
-                cID: $this->req->s['cDetails']['id'],
-                gID: $this->req->s['gDetails']['id'],
-                uID: $this->req->s['uDetails']['id']
+                cID: Common::$req->s['cDetails']['id'],
+                gID: Common::$req->s['gDetails']['id'],
+                uID: Common::$req->s['uDetails']['id']
             );
         }
     }
@@ -339,11 +329,12 @@ class DbFunctions
     {
         $this->setQueryCacheConnection();
 
+        $json = null;
         if ($this->queryCacheConnection->cacheExists(key: $cacheKey)) {
-            return $json = $this->queryCacheConnection->getCache(key: $cacheKey);
-        } else {
-            return $json = null;
+            $json = $this->queryCacheConnection->getCache(key: $cacheKey);
         }
+
+        return $json;
     }
 
     /**

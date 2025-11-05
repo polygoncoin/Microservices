@@ -38,13 +38,6 @@ use Microservices\App\SessionHandlers\Session;
 class HttpRequest extends DbFunctions
 {
     /**
-     * Session details of a request
-     *
-     * @var null|array
-     */
-    public $s = null;
-
-    /**
      * Cache object
      *
      * @var null|Object
@@ -87,6 +80,13 @@ class HttpRequest extends DbFunctions
     public $http = null;
 
     /**
+     * Session details of a request
+     *
+     * @var null|array
+     */
+    public $s = null;
+
+    /**
      * Open To World Request
      *
      * @var null|bool
@@ -122,7 +122,6 @@ class HttpRequest extends DbFunctions
     public function __construct(&$http)
     {
         $this->http = &$http;
-        parent::__construct(req: $this);
 
         $this->HOST = $this->http['server']['host'];
         $this->METHOD = $this->http['server']['method'];
@@ -170,10 +169,10 @@ class HttpRequest extends DbFunctions
         }
 
         if (!$this->open) {
-            $this->auth = new Auth(req: $this);
+            $this->auth = new Auth();
         }
 
-        $this->rParser = new RouteParser(req: $this);
+        $this->rParser = new RouteParser();
     }
 
     /**
@@ -261,7 +260,7 @@ class HttpRequest extends DbFunctions
         } else {
             $content = file_get_contents(filename: 'php://input');
             if (Env::$iRepresentation === 'XML') {
-                $content = $this->convertXmlToJson(Xml: $content);
+                $content = $this->convertXmlToJson(xmlString: $content);
             }
         }
         $this->payloadStream = fopen(

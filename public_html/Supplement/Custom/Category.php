@@ -43,22 +43,12 @@ class Category implements CustomInterface
     public $db = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
-        $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: $fetchFrom = 'Slave');
-        $this->db = &$this->c->req->db;
+        Common::$req->db = Common::$req->setDbConnection(fetchFrom: $fetchFrom = 'Slave');
+        $this->db = &Common::$req->db;
     }
 
     /**
@@ -92,7 +82,7 @@ class Category implements CustomInterface
         $this->db->execDbQuery(sql: $sql, params: $sqlParams);
         $rows = $this->db->fetchAll();
         $this->db->closeCursor();
-        $this->c->res->dataEncode->addKeyData(key: 'Results', data: $rows);
+        Common::$res->dataEncode->addKeyData(key: 'Results', data: $rows);
         return [true];
     }
 }

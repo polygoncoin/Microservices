@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 
 /**
@@ -32,27 +33,39 @@ use Microservices\App\Env;
  */
 class Counter
 {
-    public static $common = null;
-    public static $db = null;
+    public static $globalDbObj = null;
 
     /**
-     * Initialize
-     *
-     * @param Common $common Common object
+     * Get Global Auto Increment Counter
      *
      * @return int
      */
-    public static function getCounter(Common &$common): int
+    public static function getGlobalCounter(): int
     {
-        self::$common = &$common;
-        self::$db = self::$common->req->setDbConnection(fetchFrom: 'Master');
+        if (self::$globalDbObj === null) {
+            $globalDbType = getenv(name: 'globalDbType');
+            $globalDbHostname = getenv(name: 'globalDbHostname');
+            $globalDbPort = getenv(name: 'globalDbPort');
+            $globalDbUsername = getenv(name: 'globalDbUsername');
+            $globalDbPassword = getenv(name: 'globalDbPassword');
+            $globalDbDatabase = getenv(name: 'globalDbDatabase');
+
+            self::$globalDbObj = Common::$req->connectDb(
+                dbType: $globalDbType,
+                dbHostname: $globalDbHostname,
+                dbPort: $globalDbPort,
+                dbUsername: $globalDbUsername,
+                dbPassword: $globalDbPassword,
+                dbDatabase: $globalDbDatabase
+            );
+        }
 
         $table = Env::$globalDbDatabase . '.' . Env::$counter;
         $sql = "INSERT INTO {$table}() VALUES()";
         $sqlParams = [];
         
-        self::$db->execDbQuery(sql: $sql, params: $sqlParams);
-        $id = self::$db->lastInsertId();
+        self::$globalDbObj->execDbQuery(sql: $sql, params: $sqlParams);
+        $id = self::$globalDbObj->lastInsertId();
         
         return $id;
     }

@@ -58,13 +58,6 @@ class Microservices
     public $http = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    public $c = null;
-
-    /**
      * Constructor
      *
      * @param array $http HTTP request details
@@ -87,8 +80,8 @@ class Microservices
      */
     public function init(): bool
     {
-        $this->c = new Common(http: $this->http);
-        $this->c->initRequest();
+        Common::init(http: $this->http);
+        Common::initRequest();
 
         if (!isset($this->http['get'][Constants::$ROUTE_URL_PARAM])) {
             throw new \Exception(
@@ -123,7 +116,7 @@ class Microservices
      */
     public function startData(): void
     {
-        $this->c->res->dataEncode->startObject();
+        Common::$res->dataEncode->startObject();
     }
 
     /**
@@ -134,8 +127,8 @@ class Microservices
      */
     public function processApi(): bool
     {
-        if ($this->c->req->METHOD === Constants::$GET) {
-            $cacheHandler = new CacheHandler($this->c);
+        if (Common::$req->METHOD === Constants::$GET) {
+            $cacheHandler = new CacheHandler();
             if ($cacheHandler->init(mode: 'Open')) {
                 // File exists - Serve from Dropbox
                 $cacheHandler->process();
@@ -148,10 +141,10 @@ class Microservices
 
         switch (true) {
             case Env::$allowCronRequest && strpos(
-                haystack: $this->c->req->ROUTE,
+                haystack: Common::$req->ROUTE,
                 needle: '/' . Env::$cronRequestUriPrefix
             ) === 0:
-                if ($this->c->req->IP !== Env::$cronRestrictedIp) {
+                if (Common::$req->IP !== Env::$cronRestrictedIp) {
                     throw new \Exception(
                         message: 'Source IP is not supported',
                         code: HttpStatus::$NotFound
@@ -160,13 +153,13 @@ class Microservices
                 $class = __NAMESPACE__ . '\\App\\Cron';
                 break;
 
-            case $this->c->req->ROUTE === '/logout':
+            case Common::$req->ROUTE === '/logout':
                 $class = __NAMESPACE__ . '\\App\\Logout';
                 break;
 
             // Requires HTTP auth username and password
-            case $this->c->req->ROUTE === '/reload':
-                if ($this->c->req->IP !== Env::$cronRestrictedIp) {
+            case Common::$req->ROUTE === '/reload':
+                if (Common::$req->IP !== Env::$cronRestrictedIp) {
                     throw new \Exception(
                         message: 'Source IP is not supported',
                         code: HttpStatus::$NotFound
@@ -176,13 +169,13 @@ class Microservices
                 break;
 
             // Generates auth token
-            case $this->c->req->ROUTE === '/login':
+            case Common::$req->ROUTE === '/login':
                 $class = __NAMESPACE__ . '\\App\\Login';
                 break;
 
             // Requires auth token
             default:
-                $gateway = new Gateway(req: $this->c->req);
+                $gateway = new Gateway();
                 $gateway->initGateway();
                 $gateway = null;
 
@@ -193,9 +186,9 @@ class Microservices
         // Class found
         try {
             if ($class !== null) {
-                $api = new $class($this->c);
+                $api = new $class();
                 if ($api->init()) {
-                    $this->c->initResponse();
+                    Common::initResponse();
                     $this->startData();
                     $api->process();
                     $this->addStatus();
@@ -217,9 +210,9 @@ class Microservices
      */
     public function addStatus(): void
     {
-        $this->c->res->dataEncode->addKeyData(
+        Common::$res->dataEncode->addKeyData(
             key: 'Status',
-            data: $this->c->res->httpStatus
+            data: Common::$res->httpStatus
         );
     }
 
@@ -235,22 +228,22 @@ class Microservices
             $time = ceil(num: ($this->tsEnd - $this->tsStart) * 1000);
             $memory = ceil(num: memory_get_peak_usage() / 1000);
 
-            $this->c->res->dataEncode->startObject(key: 'Stats');
-            $this->c->res->dataEncode->startObject(key: 'Performance');
-            $this->c->res->dataEncode->addKeyData(
+            Common::$res->dataEncode->startObject(key: 'Stats');
+            Common::$res->dataEncode->startObject(key: 'Performance');
+            Common::$res->dataEncode->addKeyData(
                 key: 'total-time-taken',
                 data: "{$time} ms"
             );
-            $this->c->res->dataEncode->addKeyData(
+            Common::$res->dataEncode->addKeyData(
                 key: 'peak-memory-usage',
                 data: "{$memory} KB"
             );
-            $this->c->res->dataEncode->endObject();
-            $this->c->res->dataEncode->addKeyData(
+            Common::$res->dataEncode->endObject();
+            Common::$res->dataEncode->addKeyData(
                 key: 'getrusage',
                 data: getrusage()
             );
-            $this->c->res->dataEncode->endObject();
+            Common::$res->dataEncode->endObject();
         }
     }
 
@@ -261,8 +254,8 @@ class Microservices
      */
     public function endData(): void
     {
-        $this->c->res->dataEncode->endObject();
-        $this->c->res->dataEncode->end();
+        Common::$res->dataEncode->endObject();
+        Common::$res->dataEncode->end();
     }
 
     /**
@@ -272,8 +265,8 @@ class Microservices
      */
     public function outputResults(): void
     {
-        http_response_code(response_code: $this->c->res->httpStatus);
-        $this->c->res->dataEncode->streamData();
+        http_response_code(response_code: Common::$res->httpStatus);
+        Common::$res->dataEncode->streamData();
     }
 
     /**
@@ -283,7 +276,7 @@ class Microservices
      */
     public function returnResults(): bool|string
     {
-        return $this->c->res->dataEncode->getData();
+        return Common::$res->dataEncode->getData();
     }
 
     /**

@@ -50,20 +50,10 @@ class CacheHandler
     private $cacheLocation = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
     }
 
     /**
@@ -81,7 +71,7 @@ class CacheHandler
             string: str_replace(
                 search: ['../', '..\\', '/', '\\'],
                 replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-                subject: urldecode(string: $this->c->req->ROUTE)
+                subject: urldecode(string: Common::$req->ROUTE)
             ),
             characters: './\\'
         );
@@ -98,7 +88,7 @@ class CacheHandler
      */
     public function validateFileRequest(): void
     {
-        // check logic for user is allowed to access the file as per $this->c->req->s
+        // check logic for user is allowed to access the file as per Common::$req->s
         // $this->fileLocation;
     }
 

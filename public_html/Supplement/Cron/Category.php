@@ -37,21 +37,11 @@ class Category implements CronInterface
     use CronTrait;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
-        $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: 'Slave');
+        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Slave');
     }
 
     /**

@@ -43,21 +43,11 @@ class GlobalValidator implements ValidatorInterface
     public $db = null;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
-        $this->db = &$this->c->req->db;
+        $this->db = &Common::$req->db;
     }
 
     /**
@@ -77,7 +67,7 @@ class GlobalValidator implements ValidatorInterface
                 if ($mode === 'custom') {
                     $args[$attr] = $key;
                 } else {
-                    $args[$attr] = $this->c->req->s[$mode][$key];
+                    $args[$attr] = Common::$req->s[$mode][$key];
                 }
             }
             $fn = $v['fn'];

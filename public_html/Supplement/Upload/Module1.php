@@ -37,21 +37,11 @@ class Module1 implements UploadInterface
     use UploadTrait;
 
     /**
-     * Common object
-     *
-     * @var null|Common
-     */
-    private $c = null;
-
-    /**
      * Constructor
-     *
-     * @param Common $common Common object
      */
-    public function __construct(Common &$common)
+    public function __construct()
     {
-        $this->c = &$common;
-        $this->c->req->db = $this->c->req->setDbConnection(fetchFrom: 'Master');
+        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Master');
     }
 
     /**
