@@ -15,6 +15,7 @@
 
 namespace Microservices;
 
+use Microservices\App\Common;
 use Microservices\App\Logs;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\Microservices;
@@ -80,7 +81,7 @@ function Start($http, $streamData = false)
                 'Details' => [
                     '$_GET' => $_GET,
                     'php:input' => @file_get_contents(filename: 'php://input'),
-                    'session' => $Microservices->c->req->s
+                    'session' => Common::$req->s
                 ]
             ];
             $logsObj = new Logs();

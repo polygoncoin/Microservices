@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 
 /**
  * Rate Limiter
@@ -56,7 +57,7 @@ class RateLimiter
         $rateLimitHost = getenv(name: 'rateLimitHost');
         $rateLimitHostPort = getenv(name: 'rateLimitHostPort');
 
-        $this->cache = Common::$req->connectCache(
+        $this->cache = DbFunctions::connectCache(
             cacheType: $rateLimitHostType,
             cacheHostname: $rateLimitHost,
             cachePort: $rateLimitHostPort,

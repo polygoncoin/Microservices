@@ -18,6 +18,7 @@ namespace Microservices\App;
 use Microservices\App\AppTrait;
 use Microservices\App\Common;
 use Microservices\App\DataRepresentation\DataEncode;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
@@ -38,13 +39,6 @@ use Microservices\App\Web;
 class Supplement
 {
     use AppTrait;
-
-    /**
-     * Database object
-     *
-     * @var null|Object
-     */
-    public $db = null;
 
     /**
      * Hook object
@@ -120,8 +114,7 @@ class Supplement
             $sSqlConfig['isTransaction'] : false;
 
         // Set Server mode to execute query on - Read / Write Server
-        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Master');
-        $this->db = &Common::$req->db;
+        DbFunctions::setDbConnection(fetchFrom: 'Master');
 
         // Use results in where clause of sub queries recursively
         $useHierarchy = $this->getUseHierarchy(
@@ -145,7 +138,7 @@ class Supplement
                     $i < $iCount;
                     $i++
                 ) {
-                    Common::$req->delQueryCache(
+                    DbFunctions::delQueryCache(
                         cacheKey: $sSqlConfig['affectedCacheKeys'][$i]
                     );
                 }
@@ -258,7 +251,7 @@ class Supplement
             // Begin DML operation
             if ($hashJson === null) {
                 if ($this->operateAsTransaction) {
-                    $this->db->begin();
+                    DbFunctions::$masterDb->begin();
                 }
                 $response = [];
                 $this->execSupplement(
@@ -274,9 +267,9 @@ class Supplement
                 {
                     if (
                         $this->operateAsTransaction
-                        && ($this->db->beganTransaction === true)
+                        && (DbFunctions::$masterDb->beganTransaction === true)
                     ) {
-                        $this->db->commit();
+                        DbFunctions::$masterDb->commit();
                     }
 
                     $arr = [
@@ -290,7 +283,7 @@ class Supplement
                         'Response' => $response
                     ];
                     if ($idempotentWindow) {
-                        Common::$req->cache->setCache(
+                        DbFunctions::$globalCache->setCache(
                             key: $hashKey,
                             value: json_encode(value: $arr),
                             expire: $idempotentWindow
@@ -390,7 +383,7 @@ class Supplement
             }
 
             $payloadIndexes = $payloadIndexes;
-            if ($this->operateAsTransaction && !$this->db->beganTransaction) {
+            if ($this->operateAsTransaction && !DbFunctions::$masterDb->beganTransaction) {
                 $_response['Error'] = 'Transaction rolled back';
                 return;
             }
@@ -448,12 +441,12 @@ class Supplement
                 Common::$req->s['payload']
             );
 
-            if ($this->operateAsTransaction && !$this->db->beganTransaction) {
+            if ($this->operateAsTransaction && !DbFunctions::$masterDb->beganTransaction) {
                 $_response['Error'] = 'Something went wrong';
                 return;
             }
 
-            $this->db->closeCursor();
+            DbFunctions::$masterDb->closeCursor();
 
             // triggers
             if (isset($sSqlConfig['__TRIGGERS__'])) {

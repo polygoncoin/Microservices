@@ -17,7 +17,7 @@ namespace Microservices\App;
 
 use Microservices\App\AppTrait;
 use Microservices\App\CacheKey;
-use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 
 /**
  * Load CacheServerKeys_Required
@@ -36,27 +36,6 @@ class Reload
     use AppTrait;
 
     /**
-     * Database object
-     *
-     * @var null|Object
-     */
-    public $db = null;
-
-    /**
-     * Caching object
-     *
-     * @var null|Object
-     */
-    public $cache = null;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Initialize
      *
      * @return bool
@@ -73,15 +52,7 @@ class Reload
      */
     public function process(): bool
     {
-        $this->cache = Common::$req->connectCache(
-            cacheType: getenv(name: 'globalCacheType'),
-            cacheHostname: getenv(name: 'globalCacheHostname'),
-            cachePort: getenv(name: 'globalCachePort'),
-            cacheUsername: getenv(name: 'globalCacheUsername'),
-            cachePassword: getenv(name: 'globalCachePassword'),
-            cacheDatabase: getenv(name: 'globalCacheDatabase'),
-            cacheTable: getenv(name: 'globalCacheTable')
-        );
+        DbFunctions::connectGlobalCache();
 
         $this->processDomainAndUser();
         $this->processGroup();
@@ -96,17 +67,9 @@ class Reload
      */
     private function processDomainAndUser(): void
     {
-        Common::$req->db = Common::$req->connectDb(
-            dbType: getenv(name: 'globalDbType'),
-            dbHostname: getenv(name: 'globalDbHostname'),
-            dbPort: getenv(name: 'globalDbPort'),
-            dbUsername: getenv(name: 'globalDbUsername'),
-            dbPassword: getenv(name: 'globalDbPassword'),
-            dbDatabase: getenv(name: 'globalDbDatabase')
-        );
-        $this->db = &Common::$req->db;
+        DbFunctions::connectGlobalDb();
 
-        $this->db->execDbQuery(
+        DbFunctions::$globalDb->execDbQuery(
             sql: "
                 SELECT
                     *
@@ -115,24 +78,24 @@ class Reload
                 ",
             params: []
         );
-        $cRows = $this->db->fetchAll();
-        $this->db->closeCursor();
+        $cRows = DbFunctions::$globalDb->fetchAll();
+        DbFunctions::$globalDb->closeCursor();
         for ($ci = 0, $ciCount = count(value: $cRows); $ci < $ciCount; $ci++) {
             if (!empty($cRows[$ci]['open_api_domain'])) {
                 $c_key = CacheKey::clientOpenToWeb(
                     hostname: $cRows[$ci]['open_api_domain']
                 );
-                $this->cache->setCache(
+                DbFunctions::$globalCache->setCache(
                     key: $c_key,
                     value: json_encode(value: $cRows[$ci])
                 );
             }
             $c_key = CacheKey::client(hostname: $cRows[$ci]['api_domain']);
-            $this->cache->setCache(
+            DbFunctions::$globalCache->setCache(
                 key: $c_key,
                 value: json_encode(value: $cRows[$ci])
             );
-            Common::$req->db = Common::$req->connectDb(
+            $db = DbFunctions::connectDb(
                 dbType: getenv(name: $cRows[$ci]['master_db_server_type']),
                 dbHostname: getenv(name: $cRows[$ci]['master_db_hostname']),
                 dbPort: getenv(name: $cRows[$ci]['master_db_port']),
@@ -141,7 +104,7 @@ class Reload
                 dbDatabase: getenv(name: $cRows[$ci]['master_db_database'])
             );
 
-            $this->db->execDbQuery(
+            $db->execDbQuery(
                 sql: "
                     SELECT
                         *
@@ -150,14 +113,14 @@ class Reload
                     ",
                 params: []
             );
-            $uRows = $this->db->fetchAll();
-            $this->db->closeCursor();
+            $uRows = $db->fetchAll();
+            $db->closeCursor();
             for ($ui = 0, $uiCount = count(value: $uRows); $ui < $uiCount; $ui++) {
                 $cu_key = CacheKey::clientUser(
                     cID: $cRows[$ci]['id'],
                     username: $uRows[$ui]['username']
                 );
-                $this->cache->setCache(
+                DbFunctions::$globalCache->setCache(
                     key: $cu_key,
                     value: json_encode(value: $uRows[$ui])
                 );
@@ -172,16 +135,9 @@ class Reload
      */
     private function processGroup(): void
     {
-        Common::$req->db = Common::$req->connectDb(
-            dbType: getenv(name: 'globalDbType'),
-            dbHostname: getenv(name: 'globalDbHostname'),
-            dbPort: getenv(name: 'globalDbPort'),
-            dbUsername: getenv(name: 'globalDbUsername'),
-            dbPassword: getenv(name: 'globalDbPassword'),
-            dbDatabase: getenv(name: 'globalDbDatabase')
-        );
+        DbFunctions::connectGlobalCache();
 
-        $this->db->execDbQuery(
+        DbFunctions::$globalDb->execDbQuery(
             sql: "
                 SELECT
                     *
@@ -191,21 +147,21 @@ class Reload
             params: []
         );
 
-        while ($gRows = $this->db->fetch(\PDO::FETCH_ASSOC)) {
+        while ($gRows = DbFunctions::$globalDb->fetch(\PDO::FETCH_ASSOC)) {
             $g_key = CacheKey::group(gID: $gRows['id']);
-            $this->cache->setCache(key: $g_key, value: json_encode(value: $gRows));
+            DbFunctions::$globalCache->setCache(key: $g_key, value: json_encode(value: $gRows));
             if (!empty($gRows['allowed_ips'])) {
                 $cidrs = $this->cidrsIpNumber(cidrs: $gRows['allowed_ips']);
                 if (count(value: $cidrs) > 0) {
                     $cidrKey = CacheKey::cidr(gID: $gRows['id']);
-                    $this->cache->setCache(
+                    DbFunctions::$globalCache->setCache(
                         key: $cidrKey,
                         value: json_encode(value: $cidrs)
                     );
                 }
             }
         }
-        $this->db->closeCursor();
+        DbFunctions::$globalDb->closeCursor();
     }
 
     /**
@@ -217,7 +173,7 @@ class Reload
      */
     private function processToken($token): void
     {
-        $this->cache->deleteCache(key: CacheKey::token(token: $token));
+        DbFunctions::$globalCache->deleteCache(key: CacheKey::token(token: $token));
     }
 
     /**

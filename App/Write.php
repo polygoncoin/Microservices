@@ -18,6 +18,7 @@ namespace Microservices\App;
 use Microservices\App\AppTrait;
 use Microservices\App\Common;
 use Microservices\App\DataRepresentation\DataEncode;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
@@ -38,13 +39,6 @@ use Microservices\App\Web;
 class Write
 {
     use AppTrait;
-
-    /**
-     * Database object
-     *
-     * @var null|Object
-     */
-    public $db = null;
 
     /**
      * Hook object
@@ -110,8 +104,7 @@ class Write
             $wSqlConfig['isTransaction'] : false;
 
         // Set Server mode to execute query on - Read / Write Server
-        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Master');
-        $this->db = &Common::$req->db;
+        DbFunctions::setDbConnection(fetchFrom: 'Master');
 
         // Use results in where clause of sub queries recursively
         $useHierarchy = $this->getUseHierarchy(
@@ -135,7 +128,7 @@ class Write
                     $i < $iCount;
                     $i++
                 ) {
-                    Common::$req->delQueryCache(
+                    DbFunctions::delQueryCache(
                         cacheKey: $wSqlConfig['affectedCacheKeys'][$i]
                     );
                 }
@@ -248,7 +241,7 @@ class Write
             // Begin DML operation
             if ($hashJson === null) {
                 if ($this->operateAsTransaction) {
-                    $this->db->begin();
+                    DbFunctions::$masterDb->begin();
                 }
                 $response = [];
                 $this->writeDB(
@@ -264,9 +257,9 @@ class Write
                 {
                     if (
                         $this->operateAsTransaction
-                        && ($this->db->beganTransaction === true)
+                        && (DbFunctions::$masterDb->beganTransaction === true)
                     ) {
-                        $this->db->commit();
+                        DbFunctions::$masterDb->commit();
                     }
 
                     $arr = [
@@ -280,7 +273,7 @@ class Write
                         'Response' => $response
                     ];
                     if ($idempotentWindow) {
-                        Common::$req->cache->setCache(
+                        DbFunctions::$globalCache->setCache(
                             key: $hashKey,
                             value: json_encode(value: $arr),
                             expire: $idempotentWindow
@@ -375,7 +368,7 @@ class Write
             }
 
             $payloadIndexes = $payloadIndexes;
-            if ($this->operateAsTransaction && !$this->db->beganTransaction) {
+            if ($this->operateAsTransaction && !DbFunctions::$masterDb->beganTransaction) {
                 $_response['Error'] = 'Transaction rolled back';
                 return;
             }
@@ -432,7 +425,7 @@ class Write
 
             if (!empty($errors)) {
                 $_response['Error'] = $errors;
-                $this->db->rollBack();
+                DbFunctions::$masterDb->rollBack();
                 return;
             }
 
@@ -441,8 +434,8 @@ class Write
             }
 
             // Execute Query
-            $this->db->execDbQuery(sql: $sql, params: $sqlParams);
-            if ($this->operateAsTransaction && !$this->db->beganTransaction) {
+            DbFunctions::$masterDb->execDbQuery(sql: $sql, params: $sqlParams);
+            if ($this->operateAsTransaction && !DbFunctions::$masterDb->beganTransaction) {
                 $_response['Error'] = 'Something went wrong';
                 return;
             }
@@ -451,10 +444,10 @@ class Write
                 $_response[$wSqlConfig['__INSERT-IDs__']] = $id;
                 Common::$req->s['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
             } else {
-                $affectedRows = $this->db->affectedRows();
+                $affectedRows = DbFunctions::$masterDb->affectedRows();
                 $_response['affectedRows'] = $affectedRows;
             }
-            $this->db->closeCursor();
+            DbFunctions::$masterDb->closeCursor();
 
             // triggers
             if (isset($wSqlConfig['__TRIGGERS__'])) {

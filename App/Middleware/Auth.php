@@ -17,6 +17,7 @@ namespace Microservices\App\Middleware;
 
 use Microservices\App\Common;
 use Microservices\App\CacheKey;
+use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 
 /**
@@ -71,7 +72,7 @@ class Auth
                 token: Common::$req->s['token']
             );
             if (
-                !Common::$req->cache->cacheExists(
+                !DbFunctions::$globalCache->cacheExists(
                     key: $tokenKey
                 )
             ) {
@@ -81,7 +82,7 @@ class Auth
                 );
             }
             Common::$req->s['uDetails'] = json_decode(
-                json: Common::$req->cache->getCache(
+                json: DbFunctions::$globalCache->getCache(
                     key: $tokenKey
                 ),
                 associative: true
@@ -121,7 +122,7 @@ class Auth
         $gKey = CacheKey::group(
             gID: Common::$req->s['uDetails']['group_id']
         );
-        if (!Common::$req->cache->cacheExists(key: $gKey)) {
+        if (!DbFunctions::$globalCache->cacheExists(key: $gKey)) {
             throw new \Exception(
                 message: "Cache '{$gKey}' missing",
                 code: HttpStatus::$InternalServerError
@@ -129,7 +130,7 @@ class Auth
         }
 
         Common::$req->s['gDetails'] = json_decode(
-            json: Common::$req->cache->getCache(
+            json: DbFunctions::$globalCache->getCache(
                 key: $gKey
             ),
             associative: true

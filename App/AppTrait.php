@@ -19,6 +19,7 @@ use function Microservices\Start;
 use Microservices\App\Counter;
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
+use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\App\RateLimiter;
 use Microservices\App\Validator;
@@ -714,10 +715,10 @@ trait AppTrait
 
                 $hash = json_encode(value: $payloadSignature);
                 $hashKey = md5(string: $hash);
-                if (Common::$req->cache->cacheExists(key: $hashKey)) {
+                if (DbFunctions::$globalCache->cacheExists(key: $hashKey)) {
                     $hashJson = str_replace(
                         search: 'JSON',
-                        replace: Common::$req->cache->getCache(key: $hashKey),
+                        replace: DbFunctions::$globalCache->getCache(key: $hashKey),
                         subject: '{"Idempotent": JSON, "Status": 200}'
                     );
                 }
@@ -754,13 +755,13 @@ trait AppTrait
             $hash = json_encode(value: $payloadSignature);
             $hashKey = 'LAG:' . md5(string: $hash);
 
-            if (Common::$req->cache->cacheExists(key: $hashKey)) {
-                $noOfRequests = Common::$req->cache->getCache(key: $hashKey);
+            if (DbFunctions::$globalCache->cacheExists(key: $hashKey)) {
+                $noOfRequests = DbFunctions::$globalCache->getCache(key: $hashKey);
             } else {
                 $noOfRequests = 0;
             }
 
-            Common::$req->cache->setCache(
+            DbFunctions::$globalCache->setCache(
                 key: $hashKey,
                 value: ++$noOfRequests,
                 expire: 3600

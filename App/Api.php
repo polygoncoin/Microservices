@@ -18,6 +18,7 @@ namespace Microservices\App;
 use Microservices\App\CacheHandler;
 use Microservices\App\Constants;
 use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\Hook;
 use Microservices\App\Supplement;
@@ -72,7 +73,7 @@ class Api
         }
 
         Common::$req->rParser->parseRoute();
-        Common::$req->setDatabaseCacheKey();
+        DbFunctions::setDatabaseCacheKey();
 
         return true;
     }

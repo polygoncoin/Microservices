@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
 use Microservices\App\RateLimiter;
@@ -163,10 +164,10 @@ class Gateway
         $cidrKey = CacheKey::cidr(
             gID: Common::$req->s['uDetails']['group_id']
         );
-        if (Common::$req->cache->cacheExists(key: $cidrKey)) {
+        if (DbFunctions::$globalCache->cacheExists(key: $cidrKey)) {
             $this->cidrChecked = true;
             $cidrs = json_decode(
-                json: Common::$req->cache->getCache(
+                json: DbFunctions::$globalCache->getCache(
                     key: $cidrKey
                 ),
                 associative: true

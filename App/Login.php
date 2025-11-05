@@ -18,6 +18,7 @@ namespace Microservices\App;
 use Microservices\App\Constants;
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\SessionHandlers\Session;
@@ -36,13 +37,6 @@ use Microservices\App\SessionHandlers\Session;
  */
 class Login
 {
-    /**
-     * Database object
-     *
-     * @var null|Object
-     */
-    public $db = null;
-
     /**
      * Username for login
      *
@@ -176,14 +170,14 @@ class Login
             username: $this->payload['username']
         );
         // Redis - one can find the userID from client username
-        if (!Common::$req->cache->cacheExists(key: $clientUserKey)) {
+        if (!DbFunctions::$globalCache->cacheExists(key: $clientUserKey)) {
             throw new \Exception(
                 message: 'Invalid credentials',
                 code: HttpStatus::$Unauthorized
             );
         }
         $this->userDetails = json_decode(
-            json: Common::$req->cache->getCache(
+            json: DbFunctions::$globalCache->getCache(
                 key: $clientUserKey
             ),
             associative: true
@@ -209,9 +203,9 @@ class Login
     {
         // Redis - one can find the userID from username
         $cidrKey = CacheKey::cidr(gID: $this->userDetails['group_id']);
-        if (Common::$req->cache->cacheExists(key: $cidrKey)) {
+        if (DbFunctions::$globalCache->cacheExists(key: $cidrKey)) {
             $cidrs = json_decode(
-                json: Common::$req->cache->getCache(
+                json: DbFunctions::$globalCache->getCache(
                     key: $cidrKey
                 ),
                 associative: true
@@ -267,11 +261,11 @@ class Login
             $token = bin2hex(string: random_bytes(length: 32));
 
             if (
-                !Common::$req->cache->cacheExists(
+                !DbFunctions::$globalCache->cacheExists(
                     key: CacheKey::token(token: $token)
                 )
             ) {
-                Common::$req->cache->setCache(
+                DbFunctions::$globalCache->setCache(
                     key: CacheKey::token(token: $token),
                     value: '{}',
                     expire: Constants::$TOKEN_EXPIRY_TIME
@@ -298,16 +292,16 @@ class Login
         $userTokenKey = CacheKey::userToken(
             uID: $this->userDetails['id']
         );
-        if (Common::$req->cache->cacheExists(key: $userTokenKey)) {
+        if (DbFunctions::$globalCache->cacheExists(key: $userTokenKey)) {
             $tokenDetails = json_decode(
-                json: Common::$req->cache->getCache(
+                json: DbFunctions::$globalCache->getCache(
                     key: $userTokenKey
                 ),
                 associative: true
             );
 
             if (
-                Common::$req->cache->cacheExists(
+                DbFunctions::$globalCache->cacheExists(
                     key: CacheKey::token(
                         token: $tokenDetails['token']
                     )
@@ -317,7 +311,7 @@ class Login
                 if ((Constants::$TOKEN_EXPIRY_TIME - $time) > 0) {
                     $tokenFound = true;
                 } else {
-                    Common::$req->cache->deleteCache(
+                    DbFunctions::$globalCache->deleteCache(
                         key: CacheKey::token(
                             token: $tokenDetails['token']
                         )
@@ -329,7 +323,7 @@ class Login
         if (!$tokenFound) {
             $tokenDetails = $this->generateToken();
             // We set this to have a check first if multiple request/attack occurs
-            Common::$req->cache->setCache(
+            DbFunctions::$globalCache->setCache(
                 key: $userTokenKey,
                 value: json_encode(
                     value: $tokenDetails
@@ -337,7 +331,7 @@ class Login
                 expire: Constants::$TOKEN_EXPIRY_TIME
             );
             unset($this->userDetails['password_hash']);
-            Common::$req->cache->setCache(
+            DbFunctions::$globalCache->setCache(
                 key: CacheKey::token(token: $tokenDetails['token']),
                 value: json_encode(
                     value: $this->userDetails
@@ -367,11 +361,10 @@ class Login
      */
     private function updateDB(&$tokenDetails): void
     {
-        Common::$req->db = Common::$req->setDbConnection(fetchFrom: 'Master');
-        $this->db = &Common::$req->db;
+        DbFunctions::setDbConnection(fetchFrom: 'Master');
 
         $userTable = Env::$clientUsers;
-        $this->db->execDbQuery(
+        DbFunctions::$masterDb->execDbQuery(
             sql: "
                 UPDATE
                     `{$userTable}`
@@ -416,14 +409,14 @@ class Login
             );
             $expire = Constants::$TOKEN_EXPIRY_TIME;
             $timestamp = $this->timestamp;
-            if (Common::$req->cache->cacheExists(key: $userSessionIdKey)) {
+            if (DbFunctions::$globalCache->cacheExists(key: $userSessionIdKey)) {
                 $userSessionIdKeyData = json_decode(
-                    json: Common::$req->cache->getCache(
+                    json: DbFunctions::$globalCache->getCache(
                         key: $userSessionIdKey
                     ),
                     associative: true
                 );
-                Common::$req->cache->deleteCache(
+                DbFunctions::$globalCache->deleteCache(
                     key: $userSessionIdKey
                 );
                 Session::deleteSession(sessionId: $userSessionIdKeyData['sessionId']);
@@ -440,7 +433,7 @@ class Login
             Session::sessionStartReadWrite();
             $_SESSION = $this->userDetails;
 
-            Common::$req->cache->setCache(
+            DbFunctions::$globalCache->setCache(
                 key: $userSessionIdKey,
                 value: json_encode(
                     value: [

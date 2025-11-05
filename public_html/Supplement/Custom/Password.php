@@ -17,6 +17,7 @@ namespace Microservices\public_html\Supplement\Custom;
 
 use Microservices\App\CacheKey;
 use Microservices\App\Common;
+use Microservices\App\DbFunctions;
 use Microservices\public_html\Supplement\Custom\CustomInterface;
 use Microservices\public_html\Supplement\Custom\CustomTrait;
 
@@ -101,19 +102,19 @@ class Password implements CustomInterface
                 cID: $cID,
                 username: $userName
             );
-            if (Common::$req->cache->cacheExists(key: $cu_key)) {
+            if (DbFunctions::$globalCache->cacheExists(key: $cu_key)) {
                 $uDetails = json_decode(
-                    json: Common::$req->cache->getCache(
+                    json: DbFunctions::$globalCache->getCache(
                         key: $cu_key
                     ),
                     associative: true
                 );
                 $uDetails['password_hash'] = $newPasswordHash;
-                Common::$req->cache->setCache(
+                DbFunctions::$globalCache->setCache(
                     key: $cu_key,
                     value: json_encode(value: $uDetails)
                 );
-                Common::$req->cache->deleteCache(
+                DbFunctions::$globalCache->deleteCache(
                     key: CacheKey::token(token: Common::$req->s['token'])
                 );
             }

@@ -18,6 +18,7 @@ namespace Microservices\App;
 use Microservices\App\AppTrait;
 use Microservices\App\Common;
 use Microservices\App\DataRepresentation\DataEncode;
+use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
@@ -40,13 +41,6 @@ class Read
     use AppTrait;
 
     /**
-     * Database object
-     *
-     * @var null|Object
-     */
-    public $db = null;
-
-    /**
      * Hook object
      *
      * @var null|Hook
@@ -59,6 +53,13 @@ class Read
      * @var null|DataEncode
      */
     public $dataEncode = null;
+
+    /**
+     * Fetch mode Db Obj variable name in DbFunctions
+     *
+     * @var null|string
+     */
+    public $dbObj = null;
 
     /**
      * Constructor
@@ -101,7 +102,7 @@ class Read
             isset($rSqlConfig['cacheKey'])
             && !isset(Common::$req->s['payload']['orderBy'])
         ) {
-            $json = Common::$req->getQueryCache(
+            $json = DbFunctions::getQueryCache(
                 cacheKey: $rSqlConfig['cacheKey']
             );
             if ($json !== null) {
@@ -128,8 +129,8 @@ class Read
 
         // Set Server mode to execute query on - Read / Write Server
         $fetchFrom = $rSqlConfig['fetchFrom'] ?? 'Slave';
-        Common::$req->db = Common::$req->setDbConnection(fetchFrom: $fetchFrom);
-        $this->db = &Common::$req->db;
+        DbFunctions::setDbConnection(fetchFrom: $fetchFrom);
+        $this->dbObj = strtolower($fetchFrom) . 'Db';
 
         // Use result set recursively flag
         $useResultSet = $this->getUseHierarchy(
@@ -151,7 +152,7 @@ class Read
 
         if ($toBeCached) {
             $json = $this->dataEncode->getData();
-            Common::$req->setQueryCache(
+            DbFunctions::setQueryCache(
                 cacheKey: $rSqlConfig['cacheKey'],
                 json: $json
             );
@@ -347,8 +348,9 @@ class Read
             return;
         }
 
-        $this->db->execDbQuery(sql: $sql, params: $sqlParams);
-        if ($row =  $this->db->fetch()) {
+        $dbObj = $this->dbObj;
+        DbFunctions::$$dbObj->execDbQuery(sql: $sql, params: $sqlParams);
+        if ($row =  DbFunctions::$$dbObj->fetch()) {
             foreach ($row as $key => $value) {
                 $this->dataEncode->addKeyData(key: $key, data: $value);
             }
@@ -366,7 +368,7 @@ class Read
                 }
             }
         }
-        $this->db->closeCursor();
+        DbFunctions::$$dbObj->closeCursor();
 
         if (isset($rSqlConfig['__SUB-QUERY__'])) {
             $this->callReadDB(
@@ -428,9 +430,10 @@ class Read
             return;
         }
 
-        $this->db->execDbQuery(sql: $sql, params: $sqlParams);
-        $row = $this->db->fetch();
-        $this->db->closeCursor();
+        $dbObj = $this->dbObj;
+        DbFunctions::$$dbObj->execDbQuery(sql: $sql, params: $sqlParams);
+        $row = DbFunctions::$$dbObj->fetch();
+        DbFunctions::$$dbObj->closeCursor();
 
         $totalRowsCount = $row['count'];
         $totalPages = ceil(
@@ -518,8 +521,9 @@ class Read
 
         $singleColumn = false;
         $pushPop = true;
-        $this->db->execDbQuery(sql: $sql, params: $sqlParams, pushPop: $pushPop);
-        for ($i = 0; $row = $this->db->fetch();) {
+        $dbObj = $this->dbObj;
+        DbFunctions::$$dbObj->execDbQuery(sql: $sql, params: $sqlParams, pushPop: $pushPop);
+        for ($i = 0; $row = DbFunctions::$$dbObj->fetch();) {
             if ($i === 0) {
                 if (count(value: $row) === 1) {
                     $singleColumn = true;
@@ -546,7 +550,7 @@ class Read
                 $this->dataEncode->encode(data: $row);
             }
         }
-        $this->db->closeCursor(pushPop: $pushPop);
+        DbFunctions::$$dbObj->closeCursor(pushPop: $pushPop);
     }
 
     /**

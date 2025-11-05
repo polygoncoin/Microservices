@@ -38,13 +38,6 @@ use Microservices\App\SessionHandlers\Session;
 class HttpRequest extends DbFunctions
 {
     /**
-     * Cache object
-     *
-     * @var null|Object
-     */
-    public $cache = null;
-
-    /**
      * SQL Cache object
      *
      * @var null|Object
@@ -57,13 +50,6 @@ class HttpRequest extends DbFunctions
      * @var null|Auth
      */
     public $auth = null;
-
-    /**
-     * Database object
-     *
-     * @var null|Object
-     */
-    public $db = null;
 
     /**
      * JSON Decode object
@@ -204,7 +190,7 @@ class HttpRequest extends DbFunctions
         } else {
             $cKey = CacheKey::client(hostname: $this->HOST);
         }
-        if (!$this->cache->cacheExists(key: $cKey)) {
+        if (!DbFunctions::$globalCache->cacheExists(key: $cKey)) {
             throw new \Exception(
                 message: "Invalid Host '{$this->HOST}'",
                 code: HttpStatus::$InternalServerError
@@ -212,7 +198,7 @@ class HttpRequest extends DbFunctions
         }
 
         $this->s['cDetails'] = json_decode(
-            json: $this->cache->getCache(
+            json: DbFunctions::$globalCache->getCache(
                 key: $cKey
             ),
             associative: true
@@ -378,18 +364,6 @@ class HttpRequest extends DbFunctions
      */
     private function loadCache(): void
     {
-        if ($this->cache !== null) {
-            return;
-        }
-
-        $this->cache = $this->connectCache(
-            cacheType: getenv(name: 'globalCacheType'),
-            cacheHostname: getenv(name: 'globalCacheHostname'),
-            cachePort: getenv(name: 'globalCachePort'),
-            cacheUsername: getenv(name: 'globalCacheUsername'),
-            cachePassword: getenv(name: 'globalCachePassword'),
-            cacheDatabase: getenv(name: 'globalCacheDatabase'),
-            cacheTable: getenv(name: 'globalCacheTable')
-        );
+        DbFunctions::connectGlobalCache();
     }
 }

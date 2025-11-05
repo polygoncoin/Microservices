@@ -33,8 +33,6 @@ use Microservices\App\Env;
  */
 class Counter
 {
-    public static $globalDbObj = null;
-
     /**
      * Get Global Auto Increment Counter
      *
@@ -42,30 +40,14 @@ class Counter
      */
     public static function getGlobalCounter(): int
     {
-        if (self::$globalDbObj === null) {
-            $globalDbType = getenv(name: 'globalDbType');
-            $globalDbHostname = getenv(name: 'globalDbHostname');
-            $globalDbPort = getenv(name: 'globalDbPort');
-            $globalDbUsername = getenv(name: 'globalDbUsername');
-            $globalDbPassword = getenv(name: 'globalDbPassword');
-            $globalDbDatabase = getenv(name: 'globalDbDatabase');
-
-            self::$globalDbObj = Common::$req->connectDb(
-                dbType: $globalDbType,
-                dbHostname: $globalDbHostname,
-                dbPort: $globalDbPort,
-                dbUsername: $globalDbUsername,
-                dbPassword: $globalDbPassword,
-                dbDatabase: $globalDbDatabase
-            );
-        }
+        DbFunctions::connectGlobalDb();
 
         $table = Env::$globalDbDatabase . '.' . Env::$counter;
         $sql = "INSERT INTO {$table}() VALUES()";
         $sqlParams = [];
         
-        self::$globalDbObj->execDbQuery(sql: $sql, params: $sqlParams);
-        $id = self::$globalDbObj->lastInsertId();
+        DbFunctions::$globalDb->execDbQuery(sql: $sql, params: $sqlParams);
+        $id = DbFunctions::$globalDb->lastInsertId();
         
         return $id;
     }
