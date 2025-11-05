@@ -35,7 +35,7 @@ use Microservices\App\SessionHandlers\Session;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class HttpRequest extends DbFunctions
+class HttpRequest
 {
     /**
      * SQL Cache object
