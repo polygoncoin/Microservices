@@ -16,7 +16,6 @@
 namespace Microservices\public_html\Supplement\Upload;
 
 use Microservices\App\Constants;
-use Microservices\App\Common;
 use Microservices\App\DbFunctions;
 use Microservices\public_html\Supplement\Upload\UploadInterface;
 use Microservices\public_html\Supplement\Upload\UploadTrait;

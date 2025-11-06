@@ -15,7 +15,6 @@
 
 namespace Microservices\public_html\Supplement\Custom;
 
-use Microservices\App\Common;
 use Microservices\App\DbFunctions;
 use Microservices\public_html\Supplement\Custom\CustomInterface;
 use Microservices\public_html\Supplement\Custom\CustomTrait;

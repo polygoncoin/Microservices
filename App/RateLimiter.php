@@ -15,7 +15,6 @@
 
 namespace Microservices\App;
 
-use Microservices\App\Common;
 use Microservices\App\DbFunctions;
 
 /**

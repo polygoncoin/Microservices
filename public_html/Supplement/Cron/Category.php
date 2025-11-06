@@ -15,7 +15,6 @@
 
 namespace Microservices\public_html\Supplement\Cron;
 
-use Microservices\App\Common;
 use Microservices\App\DbFunctions;
 use Microservices\App\HttpStatus;
 use Microservices\public_html\Supplement\Cron\CronInterface;

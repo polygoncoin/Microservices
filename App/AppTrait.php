@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use function Microservices\Start;
+use Microservices\App\Common;
 use Microservices\App\Counter;
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
