@@ -34,7 +34,6 @@ $http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
-$http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
 $http['get'] = &$_GET;
 $http['isWebRequest'] = true;
 
@@ -44,4 +43,10 @@ foreach ($env as $key => $value) {
     putenv(assignment: "{$key}={$value}");
 }
 
-Start::http($http, $streamData = true);
+[$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
+
+http_response_code(response_code: $responseCode);
+foreach ($responseheaders as $k => $v) {
+    header(header: "{$k}: {$v}");
+}
+die($responseContent);

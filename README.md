@@ -1071,7 +1071,6 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
-xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 
 xmlhttp . onreadystatechange = function () {
@@ -1101,7 +1100,6 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "GET", handlerUrl );
-xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', 'Bearer <Token-from-login-api>');
 
@@ -1123,7 +1121,6 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
-xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 
@@ -1150,7 +1147,6 @@ var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "PUT", handlerUrl );
-xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 
@@ -1204,7 +1200,6 @@ var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
-xmlhttp . setRequestHeader('X-API-Version', 'v1.0.0');
 xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 
 xmlhttp . onreadystatechange = function () {

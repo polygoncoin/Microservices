@@ -15,9 +15,13 @@
 
 namespace Microservices;
 
+use Microservices\App\CacheHandler;
 use Microservices\App\Common;
+use Microservices\App\Constants;
+use Microservices\App\Env;
 use Microservices\App\Logs;
 use Microservices\App\DataRepresentation\DataEncode;
+use Microservices\App\HttpStatus;
 use Microservices\Microservices;
 
 class Start
@@ -32,45 +36,46 @@ class Start
      */
     public static function http($http, $streamData = false)
     {
-        try {
-            // Check version
-            if (
-                !isset($http['server']['api_version'])
-                || $http['server']['api_version'] !== 'v1.0.0'
-            ) {
-                if ($streamData) {
-                    // Set response headers
-                    header(header: 'Content-Type: application/json; charset=utf-8');
-                    header(header: 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-                    header(header: 'Pragma: no-cache');
-                }
-                die('{"Status": 400, "Message": "Bad Request"}');
-            }
+        Constants::init();
+        Env::init(http: $http);
 
+        if ($http['server']['method'] === Constants::$GET) {
+            $cacheHandler = new CacheHandler(http: $http);
+            if ($cacheHandler->init(mode: 'Open')) {
+                // File exists - Serve from Dropbox
+                return $cacheHandler->process();
+            }
+            $cacheHandler = null;
+        }
+
+        $headers = [];
+
+        try {
             $Microservices = new Microservices(http: $http);
 
             if ($streamData && $http['server']['method'] == 'OPTIONS') {
                 // Setting CORS
-                foreach ($Microservices->getHeaders() as $k => $v) {
-                    header(header: "{$k}: {$v}");
-                }
-                exit();
+                $headers = $Microservices->getHeaders();
+                $data = '{}';
+                $status = HttpStatus::$Ok;
+
+                return [$headers, $data, $status];
             }
 
             if ($Microservices->init()) {
                 // Setting CORS
                 if ($streamData) {
-                    foreach ($Microservices->getHeaders() as $k => $v) {
-                        header(header: "{$k}: {$v}");
-                    }
+                    $headers = $Microservices->getHeaders();
                 }
 
-                $Microservices->process();
-                if ($streamData) {
-                    $Microservices->outputResults();
-                } else {
-                    return $Microservices->returnResults();
+                $return = $Microservices->process();
+                if (is_array($return) && count($return) === 3) {
+                    return $return;
                 }
+                $data = $Microservices->returnResults();
+                $status = Common::$res->httpStatus;
+
+                return [$headers, $data, $status];
             }
         } catch (\Exception $e) {
             if (!in_array(needle: $e->getCode(), haystack: [400, 429])) {
@@ -98,13 +103,9 @@ class Start
                 $logsObj->log(logDetails: $logDetails);
             }
 
-            // Set response code
-            if ($streamData) {
-                http_response_code(response_code: $e->getCode());
-            }
-
             if ($e->getCode() == 429) {
-                header(header: "Retry-After: {$e->getMessage()}");
+                $headers = [];
+                $headers['Retry-After'] = $e->getMessage();
                 $arr = [
                     'Status' => $e->getCode(),
                     'Message' => 'Too Many Requests',
@@ -122,11 +123,10 @@ class Start
             $dataEncode->startObject();
             $dataEncode->addKeyData(key: 'Error', data: $arr);
 
-            if ($streamData) {
-                $dataEncode->streamData();
-            } else {
-                return $dataEncode->getData();
-            }
+            $data = $dataEncode->getData();
+            $status = $e->getCode();
+
+            return [$headers, $data, $status];
         }
     }
 }
