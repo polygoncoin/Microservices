@@ -15,7 +15,7 @@
 
 namespace Microservices\App;
 
-use function Microservices\Start;
+use Microservices\Start;
 use Microservices\App\Common;
 use Microservices\App\Counter;
 use Microservices\App\Constants;
@@ -863,7 +863,7 @@ trait AppTrait
         $triggerOutput = [];
         if ($isAssoc) {
             $http = $this->getTriggerDetails($triggerConfig);
-            $triggerOutput = Start($http);
+            $triggerOutput = Start::http($http);
         } else {
             for (
                 $iTrigger = 0, $iTriggerCount = count($triggerConfig);
@@ -871,7 +871,7 @@ trait AppTrait
                 $iTrigger++
             ) {
                 $http = $this->getTriggerDetails($triggerConfig[$iTrigger]);
-                $triggerOutput[] = Start($http);
+                $triggerOutput[] = Start::http($http);
             }
         }
 
@@ -919,13 +919,13 @@ trait AppTrait
             }
         }
 
-        $http['server']['host'] = $_SERVER['HTTP_HOST'];
+        $http['server']['host'] = Common::$http['server']['host'];
         $http['server']['method'] = $method;
-        $http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
-        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+        $http['server']['ip'] = Common::$http['server']['ip'];
+        if (isset(Common::$http['header']['authorization'])) {
+            $http['header']['authorization'] = Common::$http['header']['authorization'];
         }
-        $http['server']['api_version'] = $_SERVER['HTTP_X_API_VERSION'];
+        $http['server']['api_version'] = Common::$http['server']['api_version'];
         $http['post'] = json_encode($payloadArr);
         $http['get'] = $queryStringArr;
         $http['get'][Constants::$ROUTE_URL_PARAM] = $route;

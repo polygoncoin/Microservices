@@ -15,6 +15,8 @@
 
 namespace Microservices\TestCases;
 
+use Microservices\TestCases\TestFunctions;
+
 $header = $defaultHeaders;
 $header[] = $contentType;
 if (isset($token)) {
@@ -27,7 +29,7 @@ $params = [
     'email' => 'ramesh_test@test.com'
 ];
 
-return trigger(
+return TestFunctions::trigger(
     homeURL: $homeURL,
     method: 'PATCH',
     route: '/registration/1',

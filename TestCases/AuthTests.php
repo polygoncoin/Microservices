@@ -15,7 +15,16 @@
 
 namespace Microservices\TestCases;
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'TestFunctions.php';
+define('PUBLIC_HTML', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..'));
+
+require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
+spl_autoload_register(callback:  'Microservices\Autoload::register');
+
+define('GET', __DIR__ . DIRECTORY_SEPARATOR . 'GET');
+define('POST', __DIR__ . DIRECTORY_SEPARATOR . 'POST');
+define('PUT', __DIR__ . DIRECTORY_SEPARATOR . 'PUT');
+define('PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'PATCH');
+define('DELETE', __DIR__ . DIRECTORY_SEPARATOR . 'DELETE');
 
 $apiVersion = 'X-API-Version: v1.0.0';
 $cacheControl = 'Cache-Control: no-cache';
@@ -107,5 +116,4 @@ $response[] = include DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.ph
 
 $response[] = include POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
 
-echo '<pre>';
-print_r(value: $response);
+echo '<pre>' . print_r(value: $response, return: true);

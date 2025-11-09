@@ -182,7 +182,8 @@ class RouteParser
                 if (
                     isset($routes['iRepresentation'])
                     && Env::isValidDataRep(
-                        dataRepresentation: $routes['iRepresentation']
+                        dataRepresentation: $routes['iRepresentation'],
+                        mode: 'input'
                     )
                 ) {
                     Env::$iRepresentation = $routes['iRepresentation'];
@@ -196,7 +197,8 @@ class RouteParser
             Env::$allowGetRepresentation == 1
             && isset(Common::$req->http['get']['iRepresentation'])
             && Env::isValidDataRep(
-                dataRepresentation: Common::$req->http['get']['iRepresentation']
+                dataRepresentation: Common::$req->http['get']['iRepresentation'],
+                mode: 'input'
             )
         ) {
             Env::$iRepresentation = Common::$req->http['get']['iRepresentation'];
@@ -330,7 +332,8 @@ class RouteParser
             if (
                 isset($sqlConfig['oRepresentation'])
                 && Env::isValidDataRep(
-                    dataRepresentation: $sqlConfig['oRepresentation']
+                    dataRepresentation: $sqlConfig['oRepresentation'],
+                    mode: 'output'
                 )
             ) {
                 Env::$oRepresentation = $sqlConfig['oRepresentation'];
@@ -342,7 +345,8 @@ class RouteParser
             Env::$allowGetRepresentation == 1
             && isset(Common::$req->http['get']['oRepresentation'])
             && Env::isValidDataRep(
-                dataRepresentation: Common::$req->http['get']['oRepresentation']
+                dataRepresentation: Common::$req->http['get']['oRepresentation'],
+                mode: 'output'
             )
         ) {
             Env::$oRepresentation = Common::$req->http['get']['oRepresentation'];

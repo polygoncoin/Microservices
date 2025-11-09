@@ -15,10 +15,12 @@
 
 namespace Microservices\public_html\Config\Routes\Auth\CommonRoutes\Client;
 
+use Microservices\App\Constants;
+
 return [
     'registration' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'UserGroup' .
@@ -28,7 +30,7 @@ return [
     ],
     'address' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'UserGroup' .
@@ -38,7 +40,7 @@ return [
     ],
     'category' => [
         'truncate' => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'UserGroup' .

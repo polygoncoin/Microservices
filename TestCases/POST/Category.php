@@ -15,6 +15,8 @@
 
 namespace Microservices\TestCases;
 
+use Microservices\TestCases\TestFunctions;
+
 $header = $defaultHeaders;
 $header[] = $contentType;
 if (isset($token)) {
@@ -47,7 +49,7 @@ $params = [
     ]
 ];
 
-return trigger(
+return TestFunctions::trigger(
     homeURL: $homeURL,
     method: 'POST',
     route: '/category',

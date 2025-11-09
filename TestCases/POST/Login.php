@@ -15,10 +15,12 @@
 
 namespace Microservices\TestCases;
 
+use Microservices\TestCases\TestFunctions;
+
 $header = $defaultHeaders;
 $header[] = $contentType;
 
-$res = trigger(
+$res = TestFunctions::trigger(
     homeURL: $homeURL,
     method: 'POST',
     route: '/login',

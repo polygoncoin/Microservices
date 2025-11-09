@@ -15,10 +15,12 @@
 
 namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Groups\AdminGroup;
 
+use Microservices\App\Constants;
+
 return [
     'registration' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'AdminGroup' .
@@ -28,7 +30,7 @@ return [
     ],
     'address' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'AdminGroup' .
@@ -38,7 +40,7 @@ return [
     ],
     'registration-with-address' => [
         '{id:int|!0}'  => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'AdminGroup' .

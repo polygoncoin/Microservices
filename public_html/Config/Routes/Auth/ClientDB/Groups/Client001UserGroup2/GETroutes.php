@@ -15,17 +15,19 @@
 
 namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Groups\Client001UserGroup1;
 
+use Microservices\App\Constants;
+
 return array_merge(
-    require $Constants::$AUTH_ROUTES_DIR .
+    require Constants::$AUTH_ROUTES_DIR .
         DIRECTORY_SEPARATOR . 'ClientDB' .
         DIRECTORY_SEPARATOR . 'Common' .
         DIRECTORY_SEPARATOR . 'GETroutes.php',
-    require $Constants::$AUTH_ROUTES_DIR .
+    require Constants::$AUTH_ROUTES_DIR .
         DIRECTORY_SEPARATOR . 'ClientDB' .
         DIRECTORY_SEPARATOR . 'Common' .
         DIRECTORY_SEPARATOR . 'Custom' .
         DIRECTORY_SEPARATOR . 'GETroutes.php',
-    require $Constants::$AUTH_ROUTES_DIR .
+    require Constants::$AUTH_ROUTES_DIR .
         DIRECTORY_SEPARATOR . 'ClientDB' .
         DIRECTORY_SEPARATOR . 'Common' .
         DIRECTORY_SEPARATOR . 'ThirdParty' .

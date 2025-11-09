@@ -15,20 +15,15 @@
 
 namespace Microservices\public_html;
 
-use function Microservices\Start;
+use Microservices\Start;
 
 ini_set(option: 'display_errors', value: true);
 error_reporting(error_level: E_ALL);
 
-define(
-    constant_name: 'PUBLIC_HTML',
-    value: realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..')
-);
+define('PUBLIC_HTML', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..'));
 
 require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
 spl_autoload_register(callback:  'Microservices\Autoload::register');
-
-require_once  PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Start.php';
 
 // Process the request
 $http = [];
@@ -49,4 +44,4 @@ foreach ($env as $key => $value) {
     putenv(assignment: "{$key}={$value}");
 }
 
-Start($http, $streamData = true);
+Start::http($http, $streamData = true);

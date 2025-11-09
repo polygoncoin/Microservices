@@ -15,8 +15,10 @@
 
 namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Common\Client;
 
+use Microservices\App\Env;
+
 return [
-    $Env::$uploadRequestUriPrefix => [
+    Env::$uploadRequestUriPrefix => [
         '{module:string}' => [
             '__FILE__' => false
         ]

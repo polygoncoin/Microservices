@@ -15,6 +15,8 @@
 
 namespace Microservices\TestCases;
 
+use Microservices\TestCases\TestFunctions;
+
 $header = $defaultHeaders;
 $header[] = $contentType;
 if (isset($token)) {
@@ -29,7 +31,7 @@ $params = [
     'password' => 'shames11'
 ];
 
-return trigger(
+return TestFunctions::trigger(
     homeURL: $homeURL,
     method: 'PUT',
     route: '/registration/1',

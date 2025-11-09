@@ -15,23 +15,25 @@
 
 namespace Microservices\public_html\Config\Routes\Open;
 
+use Microservices\App\Constants;
+
 return [
     'login' => [
-        '__FILE__' => $Constants::$OPEN_QUERIES_DIR .
+        '__FILE__' => Constants::$OPEN_QUERIES_DIR .
             DIRECTORY_SEPARATOR . 'GET' .
             DIRECTORY_SEPARATOR . 'Login.php',
     ],
     'category' => [
-        '__FILE__' => $Constants::$OPEN_QUERIES_DIR .
+        '__FILE__' => Constants::$OPEN_QUERIES_DIR .
             DIRECTORY_SEPARATOR . 'GET' .
             DIRECTORY_SEPARATOR . 'Category-all.php',
         'search' => [
-            '__FILE__' => $Constants::$OPEN_QUERIES_DIR .
+            '__FILE__' => Constants::$OPEN_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'GET' .
                 DIRECTORY_SEPARATOR . 'Category-search.php',
         ],
         '{id:int|!0}' => [
-            '__FILE__' => $Constants::$OPEN_QUERIES_DIR .
+            '__FILE__' => Constants::$OPEN_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'GET' .
                 DIRECTORY_SEPARATOR . 'Category-Single.php',
         ]

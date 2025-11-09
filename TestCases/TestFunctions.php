@@ -15,27 +15,8 @@
 
 namespace Microservices\TestCases;
 
-if (!defined(constant_name: 'GET')) {
-    define(constant_name: 'GET', value: __DIR__ . DIRECTORY_SEPARATOR . 'GET');
-}
-
-if (!defined(constant_name: 'POST')) {
-    define(constant_name: 'POST', value: __DIR__ . DIRECTORY_SEPARATOR . 'POST');
-}
-
-if (!defined(constant_name: 'PUT')) {
-    define(constant_name: 'PUT', value: __DIR__ . DIRECTORY_SEPARATOR . 'PUT');
-}
-
-if (!defined(constant_name: 'PATCH')) {
-    define(constant_name: 'PATCH', value: __DIR__ . DIRECTORY_SEPARATOR . 'PATCH');
-}
-
-if (!defined(constant_name: 'DELETE')) {
-    define(constant_name: 'DELETE', value: __DIR__ . DIRECTORY_SEPARATOR . 'DELETE');
-}
-
-if (!function_exists(function: 'httpParseHeaders')) {
+class TestFunctions
+{
     /**
      * Generates raw headers into array
      *
@@ -44,7 +25,7 @@ if (!function_exists(function: 'httpParseHeaders')) {
      * @return array
      * @throws \Exception
      */
-    function httpParseHeaders($rawHeaders): array
+    public static function httpParseHeaders($rawHeaders): array
     {
         $headers = [];
         $key = '';
@@ -79,9 +60,7 @@ if (!function_exists(function: 'httpParseHeaders')) {
 
         return $headers;
     }
-}
 
-if (!function_exists(function: 'getCurlConfig')) {
     /**
      * Return cURL Config
      *
@@ -94,7 +73,7 @@ if (!function_exists(function: 'getCurlConfig')) {
      *
      * @return array
      */
-    function getCurlConfig(
+    public static function getCurlConfig(
         $homeURL,
         $method,
         $route,
@@ -134,9 +113,7 @@ if (!function_exists(function: 'getCurlConfig')) {
 
         return $curlConfig;
     }
-}
 
-if (!function_exists(function: 'trigger')) {
     /**
      * Trigger cURL
      *
@@ -148,38 +125,42 @@ if (!function_exists(function: 'trigger')) {
      *
      * @return mixed
      */
-    function trigger(
+    public static function trigger(
         $homeURL,
         $method,
         $route,
         $header = [],
         $payload = ''
     ): mixed {
-        $queryString = empty($queryString) ? '' : "&{$queryString}";
+        $queryString = '';
 
         $curl = curl_init();
-        $curlConfig = getCurlConfig(
+        $curlConfig = self::getCurlConfig(
             homeURL: $homeURL,
             method: $method,
             route: $route,
-            queryString: $queryString = '',
+            queryString: $queryString,
             header: $header,
             payload: $payload
         );
+
         curl_setopt_array(handle: $curl, options: $curlConfig);
+
         $curlResponse = curl_exec(handle: $curl);
 
         $responseHttpCode = curl_getinfo(
             handle: $curl,
             option: CURLINFO_HTTP_CODE
         );
+
         $responseContentType = curl_getinfo(
             handle: $curl,
             option: CURLINFO_CONTENT_TYPE
         );
 
         $headerSize = curl_getinfo(handle: $curl, option: CURLINFO_HEADER_SIZE);
-        $responseHeaders = httpParseHeaders(
+
+        $responseHeaders = self::httpParseHeaders(
             rawHeaders: substr(
                 string: $curlResponse,
                 offset: 0,
@@ -195,6 +176,7 @@ if (!function_exists(function: 'trigger')) {
         curl_close(handle: $curl);
 
         if ($error) {
+            echo PHP_EOL . '===>' . $responseBody . PHP_EOL;
             $response = [
                 'cURL Error #:' . $error,
                 $responseBody
@@ -211,10 +193,10 @@ if (!function_exists(function: 'trigger')) {
             $response = $responseBody;
         }
 
+        $queryString = empty($queryString) ? '' : '&' . $queryString;
+
         return [
-            'route' => htmlspecialchars(
-                string: "{$homeURL}?r={$route}{$queryString}"
-            ),
+            'route' => htmlspecialchars(string: "{$homeURL}?r={$route}{$queryString}"),
             'httpMethod' => $method,
             'requestHeaders' => $curlConfig[CURLOPT_HTTPHEADER],
             'requestPayload' => htmlspecialchars(string: $payload),
@@ -224,9 +206,7 @@ if (!function_exists(function: 'trigger')) {
             'responseBody' => $response
         ];
     }
-}
 
-if (!function_exists(function: 'genXmlPayload')) {
     /**
      * Generates XML Payload
      *
@@ -237,7 +217,7 @@ if (!function_exists(function: 'genXmlPayload')) {
      * @return array
      * @throws \Exception
      */
-    function genXmlPayload(&$params, &$payload, $rowsFlag = false): void
+    public static function genXmlPayload(&$params, &$payload, $rowsFlag = false): void
     {
         if (empty($params)) {
             return;
@@ -268,7 +248,7 @@ if (!function_exists(function: 'genXmlPayload')) {
                 $payload .= "<{$key}>";
             }
             if (is_array(value: $value)) {
-                genXmlPayload(params: $value, payload: $payload, rowsFlag: $rows);
+                self::genXmlPayload(params: $value, payload: $payload, rowsFlag: $rows);
             } else {
                 $payload .= htmlspecialchars(string: $value);
             }

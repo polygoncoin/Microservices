@@ -15,10 +15,13 @@
 
 namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Common\Custom;
 
+use Microservices\App\Constants;
+use Microservices\App\Env;
+
 return [
-    $Env::$customRequestUriPrefix => [
+    Env::$customRequestUriPrefix => [
         '{custom:string}' => [
-            '__FILE__' => $Constants::$AUTH_QUERIES_DIR .
+            '__FILE__' => Constants::$AUTH_QUERIES_DIR .
                 DIRECTORY_SEPARATOR . 'ClientDB' .
                 DIRECTORY_SEPARATOR . 'Groups' .
                 DIRECTORY_SEPARATOR . 'UserGroup' .
