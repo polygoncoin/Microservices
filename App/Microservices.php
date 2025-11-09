@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices;
+namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Common;
@@ -134,11 +134,11 @@ class Microservices
                         code: HttpStatus::$NotFound
                     );
                 }
-                $class = __NAMESPACE__ . '\\App\\Cron';
+                $class = __NAMESPACE__ . '\\Cron';
                 break;
 
             case Common::$req->ROUTE === '/logout':
-                $class = __NAMESPACE__ . '\\App\\Logout';
+                $class = __NAMESPACE__ . '\\Logout';
                 break;
 
             // Requires HTTP auth username and password
@@ -149,12 +149,12 @@ class Microservices
                         code: HttpStatus::$NotFound
                     );
                 }
-                $class = __NAMESPACE__ . '\\App\\Reload';
+                $class = __NAMESPACE__ . '\\Reload';
                 break;
 
             // Generates auth token
             case Common::$req->ROUTE === '/login':
-                $class = __NAMESPACE__ . '\\App\\Login';
+                $class = __NAMESPACE__ . '\\Login';
                 break;
 
             // Requires auth token
@@ -163,7 +163,7 @@ class Microservices
                 $gateway->initGateway();
                 $gateway = null;
 
-                $class = __NAMESPACE__ . '\\App\\Api';
+                $class = __NAMESPACE__ . '\\Api';
                 break;
         }
 

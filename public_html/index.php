@@ -15,7 +15,8 @@
 
 namespace Microservices\public_html;
 
-use Microservices\Start;
+use Microservices\App\Start;
+use Microservices\TestCases\Tests;
 
 ini_set(option: 'display_errors', value: true);
 error_reporting(error_level: E_ALL);
@@ -37,16 +38,45 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 $http['get'] = &$_GET;
 $http['isWebRequest'] = true;
 
-// Load .env
-$env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . '.env');
-foreach ($env as $key => $value) {
-    putenv(assignment: "{$key}={$value}");
-}
+if (
+    isset($http['get']['r'])
+    && in_array(
+        needle: $http['get']['r'],
+        haystack: [
+            '/auth-test',
+            '/open-test',
+            '/open-test-xml',
+            '/supp-test'
+        ]
+    )
+) {
+    $tests = new Tests();
+    switch ($http['get']['r']) {
+        case '/auth-test':
+            echo $tests->processAuth();
+            break;
+        case '/open-test':
+            echo $tests->processOpen();
+            break;
+        case '/open-test-xml':
+            echo $tests->processXml();
+            break;
+        case '/supp-test':
+            echo $tests->processSupplement();
+            break;
+    }
+} else {
+    // Load .env
+    $env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . '.env');
+    foreach ($env as $key => $value) {
+        putenv(assignment: "{$key}={$value}");
+    }
 
-[$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
+    [$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
 
-http_response_code(response_code: $responseCode);
-foreach ($responseheaders as $k => $v) {
-    header(header: "{$k}: {$v}");
+    http_response_code(response_code: $responseCode);
+    foreach ($responseheaders as $k => $v) {
+        header(header: "{$k}: {$v}");
+    }
+    die($responseContent);
 }
-die($responseContent);

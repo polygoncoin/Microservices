@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices;
+namespace Microservices\App;
 
 use Microservices\App\CacheHandler;
 use Microservices\App\Common;
@@ -22,7 +22,7 @@ use Microservices\App\Env;
 use Microservices\App\Logs;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\App\HttpStatus;
-use Microservices\Microservices;
+use Microservices\App\Microservices;
 
 class Start
 {
