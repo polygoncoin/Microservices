@@ -72,6 +72,7 @@ class Start
                 if (is_array($return) && count($return) === 3) {
                     return $return;
                 }
+
                 $data = $Microservices->returnResults();
                 $status = Common::$res->httpStatus;
 
