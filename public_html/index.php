@@ -15,6 +15,8 @@
 
 namespace Microservices\public_html;
 
+use Microservices\App\Constants;
+use Microservices\App\Env;
 use Microservices\App\Start;
 use Microservices\TestCases\Tests;
 
@@ -71,6 +73,9 @@ if (
     foreach ($env as $key => $value) {
         putenv(assignment: "{$key}={$value}");
     }
+
+    Constants::init();
+    Env::init(http: $http);
 
     [$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
 

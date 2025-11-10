@@ -132,15 +132,6 @@ class HttpRequest
                 }
                 break;
             case 'Session':
-                // Session Runtime Configuration
-                $options = [];
-
-                // Initialize Session Handler
-                Session::initSessionHandler(sessionMode: Env::$sessionMode, options: $options);
-
-                // Start session in readonly mode
-                Session::sessionStartReadonly();
-
                 if (
                     isset($_SESSION)
                     && isset($_SESSION['id'])
