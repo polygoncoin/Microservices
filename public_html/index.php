@@ -36,8 +36,14 @@ $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
 $http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
 
 $http['header'] = getallheaders();
-if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+if (isset($http['header']['Range'])) {
+    $http['header']['range'] = $http['header']['Range'];
+}
+if (isset($http['header']['HTTP_USER_AGENT'])) {
+    $http['header']['user-agent'] = $http['header']['HTTP_USER_AGENT'];
+}
+if (isset($http['header']['HTTP_AUTHORIZATION'])) {
+    $http['header']['authorization'] = $http['header']['HTTP_AUTHORIZATION'];
 }
 
 $http['get'] = &$_GET;
@@ -80,9 +86,11 @@ if (
 
     Constants::init();
     Env::init(http: $http);
-
+    
+    ob_start();
     [$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
-
+    ob_clean();
+    
     http_response_code(response_code: $responseCode);
     foreach ($responseheaders as $k => $v) {
         header(header: "{$k}: {$v}");

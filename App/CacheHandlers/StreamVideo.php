@@ -89,8 +89,8 @@ class StreamVideo
     {
         // Check Range header
         if (
-            !isset($this->http['header']['Range']) && strpos(
-                haystack: $this->http['header']['Range'],
+            !isset($this->http['header']['range']) && strpos(
+                haystack: $this->http['header']['range'],
                 needle: 'bytes='
             ) !== false
         ) {
@@ -99,7 +99,7 @@ class StreamVideo
 
         $this->file = $file;
         // Set buffer Range
-        $range = explode(separator: '=', string: $this->http['header']['Range'])[1];
+        $range = explode(separator: '=', string: $this->http['header']['range'])[1];
         list($this->streamFrom, $this->streamTill) = explode(
             separator: '-',
             string: $range
@@ -172,7 +172,7 @@ class StreamVideo
                 'Version/(1[0-9]|[2-9][0-9]|\d{3,})(\.|$|\s)`i';
             $safariBrowser = preg_match(
                 pattern: $safariBrowserPattern,
-                subject: $_SERVER['HTTP_USER_AGENT']
+                subject: $this->http['header']['user-agent']
             );
             if ($safariBrowser) {
                 $this->streamTill = $this->size - 1;
