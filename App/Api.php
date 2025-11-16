@@ -129,7 +129,13 @@ class Api
         if ($class !== null) {
             $api = new $class();
             if ($api->init()) {
-                $api->process();
+                $return = $api->process();
+                if (
+                    is_array($return)
+                    && count($return) === 3
+                ) {
+                    return $return;
+                }
             }
         }
 
