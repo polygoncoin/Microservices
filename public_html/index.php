@@ -34,9 +34,12 @@ $http = [];
 $http['server']['host'] = $_SERVER['HTTP_HOST'];
 $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
 $http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
+
+$http['header'] = getallheaders();
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
     $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
+
 $http['get'] = &$_GET;
 $http['isWebRequest'] = true;
 
@@ -51,6 +54,7 @@ if (
             '/supp-test'
         ]
     )
+    && $http['server']['host'] === 'localhost'
 ) {
     $tests = new Tests();
     switch ($http['get']['r']) {
