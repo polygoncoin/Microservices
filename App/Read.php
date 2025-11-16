@@ -23,7 +23,6 @@ use Microservices\App\Env;
 use Microservices\App\Export;
 use Microservices\App\Hook;
 use Microservices\App\HttpStatus;
-use Microservices\App\Web;
 
 /**
  * Read APIs
@@ -625,10 +624,10 @@ class Read
         switch ($serverMode) {
             case 'Master':
                 $dbDetails = DbFunctions::getDbMasterDetails();
-                break;        
+                break;
             case 'Slave':
                 $dbDetails = DbFunctions::getDbSlaveDetails();
-                break;        
+                break;
         }
 
         // Export

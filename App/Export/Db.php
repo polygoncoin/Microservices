@@ -79,8 +79,8 @@ class Db
     public function init(
         $hostname,
         $port,
-        $username, 
-        $password, 
+        $username,
+        $password,
         $database
     ): void {
         $this->containerObj->init(

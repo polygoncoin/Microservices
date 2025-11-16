@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\GET;
+namespace Microservices\public_html\Config\Queries\Open\GET;
 
 return [
     '__DOWNLOAD__' => 'SELECT * FROM `category` WHERE __WHERE__',
