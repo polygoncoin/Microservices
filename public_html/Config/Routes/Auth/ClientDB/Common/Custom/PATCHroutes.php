@@ -18,7 +18,7 @@ namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Common\Custom;
 use Microservices\App\Env;
 
 return [
-    Env::$customRequestUriPrefix => [
+    Env::$customRequestPathPrefix => [
         '{custom:string}' => [
             '{id:int|!0}'  => [
                 '__FILE__' => false
