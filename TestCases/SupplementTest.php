@@ -21,14 +21,14 @@ define('PUT', __DIR__ . DIRECTORY_SEPARATOR . 'PUT');
 define('PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'PATCH');
 define('DELETE', __DIR__ . DIRECTORY_SEPARATOR . 'DELETE');
 
-$apiVersion = 'X-API-Version: v1.0.0';
+// $apiVersion = 'X-API-Version: v1.0.0';
 $cacheControl = 'Cache-Control: no-cache';
 // $contentType = 'Content-Type: application/x-www-form-urlencoded; charset=utf-8';
 // $contentType = 'Content-Type: multipart/form-data; charset=utf-8';
 $contentType = 'Content-Type: text/plain; charset=utf-8';
 
 $defaultHeaders = [];
-$defaultHeaders[] = $apiVersion;
+// $defaultHeaders[] = $apiVersion;
 $defaultHeaders[] = $cacheControl;
 
 $response = [];

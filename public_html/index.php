@@ -24,6 +24,7 @@ ini_set(option: 'display_errors', value: true);
 error_reporting(error_level: E_ALL);
 
 define('PUBLIC_HTML', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..'));
+define('ROUTE_URL_PARAM', 'route');
 
 require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
 spl_autoload_register(callback:  'Microservices\Autoload::register');
@@ -36,23 +37,23 @@ $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
 $http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
 
 $http['header'] = getallheaders();
-if (isset($http['header']['Range'])) {
-    $http['header']['range'] = $http['header']['Range'];
+if (isset($_SERVER['Range'])) {
+    $http['header']['range'] = $_SERVER['Range'];
 }
-if (isset($http['header']['HTTP_USER_AGENT'])) {
-    $http['header']['user-agent'] = $http['header']['HTTP_USER_AGENT'];
+if (isset($_SERVER['HTTP_USER_AGENT'])) {
+    $http['header']['user-agent'] = $_SERVER['HTTP_USER_AGENT'];
 }
-if (isset($http['header']['HTTP_AUTHORIZATION'])) {
-    $http['header']['authorization'] = $http['header']['HTTP_AUTHORIZATION'];
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
 
 $http['get'] = &$_GET;
 $http['isWebRequest'] = true;
 
 if (
-    isset($http['get']['r'])
+    isset($http['get'][ROUTE_URL_PARAM])
     && in_array(
-        needle: $http['get']['r'],
+        needle: $http['get'][ROUTE_URL_PARAM],
         haystack: [
             '/auth-test',
             '/open-test',
@@ -63,7 +64,7 @@ if (
     && $http['server']['host'] === 'localhost'
 ) {
     $tests = new Tests();
-    switch ($http['get']['r']) {
+    switch ($http['get'][ROUTE_URL_PARAM]) {
         case '/auth-test':
             echo $tests->processAuth();
             break;

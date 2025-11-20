@@ -399,7 +399,7 @@ return [
     '__SET__' => [
         [ // Fetch value from parsed route
             'column' => 'id',
-            'fetchFrom' => 'pathParams',                     // pathParams / payload
+            'fetchFrom' => 'routeParams',                     // routeParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
@@ -432,7 +432,7 @@ return [
     '__WHERE__' => [
         [ // Fetch value from parsed route
             'column' => 'id',
-            'fetchFrom' => 'pathParams',                     // pathParams / payload
+            'fetchFrom' => 'routeParams',                     // routeParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
@@ -641,7 +641,7 @@ return [
     '__WHERE__' => [
         [ // Fetch value from parsed route
             'column' => 'id',
-            'fetchFrom' => 'pathParams',                     // pathParams / payload
+            'fetchFrom' => 'routeParams',                     // routeParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
@@ -683,7 +683,7 @@ return [
     '__PAYLOAD__' => [
         [ // Fetch value from parsed route
             'column' => 'id',
-            'fetchFrom' => 'pathParams',                     // pathParams / payload
+            'fetchFrom' => 'routeParams',                     // routeParams / payload
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
@@ -908,9 +908,9 @@ One can set these details for respective user in master_users table of respectiv
 
 ### GET Request
 
-- [http://localhost/Microservices/public\_html/index.php?r=/reload](http://localhost/Microservices/public_html/index.php?r=/reload)
+- [http://localhost/Microservices/public\_html/index.php?route=/reload](http://localhost/Microservices/public_html/index.php?route=/reload)
 
-- [http://localhost/Microservices/public\_html/index.php?r=/tableName/1](http://localhost/Microservices/public_html/index.php?r=/tableName/1)
+- [http://localhost/Microservices/public\_html/index.php?route=/tableName/1](http://localhost/Microservices/public_html/index.php?route=/tableName/1)
 
 > One can clean the URL by making the required changes in the web server .conf file.
 
@@ -922,9 +922,9 @@ defaultPerpage=10
 maxPerPage=1000
 ```
 
-- [http://localhost/Microservices/public\_html/index.php?r=/tableName?page=1](http://localhost/Microservices/public_html/index.php?r=/tableName/1?page=1)
-- [http://localhost/Microservices/public\_html/index.php?r=/tableName?page=1&perpage=25](http://localhost/Microservices/public_html/index.php?r=/tableName/1?page=1&perpage=25)
-- [http://localhost/Microservices/public\_html/index.php?r=/tableName?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"}](http://localhost/Microservices/public_html/index.php?r=/tableName/1?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"})
+- [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1](http://localhost/Microservices/public_html/index.php?route=/tableName/1?page=1)
+- [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1&perpage=25](http://localhost/Microservices/public_html/index.php?route=/tableName/1?page=1&perpage=25)
+- [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"}](http://localhost/Microservices/public_html/index.php?route=/tableName/1?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"})
 
 >One need to urlencode orderBy value
 
@@ -963,8 +963,8 @@ var payload = [
 - **$session\['uDetails'\]** Session Data.
 > This remains same for every request and contains keys like id, group\_id, client\_id
 
-- **$session\['pathParams'\]** Data passed in URI.
-> Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $session\['pathParams'\] will hold these dynamic values as below.
+- **$session\['routeParams'\]** Data passed in URI.
+> Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $session\['routeParams'\] will hold these dynamic values as below.
 
 - **$session\['payload'\]** Request data.
 > For **GET** method, the **$\_GET** is the payload.
@@ -1079,19 +1079,19 @@ var payload = [
 
 Examples:
 
-- r=/registration/config
-- r=/category/config
+- route=/registration/config
+- route=/category/config
 
 One need to enable same in .env file as below
 
 ```ini
 allowConfigRequest=1
-configRequestPathKeyword='config' ;for appending /config at end of URI
+configRequestRouteKeyword='config' ;for appending /config at end of URI
 ```
 
 >For controlling globally there is a flag in env file labled **allowConfigRequest**
 
-### r=/routes
+### route=/routes
 
 This lists down all allowed routes for HTTP methods respectively.
 
@@ -1109,7 +1109,7 @@ This lists down all allowed routes for HTTP methods respectively.
 ### Login
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/login";
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?route=/login";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
@@ -1138,7 +1138,7 @@ xmlhttp . send( JSON.stringify(payload) );
 * GET Request
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/routes";
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?route=/routes";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "GET", handlerUrl );
@@ -1159,7 +1159,7 @@ xmlhttp . send();
 * POST Request
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/ajax-handler-route";
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?route=/ajax-handler-route";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
@@ -1185,7 +1185,7 @@ xmlhttp . send( JSON.stringify(payload) );
 * PUT Request
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?r=/custom/password";
+var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?route=/custom/password";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "PUT", handlerUrl );
@@ -1211,7 +1211,7 @@ xmlhttp . send( JSON.stringify(payload) );
 * XML Request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?r=/registration-with-address&iRepresentation=XML&oRepresentation=XML";
+var handlerUrl = "http://public.localhost/Microservices/public_html/index.php?route=/registration-with-address&iRepresentation=XML&oRepresentation=XML";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Payload>' +

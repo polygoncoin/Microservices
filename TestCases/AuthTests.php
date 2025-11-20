@@ -28,7 +28,7 @@ $cacheControl = 'Cache-Control: no-cache';
 $contentType = 'Content-Type: text/plain; charset=utf-8';
 
 $defaultHeaders = [];
-$defaultHeaders[] = $apiVersion;
+// $defaultHeaders[] = $apiVersion;
 $defaultHeaders[] = $cacheControl;
 
 $response = [];
