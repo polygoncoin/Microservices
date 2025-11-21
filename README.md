@@ -403,7 +403,8 @@ return [
             // 'fetchFrom' => 'queryParams', // Fetch value from query string
             // 'fetchFrom' => 'payload', // Fetch value from payload
             // 'fetchFrom' => 'function', // Fetch value from function
-            // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+            // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+            // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
             // 'fetchFrom' => 'custom', // Static values
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
@@ -431,7 +432,8 @@ return [
             // 'fetchFrom' => 'queryParams', // Fetch value from query string
             // 'fetchFrom' => 'payload', // Fetch value from payload
             // 'fetchFrom' => 'function', // Fetch value from function
-            // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+            // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+            // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
             // 'fetchFrom' => 'custom', // Static values
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
@@ -475,7 +477,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     'fetchFromValue' => 'id',                       // key (id)
                     'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
@@ -527,7 +530,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     // 'fetchFrom' => '__INSERT-IDs__', // Sql Insert Ids
                     'fetchFromValue' => 'address'
@@ -544,7 +548,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     // 'fetchFrom' => '__INSERT-IDs__', // Sql Insert Ids
                     'fetchFromValue' => 'address'
@@ -559,7 +564,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     // 'fetchFrom' => '__INSERT-IDs__', // Sql Insert Ids
                     'fetchFromValue' => 'address'
@@ -656,7 +662,8 @@ return [
             // 'fetchFrom' => 'queryParams', // Fetch value from query string
             // 'fetchFrom' => 'payload', // Fetch value from payload
             // 'fetchFrom' => 'function', // Fetch value from function
-            // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+            // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+            // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
             // 'fetchFrom' => 'custom', // Static values
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
@@ -682,7 +689,8 @@ return [
             // 'fetchFrom' => 'queryParams', // Fetch value from query string
             // 'fetchFrom' => 'payload', // Fetch value from payload
             // 'fetchFrom' => 'function', // Fetch value from function
-            // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+            // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+            // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
             // 'fetchFrom' => 'custom', // Static values
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
@@ -714,7 +722,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     'fetchFromValue' => 'id',                       // key (id)
                     'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
@@ -722,11 +731,6 @@ return [
                 ],
                 // Database DataTypes settings required when useHierarchy is true
                 // to validate each data set before procedding forward
-                [ // Fetch value of last insert ids
-                    'column' => 'id',
-                    'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
-                    'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
-                ],
                 [ // Fetch values of params from previous queries
                     'column' => 'id',
                     'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
@@ -767,7 +771,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     'fetchFromValue' => 'address'
                 ],
@@ -780,7 +785,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     'fetchFromValue' => 'address'
                 ],
@@ -794,7 +800,8 @@ return [
                     // 'fetchFrom' => 'queryParams', // Fetch value from query string
                     // 'fetchFrom' => 'payload', // Fetch value from payload
                     // 'fetchFrom' => 'function', // Fetch value from function
-                    // 'fetchFrom' => 'uDetails', // Fetch value from uDetails session
+                    // 'fetchFrom' => 'cDetails', // Fetch value from client Details
+                    // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
                     'fetchFromValue' => 'address'
                 ],
