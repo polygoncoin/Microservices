@@ -43,7 +43,7 @@ sessionMode='File'  ; For Cookie based Session - 'File', 'MySql', 'PostgreSql', 
 
 allowConfigRequest=1            ;Allow config request (global flag): 1 = true / 0 = false
 cronRestrictedIp='127.0.0.1'    ;Crons Details
-maxPerPage=10000                ;Maximum value of per page (records per page)
+maxResultsPerPage=10000                ;Maximum value of per page (records per page)
 
 ; Data Representation: JSON/XML/HTML
 iRepresentation='JSON'          ; JSON/XML - Input Data Representation
@@ -53,51 +53,49 @@ allowGetRepresentation=1        ; Allow iRepresentation / oRepresentation as GET
 
 ### Cache Server Details (Redis)
 ```ini
-globalCacheType='Redis'
-globalCacheHostname='127.0.0.1'
-globalCachePort=6379
-globalCacheUsername=''
-globalCachePassword=''
-globalCacheDatabase=0
+gCacheServerType='Redis'
+gCacheServerHostname='127.0.0.1'
+gCacheServerPort=6379
+gCacheServerUsername=''
+gCacheServerPassword=''
+gCacheServerDatabase=0
 ```
 
 ### Global Database details - global.sql
 ```ini
-globalDbType='MySql'
-globalDbHostname='127.0.0.1'
-globalDbPort=3306
-globalDbUsername='username'
-globalDbPassword='password'
-globalDbDatabase='global'
-```
+gDbServerType='MySql'
+gDbServerHostname='127.0.0.1'
+gDbServerPort=3306
+gDbServerUsername='username'
+gDbServerPassword='password'
+gDbServerDatabase='global'
 
-### global Database tables details
-```ini
+; Tables
 groups='m002_master_groups'
 clients='m001_master_clients'
 ```
 
 ### Default database shared by most of the clients
 ```ini
-defaultClientDbType='MySql'
-defaultClientDbHostname='127.0.0.1'
-defaultClientDbPort=3306
-defaultClientDbUsername='username'
-defaultClientDbPassword='password'
-defaultClientDbDatabase='global'
+cDbServerType='MySql'
+cDbServerHostname='127.0.0.1'
+cDbServerPort=3306
+cDbServerUsername='username'
+cDbServerPassword='password'
+cDbServerDatabase='common'
 ```
 
 ### Example of seperate database for client 1 on Default database server
 ```ini
-dbDatabaseClient001='client_001'
+cDbServerDatabase001='client_001'
 ```
 
 ### Example of a dedicated database server for client 1
 ```ini
-dbHostnameClient001='127.0.0.1'
-dbUsernameClient001='username'
-dbPasswordClient001='password'
-dbDatabaseClient001='client_001'
+cDbServerHostname001='127.0.0.1'
+cDbServerUsername001='username'
+cDbServerPassword001='password'
+cDbServerDatabase001='client_001'
 ```
 
 ### Additional table details for database server
@@ -179,13 +177,13 @@ rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in
 
 ```ini
 ; Supported Containers - Redis / Memcached / MySql / PostgreSql / MongoDb
-queryCacheType='Redis'
-queryCacheHostname='127.0.0.1'
-queryCachePort=6379
-queryCacheUsername='username'
-queryCachePassword='password'
-queryCacheDatabase=0
-queryCacheTable='api_cache' ; For MySql / PostgreSql / MongoDb
+sqlResultsCacheServerType='Redis'
+sqlResultsCacheServerHostname='127.0.0.1'
+sqlResultsCacheServerPort=6379
+sqlResultsCacheServerUsername='username'
+sqlResultsCacheServerPassword='password'
+sqlResultsCacheServerDatabase=0
+sqlResultsCacheServerTable='api_cache' ; For MySql / PostgreSql / MongoDb
 ```
 
 #### Route based Rate Limiting
@@ -931,7 +929,7 @@ One can set these details for respective user in master_users table of respectiv
 Requires **countQuery** SQL in the configuration for GET request
 ```ini
 defaultPerpage=10
-maxPerPage=1000
+maxResultsPerPage=1000
 ```
 
 - [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1](http://localhost/Microservices/public_html/index.php?route=/tableName/1?page=1)
@@ -1003,13 +1001,13 @@ return [
     '__QUERY__' => 'INSERT INTO `category` SET SET',
     '__SET__' => [
         [
-            'column' => 'name', 
-            'fetchFrom' => 'payload', 
+            'column' => 'name',
+            'fetchFrom' => 'payload',
             'fetchFromValue' => 'name'
         ],
         [
-            'column' => 'parent_id', 
-            'fetchFrom' => 'custom', 
+            'column' => 'parent_id',
+            'fetchFrom' => 'custom',
             'fetchFromValue' => 0
         ]
     ],
@@ -1019,13 +1017,13 @@ return [
             '__QUERY__' => 'INSERT INTO `category` SET SET',
             '__SET__' => [
                 [
-                    'column' => 'name', 
-                    'fetchFrom' => 'payload', 
+                    'column' => 'name',
+                    'fetchFrom' => 'payload',
                     'fetchFromValue' => 'subname'
                 ],
                 [
-                    'column' => 'parent_id', 
-                    'fetchFrom' => '__INSERT-IDs__', 
+                    'column' => 'parent_id',
+                    'fetchFrom' => '__INSERT-IDs__',
                     'fetchFromValue' => 'category:id'
                 ]
             ],

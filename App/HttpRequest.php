@@ -185,7 +185,7 @@ class HttpRequest
         } else {
             $cKey = CacheKey::client(hostname: $this->HOST);
         }
-        if (!DbFunctions::$globalCache->cacheExists(key: $cKey)) {
+        if (!DbFunctions::$gCacheServer->cacheExists(key: $cKey)) {
             throw new \Exception(
                 message: "Invalid Host '{$this->HOST}'",
                 code: HttpStatus::$InternalServerError
@@ -193,7 +193,7 @@ class HttpRequest
         }
 
         $this->s['cDetails'] = json_decode(
-            json: DbFunctions::$globalCache->getCache(
+            json: DbFunctions::$gCacheServer->getCache(
                 key: $cKey
             ),
             associative: true
