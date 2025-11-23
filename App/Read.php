@@ -498,7 +498,10 @@ class Read
         }
 
         if ($isFirstCall) {
-            if (isset(Common::$req->s['queryParams']['orderBy'])) {
+            if (
+                isset(Common::$req->s['queryParams']['orderBy'])
+                && is_array(Common::$req->s['queryParams']['orderBy'])
+            ) {
                 $orderByStrArr = [];
                 $orderByArr = Common::$req->s['queryParams']['orderBy'];
                 foreach ($orderByArr as $k => $v) {
