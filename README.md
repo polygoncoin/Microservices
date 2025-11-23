@@ -277,22 +277,12 @@ return [
 ];
 ```
 
-* To restrict dynamic values to a certain set of values. One can do the same by appending comma-separated values after OR key.
-```PHP
-return [
-    '{tableName:string|admin,group,client,routes}' => [
-        '{id:int}' => [
-            '__FILE__' => 'SQL file location'
-        ]
-    ]
-];
-```
-
-* On other side; to exclude dynamic values. One can do the same by prefixing NOT(!) synbol to comma-separated values.
+* To restrict dynamic values to a certain set of values. One can do the same by defining its data type.
 ```PHP
 return [
     '{tableName:string}' => [
-        '{id:int|!0}' => [
+        'dataType' => DatabaseDataTypes::$Tables,
+        '{id:int}' => [
             '__FILE__' => 'SQL file location'
         ]
     ]
@@ -312,7 +302,8 @@ return [
             'Hook_1',
             '...'
         ]
-        '{id:int|!0}' => [
+        '{id:int}' => [
+            'dataType' => DatabaseDataTypes::$PrimaryKey,
             '__FILE__' => 'SQL file location',
             '__PRE-ROUTE-HOOKS__' => [], // For noi hooks
             '__POST-ROUTE-HOOKS__' => [] // For noi hooks
