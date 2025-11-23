@@ -257,6 +257,7 @@ return [
 return [
     'tableName' => [
         '{id:int}' => [
+            'dataType' => DatabaseDataTypes::$PrimaryKey,
             '__FILE__' => 'SQL file location'
         ]
     ]
@@ -268,9 +269,11 @@ return [
 return [
     'tableName' => [
         '{id:int}' => [
+            'dataType' => DatabaseDataTypes::$PrimaryKey,
             '__FILE__' => 'SQL file location for integer data type'
         ],
         '{id:string}' => [
+            'dataType' => DatabaseDataTypes::$Default,
             '__FILE__' => 'SQL file location for string data type'
         ]
     ]
@@ -293,6 +296,7 @@ return [
 ```PHP
 return [
     '{tableName:string}' => [
+        'dataType' => DatabaseDataTypes::$Tables,
         '__FILE__' => 'SQL file location',
         '__PRE-ROUTE-HOOKS__' => [// These will apply recursively
             'Hook_1',
