@@ -140,8 +140,8 @@ These DB/Cache configurations can be set in below columns respectively for each 
 ```ini
 ; ---- Rate Limit Server Details (Redis)
 ;used to save Rate Limiting related details
-rateLimitHost='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimitHostPort=6379        ; Redis host port
+rateLimitServerHostname='127.0.0.1'     ; Redis host dealing with Rate limit
+rateLimitServerPort=6379        ; Redis host port
 ```
 
 #### IP based Rate Limiting
@@ -878,8 +878,8 @@ One can configure Rate Limiting server details in **.env** file.
 #### Rate Limit Server(Redis) Configuration in .env
 
 ```ini
-rateLimitHost='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimitHostPort=6379        ; Redis host port
+rateLimitServerHostname='127.0.0.1'     ; Redis host dealing with Rate limit
+rateLimitServerPort=6379        ; Redis host port
 rateLimitIPMaxRequests=600    ; Max request allowed per IP
 rateLimitIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
 rateLimitIPPrefix='IPRL:'     ; IP based Rate Limitng (IPRL) key prefix used in Redis
