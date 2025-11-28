@@ -21,6 +21,7 @@ use Microservices\App\Counter;
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;
 use Microservices\App\DbFunctions;
+use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\RateLimiter;
 use Microservices\App\Validator;
@@ -246,6 +247,7 @@ trait AppTrait
         $paramKeys = [];
         $errors = [];
         $row = [];
+        $__SET__ = [];
 
         $missExecution = $wMissExecution = false;
         // Check __SET__
@@ -258,7 +260,6 @@ trait AppTrait
                 if (!empty($params)) {
                     // __SET__ not compulsory in query
                     $found = strpos(haystack: $sql, needle: '__SET__') !== false;
-                    $__SET__ = [];
                     foreach ($params as $param => &$v) {
                         $param = str_replace(
                             search: ['`', ' '],
@@ -323,7 +324,8 @@ trait AppTrait
             }
         } else {
             if (
-                strpos(trim(strtolower($sql)), 'insert') === 0
+                Env::$useGlobalCounter
+                && strpos(trim(strtolower($sql)), 'insert') === 0
                 && !isset($sqlParams[':id'])
                 && !isset($row['id'])
             ) {
@@ -332,12 +334,14 @@ trait AppTrait
                 $row['id'] = $id;
 
                 $__SET__[] = "`id` = :id";
-                $sql = str_replace(
-                    search: '__SET__',
-                    replace: implode(separator: ', ', array: $__SET__),
-                    subject: $sql
-                );
             }
+        }
+        if (!empty($__SET__)) {
+            $sql = str_replace(
+                search: '__SET__',
+                replace: implode(separator: ', ', array: $__SET__),
+                subject: $sql
+            );
         }
 
         if (!empty($row)) {
