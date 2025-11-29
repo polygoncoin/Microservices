@@ -90,11 +90,7 @@ class Start
                         'HttpCode' => $e->getCode(),
                         'HttpMessage' => $e->getMessage()
                     ],
-                    'Details' => [
-                        '$_GET' => $_GET,
-                        'php:input' => @file_get_contents(filename: 'php://input'),
-                        'session' => Common::$req->s
-                    ]
+                    'Details' => Common::$req->s
                 ];
                 $logsObj = new Logs();
                 $logsObj->log(logDetails: $logDetails);

@@ -211,9 +211,9 @@ class HttpRequest
             return;
         }
 
-        $this->s['queryParams'] = $this->http['get'];
+        $this->s['queryParams'] = &$this->http['get'];
         if ($this->METHOD === Constants::$GET) {
-            $this->urlDecode(arr: $_GET);
+            $this->urlDecode(value: $this->http['get']);
             $this->s['payloadType'] = 'Object';
         } else {
             $this->setPayloadStream();
@@ -236,13 +236,9 @@ class HttpRequest
      */
     private function setPayloadStream(): void
     {
-        if (!$this->http['isWebRequest']) {
-            $content = $this->http['post'];
-        } else {
-            $content = file_get_contents(filename: 'php://input');
-            if (Env::$iRepresentation === 'XML') {
-                $content = $this->convertXmlToJson(xmlString: $content);
-            }
+        $content = $this->http['post'];
+        if (Env::$iRepresentation === 'XML') {
+            $content = $this->convertXmlToJson(xmlString: $content);
         }
         $this->payloadStream = fopen(
             filename: "php://memory",
@@ -329,26 +325,22 @@ class HttpRequest
     /**
      * Function to find payload is an object/array
      *
-     * @param array $arr Array vales to be decoded. Basically $_GET
+     * @param array|string $value Array vales to be decoded. Basically $http['get']
      *
      * @return void
      */
-    public function urlDecode(&$arr): void
+    public function urlDecode(&$value): void
     {
-        if (is_array(value: $arr)) {
-            foreach ($arr as &$value) {
-                if (is_array(value: $value)) {
-                    $this->urlDecode(arr: $value);
+        if (is_array(value: $value)) {
+            foreach ($value as &$v) {
+                if (is_array(value: $v)) {
+                    $this->urlDecode(value: $v);
                 } else {
-                    $decodedVal = urldecode(string: $value);
-                    $array = json_decode(json: $decodedVal, associative: true);
-                    $value = ($array !== null) ? $array : $decodedVal;
+                    $v = urldecode(string: $v);
                 }
             }
         } else {
-            $decodedVal = urldecode(string: $arr);
-            $array = json_decode(json: $decodedVal, associative: true);
-            $arr = ($array !== null) ? $array : $decodedVal;
+            $value = urldecode(string: $value);
         }
     }
 

@@ -873,7 +873,7 @@ trait AppTrait
 
         $triggerOutput = [];
         if ($isAssoc) {
-            $http = $this->getTriggerDetails($triggerConfig);
+            $http = $this->getTriggerHttp($triggerConfig);
             [$responseheaders, $responseContent, $responseCode] = Start::http(http: $http);
             $triggerOutput = &$responseContent;
         } else {
@@ -882,7 +882,7 @@ trait AppTrait
                 $iTrigger < $iTriggerCount;
                 $iTrigger++
             ) {
-                $http = $this->getTriggerDetails($triggerConfig[$iTrigger]);
+                $http = $this->getTriggerHttp($triggerConfig[$iTrigger]);
                 [$responseheaders, $responseContent, $responseCode] = Start::http(http: $http);
                 $triggerOutput[] = &$responseContent;
             }
@@ -898,10 +898,10 @@ trait AppTrait
      *
      * @return mixed
      */
-    public function getTriggerDetails($triggerConfig)
+    public function getTriggerHttp($triggerConfig)
     {
         $method = $triggerConfig['__METHOD__'];
-        [$routeElementsArr, $errors] = $this->getTriggerPayload(
+        [$routeElementsArr, $errors] = $this->getTriggerParams(
             payloadConfig: $triggerConfig['__ROUTE__']
         );
 
@@ -915,7 +915,7 @@ trait AppTrait
         $payloadArr = [];
 
         if (isset($triggerConfig['__QUERY-STRING__'])) {
-            [$queryStringArr, $errors] = $this->getTriggerPayload(
+            [$queryStringArr, $errors] = $this->getTriggerParams(
                 payloadConfig: $triggerConfig['__QUERY-STRING__']
             );
 
@@ -924,7 +924,7 @@ trait AppTrait
             }
         }
         if (isset($triggerConfig['__PAYLOAD__'])) {
-            [$payloadArr, $errors] = $this->getTriggerPayload(
+            [$payloadArr, $errors] = $this->getTriggerParams(
                 payloadConfig: $triggerConfig['__PAYLOAD__']
             );
             if ($errors) {
@@ -952,7 +952,7 @@ trait AppTrait
      * @return array
      * @throws \Exception
      */
-    private function getTriggerPayload(&$payloadConfig): array
+    private function getTriggerParams(&$payloadConfig): array
     {
         $sqlParams = [];
         $errors = [];

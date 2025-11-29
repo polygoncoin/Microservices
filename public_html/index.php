@@ -48,6 +48,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 }
 
 $http['get'] = &$_GET;
+$http['post'] = file_get_contents(filename: 'php://input');
 $http['isWebRequest'] = true;
 
 if (
