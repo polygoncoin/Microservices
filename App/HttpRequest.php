@@ -240,7 +240,7 @@ class HttpRequest
         switch (true) {
             case Common::$req->rParser->isImportRequest:
                 $content = $this->formatCsvPayload(
-                    csvFile: $this->http['files']['file']['tmp_name']
+                    csvContent: $this->http['post']
                 );
                 break;
             case Env::$iRepresentation === 'XML':
@@ -366,14 +366,12 @@ class HttpRequest
     /**
      * Format Csv Payload
      *
-     * @param string $csvFile CSV file
+     * @param string $csvContent CSV
      *
      * @return string
      */
-    public function formatCsvPayload(&$csvFile): string
+    public function formatCsvPayload(&$csvContent): string
     {
-        $fp = fopen(filename: $csvFile, mode: "r+b");
-
         $dataEncode = new DataEncode(http: $this->http);
         $dataEncode->init(header: false);
         $dataEncode->startObject();
@@ -382,8 +380,12 @@ class HttpRequest
         $counter = null;
         $modeArr = [];
 
-        while (($line = fgets($fp)) !== false) {
-            $data = str_getcsv(trim($line), ",", "\"", "\\");
+        foreach (explode("\n", $csvContent) as $line) {
+            $line = trim($line, "\r\n");
+            if (empty($line)) {
+                continue;
+            }
+            $data = str_getcsv($line, ",", "\"", "\\");
             if (empty($data)) {
                 continue;
             }

@@ -103,22 +103,17 @@ class TestFunctions
                 break;
             case 'POST':
                 $curlConfig[CURLOPT_POST] = true;
-                if ($file !== null) {
-                    $payload = ['file' => $file];
+                if ($file === null) {
+                    $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 }
-                $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 break;
             case 'PUT':
-                $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PUT';
-                $curlConfig[CURLOPT_POSTFIELDS] = $payload;
-                break;
             case 'PATCH':
-                $curlConfig[CURLOPT_CUSTOMREQUEST] = 'PATCH';
-                $curlConfig[CURLOPT_POSTFIELDS] = $payload;
-                break;
             case 'DELETE':
-                $curlConfig[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-                $curlConfig[CURLOPT_POSTFIELDS] = $payload;
+                $curlConfig[CURLOPT_CUSTOMREQUEST] = $method;
+                if ($file === null) {
+                    $curlConfig[CURLOPT_POSTFIELDS] = $payload;
+                }
                 break;
         }
         $curlConfig[CURLOPT_RETURNTRANSFER] = true;
@@ -161,6 +156,11 @@ class TestFunctions
             payload: $payload,
             file: $file
         );
+        if ($file !== null) {
+            $fp = fopen($file, 'rb');
+            $curlConfig[CURLOPT_INFILE] = $fp;
+            $curlConfig[CURLOPT_INFILESIZE] = filesize($file);
+        }
 
         curl_setopt_array(handle: $curl, options: $curlConfig);
 
