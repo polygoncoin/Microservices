@@ -57,6 +57,13 @@ class RouteParser
     public $isConfigRequest = false;
 
     /**
+     * Is a import request flag
+     *
+     * @var bool
+     */
+    public $isImportRequest = false;
+
+    /**
      * Raw route / Configured Path
      *
      * @var string
@@ -129,7 +136,7 @@ class RouteParser
                 $this->routeHook[$key] = $element;
                 continue;
             }
-            $pos = false;
+
             if (isset($routes[$element])) {
                 $configuredRoute[] = $element;
                 $routes = &$routes[$element];
@@ -141,6 +148,13 @@ class RouteParser
                 && Env::$configRequestRouteKeyword === $element
             ) {
                 $this->isConfigRequest = true;
+                break;
+            } elseif (
+                $key === $routeLastElementPos
+                && Env::$allowImportRequest == 1
+                && Env::$importRequestRouteKeyword === $element
+            ) {
+                $this->isImportRequest = true;
                 break;
             } else {
                 if (
@@ -280,9 +294,13 @@ class RouteParser
     {
         // Set route code file
         if (
-            !(isset($routes['__FILE__'])
-            && ($routes['__FILE__'] === false
-            || file_exists(filename: $routes['__FILE__'])))
+            !(
+                isset($routes['__FILE__'])
+                && (
+                    $routes['__FILE__'] === false
+                    || file_exists(filename: $routes['__FILE__'])
+                )
+            )
         ) {
             throw new \Exception(
                 message: 'Missing config for ' . Common::$req->METHOD . ' method',

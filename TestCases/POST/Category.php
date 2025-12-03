@@ -18,7 +18,7 @@ namespace Microservices\TestCases;
 use Microservices\TestCases\TestFunctions;
 
 $header = $defaultHeaders;
-$header[] = $contentType;
+$header[] = 'Content-Type: multipart/form-data; charset=utf-8';
 if (isset($token)) {
     $header[] = "Authorization: Bearer {$token}";
 }
@@ -52,7 +52,8 @@ $params = [
 return TestFunctions::trigger(
     homeURL: $homeURL,
     method: 'POST',
-    route: '/category',
+    route: '/category/import',
     header: $header,
-    payload: json_encode(value: $params)
+    payload: '',//json_encode(value: $params),
+    file: $curlFile
 );

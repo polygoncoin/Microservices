@@ -91,7 +91,8 @@ class TestFunctions
         $route,
         $queryString,
         $header = [],
-        $payload = ''
+        $payload = '',
+        $file = null
     ): array {
         $curlConfig[CURLOPT_URL] = "{$homeURL}?route={$route}{$queryString}";
         $curlConfig[CURLOPT_HTTPHEADER] = $header;
@@ -102,6 +103,9 @@ class TestFunctions
                 break;
             case 'POST':
                 $curlConfig[CURLOPT_POST] = true;
+                if ($file !== null) {
+                    $payload = ['file' => $file];
+                }
                 $curlConfig[CURLOPT_POSTFIELDS] = $payload;
                 break;
             case 'PUT':
@@ -142,7 +146,8 @@ class TestFunctions
         $method,
         $route,
         $header = [],
-        $payload = ''
+        $payload = '',
+        $file = null
     ): mixed {
         $queryString = '';
 
@@ -153,7 +158,8 @@ class TestFunctions
             route: $route,
             queryString: $queryString,
             header: $header,
-            payload: $payload
+            payload: $payload,
+            file: $file
         );
 
         curl_setopt_array(handle: $curl, options: $curlConfig);
@@ -180,9 +186,6 @@ class TestFunctions
             )
         );
         $responseBody = substr(string: $curlResponse, offset: $headerSize);
-
-        $error = curl_error(handle: $curl);
-        curl_close(handle: $curl);
 
         $error = curl_error(handle: $curl);
         curl_close(handle: $curl);
