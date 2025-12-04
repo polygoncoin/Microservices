@@ -27,9 +27,7 @@ $cacheControl = 'Cache-Control: no-cache';
 // $contentType = 'Content-Type: multipart/form-data; charset=utf-8';
 $contentType = 'Content-Type: text/plain; charset=utf-8';
 
-$filePath = __DIR__ . '/category.csv';
-$curlFile = $filePath;
-// $curlFile = new \CURLFile($filePath, 'text/plain', 'uploaded_file.txt');
+$curlFile = __DIR__ . '/category.csv';
 
 $defaultHeaders = [];
 // $defaultHeaders[] = $apiVersion;
