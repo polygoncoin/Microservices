@@ -194,19 +194,6 @@ rateLimitUsersMaxRequestsWindow=10  ; Max one request allowed for 10 seconds
 `master_users`.`rateLimitSecondsWindow` int DEFAULT NULL,
 ```
 
-### For Cache hits configurations can be set as below.
-
-```ini
-; Supported Containers - Redis / Memcached / MySql / PostgreSql / MongoDb
-sqlResultsCacheServerType='Redis'
-sqlResultsCacheServerHostname='127.0.0.1'
-sqlResultsCacheServerPort=6379
-sqlResultsCacheServerUsername='username'
-sqlResultsCacheServerPassword='password'
-sqlResultsCacheServerDatabase=0
-sqlResultsCacheServerTable='api_cache' ; For MySql / PostgreSql / MongoDb
-```
-
 #### Route based Rate Limiting
 ```ini
 rateLimitRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
@@ -220,6 +207,19 @@ return [
     'rateLimitSecondsWindow' => 3600, // Window in Seconds for allowed number of requests
     [...]
 ];
+```
+
+### For Cache hits configurations can be set as below.
+
+```ini
+; Supported Containers - Redis / Memcached / MySql / PostgreSql / MongoDb
+sqlResultsCacheServerType='Redis'
+sqlResultsCacheServerHostname='127.0.0.1'
+sqlResultsCacheServerPort=6379
+sqlResultsCacheServerUsername='username'
+sqlResultsCacheServerPassword='password'
+sqlResultsCacheServerDatabase=0
+sqlResultsCacheServerTable='api_cache' ; For MySql / PostgreSql / MongoDb
 ```
 
 ## Folders
@@ -898,44 +898,6 @@ Classless Inter-Domain Routing (CIDR) is a method for assigning IP addresses to 
 # User level
 `master_users`.`allowed_cidrs` text DEFAULT NULL,
 ```
-
-### Rate Limiting
-
-One can configure Rate Limiting server details in **.env** file.
-
-#### Rate Limit Server(Redis) Configuration in .env
-
-```ini
-rateLimitServerHostname='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimitServerPort=6379        ; Redis host port
-rateLimitIPMaxRequests=600    ; Max request allowed per IP
-rateLimitIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
-rateLimitIPPrefix='IPRL:'     ; IP based Rate Limitng (IPRL) key prefix used in Redis
-rateLimitClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
-rateLimitGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
-rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
-rateLimitRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used in Redis
-```
-
-#### Rate Limit at group level (global database)
-
-One can set these details for respective group in m002_master_groups table of global database
-
-```SQL
-`m002_master_groups`.`rateLimitMaxRequests` int DEFAULT NULL
-`m002_master_groups`.`rateLimitSecondsWindow` int DEFAULT NULL
-```
-
-#### Rate Limit at user account level (client database)
-
-One can set these details for respective user in master_users table of respective client database
-
-```SQL
-`master_users`.`rateLimitMaxRequests` int DEFAULT NULL
-`master_users`.`rateLimitSecondsWindow` int DEFAULT NULL
-```
-
-> DEFAULT NULL represents 'no restrictions'
 
 ## HTTP Request
 
