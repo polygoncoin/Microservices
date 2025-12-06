@@ -39,7 +39,7 @@ $http['server']['host'] = $_SERVER['HTTP_HOST'];
 $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
 
 if (
-    ((int)getenv('DISABLE_REQUESTS_VIA_VPN')) === 1
+    ((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
     && !isset($_SERVER['REMOTE_ADDR'])
 ) {
     die("Invalid request");

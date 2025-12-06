@@ -10,7 +10,6 @@ This is a light & easy low code API generator using configuration arrays. It can
 - [Routes Folder](#routes-folder)
 - [Params Data Types Configuration Rules](#params-data-types-configuration-rules)
 - [SQL Configuration Rules](#sql-configuration-rules)
-- [Security](#security)
 - [HTTP Request](#http-request)
 - [Hierarchy Data](#hierarchy-data)
 - [Config and Import Route](#config-and-import-route)
@@ -34,12 +33,13 @@ This is a light & easy low code API generator using configuration arrays. It can
 Below are the configuration settings details in .env
 
 ```ini
-ENVIRONMENT=0                   ;Environment PRODUCTION = 1 / DEVELOPMENT = 0
-OUTPUT_PERFORMANCE_STATS=1      ;Add Performance Stats in JSON output: 1 = true / 0 = false
+ENVIRONMENT=0                       ;Environment PRODUCTION = 1 / DEVELOPMENT = 0
+OUTPUT_PERFORMANCE_STATS=1          ;Add Performance Stats in JSON output: 1 = true / 0 = false
+DISABLE_REQUESTS_VIA_PROXIES=1      ; 1 = true / 0 = false
 
 ; API authentication modes - Token / Session (Cookie based Sessions)
 authMode='Token'
-sessionMode='File'              ; For Cookie based Session - 'File', 'MySql', 'PostgreSql', 'MongoDb', 'Redis', 'Memcached', 'Cookie'
+sessionMode='File'                  ; For Cookie based Session - 'File', 'MySql', 'PostgreSql', 'MongoDb', 'Redis', 'Memcached', 'Cookie'
 
 ; Allow particular route config request (global flag) - 1 = true / 0 = false
 ; Useful to get details of the payload for the API
@@ -138,6 +138,21 @@ These DB/Cache configurations can be set in below columns respectively for each 
 `m001_master_clients`.`slave_cache_password` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_database` varchar(255) NOT NULL,
 `m001_master_clients`.`slave_cache_table` varchar(255) NOT NULL,
+```
+
+### Allowed IPs
+
+Classless Inter-Domain Routing (CIDR) is a method for assigning IP addresses to devices on the internet. Multiple CIDR separated by comma can be set in tables.
+
+```SQL
+# Client level
+`m001_master_clients`.`allowed_cidrs` text DEFAULT NULL,
+
+# Group level
+`m002_master_groups`.`allowed_cidrs` text DEFAULT NULL,
+
+# User level
+`master_users`.`allowed_cidrs` text DEFAULT NULL,
 ```
 
 ### The Rate Limiting configurations can be set as below.
@@ -360,9 +375,9 @@ return [
 
 > One can replace **&lt;filenames&gt;** tag with desired name as per functionality.
 
-## Params Data Types Configuration Rules
+## Configuration Rules
 
-### Database Field DataTypes Configuration in DatabaseDataTypes class
+### Dynamic Field DataTypes Configuration
 
 ```PHP
 public static $CustomINT = [
@@ -882,23 +897,6 @@ return [
 ];
 ```
 
-## Security
-
-### Allowed IPs
-
-Classless Inter-Domain Routing (CIDR) is a method for assigning IP addresses to devices on the internet. Multiple CIDR separated by comma can be set in tables.
-
-```SQL
-# Client level
-`m001_master_clients`.`allowed_cidrs` text DEFAULT NULL,
-
-# Group level
-`m002_master_groups`.`allowed_cidrs` text DEFAULT NULL,
-
-# User level
-`master_users`.`allowed_cidrs` text DEFAULT NULL,
-```
-
 ## HTTP Request
 
 ### GET Request
@@ -983,36 +981,20 @@ var payload = [
 
 ```PHP
 return [
-    '__QUERY__' => 'INSERT INTO `category` SET SET',
+    '__QUERY__' => 'INSERT INTO `category` SET __SET__',
     '__SET__' => [
-        [
-            'column' => 'name',
-            'fetchFrom' => 'payload',
-            'fetchFromValue' => 'name'
-        ],
-        [
-            'column' => 'parent_id',
-            'fetchFrom' => 'custom',
-            'fetchFromValue' => 0
-        ]
+        'name' => ['payload', 'name'],
+        'parent_id' => ['custom', 0],
     ],
     '__INSERT-IDs__' => 'category:id',
     '__SUB-QUERY__' => [
         'module1' => [
-            '__QUERY__' => 'INSERT INTO `category` SET SET',
+            '__QUERY__' => 'INSERT INTO `category` SET __SET__',
             '__SET__' => [
-                [
-                    'column' => 'name',
-                    'fetchFrom' => 'payload',
-                    'fetchFromValue' => 'subname'
-                ],
-                [
-                    'column' => 'parent_id',
-                    'fetchFrom' => '__INSERT-IDs__',
-                    'fetchFromValue' => 'category:id'
-                ]
+                'name' => ['payload', 'subname'],
+                'parent_id' => ['__INSERT-IDs__', 'category:id'],
             ],
-            '__INSERT-IDs__' => 'sub-category:id',
+            '__INSERT-IDs__' => 'sub:id',
         ]
     ],
     'useHierarchy' => true
@@ -1027,7 +1009,7 @@ return [
 var payload = {
     "name":"name",
     "module1": {
-        "subname":"subname",
+        "subname":"subname-value",
     }
 }
 ```
