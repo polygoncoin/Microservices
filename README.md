@@ -7,13 +7,10 @@ This is a light & easy low code API generator using configuration arrays. It can
 - [Important Files](#important-files)
 - [Environment File](#environment-file)
 - [Folders](#folders)
-- [Routes Folder](#routes-folder)
-- [Params Data Types Configuration Rules](#params-data-types-configuration-rules)
 - [Configuration Rules](#configuration-rules)
 - [HTTP Request](#http-request)
-- [Hierarchy Data](#hierarchy-data)
-- [Config and Import Route](#config-and-import-route)
-- [Database](#database)
+- [Hierarchy Configs](#hierarchy-configs)
+- [Special Routes](#special-routes)
 - [Javascript HTTP request example](#javascript-http-request-example)
 - [License](#license)
 
@@ -241,12 +238,12 @@ sqlResultsCacheServerTable='api_cache' ; For MySql / PostgreSql / MongoDb
 
 ### Files Folder
 
-- **Dropbox** Folder for uploaded files.
 - **Logs** Folder for application Logs.
 
 ### public\_html Folder
 
 - **Config** Basic configuration folder
+- **Files** Folder for uploaded files.
 - **Hooks** Hooks.
 - **Supplement** Customised coding for APIs
 - **Validation** Contains validation classes.
@@ -258,16 +255,16 @@ sqlResultsCacheServerTable='api_cache' ; For MySql / PostgreSql / MongoDb
 - **ThirdParty** Contains classes for third-party API's
 - **Upload** Contains classes for upload file API's
 
-## Routes Folder
+### Routes Folder
 
-### public\_html/Config/Routes
+#### public\_html/Config/Routes
 
 - **/Config/Routes/Auth/&lt;GroupName&gt;**
 - **/Config/Routes/Open**
 
 **&lt;GroupName&gt;** is the group user belongs to for accessing the API's
 
-### Files
+#### Files
 
 - **/GETroutes.php** for all GET method routes configuration.
 - **/POSTroutes.php** for all POST method routes configuration.
@@ -275,7 +272,7 @@ sqlResultsCacheServerTable='api_cache' ; For MySql / PostgreSql / MongoDb
 - **/PATCHroutes.php** for all PATCH method routes configuration.
 - **/DELETEroutes.php** for all DELETE method routes configuration.
 
-### Routes Configuration Rules
+#### Routes Configuration Rules
 
 * For configuring route **/tableName/parts** GET method
 ```PHP
@@ -357,15 +354,15 @@ return [
 
 > This '{id:int|!0}' means id is integer but can't be zero.
 
-## Queries Folder
+### Queries Folder
 
-### public\_html/Config/Queries
+#### public\_html/Config/Queries
 
 - **/Config/Queries/Auth/GlobalDB** for global database.
 - **/Config/Queries/Auth/ClientDB** for Clients (including all hosts and their databases).
 - **/Config/Queries/Open** for Open to Web API's (No Authentication).
 
-### Files
+#### Files
 
 - **/GET/&lt;filenames&gt;.php** GET method SQL.
 - **/POST/&lt;filenames&gt;;.php** POST method SQL.
@@ -897,6 +894,15 @@ return [
 ];
 ```
 
+#### Database
+
+- Dedicated database for respective client can be configured
+- This can also handle Master / Slave implementaion respectively
+
+###### fetchFrom
+
+- **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
+
 ## HTTP Request
 
 ### GET Request
@@ -968,7 +974,7 @@ var payload = [
 * **$session\['sqlResults'\]** Hierarchy data.
 >For **GET** method, one can use previous query results if configured to use hierarchy.
 
-## Hierarchy Data
+## Hierarchy Configs
 
 - Config/Queries/ClientDB/GET/Category.php
 >In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
@@ -1066,9 +1072,10 @@ var payload = [
 ]
 ```
 
-## Config and Import Route
+## Special Routes
 
-* Appending route with **/config** returns the payload information that should be supplied; both required and optional with desired format.
+### Config
+* Appending route with **/config** returns the payload information that should be supplied; both necessary and optional with desired format.
 
 Examples:
 
@@ -1084,6 +1091,7 @@ configRequestRouteKeyword='config' ;for appending /config at end of URI
 
 >For controlling globally there is a flag in env file labled **allowConfigRequest**
 
+### Import
 Similarly, we have global configs for importing CSV
 ```ini
 ; Allow import CSV - 1 = true / 0 = false
@@ -1094,16 +1102,7 @@ importSampleRouteKeyword='import-sample'
 
 ### route=/routes
 
-This lists down all allowed routes for HTTP methods respectively.
-
-## Database
-
-- Dedicated database for respective client can be configured
-- This can also handle Master / Slave implementaion respectively
-
-### fetchFrom
-
-- **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
+Lists down all the available routes with HTTP methods.
 
 ## Javascript HTTP request example
 
