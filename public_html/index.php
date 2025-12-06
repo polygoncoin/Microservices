@@ -26,15 +26,26 @@ error_reporting(error_level: E_ALL);
 define('PUBLIC_HTML', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..'));
 define('ROUTE_URL_PARAM', 'route');
 
-require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
-spl_autoload_register(callback:  'Microservices\Autoload::register');
+// Load .env
+$env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . '.env');
+foreach ($env as $key => $value) {
+    putenv(assignment: "{$key}={$value}");
+}
 
 // Process the request
 $http = [];
 
 $http['server']['host'] = $_SERVER['HTTP_HOST'];
 $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
-$http['server']['ip'] = $_SERVER['REMOTE_ADDR'];
+
+if (
+    ((int)getenv('DISABLE_REQUESTS_VIA_VPN')) === 1
+    && !isset($_SERVER['REMOTE_ADDR'])
+) {
+    die("Invalid request");
+}
+
+$http['server']['ip'] = getVisitorIP();
 
 $http['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
@@ -54,6 +65,9 @@ if (isset($_FILES)) {
     $http['files'] = &$_FILES;
 }
 $http['isWebRequest'] = true;
+
+require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
+spl_autoload_register(callback:  'Microservices\Autoload::register');
 
 if (
     isset($http['get'][ROUTE_URL_PARAM])
@@ -84,11 +98,6 @@ if (
             break;
     }
 } else {
-    // Load .env
-    $env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . '.env');
-    foreach ($env as $key => $value) {
-        putenv(assignment: "{$key}={$value}");
-    }
 
     Constants::init();
     Env::init(http: $http);
@@ -102,4 +111,22 @@ if (
         header(header: "{$k}: {$v}");
     }
     die($responseContent);
+}
+function getVisitorIP() {
+    // Check for shared internet connections (e.g., Cloudflare, proxy)
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } 
+    // Check if the user is behind a proxy and the IP is forwarded
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        // HTTP_X_FORWARDED_FOR can contain a comma-separated list of IPs
+        // The first one is typically the original client IP
+        $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $ip = trim($ipList[0]); 
+    } 
+    // Default method: get the remote address directly
+    else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return $ip;
 }
