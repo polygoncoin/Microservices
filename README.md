@@ -177,27 +177,7 @@ rateLimitUsersMaxRequests=1         ; Max one request allowed for 10 seconds
 rateLimitUsersMaxRequestsWindow=10  ; Max one request allowed for 10 seconds
 ```
 
-#### Cache server configuration for Rate Limiting
-```ini
-; ---- Rate Limit Server Details (Redis)
-;used to save Rate Limiting related details
-rateLimitServerHostname='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimitServerPort=6379                ; Redis host port
-```
-
-#### IP based Rate Limiting
-```ini
-rateLimitIPMaxRequests=600    ; Max request allowed per IP
-rateLimitIPSecondsWindow=300  ; Window in seconds of Max request allowed per IP
-rateLimitIPPrefix='IPRL:'     ; Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limits to users)
-```
-
 #### Client/Group/User based Rate Limiting
-```ini
-rateLimitClientPrefix='CRL:'  ; Client based Rate Limitng (GRL) key prefix used in Redis
-rateLimitGroupPrefix='GRL:'   ; Group based Rate Limitng (GRL) key prefix used in Redis
-rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in Redis
-```
 
 ##### Configure these in tables below
 ```SQL
@@ -212,14 +192,6 @@ rateLimitUserPrefix='URL:'    ; User based Rate Limitng (URL) key prefix used in
 # User level
 `master_users`.`rateLimitMaxRequests` int DEFAULT NULL,
 `master_users`.`rateLimitSecondsWindow` int DEFAULT NULL,
-```
-
-#### Cache server configuration for Rate Limiting
-```ini
-; ---- Rate Limit Server Details (Redis)
-;used to save Rate Limiting related details
-rateLimitServerHostname='127.0.0.1'     ; Redis host dealing with Rate limit
-rateLimitServerPort=6379                ; Redis host port
 ```
 
 ### For Cache hits configurations can be set as below.
