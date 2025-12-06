@@ -57,6 +57,13 @@ class RouteParser
     public $isConfigRequest = false;
 
     /**
+     * Is a import sample request flag
+     *
+     * @var bool
+     */
+    public $isImportSampleRequest = false;
+
+    /**
      * Is a import request flag
      *
      * @var bool
@@ -97,6 +104,17 @@ class RouteParser
         $Constants = __NAMESPACE__ . '\Constants';
         $Env = __NAMESPACE__ . '\Env';
 
+        $this->routeElements = explode(
+            separator: '/',
+            string: trim(string: Common::$req->ROUTE, characters: '/')
+        );
+        $routeLastElementPos = count(value: $this->routeElements) - 1;
+        // if ($this->routeElements[$routeLastElementPos] === Env::$importSampleRouteKeyword) {
+        //     if (isset(Common::$req->http['get']['method'])) {
+        //         Common::$req->METHOD = Common::$req->http['get']['method'];
+        //     }
+        // }
+
         if ($routeFileLocation === null) {
             if (Common::$req->open) {
                 $routeFileLocation = Constants::$OPEN_ROUTES_DIR .
@@ -119,11 +137,6 @@ class RouteParser
             );
         }
 
-        $this->routeElements = explode(
-            separator: '/',
-            string: trim(string: Common::$req->ROUTE, characters: '/')
-        );
-        $routeLastElementPos = count(value: $this->routeElements) - 1;
         $configuredRoute = [];
 
         foreach ($this->routeElements as $key => $element) {
@@ -148,6 +161,13 @@ class RouteParser
                 && Env::$configRequestRouteKeyword === $element
             ) {
                 $this->isConfigRequest = true;
+                break;
+            } elseif (
+                $key === $routeLastElementPos
+                && Env::$allowImportRequest == 1
+                && Env::$importSampleRouteKeyword === $element
+            ) {
+                $this->isImportSampleRequest = true;
                 break;
             } elseif (
                 $key === $routeLastElementPos
@@ -208,7 +228,7 @@ class RouteParser
         // Input data representation over rides global and routes settings
         // Switch Input data representation if set in URL param
         if (
-            Env::$allowGetRepresentation == 1
+            Env::$allowRepresentationAsQueryParam == 1
             && isset(Common::$req->http['get']['iRepresentation'])
             && Env::isValidDataRep(
                 dataRepresentation: Common::$req->http['get']['iRepresentation'],
@@ -248,7 +268,7 @@ class RouteParser
         if (strpos(haystack: $routeElement, needle: '{') !== 0) {
             return false;
         }
-        
+
         $dynamicRoute = trim(string: $routeElement, characters: '{}');
         [$paramName, $paramDataType] = explode(
             separator: ':',
@@ -330,7 +350,7 @@ class RouteParser
 
         // Switch Output data representation if set in URL param
         if (
-            Env::$allowGetRepresentation == 1
+            Env::$allowRepresentationAsQueryParam == 1
             && isset(Common::$req->http['get']['oRepresentation'])
             && Env::isValidDataRep(
                 dataRepresentation: Common::$req->http['get']['oRepresentation'],

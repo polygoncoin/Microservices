@@ -79,15 +79,39 @@ class CacheKey
     }
 
     /**
+     * Get Client CIDR Key
+     *
+     * @param int $cID Client Id
+     *
+     * @return string
+     */
+    public static function cCidr($cID): string
+    {
+        return "c:cidr:{$cID}";
+    }
+
+    /**
      * Get Group CIDR Key
      *
      * @param int $gID Group Id
      *
      * @return string
      */
-    public static function cidr($gID): string
+    public static function gCidr($gID): string
     {
-        return "cidr:{$gID}";
+        return "g:cidr:{$gID}";
+    }
+
+    /**
+     * Get User CIDR Key
+     *
+     * @param int $uID User Id
+     *
+     * @return string
+     */
+    public static function uCidr($uID): string
+    {
+        return "u:cidr:{$uID}";
     }
 
     /**
