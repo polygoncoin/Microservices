@@ -367,8 +367,8 @@ class Read
         }
 
         $dbObj = $this->dbObj;
-        (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->execDbQuery(sql: $sql, params: $sqlParams);
-        if ($row =  (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->fetch()) {
+        (DbFunctions::$$dbObj)[$this->api->req->cId]->execDbQuery(sql: $sql, params: $sqlParams);
+        if ($row =  (DbFunctions::$$dbObj)[$this->api->req->cId]->fetch()) {
             foreach ($row as $key => $value) {
                 $this->dataEncode->addKeyData(key: $key, data: $value);
             }
@@ -391,7 +391,7 @@ class Read
                 return;
             }
         }
-        (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->closeCursor();
+        (DbFunctions::$$dbObj)[$this->api->req->cId]->closeCursor();
 
         if (isset($rSqlConfig['__SUB-QUERY__'])) {
             $this->callReadDB(
@@ -455,9 +455,9 @@ class Read
         }
 
         $dbObj = $this->dbObj;
-        (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->execDbQuery(sql: $sql, params: $sqlParams);
-        $row = (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->fetch();
-        (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->closeCursor();
+        (DbFunctions::$$dbObj)[$this->api->req->cId]->execDbQuery(sql: $sql, params: $sqlParams);
+        $row = (DbFunctions::$$dbObj)[$this->api->req->cId]->fetch();
+        (DbFunctions::$$dbObj)[$this->api->req->cId]->closeCursor();
 
         $totalRowsCount = $row['count'];
         $totalPages = ceil(
@@ -548,8 +548,8 @@ class Read
         $singleColumn = false;
         $pushPop = true;
         $dbObj = $this->dbObj;
-        (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->execDbQuery(sql: $sql, params: $sqlParams, pushPop: $pushPop);
-        for ($i = 0; $row = (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->fetch();) {
+        (DbFunctions::$$dbObj)[$this->api->req->cId]->execDbQuery(sql: $sql, params: $sqlParams, pushPop: $pushPop);
+        for ($i = 0; $row = (DbFunctions::$$dbObj)[$this->api->req->cId]->fetch();) {
             if ($i === 0) {
                 if (count(value: $row) === 1) {
                     $singleColumn = true;
@@ -576,7 +576,7 @@ class Read
                 $this->dataEncode->encode(data: $row);
             }
         }
-        (DbFunctions::$$dbObj)[$this->api->req->s['cDetails']['id']]->closeCursor(pushPop: $pushPop);
+        (DbFunctions::$$dbObj)[$this->api->req->cId]->closeCursor(pushPop: $pushPop);
     }
 
     /**
