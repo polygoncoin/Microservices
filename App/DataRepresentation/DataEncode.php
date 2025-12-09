@@ -62,7 +62,7 @@ class DataEncode
     public $XSLT = null;
 
     /**
-     * DataEncode constructor
+     * Constructor
      *
      * @param array $http HTTP request details
      */

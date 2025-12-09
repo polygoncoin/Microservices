@@ -66,8 +66,6 @@ class Microservices
      * Constructor
      *
      * @param array $http HTTP request details
-     *
-     * @return void
      */
     public function __construct(&$http)
     {
