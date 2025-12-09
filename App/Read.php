@@ -339,7 +339,8 @@ class Read
         &$configKeys,
         $useResultSet
     ): void {
-        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParamsAssocMode(
+        $fn = 'getSqlAndParams' . Env::$parameterisedQueryMode . 'Mode';
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->$fn(
             sqlDetails: $rSqlConfig,
             configKeys: $configKeys
         );
@@ -427,7 +428,8 @@ class Read
             (Common::$req->s['queryParams']['page'] - 1) *
             Common::$req->s['queryParams']['perPage']
         );
-        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParamsAssocMode(
+        $fn = 'getSqlAndParams' . Env::$parameterisedQueryMode . 'Mode';
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->$fn(
             sqlDetails: $rSqlConfig
         );
 
@@ -487,7 +489,8 @@ class Read
         &$configKeys,
         $useResultSet
     ): void {
-        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParamsAssocMode(
+        $fn = 'getSqlAndParams' . Env::$parameterisedQueryMode . 'Mode';
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->$fn(
             sqlDetails: $rSqlConfig,
             configKeys: $configKeys
         );
@@ -627,7 +630,8 @@ class Read
             return [[], '', HttpStatus::$NotFound];
         }
 
-        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->getSqlAndParamsAssocMode(
+        $fn = 'getSqlAndParams' . Env::$parameterisedQueryMode . 'Mode';
+        [$id, $sql, $sqlParams, $errors, $missExecution] = $this->$fn(
             sqlDetails: $rSqlConfig
         );
         $serverMode = isset($rSqlConfig['fetchFrom'])
