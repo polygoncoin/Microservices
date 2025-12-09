@@ -67,11 +67,20 @@ class Login
     private $payload = [];
 
     /**
+     * Api common Object
+     *
+     * @var null|Common
+     */
+    private $api = null;
+
+    /**
      * Constructor
      */
-    public function __construct()
+    public function __construct(Common &$api)
     {
+        $this->api = &$api;
     }
+
 
     /**
      * Initialize
@@ -80,7 +89,7 @@ class Login
      */
     public function init(): bool
     {
-        Common::$req->loadClientDetails();
+        $this->api->req->loadClientDetails();
 
         return true;
     }
@@ -94,7 +103,7 @@ class Login
     public function process(): bool
     {
         // Check request method is POST
-        if (Common::$req->METHOD !== Constants::$POST) {
+        if ($this->api->req->METHOD !== Constants::$POST) {
             throw new \Exception(
                 message: 'Invalid request method',
                 code: HttpStatus::$NotFound
@@ -112,14 +121,14 @@ class Login
                 prefix: getenv('rateLimitUsersPerIpPrefix'),
                 maxRequests: getenv('rateLimitUsersPerIpMaxUsers'),
                 secondsWindow: getenv('rateLimitUsersPerIpSecondsWindow'),
-                key: Common::$req->IP
+                key: $this->api->req->IP
             );
             if ($result['allowed']) {
                 // Process the request
             } else {
                 // Return 429 Too Many Requests
                 throw new \Exception(
-                    message: $result['resetAt'] - Common::$timestamp,
+                    message: $result['resetAt'] - Env::$timestamp,
                     code: HttpStatus::$TooManyRequests
                 );
             }
@@ -146,15 +155,15 @@ class Login
     private function loadPayload(): void
     {
         // Check request method is POST
-        if (Common::$req->METHOD !== Constants::$POST) {
+        if ($this->api->req->METHOD !== Constants::$POST) {
             throw new \Exception(
                 message: 'Invalid request method',
                 code: HttpStatus::$NotFound
             );
         }
 
-        Common::$req->loadPayload();
-        $this->payload = Common::$req->dataDecode->get();
+        $this->api->req->loadPayload();
+        $this->payload = $this->api->req->dataDecode->get();
 
         // Check for necessary conditions variables
         foreach (['username', 'password'] as $value) {
@@ -177,7 +186,7 @@ class Login
      */
     private function loadUserDetails(): void
     {
-        $cID = Common::$req->s['cDetails']['id'];
+        $cID = $this->api->req->s['cDetails']['id'];
         $clientUserKey = CacheKey::clientUser(
             cID: $cID,
             username: $this->payload['username']
@@ -214,10 +223,10 @@ class Login
      */
     private function validateRequestIp(): void
     {
-        $ipNumber = ip2long(ip: Common::$req->IP);
+        $ipNumber = ip2long(ip: $this->api->req->IP);
 
         $cCidrKey = CacheKey::cCidr(
-            cID: Common::$req->s['cDetails']['id']
+            cID: $this->api->req->s['cDetails']['id']
         );
         $gCidrKey = CacheKey::gCidr(
             gID: $this->uDetails['group_id']
@@ -295,7 +304,7 @@ class Login
                 );
                 $tokenDetails = [
                     'token' => $token,
-                    'timestamp' => Common::$timestamp
+                    'timestamp' => Env::$timestamp
                 ];
                 break;
             }
@@ -330,7 +339,7 @@ class Login
                     )
                 )
             ) {
-                $time = Common::$timestamp - $tokenDetails['timestamp'];
+                $time = Env::$timestamp - $tokenDetails['timestamp'];
                 if ((Constants::$TOKEN_EXPIRY_TIME - $time) > 0) {
                     $tokenFound = true;
                 } else {
@@ -364,15 +373,15 @@ class Login
             $this->updateDB(tokenDetails: $tokenDetails);
         }
 
-        $time = Common::$timestamp - $tokenDetails['timestamp'];
+        $time = Env::$timestamp - $tokenDetails['timestamp'];
         $output = [
             'Token' => $tokenDetails['token'],
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
         ];
 
-        Common::initResponse();
-        Common::$res->dataEncode->startObject();
-        Common::$res->dataEncode->addKeyData(key: 'Results', data: $output);
+        $this->api->initResponse();
+        $this->api->res->dataEncode->startObject();
+        $this->api->res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 
     /**
@@ -384,10 +393,10 @@ class Login
      */
     private function updateDB(&$tokenDetails): void
     {
-        DbFunctions::setDbConnection(fetchFrom: 'Master');
+        DbFunctions::setDbConnection($this->api->req, fetchFrom: 'Master');
 
         $userTable = Env::$clientUsers;
-        DbFunctions::$masterDb->execDbQuery(
+        DbFunctions::$masterDb[$this->api->req->s['cDetails']['id']]->execDbQuery(
             sql: "
                 UPDATE
                     `{$userTable}`
@@ -421,7 +430,7 @@ class Login
                 uID: $this->uDetails['id']
             );
             $expire = Constants::$TOKEN_EXPIRY_TIME;
-            $timestamp = Common::$timestamp;
+            $timestamp = Env::$timestamp;
             if (DbFunctions::$gCacheServer->cacheExists(key: $userSessionIdKey)) {
                 $userSessionIdKeyData = json_decode(
                     json: DbFunctions::$gCacheServer->getCache(
@@ -433,7 +442,7 @@ class Login
                     key: $userSessionIdKey
                 );
                 Session::deleteSession(sessionId: $userSessionIdKeyData['sessionId']);
-                $expire = Common::$timestamp - $userSessionIdKeyData['timestamp'];
+                $expire = Env::$timestamp - $userSessionIdKeyData['timestamp'];
                 $expire = ($expire > Constants::$TOKEN_EXPIRY_TIME)
                     ? Constants::$TOKEN_EXPIRY_TIME : $expire;
                 $timestamp = $userSessionIdKeyData['timestamp'];
@@ -460,14 +469,14 @@ class Login
             $isLoggedIn = true;
         }
 
-        $time = Common::$timestamp - $_SESSION['timestamp'];
+        $time = Env::$timestamp - $_SESSION['timestamp'];
         $output = [
             'Session' => 'Active',
             'Expires' => (Constants::$TOKEN_EXPIRY_TIME - $time)
         ];
 
-        Common::initResponse();
-        Common::$res->dataEncode->startObject();
-        Common::$res->dataEncode->addKeyData(key: 'Results', data: $output);
+        $this->api->initResponse();
+        $this->api->res->dataEncode->startObject();
+        $this->api->res->dataEncode->addKeyData(key: 'Results', data: $output);
     }
 }

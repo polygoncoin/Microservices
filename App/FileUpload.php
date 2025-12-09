@@ -39,7 +39,7 @@ class FileUpload
     public static function init(): bool
     {
         self::validateFileUpload();
-        if (Common::$req->rParser->sqlConfigFile !== false) {
+        if ($this->api->req->rParser->sqlConfigFile !== false) {
             return false;
         }
         return true;
@@ -53,14 +53,14 @@ class FileUpload
      */
     public static function validateFileUpload(): void
     {
-        if (count(Common::$http['files']) > 1) {
+        if (count($this->api->http['files']) > 1) {
             throw new \Exception(
                 message: 'Supports only one file with each request',
                 code: HttpStatus::$BadRequest
             );
         }
 
-        foreach (Common::$http['files'] as $file => $details) {
+        foreach ($this->api->http['files'] as $file => $details) {
             if (isset($details['error'])) {
                 switch ($details['error']) {
                     case UPLOAD_ERR_INI_SIZE: // value 1
