@@ -18,7 +18,6 @@ namespace Microservices\App;
 use Microservices\App\CacheHandler;
 use Microservices\App\Constants;
 use Microservices\App\Common;
-use Microservices\App\DbFunctions;
 use Microservices\App\Env;
 use Microservices\App\Hook;
 use Microservices\App\Supplement;

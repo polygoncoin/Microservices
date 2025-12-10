@@ -18,7 +18,6 @@ namespace Microservices\App;
 use Microservices\App\Common;
 use Microservices\App\DbFunctions;
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
 use Microservices\App\RateLimiter;
 
@@ -73,7 +72,6 @@ class Gateway
     {
         $this->api = &$api;
     }
-
 
     /**
      * Initialize Gateway

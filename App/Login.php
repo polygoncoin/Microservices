@@ -83,7 +83,6 @@ class Login
         $this->api = &$api;
     }
 
-
     /**
      * Initialize
      *

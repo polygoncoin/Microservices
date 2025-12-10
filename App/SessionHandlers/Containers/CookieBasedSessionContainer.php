@@ -123,7 +123,6 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
         );
     }
 
-
     /**
      * For Custom Session Handler - Update session data
      *

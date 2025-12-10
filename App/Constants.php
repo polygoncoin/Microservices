@@ -90,7 +90,6 @@ class Constants
             DIRECTORY_SEPARATOR . 'Queries' .
             DIRECTORY_SEPARATOR . 'Open';
 
-
         self::$initialized = true;
     }
 }

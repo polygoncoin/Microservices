@@ -100,6 +100,7 @@ if (
 } else {
 
     Constants::init();
+    Env::$timestamp = time();
     Env::init(http: $http);
 
     ob_start();
