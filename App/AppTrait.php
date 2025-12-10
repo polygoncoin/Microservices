@@ -687,30 +687,27 @@ trait AppTrait
         }
 
         // Check for hierarchy
-        if (!$flag) {
-            $foundHierarchy = false;
-            if (isset($sqlConfig['__WHERE__'])) {
-                foreach ($sqlConfig['__WHERE__'] as $var => $payload) {
-                    $fetchFrom = $payload[0];
-                    $fKey = $payload[1];
-                    if (
-                        in_array(
-                            needle: $fetchFrom,
-                            haystack: ['sqlResults', 'sqlParams', 'sqlPayload']
-                        )
-                    ) {
-                        $foundHierarchy = true;
-                        break;
-                    }
-                }
-                if (!$isFirstCall && $flag && !$foundHierarchy) {
-                    throw new \Exception(
-                        message: 'Invalid config: missing ' . $fetchFrom,
-                        code: HttpStatus::$InternalServerError
-                    );
+        $foundHierarchy = false;
+        if (isset($sqlConfig['__WHERE__'])) {
+            foreach ($sqlConfig['__WHERE__'] as $var => $payload) {
+                $fetchFrom = $payload[0];
+                $fKey = $payload[1];
+                if (
+                    in_array(
+                        needle: $fetchFrom,
+                        haystack: ['sqlResults', 'sqlParams', 'sqlPayload']
+                    )
+                ) {
+                    $foundHierarchy = true;
+                    break;
                 }
             }
-
+            if (!$isFirstCall && $flag && !$foundHierarchy) {
+                throw new \Exception(
+                    message: 'Invalid config: missing ' . $fetchFrom,
+                    code: HttpStatus::$InternalServerError
+                );
+            }
         }
 
         // Check in subQuery//'__SUB-PAYLOAD__'
@@ -789,13 +786,15 @@ trait AppTrait
         $payloadSignature = [
             'IP' => $this->api->req->IP,
             'cID' => $this->api->req->s['cDetails']['id'],
-            'gID' => ($this->api->req->s['gDetails']['id'] !== null ?
-                $this->api->req->s['gDetails']['id'] : 0),
-            'uID' => ($this->api->req->s['uDetails']['id'] !== null ?
-                $this->api->req->s['uDetails']['id'] : 0),
             'httpMethod' => $this->api->req->METHOD,
             'Route' => $this->api->req->ROUTE,
         ];
+        if (isset($this->api->req->s['uDetails'])) {
+            $payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null ?
+                    $this->api->req->s['gDetails']['id'] : 0);
+            $payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null ?
+                    $this->api->req->s['uDetails']['id'] : 0);
+        }
         // $hash = hash_hmac(
         // 'sha256',
         // json_encode($payloadSignature),
@@ -838,16 +837,18 @@ trait AppTrait
                     'idempotentWindow' => $idempotentWindow,
                     'IP' => $this->api->req->IP,
                     'cID' => $this->api->req->s['cDetails']['id'],
-                    'gID' => ($this->api->req->s['gDetails']['id'] !== null ?
-                        $this->api->req->s['gDetails']['id'] : 0),
-                    'uID' => ($this->api->req->s['uDetails']['id'] !== null ?
-                        $this->api->req->s['uDetails']['id'] : 0),
                     'httpMethod' => $this->api->req->METHOD,
                     'Route' => $this->api->req->ROUTE,
                     'payload' => $this->api->req->dataDecode->get(
                         implode(separator: ':', array: $payloadIndexes)
                     )
                 ];
+                if (isset($this->api->req->s['uDetails'])) {
+                    $payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null ?
+                            $this->api->req->s['gDetails']['id'] : 0);
+                    $payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null ?
+                            $this->api->req->s['uDetails']['id'] : 0);
+                }
 
                 $hash = json_encode(value: $payloadSignature);
                 $hashKey = md5(string: $hash);
@@ -880,13 +881,15 @@ trait AppTrait
             $payloadSignature = [
                 'IP' => $this->api->req->IP,
                 'cID' => $this->api->req->s['cDetails']['id'],
-                'gID' => ($this->api->req->s['gDetails']['id'] !== null ?
-                    $this->api->req->s['gDetails']['id'] : 0),
-                'uID' => ($this->api->req->s['uDetails']['id'] !== null ?
-                    $this->api->req->s['uDetails']['id'] : 0),
                 'httpMethod' => $this->api->req->METHOD,
                 'Route' => $this->api->req->ROUTE,
             ];
+            if (isset($this->api->req->s['uDetails'])) {
+                $payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null ?
+                        $this->api->req->s['gDetails']['id'] : 0);
+                $payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null ?
+                        $this->api->req->s['uDetails']['id'] : 0);
+            }
 
             $hash = json_encode(value: $payloadSignature);
             $hashKey = 'LAG:' . md5(string: $hash);

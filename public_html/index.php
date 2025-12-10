@@ -74,6 +74,7 @@ if (
     && in_array(
         needle: $http['get'][ROUTE_URL_PARAM],
         haystack: [
+            '/tests',
             '/auth-test',
             '/open-test',
             '/open-test-xml',
@@ -84,17 +85,20 @@ if (
 ) {
     $tests = new Tests();
     switch ($http['get'][ROUTE_URL_PARAM]) {
+        case '/tests':
+            echo '<pre>'.print_r(value: $tests->processTests(), return: true);
+            break;
         case '/auth-test':
-            echo $tests->processAuth();
+            echo '<pre>'.print_r(value: $tests->processAuth(), return: true);
             break;
         case '/open-test':
-            echo $tests->processOpen();
+            echo '<pre>'.print_r(value: $tests->processOpen(), return: true);
             break;
         case '/open-test-xml':
-            echo $tests->processXml();
+            echo '<pre>'.print_r(value: $tests->processXml(), return: true);
             break;
         case '/supp-test':
-            echo $tests->processSupplement();
+            echo '<pre>'.print_r(value: $tests->processSupplement(), return: true);
             break;
     }
 } else {

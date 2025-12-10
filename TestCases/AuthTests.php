@@ -15,11 +15,13 @@
 
 namespace Microservices\TestCases;
 
-define('GET', __DIR__ . DIRECTORY_SEPARATOR . 'GET');
-define('POST', __DIR__ . DIRECTORY_SEPARATOR . 'POST');
-define('PUT', __DIR__ . DIRECTORY_SEPARATOR . 'PUT');
-define('PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'PATCH');
-define('DELETE', __DIR__ . DIRECTORY_SEPARATOR . 'DELETE');
+if (!defined('GET')) {
+    define('GET', __DIR__ . DIRECTORY_SEPARATOR . 'GET');
+    define('POST', __DIR__ . DIRECTORY_SEPARATOR . 'POST');
+    define('PUT', __DIR__ . DIRECTORY_SEPARATOR . 'PUT');
+    define('PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'PATCH');
+    define('DELETE', __DIR__ . DIRECTORY_SEPARATOR . 'DELETE');
+}
 
 // $apiVersion = 'X-API-Version: v1.0.0';
 $cacheControl = 'Cache-Control: no-cache';
@@ -113,4 +115,4 @@ $response[] = include DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.ph
 
 $response[] = include POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
 
-echo '<pre>' . print_r(value: $response, return: true);
+return $response;

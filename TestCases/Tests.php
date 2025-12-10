@@ -32,9 +32,25 @@ class Tests
     /**
      * Process Auth based requests
      *
-     * @return string
+     * @return array
      */
-    function processAuth(): string
+    public function processTests(): array
+    {
+        $response = [];
+        $response[] = $this->processAuth();
+        $response[] = $this->processOpen();
+        $response[] = $this->processXml();
+        $response[] = $this->processSupplement();
+
+        return $response;
+    }
+
+    /**
+     * Process Auth based requests
+     *
+     * @return array
+     */
+    public function processAuth(): array
     {
         return include __DIR__ . DIRECTORY_SEPARATOR . 'AuthTests.php';
     }
@@ -42,9 +58,9 @@ class Tests
     /**
      * Process Open to web api requests
      *
-     * @return string
+     * @return array
      */
-    function processOpen(): string
+    public function processOpen(): array
     {
         return include __DIR__ . DIRECTORY_SEPARATOR . 'OpenTests.php';
     }
@@ -52,9 +68,9 @@ class Tests
     /**
      * Process Open to web api requests - Request/Response are in XML format
      *
-     * @return string
+     * @return array
      */
-    function processXml(): string
+    public function processXml(): array
     {
         return include __DIR__ . DIRECTORY_SEPARATOR . 'OpenTestsXml.php';
     }
@@ -62,9 +78,9 @@ class Tests
     /**
      * Process Auth based requests
      *
-     * @return string
+     * @return array
      */
-    function processSupplement(): string
+    public function processSupplement(): array
     {
         return include __DIR__ . DIRECTORY_SEPARATOR . 'SupplementTest.php';
     }
