@@ -54,6 +54,7 @@ class Constants
     public static $OPEN_QUERIES_DIR = null;
 
     public static $WEB_COOKIES_DIR = null;
+    public static $LOG_DIR = null;
 
     private static $initialized = false;
 
@@ -95,6 +96,11 @@ class Constants
         self::$WEB_COOKIES_DIR = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'WebCookies';
         if (!is_dir(filename: self::$WEB_COOKIES_DIR)) {
             mkdir(directory: self::$WEB_COOKIES_DIR, permissions: 0755, recursive: true);
+        }
+
+        self::$LOG_DIR = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'Logs';
+        if (!is_dir(filename: self::$LOG_DIR)) {
+            mkdir(directory: self::$LOG_DIR, permissions: 0755, recursive: true);
         }
 
         self::$initialized = true;
