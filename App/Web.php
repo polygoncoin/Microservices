@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constants;
 /**
  * Web class
  * php version 8.3
@@ -74,7 +75,8 @@ class Web
         }
         $curlConfig[\CURLOPT_RETURNTRANSFER] = true;
 
-        $cookieFile = __DIR__ . '/cookies.txt';
+        $cookieFileName = '/' . md5($homeURL) . '-cookies.txt';
+        $cookieFile = Constants::$WEB_COOKIES_DIR . $cookieFileName;
         $curlConfig[\CURLOPT_COOKIEJAR] = $cookieFile; // Store cookies
         $curlConfig[\CURLOPT_COOKIEFILE] = $cookieFile; // Read cookies
 

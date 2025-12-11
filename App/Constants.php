@@ -53,6 +53,8 @@ class Constants
     public static $AUTH_QUERIES_DIR = null;
     public static $OPEN_QUERIES_DIR = null;
 
+    public static $WEB_COOKIES_DIR = null;
+
     private static $initialized = false;
 
     /**
@@ -89,6 +91,8 @@ class Constants
         self::$OPEN_QUERIES_DIR = self::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Config' .
             DIRECTORY_SEPARATOR . 'Queries' .
             DIRECTORY_SEPARATOR . 'Open';
+
+        self::$WEB_COOKIES_DIR = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'WebCookies';
 
         self::$initialized = true;
     }
