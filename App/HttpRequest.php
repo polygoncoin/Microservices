@@ -204,6 +204,8 @@ class HttpRequest
             $cKey = CacheKey::client(hostname: $this->HOST);
         }
         if (!DbFunctions::$gCacheServer->cacheExists(key: $cKey)) {
+            // throw new \Exception(message: json_encode(value: [$cKey]), code: 400);
+
             throw new \Exception(
                 message: "Invalid Host '{$this->HOST}'",
                 code: HttpStatus::$InternalServerError
