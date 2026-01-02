@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\DELETE;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\groups\UserGroup\DELETE;
 
 use Microservices\App\Constants;
 use Microservices\App\DatabaseDataTypes;

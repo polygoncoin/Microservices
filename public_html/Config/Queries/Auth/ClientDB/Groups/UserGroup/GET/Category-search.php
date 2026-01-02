@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\GET;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\groups\UserGroup\GET;
 
 return [
     '__QUERY__' => 'SELECT * FROM `category` WHERE `name` like CONCAT ('%', :name, '%');',

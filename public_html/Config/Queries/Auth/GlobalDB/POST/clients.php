@@ -16,7 +16,7 @@
 namespace Microservices\public_html\Config\Queries\Auth\GlobalDB\POST;
 
 return [
-    '__QUERY__' => 'INSERT INTO `{$Env::$clients}` SET __SET__',
+    '__QUERY__' => "INSERT INTO `{$Env::$clientsTable}` SET __SET__",
     '__SET__' => [
         [
             'column' => 'name',

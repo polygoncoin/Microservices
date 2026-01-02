@@ -117,7 +117,7 @@ class RouteParser
             string: trim(string: $this->req->ROUTE, characters: '/')
         );
         $routeLastElementPos = count(value: $this->routeElements) - 1;
-        // if ($this->routeElements[$routeLastElementPos] === Env::$importSampleRouteKeyword) {
+        // if ($this->routeElements[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
         //     if (isset($this->req->http['get']['method'])) {
         //         $this->req->METHOD = $this->req->http['get']['method'];
         //     }
@@ -130,7 +130,7 @@ class RouteParser
             } else {
                 $routeFileLocation = Constants::$AUTH_ROUTES_DIR .
                     DIRECTORY_SEPARATOR . 'ClientDB' .
-                    DIRECTORY_SEPARATOR . 'Groups' .
+                    DIRECTORY_SEPARATOR . 'groups' .
                     DIRECTORY_SEPARATOR . $this->req->s['gDetails']['name'] .
                     DIRECTORY_SEPARATOR . $this->req->METHOD . 'routes.php';
             }
@@ -164,25 +164,40 @@ class RouteParser
                 $this->checkPresenceOfDynamicString(element: $element);
                 continue;
             } elseif (
+                $key === 0
+                && Env::$enableCidrChecks === 1
+                && in_array($element, Env::$reservedRoutesPrefix)
+            ) {
+                $isValidIp = Functions::checkCidr(
+                    IP: $this->req->IP,
+                    cidrString: Env::$reservedRoutesCidrString[$element]
+                );
+                if (!$isValidIp) {
+                    throw new \Exception(
+                        message: 'Source IP is not supported',
+                        code: HttpStatus::$NotFound
+                    );
+                }
+            } elseif (
                 $key === $routeLastElementPos
-                && Env::$allowConfigRequest == 1
+                && Env::$enableConfigRequest == 1
                 && Env::$configRequestRouteKeyword === $element
             ) {
                 $this->isConfigRequest = true;
                 break;
             } elseif (
                 $key === $routeLastElementPos
-                && Env::$allowImportRequest == 1
-                && Env::$importSampleRouteKeyword === $element
+                && Env::$enableImportRequest == 1
+                && Env::$importRequestRouteKeyword === $element
             ) {
                 $this->isImportSampleRequest = true;
                 break;
             } elseif (
                 $key === $routeLastElementPos
-                && Env::$allowImportRequest == 1
-                && Env::$importRequestRouteKeyword === $element
+                && Env::$enableImportSampleRequest == 1
+                && Env::$importSampleRequestRouteKeyword === $element
             ) {
-                $this->isImportRequest = true;
+                $this->isImportSampleRequest = true;
                 break;
             } else {
                 if (
@@ -236,7 +251,7 @@ class RouteParser
         // Input data representation over rides global and routes settings
         // Switch Input data representation if set in URL param
         if (
-            Env::$allowRepresentationAsQueryParam == 1
+            Env::$enableRepresentationAsQueryParam == 1
             && isset($this->req->http['get']['iRepresentation'])
             && Env::isValidDataRep(
                 dataRepresentation: $this->req->http['get']['iRepresentation'],
@@ -340,6 +355,9 @@ class RouteParser
             !empty($routes['__FILE__'])
             && file_exists(filename: $routes['__FILE__'])
         ) {
+            $Constants = __NAMESPACE__ . '\Constants';
+            $Env = __NAMESPACE__ . '\Env';
+
             $this->sqlConfigFile = $routes['__FILE__'];
 
             // Output data representation over rides global
@@ -358,7 +376,7 @@ class RouteParser
 
         // Switch Output data representation if set in URL param
         if (
-            Env::$allowRepresentationAsQueryParam == 1
+            Env::$enableRepresentationAsQueryParam == 1
             && isset($this->req->http['get']['oRepresentation'])
             && Env::isValidDataRep(
                 dataRepresentation: $this->req->http['get']['oRepresentation'],

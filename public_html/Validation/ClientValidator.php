@@ -95,7 +95,7 @@ class ClientValidator implements ValidatorInterface
     {
         extract(array: $args);
         return $this->getPrimaryCount(
-            table: Env::$clients,
+            table: Env::$clientsTable,
             primary: 'id',
             id: $id
         );

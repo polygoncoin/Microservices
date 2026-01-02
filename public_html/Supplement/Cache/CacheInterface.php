@@ -1,10 +1,10 @@
 <?php
 
 /**
- * CustomAPI
+ * CacheAPI
  * php version 8.3
  *
- * @category  CustomAPI_Trait
+ * @category  CacheAPI_Interface
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -13,13 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Supplement\Custom;
+namespace Microservices\public_html\Supplement\Cache;
 
 /**
- * CustomAPI Trait
+ * CacheAPI Interface
  * php version 8.3
  *
- * @category  CustomAPI_Trait
+ * @category  CacheAPI_Interface
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright 2025 Ramesh N Jangid
@@ -27,6 +27,21 @@ namespace Microservices\public_html\Supplement\Custom;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-trait CustomTrait
+interface CacheInterface
 {
+    /**
+     * Initialize
+     *
+     * @return bool
+     */
+    public function init(): bool;
+
+    /**
+     * Process
+     *
+     * @param array $payload Payload
+     *
+     * @return array
+     */
+    public function process(array $payload = []): array;
 }

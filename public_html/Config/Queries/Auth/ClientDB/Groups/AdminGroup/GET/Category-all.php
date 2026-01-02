@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\AdminGroup\GET;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\groups\AdminGroup\GET;
 
 use Microservices\App\DatabaseCacheKey;
 
