@@ -17,7 +17,7 @@ namespace Microservices\public_html\Config\Routes\Auth\ClientDB\Groups\Client001
 
 use Microservices\App\Constants;
 
-return require Constants::$AUTH_ROUTES_DIR .
-    DIRECTORY_SEPARATOR . 'ClientDB' .
-    DIRECTORY_SEPARATOR . 'Common' .
-    DIRECTORY_SEPARATOR . 'DELETEroutes.php';
+return require Constants::$AUTH_ROUTES_DIR
+    . DIRECTORY_SEPARATOR . 'ClientDB'
+    . DIRECTORY_SEPARATOR . 'Common'
+    . DIRECTORY_SEPARATOR . 'DELETEroutes.php';

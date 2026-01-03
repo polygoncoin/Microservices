@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Common;
 use Microservices\App\Constants;
 use Microservices\App\HttpStatus;
 use Microservices\App\CacheHandlers\StreamVideo;
@@ -39,6 +40,13 @@ class Cache
      * @var null|array
      */
     private $http = null;
+
+    /**
+     * Api common Object
+     *
+     * @var null|Common
+     */
+    private $api = null;
 
     /**
      * File Location
@@ -77,10 +85,12 @@ class Cache
      * Constructor
      *
      * @param array $http HTTP request details
+     * @param Common $api
      */
-    public function __construct(&$http)
+    public function __construct(&$http, &$api = null)
     {
         $this->http = &$http;
+        $this->api = &$api;
     }
 
     /**
@@ -96,8 +106,8 @@ class Cache
             return false;
         }
 
-        $this->modeDropBox = Constants::$DROP_BOX_DIR .
-            DIRECTORY_SEPARATOR . $mode;
+        $this->modeDropBox = Constants::$DROP_BOX_DIR
+            . DIRECTORY_SEPARATOR . $mode;
 
         $filePath = DIRECTORY_SEPARATOR . trim(
             string: str_replace(
@@ -107,7 +117,11 @@ class Cache
             ),
             characters: './\\'
         );
-        $this->validateFileRequest();
+
+        if ($mode === 'Closed') {
+            $this->modeDropBox .= DIRECTORY_SEPARATOR . $this->api->req->cId;
+            $this->validateFileRequest();
+        }
         $this->fileLocation = $this->modeDropBox . $filePath;
 
         return (
