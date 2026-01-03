@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\groups\AdminGroup\PUT;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\AdminGroup\PUT;
 
 use Microservices\App\DatabaseDataTypes;
 

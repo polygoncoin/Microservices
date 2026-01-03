@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Config\Queries\Auth\ClientDB\groups\UserGroup\POST;
+namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\POST;
 
 use Microservices\App\DatabaseDataTypes;
 
