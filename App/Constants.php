@@ -45,7 +45,10 @@ class Constants
     public static $PUBLIC_HTML = null;
     public static $FILES_DIR = null;
     public static $DROP_BOX_DIR = null;
+
+    public static $OUTPUT_FORMAT_DIR = null;
     public static $HTML_DIR = null;
+    public static $PHP_DIR = null;
     public static $XSLT_DIR = null;
 
     public static $AUTH_ROUTES_DIR = null;
@@ -74,8 +77,11 @@ class Constants
 
         self::$FILES_DIR = self::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Files';
         self::$DROP_BOX_DIR = self::$FILES_DIR . DIRECTORY_SEPARATOR . 'Dropbox';
-        self::$HTML_DIR = self::$FILES_DIR . DIRECTORY_SEPARATOR . 'HTML';
-        self::$XSLT_DIR = self::$FILES_DIR . DIRECTORY_SEPARATOR . 'XSLT';
+
+        self::$OUTPUT_FORMAT_DIR = self::$DROP_BOX_DIR . DIRECTORY_SEPARATOR . 'ServingFiles';
+        self::$HTML_DIR = self::$OUTPUT_FORMAT_DIR . DIRECTORY_SEPARATOR . 'HTML';
+        self::$PHP_DIR = self::$OUTPUT_FORMAT_DIR . DIRECTORY_SEPARATOR . 'PHP';
+        self::$XSLT_DIR = self::$OUTPUT_FORMAT_DIR . DIRECTORY_SEPARATOR . 'XSLT';
 
         self::$AUTH_ROUTES_DIR = self::$PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Config'
             . DIRECTORY_SEPARATOR . 'Routes'
