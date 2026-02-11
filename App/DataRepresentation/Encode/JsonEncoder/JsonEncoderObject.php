@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\DataRepresentation\Encode\JsonEncode;
+namespace Microservices\App\DataRepresentation\Encode\JsonEncoder;
 
 /**
  * JSON object
