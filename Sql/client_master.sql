@@ -12,7 +12,7 @@ CREATE TABLE `users` (
   `token` varchar(255) DEFAULT NULL,
   `token_ts` int UNSIGNED DEFAULT 0,
   `rateLimitMaxRequests` int DEFAULT NULL,
-  `rateLimitSecondsWindow` int DEFAULT NULL,
+  `rateLimitMaxRequestsWindow` int DEFAULT NULL,
   `comments` varchar(255) DEFAULT NULL,
   `created_by` int DEFAULT NULL,
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

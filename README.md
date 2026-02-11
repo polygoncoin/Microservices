@@ -184,11 +184,11 @@ rateLimitUsersRequestPrefix='URRL:' ; User Per IP based Rate Limiting (UIRL) key
 
 ; Rate Limiting No. of Requests per IP ('IPRL:')
 rateLimitIPMaxRequests=600          ; Max request allowed per IP
-rateLimitIPSecondsWindow=300        ; Window in seconds of Max request allowed per IP
+rateLimitIPMaxRequestsWindow=300        ; Window in seconds of Max request allowed per IP
 
 ; Rate Limiting No. of User Per IP ('UIRL:')
 rateLimitUsersPerIpMaxUsers=10      ; Max Users allowed per IP
-rateLimitUsersPerIpSecondsWindow=300; Window in seconds of Max Users allowed per IP
+rateLimitUsersPerIpMaxUsersWindow=300; Window in seconds of Max Users allowed per IP
 
 ; Rate Limiting No. of Requests per User ('URRL:')
 ; Delay Between Consecutive Requests (allow n requests only for seconds configured for each user)
@@ -202,15 +202,15 @@ rateLimitUsersMaxRequestsWindow=10  ; Max one request allowed for 10 seconds
 ```SQL
 # Client level
 `clients`.`rateLimitMaxRequests` int DEFAULT NULL,
-`clients`.`rateLimitSecondsWindow` int DEFAULT NULL,
+`clients`.`rateLimitMaxRequestsWindow` int DEFAULT NULL,
 
 # Group level
 `groups`.`rateLimitMaxRequests` int DEFAULT NULL,
-`groups`.`rateLimitSecondsWindow` int DEFAULT NULL,
+`groups`.`rateLimitMaxRequestsWindow` int DEFAULT NULL,
 
 # User level
 `users`.`rateLimitMaxRequests` int DEFAULT NULL,
-`users`.`rateLimitSecondsWindow` int DEFAULT NULL,
+`users`.`rateLimitMaxRequestsWindow` int DEFAULT NULL,
 ```
 
 #### Route based Rate Limiting
@@ -223,7 +223,7 @@ rateLimitRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) key prefix used 
 return [
     [...]
     'rateLimitMaxRequests' => 1, // Allowed number of requests
-    'rateLimitSecondsWindow' => 3600, // Window in Seconds for allowed number of requests
+    'rateLimitMaxRequestsWindow' => 3600, // Window in Seconds for allowed number of requests
     [...]
 ];
 ```
@@ -641,7 +641,7 @@ return [
 
     // Rate Limiting Route access
     'rateLimitMaxRequests' => 1, // Allowed number of request in defined seconds window
-    'rateLimitSecondsWindow' => 3600, // Seconds Window for restricting number of request
+    'rateLimitMaxRequestsWindow' => 3600, // Seconds Window for restricting number of request
 
     // Control response time as per number of hits by configuring lags in seconds as below
     'responseLag' => [
@@ -880,7 +880,7 @@ return [
 
     // Rate Limiting Route access
     'rateLimitMaxRequests' => 1, // Allowed number of request in defined seconds window
-    'rateLimitSecondsWindow' => 3600, // Seconds Window for restricting number of request
+    'rateLimitMaxRequestsWindow' => 3600, // Seconds Window for restricting number of request
 
     // Control response time as per number of hits by configuring lags in seconds as below
     'responseLag' => [

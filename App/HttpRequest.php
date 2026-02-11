@@ -159,7 +159,7 @@ class HttpRequest
         }
 
         if (!$this->open) {
-            $this->auth = new Auth($this);
+            $this->auth = new Auth($this->api);
         }
 
         $this->rParser = new RouteParser($this->api);

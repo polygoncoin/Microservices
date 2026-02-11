@@ -38,9 +38,9 @@ class Tests
     {
         $response = [];
         $response[] = $this->processAuth();
-        // $response[] = $this->processOpen();
-        // $response[] = $this->processXml();
-        // $response[] = $this->processSupplement();
+        $response[] = $this->processOpen();
+        $response[] = $this->processXml();
+        $response[] = $this->processSupplement();
 
         return $response;
     }
