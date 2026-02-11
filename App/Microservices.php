@@ -302,6 +302,7 @@ class Microservices
         } else {
             switch ($this->api->res->oRepresentation) {
                 case 'XML':
+                case 'XSLT':
                     $headers['Content-Type'] = 'text/xml; charset=utf-8';
                     break;
                 case 'JSON':

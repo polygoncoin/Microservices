@@ -48,9 +48,9 @@ enableImportRequest=1
 importRequestRouteKeyword='import' ; to append /import at the end of route
 importSampleRequestRouteKeyword='import-sample'
 
-; Data Representation: JSON/XML/HTML
+; Data Representation: JSON/XML/XSLT/HTML/PHP
 iRepresentation='JSON'          ; JSON/XML - Input Data Representation
-oRepresentation='JSON'          ; JSON/XML/HTML/PHP - Output Data Representation
+oRepresentation='JSON'          ; JSON/XML/XSLT/HTML/PHP - Output Data Representation
 enableRepresentationAsQueryParam=1        ; Allow iRepresentation / oRepresentation as GET query params
 ```
 
@@ -660,9 +660,9 @@ return [
     ],
 
     // Data Representation
-    'oRepresentation' => 'XML', // JSON/XML/HTML/PHP - Defaults to JSON
+    'oRepresentation' => 'XML', // JSON/XML/XSLT/HTML/PHP - Defaults to JSON
 
-    // Respective Data Representation File (XML/HTML/PHP)
+    // Respective Data Representation File (XSLT/HTML/PHP)
     'phpFile' => 'file-path',
     'htmlFile' => 'file-path',
     'xsltFile' => 'file-path',
@@ -899,9 +899,9 @@ return [
     ],
 
     // Data Representation
-    'oRepresentation' => 'XML', // JSON/XML/HTML/PHP - Defaults to JSON
+    'oRepresentation' => 'XML', // JSON/XML/XSLT/HTML/PHP - Defaults to JSON
 
-    // Respective Data Representation File (XML/HTML/PHP)
+    // Respective Data Representation File (XSLT/HTML/PHP)
     'phpFile' => 'file-path',
     'htmlFile' => 'file-path',
     'xsltFile' => 'file-path',

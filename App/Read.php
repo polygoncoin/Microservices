@@ -141,7 +141,7 @@ class Read
         }
 
         if (
-            $this->api->res->oRepresentation === 'XML'
+            $this->api->res->oRepresentation === 'XSLT'
             && isset($rSqlConfig['xsltFile'])
         ) {
             $this->dataEncode->xsltFile = $rSqlConfig['xsltFile'];

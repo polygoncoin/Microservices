@@ -147,7 +147,7 @@ class Supplement
         }
 
         if (
-            $this->api->res->oRepresentation === 'XML'
+            $this->api->res->oRepresentation === 'XSLT'
             && isset($sSqlConfig['xsltFile'])
         ) {
             $this->dataEncode->xsltFile = $sSqlConfig['xsltFile'];
@@ -264,7 +264,7 @@ class Supplement
             $this->dataEncode->startObject(key: 'Results');
         } else {
             $this->dataEncode->startObject(key: 'Results');
-            if (in_array($this->api->res->oRepresentation, ['XML', 'HTML'])) {
+            if (in_array($this->api->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
                 $this->dataEncode->startArray(key: 'Rows');
             }
         }
@@ -357,7 +357,7 @@ class Supplement
                     $this->dataEncode->addKeyData(key: $k, data: $v);
                 }
             } else {
-                if (in_array($this->api->res->oRepresentation, ['XML', 'HTML'])) {
+                if (in_array($this->api->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
                     $this->dataEncode->startObject(key: 'Row');
                     foreach ($arr as $k => $v) {
                         $this->dataEncode->addKeyData(key: $k, data: $v);
@@ -372,7 +372,7 @@ class Supplement
         if ($this->api->req->s['payloadType'] === 'Object') {
             $this->dataEncode->endObject();
         } else {
-            if (in_array($this->api->res->oRepresentation, ['XML', 'HTML'])) {
+            if (in_array($this->api->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
                 $this->dataEncode->endArray();
             }
             $this->dataEncode->endObject();

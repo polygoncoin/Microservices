@@ -120,7 +120,7 @@ class PhpEncode implements DataEncodeInterface
      *
      * @param null|string|array $data Representation Data
      *
-     * @return void
+     * @return null|string|array
      */
     private function escape(&$data)
     {
@@ -133,6 +133,8 @@ class PhpEncode implements DataEncodeInterface
                 $data = nl2br(htmlspecialchars($data));
             }
         }
+        
+        return $data;
     }
 
     /**
@@ -231,7 +233,11 @@ class PhpEncode implements DataEncodeInterface
         $this->currentObject = null;
         if (count(value: $this->objects) > 0) {
             $this->currentObject = array_pop(array: $this->objects);
-            $this->currentObject->returnArray[$key] = &$returnArray;
+            if ($key !== '') {
+                $this->currentObject->returnArray[$key] = &$returnArray;
+            } else {
+                $this->currentObject->returnArray[] = &$returnArray;
+            }
         } else {
             $this->finalArray = &$returnArray;
         }
@@ -274,7 +280,11 @@ class PhpEncode implements DataEncodeInterface
         $this->currentObject = null;
         if (count(value: $this->objects) > 0) {
             $this->currentObject = array_pop(array: $this->objects);
-            $this->currentObject->returnArray[$key] = &$returnArray;
+            if ($key !== '') {
+                $this->currentObject->returnArray[$key] = &$returnArray;    
+            } else {
+                $this->currentObject->returnArray[] = &$returnArray;
+            }
         } else {
             $this->finalArray = &$returnArray;
         }

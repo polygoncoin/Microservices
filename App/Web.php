@@ -199,32 +199,28 @@ class Web
                 }
             }
 
-            $return['response'] = [
-                'errorCode' => $errorCode,
-                'errorMessage' => $errorMessage,
-                'errorConstants' => $errorConstants
-            ];
+            $return['response']['errorCode'] = $errorCode;
+            $return['response']['errorMessage'] = $errorMessage;
+            $return['response']['errorConstants'] = $errorConstants;
         } else {
             if (
                 strpos(
                     haystack: $responseContentType,
                     needle: 'application/json;'
                 ) !== false
-                && json_decode(json: $responseBody, associative: true)
+                && (
+                    (strpos(haystack: $responseBody, needle: '[') === 0)
+                    || (strpos(haystack: $responseBody, needle: '{') === 0)
+                )
             ) {
-                $responseBody = json_decode(json: $responseBody, associative: true);
+                $response = json_decode(json: $responseBody, associative: true);
+            } else {
+                $response = $responseBody;
             }
-            $response = $responseBody;
 
-            $return['response'] = [
-                'responseHttpCode' => $responseHttpCode,
-                'responseHeaders' => $responseHeaders,
-                'responseContentType' => $responseContentType,
-                'responseBody' => $response
-            ];
+            $return['response']['responseBody'] = $response;
         }
         curl_close(handle: $curl);
-
 
         return $return;
     }

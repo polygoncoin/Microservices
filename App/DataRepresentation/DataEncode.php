@@ -122,6 +122,7 @@ class DataEncode
                 );
                 break;
             case 'XML':
+            case 'XSLT':
             case 'HTML':
                 $this->dataEncoder = new XmlEncode(
                     tempStream: $this->tempStream,
@@ -261,43 +262,40 @@ class DataEncode
     {
         $this->end();
 
-        if (in_array($this->api->res->oRepresentation, ['XML', 'HTML', 'PHP'])) {
-            switch (true) {
-                case ($this->xsltFile !== null && file_exists(filename: $this->xsltFile)):
-                    rewind(stream: $this->tempStream);
-                    $xml = new \DOMDocument();
-                    $xml->loadXML(source: stream_get_contents(stream: $this->tempStream));
-
-                    $xslt = new \XSLTProcessor();
-                    $XSL = new \DOMDocument();
-                    $XSL->load(filename: $this->xsltFile);
-                    $xslt->importStylesheet(stylesheet: $XSL);
-                    echo $xslt->transformToXML(document: $xml);
-                    break;
-                case ($this->htmlFile !== null && file_exists(filename: $this->htmlFile)):
-                    rewind(stream: $this->tempStream);
-                    $xml = new \DOMDocument();
-                    $xml->loadXML(source: stream_get_contents(stream: $this->tempStream));
-
-                    $xslt = new \XSLTProcessor();
-                    $XSL = new \DOMDocument();
-                    $XSL->load(filename: $this->htmlFile);
-                    $xslt->importStylesheet(stylesheet: $XSL);
-                    echo $xslt->transformToXML(document: $xml);
-                    break;
-                case ($this->phpFile !== null && file_exists(filename: $this->phpFile)):
-                    $finalArray = &$this->tempStream;
-                    include $this->phpFile;
-                    break;
-
-            }
-        } else {
-            rewind(stream: $this->tempStream);
-            $outputStream = fopen(filename: 'php://output', mode: 'wb');
-            stream_copy_to_stream(from: $this->tempStream, to: $outputStream);
-            fclose(stream: $outputStream);
+        switch (true) {
+            case (
+                    $this->api->res->oRepresentation === 'XSLT'
+                    && $this->xsltFile !== null
+                    && file_exists(filename: $this->xsltFile)
+                ):
+                echo $this->processXml($this->xsltFile);
+                fclose(stream: $this->tempStream);
+                break;
+            case (
+                    $this->api->res->oRepresentation === 'HTML'
+                    && $this->htmlFile !== null
+                    && file_exists(filename: $this->htmlFile)
+                ):
+                echo $this->processXml($this->htmlFile);
+                fclose(stream: $this->tempStream);
+                break;
+            case (
+                    $this->api->res->oRepresentation === 'PHP'
+                    && $this->phpFile !== null
+                    && file_exists(filename: $this->phpFile)
+                ):
+                $finalArray = &$this->tempStream->finalArray;
+                include_once $this->phpFile;
+                $this->tempStream = null;
+                break;
+            default:
+                rewind(stream: $this->tempStream);
+                $outputStream = fopen(filename: 'php://output', mode: 'wb');
+                stream_copy_to_stream(from: $this->tempStream, to: $outputStream);
+                fclose(stream: $outputStream);
+                fclose(stream: $this->tempStream);
+                break;
         }
-        fclose(stream: $this->tempStream);
     }
 
     /**
@@ -309,15 +307,61 @@ class DataEncode
     {
         $this->end();
 
-        if ($this->api->res->oRepresentation === 'PHP') {
-            $finalArray = &$this->dataEncoder->finalArray;
-            $streamContent = include_once $this->phpFile;
-        } else {
-            rewind(stream: $this->tempStream);
-            $streamContent = stream_get_contents(stream: $this->tempStream);
-            fclose(stream: $this->tempStream);
+        switch (true) {
+            case (
+                    $this->api->res->oRepresentation === 'XSLT'
+                    && $this->xsltFile !== null
+                    && file_exists(filename: $this->xsltFile)
+                ):
+                $streamContent = $this->processXml($this->xsltFile);
+                fclose(stream: $this->tempStream);
+                break;
+            case (
+                    $this->api->res->oRepresentation === 'HTML'
+                    && $this->htmlFile !== null
+                    && file_exists(filename: $this->htmlFile)
+                ):
+                $streamContent = $this->processXml($this->htmlFile);
+                fclose(stream: $this->tempStream);
+                break;
+            case (
+                    $this->api->res->oRepresentation === 'PHP'
+                    && $this->phpFile !== null
+                    && file_exists(filename: $this->phpFile)
+                ):
+                $finalArray = &$this->dataEncoder->finalArray;
+                ob_clean();
+                include_once $this->phpFile;
+                $streamContent = ob_get_clean();
+                $this->tempStream = null;
+                break;
+            default:
+                rewind(stream: $this->tempStream);
+                $streamContent = stream_get_contents(stream: $this->tempStream);
+                fclose(stream: $this->tempStream);
+                break;
         }
 
         return $streamContent;
+    }
+
+    /**
+     * Generate XML(XSLT)/HTML data
+     *
+     * @param string $xmlFile XML file location
+     *
+     * @return string
+     */
+    private function processXml($xmlFile)
+    {
+        rewind(stream: $this->tempStream);
+        $xml = new \DOMDocument();
+        $xml->loadXML(source: stream_get_contents(stream: $this->tempStream));
+
+        $xslt = new \XSLTProcessor();
+        $XSL = new \DOMDocument();
+        $XSL->load(filename: $this->xmlFile);
+        $xslt->importStylesheet(stylesheet: $XSL);
+        return $xslt->transformToXML(document: $xml);
     }
 }

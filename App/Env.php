@@ -114,7 +114,7 @@ class Env
     public static $sessionMode = null;
 
     private static $iAllowedRepresentation = ['JSON', 'XML'];
-    private static $oAllowedRepresentation = ['JSON', 'XML', 'HTML', 'PHP'];
+    private static $oAllowedRepresentation = ['JSON', 'XML', 'XSLT', 'HTML', 'PHP'];
 
     /**
      * Initialize
