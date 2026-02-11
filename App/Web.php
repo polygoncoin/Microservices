@@ -105,7 +105,6 @@ class Web
         $file = null
     ): mixed {
         $queryString = '';
-
         $curl = curl_init();
         $curlConfig = self::getCurlConfig(
             homeURL: $homeURL,
@@ -178,6 +177,13 @@ class Web
             'requestPayload' => nl2br(htmlspecialchars(string: $payload)),
         ];
 
+        $return['response'] = [
+            'responseHttpCode' => $responseHttpCode,
+            'responseHeaders' => $responseHeaders,
+            'responseContentType' => $responseContentType,
+            'responseBody' => $responseBody
+        ];
+
         if ($curlResponse === false) {
             $errorCode = curl_errno(handle: $curl);
             $errorMessage = curl_error(handle: $curl);
@@ -204,6 +210,7 @@ class Web
                     haystack: $responseContentType,
                     needle: 'application/json;'
                 ) !== false
+                && json_decode(json: $responseBody, associative: true)
             ) {
                 $responseBody = json_decode(json: $responseBody, associative: true);
             }

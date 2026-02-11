@@ -50,7 +50,7 @@ importSampleRequestRouteKeyword='import-sample'
 
 ; Data Representation: JSON/XML/HTML
 iRepresentation='JSON'          ; JSON/XML - Input Data Representation
-oRepresentation='JSON'          ; JSON/XML/HTML - Output Data Representation
+oRepresentation='JSON'          ; JSON/XML/HTML/PHP - Output Data Representation
 enableRepresentationAsQueryParam=1        ; Allow iRepresentation / oRepresentation as GET query params
 ```
 
@@ -660,7 +660,12 @@ return [
     ],
 
     // Data Representation
-    'oRepresentation' => 'XML', // JSON/XML - Defaults to JSON
+    'oRepresentation' => 'XML', // JSON/XML/HTML/PHP - Defaults to JSON
+
+    // Respective Data Representation File (XML/HTML/PHP)
+    'phpFile' => 'file-path',
+    'htmlFile' => 'file-path',
+    'xsltFile' => 'file-path',
 
     // Limiting duplicates
     'idempotentWindow' => 3 // Idempotent Window for DML operation (seconds)
@@ -894,7 +899,12 @@ return [
     ],
 
     // Data Representation
-    'oRepresentation' => 'XML', // JSON/XML - Defaults to JSON
+    'oRepresentation' => 'XML', // JSON/XML/HTML/PHP - Defaults to JSON
+
+    // Respective Data Representation File (XML/HTML/PHP)
+    'phpFile' => 'file-path',
+    'htmlFile' => 'file-path',
+    'xsltFile' => 'file-path',
 
     // Limiting duplicates
     'idempotentWindow' => 3 // Idempotent Window for DML operation (seconds)

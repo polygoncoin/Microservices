@@ -95,8 +95,8 @@ class Start
                 $logsObj->log(logDetails: $logDetails);
             }
 
+            $headers = [];
             if ($e->getCode() == 429) {
-                $headers = [];
                 $headers['Retry-After'] = $e->getMessage();
                 $arr = [
                     'Status' => $e->getCode(),
@@ -110,12 +110,13 @@ class Start
                 ];
             }
 
-            $dataEncode = new DataEncode(http: $http);
-            $dataEncode->init();
-            $dataEncode->startObject();
-            $dataEncode->addKeyData(key: 'Error', data: $arr);
+            // $dataEncode = new DataEncode(http: $http);
+            // $dataEncode->init();
+            // $dataEncode->startObject();
+            // $dataEncode->addKeyData(key: 'Error', data: $arr);
 
-            $data = $dataEncode->getData();
+            // $data = $dataEncode->getData();
+            $data = json_encode(['Error' => $arr]);
             $status = $e->getCode();
 
             return [$headers, $data, $status];

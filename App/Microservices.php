@@ -300,7 +300,7 @@ class Microservices
             $methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
             $headers['Access-Control-Allow-Methods'] = $methods;
         } else {
-            switch (Env::$oRepresentation) {
+            switch ($this->api->res->oRepresentation) {
                 case 'XML':
                     $headers['Content-Type'] = 'text/xml; charset=utf-8';
                     break;
@@ -308,6 +308,7 @@ class Microservices
                     $headers['Content-Type'] = 'application/json; charset=utf-8';
                     break;
                 case 'HTML':
+                case 'PHP':
                     $headers['Content-Type'] = 'text/html; charset=utf-8';
                     break;
             }
