@@ -19,7 +19,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 ## Important Files
 
 - **.env.example** Create a copy of this file as **.env**
-- **.session.env.example** Create a copy of this file as **.session.env**
+- **.env.session.example** Create a copy of this file as **.env.session**
 - **Sql/global.sql** Import this SQL file on your **MySql global** instance
 - **Sql/client\_master.sql** Import this SQL file on your **MySql client** instance
 

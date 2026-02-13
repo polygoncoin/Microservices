@@ -26,10 +26,12 @@ error_reporting(error_level: E_ALL);
 define('PUBLIC_HTML', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..'));
 define('ROUTE_URL_PARAM', 'route');
 
-// Load .env
-$env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . '.env');
-foreach ($env as $key => $value) {
-    putenv(assignment: "{$key}={$value}");
+// Load .env(s)
+foreach (['.env','.env.rateLimiting','.env.enable','.env.cidr','.env.container'] as $envFilename) {
+    $env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . $envFilename);
+    foreach ($env as $key => $value) {
+        putenv(assignment: "{$key}={$value}");
+    }
 }
 
 // Process the request
