@@ -27,6 +27,9 @@ error_reporting(error_level: E_ALL);
 define('PUBLIC_HTML', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '..'));
 define('ROUTE_URL_PARAM', 'route');
 
+require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
+spl_autoload_register(callback:  'Microservices\Autoload::register');
+
 // Load .env(s)
 foreach (['.env','.env.rateLimiting','.env.enable','.env.cidr','.env.container'] as $envFilename) {
     $env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . $envFilename);
@@ -68,9 +71,14 @@ if (isset($_FILES)) {
     $http['files'] = &$_FILES;
 }
 $http['isWebRequest'] = true;
-
-require_once PUBLIC_HTML . DIRECTORY_SEPARATOR . 'Autoload.php';
-spl_autoload_register(callback:  'Microservices\Autoload::register');
+$http['hash'] = Functions::uniqueHttpRequestHash(
+    hashArray: [
+        $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+        $_SERVER['HTTP_ACCEPT'] ?? '',
+        $_SERVER['HTTP_USER_AGENT'] ?? ''
+    ]
+);
 
 Constants::init();
 Env::$timestamp = time();
