@@ -261,4 +261,40 @@ class Functions
 
         return $isValidIp;
     }
+
+    /**
+     * Unique HTTP Request hash
+     *
+     * @param array $hashArray Hash array
+     *
+     * @return string
+     */
+    public static function uniqueHttpRequestHash($hashArray): string
+    {
+        return md5(json_encode($hashArray));
+    }
+
+    /**
+     * Get Request IP
+     *
+     * @return string
+     */
+    public static function getHttpRequestIP() {
+        // Check for shared internet connections (e.g., Cloudflare, proxy)
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        // Check if the user is behind a proxy and the IP is forwarded
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            // HTTP_X_FORWARDED_FOR can contain a comma-separated list of IPs
+            // The first one is typically the original client IP
+            $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ip = trim($ipList[0]);
+        }
+        // Default method: get the remote address directly
+        else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
+    }
 }

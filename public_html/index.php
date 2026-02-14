@@ -17,6 +17,7 @@ namespace Microservices\public_html;
 
 use Microservices\App\Constants;
 use Microservices\App\Env;
+use Microservices\App\Functions;
 use Microservices\App\Start;
 use Microservices\TestCases\Tests;
 
@@ -47,7 +48,7 @@ if (
     die("Invalid request");
 }
 
-$http['server']['ip'] = getVisitorIP();
+$http['server']['ip'] = Functions::getHttpRequestIP();
 
 $http['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
@@ -118,22 +119,4 @@ if (
         header(header: "{$k}: {$v}");
     }
     die($responseContent);
-}
-function getVisitorIP() {
-    // Check for shared internet connections (e.g., Cloudflare, proxy)
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        $ip = $_SERVER['HTTP_CLIENT_IP'];
-    }
-    // Check if the user is behind a proxy and the IP is forwarded
-    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        // HTTP_X_FORWARDED_FOR can contain a comma-separated list of IPs
-        // The first one is typically the original client IP
-        $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $ip = trim($ipList[0]);
-    }
-    // Default method: get the remote address directly
-    else {
-        $ip = $_SERVER['REMOTE_ADDR'];
-    }
-    return $ip;
 }
