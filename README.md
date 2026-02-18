@@ -428,6 +428,12 @@ return [
     '__QUERY__' => 'SELECT columns FROM TableName WHERE __WHERE__', // OR
     '__QUERY__' => 'SELECT columns FROM TableName WHERE column1 = :column1 AND id = :id',
 
+    // Static variables to be used/fetched in __SET__ / __WHERE__
+    '__VARIABLES__' => [
+        'var1' => 'var1-data',
+        'var2' => 'var2-data',
+    ],
+
     // Details of data to be set by Query to perform task
     '__SET__' => [
         [
@@ -439,6 +445,7 @@ return [
             // 'fetchFrom' => 'cDetails', // Fetch value from client Details
             // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
             // 'fetchFrom' => 'custom', // Static values
+            // 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ keys
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
@@ -468,6 +475,7 @@ return [
             // 'fetchFrom' => 'cDetails', // Fetch value from client Details
             // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
             // 'fetchFrom' => 'custom', // Static values
+            // 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ keys
             'fetchFromValue' => 'id',                       // key (id)
             'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
             'required' => Constants::$REQUIRED              // Represents required field
@@ -485,6 +493,7 @@ return [
     /** Supported configuration for recursive operations are :
      * __SQL-COMMENT__,
      * __QUERY__,
+     * __VARIABLES__,
      * __SET__,
      * __WHERE__,
      * __MODE__,
@@ -503,6 +512,10 @@ return [
             // Query to perform task
             '__QUERY__' => 'SQL',
             '__SQL-COMMENT__' => 'Comment prepended to query for monitoring queries in logs',
+            '__VARIABLES__' => [
+                'sub-var1' => 'sub-var1-data',
+                'sub-var2' => 'sub-var2-data',
+            ],
             '__SET__/__WHERE__' => [
                 [
                     'column' => 'id',
@@ -513,6 +526,7 @@ return [
                     // 'fetchFrom' => 'cDetails', // Fetch value from client Details
                     // 'fetchFrom' => 'uDetails', // Fetch value from user Details session
                     // 'fetchFrom' => 'custom', // Static values
+                    // 'fetchFrom' => 'variables', // to fetch values as per current module/<sub-key> __VARIABLES__ keys
                     'fetchFromValue' => 'id',                       // key (id)
                     'dataType' => DatabaseDataTypes::$PrimaryKey,   // key data type
                     'required' => Constants::$REQUIRED              // Represents required field
@@ -539,6 +553,11 @@ return [
                     'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
                     'fetchFromValue' => '<return:keys-separated-by-colon>'
                 ],
+                [
+                    'column' => 'any-table- column',
+                    'fetchFrom' => 'variables',      // custom
+                    'fetchFromValue' => 'sub-var1'   // returns static sub-var1 value set in __VARIABLES__ of current module/<sub-key>
+                ]
             ],
             '__TRIGGERS__' => [...],
             '__PRE-SQL-HOOKS__' => [...],
