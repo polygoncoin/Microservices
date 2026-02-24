@@ -152,11 +152,11 @@ xmlhttp . send( payload );
 ## 🤝 Contributing
 
 Issues and feature requests are welcome.<br />
-Feel free to share them on [issues page](https://github.com/polygoncoin/Microservices/issues)
+Feel free to share them on [issues page](issues)
 
 ## Author
 
-👤 **Ramesh N Jangid (Sharma)n**
+👤 **Ramesh N Jangid (Sharma)**
 
 - Github: [@polygoncoin](https://github.com/polygoncoin)
 
