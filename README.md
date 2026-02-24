@@ -11,7 +11,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 - [HTTP Request](#http-request)
 - [Hierarchy Configs](#hierarchy-configs)
 - [Special Routes](#special-routes)
-- [Javascript HTTP request example](JS-Examples)
+- [Javascript HTTP request example](JS-Examples.md)
 - [License](#license)
 
 ***
