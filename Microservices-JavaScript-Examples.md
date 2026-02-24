@@ -1,8 +1,6 @@
-# PHP low code API generator
+# Javascript HTTP request example
 
-## Javascript HTTP request example
-
-### Login
+## Login
 
 ```javascript
 var handlerUrl = "http://api.client001.localhost/Microservices/public_html/index.php?route=/login";
@@ -29,7 +27,7 @@ var payload = {
 xmlhttp . send( JSON.stringify(payload) );
 ```
 
-### For other API's
+## For other API's
 
 * GET Request
 
