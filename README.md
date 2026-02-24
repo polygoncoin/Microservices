@@ -1283,5 +1283,5 @@ xmlhttp . send( payload );
 
 ## 📝 License
 
-Copyright © 2026 [Ramesh N Jangid (Sharma)](https://github.com/polygoncoin).
+Copyright © 2026 [Ramesh N Jangid (Sharma)](https://github.com/polygoncoin).<br />
 This project is [MIT](License) licensed.
