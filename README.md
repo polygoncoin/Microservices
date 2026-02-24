@@ -1281,6 +1281,7 @@ xmlhttp . onreadystatechange = function() {
 xmlhttp . send( payload );
 ```
 
-## License
+## 📝 License
 
-[MIT](License)
+Copyright © 2026 [Ramesh N Jangid (Sharma)](https://github.com/polygoncoin).
+This project is [MIT](License) licensed.
