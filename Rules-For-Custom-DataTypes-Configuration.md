@@ -46,6 +46,8 @@ public static $CustomINT = [
     'dataType' => 'int',
 
 // Optional params
+    // Value can be null
+    'canBeNull' => false,
     // Minimum value (int)
     'minValue' => false,
     // Maximum value (int)

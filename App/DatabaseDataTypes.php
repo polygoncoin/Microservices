@@ -340,6 +340,7 @@ class DatabaseDataTypes
      *      // PHP data type (null, bool, int, float, string)
      *      'dataType' => 'int',
      *      // if needed append necessary options from below with values
+     *      'canBeNull' => false,
      *      'minValue' => false,
      *      'maxValue' => false,
      *      'minLength' => false,
@@ -422,6 +423,15 @@ class DatabaseDataTypes
         }
 
         $returnFlag = true;
+
+        if (
+            $returnFlag
+            && isset($dataType['canBeNull'])
+            && $dataType['canBeNull'] === true
+            && $data === null
+        ) {
+            return true;
+        }
         if (
             $returnFlag
             && isset($dataType['minValue'])
