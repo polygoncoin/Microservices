@@ -35,6 +35,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 ### Files Folder
 
 - **Logs** Folder for application Logs.
+- **TestCases** Folder for Test Cases
 
 ### public\_html Folder
 
