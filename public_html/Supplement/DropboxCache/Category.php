@@ -1,10 +1,10 @@
 <?php
 
 /**
- * CacheAPI
+ * DropboxCacheAPI
  * php version 8.3
  *
- * @category  CacheAPI
+ * @category  DropboxCacheAPI
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -13,18 +13,18 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\public_html\Supplement\Cache;
+namespace Microservices\public_html\Supplement\DropboxCache;
 
 use Microservices\App\Common;
 use Microservices\App\DbFunctions;
-use Microservices\public_html\Supplement\Cache\CacheInterface;
-use Microservices\public_html\Supplement\Cache\CacheTrait;
+use Microservices\public_html\Supplement\DropboxCache\CacheInterface;
+use Microservices\public_html\Supplement\DropboxCache\CacheTrait;
 
 /**
- * CacheAPI Category
+ * DropboxCacheAPI Category
  * php version 8.3
  *
- * @category  CacheAPI_Category
+ * @category  DropboxCacheAPI_Category
  * @package   Microservices
  * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
