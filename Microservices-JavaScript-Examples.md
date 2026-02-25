@@ -154,11 +154,11 @@ Feel free to share them on [issues page](https://github.com/polygoncoin/Microser
 
 ## Author
 
-👤 **Ramesh N Jangid (Sharma)**
+👤 **Ramesh N. Jangid (Sharma)**
 
 - Github: [@polygoncoin](https://github.com/polygoncoin)
 
 ## 📝 License
 
-Copyright © 2026 [Ramesh N Jangid (Sharma)](https://github.com/polygoncoin).<br />
+Copyright © 2026 [Ramesh N. Jangid (Sharma)](https://github.com/polygoncoin).<br />
 This project is [MIT](License) licensed.
