@@ -6,7 +6,7 @@
  *
  * @category  DataEncode_JSON
  * @package   Microservices
- * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
+ * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
  * @link      https://github.com/polygoncoin/Microservices
@@ -23,7 +23,7 @@ namespace Microservices\App\DataRepresentation\Encode\JsonEncoder;
  *
  * @category  Json_Encoder_Object
  * @package   Microservices
- * @author    Ramesh N Jangid <polygon.co.in@gmail.com>
+ * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
  * @link      https://github.com/polygoncoin/Microservices
