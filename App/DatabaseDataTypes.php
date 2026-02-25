@@ -337,17 +337,29 @@ class DatabaseDataTypes
      * DatabaseDataTypes::$CustomINT
      *
      * public static $CustomINT = [
-     *      // PHP data type (null, bool, int, float, string)
-     *      'dataType' => 'int',
-     *      // if needed append necessary options from below with values
-     *      'canBeNull' => false,
-     *      'minValue' => false,
-     *      'maxValue' => false,
-     *      'minLength' => false,
-     *      'maxLength' => false,
-     *      'enumValues' => false,
-     *      'setValues' => false,
-     *      'regex' => false
+     * 
+     *     // Required param
+     *        // PHP data type (bool, int, float, string)
+     *        'dataType' => 'int',
+     *
+     *     // Optional params
+     *        // Value can be null
+     *        'canBeNull' => false,
+     *        // Minimum value (int)
+     *        'minValue' => 1,
+     *        // Maximum value (int)
+     *        'maxValue' => false,
+     *        // Minimum length (string)
+     *        'minLength' => false,
+     *        // Maximum length (string)
+     *        'maxLength' => false,
+     *        // Any one value from the Array
+     *        'enumValues' => false,
+     *        // Values belonging to this Array
+     *        'setValues' => false,
+     *
+     *        // Values should pass this regex before use
+     *        'regex' => false
      *  ];
      */
 
