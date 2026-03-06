@@ -48,7 +48,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 #### public\_html/Files Folder
 
 - **Dropbox/Open** Uploaded files for open to web
-- **Dropbox/Closed** Uploaded files by authorised users
+- **Dropbox/Closed** Uploaded files by authorised user
 - **ServingFiles/HTML** HTML files to be served with dynamic response (XSLT)
 - **ServingFiles/PHP** PHP view files to be served with dynamic response
 - **ServingFiles/XSLT** XSLT files to be served with dynamic response
@@ -84,7 +84,7 @@ These files locations are used in routes config to be used for generating respon
 #### public\_html/Config/Queries
 
 - **/Config/Queries/Auth/GlobalDB** for global database.
-- **/Config/Queries/Auth/ClientDB** for clients (including all hosts and their databases).
+- **/Config/Queries/Auth/ClientDB** for client (including all hosts and their databases).
 - **/Config/Queries/Open** for Open to Web API's (No Authentication).
 
 #### Files
@@ -99,7 +99,7 @@ These files locations are used in routes config to be used for generating respon
 
 ## 🤝 Contributing
 
-Issues and feature requests are welcome.<br />
+Issues and feature request are welcome.<br />
 Feel free to share them on [issues page](https://github.com/polygoncoin/Microservices/issues)
 
 ## Author
