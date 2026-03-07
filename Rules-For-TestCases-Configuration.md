@@ -1,4 +1,4 @@
-	Test Cases
+# Test Cases
 
 ## Defining Test Cases in file
 
@@ -26,7 +26,7 @@ Add, Comment or Uncomment depending on the requirement.
 
 ## Adding Test Cases
 
-	GET Request
+- GET Request
 
 ```PHP
 $response[] = include GET . DIRECTORY_SEPARATOR . '<get-route-file-1>.php';
@@ -45,7 +45,7 @@ $response[] = include DELETE . DIRECTORY_SEPARATOR . '<delete-route-file-1>.php'
 $response[] = include DELETE . DIRECTORY_SEPARATOR . '<delete-route-file-2>.php';
 ```
 
-	POST / PUT / PATCH / DELETE Request
+- POST / PUT / PATCH / DELETE Request
 
 These contain payload
 
@@ -61,7 +61,7 @@ $response[] = include POST . DIRECTORY_SEPARATOR . '<dml-route-file>.php';
 
 Depending on HTTP method create a file &lt;get-route-file&gt;.php / &lt;dml-route-file&gt;.php in respective HTTP method folder. Or one can change the path (the same path needs to be configured in the above code)<br/>
 
-	sample of code a file may contain is as below
+- Sample of code a file may contain is as below
 
 ```PHP
 $header = $defaultHeaders;
@@ -110,9 +110,9 @@ Feel free to share them on [issues page](https://github.com/polygoncoin/Microser
 
 ## Author
 
-**Ramesh N. Jangid (Sharma)**
+- **Ramesh N. Jangid (Sharma)**
 
-	Github: [@polygoncoin](https://github.com/polygoncoin)
+Github: [@polygoncoin](https://github.com/polygoncoin)
 
 ## 📝 License
 

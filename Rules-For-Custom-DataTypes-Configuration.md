@@ -1,4 +1,4 @@
-	Custom DataTypes
+# Custom DataTypes
 
 ## Defining Custom DataTypes
 
@@ -76,7 +76,7 @@ public static $CustomINT = [
 
 ### Custom DataTypes Example
 
-	$PrimaryKey
+- $PrimaryKey
 
 ```PHP
 public static $PrimaryKey = [
@@ -86,7 +86,7 @@ public static $PrimaryKey = [
 	'minValue' => 1
 ];
 
-	$Varchar50
+- $Varchar50
 
 public static $Varchar50 = [
 	// PHP data type (bool, int, float, string)
@@ -109,9 +109,9 @@ Feel free to share them on [issues page](https://github.com/polygoncoin/Microser
 
 ## Author
 
-**Ramesh N. Jangid (Sharma)**
+- **Ramesh N. Jangid (Sharma)**
 
-	Github: [@polygoncoin](https://github.com/polygoncoin)
+Github: [@polygoncoin](https://github.com/polygoncoin)
 
 ## 📝 License
 
