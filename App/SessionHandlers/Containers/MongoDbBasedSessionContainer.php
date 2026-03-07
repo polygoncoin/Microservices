@@ -80,7 +80,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 					return $this->decryptData(cipherText: $document['sessionData']);
 				}
 			}
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
 		return false;
@@ -105,7 +105,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			if ($this->collection->insertOne($document)) {
 				return true;
 			}
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
 		return false;
@@ -132,7 +132,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			if ($this->collection->updateOne($filter, $update)) {
 				return true;
 			}
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
 		return false;
@@ -159,7 +159,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			if ($this->collection->updateOne($filter, $update)) {
 				return true;
 			}
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
 		return false;
@@ -192,7 +192,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			if ($this->collection->deleteOne($filter)) {
 				return true;
 			}
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
 		return false;
@@ -231,7 +231,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 
 			// Select a collection
 			$this->collection = $this->database->selectCollection($this->MONGODB_COLLECTION);
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
 	}

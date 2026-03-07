@@ -123,8 +123,8 @@ class Functions
 					replace: '',
 					subject: $cidrString
 				)
-				as $cidr
-			{
+			) as $cidr
+		) {
 			if (strpos(haystack: $cidr, needle: '/')) {
 				[$cidrIp, $bits] = explode(
 					separator: '/',
@@ -153,7 +153,7 @@ class Functions
 					'start' => $startIpNumber,
 					'end' => $endIpNumber
 				];
-				else {
+			} else {
 				if ($ipNumber = ip2long(ip: $cidr)) {
 					$response[] = [
 						'start' => $ipNumber,
@@ -181,7 +181,7 @@ class Functions
 
 		if (!is_array($againstCacheKey)) {
 			$againstCacheKeys = [$againstCacheKey];
-			else {
+		} else {
 			$againstCacheKeys = $againstCacheKey;
 		}
 
@@ -250,10 +250,10 @@ class Functions
 			if (
 				$cidr['start'] === 0
 				&& $cidr['end'] === 0
-				{
+			) {
 				$isValidIp = true;
 				break;
-				elseif ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
+			} elseif ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
 				$isValidIp = true;
 				break;
 			}

@@ -51,7 +51,7 @@ $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
 if (
 	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
 	&& !isset($_SERVER['REMOTE_ADDR'])
-	{
+) {
 	die("Invalid request");
 }
 
@@ -97,7 +97,7 @@ if (
 		]
 	)
 	&& $http['server']['host'] === 'localhost'
-	{
+) {
 	$tests = new Tests();
 	switch ($http['get'][ROUTE_URL_PARAM]) {
 		case '/tests':
@@ -116,7 +116,7 @@ if (
 			echo '<pre>'.print_r(value: $tests->processSupplement(), return: true);
 			break;
 	}
-	else {
+} else {
 
 	ob_start();
 	[$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);

@@ -148,14 +148,14 @@ class Gateway
 			if ($result['allowed']) {
 				// Process the request
 				return true;
-				else {
+			} else {
 				// Return 429 Too Many Request
 				throw new \Exception(
 					message: $result['resetAt'] - Env::$timestamp,
 					code: HttpStatus::$TooManyRequest
 				);
 			}
-			catch (\Exception $e) {
+		} catch (\Exception $e) {
 			// Handle connection errors
 			throw new \Exception(
 				message: $e->getMessage(),
@@ -207,14 +207,14 @@ class Gateway
 			!Env::$enableRateLimitAtClientLevel
 			|| empty($this->api->req->s['cDetails']['rateLimitMaxRequest'])
 			|| empty($this->api->req->s['cDetails']['rateLimitMaxRequestWindow'])
-			{
+		) {
 			return;
 		}
 
 		$rateLimitClientPrefix = Env::$rateLimitClientPrefix;
-		$rateLimitMaxRequest
+		$rateLimitMaxRequest =
 				$this->api->req->s['cDetails']['rateLimitMaxRequest'];
-		$rateLimitMaxRequestWindow
+		$rateLimitMaxRequestWindow =
 				$this->api->req->s['cDetails']['rateLimitMaxRequestWindow'];
 		$key = $this->api->req->s['cDetails']['id'];
 
@@ -237,17 +237,17 @@ class Gateway
 			!Env::$enableRateLimitAtGroupLevel
 			|| empty($this->api->req->s['gDetails']['rateLimitMaxRequest'])
 			|| empty($this->api->req->s['gDetails']['rateLimitMaxRequestWindow'])
-			{
+		) {
 			return;
 		}
 
-		$rateLimitGroupPrefix
+		$rateLimitGroupPrefix =
 				Env::$rateLimitGroupPrefix;
-		$rateLimitMaxRequest
+		$rateLimitMaxRequest =
 				$this->api->req->s['gDetails']['rateLimitMaxRequest'];
-		$rateLimitMaxRequestWindow
+		$rateLimitMaxRequestWindow =
 				$this->api->req->s['gDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->api->req->s['cDetails']['id'] . ':'
+		$key = $this->api->req->s['cDetails']['id'] . ':' .
 				$this->api->req->s['uDetails']['id'];
 
 		$this->rateLimitChecked = $this->checkRateLimit(
@@ -269,17 +269,17 @@ class Gateway
 			!Env::$enableRateLimitAtUserLevel
 			|| empty($this->api->req->s['uDetails']['rateLimitMaxRequest'])
 			|| empty($this->api->req->s['uDetails']['rateLimitMaxRequestWindow'])
-			{
+		) {
 			return;
 		}
 
 		$rateLimitUserPrefix = Env::$rateLimitUserPrefix;
-		$rateLimitMaxRequest
+		$rateLimitMaxRequest =
 				$this->api->req->s['gDetails']['rateLimitMaxRequest'];
-		$rateLimitMaxRequestWindow
+		$rateLimitMaxRequestWindow =
 				$this->api->req->s['gDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->api->req->s['cDetails']['id'] . ':'
-				$this->api->req->s['uDetails']['id'] . ':'
+		$key = $this->api->req->s['cDetails']['id'] . ':' .
+				$this->api->req->s['uDetails']['id'] . ':' .
 				$this->api->req->s['uDetails']['user_id'];
 
 		$this->rateLimitChecked = $this->checkRateLimit(
@@ -304,7 +304,7 @@ class Gateway
 		$rateLimitUserPrefix = Env::$rateLimitUsersRequestPrefix;
 		$rateLimitMaxRequest = Env::$rateLimitUsersMaxRequest;
 		$rateLimitMaxRequestWindow = Env::$rateLimitUsersMaxRequestWindow;
-		$key = $this->api->req->s['cDetails']['id'] . ':'
+		$key = $this->api->req->s['cDetails']['id'] . ':' .
 				$this->api->req->s['uDetails']['id'];
 
 		$this->rateLimitChecked = $this->checkRateLimit(

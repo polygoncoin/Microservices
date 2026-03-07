@@ -131,7 +131,7 @@ class Supplement
 			if (
 				$this->api->req->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->api->req->rParser->routeEndingReservedKeyword === Env::$configRequestRouteKeyword)
-				{
+			) {
 				$this->processSupplementConfig(
 					sSqlConfig: $sSqlConfig,
 					useHierarchy: $useHierarchy
@@ -141,7 +141,7 @@ class Supplement
 			if (
 				$this->api->req->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->api->req->rParser->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword)
-				{
+			) {
 				$filename = date('Ymd-His') . '-import-sample.csv';
 				$headers = [];
 				// Export headers
@@ -162,17 +162,17 @@ class Supplement
 		if (
 			$this->api->res->oRepresentation === 'XSLT'
 			&& isset($sSqlConfig['xsltFile'])
-			{
+		) {
 			$this->dataEncode->xsltFile = $sSqlConfig['xsltFile'];
-			elseif (
+		} elseif (
 			$this->api->res->oRepresentation === 'HTML'
 			&& isset($sSqlConfig['htmlFile'])
-			{
+		) {
 			$this->dataEncode->htmlFile = $sSqlConfig['htmlFile'];
-			elseif (
+		} elseif (
 			$this->api->res->oRepresentation === 'PHP'
 			&& isset($sSqlConfig['phpFile'])
-			{
+		) {
 			$this->dataEncode->phpFile = $sSqlConfig['phpFile'];
 		}
 
@@ -196,7 +196,7 @@ class Supplement
 				$i = 0, $iCount = count(value: $sSqlConfig['affectedCacheKeys']);
 				$i < $iCount;
 				$i++
-				{
+			) {
 				DbFunctions::delQueryCache(
 					cacheKey: $sSqlConfig['affectedCacheKeys'][$i]
 				);
@@ -258,10 +258,10 @@ class Supplement
 				&& isset($sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
 				&& ($objCount = $this->api->req->dataDecode->count())
 				&& ($objCount > $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
-				{
+			) {
 				throw new \Exception(
-					message: 'Maximum supported payload count is '
-							$sSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
+					message: 'Maximum supported payload count is ' .
+						$sSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
 					code: HttpStatus::$BadRequest
 				);
 			}
@@ -276,7 +276,7 @@ class Supplement
 
 		if ($this->api->req->s['payloadType'] === 'Object') {
 			$this->dataEncode->startObject(key: 'Results');
-			else {
+		} else {
 			$this->dataEncode->startObject(key: 'Results');
 			if (in_array($this->api->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 				$this->dataEncode->startArray(key: 'Rows');
@@ -285,7 +285,7 @@ class Supplement
 
 		// Perform action
 		$iCount = $this->api->req->s['payloadType'] === 'Object' ?
-					$this->api->req->dataDecode->count();
+			1 : $this->api->req->dataDecode->count();
 
 		for ($i = 0; $i < $iCount; $i++) {
 			$configKeys = [];
@@ -293,10 +293,10 @@ class Supplement
 			if ($i === 0) {
 				if ($this->api->req->s['payloadType'] === 'Object') {
 					$payloadIndexes[] = '';
-					else {
+				} else {
 					$payloadIndexes[] = "{$i}";
 				}
-				else {
+			} else {
 				$payloadIndexes[] = "{$i}";
 			}
 
@@ -321,12 +321,11 @@ class Supplement
 					necessary: $this->api->req->s['necessaryArr']
 				);
 
-				if ($this->api->res->httpStatus === HttpStatus::$Ok)
-				{
+				if ($this->api->res->httpStatus === HttpStatus::$Ok) {
 					if (
 						$this->operateAsTransaction
 						&& ($this->db->beganTransaction === true)
-						{
+					) {
 						$this->db->commit();
 					}
 
@@ -349,7 +348,7 @@ class Supplement
 							expire: $idempotentWindow
 						);
 					}
-					else { // Failure
+				} else { // Failure
 					$arr = [];
 					$arr['Status'] = $this->api->res->httpStatus;
 					if (Env::$enablePayloadInResponse) {
@@ -362,7 +361,7 @@ class Supplement
 					}
 					$arr['Error'] = $response;
 				}
-				else {
+			} else {
 				$arr = json_decode(json: $hashJson, associative: true);
 			}
 
@@ -370,14 +369,14 @@ class Supplement
 				foreach ($arr as $k => $v) {
 					$this->dataEncode->addKeyData(key: $k, data: $v);
 				}
-				else {
+			} else {
 				if (in_array($this->api->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 					$this->dataEncode->startObject(key: 'Row');
 					foreach ($arr as $k => $v) {
 						$this->dataEncode->addKeyData(key: $k, data: $v);
 					}
 					$this->dataEncode->endObject();
-					else {
+				} else {
 					$this->dataEncode->addKeyData(key: $i, data: $arr);
 				}
 			}
@@ -385,7 +384,7 @@ class Supplement
 
 		if ($this->api->req->s['payloadType'] === 'Object') {
 			$this->dataEncode->endObject();
-			else {
+		} else {
 			if (in_array($this->api->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 				$this->dataEncode->endArray();
 			}
@@ -426,19 +425,19 @@ class Supplement
 					array: $payloadIndexes
 				),
 				characters: ':'
-					'';
+			) : '';
 
 		$isObject = $this->api->req->dataDecode->dataType(
 			keys: $payloadIndex
-			=== 'Object';
+		) === 'Object';
 
 		$iCount = $isObject ?
-					$this->api->req->dataDecode->count(keys: $payloadIndex);
+			1 : $this->api->req->dataDecode->count(keys: $payloadIndex);
 
 		for ($i = 0; $i < $iCount; $i++) {
 			if ($isObject) {
 				$_response = &$response;
-				else {
+			} else {
 				$response[$i] = [];
 				$_response = &$response[$i];
 			}
@@ -466,7 +465,7 @@ class Supplement
 						message: "Payload key '{$payloadIndex}' not set",
 						code: HttpStatus::$NotFound
 					);
-					else {
+				} else {
 					continue;
 				}
 			}
@@ -477,7 +476,7 @@ class Supplement
 
 			if (count(value: $necessary)) {
 				$this->api->req->s['necessary'] = $necessary;
-				else {
+			} else {
 				$this->api->req->s['necessary'] = [];
 			}
 
@@ -582,7 +581,7 @@ class Supplement
 		if (
 			isset($sSqlConfig['__SUB-PAYLOAD__'])
 			&& $this->isObject(arr: $sSqlConfig['__SUB-PAYLOAD__'])
-			{
+		) {
 			foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$sSqlConfig) {
 				$dataExists = false;
 				$payloadIndexes = $payloadIndexes;
