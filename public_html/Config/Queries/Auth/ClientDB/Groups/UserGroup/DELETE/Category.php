@@ -16,5 +16,5 @@
 namespace Microservices\public_html\Config\Queries\Auth\ClientDB\Groups\UserGroup\DELETE;
 
 return [
-    '__QUERY__' => 'TRUNCATE TABLE `category`;',
+	'__QUERY__' => 'TRUNCATE TABLE `category`;',
 ];

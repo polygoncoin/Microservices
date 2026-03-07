@@ -32,10 +32,10 @@ spl_autoload_register(callback:  'Microservices\Autoload::register');
 
 // Load .env(s)
 foreach (['.env','.env.rateLimiting','.env.enable','.env.cidr','.env.container'] as $envFilename) {
-    $env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . $envFilename);
-    foreach ($env as $key => $value) {
-        putenv(assignment: "{$key}={$value}");
-    }
+	$env = parse_ini_file(filename: PUBLIC_HTML . DIRECTORY_SEPARATOR . $envFilename);
+	foreach ($env as $key => $value) {
+		putenv(assignment: "{$key}={$value}");
+	}
 }
 
 Constants::init();
@@ -49,82 +49,82 @@ $http['server']['host'] = $_SERVER['HTTP_HOST'];
 $http['server']['method'] = $_SERVER['REQUEST_METHOD'];
 
 if (
-    ((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
-    && !isset($_SERVER['REMOTE_ADDR'])
-) {
-    die("Invalid request");
+	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
+	&& !isset($_SERVER['REMOTE_ADDR'])
+	{
+	die("Invalid request");
 }
 
 $http['server']['ip'] = Functions::getHttpRequestIP();
 
 $http['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
-    $http['header']['range'] = $_SERVER['Range'];
+	$http['header']['range'] = $_SERVER['Range'];
 }
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
-    $http['header']['user-agent'] = $_SERVER['HTTP_USER_AGENT'];
+	$http['header']['user-agent'] = $_SERVER['HTTP_USER_AGENT'];
 }
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+	$http['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
 
 $http['get'] = &$_GET;
 $http['post'] = file_get_contents(filename: 'php://input');
 $http['files'] = [];
 if (isset($_FILES)) {
-    $http['files'] = &$_FILES;
+	$http['files'] = &$_FILES;
 }
 $http['isWebRequest'] = true;
 $http['hash'] = Functions::uniqueHttpRequestHash(
-    hashArray: [
-        $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
-        $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
-        $_SERVER['HTTP_ACCEPT'] ?? '',
-        $_SERVER['HTTP_USER_AGENT'] ?? ''
-    ]
+	hashArray: [
+		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
+		$_SERVER['HTTP_ACCEPT'] ?? '',
+		$_SERVER['HTTP_USER_AGENT'] ?? ''
+	]
 );
 
 if (
-    isset($http['get'][ROUTE_URL_PARAM])
-    && in_array(
-        needle: $http['get'][ROUTE_URL_PARAM],
-        haystack: [
-            '/tests',
-            '/auth-test',
-            '/open-test',
-            '/open-test-xml',
-            '/supp-test'
-        ]
-    )
-    && $http['server']['host'] === 'localhost'
-) {
-    $tests = new Tests();
-    switch ($http['get'][ROUTE_URL_PARAM]) {
-        case '/tests':
-            echo '<pre>'.print_r(value: $tests->processTests(), return: true);
-            break;
-        case '/auth-test':
-            echo '<pre>'.print_r(value: $tests->processAuth(), return: true);
-            break;
-        case '/open-test':
-            echo '<pre>'.print_r(value: $tests->processOpen(), return: true);
-            break;
-        case '/open-test-xml':
-            echo '<pre>'.print_r(value: $tests->processXml(), return: true);
-            break;
-        case '/supp-test':
-            echo '<pre>'.print_r(value: $tests->processSupplement(), return: true);
-            break;
-    }
-} else {
+	isset($http['get'][ROUTE_URL_PARAM])
+	&& in_array(
+		needle: $http['get'][ROUTE_URL_PARAM],
+		haystack: [
+			'/tests',
+			'/auth-test',
+			'/open-test',
+			'/open-test-xml',
+			'/supp-test'
+		]
+	)
+	&& $http['server']['host'] === 'localhost'
+	{
+	$tests = new Tests();
+	switch ($http['get'][ROUTE_URL_PARAM]) {
+		case '/tests':
+			echo '<pre>'.print_r(value: $tests->processTests(), return: true);
+			break;
+		case '/auth-test':
+			echo '<pre>'.print_r(value: $tests->processAuth(), return: true);
+			break;
+		case '/open-test':
+			echo '<pre>'.print_r(value: $tests->processOpen(), return: true);
+			break;
+		case '/open-test-xml':
+			echo '<pre>'.print_r(value: $tests->processXml(), return: true);
+			break;
+		case '/supp-test':
+			echo '<pre>'.print_r(value: $tests->processSupplement(), return: true);
+			break;
+	}
+	else {
 
-    ob_start();
-    [$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
-    ob_clean();
+	ob_start();
+	[$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
+	ob_clean();
 
-    http_response_code(response_code: $responseCode);
-    foreach ($responseheaders as $k => $v) {
-        header(header: "{$k}: {$v}");
-    }
-    die($responseContent);
+	http_response_code(response_code: $responseCode);
+	foreach ($responseheaders as $k => $v) {
+		header(header: "{$k}: {$v}");
+	}
+	die($responseContent);
 }
