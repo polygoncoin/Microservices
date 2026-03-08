@@ -16,7 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Common;
-use Microservices\public_html\Supplement\Upload\UploadInterface;
+use Microservices\Supplement\Upload\UploadInterface;
 
 /**
  * Upload API
@@ -64,7 +64,7 @@ class Upload
 	public function init(): bool
 	{
 		$class = 'Microservices\\Supplement\\Upload\\'
-				ucfirst(string: $this->api->req->rParser->routeElements[1]);
+			. ucfirst(string: $this->api->req->rParser->routeElements[1]);
 
 		$this->uploadApi = new $class($this->api);
 

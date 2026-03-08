@@ -16,7 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Common;
-use Microservices\public_html\Supplement\ThirdParty\ThirdPartyInterface;
+use Microservices\Supplement\ThirdParty\ThirdPartyInterface;
 
 /**
  * ThirdParty API
@@ -63,8 +63,8 @@ class ThirdParty
 	 */
 	public function init(): bool
 	{
-		$class = 'Microservices\\public_html\\Supplement\\ThirdParty\\'
-				ucfirst(string: $this->api->req->rParser->routeElements[1]);
+		$class = 'Microservices\\Supplement\\ThirdParty\\'
+			. ucfirst(string: $this->api->req->rParser->routeElements[1]);
 
 		$this->thirdPartyApi = new $class($this->api);
 
