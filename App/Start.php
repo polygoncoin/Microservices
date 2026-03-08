@@ -79,8 +79,7 @@ class Start
 				$dateTime = date(
 					format: 'Y-m-d H:i:s',
 					timestamp: $sec
-				) .
-				substr(string: $usec, offset: 1);
+				) . substr(string: $usec, offset: 1);
 
 				// Log request details
 				$logDetails = [

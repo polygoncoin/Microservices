@@ -262,8 +262,8 @@ class Session
 	private static function initContainer(): void
 	{
 		// Initialize Container
-		$containerClassName = 'Microservices\\App\\SessionHandlers\\Containers\\' .
-				self::$sessionMode . 'BasedSessionContainer';
+		$containerClassName = 'Microservices\\App\\SessionHandlers\\Containers\\'
+			. self::$sessionMode . 'BasedSessionContainer';
 		self::$sessionContainer = new $containerClassName();
 
 		// Setting required common parameters
@@ -415,8 +415,8 @@ class Session
 	 */
 	public static function initSessionHandler($sessionMode, $options = []): void
 	{
-		$env = parse_ini_file(filename: Constants::$DOC_ROOT .
-				DIRECTORY_SEPARATOR . '.env.session'
+		$env = parse_ini_file(filename: Constants::$DOC_ROOT
+			. DIRECTORY_SEPARATOR . '.env.session'
 		);
 		foreach ($env as $var => $value) {
 			self::$$var = $value;
@@ -430,8 +430,8 @@ class Session
 		}
 		if (self::$sessionMode === 'File') {
 			if (empty(self::$sessionSavePath)) {
-				self::$sessionSavePath = (session_save_path() ?
-					session_save_path() : sys_get_temp_dir()) . '/session-files';
+				self::$sessionSavePath = (session_save_path()
+					? session_save_path() : sys_get_temp_dir()) . '/session-files';
 			}
 			if (strpos(self::$sessionSavePath, '/') !== 0) {
 				self::$sessionSavePath =

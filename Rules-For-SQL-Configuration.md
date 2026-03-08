@@ -252,8 +252,8 @@ return [
 	// Control response time as per number of hits by configuring lags in seconds as below
 	'responseLag' => [
 		// No of Request => Seconds Lag
-			=> 0,
-			=> 10,
+		10	=> 0,
+		20	=> 10,
 	],
 
 	// Any among below can be used for DML operations (These are Optional keys)

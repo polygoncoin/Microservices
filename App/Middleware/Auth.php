@@ -109,8 +109,8 @@ class Auth
 					);
 					if ($userConcurrencyKeyData !== $this->api->req->s['token']) {
 						throw new \Exception(
-							message: 'Account already in use. ' .
-									'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
+							message: 'Account already in use. '
+								. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
 							code: HttpStatus::$Conflict
 						);
 					}

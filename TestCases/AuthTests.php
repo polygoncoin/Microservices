@@ -60,8 +60,8 @@ $response[] = include GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
 $response[] = include GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
 $response[] = include GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
 $response[] = include GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
-$response[] = include GET . DIRECTORY_SEPARATOR .
-	'RegistrationWithAddressSingle.php';
+$response[] = include GET . DIRECTORY_SEPARATOR
+	. 'RegistrationWithAddressSingle.php';
 
 $response[] = include PUT . DIRECTORY_SEPARATOR . 'Registration.php';
 $response[] = include PUT . DIRECTORY_SEPARATOR . 'Address.php';
@@ -98,8 +98,8 @@ $response[] = include GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
 $response[] = include GET . DIRECTORY_SEPARATOR . 'Address.php';
 $response[] = include GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
 $response[] = include GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-$response[] = include GET . DIRECTORY_SEPARATOR .
-	'RegistrationWithAddressSingle.php';
+$response[] = include GET . DIRECTORY_SEPARATOR
+	. 'RegistrationWithAddressSingle.php';
 
 $response[] = include PUT . DIRECTORY_SEPARATOR . 'Registration.php';
 $response[] = include PUT . DIRECTORY_SEPARATOR . 'Address.php';

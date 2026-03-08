@@ -180,8 +180,8 @@ class Supplement
 		$this->lagResponse(sqlConfig: $sSqlConfig);
 
 		// Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
-		$this->operateAsTransaction = isset($sSqlConfig['isTransaction']) ?
-			$sSqlConfig['isTransaction'] : false;
+		$this->operateAsTransaction = isset($sSqlConfig['isTransaction'])
+			? $sSqlConfig['isTransaction'] : false;
 
 		// Set Server mode to execute query on - Read / Write Server
 		DbFunctions::setDbConnection($this->api->req, fetchFrom: 'Master');
@@ -260,8 +260,8 @@ class Supplement
 				&& ($objCount > $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
 			) {
 				throw new \Exception(
-					message: 'Maximum supported payload count is ' .
-						$sSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
+					message: 'Maximum supported payload count is '
+						. $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
 					code: HttpStatus::$BadRequest
 				);
 			}
@@ -284,8 +284,8 @@ class Supplement
 		}
 
 		// Perform action
-		$iCount = $this->api->req->s['payloadType'] === 'Object' ?
-			1 : $this->api->req->dataDecode->count();
+		$iCount = $this->api->req->s['payloadType'] === 'Object'
+			? 1 : $this->api->req->dataDecode->count();
 
 		for ($i = 0; $i < $iCount; $i++) {
 			$configKeys = [];
@@ -418,8 +418,8 @@ class Supplement
 			return;
 		}
 
-		$payloadIndex = is_array(value: $payloadIndexes) ?
-			trim(
+		$payloadIndex = is_array(value: $payloadIndexes)
+			? trim(
 				string: implode(
 					separator: ':',
 					array: $payloadIndexes
@@ -431,8 +431,8 @@ class Supplement
 			keys: $payloadIndex
 		) === 'Object';
 
-		$iCount = $isObject ?
-			1 : $this->api->req->dataDecode->count(keys: $payloadIndex);
+		$iCount = $isObject
+			? 1 : $this->api->req->dataDecode->count(keys: $payloadIndex);
 
 		for ($i = 0; $i < $iCount; $i++) {
 			if ($isObject) {
@@ -456,8 +456,8 @@ class Supplement
 				array_push($payloadIndexes, $i);
 			}
 
-			$payloadIndex = is_array(value: $payloadIndexes) ?
-				implode(separator: ':', array: $payloadIndexes) : '';
+			$payloadIndex = is_array(value: $payloadIndexes)
+				? implode(separator: ':', array: $payloadIndexes) : '';
 
 			if (!$this->api->req->dataDecode->isset(keys: $payloadIndex)) {
 				if ($useHierarchy) {
@@ -588,8 +588,8 @@ class Supplement
 				$configKeys = $configKeys;
 				array_push($payloadIndexes, $module);
 				array_push($configKeys, $module);
-				$modulePayloadKey = is_array(value: $payloadIndexes) ?
-					implode(separator: ':', array: $payloadIndexes) : '';
+				$modulePayloadKey = is_array(value: $payloadIndexes)
+					? implode(separator: ':', array: $payloadIndexes) : '';
 				$dataExists = $this->api->req->dataDecode->isset(
 					keys: $modulePayloadKey
 				);

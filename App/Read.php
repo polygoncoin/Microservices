@@ -679,8 +679,8 @@ class Read
 		[$id, $sql, $sqlParams, $errors, $missExecution] = $this->$fn(
 			sqlDetails: $rSqlConfig
 		);
-		$serverMode = isset($rSqlConfig['fetchFrom']) ?
-				$rSqlConfig['fetchFrom'] : 'Slave';
+		$serverMode = isset($rSqlConfig['fetchFrom'])
+			? $rSqlConfig['fetchFrom'] : 'Slave';
 
 		$dbDetails = [];
 		switch ($serverMode) {

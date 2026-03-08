@@ -144,8 +144,8 @@ class MongoDb implements NoSqlInterface
 				if ($this->username !== null && $this->password !== null) {
 					$UP = "{$this->username}:{$this->password}@";
 				}
-				$this->uri = 'mongodb://' . $UP .
-					$this->hostname . ':' . $this->port;
+				$this->uri = 'mongodb://' . $UP
+					. $this->hostname . ':' . $this->port;
 			}
 			$this->cache = new \MongoDB\Client($this->uri);
 

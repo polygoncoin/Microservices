@@ -170,8 +170,8 @@ class Write
 		$this->lagResponse(sqlConfig: $wSqlConfig);
 
 		// Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
-		$this->operateAsTransaction = isset($wSqlConfig['isTransaction']) ?
-			$wSqlConfig['isTransaction'] : false;
+		$this->operateAsTransaction = isset($wSqlConfig['isTransaction'])
+			? $wSqlConfig['isTransaction'] : false;
 
 		// Set Server mode to execute query on - Read / Write Server
 		DbFunctions::setDbConnection(req: $this->api->req, fetchFrom: 'Master');
@@ -252,8 +252,8 @@ class Write
 				&& ($objCount > $wSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
 			) {
 				throw new \Exception(
-					message: 'Maximum supported payload count is ' .
-							$wSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
+					message: 'Maximum supported payload count is '
+						. $wSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
 					code: HttpStatus::$BadRequest
 				);
 			}
@@ -276,8 +276,8 @@ class Write
 		}
 
 		// Perform action
-		$iCount = $this->api->req->s['payloadType'] === 'Object' ?
-			1 : $this->api->req->dataDecode->count();
+		$iCount = $this->api->req->s['payloadType'] === 'Object'
+			? 1 : $this->api->req->dataDecode->count();
 
 		for ($i = 0; $i < $iCount; $i++) {
 			$configKeys = [];
@@ -405,8 +405,8 @@ class Write
 		&$response,
 		&$necessary
 	): void {
-		$payloadIndex = is_array(value: $payloadIndexes) ?
-			trim(
+		$payloadIndex = is_array(value: $payloadIndexes)
+			? trim(
 				string: implode(
 					separator: ':',
 					array: $payloadIndexes
@@ -418,8 +418,8 @@ class Write
 			keys: $payloadIndex
 		) === 'Object';
 
-		$iCount = $isObject ?
-			1 : $this->api->req->dataDecode->count(keys: $payloadIndex);
+		$iCount = $isObject
+			? 1 : $this->api->req->dataDecode->count(keys: $payloadIndex);
 
 		$mode = getenv(name: $this->api->req->s['cDetails']['master_query_placeholder']);
 		$fn = "getSqlAndParams{$mode}Mode";
@@ -445,8 +445,8 @@ class Write
 			if (!$isObject && !$useHierarchy) {
 				array_push($payloadIndexes, $i);
 			}
-			$payloadIndex = is_array(value: $payloadIndexes) ?
-				implode(separator: ':', array: $payloadIndexes) : '';
+			$payloadIndex = is_array(value: $payloadIndexes)
+				? implode(separator: ':', array: $payloadIndexes) : '';
 
 			if (!$this->api->req->dataDecode->isset(keys: $payloadIndex)) {
 				throw new \Exception(
@@ -610,14 +610,14 @@ class Write
 				array_push($modulePayloadIndex, $module);
 				array_push($moduleConfigKeys, $module);
 
-				$modulePayloadIndexKey = is_array(value: $modulePayloadIndex) ?
-					implode(separator: ':', array: $modulePayloadIndex) : '';
+				$modulePayloadIndexKey = is_array(value: $modulePayloadIndex)
+					? implode(separator: ':', array: $modulePayloadIndex) : '';
 				$isObject = $this->api->req->dataDecode->dataType(
 					keys: $modulePayloadIndexKey
 				) === 'Object';
 
-				$iCount = $isObject ?
-					1 : $this->api->req->dataDecode->count(keys: $modulePayloadIndexKey);
+				$iCount = $isObject
+					? 1 : $this->api->req->dataDecode->count(keys: $modulePayloadIndexKey);
 
 				for ($i = 0; $i < $iCount; $i++) {
 					$modulePayloadIndexItt = $modulePayloadIndex;

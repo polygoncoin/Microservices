@@ -106,8 +106,8 @@ class DropboxCache
 			return false;
 		}
 
-		$this->modeDropBox = Constants::$DROP_BOX_DIR .
-			DIRECTORY_SEPARATOR . $mode;
+		$this->modeDropBox = Constants::$DROP_BOX_DIR
+			. DIRECTORY_SEPARATOR . $mode;
 
 		$filePath = DIRECTORY_SEPARATOR . trim(
 			string: str_replace(

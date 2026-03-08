@@ -84,10 +84,10 @@ trait AppTrait
 				foreach ($sqlConfig[$options] as $config) {
 					$fetchFrom = $config['fetchFrom'];
 					$fKey = $config['fetchFromValue'];
-					$dataType = isset($config['dataType']) ?
-						$config['dataType'] : DatabaseDataTypes::$Default;
-					$require = isset($config['necessary']) ?
-						$config['necessary'] : false;
+					$dataType = isset($config['dataType'])
+						? $config['dataType'] : DatabaseDataTypes::$Default;
+					$require = isset($config['necessary'])
+						? $config['necessary'] : false;
 
 					if ($fetchFrom === 'function') {
 						continue;
@@ -660,10 +660,10 @@ trait AppTrait
 				foreach ($sqlConfig[$options] as $config) {
 					$fetchFrom = $config['fetchFrom'];
 					$fKey = $config['fetchFromValue'];
-					$dataType = isset($config['dataType']) ?
-						$config['dataType'] : DatabaseDataTypes::$Default;
-					$require = isset($config['necessary']) ?
-						$config['necessary'] : false;
+					$dataType = isset($config['dataType'])
+						? $config['dataType'] : DatabaseDataTypes::$Default;
+					$require = isset($config['necessary'])
+						? $config['necessary'] : false;
 
 					if ($fetchFrom !== 'payload') {
 						continue;
@@ -784,10 +784,10 @@ trait AppTrait
 			'Route' => $this->api->req->ROUTE,
 		];
 		if (isset($this->api->req->s['uDetails'])) {
-			$payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null ?
-					$this->api->req->s['gDetails']['id'] : 0);
-			$payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null ?
-					$this->api->req->s['uDetails']['id'] : 0);
+			$payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null
+				? $this->api->req->s['gDetails']['id'] : 0);
+			$payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null
+				? $this->api->req->s['uDetails']['id'] : 0);
 		}
 		$hash = json_encode(value: $payloadSignature);
 		$hashKey = md5(string: $hash);
@@ -833,10 +833,10 @@ trait AppTrait
 					)
 				];
 				if (isset($this->api->req->s['uDetails'])) {
-					$payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null ?
-							$this->api->req->s['gDetails']['id'] : 0);
-					$payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null ?
-							$this->api->req->s['uDetails']['id'] : 0);
+					$payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null
+						? $this->api->req->s['gDetails']['id'] : 0);
+					$payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null
+						? $this->api->req->s['uDetails']['id'] : 0);
 				}
 
 				$hash = json_encode(value: $payloadSignature);
@@ -874,10 +874,10 @@ trait AppTrait
 				'Route' => $this->api->req->ROUTE,
 			];
 			if (isset($this->api->req->s['uDetails'])) {
-				$payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null ?
-						$this->api->req->s['gDetails']['id'] : 0);
-				$payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null ?
-						$this->api->req->s['uDetails']['id'] : 0);
+				$payloadSignature['gID'] = ($this->api->req->s['gDetails']['id'] !== null
+					? $this->api->req->s['gDetails']['id'] : 0);
+				$payloadSignature['uID'] = ($this->api->req->s['uDetails']['id'] !== null
+					? $this->api->req->s['uDetails']['id'] : 0);
 			}
 
 			$hash = json_encode(value: $payloadSignature);

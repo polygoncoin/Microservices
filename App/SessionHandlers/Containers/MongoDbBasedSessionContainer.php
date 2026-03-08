@@ -221,8 +221,8 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				if ($this->MONGODB_USERNAME !== null && $this->MONGODB_PASSWORD !== null) {
 					$UP = "{$this->MONGODB_USERNAME}:{$this->MONGODB_PASSWORD}@";
 				}
-				$this->MONGODB_URI = 'mongodb://' . $UP .
-					$this->MONGODB_HOSTNAME . ':' . $this->MONGODB_PORT;
+				$this->MONGODB_URI = 'mongodb://' . $UP
+					. $this->MONGODB_HOSTNAME . ':' . $this->MONGODB_PORT;
 			}
 			$this->mongo = new \MongoDB\Client($this->MONGODB_URI);
 

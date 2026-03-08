@@ -152,8 +152,8 @@ class MySql implements DbInterface
 		foreach ($paramKeys as $value) {
 			if (substr_count(haystack: $sql, needle: $value) > 1) {
 				throw new \Exception(
-					message: 'Parameterized query has more than one ' .
-							"occurrence of param '{$value}'"
+					message: 'Parameterized query has more than one '
+						. "occurrence of param '{$value}'"
 				);
 			}
 			$paramPos[$value] = strpos(haystack: $sql, needle: $value);
@@ -240,11 +240,10 @@ class MySql implements DbInterface
 		//Replace parameterized values.
 		foreach ($bindParams as $key => $value) {
 			if (!ctype_digit(text: $value)) {
-				$value = "'" .
-					mysqli_real_escape_string(
-						mysql: $mysqli,
-						string: $value
-					) . "'";
+				$value = "'" . mysqli_real_escape_string(
+					mysql: $mysqli,
+					string: $value
+				) . "'";
 			}
 			$sql = str_replace(search: $key, replace: $value, subject: $sql);
 		}
@@ -268,13 +267,13 @@ class MySql implements DbInterface
 		$sql = $this->generateRawSqlQuery(sql: $sql, params: $params);
 
 		// Shell command.
-		$shellCommand = $this->binaryLoc . ' ' .
-				'--host=' . escapeshellarg(arg: $this->hostname) . ' ' .
-				'--port=' . escapeshellarg(arg: $this->port) . ' ' .
-				'--user=' . escapeshellarg(arg: $this->username) . ' ' .
-				'--password=' . escapeshellarg(arg: $this->password) . ' ' .
-				'--database=' . escapeshellarg(arg: $this->database) . ' ' .
-				'--execute=' . escapeshellarg(arg: $sql);
+		$shellCommand = $this->binaryLoc . ' '
+			. '--host=' . escapeshellarg(arg: $this->hostname) . ' '
+			. '--port=' . escapeshellarg(arg: $this->port) . ' '
+			. '--user=' . escapeshellarg(arg: $this->username) . ' '
+			. '--password=' . escapeshellarg(arg: $this->password) . ' '
+			. '--database=' . escapeshellarg(arg: $this->database) . ' '
+			. '--execute=' . escapeshellarg(arg: $sql);
 
 		return $shellCommand;
 	}

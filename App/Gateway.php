@@ -242,13 +242,13 @@ class Gateway
 		}
 
 		$rateLimitGroupPrefix =
-				Env::$rateLimitGroupPrefix;
+			Env::$rateLimitGroupPrefix;
 		$rateLimitMaxRequest =
-				$this->api->req->s['gDetails']['rateLimitMaxRequest'];
+			$this->api->req->s['gDetails']['rateLimitMaxRequest'];
 		$rateLimitMaxRequestWindow =
-				$this->api->req->s['gDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->api->req->s['cDetails']['id'] . ':' .
-				$this->api->req->s['uDetails']['id'];
+			$this->api->req->s['gDetails']['rateLimitMaxRequestWindow'];
+		$key = $this->api->req->s['cDetails']['id'] . ':'
+			. $this->api->req->s['uDetails']['id'];
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitGroupPrefix,
@@ -275,12 +275,12 @@ class Gateway
 
 		$rateLimitUserPrefix = Env::$rateLimitUserPrefix;
 		$rateLimitMaxRequest =
-				$this->api->req->s['gDetails']['rateLimitMaxRequest'];
+			$this->api->req->s['gDetails']['rateLimitMaxRequest'];
 		$rateLimitMaxRequestWindow =
-				$this->api->req->s['gDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->api->req->s['cDetails']['id'] . ':' .
-				$this->api->req->s['uDetails']['id'] . ':' .
-				$this->api->req->s['uDetails']['user_id'];
+			$this->api->req->s['gDetails']['rateLimitMaxRequestWindow'];
+		$key = $this->api->req->s['cDetails']['id'] . ':'
+			. $this->api->req->s['uDetails']['id'] . ':'
+			. $this->api->req->s['uDetails']['user_id'];
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitUserPrefix,
@@ -304,8 +304,8 @@ class Gateway
 		$rateLimitUserPrefix = Env::$rateLimitUsersRequestPrefix;
 		$rateLimitMaxRequest = Env::$rateLimitUsersMaxRequest;
 		$rateLimitMaxRequestWindow = Env::$rateLimitUsersMaxRequestWindow;
-		$key = $this->api->req->s['cDetails']['id'] . ':' .
-				$this->api->req->s['uDetails']['id'];
+		$key = $this->api->req->s['cDetails']['id'] . ':'
+			. $this->api->req->s['uDetails']['id'];
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitUserPrefix,
