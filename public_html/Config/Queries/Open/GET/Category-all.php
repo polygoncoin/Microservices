@@ -93,7 +93,7 @@ return [
 	'cacheKey' => DatabaseOpenCacheKey::$Category,
 	'responseLag' => [
 		// No of Request => Seconds Lag
-			=> 0,
+		1 => 0,
 		// 2 => 10,
 	],
 	'xsltFile' => Constants::$XSLT_DIR
