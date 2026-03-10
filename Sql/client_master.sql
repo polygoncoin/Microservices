@@ -62,7 +62,6 @@ CREATE TABLE `category` (
 ) ENGINE = InnoDB;
 
 DROP TABLE IF EXISTS `api_cache`;
-
 CREATE TABLE `api_cache` (
     `key` CHAR(128) NOT NULL,
     `value` BLOB,
