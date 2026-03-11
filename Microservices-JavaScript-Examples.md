@@ -3,7 +3,7 @@
 ## Login
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/www/public_html/index.php?route=/login";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/login";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
@@ -20,7 +20,7 @@ xmlhttp . onreadystatechange = function() {
 };
 
 var payload = {
-	"username":"client_1_user_1",
+	"username":"customer_1_user_1",
 	"password":"shames11"
 };
 
@@ -32,7 +32,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - GET Request
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/www/public_html/index.php?route=/routes";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/routes";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "GET", handlerUrl );
@@ -53,7 +53,7 @@ xmlhttp . send();
 - POST Request
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/www/public_html/index.php?route=/ajax-handler-route";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/ajax-handler-route";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
@@ -79,7 +79,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - PUT Request
 
 ```javascript
-var handlerUrl = "http://api.client001.localhost/Microservices/www/public_html/index.php?route=/custom/password";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/custom/password";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "PUT", handlerUrl );

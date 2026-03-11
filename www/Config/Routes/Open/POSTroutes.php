@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Routes\Auth\GroupRoutes\AdminGroup;
+namespace Microservices\www\Config\Routes\Open;
 
 use Microservices\App\Constants;
 

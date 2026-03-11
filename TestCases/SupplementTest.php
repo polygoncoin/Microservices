@@ -35,13 +35,13 @@ $defaultHeaders[] = $cacheControl;
 
 $response = [];
 
-$homeURL = 'http://api.client001.localhost/Microservices/www/public_html/index.php';
+$homeURL = 'http://api.customer001.localhost/Microservices/www/public_html/index.php';
 
 $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Reload.php';
 
-// Client login
+// Customer login
 $payload = [
-	'username' => 'client_1_group_1_user_1',
+	'username' => 'customer_1_group_1_user_1',
 	'password' => 'shames11'
 ];
 $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Login.php';
