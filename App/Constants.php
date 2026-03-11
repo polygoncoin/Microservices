@@ -41,7 +41,7 @@ class Constants
 	public static $TOKEN_EXPIRY_TIME = 25 * 24 * 3600;
 	public static $REQUIRED = true;
 
-	public static $DOC_ROOT = null;
+	public static $ROOT = null;
 	public static $WWW = null;
 	public static $FILES_DIR = null;
 	public static $DROP_BOX_DIR = null;
@@ -72,8 +72,8 @@ class Constants
 			return;
 		}
 
-		self::$DOC_ROOT = dirname(path: __DIR__ . '..' . DIRECTORY_SEPARATOR);
-		self::$WWW = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'www';
+		self::$ROOT = dirname(path: __DIR__ . '..' . DIRECTORY_SEPARATOR);
+		self::$WWW = self::$ROOT . DIRECTORY_SEPARATOR . 'www';
 
 		self::$FILES_DIR = self::$WWW . DIRECTORY_SEPARATOR . 'Files';
 		self::$DROP_BOX_DIR = self::$FILES_DIR . DIRECTORY_SEPARATOR . 'Dropbox';
@@ -99,12 +99,12 @@ class Constants
 			. DIRECTORY_SEPARATOR . 'Queries'
 			. DIRECTORY_SEPARATOR . 'Open';
 
-		self::$WEB_COOKIES_DIR = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'WebCookies';
+		self::$WEB_COOKIES_DIR = self::$ROOT . DIRECTORY_SEPARATOR . 'WebCookies';
 		if (!is_dir(filename: self::$WEB_COOKIES_DIR)) {
 			mkdir(directory: self::$WEB_COOKIES_DIR, permissions: 0755, recursive: true);
 		}
 
-		self::$LOG_DIR = self::$DOC_ROOT . DIRECTORY_SEPARATOR . 'Logs';
+		self::$LOG_DIR = self::$ROOT . DIRECTORY_SEPARATOR . 'Logs';
 		if (!is_dir(filename: self::$LOG_DIR)) {
 			mkdir(directory: self::$LOG_DIR, permissions: 0755, recursive: true);
 		}

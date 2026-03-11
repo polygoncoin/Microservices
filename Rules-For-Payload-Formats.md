@@ -2,9 +2,9 @@
 
 ## GET Request
 
-- [http://localhost/Microservices/public\_html/index.php?route=/reload](http://localhost/Microservices/www/public_html/index.php?route=/reload)
+- [http://localhost/Microservices/www/public\_html/index.php?route=/reload](http://localhost/Microservices/www/public_html/index.php?route=/reload)
 
-- [http://localhost/Microservices/public\_html/index.php?route=/tableName/1](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1)
+- [http://localhost/Microservices/www/public\_html/index.php?route=/tableName/1](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1)
 
 One can clean the URL by making the required changes in the web server .conf file.
 
@@ -16,9 +16,9 @@ defaultPerpage=10
 maxResultsPerPage=1000
 ```
 
-- [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1?page=1)
-- [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1&perpage=25](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1?page=1&perpage=25)
-- [http://localhost/Microservices/public\_html/index.php?route=/tableName?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"}](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"})
+- [http://localhost/Microservices/www/public\_html/index.php?route=/tableName?page=1](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1?page=1)
+- [http://localhost/Microservices/www/public\_html/index.php?route=/tableName?page=1&perpage=25](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1?page=1&perpage=25)
+- [http://localhost/Microservices/www/public\_html/index.php?route=/tableName?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"}](http://localhost/Microservices/www/public_html/index.php?route=/tableName/1?page=1&perpage=25&orderBy={"field1":"ASC","field2":"DESC"})
 
 >One need to urlencode orderBy value
 
