@@ -18,9 +18,9 @@ namespace Microservices\App;
 use Microservices\App\Common;
 use Microservices\App\DbFunctions;
 use Microservices\App\Env;
-use Microservices\public_html\Validation\ClientValidator;
-use Microservices\public_html\Validation\GlobalValidator;
-use Microservices\public_html\Validation\ValidatorInterface;
+use Microservices\www\Validation\ClientValidator;
+use Microservices\www\Validation\GlobalValidator;
+use Microservices\www\Validation\ValidatorInterface;
 
 /**
  * Validator

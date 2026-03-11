@@ -17,7 +17,7 @@ namespace Microservices\App;
 
 use Microservices\App\Constants;
 use Microservices\App\Common;
-use Microservices\public_html\Supplement\Cron\CronInterface;
+use Microservices\www\Supplement\Cron\CronInterface;
 
 /**
  * Cron API
@@ -71,7 +71,7 @@ class Cron
 			. DIRECTORY_SEPARATOR . $this->api->req->METHOD . 'routes.php';
 		$this->api->req->rParser->parseRoute(routeFileLocation: $routeFileLocation);
 
-		$class = 'Microservices\\public_html\\Supplement\\Cron\\'
+		$class = 'Microservices\\www\\Supplement\\Cron\\'
 			. ucfirst(string: $this->api->req->rParser->routeElements[1]);
 
 		$this->cronApi = new $class($this->api);

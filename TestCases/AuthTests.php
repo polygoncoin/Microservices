@@ -37,7 +37,7 @@ $defaultHeaders[] = $cacheControl;
 
 $response = [];
 
-$homeURL = 'http://api.client001.localhost/Microservices/public_html/index.php';
+$homeURL = 'http://api.client001.localhost/Microservices/www/public_html/index.php';
 
 $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Reload.php';
 

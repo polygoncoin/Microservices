@@ -16,7 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Common;
-use Microservices\public_html\Supplement\Custom\CustomInterface;
+use Microservices\www\Supplement\Custom\CustomInterface;
 
 /**
  * Custom API
@@ -63,7 +63,7 @@ class Custom
 	 */
 	public function init(): bool
 	{
-		$class = 'Microservices\\public_html\\Supplement\\Custom\\'
+		$class = 'Microservices\\www\\Supplement\\Custom\\'
 			. ucfirst(string: $this->api->req->rParser->routeElements[1]);
 
 		$this->customApi = new $class($this->api);
