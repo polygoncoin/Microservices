@@ -20,6 +20,9 @@ use Microservices\App\CacheServerOpenKey;
 use Microservices\App\Env;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
+use Microservices\App\Server\CacheServer;
+use Microservices\App\Server\DatabaseServer;
+use Microservices\App\Server\QueryCacheServer;
 
 /**
  * DB Functions
@@ -40,7 +43,7 @@ class DbFunctions
 	 *
 	 * @var null|Object
 	 */
-	private static $sqlResultsCacheServer = null;
+	private static $queryCacheServer = null;
 
 	/** Database Connection */
 	/**
@@ -93,28 +96,20 @@ class DbFunctions
 	 *
 	 * @return void
 	 */
-	public static function connectQueryCache(): void
+	public static function connectQueryCacheServer(): void
 	{
-		if (self::$sqlResultsCacheServer !== null) {
+		if (self::$queryCacheServer !== null) {
 			return;
 		}
 
-		$cacheServerType = Env::$sqlResultsCacheServerType;
-		if (!in_array($cacheServerType, ['Redis', 'Memcached', 'MongoDb', 'MySql', 'PostgreSql'])) {
-			throw new \Exception(
-				message: 'Invalid query cache type',
-				code: HttpStatus::$InternalServerError
-			);
-		}
-
-		$sqlResultsCacheServerNS = 'Microservices\\App\\Server\\QueryCacheServer\\' . $cacheServerType . 'QueryCache';
-		self::$sqlResultsCacheServer = new $sqlResultsCacheServerNS(
-			queryCacheServerHostname: Env::$sqlResultsCacheServerHostname,
-			queryCacheServerPort: Env::$sqlResultsCacheServerPort,
-			queryCacheServerUsername: Env::$sqlResultsCacheServerUsername,
-			queryCacheServerPassword: Env::$sqlResultsCacheServerPassword,
-			queryCacheServerDB: Env::$sqlResultsCacheServerDB,
-			queryCacheServerTable: Env::$sqlResultsCacheServerTable
+		self::$queryCacheServer = new QueryCacheServer(
+			queryCacheServerType: Env::$queryCacheServerType,
+			queryCacheServerHostname: Env::$queryCacheServerHostname,
+			queryCacheServerPort: Env::$queryCacheServerPort,
+			queryCacheServerUsername: Env::$queryCacheServerUsername,
+			queryCacheServerPassword: Env::$queryCacheServerPassword,
+			queryCacheServerDB: Env::$queryCacheServerDB,
+			queryCacheServerTable: Env::$queryCacheServerTable
 		);
 	}
 
@@ -131,7 +126,7 @@ class DbFunctions
 	 *
 	 * @return object
 	 */
-	public static function connectCache(
+	public static function connectCacheServer(
 		$cacheServerType,
 		$cacheServerHostname,
 		$cacheServerPort,
@@ -140,14 +135,8 @@ class DbFunctions
 		$cacheServerDB,
 		$cacheServerTable
 	): object {
-		if (!in_array($cacheServerType, ['Redis', 'Memcached', 'MongoDb'])) {
-			throw new \Exception(
-				message: 'Invalid Cache type: ' . $cacheServerType,
-				code: HttpStatus::$InternalServerError
-			);
-		}
-		$cacheNS = 'Microservices\\App\\Server\\CacheServer\\' . $cacheServerType . 'Cache';
-		return new $cacheNS(
+		return new CacheServer(
+			cacheServerType: $cacheServerType,
 			cacheServerHostname: $cacheServerHostname,
 			cacheServerPort: $cacheServerPort,
 			cacheServerUsername: $cacheServerUsername,
@@ -162,12 +151,12 @@ class DbFunctions
 	 *
 	 * @return void
 	 */
-	public static function connectGlobalCache(): void
+	public static function connectGlobalCacheServer(): void
 	{
 		if (self::$gCacheServer !== null) {
 			return;
 		}
-		self::$gCacheServer = self::connectCache(
+		self::$gCacheServer = self::connectCacheServer(
 			cacheServerType: Env::$gCacheServerType,
 			cacheServerHostname: Env::$gCacheServerHostname,
 			cacheServerPort: Env::$gCacheServerPort,
@@ -207,7 +196,7 @@ class DbFunctions
 				}
 
 				$masterCacheDetails = self::getCacheMasterDetails(cDetails: $req->s['cDetails']);
-				self::$masterCache[$req->s['cDetails']['id']] = self::connectCache(
+				self::$masterCache[$req->s['cDetails']['id']] = self::connectCacheServer(
 					cacheServerType: $masterCacheDetails['cacheServerType'],
 					cacheServerHostname: $masterCacheDetails['cacheServerHostname'],
 					cacheServerPort: $masterCacheDetails['cacheServerPort'],
@@ -223,7 +212,7 @@ class DbFunctions
 				}
 
 				$slaveCacheDetails = self::getCacheSlaveDetails(cDetails: $req->s['cDetails']);
-				self::$slaveCache[$req->s['cDetails']['id']] = self::connectCache(
+				self::$slaveCache[$req->s['cDetails']['id']] = self::connectCacheServer(
 					cacheServerType: $slaveCacheDetails['cacheServerType'],
 					cacheServerHostname: $slaveCacheDetails['cacheServerHostname'],
 					cacheServerPort: $slaveCacheDetails['cacheServerPort'],
@@ -255,7 +244,7 @@ class DbFunctions
 	 *
 	 * @return object
 	 */
-	public static function connectDb(
+	public static function connectDatabaseServer(
 		$dbServerType,
 		$dbServerHostname,
 		$dbServerPort,
@@ -263,14 +252,8 @@ class DbFunctions
 		$dbServerPassword,
 		$dbServerDB
 	): object {
-		if (!in_array($dbServerType, ['MySql', 'PostgreSql'])) {
-			throw new \Exception(
-				message: "Invalid Database type '{$dbServerType}'",
-				code: HttpStatus::$InternalServerError
-			);
-		}
-		$dbNS = 'Microservices\\App\\Server\\DatabaseServer\\' . $dbServerType . 'Database';
-		return new $dbNS(
+		return new DatabaseServer(
+			dbServerType: $dbServerType,
 			dbServerHostname: $dbServerHostname,
 			dbServerPort: $dbServerPort,
 			dbServerUsername: $dbServerUsername,
@@ -284,12 +267,12 @@ class DbFunctions
 	 *
 	 * @return void
 	 */
-	public static function connectGlobalDb(): void
+	public static function connectGlobalDatabaseServer(): void
 	{
 		if (self::$gDbServer !== null) {
 			return;
 		}
-		self::$gDbServer = self::connectDb(
+		self::$gDbServer = self::connectDatabaseServer(
 			dbServerType: Env::$gDbServerType,
 			dbServerHostname: Env::$gDbServerHostname,
 			dbServerPort: Env::$gDbServerPort,
@@ -328,7 +311,7 @@ class DbFunctions
 				}
 
 				$masterDbDetails = self::getDbMasterDetails(cDetails: $req->s['cDetails']);
-				self::$masterDb[$req->s['cDetails']['id']] = self::connectDb(
+				self::$masterDb[$req->s['cDetails']['id']] = self::connectDatabaseServer(
 					dbServerType: $masterDbDetails['dbServerType'],
 					dbServerHostname: $masterDbDetails['dbServerHostname'],
 					dbServerPort: $masterDbDetails['dbServerPort'],
@@ -346,7 +329,7 @@ class DbFunctions
 				}
 
 				$slaveDbDetails = self::getDbSlaveDetails(cDetails: $req->s['cDetails']);
-				self::$slaveDb[$req->s['cDetails']['id']] = self::connectDb(
+				self::$slaveDb[$req->s['cDetails']['id']] = self::connectDatabaseServer(
 					dbServerType: $slaveDbDetails['dbServerType'],
 					dbServerHostname: $slaveDbDetails['dbServerHostname'],
 					dbServerPort: $slaveDbDetails['dbServerPort'],
@@ -394,11 +377,11 @@ class DbFunctions
 	 */
 	public static function getQueryCache($cacheKey): mixed
 	{
-		self::connectQueryCache();
+		self::connectQueryCacheServer();
 
 		$json = null;
-		if (self::$sqlResultsCacheServer->cacheExists(key: $cacheKey)) {
-			$json = self::$sqlResultsCacheServer->getCache(key: $cacheKey);
+		if (self::$queryCacheServer->cacheExists(key: $cacheKey)) {
+			$json = self::$queryCacheServer->getCache(key: $cacheKey);
 		}
 
 		return $json;
@@ -414,9 +397,9 @@ class DbFunctions
 	 */
 	public static function setQueryCache($cacheKey, &$json): void
 	{
-		self::connectQueryCache();
+		self::connectQueryCacheServer();
 
-		self::$sqlResultsCacheServer->setCache(key: $cacheKey, value: $json);
+		self::$queryCacheServer->setCache(key: $cacheKey, value: $json);
 	}
 
 	/**
@@ -428,9 +411,9 @@ class DbFunctions
 	 */
 	public static function delQueryCache($cacheKey): void
 	{
-		self::connectQueryCache();
+		self::connectQueryCacheServer();
 
-		self::$sqlResultsCacheServer->deleteCache(key: $cacheKey);
+		self::$queryCacheServer->deleteCache(key: $cacheKey);
 	}
 
 	/**

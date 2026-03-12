@@ -4,7 +4,7 @@
  * DropboxCacheAPI
  * php version 8.3
  *
- * @category  DropboxCacheAPI_Interface
+ * @category  DropboxCacheAPI
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -13,13 +13,18 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Supplement\DropboxCache;
+namespace Microservices\www\Supplement\Dropbox;
+
+use Microservices\App\Common;
+use Microservices\App\DbFunctions;
+use Microservices\www\Supplement\Dropbox\DropboxInterface;
+use Microservices\www\Supplement\Dropbox\CacheTrait;
 
 /**
- * DropboxCacheAPI Interface
+ * DropboxCacheAPI Category
  * php version 8.3
  *
- * @category  DropboxCacheAPI_Interface
+ * @category  DropboxCacheAPI_Category
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -27,14 +32,37 @@ namespace Microservices\www\Supplement\DropboxCache;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-interface CacheInterface
+class Category implements DropboxInterface
 {
+	use CacheTrait;
+
+	/**
+	 * Api common Object
+	 *
+	 * @var null|Common
+	 */
+	private $api = null;
+
+	/**
+	 * Constructor
+	 *
+	 * @param Common $api
+	 */
+	public function __construct(Common &$api)
+	{
+		$this->api = &$api;
+		DbFunctions::setDbConnection($this->api->req, fetchFrom: 'Slave');
+	}
+
 	/**
 	 * Initialize
 	 *
 	 * @return bool
 	 */
-	public function init(): bool;
+	public function init(): bool
+	{
+		return true;
+	}
 
 	/**
 	 * Process
@@ -43,5 +71,8 @@ interface CacheInterface
 	 *
 	 * @return array
 	 */
-	public function process(array $payload = []): array;
+	public function process(array $payload = []): array
+	{
+		return [true];
+	}
 }

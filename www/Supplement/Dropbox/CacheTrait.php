@@ -13,7 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Supplement\DropboxCache;
+namespace Microservices\www\Supplement\Dropbox;
 
 /**
  * DropboxCacheAPI Trait
