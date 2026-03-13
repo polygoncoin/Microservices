@@ -19,7 +19,7 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\CommonFunction;
 use Microservices\App\Start;
-use Microservices\TestCase\Tests;
+use Microservices\TestCase\Test;
 
 ini_set(option: 'display_errors', value: true);
 error_reporting(error_level: E_ALL);
@@ -105,7 +105,7 @@ if (
 	)
 	&& $http['server']['host'] === 'localhost'
 ) {
-	$tests = new Tests();
+	$tests = new Test();
 	switch ($http['get'][ROUTE_URL_PARAM]) {
 		case '/tests':
 			echo '<pre>'.print_r(value: $tests->processTests(), return: true);
