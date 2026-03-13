@@ -16,7 +16,7 @@
 namespace Microservices\www\Supplement\ThirdParty;
 
 use Microservices\App\Common;
-use Microservices\App\DbFunctions;
+use Microservices\App\DbCommonFunction;
 use Microservices\App\HttpStatus;
 use Microservices\www\Supplement\ThirdParty\ThirdPartyInterface;
 use Microservices\www\Supplement\ThirdParty\ThirdPartyTrait;
@@ -53,7 +53,7 @@ class Google implements ThirdPartyInterface
 	public function __construct(Common &$api)
 	{
 		$this->api = &$api;
-		DbFunctions::setDbConnection($this->api->req, fetchFrom: 'Slave');
+		DbCommonFunction::setDbConnection($this->api->req, fetchFrom: 'Slave');
 	}
 
 	/**

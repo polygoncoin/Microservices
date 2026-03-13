@@ -15,11 +15,11 @@
 
 namespace Microservices\www\public_html;
 
-use Microservices\App\Constants;
+use Microservices\App\Constant;
 use Microservices\App\Env;
-use Microservices\App\Functions;
+use Microservices\App\CommonFunction;
 use Microservices\App\Start;
-use Microservices\TestCases\Tests;
+use Microservices\TestCase\Tests;
 
 ini_set(option: 'display_errors', value: true);
 error_reporting(error_level: E_ALL);
@@ -45,7 +45,7 @@ foreach ([
 	}
 }
 
-Constants::init();
+Constant::init();
 Env::$timestamp = time();
 Env::init();
 
@@ -62,7 +62,7 @@ if (
 	die("Invalid request");
 }
 
-$http['server']['ip'] = Functions::getHttpRequestIP();
+$http['server']['ip'] = CommonFunction::getHttpRequestIP();
 
 $http['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
@@ -82,7 +82,7 @@ if (isset($_FILES)) {
 	$http['files'] = &$_FILES;
 }
 $http['isWebRequest'] = true;
-$http['uniqueHttpRequestHash'] = Functions::uniqueHttpRequestHash(
+$http['uniqueHttpRequestHash'] = CommonFunction::uniqueHttpRequestHash(
 	hashArray: [
 		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
