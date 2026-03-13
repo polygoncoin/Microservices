@@ -82,7 +82,7 @@ if (isset($_FILES)) {
 	$http['files'] = &$_FILES;
 }
 $http['isWebRequest'] = true;
-$http['hash'] = Functions::uniqueHttpRequestHash(
+$http['uniqueHttpRequestHash'] = Functions::uniqueHttpRequestHash(
 	hashArray: [
 		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',

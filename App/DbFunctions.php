@@ -102,7 +102,7 @@ class DbFunctions
 			return;
 		}
 
-		self::$queryCacheServer = new QueryCacheServer(
+		$queryCacheServer = new QueryCacheServer(
 			queryCacheServerType: Env::$queryCacheServerType,
 			queryCacheServerHostname: Env::$queryCacheServerHostname,
 			queryCacheServerPort: Env::$queryCacheServerPort,
@@ -111,6 +111,8 @@ class DbFunctions
 			queryCacheServerDB: Env::$queryCacheServerDB,
 			queryCacheServerTable: Env::$queryCacheServerTable
 		);
+
+		self::$queryCacheServer = $queryCacheServer->connectQueryCacheServer();
 	}
 
 	/**
@@ -135,7 +137,7 @@ class DbFunctions
 		$cacheServerDB,
 		$cacheServerTable
 	): object {
-		return new CacheServer(
+		$cacheServer = new CacheServer(
 			cacheServerType: $cacheServerType,
 			cacheServerHostname: $cacheServerHostname,
 			cacheServerPort: $cacheServerPort,
@@ -144,6 +146,8 @@ class DbFunctions
 			cacheServerDB: $cacheServerDB,
 			cacheServerTable: $cacheServerTable
 		);
+
+		return $cacheServer->connectCacheServer();
 	}
 
 	/**
@@ -252,7 +256,7 @@ class DbFunctions
 		$dbServerPassword,
 		$dbServerDB
 	): object {
-		return new DatabaseServer(
+		$dbServer = new DatabaseServer(
 			dbServerType: $dbServerType,
 			dbServerHostname: $dbServerHostname,
 			dbServerPort: $dbServerPort,
@@ -260,6 +264,8 @@ class DbFunctions
 			dbServerPassword: $dbServerPassword,
 			dbServerDB: $dbServerDB
 		);
+
+		return $dbServer->connectDatabaseServer();
 	}
 
 	/**
