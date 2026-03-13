@@ -127,7 +127,7 @@ if (
 
 	ob_start();
 	[$responseheaders, $responseContent, $responseCode] = Start::http(http: $http, streamData: true);
-	ob_clean();
+	@ob_clean();
 
 	http_response_code(response_code: $responseCode);
 	foreach ($responseheaders as $k => $v) {
