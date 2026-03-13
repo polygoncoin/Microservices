@@ -52,8 +52,8 @@ Env::init();
 // Process the request
 $iConfig = [];
 
-$iConfig['server']['host'] = $_SERVER['HTTP_HOST'];
-$iConfig['server']['method'] = $_SERVER['REQUEST_METHOD'];
+$iConfig['server']['domainName'] = $_SERVER['HTTP_HOST'];
+$iConfig['server']['httpMethod'] = $_SERVER['REQUEST_METHOD'];
 
 if (
 	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
@@ -62,17 +62,17 @@ if (
 	die("Invalid request");
 }
 
-$iConfig['server']['ip'] = CommonFunction::getHttpRequestIP();
+$iConfig['server']['httpRequestIP'] = CommonFunction::getHttpRequestIP();
 
 $iConfig['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
 	$iConfig['header']['range'] = $_SERVER['Range'];
 }
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
-	$iConfig['header']['user-agent'] = $_SERVER['HTTP_USER_AGENT'];
+	$iConfig['header']['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
 }
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-	$iConfig['header']['authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+	$iConfig['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
 
 $iConfig['get'] = &$_GET;
@@ -82,7 +82,7 @@ if (isset($_FILES)) {
 	$iConfig['files'] = &$_FILES;
 }
 $iConfig['isWebRequest'] = true;
-$iConfig['uniqueHttpRequestHash'] = CommonFunction::uniqueHttpRequestHash(
+$iConfig['httpRequestHash'] = CommonFunction::httpRequestHash(
 	hashArray: [
 		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
@@ -103,7 +103,7 @@ if (
 			'/supp-test'
 		]
 	)
-	&& $iConfig['server']['host'] === 'localhost'
+	&& $iConfig['server']['domainName'] === 'localhost'
 ) {
 	$tests = new Test();
 	switch ($iConfig['get'][ROUTE_URL_PARAM]) {
