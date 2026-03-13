@@ -86,3 +86,51 @@ INSERT INTO `group` VALUES
 (2,'Customer001UserGroup1',1,'0.0.0.0/0',NULL,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes', 'No','No'),
 (3,'AdminGroup',1,'0.0.0.0/0',NULL,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes', 'No','No');
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `request`;
+CREATE TABLE `request` (
+    `request_no` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `request_by` ENUM('Admin', 'Customer', 'WebsiteAdmin') NOT NULL,
+    `request_by_no` BIGINT NOT NULL,
+    `request_route` VARCHAR(250),
+    `request_method` ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE') NOT NULL,
+    `request_payload_json` JSON NOT NULL,
+    `request_operated_on` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `request_operator_ip` VARCHAR(25) NOT NULL,
+    PRIMARY KEY (`request_no`)
+) ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `error_log`;
+CREATE TABLE `error_log` (
+    `error_log_no` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `request_no` BIGINT NOT NULL,
+    `operated_by` ENUM('Admin', 'Customer', 'WebsiteAdmin') NOT NULL,
+    `operated_by_no` BIGINT NOT NULL,
+    `operated_route` VARCHAR(250),
+    `operated_request_method` ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE') NOT NULL,
+    `operated_config_json` JSON NOT NULL,
+    `operated_payload_json` JSON NOT NULL,
+    `operated_session_json` JSON NOT NULL,
+    `exception_json` JSON NOT NULL,
+    `operated_on` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `operator_ip` VARCHAR(25) NOT NULL,
+    PRIMARY KEY (`error_log_no`)
+) ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `debug_log`;
+CREATE TABLE `debug_log` (
+    `debug_log_no` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `debug_mode` VARCHAR(250),
+    `request_no` BIGINT NOT NULL,
+    `operated_by` ENUM('Admin', 'Customer', 'WebsiteAdmin') NOT NULL,
+    `operated_by_no` BIGINT NOT NULL,
+    `operated_route` VARCHAR(250),
+    `operated_request_method` ENUM('GET', 'POST', 'PUT', 'PATCH', 'DELETE') NOT NULL,
+    `operated_config_json` JSON NOT NULL,
+    `operated_payload_json` JSON NOT NULL,
+    `operated_session_json` JSON NOT NULL,
+    `exception_json` JSON NOT NULL,
+    `operated_on` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `operator_ip` VARCHAR(25) NOT NULL,
+    PRIMARY KEY (`debug_log_no`)
+) ENGINE = InnoDB;
