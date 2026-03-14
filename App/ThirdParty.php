@@ -16,7 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Http;
-use Microservices\Supplement\ThirdParty\ThirdPartyInterface;
+use Microservices\www\Supplement\ThirdParty\ThirdPartyInterface;
 
 /**
  * ThirdParty API

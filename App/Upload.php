@@ -16,7 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Http;
-use Microservices\Supplement\Upload\UploadInterface;
+use Microservices\www\Supplement\Upload\UploadInterface;
 
 /**
  * Upload API

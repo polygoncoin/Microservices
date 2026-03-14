@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Constant;
+use Microservices\App\Http;
 use Microservices\App\HttpStatus;
 
 /**
