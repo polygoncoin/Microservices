@@ -124,19 +124,43 @@ class Read
 			&& isset($rSqlConfig['cacheKey'])
 			&& !isset($this->http->req->s['queryParams']['orderBy'])
 		) {
-			$json = DbCommonFunction::getQueryCache(
-				cacheKey: $rSqlConfig['cacheKey']
-			);
-			if ($json !== null) {
-				$cacheHit = 'true';
-				$this->http->res->dataEncode->appendKeyData(
-					key: 'cacheHit',
-					data: $cacheHit
+			$cacheReqCount = 0;
+			$queryCacheReqFlag = false;
+			for ($i = 0;$i < 5; $i++) {
+				$json = DbCommonFunction::getQueryCache(
+					cacheKey: $rSqlConfig['cacheKey']
 				);
-				$this->http->res->dataEncode->appendData(data: $json);
-				return true;
-			} else {
-				$toBeCached = true;
+				if ($json !== null) {
+					$cacheHit = 'true';
+					$this->http->res->dataEncode->appendKeyData(
+						key: 'cacheHit',
+						data: $cacheHit
+					);
+					$this->http->res->dataEncode->appendData(data: $json);
+					return true;
+				} else {
+					if (!$cacheReqCountFlag) {
+						$cacheReqCount = DbCommonFunction::incrementQueryCacheCounter(cacheKey: $rSqlConfig['cacheKey']);
+						if ($cacheReqCount === 1) {
+							$toBeCached = true;
+							break;
+						} else {
+							$queryCacheReqFlag = true;
+						}
+					}
+					if ($queryCacheReqFlag) {
+						sleep(1);
+					}
+				}
+			}
+			if (
+				$queryCacheReqFlag
+				&& $cacheReqCount > 1
+			) {
+				throw new \Exception(
+					message: 'Invalid query cache request flag',
+					code: HttpStatus::$InternalServerError
+				);
 			}
 		}
 

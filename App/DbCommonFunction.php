@@ -372,6 +372,34 @@ class DbCommonFunction
 	}
 
 	/**
+	 * Increment Query Cache Counter
+	 *
+	 * @param string $cacheKey Cache Key from Sql configuration
+	 *
+	 * @return int
+	 */
+	public static function incrementQueryCacheCounter($cacheKey): int
+	{
+		self::connectQueryCacheServer();
+
+		return self::$queryCacheServer->incrementCache(key: 'i:' . $cacheKey);
+	}
+
+	/**
+	 * Delete Increment Query Cache Counter
+	 *
+	 * @param string $cacheKey Cache Key from Sql configuration
+	 *
+	 * @return void
+	 */
+	public static function delIncrementQueryCacheCounter($cacheKey): void
+	{
+		self::connectQueryCacheServer();
+		
+		self::$queryCacheServer->deleteCache(key: 'i:' . $cacheKey);
+	}
+
+	/**
 	 * Set Query cache
 	 *
 	 * @param string $cacheKey Cache Key from Sql configuration
@@ -382,8 +410,9 @@ class DbCommonFunction
 	public static function setQueryCache($cacheKey, &$json): void
 	{
 		self::connectQueryCacheServer();
-
+		
 		self::$queryCacheServer->setCache(key: $cacheKey, value: $json);
+		self::delIncrementQueryCacheCounter(cacheKey: $cacheKey);
 	}
 
 	/**
