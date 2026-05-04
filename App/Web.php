@@ -35,7 +35,7 @@ class Web
 	 * Return cURL Config
 	 *
 	 * @param string $homeURL     Site URL
-	 * @param string $method      HTTP method
+	 * @param string $method      Http method
 	 * @param string $route       Route
 	 * @param string $queryString Query String
 	 * @param array  $header      Header
@@ -88,7 +88,7 @@ class Web
 	 * Trigger cURL
 	 *
 	 * @param string $homeURL Site URL
-	 * @param string $method  HTTP method
+	 * @param string $method  Http method
 	 * @param string $route   Route
 	 * @param array  $header  Header
 	 * @param string $payload Payload
@@ -289,7 +289,10 @@ class Web
 
 		$isObject = (isset($params[0])) ? false : true;
 
-		if (!$isObject && count(value: $params) === 1) {
+		if (
+			!$isObject
+			&& count(value: $params) === 1
+		) {
 			$params = $params[0];
 			if (empty($params)) {
 				return;

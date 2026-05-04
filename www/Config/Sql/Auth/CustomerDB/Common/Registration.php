@@ -13,15 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Common;
-
 return [
-	'__QUERY__' => "UPDATE `{$this->http->req->usersTable}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->http->req->s['cDetails']['usersTable']}` SET __SET__ WHERE __WHERE__",
 	'__VALIDATE__' => [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-				'table' => ['custom', $this->http->req->usersTable],
+				'table' => ['custom', $this->http->req->s['cDetails']['usersTable']],
 				'primary' => ['custom', 'id'],
 				'id' => ['routeParams', 'id']
 			],

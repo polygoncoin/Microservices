@@ -44,6 +44,13 @@ class RouteParser
 	public $routeElements = [];
 
 	/**
+	 * Route file location
+	 *
+	 * @var null|string
+	 */
+	public $routeFileLocation = null;
+
+	/**
 	 * Pre / Post hooks defined in respective Route file
 	 *
 	 * @var string
@@ -86,11 +93,18 @@ class RouteParser
 	public $configuredRoute = '';
 
 	/**
-	 * Location of File containing code for route
+	 * Sql config file
 	 *
-	 * @var string
+	 * @var null|string
 	 */
 	public $sqlConfigFile = null;
+
+	/**
+	 * Sql config
+	 *
+	 * @var null|string
+	 */
+	public $sqlConfig
 
 	/**
 	 * Http Object
@@ -124,33 +138,34 @@ class RouteParser
 
 		$this->routeElements = explode(
 			separator: '/',
-			string: trim(string: $this->http->iConfig['get'][ROUTE_URL_PARAM], characters: '/')
+			string: trim(string: $this->http->httpReqDetails['get'][ROUTE_URL_PARAM], characters: '/')
 		);
 		$routeLastElementPos = count(value: $this->routeElements) - 1;
 		// if ($this->routeElements[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
-		//     if (isset($this->http->iConfig['server']['httpMethod'])) {
-		//         $this->http->iConfig['server']['httpMethod'] = $this->http->iConfig['server']['httpMethod'];
+		//     if (isset($this->http->httpReqDetails['server']['httpMethod'])) {
+		//         $this->http->httpReqDetails['server']['httpMethod'] = $this->http->httpReqDetails['server']['httpMethod'];
 		//     }
 		// }
 
 		if ($routeFileLocation === null) {
 			if ($this->http->req->isOpenToWebRequest) {
 				$routeFileLocation = Constant::$OPEN_ROUTES_DIR
-					. DIRECTORY_SEPARATOR . $this->http->iConfig['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->http->httpReqDetails['server']['httpMethod'] . 'routes.php';
 			} else {
 				$routeFileLocation = Constant::$AUTH_ROUTES_DIR
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'
 					. DIRECTORY_SEPARATOR . $this->http->req->s['gDetails']['name']
-					. DIRECTORY_SEPARATOR . $this->http->iConfig['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->http->httpReqDetails['server']['httpMethod'] . 'routes.php';
 			}
 		}
 
 		if (file_exists(filename: $routeFileLocation)) {
+			$this->routeFileLocation = $routeFileLocation;
 			$routesConfig = include $routeFileLocation;
 		} else {
 			throw new \Exception(
-				message: 'Route file missing: ' . $this->http->iConfig['server']['httpMethod'] . ' method',
+				message: 'Route file missing: ' . $this->http->httpReqDetails['server']['httpMethod'] . ' method',
 				code: HttpStatus::$InternalServerError
 			);
 		}
@@ -189,8 +204,14 @@ class RouteParser
 				break;
 			} else { // Route element is a variable/dynamic input
 				if (
-					(isset($routesConfig['__FILE__']) && count(value: $routesConfig) > 2)
-					|| (!isset($routesConfig['__FILE__']) && count(value: $routesConfig) > 0)
+					(
+						isset($routesConfig['__FILE__'])
+						&& count(value: $routesConfig) > 2
+					)
+					|| (
+						!isset($routesConfig['__FILE__'])
+						&& count(value: $routesConfig) > 0
+					)
 				) {
 					[
 						$foundIntRoute,
@@ -240,13 +261,13 @@ class RouteParser
 		// Switch Input data representation if set in URL param
 		if (
 			Env::$enableInputRepresentationAsQueryParam
-			&& isset($this->http->iConfig['get']['iRepresentation'])
+			&& isset($this->http->httpReqDetails['get']['iRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->http->iConfig['get']['iRepresentation'],
+				dataRepresentation: $this->http->httpReqDetails['get']['iRepresentation'],
 				mode: 'input'
 			)
 		) {
-			Env::$iRepresentation = $this->http->iConfig['get']['iRepresentation'];
+			Env::$iRepresentation = $this->http->httpReqDetails['get']['iRepresentation'];
 		}
 
 		$this->configuredRoute = '/' . implode(separator: '/', array: $configuredRoute);
@@ -270,7 +291,7 @@ class RouteParser
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = $routeStartingKeyword;
 			$isValidIp = CommonFunction::checkCidr(
-				IP: $this->http->iConfig['server']['httpRequestIP'],
+				IP: $this->http->httpReqDetails['server']['httpRequestIP'],
 				cidrString: Env::$reservedRoutesCidrString[$routeStartingKeyword]
 			);
 			if (!$isValidIp) {
@@ -361,7 +382,10 @@ class RouteParser
 			);
 		}
 
-		if ($paramDataType === 'int' && ctype_digit(text: $element)) {
+		if (
+			$paramDataType === 'int'
+			&& ctype_digit(text: $element)
+		) {
 			$foundIntRoute = $routeElement;
 			$foundIntParamName = $paramName;
 			DatabaseServerDataType::validateDataType(
@@ -406,7 +430,7 @@ class RouteParser
 				)
 			) {
 				throw new \Exception(
-					message: 'Missing config for ' . $this->http->iConfig['server']['httpMethod'] . ' method',
+					message: 'Missing config for ' . $this->http->httpReqDetails['server']['httpMethod'] . ' method',
 					code: HttpStatus::$InternalServerError
 				);
 			}
@@ -423,28 +447,28 @@ class RouteParser
 
 			// Output data representation over rides global
 			// Output data representation set in Query config file
-			$sqlConfig = include $this->sqlConfigFile;
+			$this->sqlConfig = include $this->sqlConfigFile;
 			if (
-				isset($sqlConfig['oRepresentation'])
+				isset($this->sqlConfig['oRepresentation'])
 				&& Env::isValidDataRep(
-					dataRepresentation: $sqlConfig['oRepresentation'],
+					dataRepresentation: $this->sqlConfig['oRepresentation'],
 					mode: 'output'
 				)
 			) {
-				$this->http->res->oRepresentation = $sqlConfig['oRepresentation'];
+				$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
 			}
 		}
 
 		// Switch Output data representation if set in URL param
 		if (
 			Env::$enableOutputRepresentationAsQueryParam
-			&& isset($this->http->iConfig['get']['oRepresentation'])
+			&& isset($this->http->httpReqDetails['get']['oRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->http->iConfig['get']['oRepresentation'],
+				dataRepresentation: $this->http->httpReqDetails['get']['oRepresentation'],
 				mode: 'output'
 			)
 		) {
-			$this->http->res->oRepresentation = $this->http->iConfig['get']['oRepresentation'];
+			$this->http->res->oRepresentation = $this->http->httpReqDetails['get']['oRepresentation'];
 		}
 	}
 

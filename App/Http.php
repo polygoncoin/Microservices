@@ -33,14 +33,14 @@ use Microservices\App\HttpResponse;
 class Http
 {
 	/**
-	 * Microservices HTTP Request
+	 * Microservices http Request
 	 *
 	 * @var null|HttpRequest
 	 */
 	public $req = null;
 
 	/**
-	 * Microservices HTTP Response
+	 * Microservices http Response
 	 *
 	 * @var null|HttpResponse
 	 */
@@ -51,18 +51,18 @@ class Http
 	 *
 	 * @var null|array
 	 */
-	public $iConfig = null;
+	public $httpReqDetails = null;
 
 	/**
 	 * Initialize
 	 *
-	 * @param array $iConfig Http Request Details
+	 * @param array $httpReqDetails Http Request Details
 	 *
 	 * @return void
 	 */
-	public function init(&$iConfig): void
+	public function init(&$httpReqDetails): void
 	{
-		$this->iConfig = &$iConfig;
+		$this->httpReqDetails = &$httpReqDetails;
 		$this->req = new HttpRequest(http: $this);
 		$this->res = new HttpResponse(http: $this);
 	}

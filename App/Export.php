@@ -333,7 +333,10 @@ class Export
 		// Start streaming
 		$data = file_get_contents(filename: $exportFile);
 
-		if ($this->unlink && !unlink(filename: $exportFile)) { // Unable to delete
+		if (
+			$this->unlink
+			&& !unlink(filename: $exportFile)
+		) { // Unable to delete
 			//handle error via logs.
 		}
 

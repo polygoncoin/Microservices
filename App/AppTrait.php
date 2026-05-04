@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\Start;
+use Microservices\App\CacheServerKey;
 use Microservices\App\Counter;
 use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
@@ -130,7 +131,11 @@ trait AppTrait
 					break;
 				}
 			}
-			// if (!$isFirstCall && $flag && !$foundHierarchy) {
+			// if (
+			// 	!$isFirstCall
+			// 	&& $flag
+			// 	&& !$foundHierarchy
+			// ) {
 			//     throw new \Exception(
 			//          message: 'Invalid config: missing ' . $fetchFrom,
 			//          code: HttpStatus::$InternalServerError
@@ -255,7 +260,10 @@ trait AppTrait
 				$sqlDetails['__SET__'],
 				$payloadVariables
 			);
-			if (empty($errors) && !$missExecution) {
+			if (
+				empty($errors)
+				&& !$missExecution
+			) {
 				if (!empty($params)) {
 					// __SET__ not compulsory in query
 					$found = strpos(haystack: $sql, needle: '__SET__') !== false;
@@ -289,7 +297,10 @@ trait AppTrait
 				$sqlDetails['__WHERE__'],
 				$payloadVariables
 			);
-			if (empty($wErrors) && !$wMissExecution) {
+			if (
+				empty($wErrors)
+				&& !$wMissExecution
+			) {
 				if (!empty($sqlWhereParams)) {
 					// __WHERE__ not compulsory in query
 					$wfound = strpos(haystack: $sql, needle: '__WHERE__') !== false;
@@ -382,7 +393,10 @@ trait AppTrait
 				$sqlDetails['__SET__'],
 				$payloadVariables
 			);
-			if (empty($errors) && !$missExecution) {
+			if (
+				empty($errors)
+				&& !$missExecution
+			) {
 				if (!empty($params)) {
 					// __SET__ not compulsory in query
 					$found = strpos(haystack: $sql, needle: '__SET__') !== false;
@@ -411,7 +425,10 @@ trait AppTrait
 				$sqlDetails['__WHERE__'],
 				$payloadVariables
 			);
-			if (empty($wErrors) && !$wMissExecution) {
+			if (
+				empty($wErrors)
+				&& !$wMissExecution
+			) {
 				if (!empty($sqlWhereParams)) {
 					// __WHERE__ not compulsory in query
 					$wfound = strpos(haystack: $sql, needle: '__WHERE__') !== false;
@@ -586,7 +603,10 @@ trait AppTrait
 	 */
 	private function getUseHierarchy(&$sqlConfig, $keyword = ''): bool
 	{
-		if (isset($sqlConfig[$keyword]) && $sqlConfig[$keyword] === true) {
+		if (
+			isset($sqlConfig[$keyword])
+			&& $sqlConfig[$keyword] === true
+		) {
 			return true;
 		}
 		if (
@@ -696,7 +716,11 @@ trait AppTrait
 					break;
 				}
 			}
-			if (!$isFirstCall && $flag && !$foundHierarchy) {
+			if (
+				!$isFirstCall
+				&& $flag
+				&& !$foundHierarchy
+			) {
 				throw new \Exception(
 					message: 'Invalid config: missing ' . $fetchFrom,
 					code: HttpStatus::$InternalServerError
@@ -743,7 +767,10 @@ trait AppTrait
 	 */
 	private function resetFetchData($fetchFrom, $keys, $row): void
 	{
-		if (empty($keys) || count(value: $keys) === 0) {
+		if (
+			empty($keys)
+			|| count(value: $keys) === 0
+		) {
 			$this->http->req->s[$fetchFrom] = [];
 			$this->http->req->s[$fetchFrom]['return'] = [];
 		}
@@ -778,16 +805,16 @@ trait AppTrait
 		}
 
 		$payloadSignature = [
-			'IP' => $this->http->iConfig['server']['httpRequestIP'],
-			'cID' => $this->http->req->s['cDetails']['id'],
-			'httpMethod' => $this->http->iConfig['server']['httpMethod'],
-			'Route' => $this->http->iConfig['get'][ROUTE_URL_PARAM],
+			'IP' => $this->http->httpReqDetails['server']['httpRequestIP'],
+			'cID' => $this->http->req->cID,
+			'httpMethod' => $this->http->httpReqDetails['server']['httpMethod'],
+			'Route' => $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
 		];
 		if (isset($this->http->req->s['uDetails'])) {
 			$payloadSignature['gID'] = ($this->http->req->s['gDetails']['id'] !== null
 				? $this->http->req->s['gDetails']['id'] : 0);
-			$payloadSignature['uID'] = ($this->http->req->s['uDetails']['id'] !== null
-				? $this->http->req->s['uDetails']['id'] : 0);
+			$payloadSignature['uID'] = ($this->http->req->uID !== null
+				? $this->http->req->uID : 0);
 		}
 		$hash = json_encode(value: $payloadSignature);
 		$hashKey = md5(string: $hash);
@@ -799,6 +826,93 @@ trait AppTrait
 			rateLimitMaxRequestWindow: $sqlConfig['rateLimitMaxRequestWindow'],
 			key: $hashKey
 		);
+	}
+
+	/**
+	 * Check Referrer Lag
+	 *
+	 * @param array $sqlConfig Config from file
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	private function checkReferrerLag(&$sqlConfig): void
+	{
+
+		$customerUserReferrerLagKey = CacheServerKey::customerUserReferrerLag(
+			cID: $this->http->req->cID
+			uID: $this->http->req->uID
+		);
+		if (
+			isset($sqlConfig['referrerLagWindow'])
+			&& count($sqlConfig['referrerLagWindow']) > 0
+		) {
+			if (!DbCommonFunction::$gCacheServer->cacheExists(key: $customerUserReferrerLagKey)) {
+				throw new \Exception(
+					message: 'Referrer lag not initiated',
+					code: HttpStatus::$BadRequest
+				);
+			}
+			$referrerLagDetails = json_decode(
+				json: DbCommonFunction::$gCacheServer->getCache(
+					key: $customerUserReferrerLagKey
+				),
+				associative: true
+			);
+			if (
+				isset($referrerLagDetails['initRoute'])
+				&& isset($referrerLagDetails['timestamp'])
+			) {
+				$found = false;
+				foreach ($sqlConfig['referrerLagWindow'] as $arr) {
+					if ($referrerLagDetails['initRoute'] === $arr['referrer']) {
+						$tsDiff = Env::$timestamp - $arr['timestamp'];
+						if (
+							isset($arr['minimumReferrerLagWindow'])
+							&& $tsDiff >= $arr['minimumReferrerLagWindow']
+						) {
+							if (isset($arr['maximumReferrerLagWindow'])) {
+								if ($tsDiff <= $arr['maximumReferrerLagWindow']) {
+									$found = true;
+								} else {
+									DbCommonFunction::$gCacheServer->deleteCache(key: $customerUserReferrerLagKey);
+								}
+							} else {
+								$found = true;
+							}
+						} else {
+							DbCommonFunction::$gCacheServer->deleteCache(key: $customerUserReferrerLagKey);
+						}
+					}
+				}
+				if (!$found) {
+					throw new \Exception(
+						message: 'Referrer lag not configured',
+						code: HttpStatus::$BadRequest
+					);
+				}
+			}
+		}
+
+		if (
+			isset($sqlConfig['enableReferrerLag'])
+			&& $sqlConfig['enableReferrerLag'] === true
+		) {
+			if (!DbCommonFunction::$gCacheServer->cacheExists(key: $customerUserReferrerLagKey)) {
+				DbCommonFunction::$gCacheServer->setCache(
+					key: $customerUserReferrerLagKey,
+					value: json_encode(value: [
+						'initRoute' => $this->http->req->rParser->configuredRoute,
+						'timestamp' => Env::$timestamp
+					])
+				);
+			} else {
+				throw new \Exception(
+					message: 'Referrer lag is enabled',
+					code: HttpStatus::$BadRequest
+				);
+			}
+		}
 	}
 
 	/**
@@ -824,10 +938,10 @@ trait AppTrait
 				$payloadSignature = [
 					'idempotentSecret' => Env::$idempotentSecret,
 					'idempotentWindow' => $idempotentWindow,
-					'IP' => $this->http->iConfig['server']['httpRequestIP'],
-					'cID' => $this->http->req->s['cDetails']['id'],
-					'httpMethod' => $this->http->iConfig['server']['httpMethod'],
-					'Route' => $this->http->iConfig['get'][ROUTE_URL_PARAM],
+					'IP' => $this->http->httpReqDetails['server']['httpRequestIP'],
+					'cID' => $this->http->req->cID,
+					'httpMethod' => $this->http->httpReqDetails['server']['httpMethod'],
+					'Route' => $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
 					'payload' => $this->http->req->dataDecode->get(
 						implode(separator: ':', array: $payloadIndexes)
 					)
@@ -835,8 +949,8 @@ trait AppTrait
 				if (isset($this->http->req->s['uDetails'])) {
 					$payloadSignature['gID'] = ($this->http->req->s['gDetails']['id'] !== null
 						? $this->http->req->s['gDetails']['id'] : 0);
-					$payloadSignature['uID'] = ($this->http->req->s['uDetails']['id'] !== null
-						? $this->http->req->s['uDetails']['id'] : 0);
+					$payloadSignature['uID'] = ($this->http->req->uID !== null
+						? $this->http->req->uID : 0);
 				}
 
 				$hash = json_encode(value: $payloadSignature);
@@ -868,16 +982,16 @@ trait AppTrait
 			&& isset($sqlConfig['responseLag'])
 		) {
 			$payloadSignature = [
-				'IP' => $this->http->iConfig['server']['httpRequestIP'],
-				'cID' => $this->http->req->s['cDetails']['id'],
-				'httpMethod' => $this->http->iConfig['server']['httpMethod'],
-				'Route' => $this->http->iConfig['get'][ROUTE_URL_PARAM],
+				'IP' => $this->http->httpReqDetails['server']['httpRequestIP'],
+				'cID' => $this->http->req->cID,
+				'httpMethod' => $this->http->httpReqDetails['server']['httpMethod'],
+				'Route' => $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
 			];
 			if (isset($this->http->req->s['uDetails'])) {
 				$payloadSignature['gID'] = ($this->http->req->s['gDetails']['id'] !== null
 					? $this->http->req->s['gDetails']['id'] : 0);
-				$payloadSignature['uID'] = ($this->http->req->s['uDetails']['id'] !== null
-					? $this->http->req->s['uDetails']['id'] : 0);
+				$payloadSignature['uID'] = ($this->http->req->uID !== null
+					? $this->http->req->uID : 0);
 			}
 
 			$hash = json_encode(value: $payloadSignature);
@@ -975,7 +1089,7 @@ trait AppTrait
 			);
 		}
 
-		$iConfig = [];
+		$httpReqDetails = [];
 
 		$isAssoc = (!isset($triggerConfig[0])) ? true : false;
 		if (
@@ -989,8 +1103,8 @@ trait AppTrait
 
 		$triggerOutput = [];
 		if ($isAssoc) {
-			$iConfig = $this->getTriggerHttp($triggerConfig);
-			[$responseheaders, $responseContent, $responseCode] = Start::http(iConfig: $iConfig);
+			$httpReqDetails = $this->getTriggerHttp($triggerConfig);
+			[$responseheaders, $responseContent, $responseCode] = Start::http(httpReqDetails: $httpReqDetails);
 			$triggerOutput = &$responseContent;
 		} else {
 			for (
@@ -998,8 +1112,8 @@ trait AppTrait
 				$iTrigger < $iTriggerCount;
 				$iTrigger++
 			) {
-				$iConfig = $this->getTriggerHttp($triggerConfig[$iTrigger]);
-				[$responseheaders, $responseContent, $responseCode] = Start::http(iConfig: $iConfig);
+				$httpReqDetails = $this->getTriggerHttp($triggerConfig[$iTrigger]);
+				[$responseheaders, $responseContent, $responseCode] = Start::http(httpReqDetails: $httpReqDetails);
 				$triggerOutput[] = &$responseContent;
 			}
 		}
@@ -1048,16 +1162,17 @@ trait AppTrait
 			}
 		}
 
-		$iConfig['server']['domainName'] = $this->http->iConfig['server']['domainName'];
-		$iConfig['server']['httpMethod'] = $method;
-		$iConfig['server']['httpRequestIP'] = $this->http->iConfig['server']['httpRequestIP'];
-		$iConfig['header'] = $this->http->iConfig['header'];
-		$iConfig['post'] = json_encode($payloadArr);
-		$iConfig['get'] = $queryStringArr;
-		$iConfig['get'][ROUTE_URL_PARAM] = $route;
-		$iConfig['isWebRequest'] = false;
+		$httpReqDetails['streamData'] = false;
+		$httpReqDetails['server']['domainName'] = $this->http->httpReqDetails['server']['domainName'];
+		$httpReqDetails['server']['httpMethod'] = $method;
+		$httpReqDetails['server']['httpRequestIP'] = $this->http->httpReqDetails['server']['httpRequestIP'];
+		$httpReqDetails['header'] = $this->http->httpReqDetails['header'];
+		$httpReqDetails['post'] = json_encode($payloadArr);
+		$httpReqDetails['get'] = $queryStringArr;
+		$httpReqDetails['get'][ROUTE_URL_PARAM] = $route;
+		$httpReqDetails['isWebRequest'] = false;
 
-		return $iConfig;
+		return $httpReqDetails;
 	}
 
 	/**

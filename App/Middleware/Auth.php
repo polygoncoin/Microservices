@@ -43,6 +43,13 @@ class Auth
 	private $http = null;
 
 	/**
+	 * Request ID
+	 *
+	 * @var null|int
+	 */
+	private $requestID = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Http $http
@@ -70,14 +77,22 @@ class Auth
 		) {
 			$this->http->req->s['uDetails'] = $_SESSION;
 			$this->http->req->s['token'] = 'sessions';
+			$this->http->req->uID = $_SESSION['id'];
 		} elseif (
-			($this->http->iConfig['header']['tokenHeader'] !== null)
-			&& preg_match(
-				pattern: '/Bearer\s(\S+)/',
-				subject: $this->http->iConfig['header']['tokenHeader'],
-				matches: $matches
-			)
+			($this->http->httpReqDetails['header']['tokenHeader'] !== null)
 		) {
+			if (
+				!preg_match(
+					pattern: '/Bearer\s(\S+)/',
+					subject: $this->http->httpReqDetails['header']['tokenHeader'],
+					matches: $matches
+				)
+			) {
+				throw new \Exception(
+					message: 'Token missing',
+					code: HttpStatus::$BadRequest
+				);
+			}
 			$this->http->req->s['token'] = $matches[1];
 			$tokenKey = CacheServerKey::token(
 				token: $this->http->req->s['token']
@@ -98,9 +113,13 @@ class Auth
 				),
 				associative: true
 			);
+			$this->http->req->uID = $this->http->req->s['uDetails']['id'];
+			$this->http->req->gID = $this->http->req->s['uDetails']['group_id'];
+
 			if (Env::$enableConcurrentLogins) {
-				$userConcurrencyKey = CacheServerKey::userConcurrency(
-					uID: $this->http->req->s['uDetails']['id']
+				$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
+					cID: $this->http->req->cID,
+					uID: $this->http->req->uID
 				);
 				if (DbCommonFunction::$gCacheServer->cacheExists(key: $userConcurrencyKey)) {
 					$userConcurrencyKeyData = DbCommonFunction::$gCacheServer->getCache(
@@ -121,19 +140,13 @@ class Auth
 					);
 				}
 			} else {
-				if ($this->http->req->s['uDetails']['httpRequestHash'] !== $this->http->iConfig['httpRequestHash']) {
+				if ($this->http->req->s['uDetails']['httpRequestHash'] !== $this->http->httpReqDetails['httpRequestHash']) {
 					throw new \Exception(
 						message: 'Token not supported from this Browser/Device',
 						code: HttpStatus::$PreconditionFailed
 					);
 				}
 			}
-		}
-		if (empty($this->http->req->s['token'])) {
-			throw new \Exception(
-				message: 'Token missing',
-				code: HttpStatus::$BadRequest
-			);
 		}
 	}
 
@@ -151,8 +164,8 @@ class Auth
 
 		// Load gDetails
 		if (
-			empty($this->http->req->s['uDetails']['id'])
-			|| empty($this->http->req->s['uDetails']['id'])
+			empty($this->http->req->uID)
+			|| empty($this->http->req->uID)
 		) {
 			throw new \Exception(
 				message: 'Invalid session',
@@ -160,8 +173,9 @@ class Auth
 			);
 		}
 
-		$gKey = CacheServerKey::group(
-			gID: $this->http->req->s['uDetails']['group_id']
+		$gKey = CacheServerKey::customerGroup(
+			cID: $this->http->req->cID,
+			gID: $this->http->req->gID
 		);
 		if (!DbCommonFunction::$gCacheServer->cacheExists(key: $gKey)) {
 			throw new \Exception(

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * HTTP Request
+ * Http Request
  * php version 8.3
  *
- * @category  HTTP_Request
+ * @category  Http Request
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -27,10 +27,10 @@ use Microservices\App\Middleware\Auth;
 use Microservices\App\RouteParser;
 
 /**
- * HTTP Request
+ * Http Request
  * php version 8.3
  *
- * @category  HTTP_Request
+ * @category  Http Request
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -92,14 +92,21 @@ class HttpRequest
 	 *
 	 * @var null|int
 	 */
-	public $cId = null;
+	public $cID = null;
 
 	/**
-	 * Customer user table
+	 * Group ID
 	 *
-	 * @var null|string
+	 * @var null|int
 	 */
-	public $usersTable = null;
+	public $gID = null;
+
+	/**
+	 * User ID
+	 *
+	 * @var null|int
+	 */
+	public $uID = null;
 
 	/**
 	 * Constructor
@@ -110,24 +117,24 @@ class HttpRequest
 	{
 		$this->http = &$http;
 
-		if (isset($this->http->iConfig['get'][ROUTE_URL_PARAM])) {
-			$this->http->iConfig['get'][ROUTE_URL_PARAM] = '/' . trim(
-				string: $this->http->iConfig['get'][ROUTE_URL_PARAM],
+		if (isset($this->http->httpReqDetails['get'][ROUTE_URL_PARAM])) {
+			$this->http->httpReqDetails['get'][ROUTE_URL_PARAM] = '/' . trim(
+				string: $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
 				characters: '/'
 			);
 		} else {
-			$this->http->iConfig['get'][ROUTE_URL_PARAM] = '';
+			$this->http->httpReqDetails['get'][ROUTE_URL_PARAM] = '';
 		}
 
 		switch (Env::$authMode) {
 			case 'Token':
 				if (
-					isset($this->http->iConfig['header'])
-					&& isset($this->http->iConfig['header']['tokenHeader'])
-					&& $this->http->iConfig['header']['tokenHeader'] !== null
+					isset($this->http->httpReqDetails['header'])
+					&& isset($this->http->httpReqDetails['header']['tokenHeader'])
+					&& $this->http->httpReqDetails['header']['tokenHeader'] !== null
 				) {
 					$this->isOpenToWebRequest = false;
-				} elseif ($this->http->iConfig['get'][ROUTE_URL_PARAM] === '/login') {
+				} elseif ($this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/login') {
 					$this->isOpenToWebRequest = false;
 				} elseif (Env::$enableOpenRequest) {
 					$this->isOpenToWebRequest = true;
@@ -145,15 +152,16 @@ class HttpRequest
 						);
 					}
 					if (Env::$enableConcurrentLogins) {
-						$userConcurrencyKey = CacheServerKey::userConcurrency(
-							uID: $_SESSION['id']
+						$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
+							cID: $this->cID,
+							uID: $this->uID
 						);
-						$sessionId = session_id();
+						$sessionID = session_id();
 						if (DbCommonFunction::$gCacheServer->cacheExists(key: $userConcurrencyKey)) {
 							$userConcurrencyKeyData = DbCommonFunction::$gCacheServer->getCache(
 								key: $userConcurrencyKey
 							);
-							if ($userConcurrencyKeyData !== $sessionId) {
+							if ($userConcurrencyKeyData !== $sessionID) {
 								throw new \Exception(
 									message: 'Account already in use. '
 										. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
@@ -163,12 +171,12 @@ class HttpRequest
 						} else {
 							$this->setCache(
 								key: $userConcurrencyKey,
-								value: $sessionId,
+								value: $sessionID,
 								expire: Env::$concurrentAccessInterval
 							);
 						}
 					} else {
-						if ($this->http->req->s['uDetails']['httpRequestHash'] !== $this->http->iConfig['httpRequestHash']) {
+						if ($this->http->req->s['uDetails']['httpRequestHash'] !== $this->http->httpReqDetails['httpRequestHash']) {
 							throw new \Exception(
 								message: 'Session not supported from this Browser/Device',
 								code: HttpStatus::$PreconditionFailed
@@ -176,7 +184,7 @@ class HttpRequest
 						}
 					}
 					$this->isOpenToWebRequest = false;
-				} elseif ($this->http->iConfig['get'][ROUTE_URL_PARAM] === '/login') {
+				} elseif ($this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/login') {
 					$this->isOpenToWebRequest = false;
 				} else {
 					$this->isOpenToWebRequest = true;
@@ -252,13 +260,13 @@ class HttpRequest
 		DbCommonFunction::connectGlobalCacheServer();
 
 		if ($this->isOpenToWebRequest) {
-			$cKey = CacheServerKey::customerOpenToWeb(domainName: $this->http->iConfig['server']['domainName']);
+			$cKey = CacheServerKey::openToWebDomain(domainName: $this->http->httpReqDetails['server']['domainName']);
 		} else {
-			$cKey = CacheServerKey::customer(domainName: $this->http->iConfig['server']['domainName']);
+			$cKey = CacheServerKey::closedToWebDomain(domainName: $this->http->httpReqDetails['server']['domainName']);
 		}
 		if (!DbCommonFunction::$gCacheServer->cacheExists(key: $cKey)) {
 			throw new \Exception(
-				message: "Invalid Host '{$this->http->iConfig['server']['domainName']}'",
+				message: "Invalid Host '{$this->http->httpReqDetails['server']['domainName']}'",
 				code: HttpStatus::$InternalServerError
 			);
 		}
@@ -269,8 +277,7 @@ class HttpRequest
 			),
 			associative: true
 		);
-		$this->usersTable = getenv(name: $this->s['cDetails']['usersTable']);
-		$this->cId = $this->s['cDetails']['id'];
+		$this->cID = $this->s['cDetails']['id'];
 	}
 
 	/**
@@ -284,9 +291,9 @@ class HttpRequest
 			return;
 		}
 
-		$this->s['queryParams'] = &$this->http->iConfig['get'];
-		if ($this->http->iConfig['server']['httpMethod'] === Constant::$GET) {
-			$this->urlDecode(value: $this->http->iConfig['get']);
+		$this->s['queryParams'] = &$this->http->httpReqDetails['get'];
+		if ($this->http->httpReqDetails['server']['httpMethod'] === Constant::$GET) {
+			$this->urlDecode(value: $this->http->httpReqDetails['get']);
 			$this->s['payloadType'] = 'Object';
 		} else {
 			$this->setPayloadStream();
@@ -313,17 +320,17 @@ class HttpRequest
 			case (
 				$this->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->rParser->routeEndingReservedKeyword === Env::$importRequestRouteKeyword)
-				&& isset($this->http->iConfig['files']['file']['tmp_name'])
+				&& isset($this->http->httpReqDetails['files']['file']['tmp_name'])
 			):
 				$content = $this->formatCsvPayload(
-					csvFile: $this->http->iConfig['files']['file']['tmp_name']
+					csvFile: $this->http->httpReqDetails['files']['file']['tmp_name']
 				);
 				break;
 			case Env::$iRepresentation === 'XML':
-				$content = $this->convertXmlToJson(xmlString: $this->http->iConfig['post']);
+				$content = $this->convertXmlToJson(xmlString: $this->http->httpReqDetails['post']);
 				break;
 			default:
-				$content = $this->http->iConfig['post'];
+				$content = $this->http->httpReqDetails['post'];
 		}
 		$this->payloadStream = fopen(
 			filename: "php://memory",
@@ -369,17 +376,24 @@ class HttpRequest
 	 */
 	private function formatXmlArray(&$array, &$result): void
 	{
-		if (isset($array['Rows']) && is_array(value: $array['Rows'])) {
+		if (
+			isset($array['Rows'])
+			&& is_array(value: $array['Rows'])
+		) {
 			$array = &$array['Rows'];
 		}
 
-		if (isset($array['Row']) && is_array(value: $array['Row'])) {
+		if (
+			isset($array['Row'])
+			&& is_array(value: $array['Row'])
+		) {
 			$array = &$array['Row'];
 		}
 
 		if (
 			isset($array[0])
-			&& is_array(value: $array[0]) && count(value: $array) === 1
+			&& is_array(value: $array[0])
+			&& count(value: $array) === 1
 		) {
 			$array = &$array[0];
 			if (empty($array)) {
@@ -410,7 +424,7 @@ class HttpRequest
 	/**
 	 * Function to find payload is an object/array
 	 *
-	 * @param array|string $value Array vales to be decoded. Basically $iConfig['get']
+	 * @param array|string $value Array vales to be decoded. Basically $httpReqDetails['get']
 	 *
 	 * @return void
 	 */

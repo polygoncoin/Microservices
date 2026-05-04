@@ -32,7 +32,7 @@ class CommonFunction
 	/**
 	 * Check Errors related to File Upload
 	 *
-	 * @param array $httpFiles $this->http->iConfig['files']
+	 * @param array $httpFiles $this->http->httpReqDetails['files']
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -167,7 +167,7 @@ class CommonFunction
 	/**
 	 * Check Cache CIDR
 	 *
-	 * @param string       $IP              $this->http->iConfig['server']['httpRequestIP']
+	 * @param string       $IP              $this->http->httpReqDetails['server']['httpRequestIP']
 	 * @param string|array $againstCacheKey Cache Key(s)
 	 *
 	 * @return null|bool
@@ -210,7 +210,7 @@ class CommonFunction
 	/**
 	 * Check CIDR
 	 *
-	 * @param string $IP         $this->http->iConfig['server']['httpRequestIP']
+	 * @param string $IP         $this->http->httpReqDetails['server']['httpRequestIP']
 	 * @param string $cidrString CIDRs
 	 *
 	 * @return null|bool
@@ -233,7 +233,7 @@ class CommonFunction
 	/**
 	 * Belongs to Cidrs range
 	 *
-	 * @param string $IP    $this->http->iConfig['server']['httpRequestIP']
+	 * @param string $IP    $this->http->httpReqDetails['server']['httpRequestIP']
 	 * @param array  $cidrs Cache Key(s)
 	 *
 	 * @return bool
@@ -251,7 +251,10 @@ class CommonFunction
 			) {
 				$isValidIp = true;
 				break;
-			} elseif ($cidr['start'] <= $ipNumber && $ipNumber <= $cidr['end']) {
+			} elseif (
+				$cidr['start'] <= $ipNumber
+				&& $ipNumber <= $cidr['end']
+			) {
 				$isValidIp = true;
 				break;
 			}
@@ -261,7 +264,7 @@ class CommonFunction
 	}
 
 	/**
-	 * Unique HTTP Request hash
+	 * Unique http Request hash
 	 *
 	 * @param array $hashArray Hash array
 	 *

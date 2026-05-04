@@ -13,8 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\GlobalDB\POST;
-
 use Microservices\App\DatabaseServerDataType;
 
 return [

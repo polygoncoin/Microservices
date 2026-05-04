@@ -13,8 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Common;
-
 return [
 	'__SQL-COMMENT__' => '',
 	'__QUERY__' => 'UPDATE `address` SET __SET__ WHERE __WHERE__',

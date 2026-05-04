@@ -163,7 +163,10 @@ class XmlEncode implements DataEncodeInterface
 	 */
 	public function appendKeyData($key, &$data): void
 	{
-		if ($this->currentObject && $this->currentObject->mode === 'Object') {
+		if (
+			$this->currentObject
+			&& $this->currentObject->mode === 'Object'
+		) {
 			$key = $this->escapeTag(key: $key);
 			$this->write(data: "<{$key}>{$this->escape(data: $data)}</{$key}>");
 		}
@@ -251,7 +254,10 @@ class XmlEncode implements DataEncodeInterface
 			$key = ($this->currentObject === null) ? 'Resultset' : 'Row';
 		}
 		if ($this->currentObject) {
-			if ($this->currentObject->mode === 'Object' && ($key === null)) {
+			if (
+				$this->currentObject->mode === 'Object'
+				&& ($key === null)
+			) {
 				throw new \Exception(
 					message: 'Object inside an Object should be supported with Key',
 					code: HttpStatus::$InternalServerError
@@ -284,7 +290,10 @@ class XmlEncode implements DataEncodeInterface
 	 */
 	public function end(): void
 	{
-		while ($this->currentObject && $this->currentObject->mode) {
+		while (
+			$this->currentObject
+			&& $this->currentObject->mode
+		) {
 			switch ($this->currentObject->mode) {
 				case 'Array':
 					$this->endArray();

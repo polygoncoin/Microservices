@@ -113,19 +113,11 @@ cDbServerUsername001='username'
 cDbServerPassword001='password'
 cCacheServerDB001='customer_001'
 cDbServerQueryPlaceholder001='Named'; Named(:param) / Unnamed(?)
-
-; Customer Database table containing user login details
-cDatabaseServerDBUsersTable='user'
 ```
 
 ### Going forward
 
 One can on similar lines can configure slaves server details or a dedicated master / slave cache servers.
-
-### Additional table detail in customer database-x / database server
-```ini
-customerUsersTable='user'         ;Table in customer database containing user details.
-```
 
 ### The query_placeholder column
 

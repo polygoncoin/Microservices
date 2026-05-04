@@ -13,11 +13,9 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Groups\UserGroup\GET;
-
 return [
-	'countQuery' => "SELECT count(1) as `count` FROM `{$this->http->req->usersTable}` WHERE __WHERE__",
-	'__QUERY__' => "SELECT * FROM `{$this->http->req->usersTable}` WHERE __WHERE__",
+	'countQuery' => "SELECT count(1) as `count` FROM `{$this->http->req->s['cDetails']['usersTable']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->http->req->s['cDetails']['usersTable']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',

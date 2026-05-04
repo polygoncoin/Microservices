@@ -72,11 +72,11 @@ interface DatabaseServerInterface
 	public function affectedRows(): bool|int;
 
 	/**
-	 * Last Insert Id by PDO
+	 * Last Insert ID by PDO
 	 *
 	 * @return bool|int
 	 */
-	public function lastInsertId(): bool|int;
+	public function lastInsertID(): bool|int;
 
 	/**
 	 * Execute Parameterized query

@@ -174,7 +174,10 @@ class JsonEncode implements DataEncodeInterface
 	 */
 	public function appendKeyData($key, &$data): void
 	{
-		if ($this->currentObject && $this->currentObject->mode === 'Object') {
+		if (
+			$this->currentObject
+			&& $this->currentObject->mode === 'Object'
+		) {
 			$this->write(data: $this->currentObject->comma);
 			$this->write(data: $this->escape(data: $key) . ':' . $data);
 			$this->currentObject->comma = ', ';
@@ -269,7 +272,10 @@ class JsonEncode implements DataEncodeInterface
 	public function startObject($key = null): void
 	{
 		if ($this->currentObject) {
-			if ($this->currentObject->mode === 'Object' && ($key === null)) {
+			if (
+				$this->currentObject->mode === 'Object'
+				&& ($key === null)
+			) {
 				throw new \Exception(
 					message: 'Object inside an Object should be supported with Key',
 					code: HttpStatus::$InternalServerError
@@ -307,7 +313,10 @@ class JsonEncode implements DataEncodeInterface
 	 */
 	public function end(): void
 	{
-		while ($this->currentObject && $this->currentObject->mode) {
+		while (
+			$this->currentObject
+			&& $this->currentObject->mode
+		) {
 			switch ($this->currentObject->mode) {
 				case 'Array':
 					$this->endArray();

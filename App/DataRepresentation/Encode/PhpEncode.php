@@ -159,7 +159,10 @@ class PhpEncode implements DataEncodeInterface
 	 */
 	public function appendKeyData($key, &$data): void
 	{
-		if ($this->currentObject && $this->currentObject->mode === 'Object') {
+		if (
+			$this->currentObject
+			&& $this->currentObject->mode === 'Object'
+		) {
 			$this->write(data: [$key => $data]);
 		}
 	}
@@ -254,7 +257,10 @@ class PhpEncode implements DataEncodeInterface
 	public function startObject($key = null): void
 	{
 		if ($this->currentObject) {
-			if ($this->currentObject->mode === 'Object' && ($key === null)) {
+			if (
+				$this->currentObject->mode === 'Object'
+				&& ($key === null)
+			) {
 				throw new \Exception(
 					message: 'Object inside an Object should be supported with Key',
 					code: HttpStatus::$InternalServerError
@@ -297,7 +303,10 @@ class PhpEncode implements DataEncodeInterface
 	 */
 	public function end(): void
 	{
-		while ($this->currentObject && $this->currentObject->mode) {
+		while (
+			$this->currentObject
+			&& $this->currentObject->mode
+		) {
 			switch ($this->currentObject->mode) {
 				case 'Array':
 					$this->endArray();

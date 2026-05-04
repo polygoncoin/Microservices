@@ -13,10 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\GlobalDB\PATCH\approve;
-
 use Microservices\App\DatabaseServerDataType;
-use Microservices\App\Env;
 
 return [
 	'__QUERY__' => "UPDATE `{$Env::$groupsTable}` SET __SET__ WHERE __WHERE__",
@@ -64,16 +61,16 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-				'table' => ['custom', Env::$groupsTable],
+				'table' => ['custom', $Env::$groupsTable],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
-			'errorMessage' => 'Invalid Group Id'
+			'errorMessage' => 'Invalid Group ID'
 		],
 		[
 			'fn' => '_checkColumnValueExist',
 			'fnArgs' => [
-				'table' => ['custom', Env::$groupsTable],
+				'table' => ['custom', $Env::$groupsTable],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', 'No'],
 				'primary' => ['custom', 'id'],
@@ -84,7 +81,7 @@ return [
 		[
 			'fn' => '_checkColumnValueExist',
 			'fnArgs' => [
-				'table' => ['custom', Env::$groupsTable],
+				'table' => ['custom', $Env::$groupsTable],
 				'column' => ['custom', 'is_approved'],
 				'columnValue' => ['custom', 'No'],
 				'primary' => ['custom', 'id'],

@@ -113,13 +113,14 @@ class Supplement
 	 */
 	public function process(): bool|array
 	{
-		$Env = __NAMESPACE__ . '\Env';
-
 		// Load Sql
-		$sSqlConfig = include $this->http->req->rParser->sqlConfigFile;
+		$sSqlConfig = &$this->http->req->rParser->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
 		$this->rateLimitRoute(sqlConfig: $sSqlConfig);
+
+		// Check for configured referrer Lags
+		$this->checkReferrerLag(sqlConfig: $sSqlConfig);
 
 		// Use results in where clause of sub queries recursively
 		$useHierarchy = $this->getUseHierarchy(
@@ -185,7 +186,7 @@ class Supplement
 
 		// Set Server mode to execute query on - Read / Write Server
 		DbCommonFunction::setDbConnection($this->http->req, fetchFrom: 'Master');
-		$this->dbServerObj = &DbCommonFunction::$masterDb[$this->http->req->cId];
+		$this->dbServerObj = &DbCommonFunction::$masterDb[$this->http->req->cID];
 
 		$this->processSupplement(
 			sSqlConfig: $sSqlConfig,
@@ -443,16 +444,25 @@ class Supplement
 			}
 
 			$payloadIndexes = $payloadIndexes;
-			if ($this->operateAsTransaction && !$this->dbServerObj->beganTransaction) {
+			if (
+				$this->operateAsTransaction
+				&& !$this->dbServerObj->beganTransaction
+			) {
 				$_response['Error'] = 'Transaction rolled back';
 				return;
 			}
 
-			if ($isObject && $i > 0) {
+			if (
+				$isObject
+				&& $i > 0
+			) {
 				return;
 			}
 
-			if (!$isObject && !$useHierarchy) {
+			if (
+				!$isObject
+				&& !$useHierarchy
+			) {
 				array_push($payloadIndexes, $i);
 			}
 
@@ -501,7 +511,10 @@ class Supplement
 				$this->http->req->s['payload']
 			);
 
-			if ($this->operateAsTransaction && !$this->dbServerObj->beganTransaction) {
+			if (
+				$this->operateAsTransaction
+				&& !$this->dbServerObj->beganTransaction
+			) {
 				$_response['Error'] = 'Something went wrong';
 				return;
 			}
@@ -571,7 +584,10 @@ class Supplement
 			);
 		}
 
-		if (isset($payloadIndexes[0]) && $payloadIndexes[0] === '') {
+		if (
+			isset($payloadIndexes[0])
+			&& $payloadIndexes[0] === ''
+		) {
 			$payloadIndexes = array_shift($payloadIndexes);
 		}
 		if (!is_array(value: $payloadIndexes)) {
@@ -593,7 +609,10 @@ class Supplement
 				$dataExists = $this->http->req->dataDecode->isset(
 					keys: $modulePayloadKey
 				);
-				if ($useHierarchy && !$dataExists) { // use parent data of a payload
+				if (
+					$useHierarchy
+					&& !$dataExists
+				) { // use parent data of a payload
 					throw new \Exception(
 						message: "Invalid payload: Module '{$module}' missing",
 						code: HttpStatus::$NotFound

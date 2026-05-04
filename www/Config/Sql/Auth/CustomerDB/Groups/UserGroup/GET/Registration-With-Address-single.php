@@ -13,10 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Groups\UserGroup\GET;
-
 return [
-	'__QUERY__' => "SELECT * FROM `{$this->http->req->usersTable}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->http->req->s['cDetails']['usersTable']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',

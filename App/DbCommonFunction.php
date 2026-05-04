@@ -191,14 +191,14 @@ class DbCommonFunction
 		switch ($fetchFrom) {
 			case 'Master':
 				if (
-					isset(self::$masterCache[$req->s['cDetails']['id']])
-					&& self::$masterCache[$req->s['cDetails']['id']] !== null
+					isset(self::$masterCache[$req->cID])
+					&& self::$masterCache[$req->cID] !== null
 				) {
 					return;
 				}
 
 				$masterCacheDetails = self::getCacheMasterDetails(cDetails: $req->s['cDetails']);
-				self::$masterCache[$req->s['cDetails']['id']] = self::connectCacheServer(
+				self::$masterCache[$req->cID] = self::connectCacheServer(
 					cacheServerType: $masterCacheDetails['cacheServerType'],
 					cacheServerHostname: $masterCacheDetails['cacheServerHostname'],
 					cacheServerPort: $masterCacheDetails['cacheServerPort'],
@@ -214,7 +214,7 @@ class DbCommonFunction
 				}
 
 				$slaveCacheDetails = self::getCacheSlaveDetails(cDetails: $req->s['cDetails']);
-				self::$slaveCache[$req->s['cDetails']['id']] = self::connectCacheServer(
+				self::$slaveCache[$req->cID] = self::connectCacheServer(
 					cacheServerType: $slaveCacheDetails['cacheServerType'],
 					cacheServerHostname: $slaveCacheDetails['cacheServerHostname'],
 					cacheServerPort: $slaveCacheDetails['cacheServerPort'],
@@ -308,14 +308,14 @@ class DbCommonFunction
 		switch ($fetchFrom) {
 			case 'Master':
 				if (
-					isset(self::$masterDb[$req->s['cDetails']['id']])
-					&& self::$masterDb[$req->s['cDetails']['id']] !== null
+					isset(self::$masterDb[$req->cID])
+					&& self::$masterDb[$req->cID] !== null
 				) {
 					return;
 				}
 
 				$masterDbDetails = self::getDbMasterDetails(cDetails: $req->s['cDetails']);
-				self::$masterDb[$req->s['cDetails']['id']] = self::connectDatabaseServer(
+				self::$masterDb[$req->cID] = self::connectDatabaseServer(
 					dbServerType: $masterDbDetails['dbServerType'],
 					dbServerHostname: $masterDbDetails['dbServerHostname'],
 					dbServerPort: $masterDbDetails['dbServerPort'],
@@ -326,14 +326,14 @@ class DbCommonFunction
 				break;
 			case 'Slave':
 				if (
-					isset(self::$slaveDb[$req->s['cDetails']['id']])
-					&& self::$slaveDb[$req->s['cDetails']['id']] !== null
+					isset(self::$slaveDb[$req->cID])
+					&& self::$slaveDb[$req->cID] !== null
 				) {
 					return;
 				}
 
 				$slaveDbDetails = self::getDbSlaveDetails(cDetails: $req->s['cDetails']);
-				self::$slaveDb[$req->s['cDetails']['id']] = self::connectDatabaseServer(
+				self::$slaveDb[$req->cID] = self::connectDatabaseServer(
 					dbServerType: $slaveDbDetails['dbServerType'],
 					dbServerHostname: $slaveDbDetails['dbServerHostname'],
 					dbServerPort: $slaveDbDetails['dbServerPort'],

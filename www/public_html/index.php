@@ -50,10 +50,11 @@ Env::$timestamp = time();
 Env::init();
 
 // Process the request
-$iConfig = [];
+$httpReqDetails = [];
 
-$iConfig['server']['domainName'] = $_SERVER['HTTP_HOST'];
-$iConfig['server']['httpMethod'] = $_SERVER['REQUEST_METHOD'];
+$httpReqDetails['streamData'] = true;
+$httpReqDetails['server']['domainName'] = $_SERVER['HTTP_HOST'];
+$httpReqDetails['server']['httpMethod'] = $_SERVER['REQUEST_METHOD'];
 
 if (
 	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
@@ -62,27 +63,27 @@ if (
 	die("Invalid request");
 }
 
-$iConfig['server']['httpRequestIP'] = CommonFunction::getHttpRequestIP();
+$httpReqDetails['server']['httpRequestIP'] = CommonFunction::getHttpRequestIP();
 
-$iConfig['header'] = getallheaders();
+$httpReqDetails['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
-	$iConfig['header']['range'] = $_SERVER['Range'];
+	$httpReqDetails['header']['range'] = $_SERVER['Range'];
 }
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
-	$iConfig['header']['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
+	$httpReqDetails['header']['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
 }
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-	$iConfig['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
+	$httpReqDetails['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
 
-$iConfig['get'] = &$_GET;
-$iConfig['post'] = file_get_contents(filename: 'php://input');
-$iConfig['files'] = [];
+$httpReqDetails['get'] = &$_GET;
+$httpReqDetails['post'] = file_get_contents(filename: 'php://input');
+$httpReqDetails['files'] = [];
 if (isset($_FILES)) {
-	$iConfig['files'] = &$_FILES;
+	$httpReqDetails['files'] = &$_FILES;
 }
-$iConfig['isWebRequest'] = true;
-$iConfig['httpRequestHash'] = CommonFunction::httpRequestHash(
+$httpReqDetails['isWebRequest'] = true;
+$httpReqDetails['httpRequestHash'] = CommonFunction::httpRequestHash(
 	hashArray: [
 		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
@@ -92,9 +93,9 @@ $iConfig['httpRequestHash'] = CommonFunction::httpRequestHash(
 );
 
 if (
-	isset($iConfig['get'][ROUTE_URL_PARAM])
+	isset($httpReqDetails['get'][ROUTE_URL_PARAM])
 	&& in_array(
-		needle: $iConfig['get'][ROUTE_URL_PARAM],
+		needle: $httpReqDetails['get'][ROUTE_URL_PARAM],
 		haystack: [
 			'/tests',
 			'/auth-test',
@@ -103,10 +104,10 @@ if (
 			'/supp-test'
 		]
 	)
-	&& $iConfig['server']['domainName'] === 'localhost'
+	&& $httpReqDetails['server']['domainName'] === 'localhost'
 ) {
 	$tests = new Test();
-	switch ($iConfig['get'][ROUTE_URL_PARAM]) {
+	switch ($httpReqDetails['get'][ROUTE_URL_PARAM]) {
 		case '/tests':
 			echo '<pre>'.print_r(value: $tests->processTests(), return: true);
 			break;
@@ -126,7 +127,7 @@ if (
 } else {
 
 	ob_start();
-	[$responseheaders, $responseContent, $responseCode] = Start::http(iConfig: $iConfig, streamData: true);
+	[$responseheaders, $responseContent, $responseCode] = Start::http(httpReqDetails: $httpReqDetails);
 	@ob_clean();
 
 	http_response_code(response_code: $responseCode);

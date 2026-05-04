@@ -63,8 +63,8 @@ Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP
 - **$session\['payload'\]** Request data.
 For **GET** method, the **$\_GET** is the payload.
 
-- **$session\['__INSERT-IDs__'\]** Insert ids Data as per configuration.
->For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertId contains the insert ids of the executed INSERT queries.
+- **$session\['__INSERT-IDs__'\]** Insert IDs Data as per configuration.
+>For **POST/PUT/PATCH/DELETE** we perform both INSERT as well as UPDATE operation. The insertID contains the insert IDs of the executed INSERT queries.
 
 - **$session\['sqlResults'\]** Hierarchy data.
 >For **GET** method, one can use previous query results if configured to use hierarchy.

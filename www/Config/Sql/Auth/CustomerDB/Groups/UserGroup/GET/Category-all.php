@@ -13,9 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Groups\UserGroup\GET;
-
-use Microservices\App\Constant;
 use Microservices\App\QueryCacheServerKey;
 
 return [
@@ -92,5 +89,5 @@ return [
 	'fetchFrom' => 'Master',
 	// 'cacheKey' => QueryCacheServerKey::$Category,
 	'oRepresentation' => 'PHP',
-	'phpFile' => Constant::$PHP_DIR . DIRECTORY_SEPARATOR . 'index.php'
+	'phpFile' => $Constant::$PHP_DIR . DIRECTORY_SEPARATOR . 'index.php'
 ];

@@ -36,9 +36,9 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function customerOpenToWeb(&$domainName): string
+	public static function openToWebDomain(&$domainName): string
 	{
-		return "c:otw:{$domainName}";
+		return "otw:{$domainName}";
 	}
 
 	/**
@@ -48,9 +48,9 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function customer($domainName): string
+	public static function closedToWebDomain($domainName): string
 	{
-		return "c:{$domainName}";
+		return "ctw:{$domainName}";
 	}
 
 	/**
@@ -61,21 +61,22 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function customerUser($cID, $username): string
+	public static function customerUsername($cID, $username): string
 	{
-		return "cu:{$cID}:u:{$username}";
+		return "c:{$cID}:u:{$username}";
 	}
 
 	/**
 	 * Get Group Key
 	 *
+	 * @param int $cID Customer ID
 	 * @param int $gID Group ID
 	 *
 	 * @return string
 	 */
-	public static function group($gID): string
+	public static function customerGroup($cID, $gID): string
 	{
-		return "g:{$gID}";
+		return "c:{$cID}:g:{$gID}";
 	}
 
 	/**
@@ -85,21 +86,22 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function cCidr($cID): string
+	public static function customerCidr($cID): string
 	{
-		return "c:cidr:{$cID}";
+		return "c:{$cID}:cidr";
 	}
 
 	/**
 	 * Get Group CIDR Key
 	 *
+	 * @param int $cID Customer ID
 	 * @param int $gID Group ID
 	 *
 	 * @return string
 	 */
-	public static function gCidr($gID): string
+	public static function customerGroupCidr($cID, $gID): string
 	{
-		return "g:cidr:{$gID}";
+		return "c:{$cID}:g:{$gID}:cidr";
 	}
 
 	/**
@@ -110,9 +112,9 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function uCidr($cID, $uID): string
+	public static function customerUserCidr($cID, $uID): string
 	{
-		return "u:cidr:{$cID}:{$uID}";
+		return "c:{$cID}:u:{$uID}:cidr";
 	}
 
 	/**
@@ -130,36 +132,52 @@ class CacheServerKey
 	/**
 	 * Get User Token Key
 	 *
+	 * @param int $cID Customer ID
 	 * @param int $uID User ID
 	 *
 	 * @return string
 	 */
-	public static function userToken($uID): string
+	public static function customerUserToken($cID, $uID): string
 	{
-		return "ut:{$uID}";
+		return "c:{$cID}:u:{$uID}:token";
 	}
 
 	/**
 	 * Get User Token Key
 	 *
+	 * @param int $cID Customer ID
 	 * @param int $uID User ID
 	 *
 	 * @return string
 	 */
-	public static function userSessionId($uID): string
+	public static function customerUserSessionID($cID, $uID): string
 	{
-		return "u:sId:{$uID}";
+		return "c:{$cID}:u:{$uID}:sID";
 	}
 
 	/**
 	 * Get Key maintaining Concurrency Interval(active session) For Current User
 	 *
+	 * @param int $cID Customer ID
 	 * @param int $uID User ID
 	 *
 	 * @return string
 	 */
-	public static function userConcurrency($uID): string
+	public static function customerUserConcurrency($cID, $uID): string
 	{
-		return "u:co:{$uID}";
+		return "c:{$cID}:u:{$uID}:con";
+	}
+
+	/**
+	 * Key to maintain Referrer Lag
+	 *
+	 * @param int $cID Customer ID
+	 * @param int $uID User ID
+	 *
+	 * @return string
+	 */
+	public static function customerUserReferrerLag($cID, $uID): string
+	{
+		return "c:{$cID}:u:{$uID}:rlag";
 	}
 }

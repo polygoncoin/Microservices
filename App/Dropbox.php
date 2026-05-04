@@ -39,7 +39,7 @@ class Dropbox
 	 *
 	 * @var null|array
 	 */
-	private $iConfig = null;
+	private $httpReqDetails = null;
 
 	/**
 	 * Http Object
@@ -84,12 +84,12 @@ class Dropbox
 	/**
 	 * Constructor
 	 *
-	 * @param array $iConfig Http Request Details
+	 * @param array $httpReqDetails Http Request Details
 	 * @param Http  $http
 	 */
-	public function __construct(&$iConfig, &$http = null)
+	public function __construct(&$httpReqDetails, &$http = null)
 	{
-		$this->iConfig = &$iConfig;
+		$this->httpReqDetails = &$httpReqDetails;
 		$this->http = &$http;
 	}
 
@@ -102,7 +102,7 @@ class Dropbox
 	 */
 	public function init($mode): bool
 	{
-		if (!isset($this->iConfig['get'][ROUTE_URL_PARAM])) {
+		if (!isset($this->httpReqDetails['get'][ROUTE_URL_PARAM])) {
 			return false;
 		}
 
@@ -113,13 +113,16 @@ class Dropbox
 			string: str_replace(
 				search: ['../', '..\\', '/', '\\'],
 				replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-				subject: urldecode(string: $this->iConfig['get'][ROUTE_URL_PARAM])
+				subject: urldecode(string: $this->httpReqDetails['get'][ROUTE_URL_PARAM])
 			),
 			characters: './\\'
 		);
 
-		if ($mode === 'Closed') {
-			$this->modeDropBox .= DIRECTORY_SEPARATOR . $this->http->req->cId;
+		if (
+			!$this->http->req->isOpenToWebRequest
+			&& $mode === 'Closed'
+		) {
+			$this->modeDropBox .= DIRECTORY_SEPARATOR . $this->http->req->cID;
 			$this->validateFileRequest();
 		}
 		$this->fileLocation = $this->modeDropBox . $filePath;
@@ -158,7 +161,7 @@ class Dropbox
 		switch (true) {
 			case in_array($this->mimeType, $this->supportedVideoMimes):
 				// Serve Video
-				$videoStream = new StreamVideo(iConfig: $this->iConfig);
+				$videoStream = new StreamVideo(httpReqDetails: $this->httpReqDetails);
 				if (
 					(
 						$httpStatus = $videoStream->init($this->fileLocation)
@@ -192,15 +195,15 @@ class Dropbox
 		$eTag = "{$modifiedTime}";
 
 		if (
-			(isset($this->iConfig['header']['HTTP_IF_NONE_MATCH'])
+			(isset($this->httpReqDetails['header']['HTTP_IF_NONE_MATCH'])
 				&& strpos(
-					haystack: $this->iConfig['header']['HTTP_IF_NONE_MATCH'],
+					haystack: $this->httpReqDetails['header']['HTTP_IF_NONE_MATCH'],
 					needle: $eTag
 				) !== false
 			)
-			|| (isset($this->iConfig['header']['HTTP_IF_MODIFIED_SINCE'])
+			|| (isset($this->httpReqDetails['header']['HTTP_IF_MODIFIED_SINCE'])
 				&& @strtotime(
-					datetime: $this->iConfig['header']['HTTP_IF_MODIFIED_SINCE']
+					datetime: $this->httpReqDetails['header']['HTTP_IF_MODIFIED_SINCE']
 				) == $modifiedTime
 			)
 		) {

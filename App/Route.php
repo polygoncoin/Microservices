@@ -34,7 +34,7 @@ use Microservices\App\Http;
 class Route
 {
 	/**
-	 * Supported HTTP methods of routes
+	 * Supported http methods of routes
 	 *
 	 * @var array
 	 */
@@ -143,7 +143,7 @@ class Route
 	 *
 	 * @param array  $routes     Route
 	 * @param string $route      Current Route
-	 * @param array  $httpRoutes All HTTP Route
+	 * @param array  $httpRoutes All http Route
 	 *
 	 * @return void
 	 */

@@ -103,13 +103,14 @@ class Write
 	 */
 	public function process(): bool|array
 	{
-		$Env = __NAMESPACE__ . '\Env';
-
 		// Load Sql
-		$wSqlConfig = include $this->http->req->rParser->sqlConfigFile;
+		$wSqlConfig = &$this->http->req->rParser->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
 		$this->rateLimitRoute(sqlConfig: $wSqlConfig);
+
+		// Check for configured referrer Lags
+		$this->checkReferrerLag(sqlConfig: $wSqlConfig);
 
 		// Use results in where clause of sub queries recursively
 		$useHierarchy = $this->getUseHierarchy(
@@ -175,7 +176,7 @@ class Write
 
 		// Set Server mode to execute query on - Read / Write Server
 		DbCommonFunction::setDbConnection(req: $this->http->req, fetchFrom: 'Master');
-		$this->dbServerObj = &DbCommonFunction::$masterDb[$this->http->req->cId];
+		$this->dbServerObj = &DbCommonFunction::$masterDb[$this->http->req->cID];
 
 		$this->processWrite(
 			wSqlConfig: $wSqlConfig,
@@ -433,16 +434,25 @@ class Write
 			}
 
 			$payloadIndexes = $payloadIndexes;
-			if ($this->operateAsTransaction && !$this->dbServerObj->beganTransaction) {
+			if (
+				$this->operateAsTransaction
+				&& !$this->dbServerObj->beganTransaction
+			) {
 				$_response['Error'] = 'Transaction rolled back';
 				return;
 			}
 
-			if ($isObject && $i > 0) {
+			if (
+				$isObject
+				&& $i > 0
+			) {
 				return;
 			}
 
-			if (!$isObject && !$useHierarchy) {
+			if (
+				!$isObject
+				&& !$useHierarchy
+			) {
 				array_push($payloadIndexes, $i);
 			}
 			$payloadIndex = is_array(value: $payloadIndexes)
@@ -507,7 +517,10 @@ class Write
 
 			// Execute Query
 			$this->dbServerObj->execDbQuery(sql: $sql, params: $sqlParams);
-			if ($this->operateAsTransaction && !$this->dbServerObj->beganTransaction) {
+			if (
+				$this->operateAsTransaction
+				&& !$this->dbServerObj->beganTransaction
+			) {
 				$_response['Error'] = 'Something went wrong';
 				return;
 			}
@@ -519,7 +532,7 @@ class Write
 				) {
 					$id = $wSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'];
 				} else {
-					$id = $this->dbServerObj->lastInsertId();
+					$id = $this->dbServerObj->lastInsertID();
 				}
 				$_response[$wSqlConfig['__INSERT-IDs__']] = $id;
 				$this->http->req->s['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
@@ -592,7 +605,10 @@ class Write
 			);
 		}
 
-		if (isset($payloadIndexes[0]) && $payloadIndexes[0] === '') {
+		if (
+			isset($payloadIndexes[0])
+			&& $payloadIndexes[0] === ''
+		) {
 			$payloadIndexes = array_shift($payloadIndexes);
 		}
 		if (!is_array(value: $payloadIndexes)) {
@@ -632,7 +648,10 @@ class Write
 						keys: $modulePayloadIndexIttKey
 					);
 
-					if ($useHierarchy && !$dataExists) { // use parent data of a payload
+					if (
+						$useHierarchy
+						&& !$dataExists
+					) { // use parent data of a payload
 						throw new \Exception(
 							message: "Invalid payload: Module '{$module}' missing",
 							code: HttpStatus::$NotFound

@@ -59,19 +59,19 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Validate session ID
 	 *
-	 * @param string $sessionId Session ID
+	 * @param string $sessionID Session ID
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
+	public function getSession($sessionID): bool|string
 	{
 		$sql = "
 			SELECT `sessionData`
 			FROM `{$this->mySqlServerDB}`.`{$this->mySqlServerTable}`
-			WHERE `sessionId` = :sessionId AND lastAccessed > :lastAccessed
+			WHERE `sessionID` = :sessionID AND lastAccessed > :lastAccessed
 		";
 		$params = [
-			':sessionId' => $sessionId,
+			':sessionID' => $sessionID,
 			':lastAccessed' => (Env::$timestamp - $this->sessionMaxLifetime)
 		];
 		if (
@@ -86,22 +86,22 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Write session data
 	 *
-	 * @param string $sessionId   Session ID
+	 * @param string $sessionID   Session ID
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
 	 */
-	public function setSession($sessionId, $sessionData): bool|int
+	public function setSession($sessionID, $sessionData): bool|int
 	{
 		$sql = "
 			INSERT INTO `{$this->mySqlServerDB}`.`{$this->mySqlServerTable}`
 			SET
 				`sessionData` = :sessionData,
 				`lastAccessed` = :lastAccessed,
-				`sessionId` = :sessionId
+				`sessionID` = :sessionID
 		";
 		$params = [
-			':sessionId' => $sessionId,
+			':sessionID' => $sessionID,
 			':sessionData' => $this->encryptData(plainText: $sessionData),
 			':lastAccessed' => Env::$timestamp
 		];
@@ -112,12 +112,12 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session data
 	 *
-	 * @param string $sessionId   Session ID
+	 * @param string $sessionID   Session ID
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
 	 */
-	public function updateSession($sessionId, $sessionData): bool|int
+	public function updateSession($sessionID, $sessionData): bool|int
 	{
 		$sql = "
 			UPDATE `{$this->mySqlServerDB}`.`{$this->mySqlServerTable}`
@@ -125,10 +125,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 				`sessionData` = :sessionData,
 				`lastAccessed` = :lastAccessed
 			WHERE
-				`sessionId` = :sessionId
+				`sessionID` = :sessionID
 		";
 		$params = [
-			':sessionId' => $sessionId,
+			':sessionID' => $sessionID,
 			':sessionData' => $this->encryptData(plainText: $sessionData),
 			':lastAccessed' => Env::$timestamp
 		];
@@ -139,20 +139,20 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session timestamp
 	 *
-	 * @param string $sessionId   Session ID
+	 * @param string $sessionID   Session ID
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool
 	 */
-	public function touchSession($sessionId, $sessionData): bool
+	public function touchSession($sessionID, $sessionData): bool
 	{
 		$sql = "
 			UPDATE `{$this->mySqlServerDB}`.`{$this->mySqlServerTable}`
 			SET `lastAccessed` = :lastAccessed
-			WHERE `sessionId` = :sessionId
+			WHERE `sessionID` = :sessionID
 		";
 		$params = [
-			':sessionId' => $sessionId,
+			':sessionID' => $sessionID,
 			':lastAccessed' => Env::$timestamp
 		];
 		return $this->execSql(sql: $sql, params: $params);
@@ -181,18 +181,18 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionId Session ID
+	 * @param string $sessionID Session ID
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
+	public function deleteSession($sessionID): bool
 	{
 		$sql = "
 			DELETE FROM `{$this->mySqlServerDB}`.`{$this->mySqlServerTable}`
-			WHERE `sessionId` = :sessionId
+			WHERE `sessionID` = :sessionID
 		";
 		$params = [
-			':sessionId' => $sessionId
+			':sessionID' => $sessionID
 		];
 		return $this->execSql(sql: $sql, params: $params);
 	}

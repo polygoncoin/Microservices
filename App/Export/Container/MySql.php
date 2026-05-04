@@ -189,7 +189,10 @@ class MySql implements ExportDatabaseServerInterface
 	 */
 	private function generateRawSqlQuery($sql, $params): string
 	{
-		if (empty($params) || count(value: $params) === 0) {
+		if (
+			empty($params)
+			|| count(value: $params) === 0
+		) {
 			return $sql;
 		}
 

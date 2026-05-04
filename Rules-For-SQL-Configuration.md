@@ -44,7 +44,7 @@ return [
 				return 'value';
 			}
 		],
-			// Fetch value of last insert ids
+			// Fetch value of last insert IDs
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',                        // custom
 			'fetchFromValue' => 'No'                        // Static values
@@ -120,10 +120,10 @@ return [
 				],
 				// Database DataTypes settings required when useHierarchy is true
 				// to validate each data set before procedding forward
-					// Fetch value of last insert ids
+					// Fetch value of last insert IDs
 					'column' => 'id',
 					'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
-					'fetchFromValue' => '<saved-id-key>'            // previous Insert ids
+					'fetchFromValue' => '<saved-id-key>'            // previous Insert IDs
 				],
 					// Fetch values of params from previous queries
 					'column' => 'id',
@@ -172,10 +172,10 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert Ids
+					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
 					'fetchFromValue' => 'address'
 				],
-					// Sql Insert Ids
+					// Sql Insert IDs
 					'fetchFrom' => '__INSERT-IDs__',
 					'fetchFromValue' => 'address:id'
 				]
@@ -190,7 +190,7 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert Ids
+					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
 					'fetchFromValue' => 'address'
 				],
 				[...]
@@ -206,7 +206,7 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert Ids
+					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
 					'fetchFromValue' => 'address'
 				],
 				[...]
@@ -228,11 +228,11 @@ return [
 	// Array of validation functions to be performed
 	'__VALIDATE__' => [
 		[
-			'fn' => 'validateGroupId',
+			'fn' => 'validateGroupID',
 			'fnArgs' => [
 				'id' => ['payload', 'id']
 			],
-			'errorMessage' => 'Invalid Group Id'
+			'errorMessage' => 'Invalid Group ID'
 		],
 		[...]
 	],
@@ -254,6 +254,25 @@ return [
 		// No of Request => Seconds Lag
 		10	=> 0,
 		20	=> 10,
+	],
+
+	// Enable referrer lag for current route
+	// To be configured in source route sql config
+	'enableReferrerLag' => true,
+
+	// Minimum Lag time between current request and referrer/previous request
+	// To be configured in target route sql config
+	'referrerLagWindow' => [
+		[
+			'referrer' => '/referrer-route-1',
+			'minimumReferrerLagWindow'	=> 7,
+			'maximumReferrerLagWindow'	=> 10,
+		],
+		[
+			'referrer' => '/referrer-route-2',
+			'minimumReferrerLagWindow'	=> 8,
+			'maximumReferrerLagWindow'	=> 11,
+		],
 	],
 
 	// Any among below can be used for DML operations (These are Optional keys)
@@ -468,11 +487,11 @@ return [
 	// Array of validation functions to be performed
 	'__VALIDATE__' => [
 		[
-			'fn' => 'validateGroupId',
+			'fn' => 'validateGroupID',
 			'fnArgs' => [
 				'id' => ['payload', 'id']
 			],
-			'errorMessage' => 'Invalid Group Id'
+			'errorMessage' => 'Invalid Group ID'
 		],
 		[...]
 	],
@@ -493,6 +512,25 @@ return [
 		// No of Request => Seconds Lag
 		10	=> 0,
 		20	=> 10,
+	],
+
+	// Enable referrer lag for current route
+	// To be configured in source route sql config
+	'enableReferrerLag' => true,
+
+	// Minimum Lag time between current request and referrer/previous request
+	// To be configured in target route sql config
+	'referrerLagWindow' => [
+		[
+			'referrer' => '/referrer-route-1',
+			'minimumReferrerLagWindow'	=> 7,
+			'maximumReferrerLagWindow'	=> 10,
+		],
+		[
+			'referrer' => '/referrer-route-2',
+			'minimumReferrerLagWindow'	=> 8,
+			'maximumReferrerLagWindow'	=> 11,
+		],
 	],
 
 	// Any among below can be used for DML operations (These are Optional keys)

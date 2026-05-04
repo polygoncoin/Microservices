@@ -234,11 +234,11 @@ class PostgreSql implements SqlInterface
 	}
 
 	/**
-	 * Last Insert Id by PDO
+	 * Last Insert ID by PDO
 	 *
 	 * @return bool|int
 	 */
-	public function lastInsertId(): bool|int
+	public function lastInsertID(): bool|int
 	{
 		try {
 			if ($this->stmt !== false) {
@@ -269,7 +269,10 @@ class PostgreSql implements SqlInterface
 		$this->connect();
 
 		try {
-			if ($pushPop && $this->stmt) {
+			if (
+				$pushPop
+				&& $this->stmt
+			) {
 				array_push($this->stmts, $this->stmt);
 			}
 			$this->stmt = $this->dbServerObj->prepare(
@@ -339,7 +342,10 @@ class PostgreSql implements SqlInterface
 		try {
 			if ($this->stmt) {
 				$this->stmt->closeCursor();
-				if ($pushPop && count(value: $this->stmts)) {
+				if (
+					$pushPop
+					&& count(value: $this->stmts)
+				) {
 					$this->stmt = array_pop(array: $this->stmts);
 				}
 			}

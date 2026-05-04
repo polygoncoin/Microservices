@@ -13,9 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Open\GET;
-
-use Microservices\App\Constant;
 use Microservices\App\QueryCacheServerKey;
 
 return [
@@ -91,7 +88,7 @@ return [
 	'useResultSet' => true,
 	'fetchFrom' => 'Master',
 	'cacheKey' => QueryCacheServerKey::category(
-		customerID: $this->http->req->s['cDetails']['id'],
+		customerID: $this->http->req->cID,
 		groupID: null,
 		isOpenToWebRequest: true
 	),
@@ -100,6 +97,6 @@ return [
 		1 => 0,
 		// 2 => 10,
 	],
-	'xsltFile' => Constant::$XSLT_DIR
+	'xsltFile' => $Constant::$XSLT_DIR
 		. DIRECTORY_SEPARATOR . 'Category.xls'
 ];

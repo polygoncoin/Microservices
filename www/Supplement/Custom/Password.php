@@ -92,9 +92,8 @@ class Password implements CustomInterface
 				algo: PASSWORD_DEFAULT
 			);
 
-			$usersTable = $this->http->req->usersTable;
 			$sql = "
-				UPDATE `{$usersTable}`
+				UPDATE `{$this->http->req->s['cDetails']['usersTable']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";
@@ -104,11 +103,11 @@ class Password implements CustomInterface
 				':is_deleted' => 'No',
 			];
 
-			DbCommonFunction::$masterDb[$this->http->req->cId]->execDbQuery(sql: $sql, params: $sqlParams);
-			DbCommonFunction::$masterDb[$this->http->req->cId]->closeCursor();
+			DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $sqlParams);
+			DbCommonFunction::$masterDb[$this->http->req->cID]->closeCursor();
 
-			$cID = $this->http->req->s['cDetails']['id'];
-			$cu_key = CacheServerKey::customerUser(
+			$cID = $this->http->req->cID;
+			$cu_key = CacheServerKey::customerUsername(
 				cID: $cID,
 				username: $userName
 			);

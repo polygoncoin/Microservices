@@ -13,10 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Common;
-
-use Microservices\App\Constant;
-
 return [
 	// Details of data to perform task
 	'__PAYLOAD__' => [
@@ -25,7 +21,7 @@ return [
 		//     'fetchFrom' => 'routeParams',
 		//     'fetchFromValue' => 'id',
 		//     'dataType' => DatabaseServerDataType::$PrimaryKey,
-		//     'required' => Constant::$REQUIRED
+		//     'required' => $Constant::$REQUIRED
 		// ],
 		[
 			'column' => 'id',

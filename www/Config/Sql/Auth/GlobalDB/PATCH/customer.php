@@ -13,10 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\GlobalDB\PATCH;
-
 use Microservices\App\DatabaseServerDataType;
-use Microservices\App\Env;
 
 return [
 	'__QUERY__' => "UPDATE `{$Env::$customerTable}` SET __SET__ WHERE __WHERE__",
@@ -64,11 +61,11 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-				'table' => ['custom', Env::$customerTable],
+				'table' => ['custom', $Env::$customerTable],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
-			'errorMessage' => 'Invalid Customer Id'
+			'errorMessage' => 'Invalid Customer ID'
 		],
 	]
 ];

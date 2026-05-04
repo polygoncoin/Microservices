@@ -27,15 +27,14 @@ class Start
 	/**
 	 * Process http request data
 	 *
-	 * @param array $iConfig    HTTP request details
-	 * @param bool  $streamData false - represent child request
+	 * @param array $httpReqDetails Http request details
 	 *
 	 * @return array
 	 */
-	public static function http($iConfig, $streamData = false)
+	public static function http(&$httpReqDetails)
 	{
-		if ($iConfig['server']['httpMethod'] === Constant::$GET) {
-			$dropboxCache = new Dropbox(iConfig: $iConfig);
+		if ($httpReqDetails['server']['httpMethod'] === Constant::$GET) {
+			$dropboxCache = new Dropbox(httpReqDetails: $httpReqDetails);
 			if ($dropboxCache->init(mode: 'Open')) {
 				// File exists - Serve from Dropbox
 				return $dropboxCache->process();
@@ -46,9 +45,12 @@ class Start
 		$headers = [];
 
 		try {
-			$Microservices = new Microservices(iConfig: $iConfig);
+			$Microservices = new Microservices(httpReqDetails: $httpReqDetails);
 
-			if ($streamData && $iConfig['server']['httpMethod'] == 'OPTIONS') {
+			if (
+				$httpReqDetails['streamData']
+				&& $httpReqDetails['server']['httpMethod'] == 'OPTIONS'
+			) {
 				// Setting CORS
 				$headers = $Microservices->getHeaders();
 				$data = '{}';
@@ -59,12 +61,15 @@ class Start
 
 			if ($Microservices->init()) {
 				// Setting CORS
-				if ($streamData) {
+				if ($httpReqDetails['streamData']) {
 					$headers = $Microservices->getHeaders();
 				}
 
 				$return = $Microservices->process();
-				if (is_array($return) && count($return) === 3) {
+				if (
+					is_array($return)
+					&& count($return) === 3
+				) {
 					return $return;
 				}
 
@@ -85,7 +90,7 @@ class Start
 				$logDetails = [
 					'LogType' => 'ERROR',
 					'DateTime' => $dateTime,
-					'HttpDetails' => [
+					'httpReqDetails' => [
 						'HttpCode' => $e->getCode(),
 						'HttpMessage' => $e->getMessage()
 					],
@@ -110,7 +115,7 @@ class Start
 				];
 			}
 
-			// $dataEncode = new DataEncode(iConfig: $iConfig);
+			// $dataEncode = new DataEncode(httpReqDetails: $httpReqDetails);
 			// $dataEncode->init();
 			// $dataEncode->startObject();
 			// $dataEncode->addKeyData(key: 'Error', data: $arr);

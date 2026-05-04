@@ -114,7 +114,10 @@ class Gateway
 
 		// Rate limit open traffic (not limited by allowed IPs/CIDR and allowed
 		// Rate Limits to user)
-		if ($this->cidrChecked === false && $this->rateLimitChecked === false) {
+		if (
+			$this->cidrChecked === false
+			&& $this->rateLimitChecked === false
+		) {
 			// IP Rate Limiting
 			$this->rateLimitIp();
 		}
@@ -176,20 +179,21 @@ class Gateway
 			return;
 		}
 
-		$cCidrKey = CacheServerKey::cCidr(
-			cID: $this->http->req->s['cDetails']['id']
+		$cCidrKey = CacheServerKey::customerCidr(
+			cID: $this->http->req->cID
 		);
-		$gCidrKey = CacheServerKey::gCidr(
-			gID: $this->http->req->s['uDetails']['group_id']
+		$gCidrKey = CacheServerKey::customerGroupCidr(
+			cID: $this->http->req->cID,
+			gID: $this->http->req->gID
 		);
-		$uCidrKey = CacheServerKey::uCidr(
-			cID: $this->http->req->s['cDetails']['id'],
-			uID: $this->http->req->s['uDetails']['id']
+		$uCidrKey = CacheServerKey::customerUserCidr(
+			cID: $this->http->req->cID,
+			uID: $this->http->req->uID
 		);
 		foreach ([$cCidrKey, $gCidrKey, $uCidrKey] as $key) {
 			if (!$this->cidrChecked) {
 				$this->cidrChecked = CommonFunction::checkCacheCidr(
-					IP: $this->http->iConfig['server']['httpRequestIP'],
+					IP: $this->http->httpReqDetails['server']['httpRequestIP'],
 					againstCacheKey: $key
 				);
 			}
@@ -216,7 +220,7 @@ class Gateway
 				$this->http->req->s['cDetails']['rateLimitMaxRequest'];
 		$rateLimitMaxRequestWindow =
 				$this->http->req->s['cDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->http->req->s['cDetails']['id'];
+		$key = $this->http->req->cID;
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitCustomerPrefix,
@@ -247,8 +251,8 @@ class Gateway
 			$this->http->req->s['gDetails']['rateLimitMaxRequest'];
 		$rateLimitMaxRequestWindow =
 			$this->http->req->s['gDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->http->req->s['cDetails']['id'] . ':'
-			. $this->http->req->s['uDetails']['id'];
+		$key = $this->http->req->cID . ':'
+			. $this->http->req->uID;
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitGroupPrefix,
@@ -278,9 +282,8 @@ class Gateway
 			$this->http->req->s['gDetails']['rateLimitMaxRequest'];
 		$rateLimitMaxRequestWindow =
 			$this->http->req->s['gDetails']['rateLimitMaxRequestWindow'];
-		$key = $this->http->req->s['cDetails']['id'] . ':'
-			. $this->http->req->s['uDetails']['id'] . ':'
-			. $this->http->req->s['uDetails']['user_id'];
+		$key = $this->http->req->cID . ':'
+			. $this->http->req->uID;
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitUserPrefix,
@@ -304,8 +307,8 @@ class Gateway
 		$rateLimitUserPrefix = Env::$rateLimitUsersRequestPrefix;
 		$rateLimitMaxRequest = Env::$rateLimitUsersMaxRequest;
 		$rateLimitMaxRequestWindow = Env::$rateLimitUsersMaxRequestWindow;
-		$key = $this->http->req->s['cDetails']['id'] . ':'
-			. $this->http->req->s['uDetails']['id'];
+		$key = $this->http->req->cID . ':'
+			. $this->http->req->uID;
 
 		$this->rateLimitChecked = $this->checkRateLimit(
 			rateLimitPrefix: $rateLimitUserPrefix,
@@ -329,7 +332,7 @@ class Gateway
 		$rateLimitIPPrefix = Env::$rateLimitIPPrefix;
 		$rateLimitIPMaxRequest = Env::$rateLimitIPMaxRequest;
 		$rateLimitIPMaxRequestWindow = Env::$rateLimitIPMaxRequestWindow;
-		$key = $this->http->iConfig['server']['httpRequestIP'];
+		$key = $this->http->httpReqDetails['server']['httpRequestIP'];
 
 		$this->checkRateLimit(
 			rateLimitPrefix: $rateLimitIPPrefix,

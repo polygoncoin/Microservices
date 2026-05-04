@@ -13,8 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\CustomerDB\Groups\AdminGroup\POST;
-
 use Microservices\App\QueryCacheServerKey;
 
 return [
@@ -71,12 +69,12 @@ return [
 	'useHierarchy' => true,
 	'affectedCacheKeys' => [
 		QueryCacheServerKey::category(
-			customerID: $this->http->req->s['cDetails']['id'],
+			customerID: $this->http->req->cID,
 			groupID: $this->http->req->s['gDetails']['id'],
 			isOpenToWebRequest: false
 		),
 		QueryCacheServerKey::category1(
-			customerID: $this->http->req->s['cDetails']['id'],
+			customerID: $this->http->req->cID,
 			groupID: $this->http->req->s['gDetails']['id'],
 			isOpenToWebRequest: false
 		)

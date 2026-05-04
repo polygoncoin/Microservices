@@ -141,7 +141,10 @@ class MongoDb implements NoSqlInterface
 		try {
 			if ($this->uri === null) {
 				$UP = '';
-				if ($this->cacheServerUsername !== null && $this->cacheServerPassword !== null) {
+				if (
+					$this->cacheServerUsername !== null
+					&& $this->cacheServerPassword !== null
+				) {
 					$UP = "{$this->cacheServerUsername}:{$this->cacheServerPassword}@";
 				}
 				$this->uri = 'mongodb://' . $UP

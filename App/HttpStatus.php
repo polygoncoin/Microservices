@@ -1,10 +1,10 @@
 <?php
 
 /**
- * HTTP Status
+ * Http Status
  * php version 8.3
  *
- * @category  HTTP_Status
+ * @category  Http Status
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -16,10 +16,10 @@
 namespace Microservices\App;
 
 /**
- * HTTP Status
+ * Http Status
  * php version 8.3
  *
- * @category  HTTP_Status
+ * @category  Http Status
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)

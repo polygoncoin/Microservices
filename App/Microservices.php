@@ -54,7 +54,7 @@ class Microservices
 	 *
 	 * @var null|array
 	 */
-	public $iConfig = null;
+	public $httpReqDetails = null;
 
 	/**
 	 * Http Object
@@ -66,12 +66,12 @@ class Microservices
 	/**
 	 * Constructor
 	 *
-	 * @param array $iConfig Http Request Details
+	 * @param array $httpReqDetails Http Request Details
 	 */
-	public function __construct(&$iConfig)
+	public function __construct(&$httpReqDetails)
 	{
-		$this->iConfig = &$iConfig;
-		$this->http = new Http($this->iConfig);
+		$this->httpReqDetails = &$httpReqDetails;
+		$this->http = new Http($this->httpReqDetails);
 	}
 
 	/**
@@ -82,9 +82,9 @@ class Microservices
 	 */
 	public function init(): bool
 	{
-		$this->http->init(iConfig: $this->iConfig);
+		$this->http->init(httpReqDetails: $this->httpReqDetails);
 
-		if (!isset($this->iConfig['get'][ROUTE_URL_PARAM])) {
+		if (!isset($this->httpReqDetails['get'][ROUTE_URL_PARAM])) {
 			throw new \Exception(
 				message: 'Missing route',
 				code: HttpStatus::$NotFound
@@ -132,11 +132,11 @@ class Microservices
 			case (
 					Env::$enableCronRequest
 					&& strpos(
-						haystack: $this->http->iConfig['get'][ROUTE_URL_PARAM],
+						haystack: $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
 						needle: '/' . Env::$cronRequestRoutePrefix
 					) === 0
 				):
-				if ($this->http->iConfig['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
+				if ($this->http->httpReqDetails['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
 					throw new \Exception(
 						message: 'Source IP is not supported',
 						code: HttpStatus::$NotFound
@@ -145,17 +145,17 @@ class Microservices
 				$class = __NAMESPACE__ . '\\Cron';
 				break;
 
-			case $this->http->iConfig['get'][ROUTE_URL_PARAM] === '/logout':
+			case $this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/logout':
 				$class = __NAMESPACE__ . '\\Logout';
 				break;
 
-			// Requires HTTP auth username and password
+			// Requires http auth username and password
 			case (
 					Env::$enableReloadRequest
-					&& $this->http->iConfig['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
+					&& $this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
 				):
 				$isValidIp = CommonFunction::checkCidr(
-					IP: $this->http->iConfig['server']['httpRequestIP'],
+					IP: $this->http->httpReqDetails['server']['httpRequestIP'],
 					cidrString: Env::$reloadRestrictedCidr
 				);
 				if (!$isValidIp) {
@@ -168,7 +168,7 @@ class Microservices
 				break;
 
 			// Generates auth token
-			case $this->http->iConfig['get'][ROUTE_URL_PARAM] === '/login':
+			case $this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/login':
 				$class = __NAMESPACE__ . '\\Login';
 				break;
 
@@ -190,7 +190,10 @@ class Microservices
 					$this->http->initResponse();
 					$this->startData();
 					$return = $api->process();
-					if (is_array($return) && count($return) === 3) {
+					if (
+						is_array($return)
+						&& count($return) === 3
+					) {
 						return $return;
 					}
 					$this->addStatus();
@@ -289,7 +292,7 @@ class Microservices
 	public function getHeaders(): array
 	{
 		$headers = [];
-		$headers['Access-Control-Allow-Origin'] = $this->iConfig['server']['domainName'];
+		$headers['Access-Control-Allow-Origin'] = $this->httpReqDetails['server']['domainName'];
 		$headers['Vary'] = 'Origin';
 		$headers['Access-Control-Allow-Headers'] = '*';
 
@@ -301,7 +304,7 @@ class Microservices
 		$headers['Cross-Origin-Opener-Policy'] = 'unsafe-none';
 
 		// Access-Control headers are received during OPTIONS request
-		if ($this->iConfig['server']['httpMethod'] == 'OPTIONS') {
+		if ($this->httpReqDetails['server']['httpMethod'] == 'OPTIONS') {
 			// may also be using PUT, PATCH, HEAD etc
 			$methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
 			$headers['Access-Control-Allow-Methods'] = $methods;

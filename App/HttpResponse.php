@@ -1,10 +1,10 @@
 <?php
 
 /**
- * HTTP Response
+ * Http Response
  * php version 8.3
  *
- * @category  HTTP_Response
+ * @category  Http Response
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -21,10 +21,10 @@ use Microservices\App\Http;
 use Microservices\App\HttpStatus;
 
 /**
- * HTTP Response
+ * Http Response
  * php version 8.3
  *
- * @category  HTTP_Response
+ * @category  Http Response
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -42,7 +42,7 @@ class HttpResponse
 	public $oRepresentation = null;
 
 	/**
-	 * HTTP Status
+	 * Http Status
 	 *
 	 * @var int
 	 */

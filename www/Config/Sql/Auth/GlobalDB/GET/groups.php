@@ -13,8 +13,6 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\www\Config\Sql\Auth\GlobalDB\GET;
-
 return [
 	'all' => [
 		'__QUERY__' => "SELECT * FROM `{$Env::$groupsTable}` WHERE __WHERE__ ORDER BY id ASC",

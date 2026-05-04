@@ -99,7 +99,7 @@ class Session
 	public static $memcachedServerPort = 11211;
 
 	/**
-	 * Session Id Cookie name
+	 * Session ID Cookie name
 	 *
 	 * @var string
 	 */
@@ -169,7 +169,10 @@ class Session
 		if (empty(self::$sessionName)) {
 			die('Invalid "sessionName"');
 		}
-		if (self::$sessionMode === 'Cookie' && empty(self::$sessionDataName)) {
+		if (
+			self::$sessionMode === 'Cookie'
+			&& empty(self::$sessionDataName)
+		) {
 			die('Invalid "sessionDataName"');
 		}
 
@@ -239,7 +242,10 @@ class Session
 				if (empty(self::$redisServerPort)) {
 					die('Invalid "redisServerPort"');
 				}
-				if (empty(self::$redisServerDB) && self::$redisServerDB != 0) {
+				if (
+					empty(self::$redisServerDB)
+					&& self::$redisServerDB != 0
+				) {
 					die('Invalid "redisServerDB"');
 				}
 				break;
@@ -481,26 +487,26 @@ class Session
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionId Session ID
+	 * @param string $sessionID Session ID
 	 *
 	 * @return bool
 	 */
-	public static function deleteSession($sessionId): bool
+	public static function deleteSession($sessionID): bool
 	{
-		return self::$sessionContainer->deleteSession($sessionId);
+		return self::$sessionContainer->deleteSession($sessionID);
 	}
 
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param array $sessionIds Session IDs
+	 * @param array $sessionIDs Session IDs
 	 *
 	 * @return void
 	 */
-	public static function deleteSessions($sessionIds): void
+	public static function deleteSessions($sessionIDs): void
 	{
-		for ($i = 0, $iCount = count($sessionIds); $i < $iCount; $i++) {
-			self::deleteSession($sessionIds[$i]);
+		for ($i = 0, $iCount = count($sessionIDs); $i < $iCount; $i++) {
+			self::deleteSession($sessionIDs[$i]);
 		}
 	}
 }

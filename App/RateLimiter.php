@@ -42,7 +42,7 @@ class RateLimiter
 	/**
 	 * Constructor
 	 *
-	 * @param HttpRequest $req HTTP Request object
+	 * @param HttpRequest $req Http Request object
 	 */
 	public function __construct()
 	{

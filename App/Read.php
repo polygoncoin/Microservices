@@ -102,13 +102,14 @@ class Read
 	 */
 	public function process(): bool|array
 	{
-		$Env = __NAMESPACE__ . '\Env';
-
 		// Load Sql
-		$rSqlConfig = include $this->http->req->rParser->sqlConfigFile;
+		$rSqlConfig = &$this->http->req->rParser->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
 		$this->rateLimitRoute(sqlConfig: $rSqlConfig);
+
+		// Check for configured referrer Lags
+		$this->checkReferrerLag(sqlConfig: $rSqlConfig);
 
 		// Lag Response
 		$this->lagResponse(sqlConfig: $rSqlConfig);
@@ -197,7 +198,7 @@ class Read
 		$fetchFrom = strtolower($fetchFrom);
 		$this->modeColumn = $fetchFrom . '_db_server_query_placeholder';
 		$dbServerObj = $fetchFrom . 'Db';
-		$this->dbServerObj = &(DbCommonFunction::$$dbServerObj)[$this->http->req->cId];
+		$this->dbServerObj = &(DbCommonFunction::$$dbServerObj)[$this->http->req->cID];
 
 		// Use result set recursively flag
 		$useResultSet = $this->getUseHierarchy(
@@ -361,7 +362,10 @@ class Read
 						useResultSet: $useResultSet
 					);
 					$this->dataEncode->endArray();
-					if ($isFirstCall && isset($rSqlConfig['countQuery'])) {
+					if (
+						$isFirstCall
+						&& isset($rSqlConfig['countQuery'])
+					) {
 						$this->dataEncode->endObject();
 					}
 					break;
@@ -480,8 +484,8 @@ class Read
 		unset($rSqlConfig['__COUNT-SQL-COMMENT__']);
 		unset($rSqlConfig['countQuery']);
 
-		$this->http->req->s['queryParams']['page']  = $this->http->iConfig['get']['page'] ?? 1;
-		$this->http->req->s['queryParams']['perPage']  = $this->http->iConfig['get']['perPage'] ??
+		$this->http->req->s['queryParams']['page']  = $this->http->httpReqDetails['get']['page'] ?? 1;
+		$this->http->req->s['queryParams']['perPage']  = $this->http->httpReqDetails['get']['perPage'] ??
 			Env::$defaultPerPage;
 
 		if ($this->http->req->s['queryParams']['perPage'] > Env::$maxResultsPerPage) {
@@ -653,7 +657,10 @@ class Read
 		$row,
 		$useResultSet
 	): void {
-		if ($useResultSet && !empty($row)) {
+		if (
+			$useResultSet
+			&& !empty($row)
+		) {
 			$this->resetFetchData(
 				fetchFrom: 'sqlResults',
 				keys: $configKeys,

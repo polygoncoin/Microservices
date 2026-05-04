@@ -60,7 +60,7 @@ class Counter
 				$sqlParams = [];
 
 				DbCommonFunction::$gDbServer->execDbQuery(sql: $sql, params: $sqlParams);
-				$id = DbCommonFunction::$gDbServer->lastInsertId();
+				$id = DbCommonFunction::$gDbServer->lastInsertID();
 				break;
 		}
 

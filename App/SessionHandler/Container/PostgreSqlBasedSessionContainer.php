@@ -59,11 +59,11 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Validate session ID
 	 *
-	 * @param string $sessionId Session ID
+	 * @param string $sessionID Session ID
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
+	public function getSession($sessionID): bool|string
 	{
 		$sql = "
 			SELECT session_data
@@ -71,7 +71,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			WHERE session_id = $1 AND last_accessed > $2
 		";
 		$params = [
-			$sessionId,
+			$sessionID,
 			(Env::$timestamp - $this->sessionMaxLifetime)
 		];
 
@@ -85,19 +85,19 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Write session data
 	 *
-	 * @param string $sessionId   Session ID
+	 * @param string $sessionID   Session ID
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
 	 */
-	public function setSession($sessionId, $sessionData): bool|int
+	public function setSession($sessionID, $sessionData): bool|int
 	{
 		$sql = "
 			INSERT INTO {$this->pgSqlServerTable} (session_id, last_accessed, session_data)
 			VALUES ($1, $2, $3)
 		";
 		$params = [
-			$sessionId,
+			$sessionID,
 			Env::$timestamp,
 			$this->encryptData(plainText: $sessionData),
 		];
@@ -108,12 +108,12 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session data
 	 *
-	 * @param string $sessionId   Session ID
+	 * @param string $sessionID   Session ID
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
 	 */
-	public function updateSession($sessionId, $sessionData): bool|int
+	public function updateSession($sessionID, $sessionData): bool|int
 	{
 		$sql = "
 			UPDATE {$this->pgSqlServerTable}
@@ -126,7 +126,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		$params = [
 			Env::$timestamp,
 			$this->encryptData(plainText: $sessionData),
-			$sessionId
+			$sessionID
 		];
 
 		return $this->execSql(sql: $sql, params: $params);
@@ -135,12 +135,12 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session timestamp
 	 *
-	 * @param string $sessionId   Session ID
+	 * @param string $sessionID   Session ID
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool
 	 */
-	public function touchSession($sessionId, $sessionData): bool
+	public function touchSession($sessionID, $sessionData): bool
 	{
 		$sql = "
 			UPDATE {$this->pgSqlServerTable}
@@ -149,7 +149,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		";
 		$params = [
 			Env::$timestamp,
-			$sessionId
+			$sessionID
 		];
 		return $this->execSql(sql: $sql, params: $params);
 	}
@@ -176,18 +176,18 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionId Session ID
+	 * @param string $sessionID Session ID
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
+	public function deleteSession($sessionID): bool
 	{
 		$sql = "
 			DELETE FROM {$this->pgSqlServerTable}
 			WHERE session_id = $1
 		";
 		$params = [
-			$sessionId
+			$sessionID
 		];
 		return $this->execSql(sql: $sql, params: $params);
 	}

@@ -63,7 +63,10 @@ class SessionContainerHelper
 	 */
 	protected function encryptData($plainText): string
 	{
-		if (!empty($this->passphrase) && !empty($this->iv)) {
+		if (
+			!empty($this->passphrase)
+			&& !empty($this->iv)
+		) {
 			return base64_encode(
 				string: openssl_encrypt(
 					data: $plainText,
@@ -86,7 +89,10 @@ class SessionContainerHelper
 	 */
 	protected function decryptData($cipherText): bool|string
 	{
-		if (!empty($this->passphrase) && !empty($this->iv)) {
+		if (
+			!empty($this->passphrase)
+			&& !empty($this->iv)
+		) {
 			return openssl_decrypt(
 				data: base64_decode(string: $cipherText),
 				cipher_algo: $this->cipher_algo,

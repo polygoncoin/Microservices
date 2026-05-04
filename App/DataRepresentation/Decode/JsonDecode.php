@@ -125,7 +125,10 @@ class JsonDecode implements DataDecodeInterface
 	{
 		$this->jsonFileIndex = null;
 		foreach ($this->jsonDecodeEngine->process(index: true) as $keys => $val) {
-			if (isset($val['sIndex']) && isset($val['eIndex'])) {
+			if (
+				isset($val['sIndex'])
+				&& isset($val['eIndex'])
+			) {
 				$jsonFileIndex = &$this->jsonFileIndex;
 				for ($i = 0, $iCount = count(value: $keys); $i < $iCount; $i++) {
 					if (
@@ -158,7 +161,10 @@ class JsonDecode implements DataDecodeInterface
 	public function isset($keys = null): bool
 	{
 		$return = true;
-		if (($keys !== null) && strlen(string: $keys) !== 0) {
+		if (
+			($keys !== null)
+			&& strlen(string: $keys) !== 0
+		) {
 			$jsonFileIndex = &$this->jsonFileIndex;
 			foreach (explode(separator: ':', string: $keys) as $key) {
 				if (isset($jsonFileIndex[$key])) {
@@ -182,7 +188,10 @@ class JsonDecode implements DataDecodeInterface
 	public function dataType($keys = null): string
 	{
 		$jsonFileIndex = &$this->jsonFileIndex;
-		if (($keys !== null) && strlen(string: $keys) > 0) {
+		if (
+			($keys !== null)
+			&& strlen(string: $keys) > 0
+		) {
 			foreach (explode(separator: ':', string: $keys) as $key) {
 				if (isset($jsonFileIndex[$key])) {
 					$jsonFileIndex = &$jsonFileIndex[$key];
@@ -212,7 +221,10 @@ class JsonDecode implements DataDecodeInterface
 	public function count($keys = null): int
 	{
 		$jsonFileIndex = &$this->jsonFileIndex;
-		if (($keys !== null) && strlen(string: $keys) !== 0) {
+		if (
+			($keys !== null)
+			&& strlen(string: $keys) !== 0
+		) {
 			foreach (explode(separator: ':', string: $keys) as $key) {
 				if (isset($jsonFileIndex[$key])) {
 					$jsonFileIndex = &$jsonFileIndex[$key];
@@ -226,7 +238,10 @@ class JsonDecode implements DataDecodeInterface
 		}
 
 		$count = 0;
-		if (isset($jsonFileIndex['sIndex']) && isset($jsonFileIndex['eIndex'])) {
+		if (
+			isset($jsonFileIndex['sIndex'])
+			&& isset($jsonFileIndex['eIndex'])
+		) {
 			$count = 1;
 		}
 		if (isset($jsonFileIndex['_c_'])) {
@@ -291,7 +306,10 @@ class JsonDecode implements DataDecodeInterface
 			return;
 		}
 		$jsonFileIndex = &$this->jsonFileIndex;
-		if (($keys !== null) && strlen(string: $keys) !== 0) {
+		if (
+			($keys !== null)
+			&& strlen(string: $keys) !== 0
+		) {
 			foreach (explode(separator: ':', string: $keys) as $key) {
 				if (isset($jsonFileIndex[$key])) {
 					$jsonFileIndex = &$jsonFileIndex[$key];
@@ -303,7 +321,10 @@ class JsonDecode implements DataDecodeInterface
 				}
 			}
 		}
-		if (isset($jsonFileIndex['sIndex']) && isset($jsonFileIndex['eIndex'])) {
+		if (
+			isset($jsonFileIndex['sIndex'])
+			&& isset($jsonFileIndex['eIndex'])
+		) {
 			$this->jsonDecodeEngine->sIndex = (int)$jsonFileIndex['sIndex'];
 			$this->jsonDecodeEngine->eIndex = (int)$jsonFileIndex['eIndex'];
 		} else {

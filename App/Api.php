@@ -23,7 +23,7 @@ use Microservices\App\Http;
 use Microservices\App\Supplement;
 
 /**
- * Class to initialize api HTTP request
+ * Class to initialize api http request
  * php version 8.3
  *
  * @category  API
@@ -79,8 +79,11 @@ class Api
 	 */
 	public function process(): mixed
 	{
-		if ($this->http->iConfig['server']['httpMethod'] === Constant::$GET) {
-			$dropboxCache = new Dropbox(iConfig: $this->http->iConfig, http: $this->http);
+		if (
+			!$this->http->req->isOpenToWebRequest
+			&& $this->http->httpReqDetails['server']['httpMethod'] === Constant::$GET
+		) {
+			$dropboxCache = new Dropbox(httpReqDetails: $this->http->httpReqDetails, http: $this->http);
 			if ($dropboxCache->init(mode: 'Closed')) {
 				// File exists - Serve from Dropbox
 				return $dropboxCache->process();
@@ -116,7 +119,7 @@ class Api
 		}
 
 		$class = null;
-		switch ($this->http->iConfig['server']['httpMethod']) {
+		switch ($this->http->httpReqDetails['server']['httpMethod']) {
 			case Constant::$GET:
 				$class = __NAMESPACE__ . '\\Read';
 				break;

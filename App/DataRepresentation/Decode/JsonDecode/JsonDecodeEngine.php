@@ -144,8 +144,8 @@ class JsonDecodeEngine
 		for (
 			;
 			(
-				($char = fgetc(stream: $this->jsonFileHandle)) !== false &&
-				(
+				($char = fgetc(stream: $this->jsonFileHandle)) !== false
+				&& (
 					($this->eIndex === null)
 					|| (
 						($this->eIndex !== null)
@@ -185,7 +185,10 @@ class JsonDecodeEngine
 							break;
 
 						// Check for null values
-						case $char === ',' && ($nullStr !== null):
+						case (
+							$char === ','
+							&& ($nullStr !== null)
+						):
 							$nullStr = $this->checkNullStr(nullStr: $nullStr);
 							switch ($this->currentObject->mode) {
 								case 'Array':
@@ -300,7 +303,10 @@ class JsonDecodeEngine
 	 */
 	public function getJsonString(): bool|string
 	{
-		if (($this->sIndex === null) && ($this->eIndex === null)) {
+		if (
+			($this->sIndex === null)
+			&& ($this->eIndex === null)
+		) {
 			rewind(stream: $this->jsonFileHandle);
 			return stream_get_contents(stream: $this->jsonFileHandle);
 		} else {
@@ -377,7 +383,10 @@ class JsonDecodeEngine
 				$this->popPreviousObject();
 				break;
 			case '}':
-				if (!empty($keyValue) && !empty($nullStr)) {
+				if (
+					!empty($keyValue)
+					&& !empty($nullStr)
+				) {
 					$nullStr = $this->checkNullStr(nullStr: $nullStr);
 					$this->currentObject->assocValues[$keyValue] = $nullStr;
 				}
@@ -474,13 +483,19 @@ class JsonDecodeEngine
 		if ($this->currentObject) {
 			if (
 				$this->currentObject->mode === 'Object'
-				&& (($key === null) || empty(trim(string: $key)))
+				&& (
+					($key === null)
+					|| empty(trim(string: $key))
+				)
 			) {
 				$this->isBadJson(str: $key);
 			}
 			if (
 				$this->currentObject->mode === 'Array'
-				&& (($key === null) || empty(trim(string: $key)))
+				&& (
+					($key === null)
+					|| empty(trim(string: $key))
+				)
 			) {
 				$this->isBadJson(str: $key);
 			}
