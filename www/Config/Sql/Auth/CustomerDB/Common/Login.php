@@ -18,12 +18,12 @@ return [
 		[
 			'column' => 'username',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'username'
+			'fetchFromDetails' => 'username'
 		],
 		[
 			'column' => 'password',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'password'
+			'fetchFromDetails' => 'password'
 		],
 	],
 	// '__VALIDATE__' => [

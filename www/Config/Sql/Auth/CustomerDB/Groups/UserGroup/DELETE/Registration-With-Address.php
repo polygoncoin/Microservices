@@ -21,19 +21,19 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'Yes'
+			'fetchFromDetails' => 'Yes'
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'routeParams',
-			'fetchFromValue' => 'id',
+			'fetchFromDetails' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
 		]
 	],
@@ -44,25 +44,25 @@ return [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromValue' => 'Yes'
+					'fetchFromDetails' => 'Yes'
 				]
 			],
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromValue' => 'No'
+					'fetchFromDetails' => 'No'
 				],
 				[
 					'column' => 'id',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'id',
+					'fetchFromDetails' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 				[
 					'column' => 'user_id',
 					'fetchFrom' => 'routeParams',
-					'fetchFromValue' => 'id',
+					'fetchFromDetails' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 			],

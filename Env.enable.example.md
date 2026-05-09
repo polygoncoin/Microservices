@@ -5,8 +5,8 @@ Control major request access and set respective keywords to make routes unique f
 ## Controlling request at top level
 
 ```ini
-; Request Payload Config
-enableConfigRequest=1                   ; 1 = true / 0 = false
+; Explain Request Payload
+enableExplainRequest=1                  ; 1 = true / 0 = false
 ; Download CSV
 enableDownloadRequest=1                 ; 1 = true / 0 = false
 ; Import CSV
@@ -40,7 +40,8 @@ uploadRequestRoutePrefix='upload'
 ### Route ending with configured params keyword
 
 ```ini
-configRequestRouteKeyword='config'      ; to append "/config" at the end of route
+; Explain Route & its Payload
+explainRequestRouteKeyword='explain'    ; to append "/explain" at the end of route
 importRequestRouteKeyword='import'      ; to append "/import" at the end of route
 importSampleRequestRouteKeyword='import-sample'
 ```

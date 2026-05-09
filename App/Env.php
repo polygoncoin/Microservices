@@ -84,7 +84,7 @@ class Env
 	public static $idempotentSecret = null;
 ///////////////
 
-	public static $enableConfigRequest = null;
+	public static $enableExplainRequest = null;
 	public static $enableDownloadRequest = null;
 	public static $enableImportRequest = null;
 	public static $enableImportSampleRequest = null;
@@ -97,7 +97,7 @@ class Env
 	public static $enableThirdPartyRequest = null;
 	public static $enableUploadRequest = null;
 
-	public static $configRequestRouteKeyword = null;
+	public static $explainRequestRouteKeyword = null;
 	public static $mySqlBinaryLocationOnWebServer = null;
 	public static $importRequestRouteKeyword = null;
 	public static $importSampleRequestRouteKeyword = null;
@@ -112,7 +112,7 @@ class Env
 
 	public static $enableCidrCheck = null;
 
-	public static $configRestrictedCidr = null;
+	public static $explainRestrictedCidr = null;
 	public static $exportRestrictedCidr = null;
 	public static $importRestrictedCidr = null;
 	public static $importSampleRestrictedCidr = null;
@@ -231,7 +231,7 @@ class Env
 		self::$idempotentSecret = getenv(name: 'idempotentSecret');
 		//////////////////
 
-		self::$enableConfigRequest = (bool)((int)getenv(name: 'enableConfigRequest'));
+		self::$enableExplainRequest = (bool)((int)getenv(name: 'enableExplainRequest'));
 		self::$enableDownloadRequest = (bool)((int)getenv(name: 'enableDownloadRequest'));
 		self::$enableImportRequest = (bool)((int)getenv(name: 'enableImportRequest'));
 		self::$enableImportSampleRequest = (bool)((int)getenv(name: 'enableImportSampleRequest'));
@@ -244,7 +244,7 @@ class Env
 		self::$enableThirdPartyRequest = (bool)((int)getenv(name: 'enableThirdPartyRequest'));
 		self::$enableUploadRequest = (bool)((int)getenv(name: 'enableUploadRequest'));
 
-		self::$configRequestRouteKeyword = getenv(name: 'configRequestRouteKeyword');
+		self::$explainRequestRouteKeyword = getenv(name: 'explainRequestRouteKeyword');
 		self::$mySqlBinaryLocationOnWebServer = getenv(name: 'mySqlBinaryLocationOnWebServer');
 		self::$importRequestRouteKeyword = getenv(name: 'importRequestRouteKeyword');
 		self::$importSampleRequestRouteKeyword = getenv(name: 'importSampleRequestRouteKeyword');
@@ -259,7 +259,7 @@ class Env
 
 		self::$enableCidrCheck = (bool)((int)getenv(name: 'enableCidrCheck'));
 
-		self::$configRestrictedCidr = getenv(name: 'configRestrictedCidr');
+		self::$explainRestrictedCidr = getenv(name: 'explainRestrictedCidr');
 		self::$exportRestrictedCidr = getenv(name: 'exportRestrictedCidr');
 		self::$importRestrictedCidr = getenv(name: 'importRestrictedCidr');
 		self::$importSampleRestrictedCidr = getenv(name: 'importSampleRestrictedCidr');

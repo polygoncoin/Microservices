@@ -20,7 +20,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		]
 	],
 	'__MODE__' => 'multipleRowFormat',
@@ -31,12 +31,12 @@ return [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromValue' => 'No'
+					'fetchFromDetails' => 'No'
 				],
 				[
 					'column' => 'user_id',
 					'fetchFrom' => 'sqlResults',
-					'fetchFromValue' => 'return:id'
+					'fetchFromDetails' => 'return:id'
 				],
 			],
 			'__MODE__' => 'multipleRowFormat',

@@ -317,11 +317,11 @@ class RouteParser
 		$return = false;
 
 		if (
-			Env::$enableConfigRequest
-			&& Env::$configRequestRouteKeyword === $routeEndingKeyword
+			Env::$enableExplainRequest
+			&& Env::$explainRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
-			$this->routeEndingReservedKeyword = Env::$configRequestRouteKeyword;
+			$this->routeEndingReservedKeyword = Env::$explainRequestRouteKeyword;
 			$return = true;
 		} elseif (
 			Env::$enableImportRequest

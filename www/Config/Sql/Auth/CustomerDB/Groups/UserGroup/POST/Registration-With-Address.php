@@ -19,32 +19,32 @@ return [
 		[
 			'column' => 'customer_id',
 			'fetchFrom' => 'cDetails',
-			'fetchFromValue' => 'id'
+			'fetchFromDetails' => 'id'
 		],
 		[
 			'column' => 'firstname',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'firstname'
+			'fetchFromDetails' => 'firstname'
 		],
 		[
 			'column' => 'lastname',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'lastname'
+			'fetchFromDetails' => 'lastname'
 		],
 		[
 			'column' => 'email',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'email'
+			'fetchFromDetails' => 'email'
 		],
 		[
 			'column' => 'username',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'username'
+			'fetchFromDetails' => 'username'
 		],
 		[
 			'column' => 'password_hash',
 			'fetchFrom' => 'function',
-			'fetchFromValue' => function($session): string {
+			'fetchFromDetails' => function($session): string {
 				return password_hash(
 					password: $session['payload']['password'],
 					algo: PASSWORD_DEFAULT
@@ -54,12 +54,12 @@ return [
 		[
 			'column' => 'allowed_cidr',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => '0.0.0.0/0'
+			'fetchFromDetails' => '0.0.0.0/0'
 		],
 		[
 			'column' => 'group_id',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => '1'
+			'fetchFromDetails' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
@@ -70,17 +70,17 @@ return [
 				[
 					'column' => 'customer_id',
 					'fetchFrom' => 'cDetails',
-					'fetchFromValue' => 'id'
+					'fetchFromDetails' => 'id'
 				],
 				[
 					'column' => 'user_id',
 					'fetchFrom' => '__INSERT-IDs__',
-					'fetchFromValue' => 'registration:id'
+					'fetchFromDetails' => 'registration:id'
 				],
 				[
 					'column' => 'address',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				]
 			],
 			'__INSERT-IDs__' => 'address:id',

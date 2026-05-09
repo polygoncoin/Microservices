@@ -20,17 +20,17 @@ return [
 			[
 				'column' => 'is_approved',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'Yes'
+				'fetchFromDetails' => 'Yes'
 			],
 			[
 				'column' => 'is_disabled',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'No'
+				'fetchFromDetails' => 'No'
 			],
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'No'
+				'fetchFromDetails' => 'No'
 			],
 		],
 		'__MODE__' => 'multipleRowFormat'
@@ -41,22 +41,22 @@ return [
 			[
 				'column' => 'is_approved',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'Yes'
+				'fetchFromDetails' => 'Yes'
 			],
 			[
 				'column' => 'is_disabled',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'No'
+				'fetchFromDetails' => 'No'
 			],
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'No'
+				'fetchFromDetails' => 'No'
 			],
 			[
 				'column' => 'id',
 				'fetchFrom' => 'routeParams',
-				'fetchFromValue' => 'id'
+				'fetchFromDetails' => 'id'
 			],
 		],
 		'__MODE__' => 'singleRowFormat'

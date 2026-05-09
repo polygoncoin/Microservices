@@ -21,18 +21,18 @@ return [
 		[
 			'column' => 'customer_id',
 			'fetchFrom' => 'cDetails',
-			'fetchFromValue' => 'id'
+			'fetchFromDetails' => 'id'
 		],
 		[
 			'column' => 'user_id',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'user_id',
+			'fetchFromDetails' => 'user_id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'address',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'address'
+			'fetchFromDetails' => 'address'
 		],
 	],
 	'__INSERT-IDs__' => 'address:id'

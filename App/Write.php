@@ -118,12 +118,12 @@ class Write
 			keyword: 'useHierarchy'
 		);
 
-		if (Env::$enableConfigRequest) {
+		if (Env::$enableExplainRequest) {
 			if (
 				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
-				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$configRequestRouteKeyword)
+				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
 			) {
-				$this->processWriteConfig(
+				$this->explainWrite(
 					wSqlConfig: $wSqlConfig,
 					useHierarchy: $useHierarchy
 				);
@@ -198,14 +198,14 @@ class Write
 	}
 
 	/**
-	 * Process write function for configuration
+	 * Explain write configuration
 	 *
 	 * @param array $wSqlConfig   Config from file
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return void
 	 */
-	private function processWriteConfig(&$wSqlConfig, $useHierarchy): void
+	private function explainWrite(&$wSqlConfig, $useHierarchy): void
 	{
 		$this->dataEncode->startObject(key: 'Config');
 		$this->dataEncode->addKeyData(
@@ -215,7 +215,7 @@ class Write
 		if (Env::$enablePayloadInResponse) {
 			$this->dataEncode->addKeyData(
 				key: Env::$payloadKeyInResponse,
-				data: $this->getConfigParams(
+				data: $this->getExplainParams(
 					sqlConfig: $wSqlConfig,
 					isFirstCall: true,
 					flag: $useHierarchy
@@ -260,8 +260,8 @@ class Write
 			}
 		}
 
-		// Set necessary fields
-		$this->http->req->s['necessaryArr'] = $this->getRequired(
+		// Set required fields
+		$this->http->req->s['requiredFieldsCollection'] = $this->getRequired(
 			sqlConfig: $wSqlConfig,
 			isFirstCall: true,
 			flag: $useHierarchy
@@ -311,7 +311,7 @@ class Write
 					configKeys: $configKeys,
 					useHierarchy: $useHierarchy,
 					response: $response,
-					necessary: $this->http->req->s['necessaryArr']
+					requiredFields: $this->http->req->s['requiredFieldsCollection']
 				);
 
 				if ($this->http->res->httpStatus === HttpStatus::$Ok) {
@@ -393,7 +393,7 @@ class Write
 	 * @param array $configKeys     Config Keys
 	 * @param bool  $useHierarchy   Use results in where clause of sub queries
 	 * @param array $response       Response by reference
-	 * @param array $necessary      Required fields
+	 * @param array $requiredFields Required fields
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -404,7 +404,7 @@ class Write
 		$configKeys,
 		$useHierarchy,
 		&$response,
-		&$necessary
+		&$requiredFields
 	): void {
 		$payloadIndex = is_array(value: $payloadIndexes)
 			? trim(
@@ -469,10 +469,10 @@ class Write
 				keys: $payloadIndex
 			);
 
-			if (count(value: $necessary)) {
-				$this->http->req->s['necessary'] = $necessary;
+			if (count(value: $requiredFields)) {
+				$this->http->req->s['requiredFields'] = $requiredFields;
 			} else {
-				$this->http->req->s['necessary'] = [];
+				$this->http->req->s['requiredFields'] = [];
 			}
 
 			if (
@@ -570,7 +570,7 @@ class Write
 					configKeys: $configKeys,
 					useHierarchy: $useHierarchy,
 					response: $_response,
-					necessary: $necessary
+					requiredFields: $requiredFields
 				);
 			}
 		}
@@ -584,7 +584,7 @@ class Write
 	 * @param array $configKeys     Config Keys
 	 * @param bool  $useHierarchy   Use results in where clause of sub queries
 	 * @param array $response       Response by reference
-	 * @param array $necessary      Required fields
+	 * @param array $requiredFields Required fields
 	 *
 	 * @return void
 	 */
@@ -594,7 +594,7 @@ class Write
 		$configKeys,
 		$useHierarchy,
 		&$response,
-		&$necessary
+		&$requiredFields
 	): void {
 		if ($useHierarchy) {
 			$row = $this->http->req->s['payload'];
@@ -658,7 +658,7 @@ class Write
 						);
 					}
 					if ($dataExists) {
-						$necessary = $necessary[$module] ?? $necessary;
+						$requiredFields = $requiredFields[$module] ?? $requiredFields;
 						$useHierarchy = $useHierarchy ?? $this->getUseHierarchy(
 							sqlConfig: $wSqlConfig,
 							keyword: 'useHierarchy'
@@ -671,7 +671,7 @@ class Write
 							configKeys: $moduleConfigKeys,
 							useHierarchy: $useHierarchy,
 							response: $response,
-							necessary: $necessary
+							requiredFields: $requiredFields
 						);
 					}
 				}

@@ -207,11 +207,11 @@ class Read
 		);
 
 		if (
-			Env::$enableConfigRequest
+			Env::$enableExplainRequest
 			&& $this->http->req->rParser->routeEndingWithReservedKeywordFlag
-			&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$configRequestRouteKeyword)
+			&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
 		) {
-			$this->processReadConfig(
+			$this->explainRead(
 				rSqlConfig: $rSqlConfig,
 				useResultSet: $useResultSet
 			);
@@ -238,14 +238,14 @@ class Read
 	}
 
 	/**
-	 * Process read function for configuration
+	 * Explain read configuration
 	 *
 	 * @param array $rSqlConfig   Config from file
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
 	 */
-	private function processReadConfig(&$rSqlConfig, $useResultSet): void
+	private function explainRead(&$rSqlConfig, $useResultSet): void
 	{
 		$this->dataEncode->startObject(key: 'Config');
 		$this->dataEncode->addKeyData(
@@ -254,7 +254,7 @@ class Read
 		);
 		$this->dataEncode->addKeyData(
 			key: 'Payload',
-			data: $this->getConfigParams(
+			data: $this->getExplainParams(
 				sqlConfig: $rSqlConfig,
 				isFirstCall: true,
 				flag: $useResultSet
@@ -273,16 +273,16 @@ class Read
 	 */
 	private function processRead(&$rSqlConfig, $useResultSet): void
 	{
-		$this->http->req->s['necessaryArr'] = $this->getRequired(
+		$this->http->req->s['requiredFieldsCollection'] = $this->getRequired(
 			sqlConfig: $rSqlConfig,
 			isFirstCall: true,
 			flag: $useResultSet
 		);
 
-		if (isset($this->http->req->s['necessaryArr'])) {
-			$this->http->req->s['necessary'] = $this->http->req->s['necessaryArr'];
+		if (isset($this->http->req->s['requiredFieldsCollection'])) {
+			$this->http->req->s['requiredFields'] = $this->http->req->s['requiredFieldsCollection'];
 		} else {
-			$this->http->req->s['necessary'] = [];
+			$this->http->req->s['requiredFields'] = [];
 		}
 
 		// Start Read operation

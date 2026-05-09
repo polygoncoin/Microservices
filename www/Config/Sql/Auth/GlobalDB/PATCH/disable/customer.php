@@ -21,34 +21,34 @@ return [
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'Yes'
+			'fetchFromDetails' => 'Yes'
 		],
 		[
 			'column' => 'updated_by',
 			'fetchFrom' => 'uDetails',
-			'fetchFromValue' => 'id'
+			'fetchFromDetails' => 'id'
 		],
 		[
 			'column' => 'updated_on',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => date(format: 'Y-m-d H:i:s')
+			'fetchFromDetails' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		],
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'id',
+			'fetchFromDetails' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],

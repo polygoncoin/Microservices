@@ -25,19 +25,19 @@ return array_merge(
 			[
 				'column' => 'address',
 				'fetchFrom' => 'payload',
-				'fetchFromValue' => 'address'
+				'fetchFromDetails' => 'address'
 			]
 		],
 		'__WHERE__' => [
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromValue' => 'No'
+				'fetchFromDetails' => 'No'
 			],
 			[
 				'column' => 'id',
 				'fetchFrom' => 'routeParams',
-				'fetchFromValue' => 'id',
+				'fetchFromDetails' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]
 		],

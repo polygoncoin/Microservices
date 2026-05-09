@@ -19,12 +19,12 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'routeParams',
-			'fetchFromValue' => 'id'
+			'fetchFromDetails' => 'id'
 		]
 	],
 	'__MODE__' => 'singleRowFormat',
@@ -35,12 +35,12 @@ return [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromValue' => 'No'
+					'fetchFromDetails' => 'No'
 				],
 				[
 					'column' => 'user_id',
 					'fetchFrom' => 'sqlResults',
-					'fetchFromValue' => 'return:id'
+					'fetchFromDetails' => 'return:id'
 				],
 			],
 			'__MODE__' => 'multipleRowFormat',

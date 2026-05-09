@@ -21,12 +21,12 @@ return [
 		[
 			'column' => 'name',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'name'
+			'fetchFromDetails' => 'name'
 		],
 		[
 			'column' => 'parent_id',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 0
+			'fetchFromDetails' => 0
 		],
 	],
 	'__INSERT-IDs__' => 'category:id',
@@ -37,12 +37,12 @@ return [
 				[
 					'column' => 'name',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'subname'
+					'fetchFromDetails' => 'subname'
 				],
 				[
 					'column' => 'parent_id',
 					'fetchFrom' => '__INSERT-IDs__',
-					'fetchFromValue' => 'category:id'
+					'fetchFromDetails' => 'category:id'
 				],
 			],
 			'__INSERT-IDs__' => 'sub:id',
@@ -53,12 +53,12 @@ return [
 						[
 							'column' => 'name',
 							'fetchFrom' => 'payload',
-							'fetchFromValue' => 'subsubname'
+							'fetchFromDetails' => 'subsubname'
 						],
 						[
 							'column' => 'parent_id',
 							'fetchFrom' => '__INSERT-IDs__',
-							'fetchFromValue' => 'sub:id'
+							'fetchFromDetails' => 'sub:id'
 						],
 					],
 					'__INSERT-IDs__' => 'subsub:id',

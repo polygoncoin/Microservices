@@ -21,29 +21,29 @@ return [
 		[
 			'column' => 'firstname',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'firstname'
+			'fetchFromDetails' => 'firstname'
 		],
 		[
 			'column' => 'lastname',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'lastname'
+			'fetchFromDetails' => 'lastname'
 		],
 		[
 			'column' => 'email',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'email'
+			'fetchFromDetails' => 'email'
 		],
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'routeParams',
-			'fetchFromValue' => 'id',
+			'fetchFromDetails' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
 		]
 	],
@@ -54,19 +54,19 @@ return [
 				[
 					'column' => 'address',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				]
 			],
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromValue' => 'No'
+					'fetchFromDetails' => 'No'
 				],
 				[
 					'column' => 'id',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'id',
+					'fetchFromDetails' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 			],

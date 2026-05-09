@@ -33,21 +33,21 @@ return [
 			// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 			// 'fetchFrom' => 'custom', // Static values
 			// 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ keys
-			'fetchFromValue' => 'id',                       // key (id)
+			'fetchFromDetails' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
-			'required' => Constant::$REQUIRED              // Represents required field
+			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
 			// Fetch value from function
 			'column' => 'password',
 			'fetchFrom' => 'function',                       // function
-			'fetchFromValue' => function($session) {        // execute a function and return value
+			'fetchFromDetails' => function($session) {        // execute a function and return value
 				return 'value';
 			}
 		],
 			// Fetch value of last insert IDs
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',                        // custom
-			'fetchFromValue' => 'No'                        // Static values
+			'fetchFromDetails' => 'No'                        // Static values
 		]
 	],
 
@@ -63,9 +63,9 @@ return [
 			// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 			// 'fetchFrom' => 'custom', // Static values
 			// 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ keys
-			'fetchFromValue' => 'id',                       // key (id)
+			'fetchFromDetails' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
-			'required' => Constant::$REQUIRED              // Represents required field
+			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
 		[...]
 	],
@@ -114,36 +114,36 @@ return [
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
 					// 'fetchFrom' => 'variables', // to fetch values as per current module/<sub-key> __VARIABLES__ keys
-					'fetchFromValue' => 'id',                       // key (id)
+					'fetchFromDetails' => 'id',                       // key (id)
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
-					'required' => Constant::$REQUIRED              // Represents required field
+					'isRequired' => Constant::$REQUIRED              // Represents required field
 				],
 				// Database DataTypes settings required when useHierarchy is true
 				// to validate each data set before procedding forward
 					// Fetch value of last insert IDs
 					'column' => 'id',
 					'fetchFrom' => '__INSERT-IDs__',                // uDetails from session
-					'fetchFromValue' => '<saved-id-key>'            // previous Insert IDs
+					'fetchFromDetails' => '<saved-id-key>'            // previous Insert IDs
 				],
 					// Fetch values of params from previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
-					'fetchFromValue' => '<return:keys-separated-by-colon>'
+					'fetchFromDetails' => '<return:keys-separated-by-colon>'
 				],
 					// Fetch values of sql results from previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
-					'fetchFromValue' => '<return:keys-separated-by-colon>'
+					'fetchFromDetails' => '<return:keys-separated-by-colon>'
 				],
 					// Fetch values of sql payload for previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
-					'fetchFromValue' => '<return:keys-separated-by-colon>'
+					'fetchFromDetails' => '<return:keys-separated-by-colon>'
 				],
 				[
 					'column' => 'any-table- column',
 					'fetchFrom' => 'variables',      // custom
-					'fetchFromValue' => 'sub-var1'   // returns static sub-var1 value set in __VARIABLES__ of current module/<sub-key>
+					'fetchFromDetails' => 'sub-var1'   // returns static sub-var1 value set in __VARIABLES__ of current module/<sub-key>
 				]
 			],
 			'__TRIGGERS__' => [...],
@@ -173,11 +173,11 @@ return [
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
 					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				],
 					// Sql Insert IDs
 					'fetchFrom' => '__INSERT-IDs__',
-					'fetchFromValue' => 'address:id'
+					'fetchFromDetails' => 'address:id'
 				]
 			],
 			'__QUERY-STRING__' => [
@@ -191,7 +191,7 @@ return [
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
 					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				],
 				[...]
 			],
@@ -207,7 +207,7 @@ return [
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
 					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				],
 				[...]
 			]
@@ -328,9 +328,9 @@ return [
 			// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 			// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 			// 'fetchFrom' => 'custom', // Static values
-			'fetchFromValue' => 'id',                       // key (id)
+			'fetchFromDetails' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
-			'required' => Constant::$REQUIRED              // Represents required field
+			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
 		[...]
 	]
@@ -355,9 +355,9 @@ return [
 			// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 			// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 			// 'fetchFrom' => 'custom', // Static values
-			'fetchFromValue' => 'id',                       // key (id)
+			'fetchFromDetails' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
-			'required' => Constant::$REQUIRED              // Represents required field
+			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
 		[...]
 	],
@@ -388,26 +388,26 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromValue' => 'id',                       // key (id)
+					'fetchFromDetails' => 'id',                       // key (id)
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
-					'required' => Constant::$REQUIRED              // Represents required field
+					'isRequired' => Constant::$REQUIRED              // Represents required field
 				],
 				// Database DataTypes settings required when useHierarchy is true
 				// to validate each data set before procedding forward
 					// Fetch values of params from previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlParams',                     // sqlParams (with useHierarchy)
-					'fetchFromValue' => '<return:keys-separated-by-colon>'
+					'fetchFromDetails' => '<return:keys-separated-by-colon>'
 				],
 					// Fetch values of sql results from previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
-					'fetchFromValue' => '<return:keys-separated-by-colon>'
+					'fetchFromDetails' => '<return:keys-separated-by-colon>'
 				],
 					// Fetch values of sql payload for previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
-					'fetchFromValue' => '<return:keys-separated-by-colon>'
+					'fetchFromDetails' => '<return:keys-separated-by-colon>'
 				],
 			],
 			'__FUNCTION__' => 'subProcess',
@@ -437,7 +437,7 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				],
 				[...]
 			],
@@ -451,7 +451,7 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				],
 				[...]
 			],
@@ -466,7 +466,7 @@ return [
 					// 'fetchFrom' => 'cDetails', // Fetch value from customer Details
 					// 'fetchFrom' => 'uDetails', // Fetch value from user Details session
 					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromValue' => 'address'
+					'fetchFromDetails' => 'address'
 				],
 				[...]
 			]

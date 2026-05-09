@@ -19,7 +19,7 @@ return [
 		[
 			'column' => 'name',
 			'fetchFrom' => 'queryParams',
-			'fetchFromValue' => 'name'
+			'fetchFromDetails' => 'name'
 		]
 	],
 	'__MODE__' => 'multipleRowFormat',

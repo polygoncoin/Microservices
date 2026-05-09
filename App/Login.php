@@ -167,14 +167,14 @@ class Login
 		$this->http->req->loadPayload();
 		$this->payload = $this->http->req->dataDecode->get();
 
-		// Check for necessary conditions variables
+		// Check for required conditions variables
 		foreach (['username', 'password'] as $value) {
 			if (
 				!isset($this->payload[$value])
 				|| empty($this->payload[$value])
 			) {
 				throw new \Exception(
-					message: 'Missing necessary parameters',
+					message: 'Missing required parameters',
 					code: HttpStatus::$NotFound
 				);
 			} else {

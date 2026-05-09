@@ -78,7 +78,7 @@ For **GET** method, the **$\_GET** is the payload.
 [
 	'column' => 'parent_id',
 	'fetchFrom' => 'sqlResults',
-	'fetchFromValue' => 'return:id'
+	'fetchFromDetails' => 'return:id'
 ],
 ```
 

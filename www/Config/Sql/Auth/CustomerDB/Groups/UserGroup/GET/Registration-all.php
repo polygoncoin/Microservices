@@ -20,7 +20,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		]
 	],
 	'__MODE__' => 'multipleRowFormat'

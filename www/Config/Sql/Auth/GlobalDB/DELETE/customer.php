@@ -21,24 +21,24 @@ return [
 		[
 			'column' => 'updated_by',
 			'fetchFrom' => 'uDetails',
-			'fetchFromValue' => 'id'
+			'fetchFromDetails' => 'id'
 		],
 		[
 			'column' => 'updated_on',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => date('Y-m-d H:i:s')
+			'fetchFromDetails' => date('Y-m-d H:i:s')
 		],
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromValue' => 'No'
+			'fetchFromDetails' => 'No'
 		],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'routeParams',
-			'fetchFromValue' => 'id',
+			'fetchFromDetails' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],

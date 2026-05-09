@@ -25,24 +25,24 @@ return array_merge(
 			[
 				'column' => 'firstname',
 				'fetchFrom' => 'payload',
-				'fetchFromValue' => 'firstname'
+				'fetchFromDetails' => 'firstname'
 			],
 			[
 				'column' => 'lastname',
 				'fetchFrom' => 'payload',
-				'fetchFromValue' => 'lastname'
+				'fetchFromDetails' => 'lastname'
 			],
 			[
 				'column' => 'email',
 				'fetchFrom' => 'payload',
-				'fetchFromValue' => 'email'
+				'fetchFromDetails' => 'email'
 			],
 		],
 		'__WHERE__' => [
 			[
 				'column' => 'id',
 				'fetchFrom' => 'routeParams',
-				'fetchFromValue' => 'id',
+				'fetchFromDetails' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]
 		],

@@ -19,19 +19,19 @@ return [
 		// [
 		//     'column' => 'id',
 		//     'fetchFrom' => 'routeParams',
-		//     'fetchFromValue' => 'id',
+		//     'fetchFromDetails' => 'id',
 		//     'dataType' => DatabaseServerDataType::$PrimaryKey,
-		//     'required' => $Constant::$REQUIRED
+		//     'isRequired' => $Constant::$REQUIRED
 		// ],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'payload-id-1',
+			'fetchFromDetails' => 'payload-id-1',
 		],
 		[
 			'column' => 'column-1',
 			'fetchFrom' => 'payload',
-			'fetchFromValue' => 'payload-param-1',
+			'fetchFromDetails' => 'payload-param-1',
 		],
 	],
 	'__FUNCTION__' => 'process',
@@ -41,12 +41,12 @@ return [
 				[
 					'column' => 'sub-id',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'sub-payload-id-1',
+					'fetchFromDetails' => 'sub-payload-id-1',
 				],
 				[
 					'column' => 'sub-column-1',
 					'fetchFrom' => 'payload',
-					'fetchFromValue' => 'sub-payload-param-1',
+					'fetchFromDetails' => 'sub-payload-param-1',
 				],
 			],
 			'__FUNCTION__' => 'processSub',

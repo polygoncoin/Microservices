@@ -106,7 +106,7 @@ class Api
 			!in_array(
 				$this->http->req->rParser->routeEndingReservedKeyword,
 				[
-					Env::$configRequestRouteKeyword,
+					Env::$explainRequestRouteKeyword,
 					Env::$importSampleRequestRouteKeyword
 				]
 			)

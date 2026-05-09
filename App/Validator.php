@@ -75,8 +75,8 @@ class Validator
 	public function validate(&$validationConfig): array
 	{
 		if (
-			isset(($this->http->req->s['necessary']))
-			&& count(value: $this->http->req->s['necessary']) > 0
+			isset(($this->http->req->s['requiredFields']))
+			&& count(value: $this->http->req->s['requiredFields']) > 0
 		) {
 			if (
 				([$isValidData, $errors] = $this->validateRequired())
@@ -90,7 +90,7 @@ class Validator
 	}
 
 	/**
-	 * Validate necessary payload
+	 * Validate required payload
 	 *
 	 * @return array
 	 */
@@ -99,13 +99,10 @@ class Validator
 		$isValidData = true;
 		$errors = [];
 		// Required fields payload validation
-		if (!empty($this->http->req->s['necessary']['payload'])) {
-			foreach ($this->http->req->s['necessary']['payload'] as $column => &$arr) {
-				if (
-					$arr['necessary']
-					&& !isset($this->http->req->s['payload'][$column])
-				) {
-					$errors[] = 'Missing necessary payload: ' . $column;
+		if (!empty($this->http->req->s['requiredFields']['payload'])) {
+			foreach ($this->http->req->s['requiredFields']['payload'] as $fetchFromDetails) {
+				if (!in_array($fetchFromDetails, $this->http->req->s['payload'])) {
+					$errors[] = 'Missing required payload: ' . $fetchFromDetails;
 					$isValidData = false;
 				}
 			}
