@@ -167,19 +167,19 @@ class JsonEncode implements DataEncodeInterface
 	/**
 	 * Append raw json string
 	 *
-	 * @param string $key  key of associative array
+	 * @param string $objectKey  key of associative array
 	 * @param string $data Reference of Representation Data
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($key, &$data): void
+	public function appendKeyData($objectKey, &$data): void
 	{
 		if (
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
 		) {
 			$this->write(data: $this->currentObject->comma);
-			$this->write(data: $this->escape(data: $key) . ':' . $data);
+			$this->write(data: $this->escape(data: $objectKey) . ':' . $data);
 			$this->currentObject->comma = ', ';
 		}
 	}
@@ -206,13 +206,13 @@ class JsonEncode implements DataEncodeInterface
 	/**
 	 * Add simple array/value as in the json format
 	 *
-	 * @param string       $key  Key of associative array
+	 * @param string       $objectKey  Key of associative array
 	 * @param string|array $data Representation Data
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addKeyData($key, $data): void
+	public function addKeyData($objectKey, $data): void
 	{
 		if ($this->currentObject->mode !== 'Object') {
 			throw new \Exception(
@@ -221,7 +221,7 @@ class JsonEncode implements DataEncodeInterface
 			);
 		}
 		$this->write(data: $this->currentObject->comma);
-		$this->write(data: $this->escape(data: $key) . ':');
+		$this->write(data: $this->escape(data: $objectKey) . ':');
 		$this->currentObject->comma = '';
 		$this->encode(data: $data);
 	}
@@ -229,19 +229,19 @@ class JsonEncode implements DataEncodeInterface
 	/**
 	 * Start simple array
 	 *
-	 * @param null|string $key Used while creating simple array inside an object
+	 * @param null|string $objectKey Used while creating simple array inside an object
 	 *
 	 * @return void
 	 */
-	public function startArray($key = null): void
+	public function startArray($objectKey = null): void
 	{
 		if ($this->currentObject) {
 			$this->write(data: $this->currentObject->comma);
 			array_push($this->objects, $this->currentObject);
 		}
 		$this->currentObject = new JsonEncoderObject(mode: 'Array');
-		if ($key !== null) {
-			$this->write(data: $this->escape(data: $key) . ':');
+		if ($objectKey !== null) {
+			$this->write(data: $this->escape(data: $objectKey) . ':');
 		}
 		$this->write(data: '[');
 	}
@@ -264,20 +264,20 @@ class JsonEncode implements DataEncodeInterface
 	/**
 	 * Start simple array
 	 *
-	 * @param null|string $key Used while creating associative array inside an object
+	 * @param null|string $objectKey Used while creating associative array inside an object
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($key = null): void
+	public function startObject($objectKey = null): void
 	{
 		if ($this->currentObject) {
 			if (
 				$this->currentObject->mode === 'Object'
-				&& ($key === null)
+				&& ($objectKey === null)
 			) {
 				throw new \Exception(
-					message: 'Object inside an Object should be supported with Key',
+					message: 'Object inside an Object should be supported with key',
 					code: HttpStatus::$InternalServerError
 				);
 			}
@@ -285,8 +285,8 @@ class JsonEncode implements DataEncodeInterface
 			array_push($this->objects, $this->currentObject);
 		}
 		$this->currentObject = new JsonEncoderObject(mode: 'Object');
-		if ($key !== null) {
-			$this->write(data: $this->escape(data: $key) . ':');
+		if ($objectKey !== null) {
+			$this->write(data: $this->escape(data: $objectKey) . ':');
 		}
 		$this->write(data: '{');
 	}

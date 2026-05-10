@@ -22,7 +22,7 @@ $header = $defaultHeaders;
 if (isset($token)) {
 	$header[] = "Authorization: Bearer {$token}";
 
-	$params = [
+	$paramArr = [
 		[
 			'name' => 'ramesh0',
 			'sub' => [
@@ -53,7 +53,7 @@ if (isset($token)) {
 		method: 'POST',
 		route: '/category/import',
 		header: $header,
-		payload: '',//json_encode(value: $params),
+		payload: '',//json_encode(value: $paramArr),
 		file: $curlFile
 	);
 }

@@ -48,18 +48,18 @@ class Counter
 
 		switch (Env::$gCounterMode) {
 			case 'Cache':
-				$key = Env::$gCounter;
-				DbCommonFunction::connectGlobalCacheServer();
-				$id = DbCommonFunction::$gCacheServer->incrementCache($key);
+				$cacheKey = Env::$gCounter;
+				DbCommonFunction::connectGlobalCache();
+				$id = DbCommonFunction::$gCacheServer->cacheIncrement(cacheKey: $cacheKey);
 				break;
 			case 'Database':
-				DbCommonFunction::connectGlobalDatabaseServer();
+				DbCommonFunction::connectGlobalDb();
 
 				$table = Env::$gDbServerDB . '.' . Env::$gCounter;
 				$sql = "INSERT INTO {$table}() VALUES()";
-				$sqlParams = [];
+				$sqlParamArr = [];
 
-				DbCommonFunction::$gDbServer->execDbQuery(sql: $sql, params: $sqlParams);
+				DbCommonFunction::$gDbServer->execDbQuery(sql: $sql, params: $sqlParamArr);
 				$id = DbCommonFunction::$gDbServer->lastInsertID();
 				break;
 		}

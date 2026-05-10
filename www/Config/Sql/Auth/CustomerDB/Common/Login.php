@@ -18,12 +18,12 @@ return [
 		[
 			'column' => 'username',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'username'
+			'fetchFromDetail' => 'username'
 		],
 		[
 			'column' => 'password',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'password'
+			'fetchFromDetail' => 'password'
 		],
 	],
 	// '__VALIDATE__' => [
@@ -32,7 +32,7 @@ return [
 	//         'fnArgs' => [
 	//             'table' => ['custom', 'address'],
 	//             'primary' => ['custom', 'id'],
-	//             'id' => ['routeParams', 'id']
+	//             'id' => ['routeParamArr', 'id']
 	//         ],
 	//         'errorMessage' => 'Invalid address id'
 	//     ],

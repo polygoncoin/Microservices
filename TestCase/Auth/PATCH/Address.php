@@ -22,7 +22,7 @@ $header[] = $contentType;
 if (isset($token)) {
 	$header[] = "Authorization: Bearer {$token}";
 
-	$params = [
+	$paramArr = [
 		'address' => '203'
 	];
 
@@ -31,6 +31,6 @@ if (isset($token)) {
 		method: 'PATCH',
 		route: '/address/1',
 		header: $header,
-		payload: json_encode(value: $params)
+		payload: json_encode(value: $paramArr)
 	);
 }

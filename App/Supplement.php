@@ -144,19 +144,19 @@ class Supplement
 				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword)
 			) {
 				$filename = date('Ymd-His') . '-import-sample.csv';
-				$headers = [];
-				// Export headers
-				$headers['Content-type'] = 'text/csv';
-				$headers['Content-Disposition'] = "attachment; filename={$filename}";
-				$headers['Pragma'] = 'no-cache';
-				$headers['Expires'] = '0';
+				$headerArr = [];
+				// Export header
+				$headerArr['Content-type'] = 'text/csv';
+				$headerArr['Content-Disposition'] = "attachment; filename={$filename}";
+				$headerArr['Pragma'] = 'no-cache';
+				$headerArr['Expires'] = '0';
 
 				$csv = $this->processImportConfig(
 					wSqlConfig: $wSqlConfig,
 					useHierarchy: $useHierarchy
 				);
 
-				return [$headers, $csv, HttpStatus::$Ok];
+				return [$headerArr, $csv, HttpStatus::$Ok];
 			}
 		}
 
@@ -185,21 +185,21 @@ class Supplement
 			? $sSqlConfig['isTransaction'] : false;
 
 		// Set Server mode to execute query on - Read / Write Server
-		DbCommonFunction::setDbConnection($this->http->req, fetchFrom: 'Master');
+		DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Master');
 		$this->dbServerObj = &DbCommonFunction::$masterDb[$this->http->req->cID];
 
 		$this->processSupplement(
 			sSqlConfig: $sSqlConfig,
 			useHierarchy: $useHierarchy
 		);
-		if (isset($sSqlConfig['affectedCacheKeys'])) {
+		if (isset($sSqlConfig['affectedCacheKeyArr'])) {
 			for (
-				$i = 0, $iCount = count(value: $sSqlConfig['affectedCacheKeys']);
+				$i = 0, $iCount = count(value: $sSqlConfig['affectedCacheKeyArr']);
 				$i < $iCount;
 				$i++
 			) {
-				DbCommonFunction::delQueryCache(
-					cacheKey: $sSqlConfig['affectedCacheKeys'][$i]
+				DbCommonFunction::queryCacheDelete(
+					queryCacheKey: $sSqlConfig['affectedCacheKeyArr'][$i]
 				);
 			}
 		}
@@ -217,14 +217,14 @@ class Supplement
 	 */
 	private function explainSupplement(&$sSqlConfig, $useHierarchy): void
 	{
-		$this->dataEncode->startObject(key: 'Config');
+		$this->dataEncode->startObject(objectKey: 'Config');
 		$this->dataEncode->addKeyData(
-			key: 'Route',
+			objectKey: 'Route',
 			data: $this->http->req->rParser->configuredRoute
 		);
 		$this->dataEncode->addKeyData(
-			key: 'Payload',
-			data: $this->getExplainParams(
+			objectKey: 'Payload',
+			data: $this->getExplainParamArr(
 				sqlConfig: $sSqlConfig,
 				isFirstCall: true,
 				flag: $useHierarchy
@@ -269,18 +269,18 @@ class Supplement
 		}
 
 		// Set required fields
-		$this->http->req->s['requiredFieldsCollection'] = $this->getRequired(
+		$this->http->req->s['requiredFieldArrCollection'] = $this->getRequired(
 			sqlConfig: $sSqlConfig,
 			isFirstCall: true,
 			flag: $useHierarchy
 		);
 
 		if ($this->http->req->s['payloadType'] === 'Object') {
-			$this->dataEncode->startObject(key: 'Results');
+			$this->dataEncode->startObject(objectKey: 'Results');
 		} else {
-			$this->dataEncode->startObject(key: 'Results');
+			$this->dataEncode->startObject(objectKey: 'Results');
 			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
-				$this->dataEncode->startArray(key: 'Rows');
+				$this->dataEncode->startArray(objectKey: 'Rows');
 			}
 		}
 
@@ -289,22 +289,22 @@ class Supplement
 			? 1 : $this->http->req->dataDecode->count();
 
 		for ($i = 0; $i < $iCount; $i++) {
-			$configKeys = [];
-			$payloadIndexes = [];
+			$configKeyArr = [];
+			$payloadIndexArr = [];
 			if ($i === 0) {
 				if ($this->http->req->s['payloadType'] === 'Object') {
-					$payloadIndexes[] = '';
+					$payloadIndexArr[] = '';
 				} else {
-					$payloadIndexes[] = "{$i}";
+					$payloadIndexArr[] = "{$i}";
 				}
 			} else {
-				$payloadIndexes[] = "{$i}";
+				$payloadIndexArr[] = "{$i}";
 			}
 
 			// Check for Idempotent Window
 			[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
 				sqlConfig: $sSqlConfig,
-				payloadIndexes: $payloadIndexes
+				payloadIndexArr: $payloadIndexArr
 			);
 
 			// Begin DML operation
@@ -315,11 +315,11 @@ class Supplement
 				$response = [];
 				$this->execSupplement(
 					sSqlConfig: $sSqlConfig,
-					payloadIndexes: $payloadIndexes,
-					configKeys: $configKeys,
+					payloadIndexArr: $payloadIndexArr,
+					configKeyArr: $configKeyArr,
 					useHierarchy: $useHierarchy,
 					response: $response,
-					requiredFields: $this->http->req->s['requiredFieldsCollection']
+					requiredFieldArr: $this->http->req->s['requiredFieldArrCollection']
 				);
 
 				if ($this->http->res->httpStatus === HttpStatus::$Ok) {
@@ -334,17 +334,17 @@ class Supplement
 					$arr['Status'] = HttpStatus::$Ok;
 					if (Env::$enablePayloadInResponse) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-							keys: implode(
+							keyString: implode(
 								separator: ':',
-								array: $payloadIndexes
+								array: $payloadIndexArr
 							)
 						);
 					}
 					$arr['Response'] = $response;
 
 					if ($idempotentWindow) {
-						DbCommonFunction::$gCacheServer->setCache(
-							key: $hashKey,
+						DbCommonFunction::$gCacheServer->cacheSet(
+							cacheKey: $hashKey,
 							value: json_encode(value: $arr),
 							expire: $idempotentWindow
 						);
@@ -354,9 +354,9 @@ class Supplement
 					$arr['Status'] = $this->http->res->httpStatus;
 					if (Env::$enablePayloadInResponse) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-							keys: implode(
+							keyString: implode(
 								separator: ':',
-								array: $payloadIndexes
+								array: $payloadIndexArr
 							)
 						);
 					}
@@ -366,19 +366,19 @@ class Supplement
 				$arr = json_decode(json: $hashJson, associative: true);
 			}
 
-			if ($payloadIndexes[0] === '') {
+			if ($payloadIndexArr[0] === '') {
 				foreach ($arr as $k => $v) {
-					$this->dataEncode->addKeyData(key: $k, data: $v);
+					$this->dataEncode->addKeyData(objectKey: $k, data: $v);
 				}
 			} else {
 				if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
-					$this->dataEncode->startObject(key: 'Row');
+					$this->dataEncode->startObject(objectKey: 'Row');
 					foreach ($arr as $k => $v) {
-						$this->dataEncode->addKeyData(key: $k, data: $v);
+						$this->dataEncode->addKeyData(objectKey: $k, data: $v);
 					}
 					$this->dataEncode->endObject();
 				} else {
-					$this->dataEncode->addKeyData(key: $i, data: $arr);
+					$this->dataEncode->addKeyData(objectKey: $i, data: $arr);
 				}
 			}
 		}
@@ -397,43 +397,43 @@ class Supplement
 	 * Function to execute supplement recursively
 	 *
 	 * @param array $sSqlConfig     Config from file
-	 * @param array $payloadIndexes Payload Indexes
-	 * @param array $configKeys     Config Keys
+	 * @param array $payloadIndexArr Payload Indexes
+	 * @param array $configKeyArr     Config key's
 	 * @param bool  $useHierarchy   Use results in where clause of sub queries
 	 * @param array $response       Response by reference
-	 * @param array $requiredFields Required fields
+	 * @param array $requiredFieldArr Required fields
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
 	private function execSupplement(
 		&$sSqlConfig,
-		$payloadIndexes,
-		$configKeys,
+		$payloadIndexArr,
+		$configKeyArr,
 		$useHierarchy,
 		&$response,
-		&$requiredFields
+		&$requiredFieldArr
 	): void {
 		// Return if function is not set
 		if (!isset($sSqlConfig['__FUNCTION__'])) {
 			return;
 		}
 
-		$payloadIndex = is_array(value: $payloadIndexes)
+		$payloadIndex = is_array(value: $payloadIndexArr)
 			? trim(
 				string: implode(
 					separator: ':',
-					array: $payloadIndexes
+					array: $payloadIndexArr
 				),
 				characters: ':'
 			) : '';
 
 		$isObject = $this->http->req->dataDecode->dataType(
-			keys: $payloadIndex
+			keyString: $payloadIndex
 		) === 'Object';
 
 		$iCount = $isObject
-			? 1 : $this->http->req->dataDecode->count(keys: $payloadIndex);
+			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
 
 		for ($i = 0; $i < $iCount; $i++) {
 			if ($isObject) {
@@ -443,7 +443,7 @@ class Supplement
 				$_response = &$response[$i];
 			}
 
-			$payloadIndexes = $payloadIndexes;
+			$payloadIndexArr = $payloadIndexArr;
 			if (
 				$this->operateAsTransaction
 				&& !$this->dbServerObj->beganTransaction
@@ -463,13 +463,13 @@ class Supplement
 				!$isObject
 				&& !$useHierarchy
 			) {
-				array_push($payloadIndexes, $i);
+				array_push($payloadIndexArr, $i);
 			}
 
-			$payloadIndex = is_array(value: $payloadIndexes)
-				? implode(separator: ':', array: $payloadIndexes) : '';
+			$payloadIndex = is_array(value: $payloadIndexArr)
+				? implode(separator: ':', array: $payloadIndexArr) : '';
 
-			if (!$this->http->req->dataDecode->isset(keys: $payloadIndex)) {
+			if (!$this->http->req->dataDecode->isset(keyString: $payloadIndex)) {
 				if ($useHierarchy) {
 					throw new \Exception(
 						message: "Payload key '{$payloadIndex}' not set",
@@ -481,13 +481,13 @@ class Supplement
 			}
 
 			$this->http->req->s['payload'] = $this->http->req->dataDecode->get(
-				keys: $payloadIndex
+				keyString: $payloadIndex
 			);
 
-			if (count(value: $requiredFields)) {
-				$this->http->req->s['requiredFields'] = $requiredFields;
+			if (count(value: $requiredFieldArr)) {
+				$this->http->req->s['requiredFieldArr'] = $requiredFieldArr;
 			} else {
-				$this->http->req->s['requiredFields'] = [];
+				$this->http->req->s['requiredFieldArr'] = [];
 			}
 
 			// Validation
@@ -524,7 +524,7 @@ class Supplement
 			// triggers
 			if (isset($sSqlConfig['__TRIGGERS__'])) {
 				$this->dataEncode->addKeyData(
-					key: '__TRIGGERS__',
+					objectKey: '__TRIGGERS__',
 					data: $this->getTriggerData(
 						triggerConfig: $sSqlConfig['__TRIGGERS__']
 					)
@@ -545,11 +545,11 @@ class Supplement
 			if (isset($sSqlConfig['__SUB-PAYLOAD__'])) {
 				$this->callExecSupplement(
 					sSqlConfig: $sSqlConfig,
-					payloadIndexes: $payloadIndexes,
-					configKeys: $configKeys,
+					payloadIndexArr: $payloadIndexArr,
+					configKeyArr: $configKeyArr,
 					useHierarchy: $useHierarchy,
 					response: $_response,
-					requiredFields: $requiredFields
+					requiredFieldArr: $requiredFieldArr
 				);
 			}
 		}
@@ -559,39 +559,39 @@ class Supplement
 	 * Validate and call _writeDB
 	 *
 	 * @param array $sSqlConfig     Config from file
-	 * @param array $payloadIndexes Payload Indexes
-	 * @param array $configKeys     Config Keys
+	 * @param array $payloadIndexArr Payload Indexes
+	 * @param array $configKeyArr     Config key's
 	 * @param bool  $useHierarchy   Use results in where clause of sub queries
 	 * @param array $response       Response by reference
-	 * @param array $requiredFields Required fields
+	 * @param array $requiredFieldArr Required fields
 	 *
 	 * @return void
 	 */
 	private function callExecSupplement(
 		&$sSqlConfig,
-		$payloadIndexes,
-		$configKeys,
+		$payloadIndexArr,
+		$configKeyArr,
 		$useHierarchy,
 		&$response,
-		&$requiredFields
+		&$requiredFieldArr
 	): void {
 		if ($useHierarchy) {
 			$row = $this->http->req->s['payload'];
 			$this->resetFetchData(
 				fetchFrom: 'sqlPayload',
-				keys: $configKeys,
+				moduleKeyArr: $configKeyArr,
 				row: $row
 			);
 		}
 
 		if (
-			isset($payloadIndexes[0])
-			&& $payloadIndexes[0] === ''
+			isset($payloadIndexArr[0])
+			&& $payloadIndexArr[0] === ''
 		) {
-			$payloadIndexes = array_shift($payloadIndexes);
+			$payloadIndexArr = array_shift($payloadIndexArr);
 		}
-		if (!is_array(value: $payloadIndexes)) {
-			$payloadIndexes = [];
+		if (!is_array(value: $payloadIndexArr)) {
+			$payloadIndexArr = [];
 		}
 
 		if (
@@ -599,27 +599,27 @@ class Supplement
 			&& $this->isObject(arr: $sSqlConfig['__SUB-PAYLOAD__'])
 		) {
 			foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$sSqlConfig) {
-				$dataExists = false;
-				$payloadIndexes = $payloadIndexes;
-				$configKeys = $configKeys;
-				array_push($payloadIndexes, $module);
-				array_push($configKeys, $module);
-				$modulePayloadKey = is_array(value: $payloadIndexes)
-					? implode(separator: ':', array: $payloadIndexes) : '';
-				$dataExists = $this->http->req->dataDecode->isset(
-					keys: $modulePayloadKey
+				$dataExist = false;
+				$payloadIndexArr = $payloadIndexArr;
+				$configKeyArr = $configKeyArr;
+				array_push($payloadIndexArr, $module);
+				array_push($configKeyArr, $module);
+				$modulePayloadKey = is_array(value: $payloadIndexArr)
+					? implode(separator: ':', array: $payloadIndexArr) : '';
+				$dataExist = $this->http->req->dataDecode->isset(
+					keyString: $modulePayloadKey
 				);
 				if (
 					$useHierarchy
-					&& !$dataExists
+					&& !$dataExist
 				) { // use parent data of a payload
 					throw new \Exception(
 						message: "Invalid payload: Module '{$module}' missing",
 						code: HttpStatus::$NotFound
 					);
 				}
-				if ($dataExists) {
-					$requiredFields = $requiredFields[$module] ?? $requiredFields;
+				if ($dataExist) {
+					$requiredFieldArr = $requiredFieldArr[$module] ?? $requiredFieldArr;
 					$useHierarchy = $useHierarchy ?? $this->getUseHierarchy(
 						sqlConfig: $sSqlConfig,
 						keyword: 'useHierarchy'
@@ -628,11 +628,11 @@ class Supplement
 					$response = &$response[$module];
 					$this->execSupplement(
 						sSqlConfig: $sSqlConfig,
-						payloadIndexes: $payloadIndexes,
-						configKeys: $configKeys,
+						payloadIndexArr: $payloadIndexArr,
+						configKeyArr: $configKeyArr,
 						useHierarchy: $useHierarchy,
 						response: $response,
-						requiredFields: $requiredFields
+						requiredFieldArr: $requiredFieldArr
 					);
 				}
 			}
@@ -652,12 +652,12 @@ class Supplement
 		$return = true;
 		$isValidData = true;
 		if (isset($sSqlConfig['__VALIDATE__'])) {
-			[$isValidData, $errors] = $this->validate(
+			[$isValidData, $errorArr] = $this->validate(
 				validationConfig: $sSqlConfig['__VALIDATE__']
 			);
 			if ($isValidData !== true) {
 				$this->http->res->httpStatus = HttpStatus::$BadRequest;
-				$response['Error'] = $errors;
+				$response['Error'] = $errorArr;
 				$return = false;
 			}
 		}

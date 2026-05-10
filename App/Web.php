@@ -160,7 +160,7 @@ class Web
 
 		$headerSize = curl_getinfo(handle: $curl, option: \CURLINFO_HEADER_SIZE);
 
-		$responseHeaders = self::httpParseHeaders(
+		$responseHeaderArr = self::httpParseHeaders(
 			rawHeaders: substr(
 				string: $curlResponse,
 				offset: 0,
@@ -179,7 +179,7 @@ class Web
 
 		$return['response'] = [
 			'responseHttpCode' => $responseHttpCode,
-			'responseHeaders' => $responseHeaders,
+			'responseHeaderArr' => $responseHeaderArr,
 			'responseContentType' => $responseContentType,
 			'responseBody' => $responseBody
 		];
@@ -226,32 +226,32 @@ class Web
 	}
 
 	/**
-	 * Generates raw headers into array
+	 * Generates raw header into array
 	 *
-	 * @param string $rawHeaders Raw headers from cURL response
+	 * @param string $rawHeaders Raw header from cURL response
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
 	private static function httpParseHeaders($rawHeaders): array
 	{
-		$headers = [];
+		$headerArr = [];
 		$key = '';
 
 		foreach (explode(separator: "\n", string: $rawHeaders) as $i => $h) {
 			$h = explode(separator: ':', string: $h, limit: 2);
 
 			if (isset($h[1])) {
-				if (!isset($headers[$h[0]])) {
-					$headers[$h[0]] = trim(string: $h[1]);
-				} elseif (is_array(value: $headers[$h[0]])) {
-					$headers[$h[0]] = array_merge(
-						$headers[$h[0]],
+				if (!isset($headerArr[$h[0]])) {
+					$headerArr[$h[0]] = trim(string: $h[1]);
+				} elseif (is_array(value: $headerArr[$h[0]])) {
+					$headerArr[$h[0]] = array_merge(
+						$headerArr[$h[0]],
 						[trim(string: $h[1])]
 					);
 				} else {
-					$headers[$h[0]] = array_merge(
-						[$headers[$h[0]]],
+					$headerArr[$h[0]] = array_merge(
+						[$headerArr[$h[0]]],
 						[trim(string: $h[1])]
 					);
 				}
@@ -259,42 +259,42 @@ class Web
 				$key = $h[0];
 			} else {
 				if (substr(string: $h[0], offset: 0, length: 1) == "\t") {
-					$headers[$key] .= "\r\n\t" . trim(string: $h[0]);
+					$headerArr[$key] .= "\r\n\t" . trim(string: $h[0]);
 				} elseif (!$key) {
-					$headers[0] = trim(string: $h[0]);
+					$headerArr[0] = trim(string: $h[0]);
 				}
 			}
 		}
 
-		return $headers;
+		return $headerArr;
 	}
 
 	/**
 	 * Generates XML Payload
 	 *
-	 * @param array $params   Params
+	 * @param array $paramArr   ParamArr
 	 * @param array $payload  Payload
-	 * @param bool  $rowsFlag Flag
+	 * @param bool  $rowTagStartFlag Flag
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public static function genXmlPayload(&$params, &$payload, $rowsFlag = false): void
+	public static function genXmlPayload(&$paramArr, &$payload, $rowTagStartFlag = false): void
 	{
-		if (empty($params)) {
+		if (empty($paramArr)) {
 			return;
 		}
 
-		$rows = false;
+		$rowTagStartFlag = false;
 
-		$isObject = (isset($params[0])) ? false : true;
+		$isObject = (isset($paramArr[0])) ? false : true;
 
 		if (
 			!$isObject
-			&& count(value: $params) === 1
+			&& count(value: $paramArr) === 1
 		) {
-			$params = $params[0];
-			if (empty($params)) {
+			$paramArr = $paramArr[0];
+			if (empty($paramArr)) {
 				return;
 			}
 			$isObject = true;
@@ -302,18 +302,18 @@ class Web
 
 		if (!$isObject) {
 			$payload .= '<Rows>';
-			$rows = true;
+			$rowTagStartFlag = true;
 		}
 
-		if ($rowsFlag) {
+		if ($rowTagStartFlag) {
 			$payload .= '<Row>';
 		}
-		foreach ($params as $key => &$value) {
+		foreach ($paramArr as $key => &$value) {
 			if ($isObject) {
 				$payload .= "<{$key}>";
 			}
 			if (is_array(value: $value)) {
-				self::genXmlPayload(params: $value, payload: $payload, rowsFlag: $rows);
+				self::genXmlPayload(params: $value, payload: $payload, rowTagStartFlag: $rowTagStartFlag);
 			} else {
 				$payload .= htmlspecialchars(string: $value);
 			}
@@ -321,7 +321,7 @@ class Web
 				$payload .= "</{$key}>";
 			}
 		}
-		if ($rowsFlag) {
+		if ($rowTagStartFlag) {
 			$payload .= '</Row>';
 		}
 		if (!$isObject) {

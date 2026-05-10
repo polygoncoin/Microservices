@@ -46,9 +46,9 @@ interface ExportDatabaseServerInterface
 	 * Returns Shell Command
 	 *
 	 * @param string $sql    query
-	 * @param array  $params query params
+	 * @param array  $paramArr query params
 	 *
 	 * @return string
 	 */
-	public function getShellCommand($sql, $params = null): string;
+	public function getShellCommand($sql, $paramArr = null): string;
 }

@@ -1,10 +1,10 @@
-# Global Container Details
+# Global Container Detail
 
 ## Global cache
 
 ```ini
 ; (Redis) user <username> allcommands allkeys on ><password>
-; used to save user and token related details
+; used to save user and token related detail
 ; Supported Container - Redis / Memcached / MongoDb
 gCacheServerType='Redis'
 gCacheServerHostname='127.0.0.1'
@@ -18,7 +18,7 @@ gCacheServerTable='global_cache' ; For MongoDb
 ## Global Database
 
 ```ini
-; Global Database details - global.sql
+; Global Database detail - global.sql
 ; Supported Container - MySql / PostgreSql
 gDbServerType='MySql'
 gDbServerHostname='127.0.0.1'

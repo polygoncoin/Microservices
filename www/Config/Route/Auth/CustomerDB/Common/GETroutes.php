@@ -77,7 +77,7 @@ return [
 	$Env::$routesRequestRoute => [
 		'__FILE__' => false,
 		'{method:string}' => [
-			'dataType' => DatabaseServerDataType::$HttpMethods,
+			'dataType' => DatabaseServerDataType::$HttpMethod,
 			'__FILE__' => false
 		]
 	]

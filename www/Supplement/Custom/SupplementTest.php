@@ -51,7 +51,7 @@ class SupplementTest implements CustomInterface
 	public function __construct(Http &$http)
 	{
 		$this->http = &$http;
-		DbCommonFunction::setDbConnection($this->http->req, fetchFrom: 'Slave');
+		DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Slave');
 	}
 
 	/**

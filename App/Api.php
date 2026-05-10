@@ -81,9 +81,9 @@ class Api
 	{
 		if (
 			!$this->http->req->isOpenToWebRequest
-			&& $this->http->httpReqDetails['server']['httpMethod'] === Constant::$GET
+			&& $this->http->httpReqDetailArr['server']['httpMethod'] === Constant::$GET
 		) {
-			$dropboxCache = new Dropbox(httpReqDetails: $this->http->httpReqDetails, http: $this->http);
+			$dropboxCache = new Dropbox(httpReqDetailArr: $this->http->httpReqDetailArr, http: $this->http);
 			if ($dropboxCache->init(mode: 'Closed')) {
 				// File exists - Serve from Dropbox
 				return $dropboxCache->process();
@@ -119,7 +119,7 @@ class Api
 		}
 
 		$class = null;
-		switch ($this->http->httpReqDetails['server']['httpMethod']) {
+		switch ($this->http->httpReqDetailArr['server']['httpMethod']) {
 			case Constant::$GET:
 				$class = __NAMESPACE__ . '\\Read';
 				break;
@@ -171,7 +171,7 @@ class Api
 
 		if (
 			Env::$enableRoutesRequest
-			&& Env::$routesRequestRoute === $this->http->req->rParser->routeElements[0]
+			&& Env::$routesRequestRoute === $this->http->req->rParser->routeElementArr[0]
 		) {
 			$supplementApiClass = __NAMESPACE__ . '\\Route';
 			$supplementObj = new $supplementApiClass($this->http);
@@ -185,7 +185,7 @@ class Api
 				case (
 						Env::$enableCustomRequest
 						&& (Env::$customRequestRoutePrefix
-							=== $this->http->req->rParser->routeElements[0])
+							=== $this->http->req->rParser->routeElementArr[0])
 
 					):
 					$supplementApiClass = __NAMESPACE__ . '\\Custom';
@@ -193,21 +193,21 @@ class Api
 				case (
 						Env::$enableUploadRequest
 						&& (Env::$uploadRequestRoutePrefix
-							=== $this->http->req->rParser->routeElements[0])
+							=== $this->http->req->rParser->routeElementArr[0])
 					):
 					$supplementApiClass = __NAMESPACE__ . '\\Upload';
 					break;
 				case (
 						Env::$enableThirdPartyRequest
 						&& (Env::$thirdPartyRequestRoutePrefix
-							=== $this->http->req->rParser->routeElements[0])
+							=== $this->http->req->rParser->routeElementArr[0])
 					):
 					$supplementApiClass = __NAMESPACE__ . '\\ThirdParty';
 					break;
 				case (
 						Env::$enableDropboxRequest
 						&& (Env::$dropboxRequestRoutePrefix
-							=== $this->http->req->rParser->routeElements[0])
+							=== $this->http->req->rParser->routeElementArr[0])
 					):
 					$supplementApiClass = __NAMESPACE__ . '\\Dropbox';
 					break;

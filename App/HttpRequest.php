@@ -62,7 +62,7 @@ class HttpRequest
 	private $http = null;
 
 	/**
-	 * Session details of a request
+	 * Session detail of a request
 	 *
 	 * @var null|array
 	 */
@@ -117,24 +117,24 @@ class HttpRequest
 	{
 		$this->http = &$http;
 
-		if (isset($this->http->httpReqDetails['get'][ROUTE_URL_PARAM])) {
-			$this->http->httpReqDetails['get'][ROUTE_URL_PARAM] = '/' . trim(
-				string: $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
+		if (isset($this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM])) {
+			$this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] = '/' . trim(
+				string: $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM],
 				characters: '/'
 			);
 		} else {
-			$this->http->httpReqDetails['get'][ROUTE_URL_PARAM] = '';
+			$this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] = '';
 		}
 
 		switch (Env::$authMode) {
 			case 'Token':
 				if (
-					isset($this->http->httpReqDetails['header'])
-					&& isset($this->http->httpReqDetails['header']['tokenHeader'])
-					&& $this->http->httpReqDetails['header']['tokenHeader'] !== null
+					isset($this->http->httpReqDetailArr['header'])
+					&& isset($this->http->httpReqDetailArr['header']['tokenHeader'])
+					&& $this->http->httpReqDetailArr['header']['tokenHeader'] !== null
 				) {
 					$this->isOpenToWebRequest = false;
-				} elseif ($this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/login') {
+				} elseif ($this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login') {
 					$this->isOpenToWebRequest = false;
 				} elseif (Env::$enableOpenRequest) {
 					$this->isOpenToWebRequest = true;
@@ -151,15 +151,15 @@ class HttpRequest
 							code: HttpStatus::$InternalServerError
 						);
 					}
-					if (Env::$enableConcurrentLogins) {
+					if (Env::$enableConcurrentLogin) {
 						$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
 							cID: $this->cID,
 							uID: $this->uID
 						);
 						$sessionID = session_id();
-						if (DbCommonFunction::$gCacheServer->cacheExists(key: $userConcurrencyKey)) {
-							$userConcurrencyKeyData = DbCommonFunction::$gCacheServer->getCache(
-								key: $userConcurrencyKey
+						if (DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $userConcurrencyKey)) {
+							$userConcurrencyKeyData = DbCommonFunction::$gCacheServer->cacheGet(
+								cacheKey: $userConcurrencyKey
 							);
 							if ($userConcurrencyKeyData !== $sessionID) {
 								throw new \Exception(
@@ -169,14 +169,14 @@ class HttpRequest
 								);
 							}
 						} else {
-							$this->setCache(
-								key: $userConcurrencyKey,
+							$this->cacheSet(
+								cacheKey: $userConcurrencyKey,
 								value: $sessionID,
 								expire: Env::$concurrentAccessInterval
 							);
 						}
 					} else {
-						if ($this->http->req->s['uDetails']['httpRequestHash'] !== $this->http->httpReqDetails['httpRequestHash']) {
+						if ($this->http->req->s['uDetail']['httpRequestHash'] !== $this->http->httpReqDetailArr['httpRequestHash']) {
 							throw new \Exception(
 								message: 'Session not supported from this Browser/Device',
 								code: HttpStatus::$PreconditionFailed
@@ -184,7 +184,7 @@ class HttpRequest
 						}
 					}
 					$this->isOpenToWebRequest = false;
-				} elseif ($this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/login') {
+				} elseif ($this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login') {
 					$this->isOpenToWebRequest = false;
 				} else {
 					$this->isOpenToWebRequest = true;
@@ -233,11 +233,11 @@ class HttpRequest
 	 */
 	public function init(): bool
 	{
-		$this->loadCustomerDetails();
+		$this->loadCustomerDetail();
 
 		if (!$this->isOpenToWebRequest) {
-			$this->auth->loadUserDetails();
-			$this->auth->loadGroupDetails();
+			$this->auth->loadUserDetail();
+			$this->auth->loadGroupDetail();
 		}
 
 		$this->rParser->parseRoute();
@@ -246,38 +246,38 @@ class HttpRequest
 	}
 
 	/**
-	 * Load Customer Details
+	 * Load Customer Detail
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function loadCustomerDetails(): void
+	public function loadCustomerDetail(): void
 	{
-		if (isset($this->s['cDetails'])) {
+		if (isset($this->s['cDetail'])) {
 			return;
 		}
 
-		DbCommonFunction::connectGlobalCacheServer();
+		DbCommonFunction::connectGlobalCache();
 
 		if ($this->isOpenToWebRequest) {
-			$cKey = CacheServerKey::openToWebDomain(domainName: $this->http->httpReqDetails['server']['domainName']);
+			$cKey = CacheServerKey::openToWebDomain(domainName: $this->http->httpReqDetailArr['server']['domainName']);
 		} else {
-			$cKey = CacheServerKey::closedToWebDomain(domainName: $this->http->httpReqDetails['server']['domainName']);
+			$cKey = CacheServerKey::closedToWebDomain(domainName: $this->http->httpReqDetailArr['server']['domainName']);
 		}
-		if (!DbCommonFunction::$gCacheServer->cacheExists(key: $cKey)) {
+		if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cKey)) {
 			throw new \Exception(
-				message: "Invalid Host '{$this->http->httpReqDetails['server']['domainName']}'",
+				message: "Invalid Host '{$this->http->httpReqDetailArr['server']['domainName']}'",
 				code: HttpStatus::$InternalServerError
 			);
 		}
 
-		$this->s['cDetails'] = json_decode(
-			json: DbCommonFunction::$gCacheServer->getCache(
-				key: $cKey
+		$this->s['cDetail'] = json_decode(
+			json: DbCommonFunction::$gCacheServer->cacheGet(
+				cacheKey: $cKey
 			),
 			associative: true
 		);
-		$this->cID = $this->s['cDetails']['id'];
+		$this->cID = $this->s['cDetail']['id'];
 	}
 
 	/**
@@ -291,9 +291,9 @@ class HttpRequest
 			return;
 		}
 
-		$this->s['queryParams'] = &$this->http->httpReqDetails['get'];
-		if ($this->http->httpReqDetails['server']['httpMethod'] === Constant::$GET) {
-			$this->urlDecode(value: $this->http->httpReqDetails['get']);
+		$this->s['queryParamArr'] = &$this->http->httpReqDetailArr['get'];
+		if ($this->http->httpReqDetailArr['server']['httpMethod'] === Constant::$GET) {
+			$this->urlDecode(value: $this->http->httpReqDetailArr['get']);
 			$this->s['payloadType'] = 'Object';
 		} else {
 			$this->setPayloadStream();
@@ -320,17 +320,17 @@ class HttpRequest
 			case (
 				$this->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->rParser->routeEndingReservedKeyword === Env::$importRequestRouteKeyword)
-				&& isset($this->http->httpReqDetails['files']['file']['tmp_name'])
+				&& isset($this->http->httpReqDetailArr['files']['file']['tmp_name'])
 			):
 				$content = $this->formatCsvPayload(
-					csvFile: $this->http->httpReqDetails['files']['file']['tmp_name']
+					csvFile: $this->http->httpReqDetailArr['files']['file']['tmp_name']
 				);
 				break;
 			case Env::$iRepresentation === 'XML':
-				$content = $this->convertXmlToJson(xmlString: $this->http->httpReqDetails['post']);
+				$content = $this->convertXmlToJson(xmlString: $this->http->httpReqDetailArr['post']);
 				break;
 			default:
-				$content = $this->http->httpReqDetails['post'];
+				$content = $this->http->httpReqDetailArr['post'];
 		}
 		$this->payloadStream = fopen(
 			filename: "php://memory",
@@ -424,7 +424,7 @@ class HttpRequest
 	/**
 	 * Function to find payload is an object/array
 	 *
-	 * @param array|string $value Array vales to be decoded. Basically $httpReqDetails['get']
+	 * @param array|string $value Array vales to be decoded. Basically $httpReqDetailArr['get']
 	 *
 	 * @return void
 	 */
@@ -498,10 +498,10 @@ class HttpRequest
 
 			if ($counter === 0) {
 				$modeArr = $_mode;
-				$dataEncode->startArray(key: $_mode[0]);
+				$dataEncode->startArray(objectKey: $_mode[0]);
 				$dataEncode->startObject();
 				foreach ($_data as $k => $v) {
-					$dataEncode->addKeyData(key: $k, data: $v);
+					$dataEncode->addKeyData(objectKey: $k, data: $v);
 				}
 				$counter = 1;
 				continue;
@@ -543,14 +543,14 @@ class HttpRequest
 					}
 					for ($_i = $i; $_i < $_modeCount; $_i++) {
 						$_modeArr[$_i] = $_mode[$_i];
-						$dataEncode->startArray(key: $_mode[$_i]);
+						$dataEncode->startArray(objectKey: $_mode[$_i]);
 						$dataEncode->startObject();
 					}
 				}
 				$modeArr = $_modeArr;
 			}
 			foreach ($_data as $k => $v) {
-				$dataEncode->addKeyData(key: $k, data: $v);
+				$dataEncode->addKeyData(objectKey: $k, data: $v);
 			}
 		}
 		$dataEncode->endObject();

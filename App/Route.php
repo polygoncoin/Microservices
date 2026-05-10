@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Route - Available routes
+ * Route - Available routeArr
  * php version 8.3
  *
  * @category  Route
@@ -20,7 +20,7 @@ use Microservices\App\Env;
 use Microservices\App\Http;
 
 /**
- * Route - Available routes
+ * Route - Available routeArr
  * php version 8.3
  *
  * @category  Route
@@ -34,11 +34,11 @@ use Microservices\App\Http;
 class Route
 {
 	/**
-	 * Supported http methods of routes
+	 * Supported http methods of routeArr
 	 *
 	 * @var array
 	 */
-	private $httpMethods = [
+	private $httpMethodArr = [
 		'GET',
 		'POST',
 		'PUT',
@@ -55,11 +55,11 @@ class Route
 		. DIRECTORY_SEPARATOR . 'Route';
 
 	/**
-	 * Route config ignore keys
+	 * Route config ignore key's
 	 *
 	 * @var array
 	 */
-	private $reservedKeys = ['dataType'];
+	private $reservedKeyArr = ['dataType'];
 
 	/**
 	 * Http Object
@@ -92,7 +92,7 @@ class Route
 	}
 
 	/**
-	 * Make allowed routes list of a logged-in user
+	 * Make allowed routeArr list of a logged-in user
 	 *
 	 * @param array $payload Payload
 	 *
@@ -103,7 +103,7 @@ class Route
 		$Constant = __NAMESPACE__ . '\Constant';
 		$Env = __NAMESPACE__ . '\Env';
 
-		$httpRoutes = [];
+		$httpRouteArr = [];
 		if ($this->http->req->isOpenToWebRequest) {
 			$userRoutesFolder = Constant::$WWW . $this->routesFolder
 				. DIRECTORY_SEPARATOR . 'Open';
@@ -112,27 +112,27 @@ class Route
 				. DIRECTORY_SEPARATOR . 'Auth'
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . $this->http->req->s['gDetails']['name'];
+				. DIRECTORY_SEPARATOR . $this->http->req->s['gDetail']['name'];
 		}
 
-		foreach ($this->httpMethods as $method) {
-			$httpRoutes[$method] = [];
+		foreach ($this->httpMethodArr as $method) {
+			$httpRouteArr[$method] = [];
 			$routeFileLocation =  $userRoutesFolder
-				. DIRECTORY_SEPARATOR . $method . 'routes.php';
+				. DIRECTORY_SEPARATOR . $method . 'routeArr.php';
 			if (!file_exists(filename: $routeFileLocation)) {
 				continue;
 			}
-			$routes = include $routeFileLocation;
+			$routeArr = include $routeFileLocation;
 			$route = '';
 			$this->getRoutes(
-				routes: $routes,
+				routeArr: $routeArr,
 				route: $route,
-				httpRoutes: $httpRoutes[$method]
+				httpRouteArr: $httpRouteArr[$method]
 			);
 		}
 		$this->http->res->dataEncode->addKeyData(
-			key: 'Results',
-			data: $httpRoutes
+			objectKey: 'Results',
+			data: $httpRouteArr
 		);
 
 		return true;
@@ -141,27 +141,27 @@ class Route
 	/**
 	 * Create Route list
 	 *
-	 * @param array  $routes     Route
+	 * @param array  $routeArr     Route
 	 * @param string $route      Current Route
-	 * @param array  $httpRoutes All http Route
+	 * @param array  $httpRouteArr All http Route
 	 *
 	 * @return void
 	 */
-	private function getRoutes(&$routes, $route, &$httpRoutes): void
+	private function getRoutes(&$routeArr, $route, &$httpRouteArr): void
 	{
-		foreach ($routes as $key => &$r) {
-			if (in_array(needle: $key, haystack: $this->reservedKeys)) {
+		foreach ($routeArr as $key => &$r) {
+			if (in_array(needle: $key, haystack: $this->reservedKeyArr)) {
 				continue;
 			}
 			if ($key === '__FILE__') {
-				$httpRoutes[] = $route;
+				$httpRouteArr[] = $route;
 			}
 			if (is_array(value: $r)) {
 				$_route = $route . '/' . $key;
 				$this->getRoutes(
-					routes: $r,
+					routeArr: $r,
 					route: $_route,
-					httpRoutes: $httpRoutes
+					httpRouteArr: $httpRouteArr
 				);
 			}
 		}

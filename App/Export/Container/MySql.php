@@ -125,18 +125,18 @@ class MySql implements ExportDatabaseServerInterface
 	 * Validate
 	 *
 	 * @param string $sql    query
-	 * @param array  $params query params
+	 * @param array  $paramArr query params
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function validate($sql, $params): void
+	private function validate($sql, $paramArr): void
 	{
 		if (empty($sql)) {
 			throw new \Exception(message: 'Empty Sql query');
 		}
 
-		if (count(value: $params) === 0) {
+		if (count(value: $paramArr) === 0) {
 			return;
 		}
 
@@ -145,7 +145,7 @@ class MySql implements ExportDatabaseServerInterface
 			substr_count(
 				haystack: $sql,
 				needle: ':'
-				!== count(value: $params)
+				!== count(value: $paramArr)
 			)
 		) {
 			throw new \Exception(
@@ -153,9 +153,9 @@ class MySql implements ExportDatabaseServerInterface
 			);
 		}
 
-		$paramKeys = array_keys(array: $params);
+		$paramKeyArr = array_keys(array: $paramArr);
 		$paramPos = [];
-		foreach ($paramKeys as $value) {
+		foreach ($paramKeyArr as $value) {
 			if (substr_count(haystack: $sql, needle: $value) > 1) {
 				throw new \Exception(
 					message: 'Parameterized query has more than one '
@@ -182,21 +182,21 @@ class MySql implements ExportDatabaseServerInterface
 	 * Generate raw Sql query from parameterized query via PDO.
 	 *
 	 * @param string $sql    query
-	 * @param array  $params query params
+	 * @param array  $paramArr query params
 	 *
 	 * @return string
 	 * @throws \Exception
 	 */
-	private function generateRawSqlQuery($sql, $params): string
+	private function generateRawSqlQuery($sql, $paramArr): string
 	{
 		if (
-			empty($params)
-			|| count(value: $params) === 0
+			empty($paramArr)
+			|| count(value: $paramArr) === 0
 		) {
 			return $sql;
 		}
 
-		$this->validate(sql: $sql, params: $params);
+		$this->validate(sql: $sql, params: $paramArr);
 
 		//mysqli connection
 		$mysqli = mysqli_connect(
@@ -213,41 +213,41 @@ class MySql implements ExportDatabaseServerInterface
 		}
 
 		//Generate bind params
-		$bindParams = [];
-		foreach ($params as $key => $values) {
-			if (is_array(value: $values)) {
-				$tmpParams = [];
+		$bindParamArr = [];
+		foreach ($paramArr as $key => $valueArr) {
+			if (is_array(value: $valueArr)) {
+				$tmpParamArr = [];
 				$count = 1;
-				foreach ($values as $value) {
+				foreach ($valueArr as $value) {
 					if (is_array(value: $value)) {
 						throw new \Exception(
 							message: "Invalid params for key '{$key}'"
 						);
 					}
 					$newKey = $key . $count;
-					if (in_array(needle: $newKey, haystack: $tmpParams)) {
+					if (in_array(needle: $newKey, haystack: $tmpParamArr)) {
 						throw new \Exception(
 							message: "Invalid parameterized params '{$newKey}'"
 						);
 					}
-					$tmpParams[$key . $count++] = $value;
+					$tmpParamArr[$key . $count++] = $value;
 				}
 				$sql = str_replace(
 					search: $key,
 					replace: implode(
 						separator: ', ',
-						array: array_keys(array: $tmpParams)
+						array: array_keys(array: $tmpParamArr)
 					),
 					subject: $sql
 				);
-				$bindParams = array_merge($bindParams, $tmpParams);
+				$bindParamArr = array_merge($bindParamArr, $tmpParamArr);
 			} else {
-				$bindParams[$key] = $values;
+				$bindParamArr[$key] = $valueArr;
 			}
 		}
 
-		//Replace parameterized values.
-		foreach ($bindParams as $key => $value) {
+		//Replace parameterized valueArr.
+		foreach ($bindParamArr as $key => $value) {
 			if (!ctype_digit(text: $value)) {
 				$value = "'" . mysqli_real_escape_string(
 					mysql: $mysqli,
@@ -267,13 +267,13 @@ class MySql implements ExportDatabaseServerInterface
 	 * Returns Shell Command
 	 *
 	 * @param string $sql    query
-	 * @param array  $params query params
+	 * @param array  $paramArr query params
 	 *
 	 * @return string
 	 */
-	public function getShellCommand($sql, $params = null): string
+	public function getShellCommand($sql, $paramArr = null): string
 	{
-		$sql = $this->generateRawSqlQuery(sql: $sql, params: $params);
+		$sql = $this->generateRawSqlQuery(sql: $sql, params: $paramArr);
 
 		// Shell command.
 		$shellCommand = $this->binaryLoc . ' '

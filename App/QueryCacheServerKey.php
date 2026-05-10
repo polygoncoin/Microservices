@@ -155,7 +155,7 @@ class QueryCacheServerKey
 	}
 
 	/**
-	 * App Key Details
+	 * App Key Detail
 	 *
 	 * @param bool $isOpenToWebRequest
 	 *
@@ -167,7 +167,7 @@ class QueryCacheServerKey
 	}
 
 	/**
-	 * Customer Key Details
+	 * Customer Key Detail
 	 *
 	 * @param int $customerID Customer ID
 	 *
@@ -179,7 +179,7 @@ class QueryCacheServerKey
 	}
 
 	/**
-	 * Group Key Details
+	 * Group Key Detail
 	 *
 	 * @param int $groupID Group ID
 	 *
@@ -191,7 +191,7 @@ class QueryCacheServerKey
 	}
 
 	/**
-	 * User Key Details
+	 * User Key Detail
 	 *
 	 * @param int $userID User ID
 	 *

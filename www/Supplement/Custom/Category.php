@@ -51,7 +51,7 @@ class Category implements CustomInterface
 	public function __construct(Http &$http)
 	{
 		$this->http = &$http;
-		DbCommonFunction::setDbConnection($this->http->req, fetchFrom: 'Slave');
+		DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Slave');
 	}
 
 	/**
@@ -78,14 +78,14 @@ class Category implements CustomInterface
 			FROM category
 			WHERE is_deleted = :is_deleted AND parent_id = :parent_id
 		';
-		$sqlParams = [
+		$sqlParamArr = [
 			':is_deleted' => 'No',
 			':parent_id' => 0,
 		];
-		DbCommonFunction::$slaveDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $sqlParams);
+		DbCommonFunction::$slaveDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $sqlParamArr);
 		$rows = DbCommonFunction::$slaveDb[$this->http->req->cID]->fetchAll();
 		DbCommonFunction::$slaveDb[$this->http->req->cID]->closeCursor();
-		$this->http->res->dataEncode->addKeyData(key: 'Results', data: $rows);
+		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $rows);
 		return [true];
 	}
 }

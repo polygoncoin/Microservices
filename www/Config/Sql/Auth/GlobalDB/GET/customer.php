@@ -21,17 +21,17 @@ return [
 			[
 				'column' => 'is_approved',
 				'fetchFrom' => 'custom',
-				'fetchFromDetails' => 'Yes'
+				'fetchFromDetail' => 'Yes'
 			],
 			[
 				'column' => 'is_disabled',
 				'fetchFrom' => 'custom',
-				'fetchFromDetails' => 'No'
+				'fetchFromDetail' => 'No'
 			],
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromDetails' => 'No'
+				'fetchFromDetail' => 'No'
 			]
 		],
 		'__MODE__' => 'multipleRowFormat'
@@ -42,24 +42,24 @@ return [
 			[
 				'column' => 'is_approved',
 				'fetchFrom' => 'custom',
-				'fetchFromDetails' => 'Yes'
+				'fetchFromDetail' => 'Yes'
 			],
 			[
 				'column' => 'is_disabled',
 				'fetchFrom' => 'custom',
-				'fetchFromDetails' => 'No'
+				'fetchFromDetail' => 'No'
 			],
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromDetails' => 'No'
+				'fetchFromDetail' => 'No'
 			],
 			[
 				'column' => 'id',
-				'fetchFrom' => 'routeParams',
-				'fetchFromDetails' => 'id'
+				'fetchFrom' => 'routeParamArr',
+				'fetchFromDetail' => 'id'
 			]
 		],
 		'__MODE__' => 'singleRowFormat'
 	],
-][isset($this->http->req->s['routeParams']['id'])?'single':'all'];
+][isset($this->http->req->s['routeParamArr']['id'])?'single':'all'];

@@ -139,73 +139,80 @@ class MongoDbCache implements CacheServerInterface
 	/**
 	 * Checks if cache key exist
 	 *
-	 * @param string $key Cache key
+	 * @param string $cacheKey Cache key
 	 *
 	 * @return mixed
 	 */
-	public function cacheExists($key): mixed
+	public function cacheExist($cacheKey): mixed
 	{
 		$this->connect();
 
-		return $this->cacheServerObj->cacheExists(key: $key);
+		return $this->cacheServerObj->cacheExist(cacheKey: $cacheKey);
 	}
 
 	/**
 	 * Get cache on basis of key
 	 *
-	 * @param string $key Cache key
+	 * @param string $cacheKey Cache key
 	 *
 	 * @return mixed
 	 */
-	public function getCache($key): mixed
+	public function cacheGet($cacheKey): mixed
 	{
 		$this->connect();
 
-		return $this->cacheServerObj->getCache($key);
+		return $this->cacheServerObj->cacheGet(cacheKey: $cacheKey);
 	}
 
 	/**
 	 * Set cache on basis of key
 	 *
-	 * @param string $key    Cache key
+	 * @param string $cacheKey    Cache key
 	 * @param string $value  Cache value
 	 * @param int    $expire Seconds to expire. Default 0 - doesn't expire
 	 *
 	 * @return mixed
 	 */
-	public function setCache($key, $value, $expire = null): mixed
+	public function cacheSet($cacheKey, $value, $expire = null): mixed
 	{
 		$this->connect();
 
-		return $this->cacheServerObj->setCache($key, $value, $expire);
+		return $this->cacheServerObj->cacheSet(
+			cacheKey: $cacheKey,
+			value: $value,
+			expire: $expire
+		);
 	}
 
 	/**
 	 * Increment Key value with offset
 	 *
-	 * @param string $key    Cache key
+	 * @param string $cacheKey    Cache key
 	 * @param int    $offset Offset
 	 *
 	 * @return int
 	 */
-	public function incrementCache($key, $offset = 1): int
+	public function cacheIncrement($cacheKey, $offset = 1): int
 	{
 		$this->connect();
 
-		return $this->cacheServerObj->incrementCache($key, $offset);
+		return $this->cacheServerObj->cacheIncrement(
+			cacheKey: $cacheKey,
+			offset: $offset
+		);
 	}
 
 	/**
 	 * Delete basis of key
 	 *
-	 * @param string $key Cache key
+	 * @param string $cacheKey Cache key
 	 *
 	 * @return mixed
 	 */
-	public function deleteCache($key): mixed
+	public function cacheDelete($cacheKey): mixed
 	{
 		$this->connect();
 
-		return $this->cacheServerObj->deleteCache($key);
+		return $this->cacheServerObj->cacheDelete(cacheKey: $cacheKey);
 	}
 }

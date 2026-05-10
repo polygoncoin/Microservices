@@ -17,7 +17,7 @@ namespace Microservices\App\Server\QueryCacheServer;
 
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
-use Microservices\App\Server\Container\Sql\PostgreSql as DB_PostgreSql;
+use Microservices\App\Server\Container\Sql\PostgreSql as QueryCache_PostgreSql;
 
 /**
  * Query Caching via PostgreSql
@@ -78,7 +78,7 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Query Cache Server Object
 	 *
-	 * @var null|DB_PostgreSql
+	 * @var null|QueryCache_PostgreSql
 	 */
 	private $queryCacheServerObj = null;
 
@@ -121,7 +121,7 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 		}
 
 		try {
-			$this->queryCacheServerObj = new DB_PostgreSql(
+			$this->queryCacheServerObj = new QueryCache_PostgreSql(
 				dbServerHostname: $this->queryCacheServerHostname,
 				dbServerPort: $this->queryCacheServerPort,
 				dbServerUsername: $this->queryCacheServerUsername,
@@ -139,11 +139,11 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Checks if cache key exist
 	 *
-	 * @param string $key Cache key
+	 * @param string $queryCacheKey Query cache key
 	 *
 	 * @return mixed
 	 */
-	public function cacheExists($key): mixed
+	public function queryCacheExists($queryCacheKey): mixed
 	{
 		$this->connect();
 
@@ -152,9 +152,9 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 			FROM {$this->queryCacheServerTable}
 			WHERE key = :key
 		";
-		$params = [':key' => $key];
+		$paramArr = [':key' => $queryCacheKey];
 
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $params);
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
 		$row = $this->queryCacheServerObj->fetch();
 		$this->queryCacheServerObj->closeCursor();
 
@@ -164,11 +164,11 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Get cache on basis of key
 	 *
-	 * @param string $key Cache key
+	 * @param string $queryCacheKey Query cache key
 	 *
 	 * @return mixed
 	 */
-	public function getCache($key): mixed
+	public function queryCacheGet($queryCacheKey): mixed
 	{
 		$this->connect();
 
@@ -177,8 +177,8 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 			FROM {$this->queryCacheServerTable}
 			WHERE key = :key
 		";
-		$params = [':key' => $key];
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $params);
+		$paramArr = [':key' => $queryCacheKey];
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
 		if ($row = $this->queryCacheServerObj->fetch()) {
 			$this->queryCacheServerObj->closeCursor();
 			return $row['value'];
@@ -190,23 +190,23 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Set cache on basis of key
 	 *
-	 * @param string   $key    Cache key
+	 * @param string   $queryCacheKey    Cache key
 	 * @param string   $value  Cache value
 	 *
 	 * @return mixed
 	 */
-	public function setCache($key, $value): mixed
+	public function queryCacheSet($queryCacheKey, $value): mixed
 	{
 		$this->connect();
-		$this->deleteCache($key);
+		$this->cacheDelete($queryCacheKey);
 
 		$sql = "
 			INSERT INTO {$this->queryCacheServerTable}
 			SET key = :value, value = :value
 		";
-		$params = [':key' => $key, ':value' => $value];
+		$paramArr = [':key' => $queryCacheKey, ':value' => $value];
 
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $params);
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
 		$this->queryCacheServerObj->closeCursor();
 
 		return true;
@@ -215,17 +215,17 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Delete basis of key
 	 *
-	 * @param string $key Cache key
+	 * @param string $queryCacheKey Query cache key
 	 *
 	 * @return mixed
 	 */
-	public function deleteCache($key): mixed
+	public function queryCacheDelete($queryCacheKey): mixed
 	{
 		$this->connect();
 
 		$sql = "DELETE FROM {$this->queryCacheServerTable} WHERE key = :key";
-		$params = [':key' => $key];
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $params);
+		$paramArr = [':key' => $queryCacheKey];
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
 		$this->queryCacheServerObj->closeCursor();
 
 		return true;

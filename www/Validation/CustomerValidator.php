@@ -64,7 +64,7 @@ class CustomerValidator implements ValidatorInterface
 	public function validate(&$validationConfig): array
 	{
 		$isValidData = true;
-		$errors = [];
+		$errorArr = [];
 		foreach ($validationConfig as &$v) {
 			$args = [];
 			foreach ($v['fnArgs'] as $attr => [$mode, $key]) {
@@ -76,12 +76,12 @@ class CustomerValidator implements ValidatorInterface
 			}
 			$fn = $v['fn'];
 			if (!$this->$fn($args)) {
-				$errors[] = $v['errorMessage'];
+				$errorArr[] = $v['errorMessage'];
 				$isValidData = false;
 			}
 		}
 
-		return [$isValidData, $errors];
+		return [$isValidData, $errorArr];
 	}
 
 	/**
@@ -101,8 +101,8 @@ class CustomerValidator implements ValidatorInterface
 			FROM `{$dbServerDB}`.`{$table}`
 			WHERE `{$primary}` = ?
 		";
-		$params = [$id];
-		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $params);
+		$paramArr = [$id];
+		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $paramArr);
 		return (int)(DbCommonFunction::$masterDb[$this->http->req->cID]->fetch())['count'];
 	}
 
@@ -117,8 +117,8 @@ class CustomerValidator implements ValidatorInterface
 	{
 		extract(array: $args);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
-		$params = [$id];
-		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $params);
+		$paramArr = [$id];
+		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $paramArr);
 		$row = DbCommonFunction::$masterDb[$this->http->req->cID]->fetch();
 		DbCommonFunction::$masterDb[$this->http->req->cID]->closeCursor();
 		return ($row['count'] === 0) ? false : true;

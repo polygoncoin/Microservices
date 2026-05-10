@@ -216,7 +216,7 @@ class PostgreSql implements SqlInterface
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRows(): bool|int
+	public function affectedRowCount(): bool|int
 	{
 		try {
 			if ($this->stmt) {
@@ -259,12 +259,12 @@ class PostgreSql implements SqlInterface
 	 * Execute Parameterized query
 	 *
 	 * @param string $sql     Parameterized query
-	 * @param array  $params  Parameterized query params
+	 * @param array  $paramArr  Parameterized query params
 	 * @param bool   $pushPop Push Pop result set stmt
 	 *
 	 * @return void
 	 */
-	public function execDbQuery($sql, $params = [], $pushPop = false): void
+	public function execDbQuery($sql, $paramArr = [], $pushPop = false): void
 	{
 		$this->connect();
 
@@ -280,7 +280,7 @@ class PostgreSql implements SqlInterface
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
 			if ($this->stmt) {
-				$this->stmt->execute(params: $params);
+				$this->stmt->execute(params: $paramArr);
 			}
 		} catch (\PDOException $e) {
 			if ($this->beganTransaction) {

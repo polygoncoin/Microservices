@@ -35,11 +35,11 @@ use Microservices\App\DropboxHandler\StreamVideo;
 class Dropbox
 {
 	/**
-	 * Http Request Details
+	 * Http Request Detail
 	 *
 	 * @var null|array
 	 */
-	private $httpReqDetails = null;
+	private $httpReqDetailArr = null;
 
 	/**
 	 * Http Object
@@ -67,7 +67,7 @@ class Dropbox
 	 *
 	 * @var array
 	 */
-	private $supportedVideoMimes = [
+	private $supportedVideoMimeArr = [
 		'video/quicktime'
 	];
 
@@ -84,12 +84,12 @@ class Dropbox
 	/**
 	 * Constructor
 	 *
-	 * @param array $httpReqDetails Http Request Details
+	 * @param array $httpReqDetailArr Http Request Detail
 	 * @param Http  $http
 	 */
-	public function __construct(&$httpReqDetails, &$http = null)
+	public function __construct(&$httpReqDetailArr, &$http = null)
 	{
-		$this->httpReqDetails = &$httpReqDetails;
+		$this->httpReqDetailArr = &$httpReqDetailArr;
 		$this->http = &$http;
 	}
 
@@ -102,7 +102,7 @@ class Dropbox
 	 */
 	public function init($mode): bool
 	{
-		if (!isset($this->httpReqDetails['get'][ROUTE_URL_PARAM])) {
+		if (!isset($this->httpReqDetailArr['get'][ROUTE_URL_PARAM])) {
 			return false;
 		}
 
@@ -113,7 +113,7 @@ class Dropbox
 			string: str_replace(
 				search: ['../', '..\\', '/', '\\'],
 				replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-				subject: urldecode(string: $this->httpReqDetails['get'][ROUTE_URL_PARAM])
+				subject: urldecode(string: $this->httpReqDetailArr['get'][ROUTE_URL_PARAM])
 			),
 			characters: './\\'
 		);
@@ -151,7 +151,7 @@ class Dropbox
 	 */
 	public function process(): array
 	{
-		$headers = [];
+		$headerArr = [];
 		$status = HttpStatus::$Ok;
 		$data = '';
 
@@ -159,15 +159,15 @@ class Dropbox
 		$this->mimeType = mime_content_type($this->fileLocation);
 
 		switch (true) {
-			case in_array($this->mimeType, $this->supportedVideoMimes):
+			case in_array($this->mimeType, $this->supportedVideoMimeArr):
 				// Serve Video
-				$videoStream = new StreamVideo(httpReqDetails: $this->httpReqDetails);
+				$videoStream = new StreamVideo(httpReqDetailArr: $this->httpReqDetailArr);
 				if (
 					(
 						$httpStatus = $videoStream->init($this->fileLocation)
 					) !== HttpStatus::$Ok
 				) {
-					$return = [$headers, $data, $httpStatus];
+					$return = [$headerArr, $data, $httpStatus];
 				} else {
 					$return = $videoStream->serveContent();
 				}
@@ -186,7 +186,7 @@ class Dropbox
 	 */
 	public function serveDefault(): array
 	{
-		$headers = [];
+		$headerArr = [];
 		$status = HttpStatus::$Ok;
 		$data = '';
 
@@ -195,38 +195,38 @@ class Dropbox
 		$eTag = "{$modifiedTime}";
 
 		if (
-			(isset($this->httpReqDetails['header']['HTTP_IF_NONE_MATCH'])
+			(isset($this->httpReqDetailArr['header']['HTTP_IF_NONE_MATCH'])
 				&& strpos(
-					haystack: $this->httpReqDetails['header']['HTTP_IF_NONE_MATCH'],
+					haystack: $this->httpReqDetailArr['header']['HTTP_IF_NONE_MATCH'],
 					needle: $eTag
 				) !== false
 			)
-			|| (isset($this->httpReqDetails['header']['HTTP_IF_MODIFIED_SINCE'])
+			|| (isset($this->httpReqDetailArr['header']['HTTP_IF_MODIFIED_SINCE'])
 				&& @strtotime(
-					datetime: $this->httpReqDetails['header']['HTTP_IF_MODIFIED_SINCE']
+					datetime: $this->httpReqDetailArr['header']['HTTP_IF_MODIFIED_SINCE']
 				) == $modifiedTime
 			)
 		) {
 			$status = HttpStatus::$NotModified;
-			return [$headers, $data, $status];
+			return [$headerArr, $data, $status];
 		}
 
-		// Set headers
+		// Set header
 
 		// File name requested for download
 		// $fileName = basename(path: $this->fileLocation);
-		// $headers['Content-Disposition'] = "attachment;filename='$fileName';";
+		// $headerArr['Content-Disposition'] = "attachment;filename='$fileName';";
 
-		$headers['Cache-Control'] = 'max-age=0, must-revalidate';
-		$headers['Last-Modified'] = gmdate(
+		$headerArr['Cache-Control'] = 'max-age=0, must-revalidate';
+		$headerArr['Last-Modified'] = gmdate(
 			format: 'D, d M Y H:i:s',
 			timestamp: $modifiedTime
 		) . ' GMT';
-		$headers['Etag'] = "\"{$eTag}\"";
-		$headers['Expires'] = -1;
-		$headers['Content-Type'] = "{$this->mimeType}";
-		$headers['Content-Length'] = filesize(filename: $this->fileLocation);
+		$headerArr['Etag'] = "\"{$eTag}\"";
+		$headerArr['Expires'] = -1;
+		$headerArr['Content-Type'] = "{$this->mimeType}";
+		$headerArr['Content-Length'] = filesize(filename: $this->fileLocation);
 
-		return [$headers, file_get_contents($this->fileLocation), $status];
+		return [$headerArr, file_get_contents($this->fileLocation), $status];
 	}
 }

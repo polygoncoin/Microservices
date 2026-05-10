@@ -82,10 +82,10 @@ class Password implements CustomInterface
 		$this->http->req->s['payload'] = $payload;
 
 		$oldPassword = $this->http->req->s['payload']['old_password'];
-		$oldPasswordHash = $this->http->req->s['uDetails']['password_hash'];
+		$oldPasswordHash = $this->http->req->s['uDetail']['password_hash'];
 
 		if (password_verify(password: $oldPassword, hash: $oldPasswordHash)) {
-			$userName = $this->http->req->s['uDetails']['username'];
+			$userName = $this->http->req->s['uDetail']['username'];
 			$newPassword = $this->http->req->s['payload']['new_password'];
 			$newPasswordHash = password_hash(
 				password: $newPassword,
@@ -93,17 +93,17 @@ class Password implements CustomInterface
 			);
 
 			$sql = "
-				UPDATE `{$this->http->req->s['cDetails']['usersTable']}`
+				UPDATE `{$this->http->req->s['cDetail']['usersTable']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";
-			$sqlParams = [
+			$sqlParamArr = [
 				':password_hash' => $newPasswordHash,
 				':username' => $userName,
 				':is_deleted' => 'No',
 			];
 
-			DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $sqlParams);
+			DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $sqlParamArr);
 			DbCommonFunction::$masterDb[$this->http->req->cID]->closeCursor();
 
 			$cID = $this->http->req->cID;
@@ -111,25 +111,25 @@ class Password implements CustomInterface
 				cID: $cID,
 				username: $userName
 			);
-			if (DbCommonFunction::$gCacheServer->cacheExists(key: $cu_key)) {
-				$uDetails = json_decode(
-					json: DbCommonFunction::$gCacheServer->getCache(
-						key: $cu_key
+			if (DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cu_key)) {
+				$uDetail = json_decode(
+					json: DbCommonFunction::$gCacheServer->cacheGet(
+						cacheKey: $cu_key
 					),
 					associative: true
 				);
-				$uDetails['password_hash'] = $newPasswordHash;
-				DbCommonFunction::$gCacheServer->setCache(
-					key: $cu_key,
-					value: json_encode(value: $uDetails)
+				$uDetail['password_hash'] = $newPasswordHash;
+				DbCommonFunction::$gCacheServer->cacheSet(
+					cacheKey: $cu_key,
+					value: json_encode(value: $uDetail)
 				);
-				DbCommonFunction::$gCacheServer->deleteCache(
-					key: CacheServerKey::token(token: $this->http->req->s['token'])
+				DbCommonFunction::$gCacheServer->cacheDelete(
+					cacheKey: CacheServerKey::token(token: $this->http->req->s['token'])
 				);
 			}
 
 			$this->http->res->dataEncode->addKeyData(
-				key: 'Results',
+				objectKey: 'Results',
 				data: 'Password changed successfully'
 			);
 		}

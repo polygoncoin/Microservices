@@ -39,37 +39,37 @@ interface QueryCacheServerInterface
 	/**
 	 * Checks if cache key exist
 	 *
-	 * @param string $key Cache key
+	 * @param string $queryCacheKey Query cache key
 	 *
 	 * @return mixed
 	 */
-	public function cacheExists($key): mixed;
+	public function queryCacheExists($queryCacheKey): mixed;
 
 	/**
 	 * Get cache on basis of key
 	 *
-	 * @param string $key Cache key
+	 * @param string $queryCacheKey Query cache key
 	 *
 	 * @return mixed
 	 */
-	public function getCache($key): mixed;
+	public function queryCacheGet($queryCacheKey): mixed;
 
 	/**
 	 * Set cache on basis of key
 	 *
-	 * @param string $key    Cache key
+	 * @param string $queryCacheKey    Cache key
 	 * @param string $value  Cache value
 	 *
 	 * @return mixed
 	 */
-	public function setCache($key, $value): mixed;
+	public function queryCacheSet($queryCacheKey, $value): mixed;
 
 	/**
 	 * Delete cache on basis of key
 	 *
-	 * @param string $key Cache key
+	 * @param string $queryCacheKey Query cache key
 	 *
 	 * @return mixed
 	 */
-	public function deleteCache($key): mixed;
+	public function queryCacheDelete($queryCacheKey): mixed;
 }

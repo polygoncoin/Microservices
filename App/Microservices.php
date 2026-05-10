@@ -50,11 +50,11 @@ class Microservices
 	private $tsEnd = null;
 
 	/**
-	 * Http Request Details
+	 * Http Request Detail
 	 *
 	 * @var null|array
 	 */
-	public $httpReqDetails = null;
+	public $httpReqDetailArr = null;
 
 	/**
 	 * Http Object
@@ -66,12 +66,12 @@ class Microservices
 	/**
 	 * Constructor
 	 *
-	 * @param array $httpReqDetails Http Request Details
+	 * @param array $httpReqDetailArr Http Request Detail
 	 */
-	public function __construct(&$httpReqDetails)
+	public function __construct(&$httpReqDetailArr)
 	{
-		$this->httpReqDetails = &$httpReqDetails;
-		$this->http = new Http($this->httpReqDetails);
+		$this->httpReqDetailArr = &$httpReqDetailArr;
+		$this->http = new Http($this->httpReqDetailArr);
 	}
 
 	/**
@@ -82,9 +82,9 @@ class Microservices
 	 */
 	public function init(): bool
 	{
-		$this->http->init(httpReqDetails: $this->httpReqDetails);
+		$this->http->init(httpReqDetailArr: $this->httpReqDetailArr);
 
-		if (!isset($this->httpReqDetails['get'][ROUTE_URL_PARAM])) {
+		if (!isset($this->httpReqDetailArr['get'][ROUTE_URL_PARAM])) {
 			throw new \Exception(
 				message: 'Missing route',
 				code: HttpStatus::$NotFound
@@ -132,11 +132,11 @@ class Microservices
 			case (
 					Env::$enableCronRequest
 					&& strpos(
-						haystack: $this->http->httpReqDetails['get'][ROUTE_URL_PARAM],
+						haystack: $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM],
 						needle: '/' . Env::$cronRequestRoutePrefix
 					) === 0
 				):
-				if ($this->http->httpReqDetails['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
+				if ($this->http->httpReqDetailArr['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
 					throw new \Exception(
 						message: 'Source IP is not supported',
 						code: HttpStatus::$NotFound
@@ -145,17 +145,17 @@ class Microservices
 				$class = __NAMESPACE__ . '\\Cron';
 				break;
 
-			case $this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/logout':
+			case $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/logout':
 				$class = __NAMESPACE__ . '\\Logout';
 				break;
 
 			// Requires http auth username and password
 			case (
 					Env::$enableReloadRequest
-					&& $this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
+					&& $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
 				):
 				$isValidIp = CommonFunction::checkCidr(
-					IP: $this->http->httpReqDetails['server']['httpRequestIP'],
+					IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
 					cidrString: Env::$reloadRestrictedCidr
 				);
 				if (!$isValidIp) {
@@ -168,7 +168,7 @@ class Microservices
 				break;
 
 			// Generates auth token
-			case $this->http->httpReqDetails['get'][ROUTE_URL_PARAM] === '/login':
+			case $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login':
 				$class = __NAMESPACE__ . '\\Login';
 				break;
 
@@ -216,13 +216,13 @@ class Microservices
 	public function addStatus(): void
 	{
 		$this->http->res->dataEncode->addKeyData(
-			key: 'Status',
+			objectKey: 'Status',
 			data: $this->http->res->httpStatus
 		);
 	}
 
 	/**
-	 * Add Performance details
+	 * Add Performance detail
 	 *
 	 * @return void
 	 */
@@ -233,19 +233,19 @@ class Microservices
 			$time = ceil(num: ($this->tsEnd - $this->tsStart) * 1000);
 			$memory = ceil(num: memory_get_peak_usage() / 1000);
 
-			$this->http->res->dataEncode->startObject(key: 'Stats');
-			$this->http->res->dataEncode->startObject(key: 'Performance');
+			$this->http->res->dataEncode->startObject(objectKey: 'Stats');
+			$this->http->res->dataEncode->startObject(objectKey: 'Performance');
 			$this->http->res->dataEncode->addKeyData(
-				key: 'total-time-taken',
+				objectKey: 'total-time-taken',
 				data: "{$time} ms"
 			);
 			$this->http->res->dataEncode->addKeyData(
-				key: 'peak-memory-usage',
+				objectKey: 'peak-memory-usage',
 				data: "{$memory} KB"
 			);
 			$this->http->res->dataEncode->endObject();
 			$this->http->res->dataEncode->addKeyData(
-				key: 'getrusage',
+				objectKey: 'getrusage',
 				data: getrusage()
 			);
 			$this->http->res->dataEncode->endObject();
@@ -291,43 +291,43 @@ class Microservices
 	 */
 	public function getHeaders(): array
 	{
-		$headers = [];
-		$headers['Access-Control-Allow-Origin'] = $this->httpReqDetails['server']['domainName'];
-		$headers['Vary'] = 'Origin';
-		$headers['Access-Control-Allow-Headers'] = '*';
+		$headerArr = [];
+		$headerArr['Access-Control-Allow-Origin'] = $this->httpReqDetailArr['server']['domainName'];
+		$headerArr['Vary'] = 'Origin';
+		$headerArr['Access-Control-Allow-Headers'] = '*';
 
-		$headers['Referrer-Policy'] = 'origin';
-		$headers['X-Frame-Options'] = 'SAMEORIGIN';
-		$headers['X-Content-Type-Options'] = 'nosniff';
-		$headers['Cross-Origin-Resource-Policy'] = 'same-origin';
-		$headers['Cross-Origin-Embedder-Policy'] = 'unsafe-none';
-		$headers['Cross-Origin-Opener-Policy'] = 'unsafe-none';
+		$headerArr['Referrer-Policy'] = 'origin';
+		$headerArr['X-Frame-Options'] = 'SAMEORIGIN';
+		$headerArr['X-Content-Type-Options'] = 'nosniff';
+		$headerArr['Cross-Origin-Resource-Policy'] = 'same-origin';
+		$headerArr['Cross-Origin-Embedder-Policy'] = 'unsafe-none';
+		$headerArr['Cross-Origin-Opener-Policy'] = 'unsafe-none';
 
-		// Access-Control headers are received during OPTIONS request
-		if ($this->httpReqDetails['server']['httpMethod'] == 'OPTIONS') {
+		// Access-Control header are received during OPTIONS request
+		if ($this->httpReqDetailArr['server']['httpMethod'] == 'OPTIONS') {
 			// may also be using PUT, PATCH, HEAD etc
 			$methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
-			$headers['Access-Control-Allow-Methods'] = $methods;
+			$headerArr['Access-Control-Allow-Methods'] = $methods;
 		} else {
 			switch ($this->http->res->oRepresentation) {
 				case 'XML':
 				case 'XSLT':
-					$headers['Content-Type'] = 'text/xml; charset=utf-8';
+					$headerArr['Content-Type'] = 'text/xml; charset=utf-8';
 					break;
 				case 'JSON':
-					$headers['Content-Type'] = 'application/json; charset=utf-8';
+					$headerArr['Content-Type'] = 'application/json; charset=utf-8';
 					break;
 				case 'HTML':
 				case 'PHP':
-					$headers['Content-Type'] = 'text/html; charset=utf-8';
+					$headerArr['Content-Type'] = 'text/html; charset=utf-8';
 					break;
 			}
 			$cacheControl = 'no-store, no-cache, must-revalidate, max-age=0';
-			$headers['Cache-Control'] = $cacheControl;
-			$headers['Pragma'] = 'no-cache';
+			$headerArr['Cache-Control'] = $cacheControl;
+			$headerArr['Pragma'] = 'no-cache';
 		}
 
-		return $headers;
+		return $headerArr;
 	}
 
 	/**

@@ -21,39 +21,39 @@ return [
 		[
 			'column' => 'name',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'name'
+			'fetchFromDetail' => 'name'
 		],
 		[
 			'column' => 'updated_by',
-			'fetchFrom' => 'uDetails',
-			'fetchFromDetails' => 'id'
+			'fetchFrom' => 'uDetail',
+			'fetchFromDetail' => 'id'
 		],
 		[
 			'column' => 'updated_on',
 			'fetchFrom' => 'custom',
-			'fetchFromDetails' => date(format: 'Y-m-d H:i:s')
+			'fetchFromDetail' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_approved',
 			'fetchFrom' => 'custom',
-			'fetchFromDetails' => 'Yes'
+			'fetchFromDetail' => 'Yes'
 		],
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromDetails' => 'No'
+			'fetchFromDetail' => 'No'
 		],
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromDetails' => 'No'
+			'fetchFromDetail' => 'No'
 		],
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParams',
-			'fetchFromDetails' => 'id',
+			'fetchFrom' => 'routeParamArr',
+			'fetchFromDetail' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],

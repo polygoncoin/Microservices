@@ -75,14 +75,14 @@ class Validator
 	public function validate(&$validationConfig): array
 	{
 		if (
-			isset(($this->http->req->s['requiredFields']))
-			&& count(value: $this->http->req->s['requiredFields']) > 0
+			isset(($this->http->req->s['requiredFieldArr']))
+			&& count(value: $this->http->req->s['requiredFieldArr']) > 0
 		) {
 			if (
-				([$isValidData, $errors] = $this->validateRequired())
+				([$isValidData, $errorArr] = $this->validateRequired())
 				&& !$isValidData
 			) {
-				return [$isValidData, $errors];
+				return [$isValidData, $errorArr];
 			}
 		}
 
@@ -97,17 +97,17 @@ class Validator
 	private function validateRequired(): array
 	{
 		$isValidData = true;
-		$errors = [];
+		$errorArr = [];
 		// Required fields payload validation
-		if (!empty($this->http->req->s['requiredFields']['payload'])) {
-			foreach ($this->http->req->s['requiredFields']['payload'] as $fetchFromDetails) {
-				if (!in_array($fetchFromDetails, $this->http->req->s['payload'])) {
-					$errors[] = 'Missing required payload: ' . $fetchFromDetails;
+		if (!empty($this->http->req->s['requiredFieldArr']['payload'])) {
+			foreach ($this->http->req->s['requiredFieldArr']['payload'] as $fetchFromDetail) {
+				if (!in_array($fetchFromDetail, $this->http->req->s['payload'])) {
+					$errorArr[] = 'Missing required payload: ' . $fetchFromDetail;
 					$isValidData = false;
 				}
 			}
 		}
 
-		return [$isValidData, $errors];
+		return [$isValidData, $errorArr];
 	}
 }

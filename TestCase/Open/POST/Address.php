@@ -20,7 +20,7 @@ use Microservices\App\Web;
 $header = $defaultHeaders;
 $header[] = $contentType;
 
-$params = [
+$paramArr = [
 	'user_id' => 1,
 	'address' => '203'
 ];
@@ -30,5 +30,5 @@ return Web::trigger(
 	method: 'POST',
 	route: '/address',
 	header: $header,
-	payload: json_encode(value: $params)
+	payload: json_encode(value: $paramArr)
 );

@@ -129,7 +129,7 @@ One need to enable same in .env file as below
 
 ```ini
 ; Allow particular route explain request (global flag)
-; Useful to get details of the payload by the API
+; Useful to get detail of the payload by the API
 enableExplainRequest=1              ; 1 = true / 0 = false
 enableImportRequest=1               ; 1 = true / 0 = false
 

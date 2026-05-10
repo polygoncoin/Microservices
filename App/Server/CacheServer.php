@@ -115,7 +115,7 @@ class CacheServer
 	 *
 	 * @return CacheServerInterface
 	 */
-	public function connectCacheServer(): CacheServerInterface
+	public function connectCache(): CacheServerInterface
 	{
 		if (
             !in_array(

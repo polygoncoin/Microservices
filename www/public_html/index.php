@@ -50,11 +50,11 @@ Env::$timestamp = time();
 Env::init();
 
 // Process the request
-$httpReqDetails = [];
+$httpReqDetailArr = [];
 
-$httpReqDetails['streamData'] = true;
-$httpReqDetails['server']['domainName'] = $_SERVER['HTTP_HOST'];
-$httpReqDetails['server']['httpMethod'] = $_SERVER['REQUEST_METHOD'];
+$httpReqDetailArr['streamData'] = true;
+$httpReqDetailArr['server']['domainName'] = $_SERVER['HTTP_HOST'];
+$httpReqDetailArr['server']['httpMethod'] = $_SERVER['REQUEST_METHOD'];
 
 if (
 	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
@@ -63,27 +63,27 @@ if (
 	die("Invalid request");
 }
 
-$httpReqDetails['server']['httpRequestIP'] = CommonFunction::getHttpRequestIP();
+$httpReqDetailArr['server']['httpRequestIP'] = CommonFunction::getHttpRequestIP();
 
-$httpReqDetails['header'] = getallheaders();
+$httpReqDetailArr['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
-	$httpReqDetails['header']['range'] = $_SERVER['Range'];
+	$httpReqDetailArr['header']['range'] = $_SERVER['Range'];
 }
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
-	$httpReqDetails['header']['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
+	$httpReqDetailArr['header']['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
 }
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-	$httpReqDetails['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
+	$httpReqDetailArr['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
 
-$httpReqDetails['get'] = &$_GET;
-$httpReqDetails['post'] = file_get_contents(filename: 'php://input');
-$httpReqDetails['files'] = [];
+$httpReqDetailArr['get'] = &$_GET;
+$httpReqDetailArr['post'] = file_get_contents(filename: 'php://input');
+$httpReqDetailArr['files'] = [];
 if (isset($_FILES)) {
-	$httpReqDetails['files'] = &$_FILES;
+	$httpReqDetailArr['files'] = &$_FILES;
 }
-$httpReqDetails['isWebRequest'] = true;
-$httpReqDetails['httpRequestHash'] = CommonFunction::httpRequestHash(
+$httpReqDetailArr['isWebRequest'] = true;
+$httpReqDetailArr['httpRequestHash'] = CommonFunction::httpRequestHash(
 	hashArray: [
 		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '',
@@ -93,9 +93,9 @@ $httpReqDetails['httpRequestHash'] = CommonFunction::httpRequestHash(
 );
 
 if (
-	isset($httpReqDetails['get'][ROUTE_URL_PARAM])
+	isset($httpReqDetailArr['get'][ROUTE_URL_PARAM])
 	&& in_array(
-		needle: $httpReqDetails['get'][ROUTE_URL_PARAM],
+		needle: $httpReqDetailArr['get'][ROUTE_URL_PARAM],
 		haystack: [
 			'/tests',
 			'/auth-test',
@@ -104,10 +104,10 @@ if (
 			'/supp-test'
 		]
 	)
-	&& $httpReqDetails['server']['domainName'] === 'localhost'
+	&& $httpReqDetailArr['server']['domainName'] === 'localhost'
 ) {
 	$tests = new Test();
-	switch ($httpReqDetails['get'][ROUTE_URL_PARAM]) {
+	switch ($httpReqDetailArr['get'][ROUTE_URL_PARAM]) {
 		case '/tests':
 			echo '<pre>'.print_r(value: $tests->processTests(), return: true);
 			break;
@@ -127,11 +127,11 @@ if (
 } else {
 
 	ob_start();
-	[$responseheaders, $responseContent, $responseCode] = Start::http(httpReqDetails: $httpReqDetails);
+	[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqDetailArr: $httpReqDetailArr);
 	@ob_clean();
 
 	http_response_code(response_code: $responseCode);
-	foreach ($responseheaders as $k => $v) {
+	foreach ($responseHeaderArr as $k => $v) {
 		header(header: "{$k}: {$v}");
 	}
 	die($responseContent);

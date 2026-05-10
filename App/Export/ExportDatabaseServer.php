@@ -96,11 +96,11 @@ class ExportDatabaseServer
 	 * Returns Shell Command
 	 *
 	 * @param string $sql    query
-	 * @param array  $params query params
+	 * @param array  $paramArr query params
 	 *
 	 * @return string
 	 */
-	public function getShellCommand($sql, $params = []): string
+	public function getShellCommand($sql, $paramArr = []): string
 	{
 		// Validation
 		if (empty($sql)) {
@@ -109,7 +109,7 @@ class ExportDatabaseServer
 
 		return $this->dbServerObj->getShellCommand(
 			sql: $sql,
-			params: $params
+			params: $paramArr
 		);
 	}
 }

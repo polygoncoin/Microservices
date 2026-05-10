@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handling PHP Raw Array details for Views
+ * Handling PHP Raw Array detail for Views
  * php version 8.3
  *
  * @category  DataEncode_PHP
@@ -152,18 +152,18 @@ class PhpEncode implements DataEncodeInterface
 	/**
 	 * Append raw json string
 	 *
-	 * @param string $key  key of associative array
+	 * @param string $objectKey  key of associative array
 	 * @param string $data Reference of Representation Data
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($key, &$data): void
+	public function appendKeyData($objectKey, &$data): void
 	{
 		if (
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
 		) {
-			$this->write(data: [$key => $data]);
+			$this->write(data: [$objectKey => $data]);
 		}
 	}
 
@@ -189,13 +189,13 @@ class PhpEncode implements DataEncodeInterface
 	/**
 	 * Add simple array/value as in the json format
 	 *
-	 * @param string       $key  Key of associative array
+	 * @param string       $objectKey  Key of associative array
 	 * @param string|array $data Representation Data
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addKeyData($key, $data): void
+	public function addKeyData($objectKey, $data): void
 	{
 		if ($this->currentObject->mode !== 'Object') {
 			throw new \Exception(
@@ -203,24 +203,24 @@ class PhpEncode implements DataEncodeInterface
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		$this->encode(data: [$key => $data]);
+		$this->encode(data: [$objectKey => $data]);
 	}
 
 	/**
 	 * Start simple array
 	 *
-	 * @param null|string $key Used while creating simple array inside an object
+	 * @param null|string $objectKey Used while creating simple array inside an object
 	 *
 	 * @return void
 	 */
-	public function startArray($key = null): void
+	public function startArray($objectKey = null): void
 	{
 		if ($this->currentObject) {
 			array_push($this->objects, $this->currentObject);
 		}
 		$this->currentObject = new PhpEncoderObject(mode: 'Array');
-		if ($key !== null) {
-			$this->currentObject->key = $key;
+		if ($objectKey !== null) {
+			$this->currentObject->objectKey = $objectKey;
 		}
 	}
 
@@ -231,13 +231,13 @@ class PhpEncode implements DataEncodeInterface
 	 */
 	public function endArray(): void
 	{
-		$key = $this->currentObject->key;
+		$objectKey = $this->currentObject->objectKey;
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
 		if (count(value: $this->objects) > 0) {
 			$this->currentObject = array_pop(array: $this->objects);
-			if ($key !== '') {
-				$this->currentObject->returnArray[$key] = &$returnArray;
+			if ($objectKey !== '') {
+				$this->currentObject->returnArray[$objectKey] = &$returnArray;
 			} else {
 				$this->currentObject->returnArray[] = &$returnArray;
 			}
@@ -249,28 +249,28 @@ class PhpEncode implements DataEncodeInterface
 	/**
 	 * Start simple array
 	 *
-	 * @param null|string $key Used while creating associative array inside an object
+	 * @param null|string $objectKey Used while creating associative array inside an object
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($key = null): void
+	public function startObject($objectKey = null): void
 	{
 		if ($this->currentObject) {
 			if (
 				$this->currentObject->mode === 'Object'
-				&& ($key === null)
+				&& ($objectKey === null)
 			) {
 				throw new \Exception(
-					message: 'Object inside an Object should be supported with Key',
+					message: 'Object inside an Object should be supported with key',
 					code: HttpStatus::$InternalServerError
 				);
 			}
 			array_push($this->objects, $this->currentObject);
 		}
 		$this->currentObject = new PhpEncoderObject(mode: 'Object');
-		if ($key !== null) {
-			$this->currentObject->key = $key;
+		if ($objectKey !== null) {
+			$this->currentObject->objectKey = $objectKey;
 		}
 	}
 
@@ -281,13 +281,13 @@ class PhpEncode implements DataEncodeInterface
 	 */
 	public function endObject(): void
 	{
-		$key = $this->currentObject->key;
+		$objectKey = $this->currentObject->objectKey;
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
 		if (count(value: $this->objects) > 0) {
 			$this->currentObject = array_pop(array: $this->objects);
-			if ($key !== '') {
-				$this->currentObject->returnArray[$key] = &$returnArray;
+			if ($objectKey !== '') {
+				$this->currentObject->returnArray[$objectKey] = &$returnArray;
 			} else {
 				$this->currentObject->returnArray[] = &$returnArray;
 			}

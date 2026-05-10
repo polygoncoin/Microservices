@@ -48,7 +48,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 			empty($this->passphrase)
 			|| empty($this->iv)
 		) {
-			die('Please set encryption details in Session.php');
+			die('Please set encryption detail in Session.php');
 		}
 	}
 

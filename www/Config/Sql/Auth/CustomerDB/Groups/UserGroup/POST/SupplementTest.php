@@ -14,24 +14,24 @@
  */
 
 return [
-	// Details of data to perform task
+	// Detail of data to perform task
 	'__PAYLOAD__' => [
 		// [
 		//     'column' => 'id',
-		//     'fetchFrom' => 'routeParams',
-		//     'fetchFromDetails' => 'id',
+		//     'fetchFrom' => 'routeParamArr',
+		//     'fetchFromDetail' => 'id',
 		//     'dataType' => DatabaseServerDataType::$PrimaryKey,
 		//     'isRequired' => $Constant::$REQUIRED
 		// ],
 		[
 			'column' => 'id',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'payload-id-1',
+			'fetchFromDetail' => 'payload-id-1',
 		],
 		[
 			'column' => 'column-1',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'payload-param-1',
+			'fetchFromDetail' => 'payload-param-1',
 		],
 	],
 	'__FUNCTION__' => 'process',
@@ -41,12 +41,12 @@ return [
 				[
 					'column' => 'sub-id',
 					'fetchFrom' => 'payload',
-					'fetchFromDetails' => 'sub-payload-id-1',
+					'fetchFromDetail' => 'sub-payload-id-1',
 				],
 				[
 					'column' => 'sub-column-1',
 					'fetchFrom' => 'payload',
-					'fetchFromDetails' => 'sub-payload-param-1',
+					'fetchFromDetail' => 'sub-payload-param-1',
 				],
 			],
 			'__FUNCTION__' => 'processSub',

@@ -34,7 +34,7 @@ customerTable='customer'
 
 ### Setting Cache / Database Server configuration in customer table for working
 
-These **Global Cache Server configuration (Redis)** and **Global Database Server configuration** config keys should be set in customer table in below columns respectively for each customer.
+These **Global Cache Server configuration (Redis)** and **Global Database Server configuration** config key's should be set in customer table in below columns respectively for each customer.
 
 ```SQL
 `customer`.`master_db_server_type` varchar(255) NOT NULL,
@@ -67,9 +67,9 @@ These **Global Cache Server configuration (Redis)** and **Global Database Server
 `customer`.`slave_cache_server_table` varchar(255) NOT NULL,
 ```
 
-- **Note**: Only the Key details in the environment file are to be set in columns of respective record. Eg. for column master_db_server_hostname the value to be set is 'gDbServerType' and not '127.0.0.1'. The configured values for the Key are picked from the env files.
+- **Note**: Only the Key detail in the environment file are to be set in columns of respective record. Eg. for column master_db_server_hostname the value to be set is 'gDbServerType' and not '127.0.0.1'. The configured values for the Key are picked from the env files.
 
-The slave details can take same values as master if presently your system doesn't have such implementation.
+The slave detail can take same values as master if presently your system doesn't have such implementation.
 
 ## Setting Cache / Database Server configuration in customer table for working
 
@@ -117,11 +117,11 @@ cDbServerQueryPlaceholder001='Named'; Named(:param) / Unnamed(?)
 
 ### Going forward
 
-One can on similar lines can configure slaves server details or a dedicated master / slave cache servers.
+One can on similar lines can configure slaves server detail or a dedicated master / slave cache servers.
 
 ### The query_placeholder column
 
-These column contains keys containing details about the way the queries are build to use data provided for SQL's'
+These column contains key's containing detail about the way the queries are build to use data provided for SQL's'
 
 ```SQL
 `customer`.`master_db_server_query_placeholder` varchar(255) NOT NULL,

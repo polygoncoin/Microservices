@@ -20,7 +20,7 @@ use Microservices\App\Web;
 $header = $defaultHeaders;
 $header[] = $contentType;
 
-$params = [
+$paramArr = [
 	'firstname' => 'Ramesh',
 	'lastname' => 'Jangid',
 	'email' => 'ramesh@test.com',
@@ -33,5 +33,5 @@ return Web::trigger(
 	method: 'POST',
 	route: '/registration',
 	header: $header,
-	payload: json_encode(value: $params)
+	payload: json_encode(value: $paramArr)
 );

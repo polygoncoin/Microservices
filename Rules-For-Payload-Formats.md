@@ -54,11 +54,11 @@ var payload = [
 
 ## HttpRequest Variables
 
-- **$session\['uDetails'\]** Session Data.
-This remains same for every request and contains keys like id, group\_id, customer\_id
+- **$session\['uDetail'\]** Session Data.
+This remains same for every request and contains key's like id, group\_id, customer\_id
 
-- **$session\['routeParams'\]** Data passed in URI.
-Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $session\['routeParams'\] will hold these dynamic values as below.
+- **$session\['routeParamArr'\]** Data passed in URI.
+Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $session\['routeParamArr'\] will hold these dynamic values as below.
 
 - **$session\['payload'\]** Request data.
 For **GET** method, the **$\_GET** is the payload.
@@ -78,7 +78,7 @@ For **GET** method, the **$\_GET** is the payload.
 [
 	'column' => 'parent_id',
 	'fetchFrom' => 'sqlResults',
-	'fetchFromDetails' => 'return:id'
+	'fetchFromDetail' => 'return:id'
 ],
 ```
 

@@ -47,22 +47,22 @@ class Http
 	public $res = null;
 
 	/**
-	 * Http Request Details
+	 * Http Request Detail
 	 *
 	 * @var null|array
 	 */
-	public $httpReqDetails = null;
+	public $httpReqDetailArr = null;
 
 	/**
 	 * Initialize
 	 *
-	 * @param array $httpReqDetails Http Request Details
+	 * @param array $httpReqDetailArr Http Request Detail
 	 *
 	 * @return void
 	 */
-	public function init(&$httpReqDetails): void
+	public function init(&$httpReqDetailArr): void
 	{
-		$this->httpReqDetails = &$httpReqDetails;
+		$this->httpReqDetailArr = &$httpReqDetailArr;
 		$this->req = new HttpRequest(http: $this);
 		$this->res = new HttpResponse(http: $this);
 	}

@@ -96,7 +96,7 @@ class DataEncode
 	 */
 	public function init($header = true): void
 	{
-		if ($this->http->httpReqDetails['server']['httpMethod'] === Constant::$GET) {
+		if ($this->http->httpReqDetailArr['server']['httpMethod'] === Constant::$GET) {
 			if ($this->http->res->oRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
@@ -138,13 +138,13 @@ class DataEncode
 	/**
 	 * Start simple array
 	 *
-	 * @param null|string $key Used while creating simple array inside an object
+	 * @param null|string $objectKey Used while creating simple array inside an object
 	 *
 	 * @return void
 	 */
-	public function startArray($key = null): void
+	public function startArray($objectKey = null): void
 	{
-		$this->dataEncoder->startArray(key: $key);
+		$this->dataEncoder->startArray(objectKey: $objectKey);
 	}
 
 	/**
@@ -173,28 +173,28 @@ class DataEncode
 	/**
 	 * Start simple array
 	 *
-	 * @param null|string $key Used while creating associative array inside an object
+	 * @param null|string $objectKey Used while creating associative array inside an object
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($key = null): void
+	public function startObject($objectKey = null): void
 	{
-		$this->dataEncoder->startObject(key: $key);
+		$this->dataEncoder->startObject(objectKey: $objectKey);
 	}
 
 	/**
 	 * Add simple array/value as in the data format
 	 *
-	 * @param string       $key  Key of associative array
+	 * @param string       $objectKey  Key of associative array
 	 * @param string|array $data Representation Data
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addKeyData($key, $data): void
+	public function addKeyData($objectKey, $data): void
 	{
-		$this->dataEncoder->addKeyData(key: $key, data: $data);
+		$this->dataEncoder->addKeyData(objectKey: $objectKey, data: $data);
 	}
 
 	/**
@@ -234,14 +234,14 @@ class DataEncode
 	/**
 	 * Append raw data string
 	 *
-	 * @param string $key  key of associative array
+	 * @param string $objectKey  key of associative array
 	 * @param string $data Representation Data
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($key, &$data): void
+	public function appendKeyData($objectKey, &$data): void
 	{
-		$this->dataEncoder->appendKeyData(key: $key, data: $data);
+		$this->dataEncoder->appendKeyData(objectKey: $objectKey, data: $data);
 	}
 
 	/**

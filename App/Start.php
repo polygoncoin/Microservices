@@ -27,14 +27,14 @@ class Start
 	/**
 	 * Process http request data
 	 *
-	 * @param array $httpReqDetails Http request details
+	 * @param array $httpReqDetailArr Http request detail
 	 *
 	 * @return array
 	 */
-	public static function http(&$httpReqDetails)
+	public static function http(&$httpReqDetailArr)
 	{
-		if ($httpReqDetails['server']['httpMethod'] === Constant::$GET) {
-			$dropboxCache = new Dropbox(httpReqDetails: $httpReqDetails);
+		if ($httpReqDetailArr['server']['httpMethod'] === Constant::$GET) {
+			$dropboxCache = new Dropbox(httpReqDetailArr: $httpReqDetailArr);
 			if ($dropboxCache->init(mode: 'Open')) {
 				// File exists - Serve from Dropbox
 				return $dropboxCache->process();
@@ -42,27 +42,27 @@ class Start
 			$dropboxCache = null;
 		}
 
-		$headers = [];
+		$headerArr = [];
 
 		try {
-			$Microservices = new Microservices(httpReqDetails: $httpReqDetails);
+			$Microservices = new Microservices(httpReqDetailArr: $httpReqDetailArr);
 
 			if (
-				$httpReqDetails['streamData']
-				&& $httpReqDetails['server']['httpMethod'] == 'OPTIONS'
+				$httpReqDetailArr['streamData']
+				&& $httpReqDetailArr['server']['httpMethod'] == 'OPTIONS'
 			) {
 				// Setting CORS
-				$headers = $Microservices->getHeaders();
+				$headerArr = $Microservices->getHeaders();
 				$data = '{}';
 				$status = HttpStatus::$Ok;
 
-				return [$headers, $data, $status];
+				return [$headerArr, $data, $status];
 			}
 
 			if ($Microservices->init()) {
 				// Setting CORS
-				if ($httpReqDetails['streamData']) {
-					$headers = $Microservices->getHeaders();
+				if ($httpReqDetailArr['streamData']) {
+					$headerArr = $Microservices->getHeaders();
 				}
 
 				$return = $Microservices->process();
@@ -76,7 +76,7 @@ class Start
 				$data = $Microservices->returnResults();
 				$status = $Microservices->http->res->httpStatus;
 
-				return [$headers, $data, $status];
+				return [$headerArr, $data, $status];
 			}
 		} catch (\Exception $e) {
 			if (!in_array(needle: $e->getCode(), haystack: [400, 429])) {
@@ -86,23 +86,23 @@ class Start
 					timestamp: $sec
 				) . substr(string: $usec, offset: 1);
 
-				// Log request details
-				$logDetails = [
+				// Log request detail
+				$logDetail = [
 					'LogType' => 'ERROR',
 					'DateTime' => $dateTime,
-					'httpReqDetails' => [
+					'httpReqDetailArr' => [
 						'HttpCode' => $e->getCode(),
 						'HttpMessage' => $e->getMessage()
 					],
-					'Details' => $Microservices->http->req->s
+					'Detail' => $Microservices->http->req->s
 				];
 				$logsObj = new Log();
-				$logsObj->log(logDetails: $logDetails);
+				$logsObj->log(logDetail: $logDetail);
 			}
 
-			$headers = [];
+			$headerArr = [];
 			if ($e->getCode() == 429) {
-				$headers['Retry-After'] = $e->getMessage();
+				$headerArr['Retry-After'] = $e->getMessage();
 				$arr = [
 					'Status' => $e->getCode(),
 					'Message' => 'Too Many Request',
@@ -115,16 +115,16 @@ class Start
 				];
 			}
 
-			// $dataEncode = new DataEncode(httpReqDetails: $httpReqDetails);
+			// $dataEncode = new DataEncode(httpReqDetailArr: $httpReqDetailArr);
 			// $dataEncode->init();
 			// $dataEncode->startObject();
-			// $dataEncode->addKeyData(key: 'Error', data: $arr);
+			// $dataEncode->addKeyData(objectKey: 'Error', data: $arr);
 
 			// $data = $dataEncode->getData();
 			$data = json_encode(['Error' => $arr]);
 			$status = $e->getCode();
 
-			return [$headers, $data, $status];
+			return [$headerArr, $data, $status];
 		}
 	}
 }

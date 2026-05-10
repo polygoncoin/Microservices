@@ -18,8 +18,8 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'name',
-			'fetchFrom' => 'queryParams',
-			'fetchFromDetails' => 'name'
+			'fetchFrom' => 'queryParamArr',
+			'fetchFromDetail' => 'name'
 		]
 	],
 	'__MODE__' => 'multipleRowFormat',

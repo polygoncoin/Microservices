@@ -22,7 +22,7 @@ $header[] = $contentType;
 if (isset($token)) {
 	$header[] = "Authorization: Bearer {$token}";
 
-	$params = [
+	$paramArr = [
 		[
 			'payload-id-1' => 1,
 			'payload-param-1' => 'payload-param-1-value',
@@ -62,6 +62,6 @@ if (isset($token)) {
 		method: 'POST',
 		route: '/custom/SupplementTest',
 		header: $header,
-		payload: json_encode(value: $params)
+		payload: json_encode(value: $paramArr)
 	);
 }

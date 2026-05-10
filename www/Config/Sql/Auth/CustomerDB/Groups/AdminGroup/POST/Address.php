@@ -20,19 +20,19 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'customer_id',
-			'fetchFrom' => 'cDetails',
-			'fetchFromDetails' => 'id'
+			'fetchFrom' => 'cDetail',
+			'fetchFromDetail' => 'id'
 		],
 		[
 			'column' => 'user_id',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'user_id',
+			'fetchFromDetail' => 'user_id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'address',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'address'
+			'fetchFromDetail' => 'address'
 		],
 	],
 	'__INSERT-IDs__' => 'address:id'

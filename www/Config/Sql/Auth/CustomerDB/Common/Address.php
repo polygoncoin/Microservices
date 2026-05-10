@@ -22,7 +22,7 @@ return [
 			'fnArgs' => [
 				'table' => ['custom', 'address'],
 				'primary' => ['custom', 'id'],
-				'id' => ['routeParams', 'id']
+				'id' => ['routeParamArr', 'id']
 			],
 			'errorMessage' => 'Invalid address id'
 		],

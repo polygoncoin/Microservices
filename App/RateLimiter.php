@@ -50,7 +50,7 @@ class RateLimiter
 			return;
 		}
 
-		$this->cacheServerObj = DbCommonFunction::connectCacheServer(
+		$this->cacheServerObj = DbCommonFunction::connectCache(
 			cacheServerType: Env::$rateLimitServerType,
 			cacheServerHostname: Env::$rateLimitServerHostname,
 			cacheServerPort: Env::$rateLimitServerPort,
@@ -65,9 +65,9 @@ class RateLimiter
 	 * Check the request is valid
 	 *
 	 * @param string $prefix        Prefix
-	 * @param int    $maxRequest   Max request
+	 * @param int    $maxRequest    Max request
 	 * @param int    $secondsWindow Window in seconds
-	 * @param string $key           Key
+	 * @param string $rateLimitKey  Rate Limit Key
 	 *
 	 * @return array
 	 */
@@ -75,7 +75,7 @@ class RateLimiter
 		$prefix,
 		$maxRequest,
 		$secondsWindow,
-		$key
+		$rateLimitKey
 	): array {
 		if (
 			$this->cacheServerObj === null
@@ -84,7 +84,7 @@ class RateLimiter
 			return [
 				'allowed' => true,
 				'remaining' => 1,
-				'resetAt' => 1
+				'resetOn' => 1
 			];
 		}
 
@@ -94,28 +94,34 @@ class RateLimiter
 		$remainder = Env::$timestamp % $secondsWindow;
 		$remainder = $remainder !== 0 ? $remainder : $secondsWindow;
 
-		$key = $prefix . $key;
+		$rateLimitKey = $prefix . $rateLimitKey;
 
-		if ($this->cacheServerObj->cacheExists($key)) {
-			$requestCount = (int)$this->cacheServerObj->getCache($key);
+		if ($this->cacheServerObj->cacheExist($rateLimitKey)) {
+			$requestCount = (int)$this->cacheServerObj->cacheGet(
+				cacheKey: $rateLimitKey
+			);
 		} else {
 			$requestCount = 0;
-			$this->cacheServerObj->setCache($key, $requestCount, $remainder);
+			$this->cacheServerObj->cacheSet(
+				cacheKey: $rateLimitKey,
+				value: $requestCount,
+				expire: $remainder
+			);
 		}
 		$requestCount++;
 
 		$allowed = $requestCount <= $maxRequest;
 		$remaining = max(0, $maxRequest - $requestCount);
-		$resetAt = Env::$timestamp + $remainder;
+		$resetOn = Env::$timestamp + $remainder;
 
 		if ($allowed) {
-			$this->cacheServerObj->incrementCache($key);
+			$this->cacheServerObj->cacheIncrement(cacheKey: $rateLimitKey);
 		}
 
 		return [
 			'allowed' => $allowed,
 			'remaining' => $remaining,
-			'resetAt' => $resetAt
+			'resetOn' => $resetOn
 		];
 	}
 }

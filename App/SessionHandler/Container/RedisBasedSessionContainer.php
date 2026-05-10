@@ -194,7 +194,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 				);
 			}
 
-			$connParams = [
+			$connParamArr = [
 				'host' => $this->redisServerHostname,
 				'port' => (int)$this->redisServerPort,
 				'connectTimeout' => 2.5
@@ -204,14 +204,14 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 				$this->redisServerUsername !== null
 				&& $this->redisServerPassword !== null
 			) {
-				$connParams['auth'] = [
+				$connParamArr['auth'] = [
 					$this->redisServerUsername,
 					$this->redisServerPassword
 				];
 			}
 
 			$this->redisServerObj = new \Redis( // phpcs:ignore
-				$connParams
+				$connParamArr
 			);
 			$this->redisServerObj->select($this->redisServerDB);
 		} catch (\Exception $e) {

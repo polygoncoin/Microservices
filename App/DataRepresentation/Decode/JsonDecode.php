@@ -124,26 +124,26 @@ class JsonDecode implements DataDecodeInterface
 	public function indexData(): void
 	{
 		$this->jsonFileIndex = null;
-		foreach ($this->jsonDecodeEngine->process(index: true) as $keys => $val) {
+		foreach ($this->jsonDecodeEngine->process(index: true) as $keyArr => $val) {
 			if (
 				isset($val['sIndex'])
 				&& isset($val['eIndex'])
 			) {
 				$jsonFileIndex = &$this->jsonFileIndex;
-				for ($i = 0, $iCount = count(value: $keys); $i < $iCount; $i++) {
+				for ($i = 0, $iCount = count(value: $keyArr); $i < $iCount; $i++) {
 					if (
-						is_numeric(value: $keys[$i])
-						&& !isset($jsonFileIndex[$keys[$i]])
+						is_numeric(value: $keyArr[$i])
+						&& !isset($jsonFileIndex[$keyArr[$i]])
 					) {
-						$jsonFileIndex[$keys[$i]] = [];
+						$jsonFileIndex[$keyArr[$i]] = [];
 						if (!isset($jsonFileIndex['_c_'])) {
 							$jsonFileIndex['_c_'] = 0;
 						}
-						if (is_numeric(value: $keys[$i])) {
+						if (is_numeric(value: $keyArr[$i])) {
 							$jsonFileIndex['_c_']++;
 						}
 					}
-					$jsonFileIndex = &$jsonFileIndex[$keys[$i]];
+					$jsonFileIndex = &$jsonFileIndex[$keyArr[$i]];
 				}
 				$jsonFileIndex['sIndex'] = $val['sIndex'];
 				$jsonFileIndex['eIndex'] = $val['eIndex'];
@@ -152,23 +152,23 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Keys exist
+	 * Key's exist
 	 *
-	 * @param null|string $keys Keys exist (values separated by colon)
+	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
 	 * @return bool
 	 */
-	public function isset($keys = null): bool
+	public function isset($keyString = null): bool
 	{
 		$return = true;
 		if (
-			($keys !== null)
-			&& strlen(string: $keys) !== 0
+			($keyString !== null)
+			&& strlen(string: $keyString) !== 0
 		) {
 			$jsonFileIndex = &$this->jsonFileIndex;
-			foreach (explode(separator: ':', string: $keys) as $key) {
-				if (isset($jsonFileIndex[$key])) {
-					$jsonFileIndex = &$jsonFileIndex[$key];
+			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+				if (isset($jsonFileIndex[$objectKey])) {
+					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
 					$return = false;
 					break;
@@ -181,23 +181,23 @@ class JsonDecode implements DataDecodeInterface
 	/**
 	 * Key exist
 	 *
-	 * @param null|string $keys Keys exist (values separated by colon)
+	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
 	 * @return string Object/Array
 	 */
-	public function dataType($keys = null): string
+	public function dataType($keyString = null): string
 	{
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
-			($keys !== null)
-			&& strlen(string: $keys) > 0
+			($keyString !== null)
+			&& strlen(string: $keyString) > 0
 		) {
-			foreach (explode(separator: ':', string: $keys) as $key) {
-				if (isset($jsonFileIndex[$key])) {
-					$jsonFileIndex = &$jsonFileIndex[$key];
+			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+				if (isset($jsonFileIndex[$objectKey])) {
+					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
 					throw new \Exception(
-						message: "Key '{$key}' not found",
+						message: "Key '{$objectKey}' not found",
 						code: HttpStatus::$BadRequest
 					);
 				}
@@ -214,23 +214,23 @@ class JsonDecode implements DataDecodeInterface
 	/**
 	 * Count of array element
 	 *
-	 * @param null|string $keys Key values separated by colon
+	 * @param null|string $keyString Key values separated by colon
 	 *
 	 * @return int
 	 */
-	public function count($keys = null): int
+	public function count($keyString = null): int
 	{
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
-			($keys !== null)
-			&& strlen(string: $keys) !== 0
+			($keyString !== null)
+			&& strlen(string: $keyString) !== 0
 		) {
-			foreach (explode(separator: ':', string: $keys) as $key) {
-				if (isset($jsonFileIndex[$key])) {
-					$jsonFileIndex = &$jsonFileIndex[$key];
+			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+				if (isset($jsonFileIndex[$objectKey])) {
+					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
 					throw new \Exception(
-						message: "Key '{$key}' not found",
+						message: "Key '{$objectKey}' not found",
 						code: HttpStatus::$BadRequest
 					);
 				}
@@ -251,19 +251,19 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Pass the keys and get whole json content belonging to keys
+	 * Pass the key's and get whole json content belonging to key's
 	 *
-	 * @param string $keys Key values separated by colon
+	 * @param string $keyString Key values separated by colon
 	 *
 	 * @return mixed
 	 */
-	public function get($keys = ''): mixed
+	public function get($keyString = ''): mixed
 	{
-		if (!$this->isset(keys: $keys)) {
+		if (!$this->isset(keyString: $keyString)) {
 			return false;
 		}
 		$valueArr = [];
-		$this->load(keys: $keys);
+		$this->load(keyString: $keyString);
 		foreach ($this->jsonDecodeEngine->process() as $valueArr) {
 			break;
 		}
@@ -273,16 +273,16 @@ class JsonDecode implements DataDecodeInterface
 	/**
 	 * Get complete JSON for Kays
 	 *
-	 * @param string $keys Key values separated by colon
+	 * @param string $keyString Key values separated by colon
 	 *
 	 * @return mixed
 	 */
-	public function getCompleteArray($keys = ''): mixed
+	public function getCompleteArray($keyString = ''): mixed
 	{
-		if (!$this->isset(keys: $keys)) {
+		if (!$this->isset(keyString: $keyString)) {
 			return false;
 		}
-		$this->load(keys: $keys);
+		$this->load(keyString: $keyString);
 		return json_decode(
 			json: $this->jsonDecodeEngine->getJsonString(),
 			associative: true
@@ -290,32 +290,32 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Start processing the JSON string for a keys
-	 * Perform search inside keys of JSON like $json['data'][0]['data1']
+	 * Start processing the JSON string for a key's
+	 * Perform search inside key's of JSON like $json['data'][0]['data1']
 	 *
-	 * @param string $keys Key values separated by colon
+	 * @param string $keyString Key values separated by colon
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function load($keys): void
+	public function load($keyString): void
 	{
-		if (in_array(needle: $keys, haystack: [null, ''])) {
+		if (in_array(needle: $keyString, haystack: [null, ''])) {
 			$this->jsonDecodeEngine->sIndex = null;
 			$this->jsonDecodeEngine->eIndex = null;
 			return;
 		}
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
-			($keys !== null)
-			&& strlen(string: $keys) !== 0
+			($keyString !== null)
+			&& strlen(string: $keyString) !== 0
 		) {
-			foreach (explode(separator: ':', string: $keys) as $key) {
-				if (isset($jsonFileIndex[$key])) {
-					$jsonFileIndex = &$jsonFileIndex[$key];
+			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+				if (isset($jsonFileIndex[$objectKey])) {
+					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
 					throw new \Exception(
-						message: "Key '{$key}' not found",
+						message: "Key '{$objectKey}' not found",
 						code: HttpStatus::$BadRequest
 					);
 				}
@@ -329,7 +329,7 @@ class JsonDecode implements DataDecodeInterface
 			$this->jsonDecodeEngine->eIndex = (int)$jsonFileIndex['eIndex'];
 		} else {
 			throw new \Exception(
-				message: "Invalid keys '{$keys}'",
+				message: "Invalid key's '{$keyString}'",
 				code: HttpStatus::$BadRequest
 			);
 		}

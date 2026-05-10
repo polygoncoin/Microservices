@@ -16,32 +16,32 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->http->req->s['cDetails']['usersTable']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->http->req->s['cDetail']['usersTable']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'firstname',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'firstname'
+			'fetchFromDetail' => 'firstname'
 		],
 		[
 			'column' => 'lastname',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'lastname'
+			'fetchFromDetail' => 'lastname'
 		],
 		[
 			'column' => 'email',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'email'
+			'fetchFromDetail' => 'email'
 		],
 		[
 			'column' => 'username',
 			'fetchFrom' => 'payload',
-			'fetchFromDetails' => 'username'
+			'fetchFromDetail' => 'username'
 		],
 		[
 			'column' => 'password_hash',
 			'fetchFrom' => 'function',
-			'fetchFromDetails' => function($session): string {
+			'fetchFromDetail' => function($session): string {
 				return password_hash(
 					password: $session['payload']['password'],
 					algo: PASSWORD_DEFAULT
@@ -53,12 +53,12 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromDetails' => 'No'
+			'fetchFromDetail' => 'No'
 		],
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParams',
-			'fetchFromDetails' => 'id',
+			'fetchFrom' => 'routeParamArr',
+			'fetchFromDetail' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
 		]
 	],
@@ -69,19 +69,19 @@ return [
 				[
 					'column' => 'address',
 					'fetchFrom' => 'payload',
-					'fetchFromDetails' => 'address'
+					'fetchFromDetail' => 'address'
 				]
 			],
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromDetails' => 'No'
+					'fetchFromDetail' => 'No'
 				],
 				[
 					'column' => 'id',
 					'fetchFrom' => 'payload',
-					'fetchFromDetails' => 'id',
+					'fetchFromDetail' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 			],
@@ -91,9 +91,9 @@ return [
 		[
 			'fn' => 'primaryKeyExist',
 			'fnArgs' => [
-				'table' => ['custom', $this->http->req->s['cDetails']['usersTable']],
+				'table' => ['custom', $this->http->req->s['cDetail']['usersTable']],
 				'primary' => ['custom', 'id'],
-				'id' => ['routeParams', 'id']
+				'id' => ['routeParamArr', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'
 		],

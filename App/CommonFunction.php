@@ -32,23 +32,23 @@ class CommonFunction
 	/**
 	 * Check Errors related to File Upload
 	 *
-	 * @param array $httpFiles $this->http->httpReqDetails['files']
+	 * @param array $httpFileArr $this->http->httpReqDetailArr['files']
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public static function validateFileUpload($httpFiles): void
+	public static function validateFileUpload($httpFileArr): void
 	{
-		if (count($httpFiles) > 1) {
+		if (count($httpFileArr) > 1) {
 			throw new \Exception(
 				message: 'Supports only one file with each request',
 				code: HttpStatus::$BadRequest
 			);
 		}
 
-		foreach ($httpFiles as $file => $details) {
-			if (isset($details['error'])) {
-				switch ($details['error']) {
+		foreach ($httpFileArr as $file => $detail) {
+			if (isset($detail['error'])) {
+				switch ($detail['error']) {
 					case \UPLOAD_ERR_INI_SIZE: // value 1
 						throw new \Exception(
 							message: 'Size of the uploaded file exceeds the maximum value specified',
@@ -109,7 +109,7 @@ class CommonFunction
 	 *
 	 * @return array
 	 */
-	public static function cidrsIpNumber($cidrString): array
+	public static function cidrStringIpNumber($cidrString): array
 	{
 		$response = [];
 
@@ -167,35 +167,33 @@ class CommonFunction
 	/**
 	 * Check Cache CIDR
 	 *
-	 * @param string       $IP              $this->http->httpReqDetails['server']['httpRequestIP']
-	 * @param string|array $againstCacheKey Cache Key(s)
+	 * @param string       $IP          $this->http->httpReqDetailArr['server']['httpRequestIP']
+	 * @param string|array $cacheKeyArr Cache Key(s)
 	 *
 	 * @return null|bool
 	 * @throws \Exception
 	 */
-	public static function checkCacheCidr($IP, $againstCacheKey): null|bool
+	public static function checkCacheCidr($IP, $cacheKeyArr): null|bool
 	{
 		$cidrChecked = false;
 
-		if (!is_array($againstCacheKey)) {
-			$againstCacheKeys = [$againstCacheKey];
-		} else {
-			$againstCacheKeys = $againstCacheKey;
+		if (!is_array($cacheKeyArr)) {
+			$cacheKeyArr = [$cacheKeyArr];
 		}
 
-		foreach ($againstCacheKeys as $againstCacheKey) {
-			if (!DbCommonFunction::$gCacheServer->cacheExists(key: $againstCacheKey)) {
+		foreach ($cacheKeyArr as $cacheKey) {
+			if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cacheKey)) {
 				continue;
 			}
 			$cidrChecked = true;
 
-			$cidrs = json_decode(
-				json: DbCommonFunction::$gCacheServer->getCache(
-					key: $againstCacheKey
+			$cidrArr = json_decode(
+				json: DbCommonFunction::$gCacheServer->cacheGet(
+					cacheKey: $cacheKey
 				),
 				associative: true
 			);
-			$isValidIp = self::belongsToCidrsRange(IP: $IP, cidrs: $cidrs);
+			$isValidIp = self::belongsToCidrArrRange(IP: $IP, cidrArr: $cidrArr);
 			if (!$isValidIp) {
 				throw new \Exception(
 					message: 'IP not supported',
@@ -210,7 +208,7 @@ class CommonFunction
 	/**
 	 * Check CIDR
 	 *
-	 * @param string $IP         $this->http->httpReqDetails['server']['httpRequestIP']
+	 * @param string $IP         $this->http->httpReqDetailArr['server']['httpRequestIP']
 	 * @param string $cidrString CIDRs
 	 *
 	 * @return null|bool
@@ -218,8 +216,8 @@ class CommonFunction
 	 */
 	public static function checkCidr($IP, $cidrString): null|bool
 	{
-		$cidrs = self::cidrsIpNumber(cidrString: $cidrString);
-		$isValidIp = self::belongsToCidrsRange(IP: $IP, cidrs: $cidrs);
+		$cidrArr = self::cidrStringIpNumber(cidrString: $cidrString);
+		$isValidIp = self::belongsToCidrArrRange(IP: $IP, cidrArr: $cidrArr);
 		if (!$isValidIp) {
 			throw new \Exception(
 				message: 'IP not supported',
@@ -231,20 +229,20 @@ class CommonFunction
 	}
 
 	/**
-	 * Belongs to Cidrs range
+	 * Belongs to CidrArr range
 	 *
-	 * @param string $IP    $this->http->httpReqDetails['server']['httpRequestIP']
-	 * @param array  $cidrs Cache Key(s)
+	 * @param string $IP    $this->http->httpReqDetailArr['server']['httpRequestIP']
+	 * @param array  $cidrArr Cache Key(s)
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public static function belongsToCidrsRange($IP, $cidrs): bool
+	public static function belongsToCidrArrRange($IP, $cidrArr): bool
 	{
 		$ipNumber = ip2long(ip: $IP);
 
 		$isValidIp = false;
-		foreach ($cidrs as $cidr) {
+		foreach ($cidrArr as $cidr) {
 			if (
 				$cidr['start'] === 0
 				&& $cidr['end'] === 0

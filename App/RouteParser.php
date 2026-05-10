@@ -37,11 +37,11 @@ use Microservices\App\HttpStatus;
 class RouteParser
 {
 	/**
-	 * Array containing details of received route elements
+	 * Array containing detail of received route elements
 	 *
 	 * @var string[]
 	 */
-	public $routeElements = [];
+	public $routeElementArr = [];
 
 	/**
 	 * Route file location
@@ -136,27 +136,27 @@ class RouteParser
 		$Constant = __NAMESPACE__ . '\Constant';
 		$Env = __NAMESPACE__ . '\Env';
 
-		$this->routeElements = explode(
+		$this->routeElementArr = explode(
 			separator: '/',
-			string: trim(string: $this->http->httpReqDetails['get'][ROUTE_URL_PARAM], characters: '/')
+			string: trim(string: $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM], characters: '/')
 		);
-		$routeLastElementPos = count(value: $this->routeElements) - 1;
-		// if ($this->routeElements[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
-		//     if (isset($this->http->httpReqDetails['server']['httpMethod'])) {
-		//         $this->http->httpReqDetails['server']['httpMethod'] = $this->http->httpReqDetails['server']['httpMethod'];
+		$routeLastElementPos = count(value: $this->routeElementArr) - 1;
+		// if ($this->routeElementArr[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
+		//     if (isset($this->http->httpReqDetailArr['server']['httpMethod'])) {
+		//         $this->http->httpReqDetailArr['server']['httpMethod'] = $this->http->httpReqDetailArr['server']['httpMethod'];
 		//     }
 		// }
 
 		if ($routeFileLocation === null) {
 			if ($this->http->req->isOpenToWebRequest) {
 				$routeFileLocation = Constant::$OPEN_ROUTES_DIR
-					. DIRECTORY_SEPARATOR . $this->http->httpReqDetails['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->http->httpReqDetailArr['server']['httpMethod'] . 'routes.php';
 			} else {
 				$routeFileLocation = Constant::$AUTH_ROUTES_DIR
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'
-					. DIRECTORY_SEPARATOR . $this->http->req->s['gDetails']['name']
-					. DIRECTORY_SEPARATOR . $this->http->httpReqDetails['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->http->req->s['gDetail']['name']
+					. DIRECTORY_SEPARATOR . $this->http->httpReqDetailArr['server']['httpMethod'] . 'routes.php';
 			}
 		}
 
@@ -165,15 +165,15 @@ class RouteParser
 			$routesConfig = include $routeFileLocation;
 		} else {
 			throw new \Exception(
-				message: 'Route file missing: ' . $this->http->httpReqDetails['server']['httpMethod'] . ' method',
+				message: 'Route file missing: ' . $this->http->httpReqDetailArr['server']['httpMethod'] . ' method',
 				code: HttpStatus::$InternalServerError
 			);
 		}
 
 		$configuredRoute = [];
 
-		for ($key = 0, $keyCount = count($this->routeElements); $key < $keyCount; $key++) {
-			$element = $this->routeElements[$key];
+		for ($key = 0, $keyCount = count($this->routeElementArr); $key < $keyCount; $key++) {
+			$element = $this->routeElementArr[$key];
 			if ($element === '') {
 				continue;
 			}
@@ -224,11 +224,11 @@ class RouteParser
 					);
 					if ($foundIntRoute) {
 						$configuredRoute[] = $foundIntRoute;
-						$this->http->req->s['routeParams'][$foundIntParamName] =
+						$this->http->req->s['routeParamArr'][$foundIntParamName] =
 							(int)$element;
 					} elseif ($foundStringRoute) {
 						$configuredRoute[] = $foundStringRoute;
-						$this->http->req->s['routeParams'][$foundStringParamName] =
+						$this->http->req->s['routeParamArr'][$foundStringParamName] =
 							urldecode(string: $element);
 					} else {
 						throw new \Exception(
@@ -261,13 +261,13 @@ class RouteParser
 		// Switch Input data representation if set in URL param
 		if (
 			Env::$enableInputRepresentationAsQueryParam
-			&& isset($this->http->httpReqDetails['get']['iRepresentation'])
+			&& isset($this->http->httpReqDetailArr['get']['iRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->http->httpReqDetails['get']['iRepresentation'],
+				dataRepresentation: $this->http->httpReqDetailArr['get']['iRepresentation'],
 				mode: 'input'
 			)
 		) {
-			Env::$iRepresentation = $this->http->httpReqDetails['get']['iRepresentation'];
+			Env::$iRepresentation = $this->http->httpReqDetailArr['get']['iRepresentation'];
 		}
 
 		$this->configuredRoute = '/' . implode(separator: '/', array: $configuredRoute);
@@ -291,7 +291,7 @@ class RouteParser
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = $routeStartingKeyword;
 			$isValidIp = CommonFunction::checkCidr(
-				IP: $this->http->httpReqDetails['server']['httpRequestIP'],
+				IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
 				cidrString: Env::$reservedRoutesCidrString[$routeStartingKeyword]
 			);
 			if (!$isValidIp) {
@@ -430,7 +430,7 @@ class RouteParser
 				)
 			) {
 				throw new \Exception(
-					message: 'Missing config for ' . $this->http->httpReqDetails['server']['httpMethod'] . ' method',
+					message: 'Missing config for ' . $this->http->httpReqDetailArr['server']['httpMethod'] . ' method',
 					code: HttpStatus::$InternalServerError
 				);
 			}
@@ -462,13 +462,13 @@ class RouteParser
 		// Switch Output data representation if set in URL param
 		if (
 			Env::$enableOutputRepresentationAsQueryParam
-			&& isset($this->http->httpReqDetails['get']['oRepresentation'])
+			&& isset($this->http->httpReqDetailArr['get']['oRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->http->httpReqDetails['get']['oRepresentation'],
+				dataRepresentation: $this->http->httpReqDetailArr['get']['oRepresentation'],
 				mode: 'output'
 			)
 		) {
-			$this->http->res->oRepresentation = $this->http->httpReqDetails['get']['oRepresentation'];
+			$this->http->res->oRepresentation = $this->http->httpReqDetailArr['get']['oRepresentation'];
 		}
 	}
 
@@ -487,7 +487,7 @@ class RouteParser
 				offset: 1,
 				length: strpos(haystack: $element, needle: ':') - 1
 			);
-			$this->http->req->s['routeParams'][$param] = $element;
+			$this->http->req->s['routeParamArr'][$param] = $element;
 		}
 	}
 

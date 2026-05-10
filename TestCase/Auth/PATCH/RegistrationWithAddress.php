@@ -22,7 +22,7 @@ $header[] = $contentType;
 if (isset($token)) {
 	$header[] = "Authorization: Bearer {$token}";
 
-	$params = [
+	$paramArr = [
 		'firstname' => 'Ramesh',
 		'lastname' => 'Jangid',
 		'email' => 'ramesh@test.com',
@@ -37,6 +37,6 @@ if (isset($token)) {
 		method: 'PATCH',
 		route: '/registration-with-address/1',
 		header: $header,
-		payload: json_encode(value: $params)
+		payload: json_encode(value: $paramArr)
 	);
 }

@@ -137,12 +137,12 @@ class Export
 		);
 		$this->useTmpFile = $toggleUseTmpFile;
 
-		$lines = shell_exec(command: $shellCommand);
-		$linesArr = explode(separator: PHP_EOL, string: $lines);
+		$shellOutput = shell_exec(command: $shellCommand);
+		$outputLineArr = explode(separator: PHP_EOL, string: $shellOutput);
 
 		switch ($this->exportMode) {
 			case 'TSV':
-				if ($linesArr[1] !== '1') {
+				if ($outputLineArr[1] !== '1') {
 					throw new \Exception(
 						message: "Issue while connecting to {$this->dbServerType} TSV Host",
 						code: HttpStatus::$InternalServerError
@@ -150,7 +150,7 @@ class Export
 				}
 				break;
 			case 'CSV':
-				if ($linesArr[1] !== '"1"') {
+				if ($outputLineArr[1] !== '"1"') {
 					throw new \Exception(
 						message: "Issue while connecting to {$this->dbServerType} CSV Host",
 						code: HttpStatus::$InternalServerError
@@ -189,7 +189,7 @@ class Export
 	 * Get Shell Command
 	 *
 	 * @param string      $sql        Sql query
-	 * @param array       $params     Sql query params
+	 * @param array       $paramArr     Sql query params
 	 * @param null|string $exportFile Absolute file path
 	 *
 	 * @return array
@@ -197,10 +197,10 @@ class Export
 	 */
 	private function getShellCommand(
 		$sql,
-		$params = [],
+		$paramArr = [],
 		$exportFile = null
 	): array {
-		$shellCommand = $this->dbServerObj->getShellCommand(sql: $sql, params: $params);
+		$shellCommand = $this->dbServerObj->getShellCommand(sql: $sql, params: $paramArr);
 		if ($this->exportMode === 'CSV') {
 			$shellCommand .= ' | sed -e \'s/"/""/g ; s/\t/","/g ; s/^/"/g ; s/$/"/g\'';
 		}
@@ -225,7 +225,7 @@ class Export
 	 *
 	 * @param $downloadFile Name of CSV file on customer side.
 	 * @param $sql          Sql query
-	 * @param $params       Sql query params
+	 * @param $paramArr       Sql query params
 	 * @param $exportFile   Absolute file path with filename
 	 *
 	 * @return array
@@ -233,12 +233,12 @@ class Export
 	public function initDownload(
 		$downloadFile,
 		$sql,
-		$params = [],
+		$paramArr = [],
 		$exportFile = null
 	): array {
 		[$shellCommand, $tmpFilename] = $this->getShellCommand(
 			sql: $sql,
-			params: $params,
+			params: $paramArr,
 			exportFile: $exportFile
 		);
 
@@ -256,13 +256,13 @@ class Export
 				downloadFile: $downloadFile
 			);
 		} else {
-			// Set headers
-			$headers = $this->getCsvHeaders(filename: $downloadFile);
+			// Set header
+			$headerArr = $this->getCsvHeaders(filename: $downloadFile);
 
 			// Execute shell command
 			// The shell command echos the output.
 			$data = shell_exec(command: $shellCommand);
-			$return = [$headers, $data, HttpStatus::$Ok];
+			$return = [$headerArr, $data, HttpStatus::$Ok];
 		}
 
 		return $return;
@@ -272,19 +272,19 @@ class Export
 	 * Save Export on server
 	 *
 	 * @param $sql        Sql query
-	 * @param $params     Sql query params
+	 * @param $paramArr     Sql query params
 	 * @param $exportFile Absolute file path with filename
 	 *
 	 * @return array
 	 */
 	public function saveExport(
 		$sql,
-		$params = [],
+		$paramArr = [],
 		$exportFile = null
 	): array {
 		[$shellCommand, $tmpFilename] = $this->getShellCommand(
 			sql: $sql,
-			params: $params,
+			params: $paramArr,
 			exportFile: $exportFile
 		);
 
@@ -292,11 +292,11 @@ class Export
 		// The shell command saves exported CSV data to provided path
 		shell_exec(command: $shellCommand);
 
-		return [$headers = [], $data = '', HttpStatus::$Ok];
+		return [$headerArr = [], $data = '', HttpStatus::$Ok];
 	}
 
 	/**
-	 * Set CSV file headers
+	 * Set CSV file header
 	 *
 	 * @param $filename Name to be used to save CSV file on customer machine.
 	 *
@@ -304,14 +304,14 @@ class Export
 	 */
 	private function getCsvHeaders($filename): array
 	{
-		$headers = [];
-		// Export headers
-		$headers['Content-type'] = 'text/csv';
-		$headers['Content-Disposition'] = "attachment; filename={$filename}";
-		$headers['Pragma'] = 'no-cache';
-		$headers['Expires'] = '0';
+		$headerArr = [];
+		// Export header
+		$headerArr['Content-type'] = 'text/csv';
+		$headerArr['Content-Disposition'] = "attachment; filename={$filename}";
+		$headerArr['Pragma'] = 'no-cache';
+		$headerArr['Expires'] = '0';
 
-		return $headers;
+		return $headerArr;
 	}
 
 	/**
@@ -327,8 +327,8 @@ class Export
 		// Validation
 		$this->vFileLocation(filename: $exportFile);
 
-		// Set headers
-		$headers = $this->getCsvHeaders(filename: $downloadFile);
+		// Set header
+		$headerArr = $this->getCsvHeaders(filename: $downloadFile);
 
 		// Start streaming
 		$data = file_get_contents(filename: $exportFile);
@@ -340,6 +340,6 @@ class Export
 			//handle error via logs.
 		}
 
-		return [$headers, $data, HttpStatus::$Ok];
+		return [$headerArr, $data, HttpStatus::$Ok];
 	}
 }

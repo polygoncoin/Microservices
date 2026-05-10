@@ -22,7 +22,7 @@ use Microservices\App\Http;
 use Microservices\App\HttpStatus;
 
 /**
- * Class handling details for Auth middleware
+ * Class handling detail for Auth middleware
  * php version 8.3
  *
  * @category  Auth_Middleware
@@ -60,14 +60,14 @@ class Auth
 	}
 
 	/**
-	 * Load User Details
+	 * Load User Detail
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function loadUserDetails(): void
+	public function loadUserDetail(): void
 	{
-		if (isset($this->http->req->s['uDetails'])) {
+		if (isset($this->http->req->s['uDetail'])) {
 			return;
 		}
 
@@ -75,16 +75,16 @@ class Auth
 			isset($_SESSION)
 			&& isset($_SESSION['id'])
 		) {
-			$this->http->req->s['uDetails'] = $_SESSION;
+			$this->http->req->s['uDetail'] = $_SESSION;
 			$this->http->req->s['token'] = 'sessions';
 			$this->http->req->uID = $_SESSION['id'];
 		} elseif (
-			($this->http->httpReqDetails['header']['tokenHeader'] !== null)
+			($this->http->httpReqDetailArr['header']['tokenHeader'] !== null)
 		) {
 			if (
 				!preg_match(
 					pattern: '/Bearer\s(\S+)/',
-					subject: $this->http->httpReqDetails['header']['tokenHeader'],
+					subject: $this->http->httpReqDetailArr['header']['tokenHeader'],
 					matches: $matches
 				)
 			) {
@@ -98,8 +98,8 @@ class Auth
 				token: $this->http->req->s['token']
 			);
 			if (
-				!DbCommonFunction::$gCacheServer->cacheExists(
-					key: $tokenKey
+				!DbCommonFunction::$gCacheServer->cacheExist(
+					cacheKey: $tokenKey
 				)
 			) {
 				throw new \Exception(
@@ -107,23 +107,23 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->http->req->s['uDetails'] = json_decode(
-				json: DbCommonFunction::$gCacheServer->getCache(
-					key: $tokenKey
+			$this->http->req->s['uDetail'] = json_decode(
+				json: DbCommonFunction::$gCacheServer->cacheGet(
+					cacheKey: $tokenKey
 				),
 				associative: true
 			);
-			$this->http->req->uID = $this->http->req->s['uDetails']['id'];
-			$this->http->req->gID = $this->http->req->s['uDetails']['group_id'];
+			$this->http->req->uID = $this->http->req->s['uDetail']['id'];
+			$this->http->req->gID = $this->http->req->s['uDetail']['group_id'];
 
-			if (Env::$enableConcurrentLogins) {
+			if (Env::$enableConcurrentLogin) {
 				$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
 					cID: $this->http->req->cID,
 					uID: $this->http->req->uID
 				);
-				if (DbCommonFunction::$gCacheServer->cacheExists(key: $userConcurrencyKey)) {
-					$userConcurrencyKeyData = DbCommonFunction::$gCacheServer->getCache(
-						key: $userConcurrencyKey
+				if (DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $userConcurrencyKey)) {
+					$userConcurrencyKeyData = DbCommonFunction::$gCacheServer->cacheGet(
+						cacheKey: $userConcurrencyKey
 					);
 					if ($userConcurrencyKeyData !== $this->http->req->s['token']) {
 						throw new \Exception(
@@ -133,14 +133,14 @@ class Auth
 						);
 					}
 				} else {
-					$this->setCache(
-						key: $userConcurrencyKey,
+					$this->cacheSet(
+						cacheKey: $userConcurrencyKey,
 						value: $this->http->req->s['token'],
 						expire: Env::$concurrentAccessInterval
 					);
 				}
 			} else {
-				if ($this->http->req->s['uDetails']['httpRequestHash'] !== $this->http->httpReqDetails['httpRequestHash']) {
+				if ($this->http->req->s['uDetail']['httpRequestHash'] !== $this->http->httpReqDetailArr['httpRequestHash']) {
 					throw new \Exception(
 						message: 'Token not supported from this Browser/Device',
 						code: HttpStatus::$PreconditionFailed
@@ -151,18 +151,18 @@ class Auth
 	}
 
 	/**
-	 * Load User Details
+	 * Load User Detail
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function loadGroupDetails(): void
+	public function loadGroupDetail(): void
 	{
-		if (isset($this->http->req->s['gDetails'])) {
+		if (isset($this->http->req->s['gDetail'])) {
 			return;
 		}
 
-		// Load gDetails
+		// Load gDetail
 		if (
 			empty($this->http->req->uID)
 			|| empty($this->http->req->uID)
@@ -177,16 +177,16 @@ class Auth
 			cID: $this->http->req->cID,
 			gID: $this->http->req->gID
 		);
-		if (!DbCommonFunction::$gCacheServer->cacheExists(key: $gKey)) {
+		if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $gKey)) {
 			throw new \Exception(
 				message: "Cache '{$gKey}' missing",
 				code: HttpStatus::$InternalServerError
 			);
 		}
 
-		$this->http->req->s['gDetails'] = json_decode(
-			json: DbCommonFunction::$gCacheServer->getCache(
-				key: $gKey
+		$this->http->req->s['gDetail'] = json_decode(
+			json: DbCommonFunction::$gCacheServer->cacheGet(
+				cacheKey: $gKey
 			),
 			associative: true
 		);

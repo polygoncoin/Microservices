@@ -29,7 +29,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 - **Sql/global.sql** Import this SQL file on your **MySql global** instance
 - **Sql/customer\_master.sql** Import this SQL file on your **MySql customer** instance
 
-- **Note**: One can import both sql's in a single database to start with. Just configure the same details in the environment files.
+- **Note**: One can import both sql's in a single database to start with. Just configure the same detail in the environment files.
 
 ## Folders
 
