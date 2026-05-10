@@ -200,7 +200,7 @@ class Export
 		$paramArr = [],
 		$exportFile = null
 	): array {
-		$shellCommand = $this->dbServerObj->getShellCommand(sql: $sql, params: $paramArr);
+		$shellCommand = $this->dbServerObj->getShellCommand(sql: $sql, paramArr: $paramArr);
 		if ($this->exportMode === 'CSV') {
 			$shellCommand .= ' | sed -e \'s/"/""/g ; s/\t/","/g ; s/^/"/g ; s/$/"/g\'';
 		}
@@ -238,7 +238,7 @@ class Export
 	): array {
 		[$shellCommand, $tmpFilename] = $this->getShellCommand(
 			sql: $sql,
-			params: $paramArr,
+			paramArr: $paramArr,
 			exportFile: $exportFile
 		);
 
@@ -284,7 +284,7 @@ class Export
 	): array {
 		[$shellCommand, $tmpFilename] = $this->getShellCommand(
 			sql: $sql,
-			params: $paramArr,
+			paramArr: $paramArr,
 			exportFile: $exportFile
 		);
 

@@ -121,7 +121,7 @@ public static $PrimaryKey = [
 
 Examples:
 
-- route=/registration/config (returns the payload information)
+- route=/registration/explain (returns the payload information)
 - route=/registration/import (import CSV)
 - route=/registration/import-sample (sample CSV download for respective HTTP Method)
 

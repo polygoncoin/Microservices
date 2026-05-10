@@ -140,7 +140,7 @@ class Read
 					$this->http->res->dataEncode->appendData(data: $json);
 					return true;
 				} else {
-					if (!$cacheReqCountFlag) {
+					if (!$queryCacheReqFlag) {
 						$cacheReqCount = DbCommonFunction::queryCacheIncrement(queryCacheKey: $rSqlConfig['cacheKey']);
 						if ($cacheReqCount === 1) {
 							$toBeCached = true;
@@ -428,7 +428,7 @@ class Read
 			return;
 		}
 
-		$this->dbServerObj->execDbQuery(sql: $sql, params: $sqlParamArr);
+		$this->dbServerObj->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
 		if ($row = $this->dbServerObj->fetch()) {
 			foreach ($row as $key => $value) {
 				$this->dataEncode->addKeyData(objectKey: $key, data: $value);
@@ -517,7 +517,7 @@ class Read
 			return;
 		}
 
-		$this->dbServerObj->execDbQuery(sql: $sql, params: $sqlParamArr);
+		$this->dbServerObj->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
 		$row = $this->dbServerObj->fetch();
 		$this->dbServerObj->closeCursor();
 
@@ -610,7 +610,7 @@ class Read
 
 		$singleColumn = false;
 		$pushPop = true;
-		$this->dbServerObj->execDbQuery(sql: $sql, params: $sqlParamArr, pushPop: $pushPop);
+		$this->dbServerObj->execDbQuery(sql: $sql, paramArr: $sqlParamArr, pushPop: $pushPop);
 		for ($i = 0; $row = $this->dbServerObj->fetch();) {
 			if ($i === 0) {
 				if (count(value: $row) === 1) {
@@ -742,21 +742,21 @@ class Read
 				$return = $export->initDownload(
 					downloadFile: $downloadFile,
 					sql: $sql,
-					params: $sqlParamArr,
+					paramArr: $sqlParamArr,
 					exportFile: $rSqlConfig['exportFile']
 				);
 			} else {
 				$return = $export->initDownload(
 					downloadFile: $downloadFile,
 					sql: $sql,
-					params: $sqlParamArr
+					paramArr: $sqlParamArr
 				);
 			}
 		} else {
 			if (isset($rSqlConfig['exportFile'])) {
 				$return = $export->saveExport(
 					sql: $sql,
-					params: $sqlParamArr,
+					paramArr: $sqlParamArr,
 					exportFile: $rSqlConfig['exportFile']
 				);
 			}

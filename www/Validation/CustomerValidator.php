@@ -102,7 +102,7 @@ class CustomerValidator implements ValidatorInterface
 			WHERE `{$primary}` = ?
 		";
 		$paramArr = [$id];
-		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $paramArr);
+		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, paramArr: $paramArr);
 		return (int)(DbCommonFunction::$masterDb[$this->http->req->cID]->fetch())['count'];
 	}
 
@@ -118,7 +118,7 @@ class CustomerValidator implements ValidatorInterface
 		extract(array: $args);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
-		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $paramArr);
+		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, paramArr: $paramArr);
 		$row = DbCommonFunction::$masterDb[$this->http->req->cID]->fetch();
 		DbCommonFunction::$masterDb[$this->http->req->cID]->closeCursor();
 		return ($row['count'] === 0) ? false : true;

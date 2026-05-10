@@ -63,7 +63,7 @@ class Reload
 				FROM
 					`{$this->execPhpFunc(param: getenv(name: 'customerTable'))}` C
 				",
-			params: []
+			paramArr: []
 		);
 		$cRowArr = DbCommonFunction::$gDbServer->fetchAll();
 		DbCommonFunction::$gDbServer->closeCursor();
@@ -109,7 +109,7 @@ class Reload
 					FROM
 						`{$cRow['groupsTable']}` U
 					",
-				params: []
+				paramArr: []
 			);
 			$gRowArr = $dbServerObj->fetchAll();
 			$dbServerObj->closeCursor();
@@ -143,7 +143,7 @@ class Reload
 					FROM
 						`{$cRow['usersTable']}` U
 					",
-				params: []
+				paramArr: []
 			);
 			$uRowArr = $dbServerObj->fetchAll();
 			$dbServerObj->closeCursor();

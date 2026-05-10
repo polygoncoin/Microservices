@@ -58,7 +58,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 INSERT INTO `customer` VALUES
-(1,'Customer 001','group','user','0.0.0.0/0','api.customer001.localhost','localhost','cDbServerType001','cDbServerHostname001','cDbServerPort001','cDbServerUsername001','cDbServerPassword001','cCacheServerDB001','cDbServerQueryPlaceholder001','cDbServerType001','cDbServerHostname001','cDbServerPort001','cDbServerUsername001','cDbServerPassword001','cCacheServerDB001','cDbServerQueryPlaceholder001','gCacheServerType','gCacheServerHostname','gCacheServerPort','gCacheServerUsername','gCacheServerPassword','gCacheServerDB','gCacheServerTable','gCacheServerType','gCacheServerHostname','gCacheServerPort','gCacheServerUsername','gCacheServerPassword','gCacheServerDB','gCacheServerTable',NULL,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes', 'No','No');
+(1,'Customer 001','group','user','0.0.0.0/0','api.customer001.localhost','localhost','cDbServerType001','cDbServerHostname001','cDbServerPort001','cDbServerUsername001','cDbServerPassword001','cDbServerDatabase001','cDbServerQueryPlaceholder001','cDbServerType001','cDbServerHostname001','cDbServerPort001','cDbServerUsername001','cDbServerPassword001','cDbServerDatabase001','cDbServerQueryPlaceholder001','gCacheServerType','gCacheServerHostname','gCacheServerPort','gCacheServerUsername','gCacheServerPassword','gCacheServerDB','gCacheServerTable','gCacheServerType','gCacheServerHostname','gCacheServerPort','gCacheServerUsername','gCacheServerPassword','gCacheServerDB','gCacheServerTable',NULL,NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-29 16:00:41','Yes', 'No','No');
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `request`;
@@ -78,7 +78,7 @@ CREATE TABLE `request` (
 DROP TABLE IF EXISTS `error_log`;
 CREATE TABLE `error_log` (
     `error_log_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `request_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `request_id` BIGINT UNSIGNED NOT NULL,
     `request_by` ENUM('Admin', 'Customer', 'WebsiteAdmin') NOT NULL,
     `customer_id` INT NOT NULL,
     `user_id` INT NOT NULL,
@@ -97,7 +97,7 @@ DROP TABLE IF EXISTS `debug_log`;
 CREATE TABLE `debug_log` (
     `debug_log_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     `debug_mode` VARCHAR(250),
-    `request_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `request_id` BIGINT UNSIGNED NOT NULL,
     `request_by` ENUM('Admin', 'Customer', 'WebsiteAdmin') NOT NULL,
     `customer_id` INT NOT NULL,
     `user_id` INT NOT NULL,

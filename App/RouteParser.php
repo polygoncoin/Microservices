@@ -104,7 +104,7 @@ class RouteParser
 	 *
 	 * @var null|string
 	 */
-	public $sqlConfig
+	public $sqlConfig = null;
 
 	/**
 	 * Http Object

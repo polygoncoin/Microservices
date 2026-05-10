@@ -196,7 +196,7 @@ class MySql implements ExportDatabaseServerInterface
 			return $sql;
 		}
 
-		$this->validate(sql: $sql, params: $paramArr);
+		$this->validate(sql: $sql, paramArr: $paramArr);
 
 		//mysqli connection
 		$mysqli = mysqli_connect(
@@ -273,7 +273,7 @@ class MySql implements ExportDatabaseServerInterface
 	 */
 	public function getShellCommand($sql, $paramArr = null): string
 	{
-		$sql = $this->generateRawSqlQuery(sql: $sql, params: $paramArr);
+		$sql = $this->generateRawSqlQuery(sql: $sql, paramArr: $paramArr);
 
 		// Shell command.
 		$shellCommand = $this->binaryLoc . ' '

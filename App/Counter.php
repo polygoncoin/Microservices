@@ -59,7 +59,7 @@ class Counter
 				$sql = "INSERT INTO {$table}() VALUES()";
 				$sqlParamArr = [];
 
-				DbCommonFunction::$gDbServer->execDbQuery(sql: $sql, params: $sqlParamArr);
+				DbCommonFunction::$gDbServer->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
 				$id = DbCommonFunction::$gDbServer->lastInsertID();
 				break;
 		}

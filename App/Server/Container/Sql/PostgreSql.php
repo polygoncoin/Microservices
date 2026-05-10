@@ -280,7 +280,7 @@ class PostgreSql implements SqlInterface
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
 			if ($this->stmt) {
-				$this->stmt->execute(params: $paramArr);
+				$this->stmt->execute(paramArr: $paramArr);
 			}
 		} catch (\PDOException $e) {
 			if ($this->beganTransaction) {

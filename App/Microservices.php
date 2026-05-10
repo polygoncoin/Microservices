@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\CommonFunction;
+use Microservices\App\Dropbox;
 use Microservices\App\Env;
 use Microservices\App\Gateway;
 use Microservices\App\Http;
@@ -71,7 +72,6 @@ class Microservices
 	public function __construct(&$httpReqDetailArr)
 	{
 		$this->httpReqDetailArr = &$httpReqDetailArr;
-		$this->http = new Http($this->httpReqDetailArr);
 	}
 
 	/**
@@ -82,8 +82,6 @@ class Microservices
 	 */
 	public function init(): bool
 	{
-		$this->http->init(httpReqDetailArr: $this->httpReqDetailArr);
-
 		if (!isset($this->httpReqDetailArr['get'][ROUTE_URL_PARAM])) {
 			throw new \Exception(
 				message: 'Missing route',
@@ -109,16 +107,6 @@ class Microservices
 	}
 
 	/**
-	 * Start Data Output
-	 *
-	 * @return void
-	 */
-	public function startData(): void
-	{
-		$this->http->res->dataEncode->startObject();
-	}
-
-	/**
 	 * Process API request
 	 *
 	 * @return mixed
@@ -132,11 +120,11 @@ class Microservices
 			case (
 					Env::$enableCronRequest
 					&& strpos(
-						haystack: $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM],
+						haystack: $this->httpReqDetailArr['get'][ROUTE_URL_PARAM],
 						needle: '/' . Env::$cronRequestRoutePrefix
 					) === 0
 				):
-				if ($this->http->httpReqDetailArr['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
+				if ($this->httpReqDetailArr['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
 					throw new \Exception(
 						message: 'Source IP is not supported',
 						code: HttpStatus::$NotFound
@@ -145,17 +133,17 @@ class Microservices
 				$class = __NAMESPACE__ . '\\Cron';
 				break;
 
-			case $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/logout':
+			case $this->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/logout':
 				$class = __NAMESPACE__ . '\\Logout';
 				break;
 
 			// Requires http auth username and password
 			case (
 					Env::$enableReloadRequest
-					&& $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
+					&& $this->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
 				):
 				$isValidIp = CommonFunction::checkCidr(
-					IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
+					IP: $this->httpReqDetailArr['server']['httpRequestIP'],
 					cidrString: Env::$reloadRestrictedCidr
 				);
 				if (!$isValidIp) {
@@ -168,12 +156,26 @@ class Microservices
 				break;
 
 			// Generates auth token
-			case $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login':
+			case $this->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login':
+				$this->http = new Http($this->httpReqDetailArr);
+				$this->http->init();
 				$class = __NAMESPACE__ . '\\Login';
 				break;
 
 			// Requires auth token
 			default:
+				if ($this->httpReqDetailArr['server']['httpMethod'] === Constant::$GET) {
+					$dropboxCache = new Dropbox(httpReqDetailArr: $this->httpReqDetailArr);
+					if ($dropboxCache->init(mode: 'Open')) {
+						// File exists - Serve from Dropbox
+						return $dropboxCache->process();
+					}
+					$dropboxCache = null;
+				}
+
+				$this->http = new Http($this->httpReqDetailArr);
+				$this->http->init();
+
 				$gateway = new Gateway($this->http);
 				$gateway->initGateway();
 				$gateway = null;
@@ -187,7 +189,9 @@ class Microservices
 			if ($class !== null) {
 				$api = new $class($this->http);
 				if ($api->init()) {
-					$this->http->initResponse();
+					if ($this->http !== null) {
+						$this->http->initResponse();
+					}
 					$this->startData();
 					$return = $api->process();
 					if (
@@ -209,12 +213,28 @@ class Microservices
 	}
 
 	/**
+	 * Start Data Output
+	 *
+	 * @return void
+	 */
+	public function startData(): void
+	{
+		if ($this->http === null) {
+			return;
+		}
+		$this->http->res->dataEncode->startObject();
+	}
+
+	/**
 	 * Add Status
 	 *
 	 * @return void
 	 */
 	public function addStatus(): void
 	{
+		if ($this->http === null) {
+			return;
+		}
 		$this->http->res->dataEncode->addKeyData(
 			objectKey: 'Status',
 			data: $this->http->res->httpStatus
@@ -228,6 +248,9 @@ class Microservices
 	 */
 	public function addPerformance(): void
 	{
+		if ($this->http === null) {
+			return;
+		}
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
 			$this->tsEnd = microtime(as_float: true);
 			$time = ceil(num: ($this->tsEnd - $this->tsStart) * 1000);
@@ -259,6 +282,9 @@ class Microservices
 	 */
 	public function endData(): void
 	{
+		if ($this->http === null) {
+			return;
+		}
 		$this->http->res->dataEncode->endObject();
 		$this->http->res->dataEncode->end();
 	}
@@ -270,6 +296,9 @@ class Microservices
 	 */
 	public function outputResults(): void
 	{
+		if ($this->http === null) {
+			return;
+		}
 		http_response_code(response_code: $this->http->res->httpStatus);
 		$this->http->res->dataEncode->streamData();
 	}
@@ -281,6 +310,9 @@ class Microservices
 	 */
 	public function returnResults(): bool|string
 	{
+		if ($this->http === null) {
+			return false;
+		}
 		return $this->http->res->dataEncode->getData();
 	}
 
@@ -309,7 +341,12 @@ class Microservices
 			$methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
 			$headerArr['Access-Control-Allow-Methods'] = $methods;
 		} else {
-			switch ($this->http->res->oRepresentation) {
+			if ($this->http === null) {
+				$oRepresentation = Env::$oRepresentation;
+			} else {
+				$oRepresentation = $this->http->res->oRepresentation;
+			}
+			switch ($oRepresentation) {
 				case 'XML':
 				case 'XSLT':
 					$headerArr['Content-Type'] = 'text/xml; charset=utf-8';

@@ -103,7 +103,7 @@ class Password implements CustomInterface
 				':is_deleted' => 'No',
 			];
 
-			DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, params: $sqlParamArr);
+			DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
 			DbCommonFunction::$masterDb[$this->http->req->cID]->closeCursor();
 
 			$cID = $this->http->req->cID;

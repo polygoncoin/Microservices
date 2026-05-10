@@ -516,7 +516,7 @@ class Write
 			}
 
 			// Execute Query
-			$this->dbServerObj->execDbQuery(sql: $sql, params: $sqlParamArr);
+			$this->dbServerObj->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
 			if (
 				$this->operateAsTransaction
 				&& !$this->dbServerObj->beganTransaction

@@ -54,15 +54,22 @@ class Http
 	public $httpReqDetailArr = null;
 
 	/**
-	 * Initialize
+	 * Constructor
 	 *
-	 * @param array $httpReqDetailArr Http Request Detail
+	 * @param array $httpReqDetailArr
+	 */
+	public function __construct(&$httpReqDetailArr)
+	{
+		$this->httpReqDetailArr = &$httpReqDetailArr;
+	}
+
+	/**
+	 * Initialize
 	 *
 	 * @return void
 	 */
-	public function init(&$httpReqDetailArr): void
+	public function init(): void
 	{
-		$this->httpReqDetailArr = &$httpReqDetailArr;
 		$this->req = new HttpRequest(http: $this);
 		$this->res = new HttpResponse(http: $this);
 	}

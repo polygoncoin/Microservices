@@ -505,7 +505,7 @@ class Login
 					`token` = :token
 				WHERE
 					id = :id",
-			params: [
+			paramArr: [
 				':token' => json_encode($userData),
 				':id' => $this->http->req->s['uDetail']['id']
 			]

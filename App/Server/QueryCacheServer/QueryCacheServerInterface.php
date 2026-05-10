@@ -43,7 +43,7 @@ interface QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheExists($queryCacheKey): mixed;
+	public function queryCacheExist($queryCacheKey): mixed;
 
 	/**
 	 * Get cache on basis of key
@@ -63,6 +63,16 @@ interface QueryCacheServerInterface
 	 * @return mixed
 	 */
 	public function queryCacheSet($queryCacheKey, $value): mixed;
+
+	/**
+	 * Increment cache on basis of key
+	 *
+	 * @param string $queryCacheKey    Cache key
+	 * @param int    $offset Offset
+	 *
+	 * @return mixed
+	 */
+	public function queryCacheIncrement($queryCacheKey, $offset = 1): mixed;
 
 	/**
 	 * Delete cache on basis of key

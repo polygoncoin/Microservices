@@ -162,7 +162,7 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheExists($queryCacheKey): mixed
+	public function queryCacheExist($queryCacheKey): mixed
 	{
 		$this->connect();
 
@@ -196,6 +196,21 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 		$this->connect();
 
 		return $this->queryCacheServerObj->cacheSet($queryCacheKey, $value);
+	}
+
+	/**
+	 * Increment cache on basis of key
+	 *
+	 * @param string $queryCacheKey    Cache key
+	 * @param int    $offset Offset
+	 *
+	 * @return mixed
+	 */
+	public function queryCacheIncrement($queryCacheKey, $offset = 1): mixed
+	{
+		$this->connect();
+
+		return $this->queryCacheServerObj->cacheIncrement($queryCacheKey, $offset);
 	}
 
 	/**

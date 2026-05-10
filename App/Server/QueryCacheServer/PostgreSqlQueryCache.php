@@ -143,7 +143,7 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheExists($queryCacheKey): mixed
+	public function queryCacheExist($queryCacheKey): mixed
 	{
 		$this->connect();
 
@@ -154,7 +154,7 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 		";
 		$paramArr = [':key' => $queryCacheKey];
 
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, paramArr: $paramArr);
 		$row = $this->queryCacheServerObj->fetch();
 		$this->queryCacheServerObj->closeCursor();
 
@@ -178,7 +178,7 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 			WHERE key = :key
 		";
 		$paramArr = [':key' => $queryCacheKey];
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, paramArr: $paramArr);
 		if ($row = $this->queryCacheServerObj->fetch()) {
 			$this->queryCacheServerObj->closeCursor();
 			return $row['value'];
@@ -206,10 +206,25 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 		";
 		$paramArr = [':key' => $queryCacheKey, ':value' => $value];
 
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, paramArr: $paramArr);
 		$this->queryCacheServerObj->closeCursor();
 
 		return true;
+	}
+
+	/**
+	 * Increment cache on basis of key
+	 *
+	 * @param string $queryCacheKey    Cache key
+	 * @param int    $offset Offset
+	 *
+	 * @return mixed
+	 */
+	public function queryCacheIncrement($queryCacheKey, $offset = 1): mixed
+	{
+		$this->connect();
+
+		return $this->queryCacheServerObj->cacheIncrement($queryCacheKey, $offset);
 	}
 
 	/**
@@ -225,7 +240,7 @@ class PostgreSqlQueryCache implements QueryCacheServerInterface
 
 		$sql = "DELETE FROM {$this->queryCacheServerTable} WHERE key = :key";
 		$paramArr = [':key' => $queryCacheKey];
-		$this->queryCacheServerObj->execDbQuery(sql: $sql, params: $paramArr);
+		$this->queryCacheServerObj->execDbQuery(sql: $sql, paramArr: $paramArr);
 		$this->queryCacheServerObj->closeCursor();
 
 		return true;

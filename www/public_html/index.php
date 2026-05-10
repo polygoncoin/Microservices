@@ -97,7 +97,7 @@ if (
 	&& in_array(
 		needle: $httpReqDetailArr['get'][ROUTE_URL_PARAM],
 		haystack: [
-			'/tests',
+			'/all-test',
 			'/auth-test',
 			'/open-test',
 			'/open-test-xml',
@@ -108,8 +108,8 @@ if (
 ) {
 	$tests = new Test();
 	switch ($httpReqDetailArr['get'][ROUTE_URL_PARAM]) {
-		case '/tests':
-			echo '<pre>'.print_r(value: $tests->processTests(), return: true);
+		case '/all-test':
+			echo '<pre>'.print_r(value: $tests->processAllTest(), return: true);
 			break;
 		case '/auth-test':
 			echo '<pre>'.print_r(value: $tests->processAuth(), return: true);
@@ -130,9 +130,12 @@ if (
 	[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqDetailArr: $httpReqDetailArr);
 	@ob_clean();
 
+	$responseCode = $responseCode ?? 200;
 	http_response_code(response_code: $responseCode);
+
 	foreach ($responseHeaderArr as $k => $v) {
 		header(header: "{$k}: {$v}");
 	}
+
 	die($responseContent);
 }

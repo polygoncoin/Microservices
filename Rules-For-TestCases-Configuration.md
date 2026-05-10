@@ -101,7 +101,7 @@ index.php/?route=/&lt;some&gt; Test (to be configured in index.php)
 
 If you have multiple test cases files for the project and want to check for all of them; one can configure same in Test.php and acceess via browser.
 
-index.php/?route=/tests (configured in index.php)
+index.php/?route=/all-test (configured in index.php)
 
 ## Contributing
 

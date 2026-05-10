@@ -111,7 +111,7 @@ cDbServerHostname001='127.0.0.1'
 cDbServerPort001=3306
 cDbServerUsername001='username'
 cDbServerPassword001='password'
-cCacheServerDB001='customer_001'
+cDbServerDatabase001='customer_001'
 cDbServerQueryPlaceholder001='Named'; Named(:param) / Unnamed(?)
 ```
 

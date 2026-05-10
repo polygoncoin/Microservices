@@ -25,8 +25,8 @@ if (isset($token)) {
 	return Web::trigger(
 		homeURL: $homeURL,
 		method: 'POST',
-		// route: '/category/config',
-		route: '/custom/SupplementTest/config',
+		// route: '/category/explain',
+		route: '/custom/SupplementTest/explain',
 		header: $header,
 		payload: ''
 	);

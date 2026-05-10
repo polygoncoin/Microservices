@@ -34,7 +34,7 @@ class Test
 	 *
 	 * @return array
 	 */
-	public function processTests(): array
+	public function processAllTest(): array
 	{
 		$response = [];
 		$response[] = $this->processAuth();

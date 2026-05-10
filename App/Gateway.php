@@ -86,7 +86,7 @@ class Gateway
 			$this->http->req->auth->loadUserDetail();
 			$this->checkCidr();
 		}
-		$this->checkRateLimit();
+		$this->rateLimitRequest();
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Gateway
 	 *
 	 * @return void
 	 */
-	private function checkRateLimit(): void
+	private function rateLimitRequest(): void
 	{
 		$this->rateLimiter = new RateLimiter();
 

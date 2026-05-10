@@ -118,8 +118,9 @@ class Route
 		foreach ($this->httpMethodArr as $method) {
 			$httpRouteArr[$method] = [];
 			$routeFileLocation =  $userRoutesFolder
-				. DIRECTORY_SEPARATOR . $method . 'routeArr.php';
+				. DIRECTORY_SEPARATOR . $method . 'routes.php';
 			if (!file_exists(filename: $routeFileLocation)) {
+				throw new \Exception(message: json_encode(value: [$routeFileLocation]), code: 400);
 				continue;
 			}
 			$routeArr = include $routeFileLocation;

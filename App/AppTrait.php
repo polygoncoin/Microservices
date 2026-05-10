@@ -83,6 +83,7 @@ trait AppTrait
 		foreach (['__PAYLOAD__', '__SET__', '__WHERE__'] as $option) {
 			if (isset($sqlConfig[$option])) {
 				foreach ($sqlConfig[$option] as $sqlParamConfig) {
+					$fetchFrom = $sqlParamConfig['fetchFrom'];
 					if ($fetchFrom === 'function') {
 						continue;
 					}
@@ -90,7 +91,6 @@ trait AppTrait
 						? $sqlParamConfig['isRequired'] : false;
 
 					if ($isRequired) {
-						$fetchFrom = $sqlParamConfig['fetchFrom'];
 						$fetchFromDetail = $sqlParamConfig['fetchFromDetail'];
 
 						if (!isset($requiredFieldArr[$fetchFrom])) {
@@ -546,7 +546,10 @@ trait AppTrait
 				}
 				continue;
 			} elseif (isset($this->http->req->s[$fetchFrom][$fetchFromDetail])) {
-				if (in_array($fetchFromDetail, $this->http->req->s['requiredFieldArr'][$fetchFrom])) {
+				if (
+					isset($this->http->req->s['requiredFieldArr'][$fetchFrom])
+					&& in_array($fetchFromDetail, $this->http->req->s['requiredFieldArr'][$fetchFrom])
+				) {
 					if (isset($sqlParamConfig['dataType'])) {
 						if (
 							!DatabaseServerDataType::validateDataType(
@@ -837,9 +840,8 @@ trait AppTrait
 	 */
 	private function checkReferrerLag(&$sqlConfig): void
 	{
-
 		$customerUserReferrerLagKey = CacheServerKey::customerUserReferrerLag(
-			cID: $this->http->req->cID
+			cID: $this->http->req->cID,
 			uID: $this->http->req->uID
 		);
 		if (
@@ -1030,7 +1032,7 @@ trait AppTrait
 	 * @param string $rateLimitPrefix        Prefix
 	 * @param int    $rateLimitMaxRequest   Max request
 	 * @param int    $rateLimitMaxRequestWindow Window in seconds
-	 * @param string $key                    Key
+	 * @param string $rateLimitKey              Rate Limit Key
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -1039,7 +1041,7 @@ trait AppTrait
 		$rateLimitPrefix,
 		$rateLimitMaxRequest,
 		$rateLimitMaxRequestWindow,
-		$key
+		$rateLimitKey
 	): bool {
 		if ($this->rateLimiter === null) {
 			$this->rateLimiter = new RateLimiter($this->http->req);
@@ -1050,7 +1052,7 @@ trait AppTrait
 				prefix: $rateLimitPrefix,
 				maxRequest: $rateLimitMaxRequest,
 				secondsWindow: $rateLimitMaxRequestWindow,
-				rateLimitKey: $key
+				rateLimitKey: $rateLimitKey
 			);
 
 			if ($result['allowed']) {

@@ -109,7 +109,7 @@ class ExportDatabaseServer
 
 		return $this->dbServerObj->getShellCommand(
 			sql: $sql,
-			params: $paramArr
+			paramArr: $paramArr
 		);
 	}
 }

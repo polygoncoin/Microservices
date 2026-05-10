@@ -119,7 +119,8 @@ class Dropbox
 		);
 
 		if (
-			!$this->http->req->isOpenToWebRequest
+			$this->http !== null
+			&& !$this->http->req->isOpenToWebRequest
 			&& $mode === 'Closed'
 		) {
 			$this->modeDropBox .= DIRECTORY_SEPARATOR . $this->http->req->cID;
