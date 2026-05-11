@@ -253,7 +253,7 @@ class Supplement
 					code: HttpStatus::$BadRequest
 				);
 			}
-			// Check for maximum objects supported when payloadType is Array
+			// Check for maximum object's supported when payloadType is Array
 			if (
 				$sSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
 				&& isset($sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])

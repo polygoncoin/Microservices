@@ -228,8 +228,8 @@ return [
 	// Array of validation functions to be performed
 	'__VALIDATE__' => [
 		[
-			'fn' => 'validateGroupID',
-			'fnArgs' => [
+			'function' => 'validateGroupID',
+			'functionArgs' => [
 				'id' => ['payload', 'id']
 			],
 			'errorMessage' => 'Invalid Group ID'
@@ -487,8 +487,8 @@ return [
 	// Array of validation functions to be performed
 	'__VALIDATE__' => [
 		[
-			'fn' => 'validateGroupID',
-			'fnArgs' => [
+			'function' => 'validateGroupID',
+			'functionArgs' => [
 				'id' => ['payload', 'id']
 			],
 			'errorMessage' => 'Invalid Group ID'

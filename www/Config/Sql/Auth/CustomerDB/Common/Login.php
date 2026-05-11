@@ -28,8 +28,8 @@ return [
 	],
 	// '__VALIDATE__' => [
 	//     [
-	//         'fn' => 'primaryKeyExist',
-	//         'fnArgs' => [
+	//         'function' => 'primaryKeyExist',
+	//         'functionArgs' => [
 	//             'table' => ['custom', 'address'],
 	//             'primary' => ['custom', 'id'],
 	//             'id' => ['routeParamArr', 'id']

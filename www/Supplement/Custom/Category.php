@@ -83,9 +83,9 @@ class Category implements CustomInterface
 			':parent_id' => 0,
 		];
 		DbCommonFunction::$slaveDb[$this->http->req->cID]->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
-		$rows = DbCommonFunction::$slaveDb[$this->http->req->cID]->fetchAll();
+		$rowArr = DbCommonFunction::$slaveDb[$this->http->req->cID]->fetchAll();
 		DbCommonFunction::$slaveDb[$this->http->req->cID]->closeCursor();
-		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $rows);
+		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $rowArr);
 		return [true];
 	}
 }

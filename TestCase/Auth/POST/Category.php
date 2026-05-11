@@ -17,10 +17,10 @@ namespace Microservices\TestCase;
 
 use Microservices\App\Web;
 
-$header = $defaultHeaders;
-// $header[] = 'Content-Type: multipart/form-data; charset=utf-8';
+$headerArr = $defaultHeaderArr;
+// $headerArr[] = 'Content-Type: multipart/form-data; charset=utf-8';
 if (isset($token)) {
-	$header[] = "Authorization: Bearer {$token}";
+	$headerArr[] = "Authorization: Bearer {$token}";
 
 	$paramArr = [
 		[
@@ -52,7 +52,7 @@ if (isset($token)) {
 		homeURL: $homeURL,
 		method: 'POST',
 		route: '/category/import',
-		header: $header,
+		header: $headerArr,
 		payload: '',//json_encode(value: $paramArr),
 		file: $curlFile
 	);

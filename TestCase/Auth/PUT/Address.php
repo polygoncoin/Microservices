@@ -17,10 +17,10 @@ namespace Microservices\TestCase;
 
 use Microservices\App\Web;
 
-$header = $defaultHeaders;
-$header[] = $contentType;
+$headerArr = $defaultHeaderArr;
+$headerArr[] = $contentType;
 if (isset($token)) {
-	$header[] = "Authorization: Bearer {$token}";
+	$headerArr[] = "Authorization: Bearer {$token}";
 
 	$paramArr = [
 		'user_id' => 1,
@@ -31,7 +31,7 @@ if (isset($token)) {
 		homeURL: $homeURL,
 		method: 'PUT',
 		route: '/address/1',
-		header: $header,
+		header: $headerArr,
 		payload: json_encode(value: $paramArr)
 	);
 }

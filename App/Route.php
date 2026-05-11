@@ -150,17 +150,17 @@ class Route
 	 */
 	private function getRoutes(&$routeArr, $route, &$httpRouteArr): void
 	{
-		foreach ($routeArr as $key => &$r) {
-			if (in_array(needle: $key, haystack: $this->reservedKeyArr)) {
+		foreach ($routeArr as $routeElement => &$_routeArr) {
+			if (in_array(needle: $routeElement, haystack: $this->reservedKeyArr)) {
 				continue;
 			}
-			if ($key === '__FILE__') {
+			if ($routeElement === '__FILE__') {
 				$httpRouteArr[] = $route;
 			}
-			if (is_array(value: $r)) {
-				$_route = $route . '/' . $key;
+			if (is_array(value: $_routeArr)) {
+				$_route = $route . '/' . $routeElement;
 				$this->getRoutes(
-					routeArr: $r,
+					routeArr: $_routeArr,
 					route: $_route,
 					httpRouteArr: $httpRouteArr
 				);

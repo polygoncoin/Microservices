@@ -89,8 +89,8 @@ return [
 	],
 	'__VALIDATE__' => [
 		[
-			'fn' => 'primaryKeyExist',
-			'fnArgs' => [
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
 				'table' => ['custom', $this->http->req->s['cDetail']['usersTable']],
 				'primary' => ['custom', 'id'],
 				'id' => ['routeParamArr', 'id']

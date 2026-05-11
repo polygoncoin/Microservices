@@ -81,8 +81,8 @@ return [
 	],
 	'__VALIDATE__' => [
 		[
-			'fn' => 'primaryKeyExist',
-			'fnArgs' => [
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
 				'table' => ['custom', $Env::$groupsTable],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]

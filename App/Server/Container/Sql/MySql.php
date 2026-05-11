@@ -86,7 +86,7 @@ class MySql implements SqlInterface
 	 *
 	 * @var \PDOStatement[]
 	 */
-	private $stmts = [];
+	private $stmtArr = [];
 
 	/**
 	 * Transaction started flag
@@ -290,7 +290,7 @@ class MySql implements SqlInterface
 				$pushPop
 				&& $this->stmt
 			) {
-				array_push($this->stmts, $this->stmt);
+				array_push($this->stmtArr, $this->stmt);
 			}
 			$this->stmt = $this->dbServerObj->prepare(
 				query: $sql,
@@ -361,9 +361,9 @@ class MySql implements SqlInterface
 				$this->stmt->closeCursor();
 				if (
 					$pushPop
-					&& count(value: $this->stmts)
+					&& count(value: $this->stmtArr)
 				) {
-					$this->stmt = array_pop(array: $this->stmts);
+					$this->stmt = array_pop(array: $this->stmtArr);
 				}
 			}
 		} catch (\PDOException $e) {

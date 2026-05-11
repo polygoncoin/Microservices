@@ -161,7 +161,7 @@ class Web
 		$headerSize = curl_getinfo(handle: $curl, option: \CURLINFO_HEADER_SIZE);
 
 		$responseHeaderArr = self::httpParseHeaders(
-			rawHeaders: substr(
+			rawHeaderArr: substr(
 				string: $curlResponse,
 				offset: 0,
 				length: $headerSize
@@ -228,17 +228,17 @@ class Web
 	/**
 	 * Generates raw header into array
 	 *
-	 * @param string $rawHeaders Raw header from cURL response
+	 * @param string $rawHeaderArr Raw header from cURL response
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	private static function httpParseHeaders($rawHeaders): array
+	private static function httpParseHeaders($rawHeaderArr): array
 	{
 		$headerArr = [];
-		$key = '';
+		$headerName = '';
 
-		foreach (explode(separator: "\n", string: $rawHeaders) as $i => $h) {
+		foreach (explode(separator: "\n", string: $rawHeaderArr) as $i => $h) {
 			$h = explode(separator: ':', string: $h, limit: 2);
 
 			if (isset($h[1])) {
@@ -256,11 +256,11 @@ class Web
 					);
 				}
 
-				$key = $h[0];
+				$headerName = $h[0];
 			} else {
 				if (substr(string: $h[0], offset: 0, length: 1) == "\t") {
-					$headerArr[$key] .= "\r\n\t" . trim(string: $h[0]);
-				} elseif (!$key) {
+					$headerArr[$headerName] .= "\r\n\t" . trim(string: $h[0]);
+				} elseif (!$headerName) {
 					$headerArr[0] = trim(string: $h[0]);
 				}
 			}
@@ -308,9 +308,9 @@ class Web
 		if ($rowTagStartFlag) {
 			$payload .= '<Row>';
 		}
-		foreach ($paramArr as $key => &$value) {
+		foreach ($paramArr as $column => &$value) {
 			if ($isObject) {
-				$payload .= "<{$key}>";
+				$payload .= "<{$column}>";
 			}
 			if (is_array(value: $value)) {
 				self::genXmlPayload(paramArr: $value, payload: $payload, rowTagStartFlag: $rowTagStartFlag);
@@ -318,7 +318,7 @@ class Web
 				$payload .= htmlspecialchars(string: $value);
 			}
 			if ($isObject) {
-				$payload .= "</{$key}>";
+				$payload .= "</{$column}>";
 			}
 		}
 		if ($rowTagStartFlag) {

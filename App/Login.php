@@ -245,11 +245,11 @@ class Login
 			uID: $this->http->req->uID
 		);
 		$cidrChecked = false;
-		foreach ([$cCidrKey, $gCidrKey, $uCidrKey] as $key) {
+		foreach ([$cCidrKey, $gCidrKey, $uCidrKey] as $cacheKey) {
 			if (!$cidrChecked) {
 				$cidrChecked = CommonFunction::checkCacheCidr(
 					IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-					cacheKeyArr: $key
+					cidrCacheKey: $cacheKey
 				);
 			}
 		}

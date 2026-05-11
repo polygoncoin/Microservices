@@ -489,13 +489,13 @@ trait AppTrait
 
 		// Collect param values as per config respectively
 		foreach ($sqlConfig as $sqlParamConfig) {
-			$var = $sqlParamConfig['column'];
+			$column = $sqlParamConfig['column'];
 			$fetchFrom = $sqlParamConfig['fetchFrom'];
 			$fetchFromDetail = $sqlParamConfig['fetchFromDetail'];
 			if ($fetchFrom === 'function') {
 				$function = $fetchFromDetail;
 				$value = $function($this->http->req->s);
-				$sqlParamArr[$var] = $value;
+				$sqlParamArr[$column] = $value;
 				continue;
 			} elseif (
 				in_array(
@@ -507,40 +507,40 @@ trait AppTrait
 					$errorArr[] = "Missing key '{$fetchFromDetail}' in '{$fetchFrom}'";
 					continue;
 				}
-				$fetchFromKeyArr = explode(separator: ':', string: $fetchFromDetail);
+				$fetchFromDetailArr = explode(separator: ':', string: $fetchFromDetail);
 				$value = $this->http->req->s[$fetchFrom];
-				foreach ($fetchFromKeyArr as $key) {
-					if (!isset($value[$key])) {
-						$errorArr[] = "Missing hierarchy key '{$key}' of '{$fetchFromDetail}' in '{$fetchFrom}'";
+				foreach ($fetchFromDetailArr as $_fetchFromDetail) {
+					if (!isset($value[$_fetchFromDetail])) {
+						$errorArr[] = "Missing hierarchy key '{$_fetchFromDetail}' of '{$fetchFromDetail}' in '{$fetchFrom}'";
 						continue;
 					}
-					$value = $value[$key];
+					$value = &$value[$_fetchFromDetail];
 				}
-				$sqlParamArr[$var] = $value;
+				$sqlParamArr[$column] = $value;
 				continue;
 			} elseif ($fetchFrom === 'sqlResults') {
 				if (!isset($this->http->req->s[$fetchFrom])) {
 					$missExecution = true;
 					continue;
 				}
-				$fetchFromKeyArr = explode(separator: ':', string: $fetchFromDetail);
+				$fetchFromDetailArr = explode(separator: ':', string: $fetchFromDetail);
 				$value = $this->http->req->s[$fetchFrom];
-				foreach ($fetchFromKeyArr as $key) {
-					if (!isset($value[$key])) {
+				foreach ($fetchFromDetailArr as $_fetchFromDetail) {
+					if (!isset($value[$_fetchFromDetail])) {
 						$missExecution = true;
 						continue;
 					}
-					$value = $value[$key];
+					$value = &$value[$_fetchFromDetail];
 				}
-				$sqlParamArr[$var] = $value;
+				$sqlParamArr[$column] = $value;
 				continue;
 			} elseif ($fetchFrom === 'custom') {
 				$value = $fetchFromDetail;
-				$sqlParamArr[$var] = $value;
+				$sqlParamArr[$column] = $value;
 				continue;
 			} elseif ($fetchFrom === 'variables') {
 				if (isset($payloadVariableArr[$fetchFromDetail])) {
-					$sqlParamArr[$var] = $payloadVariableArr[$fetchFromDetail];
+					$sqlParamArr[$column] = $payloadVariableArr[$fetchFromDetail];
 				} else {
 					$errorArr[] = "Missing '{$fetchFrom}' for '{$fetchFromDetail}'";
 				}
@@ -562,7 +562,7 @@ trait AppTrait
 						}
 					}
 				}
-				$sqlParamArr[$var] = $this->http->req->s[$fetchFrom][$fetchFromDetail];
+				$sqlParamArr[$column] = $this->http->req->s[$fetchFrom][$fetchFromDetail];
 				continue;
 			} elseif (in_array($fetchFromDetail, $this->http->req->s['requiredFieldArr'][$fetchFrom])) {
 				$errorArr[] = "Missing required field '{$fetchFrom}' for '{$fetchFromDetail}'";
@@ -1192,17 +1192,17 @@ trait AppTrait
 
 		// Collect param values as per config respectively
 		foreach ($payloadConfig as &$payloadParamConfig) {
-			$var = $payloadParamConfig['column'] ?? null;
+			$column = $payloadParamConfig['column'] ?? null;
 
 			$fetchFrom = $payloadParamConfig['fetchFrom'];
 			$fetchFromDetail = $payloadParamConfig['fetchFromDetail'];
 			if ($fetchFrom === 'function') {
 				$function = $fetchFromDetail;
 				$value = $function($this->http->req->s);
-				if ($var === null) {
+				if ($column === null) {
 					$sqlParamArr[] = $value;
 				} else {
-					$sqlParamArr[$var] = $value;
+					$sqlParamArr[$column] = $value;
 				}
 				continue;
 			} elseif (
@@ -1211,37 +1211,37 @@ trait AppTrait
 					haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload']
 				)
 			) {
-				$fetchFromKeyArr = explode(separator: ':', string: $fetchFromDetail);
+				$fetchFromDetailArr = explode(separator: ':', string: $fetchFromDetail);
 				$value = $this->http->req->s[$fetchFrom];
-				foreach ($fetchFromKeyArr as $key) {
-					if (!isset($value[$key])) {
+				foreach ($fetchFromDetailArr as $_fetchFromDetail) {
+					if (!isset($value[$_fetchFromDetail])) {
 						throw new \Exception(
 							message: 'Invalid hierarchy:  Missing hierarchy data',
 							code: HttpStatus::$InternalServerError
 						);
 					}
-					$value = $value[$key];
+					$value = $value[$_fetchFromDetail];
 				}
-				if ($var === null) {
+				if ($column === null) {
 					$sqlParamArr[] = $value;
 				} else {
-					$sqlParamArr[$var] = $value;
+					$sqlParamArr[$column] = $value;
 				}
 				continue;
 			} elseif ($fetchFrom === 'custom') {
 				$value = $fetchFromDetail;
-				if ($var === null) {
+				if ($column === null) {
 					$sqlParamArr[] = $value;
 				} else {
-					$sqlParamArr[$var] = $value;
+					$sqlParamArr[$column] = $value;
 				}
 				continue;
 			} elseif (isset($this->http->req->s[$fetchFrom][$fetchFromDetail])) {
 				$value = $this->http->req->s[$fetchFrom][$fetchFromDetail];
-				if ($var === null) {
+				if ($column === null) {
 					$sqlParamArr[] = $value;
 				} else {
-					$sqlParamArr[$var] = $value;
+					$sqlParamArr[$column] = $value;
 				}
 				continue;
 			} else {
@@ -1269,7 +1269,7 @@ trait AppTrait
 			flag: $useHierarchy
 		);
 		$paramArr = $this->genCsvHelper(
-			header: 'CSV',
+			headerCsv: 'CSV',
 			explainParamArr: $explainParamArr
 		);
 
@@ -1301,25 +1301,27 @@ trait AppTrait
 	/**
 	 * Generate sample CSV helper
 	 *
-	 * @param string $header
+	 * @param string $module
 	 * @param array  $explainParamArr
 	 *
 	 * @return array
 	 */
-	private function genCsvHelper($header, $explainParamArr): array
+	private function genCsvHelper($module, $explainParamArr): array
 	{
-		$fields = [];
-		foreach ($explainParamArr as $key => $value) {
-			if (isset($value['dataType'])) {
-				$fields[$header][] = "{$header}:{$key}";
+		$headerCsvArr = [];
+		foreach ($explainParamArr as $hierarchyKey => $_explainParamArr) {
+			if (isset($_explainParamArr['dataType'])) {
+				$columnHeader = "{$module}:{$hierarchyKey}";
+				$headerCsvArr[$module][] = $columnHeader;
 			} else {
-				$returnHeaderArr = $this->genCsvHelper("{$header}:{$key}", $value);
-				foreach ($returnHeaderArr as $k => $v) {
-					$fields[$k] = $v;
+				$_module = "{$module}:{$hierarchyKey}";
+				$returnHeaderArr = $this->genCsvHelper($_module, $_explainParamArr);
+				foreach ($returnHeaderArr as $_module => $columnHeader) {
+					$headerCsvArr[$_module] = $columnHeader;
 				}
 			}
 		}
 
-		return $fields;
+		return $headerCsvArr;
 	}
 }

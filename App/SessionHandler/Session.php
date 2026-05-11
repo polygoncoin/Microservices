@@ -273,7 +273,7 @@ class Session
 		self::$sessionContainer = new $containerClassName();
 
 		// Setting required common parameters
-		self::$sessionContainer->sessionOptions = self::$optionArr;
+		self::$sessionContainer->sessionOption = self::$optionArr;
 		self::$sessionContainer->sessionName = self::$sessionName;
 		self::$sessionContainer->sessionMaxLifetime = (int)self::$sessionMaxLifetime;
 
@@ -467,7 +467,7 @@ class Session
 			$optionArr = self::$optionArr;
 			$optionArr['read_and_close'] = true;
 
-			self::$sessionContainer->sessionOptions = $optionArr;
+			self::$sessionContainer->sessionOption = $optionArr;
 			return session_start(optionArr: $optionArr);
 		}
 		return false;
@@ -480,7 +480,7 @@ class Session
 	 */
 	public static function sessionStartReadWrite(): bool
 	{
-		self::$sessionContainer->sessionOptions = self::$optionArr;
+		self::$sessionContainer->sessionOption = self::$optionArr;
 		return session_start(optionArr: self::$optionArr);
 	}
 

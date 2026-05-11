@@ -39,9 +39,9 @@ foreach ([
 	'.env.global.container',
 	'.env.rateLimiting'
 ] as $envFilename) {
-	$env = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
-	foreach ($env as $key => $value) {
-		putenv(assignment: "{$key}={$value}");
+	$envData = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
+	foreach ($envData as $name => $value) {
+		putenv(assignment: "{$name}={$value}");
 	}
 }
 
@@ -106,22 +106,22 @@ if (
 	)
 	&& $httpReqDetailArr['server']['domainName'] === 'localhost'
 ) {
-	$tests = new Test();
+	$testObj = new Test();
 	switch ($httpReqDetailArr['get'][ROUTE_URL_PARAM]) {
 		case '/all-test':
-			echo '<pre>'.print_r(value: $tests->processAllTest(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processAllTest(), return: true);
 			break;
 		case '/auth-test':
-			echo '<pre>'.print_r(value: $tests->processAuth(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processAuth(), return: true);
 			break;
 		case '/open-test':
-			echo '<pre>'.print_r(value: $tests->processOpen(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processOpen(), return: true);
 			break;
 		case '/open-test-xml':
-			echo '<pre>'.print_r(value: $tests->processXml(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processXml(), return: true);
 			break;
 		case '/supp-test':
-			echo '<pre>'.print_r(value: $tests->processSupplement(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processSupplement(), return: true);
 			break;
 	}
 } else {

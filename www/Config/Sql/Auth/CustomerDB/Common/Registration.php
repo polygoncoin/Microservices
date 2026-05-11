@@ -17,8 +17,8 @@ return [
 	'__QUERY__' => "UPDATE `{$this->http->req->s['cDetail']['usersTable']}` SET __SET__ WHERE __WHERE__",
 	'__VALIDATE__' => [
 		[
-			'fn' => 'primaryKeyExist',
-			'fnArgs' => [
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
 				'table' => ['custom', $this->http->req->s['cDetail']['usersTable']],
 				'primary' => ['custom', 'id'],
 				'id' => ['routeParamArr', 'id']

@@ -245,7 +245,7 @@ class Write
 					code: HttpStatus::$BadRequest
 				);
 			}
-			// Check for maximum objects supported when payloadType is Array
+			// Check for maximum object's supported when payloadType is Array
 			if (
 				$wSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
 				&& isset($wSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
@@ -423,7 +423,7 @@ class Write
 			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
 
 		$mode = getenv(name: $this->http->req->s['cDetail']['master_db_server_query_placeholder']);
-		$fn = "getSqlAndParam{$mode}Mode";
+		$function = "getSqlAndParam{$mode}Mode";
 
 		for ($i = 0; $i < $iCount; $i++) {
 			if ($isObject) {
@@ -501,7 +501,7 @@ class Write
 			}
 
 			// Get Sql and ParamArr
-			[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$fn(
+			[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$function(
 				sqlConfig: $wSqlConfig
 			);
 

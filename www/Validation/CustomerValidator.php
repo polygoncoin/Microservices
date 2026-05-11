@@ -66,16 +66,16 @@ class CustomerValidator implements ValidatorInterface
 		$isValidData = true;
 		$errorArr = [];
 		foreach ($validationConfig as &$v) {
-			$args = [];
-			foreach ($v['fnArgs'] as $attr => [$mode, $key]) {
-				if ($mode === 'custom') {
-					$args[$attr] = $key;
+			$argArr = [];
+			foreach ($v['functionArgs'] as $argName => [$fetchFrom, $fetchFromDetail]) {
+				if ($fetchFrom === 'custom') {
+					$argArr[$argName] = $fetchFromDetail;
 				} else {
-					$args[$attr] = $this->http->req->s[$mode][$key];
+					$argArr[$argName] = $this->http->req->s[$fetchFrom][$fetchFromDetail];
 				}
 			}
-			$fn = $v['fn'];
-			if (!$this->$fn($args)) {
+			$function = $v['function'];
+			if (!$this->$function($argArr)) {
 				$errorArr[] = $v['errorMessage'];
 				$isValidData = false;
 			}
@@ -109,13 +109,13 @@ class CustomerValidator implements ValidatorInterface
 	/**
 	 * Checks primary key exist
 	 *
-	 * @param array $args Arguments
+	 * @param array $argArr Arguments
 	 *
 	 * @return bool
 	 */
-	private function primaryKeyExist(&$args): bool
+	private function primaryKeyExist(&$argArr): bool
 	{
-		extract(array: $args);
+		extract(array: $argArr);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
 		DbCommonFunction::$masterDb[$this->http->req->cID]->execDbQuery(sql: $sql, paramArr: $paramArr);

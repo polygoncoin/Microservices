@@ -18,8 +18,8 @@ return [
 	'__QUERY__' => 'UPDATE `address` SET __SET__ WHERE __WHERE__',
 	'__VALIDATE__' => [
 		[
-			'fn' => 'primaryKeyExist',
-			'fnArgs' => [
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
 				'table' => ['custom', 'address'],
 				'primary' => ['custom', 'id'],
 				'id' => ['routeParamArr', 'id']

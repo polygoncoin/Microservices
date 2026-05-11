@@ -41,11 +41,11 @@ class XmlEncode implements DataEncodeInterface
 	private $tempStream = null;
 
 	/**
-	 * Array of XmlEncoderObject objects
+	 * Array of XmlEncoderObject object's
 	 *
 	 * @var XmlEncoderObject[]
 	 */
-	private $objects = [];
+	private $objectArr = [];
 
 	/**
 	 * Current XmlEncoderObject object
@@ -220,7 +220,7 @@ class XmlEncode implements DataEncodeInterface
 			$objectKey = 'Rows';
 		}
 		if ($this->currentObject) {
-			array_push($this->objects, $this->currentObject);
+			array_push($this->objectArr, $this->currentObject);
 		}
 		$this->currentObject = new XmlEncoderObject(mode: 'Array', objectKey: $objectKey);
 		$this->write(data: "<{$this->currentObject->objectKey}>");
@@ -235,8 +235,8 @@ class XmlEncode implements DataEncodeInterface
 	{
 		$this->write(data: "</{$this->currentObject->objectKey}>");
 		$this->currentObject = null;
-		if (count(value: $this->objects) > 0) {
-			$this->currentObject = array_pop($this->objects);
+		if (count(value: $this->objectArr) > 0) {
+			$this->currentObject = array_pop($this->objectArr);
 		}
 	}
 
@@ -263,7 +263,7 @@ class XmlEncode implements DataEncodeInterface
 					code: HttpStatus::$InternalServerError
 				);
 			}
-			array_push($this->objects, $this->currentObject);
+			array_push($this->objectArr, $this->currentObject);
 		}
 		$this->currentObject = new XmlEncoderObject(mode: 'Object', objectKey: $objectKey);
 		$this->write(data: "<{$this->currentObject->objectKey}>");
@@ -278,8 +278,8 @@ class XmlEncode implements DataEncodeInterface
 	{
 		$this->write(data: "</{$this->currentObject->objectKey}>");
 		$this->currentObject = null;
-		if (count(value: $this->objects) > 0) {
-			$this->currentObject = array_pop($this->objects);
+		if (count(value: $this->objectArr) > 0) {
+			$this->currentObject = array_pop($this->objectArr);
 		}
 	}
 

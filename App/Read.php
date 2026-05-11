@@ -411,8 +411,8 @@ class Read
 		$useResultSet
 	): void {
 		$mode = getenv(name: $this->http->req->s['cDetail'][$this->modeColumn]);
-		$fn = "getSqlAndParam{$mode}Mode";
-		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$fn(
+		$function = "getSqlAndParam{$mode}Mode";
+		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $rSqlConfig,
 			configKeyArr: $configKeyArr
 		);
@@ -430,15 +430,15 @@ class Read
 
 		$this->dbServerObj->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
 		if ($row = $this->dbServerObj->fetch()) {
-			foreach ($row as $key => $value) {
-				$this->dataEncode->addKeyData(objectKey: $key, data: $value);
+			foreach ($row as $objectKey => $value) {
+				$this->dataEncode->addKeyData(objectKey: $objectKey, data: $value);
 			}
 			// check if selected column-name mismatches or conflicts with
 			// configured module/submodule names
 			if (isset($rSqlConfig['__SUB-QUERY__'])) {
 				$subQueryKeyArr = array_keys(array: $rSqlConfig['__SUB-QUERY__']);
-				foreach ($row as $key => $value) {
-					if (in_array(needle: $key, haystack: $subQueryKeyArr)) {
+				foreach ($row as $objectKey => $value) {
+					if (in_array(needle: $objectKey, haystack: $subQueryKeyArr)) {
 						throw new \Exception(
 							message: 'Invalid config: Conflicting column names',
 							code: HttpStatus::$InternalServerError
@@ -501,8 +501,8 @@ class Read
 		);
 
 		$mode = getenv(name: $this->http->req->s['cDetail'][$this->modeColumn]);
-		$fn = "getSqlAndParam{$mode}Mode";
-		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$fn(
+		$function = "getSqlAndParam{$mode}Mode";
+		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $rSqlConfig
 		);
 
@@ -562,8 +562,8 @@ class Read
 		$useResultSet
 	): void {
 		$mode = getenv(name: $this->http->req->s['cDetail'][$this->modeColumn]);
-		$fn = "getSqlAndParam{$mode}Mode";
-		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$fn(
+		$function = "getSqlAndParam{$mode}Mode";
+		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $rSqlConfig,
 			configKeyArr: $configKeyArr
 		);
@@ -624,8 +624,8 @@ class Read
 				$this->dataEncode->encode(data: $row[key(array: $row)]);
 			} elseif (isset($rSqlConfig['__SUB-QUERY__'])) {
 				$this->dataEncode->startObject();
-				foreach ($row as $key => $value) {
-					$this->dataEncode->addKeyData(objectKey: $key, data: $value);
+				foreach ($row as $objectKey => $value) {
+					$this->dataEncode->addKeyData(objectKey: $objectKey, data: $value);
 				}
 				$this->callReadDB(
 					rSqlConfig: $rSqlConfig,
@@ -672,9 +672,9 @@ class Read
 			isset($rSqlConfig['__SUB-QUERY__'])
 			&& $this->isObject(arr: $rSqlConfig['__SUB-QUERY__'])
 		) {
-			foreach ($rSqlConfig['__SUB-QUERY__'] as $key => &$rSqlConfig) {
-				$configKeyArr = $configKeyArr;
-				$configKeyArr[] = $key;
+			foreach ($rSqlConfig['__SUB-QUERY__'] as $module => &$rSqlConfig) {
+				$moduleConfigKeyArr = $configKeyArr;
+				$moduleConfigKeyArr[] = $module;
 				$useResultSet = $useResultSet ??
 					$this->getUseHierarchy(
 						sqlConfig: $rSqlConfig,
@@ -683,7 +683,7 @@ class Read
 				$this->readDB(
 					rSqlConfig: $rSqlConfig,
 					isFirstCall: false,
-					configKeyArr: $configKeyArr,
+					configKeyArr: $moduleConfigKeyArr,
 					useResultSet: $useResultSet
 				);
 			}
@@ -706,8 +706,8 @@ class Read
 		}
 
 		$mode = getenv(name: $this->http->req->s['cDetail'][$this->modeColumn]);
-		$fn = "getSqlAndParam{$mode}Mode";
-		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$fn(
+		$function = "getSqlAndParam{$mode}Mode";
+		[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $rSqlConfig
 		);
 		$serverMode = isset($rSqlConfig['fetchFrom'])

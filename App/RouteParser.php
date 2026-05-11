@@ -172,33 +172,30 @@ class RouteParser
 
 		$configuredRoute = [];
 
-		for ($key = 0, $keyCount = count($this->routeElementArr); $key < $keyCount; $key++) {
-			$element = $this->routeElementArr[$key];
+		for ($i = 0, $iCount = count($this->routeElementArr); $i < $iCount; $i++) {
+			$element = $this->routeElementArr[$i];
 			if ($element === '') {
-				continue;
-			}
-			if (
-				in_array(
-					needle: $key,
-					haystack: ['__PRE-ROUTE-HOOKS__', '__POST-ROUTE-HOOKS__']
-				)
-			) {
-				$this->routeHook[$key] = $element;
 				continue;
 			}
 
 			if (isset($routesConfig[$element])) { // Route element is configured
+				if (isset($routesConfig[$element]['__PRE-ROUTE-HOOKS__'])) {
+					$this->routeHook[$element]['__PRE-ROUTE-HOOKS__'] = $routesConfig[$element]['__PRE-ROUTE-HOOKS__'];
+				}
+				if (isset($routesConfig[$element]['__POST-ROUTE-HOOKS__'])) {
+					$this->routeHook[$element]['__POST-ROUTE-HOOKS__'] = $routesConfig[$element]['__POST-ROUTE-HOOKS__'];
+				}
 				$configuredRoute[] = $element;
 				$routesConfig = &$routesConfig[$element];
 				$this->checkPresenceOfDynamicString(element: $element);
 				continue;
 			} elseif ( // Route starting with reserved keyword
-				$key === 0
+				$i === 0
 				&& $this->isStartingWithReservedRouteKeyword(routeStartingKeyword: $element)
 			) {
 				continue;
 			} elseif ( // Route ending with reserved keyword
-				$key === $routeLastElementPos
+				$i === $routeLastElementPos
 				&& $this->isEndingWithReservedRouteKeyword(routeEndingKeyword: $element)
 			) {
 				break;
@@ -236,9 +233,14 @@ class RouteParser
 							code: HttpStatus::$BadRequest
 						);
 					}
-					$routesConfig = &$routesConfig[
-						($foundIntRoute ? $foundIntRoute : $foundStringRoute)
-					];
+					$_element = $foundIntRoute ? $foundIntRoute : $foundStringRoute;
+					if (isset($routesConfig[$_element]['__PRE-ROUTE-HOOKS__'])) {
+						$this->routeHook[$_element]['__PRE-ROUTE-HOOKS__'] = $routesConfig[$_element]['__PRE-ROUTE-HOOKS__'];
+					}
+					if (isset($routesConfig[$_element]['__POST-ROUTE-HOOKS__'])) {
+						$this->routeHook[$_element]['__POST-ROUTE-HOOKS__'] = $routesConfig[$_element]['__POST-ROUTE-HOOKS__'];
+					}
+					$routesConfig = &$routesConfig[$_element];
 				} else {
 					throw new \Exception(
 						message: 'Route not supported',

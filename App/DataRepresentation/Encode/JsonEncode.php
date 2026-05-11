@@ -41,11 +41,11 @@ class JsonEncode implements DataEncodeInterface
 	private $tempStream = null;
 
 	/**
-	 * Array of JsonEncoderObject objects
+	 * Array of JsonEncoderObject object's
 	 *
 	 * @var JsonEncoderObject[]
 	 */
-	private $objects = [];
+	private $objectArr = [];
 
 	/**
 	 * Current JsonEncoderObject object
@@ -59,16 +59,16 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @var string[]
 	 */
-	private $escapers = [
+	private $escapeArr = [
 		"\\", "\"", "\n", "\r", "\t", "\x08", "\x0c", ' '
 	];
 
 	/**
-	 * Characters that are escaped with for $escapers while creating JSON
+	 * Characters that are escaped with for $escapeArr while creating JSON
 	 *
 	 * @var string[]
 	 */
-	private $replacements = [
+	private $replaceArr = [
 		"\\\\", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b", ' '
 	];
 
@@ -141,8 +141,8 @@ class JsonEncode implements DataEncodeInterface
 			return 'null';
 		}
 		$data = str_replace(
-			search: $this->escapers,
-			replace: $this->replacements,
+			search: $this->escapeArr,
+			replace: $this->replaceArr,
 			subject: $data
 		);
 		return "\"{$data}\"";
@@ -237,7 +237,7 @@ class JsonEncode implements DataEncodeInterface
 	{
 		if ($this->currentObject) {
 			$this->write(data: $this->currentObject->comma);
-			array_push($this->objects, $this->currentObject);
+			array_push($this->objectArr, $this->currentObject);
 		}
 		$this->currentObject = new JsonEncoderObject(mode: 'Array');
 		if ($objectKey !== null) {
@@ -255,8 +255,8 @@ class JsonEncode implements DataEncodeInterface
 	{
 		$this->write(data: ']');
 		$this->currentObject = null;
-		if (count(value: $this->objects) > 0) {
-			$this->currentObject = array_pop(array: $this->objects);
+		if (count(value: $this->objectArr) > 0) {
+			$this->currentObject = array_pop(array: $this->objectArr);
 			$this->currentObject->comma = ', ';
 		}
 	}
@@ -282,7 +282,7 @@ class JsonEncode implements DataEncodeInterface
 				);
 			}
 			$this->write(data: $this->currentObject->comma);
-			array_push($this->objects, $this->currentObject);
+			array_push($this->objectArr, $this->currentObject);
 		}
 		$this->currentObject = new JsonEncoderObject(mode: 'Object');
 		if ($objectKey !== null) {
@@ -300,8 +300,8 @@ class JsonEncode implements DataEncodeInterface
 	{
 		$this->write(data: '}');
 		$this->currentObject = null;
-		if (count(value: $this->objects) > 0) {
-			$this->currentObject = array_pop(array: $this->objects);
+		if (count(value: $this->objectArr) > 0) {
+			$this->currentObject = array_pop(array: $this->objectArr);
 			$this->currentObject->comma = ', ';
 		}
 	}

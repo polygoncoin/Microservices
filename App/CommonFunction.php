@@ -167,42 +167,33 @@ class CommonFunction
 	/**
 	 * Check Cache CIDR
 	 *
-	 * @param string       $IP          $this->http->httpReqDetailArr['server']['httpRequestIP']
-	 * @param string|array $cacheKeyArr Cache Key(s)
+	 * @param string $IP           $this->http->httpReqDetailArr['server']['httpRequestIP']
+	 * @param string $cidrCacheKey Cache Key(s)
 	 *
 	 * @return null|bool
 	 * @throws \Exception
 	 */
-	public static function checkCacheCidr($IP, $cacheKeyArr): null|bool
+	public static function checkCacheCidr($IP, $cidrCacheKey): null|bool
 	{
-		$cidrChecked = false;
-
-		if (!is_array($cacheKeyArr)) {
-			$cacheKeyArr = [$cacheKeyArr];
+		if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cidrCacheKey)) {
+			return false;
 		}
 
-		foreach ($cacheKeyArr as $cacheKey) {
-			if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cacheKey)) {
-				continue;
-			}
-			$cidrChecked = true;
-
-			$cidrArr = json_decode(
-				json: DbCommonFunction::$gCacheServer->cacheGet(
-					cacheKey: $cacheKey
-				),
-				associative: true
+		$cidrArr = json_decode(
+			json: DbCommonFunction::$gCacheServer->cacheGet(
+				cacheKey: $cidrCacheKey
+			),
+			associative: true
+		);
+		$isValidIp = self::belongsToCidrArrRange(IP: $IP, cidrArr: $cidrArr);
+		if (!$isValidIp) {
+			throw new \Exception(
+				message: 'IP not supported',
+				code: HttpStatus::$BadRequest
 			);
-			$isValidIp = self::belongsToCidrArrRange(IP: $IP, cidrArr: $cidrArr);
-			if (!$isValidIp) {
-				throw new \Exception(
-					message: 'IP not supported',
-					code: HttpStatus::$BadRequest
-				);
-			}
 		}
 
-		return $cidrChecked;
+		return true;
 	}
 
 	/**

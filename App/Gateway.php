@@ -190,11 +190,11 @@ class Gateway
 			cID: $this->http->req->cID,
 			uID: $this->http->req->uID
 		);
-		foreach ([$cCidrKey, $gCidrKey, $uCidrKey] as $key) {
+		foreach ([$cCidrKey, $gCidrKey, $uCidrKey] as $cacheKey) {
 			if (!$this->cidrChecked) {
 				$this->cidrChecked = CommonFunction::checkCacheCidr(
 					IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-					cacheKeyArr: $key
+					cidrCacheKey: $cacheKey
 				);
 			}
 		}

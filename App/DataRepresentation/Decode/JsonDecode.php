@@ -79,10 +79,10 @@ class JsonDecode implements DataDecodeInterface
 		$this->jsonFileHandle = &$jsonFileHandle;
 
 		// File Stats - Check for size
-		$fileStats = fstat(stream: $this->jsonFileHandle);
+		$fileDetail = fstat(stream: $this->jsonFileHandle);
 		if (
-			isset($fileStats['size'])
-			&& $fileStats['size'] > $this->allowedPayloadLength
+			isset($fileDetail['size'])
+			&& $fileDetail['size'] > $this->allowedPayloadLength
 		) {
 			throw new \Exception(
 				message: 'File size greater than allowed size',

@@ -41,11 +41,11 @@ class PhpEncode implements DataEncodeInterface
 	public $finalArray = null;
 
 	/**
-	 * Array of PhpEncoderObject objects
+	 * Array of PhpEncoderObject object's
 	 *
 	 * @var PhpEncoderObject[]
 	 */
-	private $objects = [];
+	private $objectArr = [];
 
 	/**
 	 * Current PhpEncoderObject object
@@ -216,7 +216,7 @@ class PhpEncode implements DataEncodeInterface
 	public function startArray($objectKey = null): void
 	{
 		if ($this->currentObject) {
-			array_push($this->objects, $this->currentObject);
+			array_push($this->objectArr, $this->currentObject);
 		}
 		$this->currentObject = new PhpEncoderObject(mode: 'Array');
 		if ($objectKey !== null) {
@@ -234,8 +234,8 @@ class PhpEncode implements DataEncodeInterface
 		$objectKey = $this->currentObject->objectKey;
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
-		if (count(value: $this->objects) > 0) {
-			$this->currentObject = array_pop(array: $this->objects);
+		if (count(value: $this->objectArr) > 0) {
+			$this->currentObject = array_pop(array: $this->objectArr);
 			if ($objectKey !== '') {
 				$this->currentObject->returnArray[$objectKey] = &$returnArray;
 			} else {
@@ -266,7 +266,7 @@ class PhpEncode implements DataEncodeInterface
 					code: HttpStatus::$InternalServerError
 				);
 			}
-			array_push($this->objects, $this->currentObject);
+			array_push($this->objectArr, $this->currentObject);
 		}
 		$this->currentObject = new PhpEncoderObject(mode: 'Object');
 		if ($objectKey !== null) {
@@ -284,8 +284,8 @@ class PhpEncode implements DataEncodeInterface
 		$objectKey = $this->currentObject->objectKey;
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
-		if (count(value: $this->objects) > 0) {
-			$this->currentObject = array_pop(array: $this->objects);
+		if (count(value: $this->objectArr) > 0) {
+			$this->currentObject = array_pop(array: $this->objectArr);
 			if ($objectKey !== '') {
 				$this->currentObject->returnArray[$objectKey] = &$returnArray;
 			} else {

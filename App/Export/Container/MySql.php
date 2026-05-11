@@ -153,27 +153,26 @@ class MySql implements ExportDatabaseServerInterface
 			);
 		}
 
-		$paramKeyArr = array_keys(array: $paramArr);
 		$paramPos = [];
-		foreach ($paramKeyArr as $value) {
-			if (substr_count(haystack: $sql, needle: $value) > 1) {
+		foreach (array_keys(array: $paramArr) as $parameterisedColumn) {
+			if (substr_count(haystack: $sql, needle: $parameterisedColumn) > 1) {
 				throw new \Exception(
 					message: 'Parameterized query has more than one '
-						. "occurrence of param '{$value}'"
+						. "occurrence of param '{$parameterisedColumn}'"
 				);
 			}
-			$paramPos[$value] = strpos(haystack: $sql, needle: $value);
+			$paramPos[$parameterisedColumn] = strpos(haystack: $sql, needle: $parameterisedColumn);
 		}
-		foreach ($paramPos as $key => $value) {
+		foreach ($paramPos as $parameterisedColumn => $value) {
 			if (
 				substr(
 					string: $sql,
 					offset: $value,
-					length: strlen(string: $key)
-					!== $key
+					length: strlen(string: $parameterisedColumn)
+					!== $parameterisedColumn
 				)
 			) {
-				throw new \Exception(message: "Invalid param key '{$key}'");
+				throw new \Exception(message: "Invalid param key '{$parameterisedColumn}'");
 			}
 		}
 	}
@@ -214,26 +213,26 @@ class MySql implements ExportDatabaseServerInterface
 
 		//Generate bind params
 		$bindParamArr = [];
-		foreach ($paramArr as $key => $valueArr) {
+		foreach ($paramArr as $parameterisedColumn => $valueArr) {
 			if (is_array(value: $valueArr)) {
 				$tmpParamArr = [];
 				$count = 1;
 				foreach ($valueArr as $value) {
 					if (is_array(value: $value)) {
 						throw new \Exception(
-							message: "Invalid params for key '{$key}'"
+							message: "Invalid params for key '{$parameterisedColumn}'"
 						);
 					}
-					$newKey = $key . $count;
-					if (in_array(needle: $newKey, haystack: $tmpParamArr)) {
+					$newParameterisedColumn = $parameterisedColumn . $count++;
+					if (in_array(needle: $newParameterisedColumn, haystack: $tmpParamArr)) {
 						throw new \Exception(
-							message: "Invalid parameterized params '{$newKey}'"
+							message: "Invalid parameterized params '{$newParameterisedColumn}'"
 						);
 					}
-					$tmpParamArr[$key . $count++] = $value;
+					$tmpParamArr[$newParameterisedColumn] = $value;
 				}
 				$sql = str_replace(
-					search: $key,
+					search: $parameterisedColumn,
 					replace: implode(
 						separator: ', ',
 						array: array_keys(array: $tmpParamArr)
@@ -242,19 +241,19 @@ class MySql implements ExportDatabaseServerInterface
 				);
 				$bindParamArr = array_merge($bindParamArr, $tmpParamArr);
 			} else {
-				$bindParamArr[$key] = $valueArr;
+				$bindParamArr[$parameterisedColumn] = $valueArr;
 			}
 		}
 
 		//Replace parameterized valueArr.
-		foreach ($bindParamArr as $key => $value) {
+		foreach ($bindParamArr as $parameterisedColumn => $value) {
 			if (!ctype_digit(text: $value)) {
 				$value = "'" . mysqli_real_escape_string(
 					mysql: $mysqli,
 					string: $value
 				) . "'";
 			}
-			$sql = str_replace(search: $key, replace: $value, subject: $sql);
+			$sql = str_replace(search: $parameterisedColumn, replace: $value, subject: $sql);
 		}
 
 		// Close mysqli connection.
