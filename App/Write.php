@@ -388,11 +388,11 @@ class Write
 	/**
 	 * Function to insert/update sub queries recursively
 	 *
-	 * @param array $wSqlConfig     Config from file
-	 * @param array $payloadIndexArr Payload Indexes
+	 * @param array $wSqlConfig       Config from file
+	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
-	 * @param bool  $useHierarchy   Use results in where clause of sub queries
-	 * @param array $response       Response by reference
+	 * @param bool  $useHierarchy     Use results in where clause of sub queries
+	 * @param array $response         Response by reference
 	 * @param array $requiredFieldArr Required fields
 	 *
 	 * @return void
@@ -579,11 +579,11 @@ class Write
 	/**
 	 * Validate and call _writeDB
 	 *
-	 * @param array $wSqlConfig     Config from file
-	 * @param array $payloadIndexArr Payload Indexes
+	 * @param array $wSqlConfig       Config from file
+	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
-	 * @param bool  $useHierarchy   Use results in where clause of sub queries
-	 * @param array $response       Response by reference
+	 * @param bool  $useHierarchy     Use results in where clause of sub queries
+	 * @param array $response         Response by reference
 	 * @param array $requiredFieldArr Required fields
 	 *
 	 * @return void

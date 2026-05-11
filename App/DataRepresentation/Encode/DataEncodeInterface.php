@@ -77,8 +77,8 @@ interface DataEncodeInterface
 	/**
 	 * Add simple array/value as in the data format
 	 *
-	 * @param string       $objectKey  Key of associative array
-	 * @param string|array $data Representation Data
+	 * @param string       $objectKey Key of associative array
+	 * @param string|array $data      Representation Data
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -113,8 +113,8 @@ interface DataEncodeInterface
 	/**
 	 * Append raw data string
 	 *
-	 * @param string $objectKey  key of associative array
-	 * @param string $data Reference of Representation Data
+	 * @param string $objectKey Key of associative array
+	 * @param string $data      Reference of Representation Data
 	 *
 	 * @return void
 	 */

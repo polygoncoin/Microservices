@@ -218,8 +218,8 @@ trait AppTrait
 	/**
 	 * Returns Query and ParamArr for execution
 	 *
-	 * @param array      $sqlConfig  Config from file
-	 * @param array|null $configKeyArr  Config key's
+	 * @param array      $sqlConfig    Sql config
+	 * @param array|null $configKeyArr Config key's
 	 *
 	 * @return array
 	 */
@@ -351,8 +351,8 @@ trait AppTrait
 	/**
 	 * Returns Query and ParamArr for execution
 	 *
-	 * @param array      $sqlConfig  Config from file
-	 * @param array|null $configKeyArr  Config key's
+	 * @param array      $sqlConfig    Sql config
+	 * @param array|null $configKeyArr Config key's
 	 *
 	 * @return array
 	 */
@@ -475,7 +475,7 @@ trait AppTrait
 	/**
 	 * Generates ParamArr for statement to execute
 	 *
-	 * @param array $sqlConfig        Config from file
+	 * @param array $sqlConfig          Sql config
 	 * @param array $payloadVariableArr Payload Variables
 	 *
 	 * @return array
@@ -601,7 +601,7 @@ trait AppTrait
 	/**
 	 * Use results in where clause of sub queries recursively
 	 *
-	 * @param array  $sqlConfig Config from file
+	 * @param array  $sqlConfig Sql config
 	 * @param string $keyword   useHierarchy/useResultSet
 	 *
 	 * @return bool
@@ -632,7 +632,7 @@ trait AppTrait
 	/**
 	 * Return explain params recursively
 	 *
-	 * @param array $sqlConfig   Config from file
+	 * @param array $sqlConfig   Sql config
 	 * @param bool  $isFirstCall Flag to check if this is first request
 	 * @param bool  $flag        useHierarchy/useResultSet flag
 	 *
@@ -761,9 +761,9 @@ trait AppTrait
 	/**
 	 * Function to reset data for module key wise
 	 *
-	 * @param string $fetchFrom sqlResults / sqlParamArr / sqlPayload
+	 * @param string $fetchFrom    sqlResults / sqlParamArr / sqlPayload
 	 * @param array  $moduleKeyArr Module key's in recursion
-	 * @param array  $row       Row data fetched from DB
+	 * @param array  $row          Row data fetched from DB
 	 *
 	 * @return void
 	 */
@@ -919,7 +919,7 @@ trait AppTrait
 	/**
 	 * Check for Idempotent Window
 	 *
-	 * @param array $sqlConfig       Config from file
+	 * @param array $sqlConfig       Sql config
 	 * @param array $payloadIndexArr Payload Indexes
 	 *
 	 * @return array
@@ -972,7 +972,7 @@ trait AppTrait
 	/**
 	 * Lag Response
 	 *
-	 * @param array $sqlConfig Config from file
+	 * @param array $sqlConfig Sql config
 	 *
 	 * @return void
 	 */
@@ -1029,10 +1029,10 @@ trait AppTrait
 	/**
 	 * Check Rate Limit
 	 *
-	 * @param string $rateLimitPrefix        Prefix
-	 * @param int    $rateLimitMaxRequest   Max request
+	 * @param string $rateLimitPrefix           Prefix
+	 * @param int    $rateLimitMaxRequest       Max request
 	 * @param int    $rateLimitMaxRequestWindow Window in seconds
-	 * @param string $rateLimitKey              Rate Limit Key
+	 * @param string $rateLimitKey              Rate limit key
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -1179,7 +1179,7 @@ trait AppTrait
 	/**
 	 * Generates ParamArr for statement to execute
 	 *
-	 * @param array $payloadConfig    API Payload configuration
+	 * @param array $payloadConfig      API Payload configuration
 	 * @param array $payloadVariableArr Payload Variables
 	 *
 	 * @return array
@@ -1256,7 +1256,7 @@ trait AppTrait
 	/**
 	 * Process import function of configuration
 	 *
-	 * @param array $wSqlConfig   Config from file
+	 * @param array $wSqlConfig   Write sql config
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return string

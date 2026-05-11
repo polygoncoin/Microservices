@@ -396,11 +396,11 @@ class Supplement
 	/**
 	 * Function to execute supplement recursively
 	 *
-	 * @param array $sSqlConfig     Config from file
-	 * @param array $payloadIndexArr Payload Indexes
+	 * @param array $sSqlConfig       Config from file
+	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
-	 * @param bool  $useHierarchy   Use results in where clause of sub queries
-	 * @param array $response       Response by reference
+	 * @param bool  $useHierarchy     Use results in where clause of sub queries
+	 * @param array $response         Response by reference
 	 * @param array $requiredFieldArr Required fields
 	 *
 	 * @return void
@@ -558,11 +558,11 @@ class Supplement
 	/**
 	 * Validate and call _writeDB
 	 *
-	 * @param array $sSqlConfig     Config from file
-	 * @param array $payloadIndexArr Payload Indexes
+	 * @param array $sSqlConfig       Config from file
+	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
-	 * @param bool  $useHierarchy   Use results in where clause of sub queries
-	 * @param array $response       Response by reference
+	 * @param bool  $useHierarchy     Use results in where clause of sub queries
+	 * @param array $response         Response by reference
 	 * @param array $requiredFieldArr Required fields
 	 *
 	 * @return void

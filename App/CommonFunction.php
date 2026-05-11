@@ -222,7 +222,7 @@ class CommonFunction
 	/**
 	 * Belongs to CidrArr range
 	 *
-	 * @param string $IP    $this->http->httpReqDetailArr['server']['httpRequestIP']
+	 * @param string $IP      $this->http->httpReqDetailArr['server']['httpRequestIP']
 	 * @param array  $cidrArr Cache Key(s)
 	 *
 	 * @return bool

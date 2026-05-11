@@ -126,10 +126,10 @@ class Gateway
 	/**
 	 * Check Rate Limit
 	 *
-	 * @param string $rateLimitPrefix        Prefix
-	 * @param int    $rateLimitMaxRequest   Max request
+	 * @param string $rateLimitPrefix           Prefix
+	 * @param int    $rateLimitMaxRequest       Max request
 	 * @param int    $rateLimitMaxRequestWindow Window in seconds
-	 * @param string $rateLimitKey                    Key
+	 * @param string $rateLimitKey              Rate limit key
 	 *
 	 * @return void
 	 * @throws \Exception

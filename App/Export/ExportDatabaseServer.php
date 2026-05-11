@@ -95,7 +95,7 @@ class ExportDatabaseServer
 	/**
 	 * Returns Shell Command
 	 *
-	 * @param string $sql    query
+	 * @param string $sql      query
 	 * @param array  $paramArr query params
 	 *
 	 * @return string

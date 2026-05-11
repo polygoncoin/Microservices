@@ -191,8 +191,8 @@ class MySqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Set cache on basis of key
 	 *
-	 * @param string   $queryCacheKey    Cache key
-	 * @param string   $value  Cache value
+	 * @param string   $queryCacheKey Query cache key
+	 * @param string   $value         Cache value
 	 *
 	 * @return mixed
 	 */
@@ -216,8 +216,8 @@ class MySqlQueryCache implements QueryCacheServerInterface
 	/**
 	 * Increment cache on basis of key
 	 *
-	 * @param string $queryCacheKey    Cache key
-	 * @param int    $offset Offset
+	 * @param string $queryCacheKey Query cache key
+	 * @param int    $offset        Offset
 	 *
 	 * @return mixed
 	 */

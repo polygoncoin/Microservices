@@ -231,7 +231,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * Get Session
 	 *
-	 * @param string $sql    SQL
+	 * @param string $sql      Sql
 	 * @param array  $paramArr ParamArr
 	 *
 	 * @return mixed
@@ -259,7 +259,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * Execute SQL
 	 *
-	 * @param string $sql    SQL
+	 * @param string $sql      Sql
 	 * @param array  $paramArr ParamArr
 	 *
 	 * @return bool

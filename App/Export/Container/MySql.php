@@ -124,7 +124,7 @@ class MySql implements ExportDatabaseServerInterface
 	/**
 	 * Validate
 	 *
-	 * @param string $sql    query
+	 * @param string $sql      query
 	 * @param array  $paramArr query params
 	 *
 	 * @return void
@@ -180,7 +180,7 @@ class MySql implements ExportDatabaseServerInterface
 	/**
 	 * Generate raw Sql query from parameterized query via PDO.
 	 *
-	 * @param string $sql    query
+	 * @param string $sql      query
 	 * @param array  $paramArr query params
 	 *
 	 * @return string
@@ -265,7 +265,7 @@ class MySql implements ExportDatabaseServerInterface
 	/**
 	 * Returns Shell Command
 	 *
-	 * @param string $sql    query
+	 * @param string $sql      query
 	 * @param array  $paramArr query params
 	 *
 	 * @return string

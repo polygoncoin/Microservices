@@ -300,7 +300,7 @@ class Read
 	 *
 	 * @param array $rSqlConfig   Config from file
 	 * @param bool  $isFirstCall  true to represent the first call in recursion
-	 * @param array $configKeyArr   Config key's in recursion
+	 * @param array $configKeyArr Config key's in recursion
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
@@ -398,7 +398,7 @@ class Read
 	 *
 	 * @param array $rSqlConfig   Read SQL configuration
 	 * @param bool  $isFirstCall  true to represent the first call in recursion
-	 * @param array $configKeyArr   Config key's
+	 * @param array $configKeyArr Config key's
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
@@ -549,7 +549,7 @@ class Read
 	 *
 	 * @param array $rSqlConfig   Read SQL configuration
 	 * @param bool  $isFirstCall  true to represent the first call in recursion
-	 * @param array $configKeyArr   Config key's
+	 * @param array $configKeyArr Config key's
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
@@ -645,7 +645,7 @@ class Read
 	 * Validate and call readDB
 	 *
 	 * @param array $rSqlConfig   Read SQL configuration
-	 * @param array $configKeyArr   Config key's
+	 * @param array $configKeyArr Config key's
 	 * @param array $row          Row data fetched from DB
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
@@ -693,7 +693,7 @@ class Read
 	/**
 	 * Validate and call readDB
 	 *
-	 * @param array $rSqlConfig   Read SQL configuration
+	 * @param array $rSqlConfig Read SQL configuration
 	 *
 	 * @return array
 	 */

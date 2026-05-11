@@ -81,7 +81,7 @@ class JsonDecodeObject
 	/**
 	 * Constructor
 	 *
-	 * @param string $mode     Values can be one among Array
+	 * @param string $mode      Values can be one among Array
 	 * @param string $objectKey Key for object
 	 */
 	public function __construct($mode, $objectKey = null)

@@ -275,9 +275,9 @@ class MySql implements SqlInterface
 	/**
 	 * Execute Parameterized query
 	 *
-	 * @param string $sql     Parameterized query
-	 * @param array  $paramArr  Parameterized query params
-	 * @param bool   $pushPop Push Pop result set stmt
+	 * @param string $sql      Parameterized query
+	 * @param array  $paramArr Parameterized query params
+	 * @param bool   $pushPop  Push Pop result set stmt
 	 *
 	 * @return void
 	 */

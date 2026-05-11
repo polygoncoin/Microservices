@@ -167,8 +167,8 @@ class JsonEncode implements DataEncodeInterface
 	/**
 	 * Append raw json string
 	 *
-	 * @param string $objectKey  key of associative array
-	 * @param string $data Reference of Representation Data
+	 * @param string $objectKey Key of associative array
+	 * @param string $data      Reference of Representation Data
 	 *
 	 * @return void
 	 */
@@ -206,8 +206,8 @@ class JsonEncode implements DataEncodeInterface
 	/**
 	 * Add simple array/value as in the json format
 	 *
-	 * @param string       $objectKey  Key of associative array
-	 * @param string|array $data Representation Data
+	 * @param string       $objectKey Key of associative array
+	 * @param string|array $data      Representation Data
 	 *
 	 * @return void
 	 * @throws \Exception

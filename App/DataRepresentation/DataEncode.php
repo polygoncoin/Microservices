@@ -186,8 +186,8 @@ class DataEncode
 	/**
 	 * Add simple array/value as in the data format
 	 *
-	 * @param string       $objectKey  Key of associative array
-	 * @param string|array $data Representation Data
+	 * @param string       $objectKey Key of associative array
+	 * @param string|array $data      Representation Data
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -234,8 +234,8 @@ class DataEncode
 	/**
 	 * Append raw data string
 	 *
-	 * @param string $objectKey  key of associative array
-	 * @param string $data Representation Data
+	 * @param string $objectKey Key of associative array
+	 * @param string $data      Representation Data
 	 *
 	 * @return void
 	 */

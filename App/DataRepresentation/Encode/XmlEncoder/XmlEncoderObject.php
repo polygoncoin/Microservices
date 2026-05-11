@@ -37,8 +37,8 @@ class XmlEncoderObject
 	/**
 	 * Constructor
 	 *
-	 * @param string      $mode Values can be one among Array/object
-	 * @param null|string $objectKey  Tag
+	 * @param string      $mode      Values can be one among Array/object
+	 * @param null|string $objectKey Tag
 	 */
 	public function __construct($mode, $objectKey)
 	{

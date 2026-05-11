@@ -156,8 +156,8 @@ class XmlEncode implements DataEncodeInterface
 	/**
 	 * Append raw XML string
 	 *
-	 * @param string $objectKey  Tag of associative array
-	 * @param string $data Reference of Representation Data
+	 * @param string $objectKey Tag of associative array
+	 * @param string $data      Reference of Representation Data
 	 *
 	 * @return void
 	 */

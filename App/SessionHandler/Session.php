@@ -415,7 +415,7 @@ class Session
 	 * Initialize session handler
 	 *
 	 * @param string $sessionMode File/MySql/Cookie
-	 * @param array  $optionArr     Options
+	 * @param array  $optionArr   Options
 	 *
 	 * @return void
 	 */

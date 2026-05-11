@@ -179,9 +179,9 @@ class Redis implements NoSqlInterface
 	/**
 	 * Set cache on basis of key
 	 *
-	 * @param string $cacheKey    Cache key
-	 * @param string $value  Cache value
-	 * @param int    $expire Seconds to expire. Default 0 - doesn't expire
+	 * @param string $cacheKey Cache key
+	 * @param string $value    Cache value
+	 * @param int    $expire   Seconds to expire. Default 0 - doesn't expire
 	 *
 	 * @return mixed
 	 */
@@ -199,8 +199,8 @@ class Redis implements NoSqlInterface
 	/**
 	 * Increment Key value with offset
 	 *
-	 * @param string $cacheKey    Cache key
-	 * @param int    $offset Offset
+	 * @param string $cacheKey Cache key
+	 * @param int    $offset   Offset
 	 *
 	 * @return int
 	 */
