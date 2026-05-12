@@ -63,14 +63,14 @@ class CustomSessionHandler implements
 	private $foundSession = null;
 
 	/**
-	 * Session ID
+	 * Session id
 	 *
 	 * @var string
 	 */
 	private $sessionID = '';
 
 	/**
-	 * Session ID created flag to handle session_regenerate_id
+	 * Session id created flag to handle session_regenerate_id
 	 * In this case validateId is called after create_sid function
 	 * Also, we have used this to validate created sessionID
 	 *
@@ -125,13 +125,13 @@ class CustomSessionHandler implements
 	}
 
 	/**
-	 * Validate session ID
+	 * Validate session id
 	 *
 	 * Calls if session cookie is present in request
 	 *
 	 * A callable with the following signature
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool true if the session id is valid otherwise false
 	 */
@@ -154,7 +154,7 @@ class CustomSessionHandler implements
 	}
 
 	/**
-	 * Create session ID
+	 * Create session id
 	 *
 	 * Calls if no session cookie is present
 	 * Invoked internally when a new session id is needed
@@ -187,7 +187,7 @@ class CustomSessionHandler implements
 	 *
 	 * A callable with the following signature
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return string|false the session data or an empty string
 	 */
@@ -205,7 +205,7 @@ class CustomSessionHandler implements
 	 *
 	 * A callable with the following signature
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool true for success or false for failure
@@ -245,7 +245,7 @@ class CustomSessionHandler implements
 	 *
 	 * A callable with the following signature
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool true for success or false for failure
@@ -294,7 +294,7 @@ class CustomSessionHandler implements
 	 *
 	 * A callable with the following signature
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool true for success or false for failure
 	 */

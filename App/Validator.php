@@ -44,7 +44,7 @@ class Validator
 	private $v = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

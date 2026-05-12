@@ -35,14 +35,14 @@ use Microservices\App\DropboxHandler\StreamVideo;
 class Dropbox
 {
 	/**
-	 * Http Request Detail
+	 * HTTP request detail
 	 *
 	 * @var null|array
 	 */
 	private $httpReqDetailArr = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -84,7 +84,7 @@ class Dropbox
 	/**
 	 * Constructor
 	 *
-	 * @param array $httpReqDetailArr Http Request Detail
+	 * @param array $httpReqDetailArr HTTP request detail
 	 * @param Http  $http
 	 */
 	public function __construct(&$httpReqDetailArr, &$http = null)

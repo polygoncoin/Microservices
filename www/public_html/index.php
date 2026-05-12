@@ -63,7 +63,7 @@ if (
 	die("Invalid request");
 }
 
-$httpReqDetailArr['server']['httpRequestIP'] = CommonFunction::getHttpRequestIP();
+$httpReqDetailArr['server']['httpRequestIP'] = CommonFunction::getHttpRequestIp();
 
 $httpReqDetailArr['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {

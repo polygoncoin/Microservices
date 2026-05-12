@@ -30,7 +30,7 @@ namespace Microservices\App;
 class CacheServerKey
 {
 	/**
-	 * Get Customer Key
+	 * Get open to web Domain key
 	 *
 	 * @param string $domainName Domain Name
 	 *
@@ -42,7 +42,7 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get Customer Key
+	 * Get closed to web Domain key
 	 *
 	 * @param string $domainName Domain Name
 	 *
@@ -54,9 +54,9 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get Customer User Key
+	 * Get Customer user username key
 	 *
-	 * @param int    $cID      Customer ID
+	 * @param int    $cID      Customer id
 	 * @param string $username Username
 	 *
 	 * @return string
@@ -67,10 +67,10 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get Group Key
+	 * Get Group key
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $gID Group ID
+	 * @param int $cID Customer id
+	 * @param int $gID Group id
 	 *
 	 * @return string
 	 */
@@ -80,9 +80,9 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get Customer CIDR Key
+	 * Get Customer CIDR key
 	 *
-	 * @param int $cID Customer ID
+	 * @param int $cID Customer id
 	 *
 	 * @return string
 	 */
@@ -92,10 +92,10 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get Group CIDR Key
+	 * Get Customer group CIDR key
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $gID Group ID
+	 * @param int $cID Customer id
+	 * @param int $gID Group id
 	 *
 	 * @return string
 	 */
@@ -105,10 +105,10 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get User CIDR Key
+	 * Get Customer user CIDR key
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $uID User ID
+	 * @param int $cID Customer id
+	 * @param int $uID User id
 	 *
 	 * @return string
 	 */
@@ -118,7 +118,7 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get Token Key
+	 * Get Token key
 	 *
 	 * @param string $token Token
 	 *
@@ -130,10 +130,10 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get User Token Key
+	 * Get Customer user Token key
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $uID User ID
+	 * @param int $cID Customer id
+	 * @param int $uID User id
 	 *
 	 * @return string
 	 */
@@ -143,23 +143,23 @@ class CacheServerKey
 	}
 
 	/**
-	 * Get User Token Key
+	 * Get Customer user Session id key
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $uID User ID
+	 * @param int $cID Customer id
+	 * @param int $uID User id
 	 *
 	 * @return string
 	 */
-	public static function customerUserSessionID($cID, $uID): string
+	public static function customerUserSessionId($cID, $uID): string
 	{
 		return "c:{$cID}:u:{$uID}:sID";
 	}
 
 	/**
-	 * Get Key maintaining Concurrency Interval(active session) For Current User
+	 * Get key maintaining concurrency interval(active session) for current user
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $uID User ID
+	 * @param int $cID Customer id
+	 * @param int $uID User id
 	 *
 	 * @return string
 	 */
@@ -169,10 +169,10 @@ class CacheServerKey
 	}
 
 	/**
-	 * Key to maintain Referrer Lag
+	 * Get Customer user Referrer lag key
 	 *
-	 * @param int $cID Customer ID
-	 * @param int $uID User ID
+	 * @param int $cID Customer id
+	 * @param int $uID User id
 	 *
 	 * @return string
 	 */

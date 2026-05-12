@@ -124,8 +124,8 @@ class MySql implements ExportDatabaseServerInterface
 	/**
 	 * Validate
 	 *
-	 * @param string $sql      query
-	 * @param array  $paramArr query params
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -133,7 +133,7 @@ class MySql implements ExportDatabaseServerInterface
 	private function validate($sql, $paramArr): void
 	{
 		if (empty($sql)) {
-			throw new \Exception(message: 'Empty Sql query');
+			throw new \Exception(message: 'Empty SQL query');
 		}
 
 		if (count(value: $paramArr) === 0) {
@@ -178,10 +178,10 @@ class MySql implements ExportDatabaseServerInterface
 	}
 
 	/**
-	 * Generate raw Sql query from parameterized query via PDO.
+	 * Generate raw SQL query from parameterized query via PDO.
 	 *
-	 * @param string $sql      query
-	 * @param array  $paramArr query params
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 *
 	 * @return string
 	 * @throws \Exception
@@ -265,8 +265,8 @@ class MySql implements ExportDatabaseServerInterface
 	/**
 	 * Returns Shell Command
 	 *
-	 * @param string $sql      query
-	 * @param array  $paramArr query params
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 *
 	 * @return string
 	 */

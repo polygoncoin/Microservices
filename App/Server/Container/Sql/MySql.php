@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Sql Database
+ * SQL Database
  * php version 8.3
  *
  * @category  Sql
@@ -119,7 +119,7 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Database Server Object
+	 * Connect Database
 	 *
 	 * @return void
 	 */
@@ -229,7 +229,7 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Affected Rows by PDO
+	 * Affected row count
 	 *
 	 * @return bool|int
 	 */
@@ -251,11 +251,11 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Last Insert ID by PDO
+	 * Last insert id
 	 *
 	 * @return bool|int
 	 */
-	public function lastInsertID(): bool|int
+	public function lastInsertId(): bool|int
 	{
 		try {
 			if (($lastInsertID = $this->dbServerObj->lastInsertId()) !== false) {
@@ -273,10 +273,10 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Execute Parameterized query
+	 * Execute query
 	 *
-	 * @param string $sql      Parameterized query
-	 * @param array  $paramArr Parameterized query params
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 * @param bool   $pushPop  Push Pop result set stmt
 	 *
 	 * @return void
@@ -310,7 +310,7 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Fetch row from statement
+	 * Fetch row
 	 *
 	 * @return mixed
 	 */
@@ -329,7 +329,7 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Fetch all rows from statement
+	 * Fetch all rows
 	 *
 	 * @return array|bool
 	 */

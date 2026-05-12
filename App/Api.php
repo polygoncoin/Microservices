@@ -23,7 +23,7 @@ use Microservices\App\Http;
 use Microservices\App\Supplement;
 
 /**
- * Class to initialize api http request
+ * Class to initialize api HTTP request
  * php version 8.3
  *
  * @category  API
@@ -44,7 +44,7 @@ class Api
 	private $hook = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -135,12 +135,6 @@ class Api
 			$api = new $class($this->http);
 			if ($api->init()) {
 				$return = $api->process();
-				if (
-					is_array($return)
-					&& count($return) === 3
-				) {
-					return $return;
-				}
 			}
 		}
 
@@ -157,11 +151,18 @@ class Api
 			);
 		}
 
+		if (
+			is_array($return)
+			&& count($return) === 3
+		) {
+			return $return;
+		}
+
 		return true;
 	}
 
 	/**
-	 * Miscellaneous Functionality Before Collecting Payload
+	 * Process before collecting Payload
 	 *
 	 * @return bool
 	 */
@@ -228,7 +229,7 @@ class Api
 	}
 
 	/**
-	 * Miscellaneous Functionality After Collecting Payload
+	 * Execute once done with api process function
 	 *
 	 * @return bool
 	 */

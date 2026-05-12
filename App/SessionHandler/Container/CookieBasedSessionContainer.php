@@ -53,9 +53,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	}
 
 	/**
-	 * For Custom Session Handler - Validate session ID
+	 * For Custom Session Handler - Validate session id
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool|string
 	 */
@@ -83,7 +83,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Write session data
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
@@ -122,7 +122,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session data
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
@@ -135,7 +135,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session timestamp
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool
@@ -186,7 +186,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool
 	 */

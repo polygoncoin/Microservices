@@ -152,7 +152,7 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Key's exist
+	 * Result exist as per $keyString
 	 *
 	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
@@ -179,7 +179,7 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Key exist
+	 * Datatype of result as per $keyString
 	 *
 	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
@@ -212,7 +212,7 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Count of array element
+	 * Count of result as per $keyString
 	 *
 	 * @param null|string $keyString Key values separated by colon
 	 *
@@ -251,7 +251,7 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Pass the key's and get whole json content belonging to key's
+	 * Get result as per $keyString
 	 *
 	 * @param string $keyString Key values separated by colon
 	 *
@@ -271,7 +271,7 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
-	 * Get complete JSON for Kays
+	 * Get complete result as per $keyString
 	 *
 	 * @param string $keyString Key values separated by colon
 	 *
@@ -290,6 +290,7 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
+	 * Load result as per $keyString
 	 * Start processing the JSON string for a key's
 	 * Perform search inside key's of JSON like $json['data'][0]['data1']
 	 *

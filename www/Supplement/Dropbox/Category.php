@@ -37,7 +37,7 @@ class Category implements DropboxInterface
 	use CacheTrait;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

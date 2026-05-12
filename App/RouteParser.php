@@ -93,21 +93,21 @@ class RouteParser
 	public $configuredRoute = '';
 
 	/**
-	 * Sql config file
+	 * SQL config file
 	 *
 	 * @var null|string
 	 */
 	public $sqlConfigFile = null;
 
 	/**
-	 * Sql config
+	 * SQL config
 	 *
 	 * @var null|string
 	 */
 	public $sqlConfig = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -408,7 +408,7 @@ class RouteParser
 	}
 
 	/**
-	 * Validate config file
+	 * Validate SQL config file
 	 *
 	 * @param array $routesConfig Route config
 	 *
@@ -494,7 +494,7 @@ class RouteParser
 	}
 
 	/**
-	 * Find ROute and Param Name from Dynamic String configured in Route file.
+	 * Find Ruute and Param Name from Dynamic String configured in Route file.
 	 *
 	 * @param array  $routesConfig Route config
 	 * @param string $element      Route element

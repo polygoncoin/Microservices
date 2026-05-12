@@ -1,11 +1,11 @@
-# Request control
+# request control
 
 Control major request access and set respective keywords to make routes unique for your services.
 
 ## Controlling request at top level
 
 ```ini
-; Explain Request Payload
+; Explain request Payload
 enableExplainRequest=1                  ; 1 = true / 0 = false
 ; Download CSV
 enableDownloadRequest=1                 ; 1 = true / 0 = false

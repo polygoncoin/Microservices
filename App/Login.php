@@ -68,7 +68,7 @@ class Login
 	private $payload = [];
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -128,7 +128,7 @@ class Login
 			if ($result['allowed']) {
 				// Process the request
 			} else {
-				// Return 429 Too Many Request
+				// Return 429 Too Many request
 				throw new \Exception(
 					message: $result['resetOn'] - Env::$timestamp,
 					code: HttpStatus::$TooManyRequest
@@ -149,7 +149,7 @@ class Login
 	}
 
 	/**
-	 * Function to load Payload
+	 * Load payload
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -184,7 +184,7 @@ class Login
 	}
 
 	/**
-	 * Function to load user detail from cache
+	 * Load user detail from cache
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -224,7 +224,7 @@ class Login
 	}
 
 	/**
-	 * Function to validate source ip
+	 * Validate source ip
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -273,7 +273,7 @@ class Login
 		if ($result['allowed']) {
 			// Process the request
 		} else {
-			// Return 429 Too Many Request
+			// Return 429 Too Many request
 			throw new \Exception(
 				message: $result['resetOn'] - Env::$timestamp,
 				code: HttpStatus::$TooManyRequest
@@ -445,7 +445,7 @@ class Login
 					$newTokenData['token'] => $newTokenData
 				];
 			}
-			$this->updateDB(userData: $userTokenKeyData);
+			$this->updateDb(userData: $userTokenKeyData);
 
 			$tokenFoundData = &$newTokenData;
 			$tokenFound = true;
@@ -492,7 +492,7 @@ class Login
 	 *
 	 * @return void
 	 */
-	private function updateDB(&$userData): void
+	private function updateDb(&$userData): void
 	{
 		DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Master');
 		$this->dbServerObj = &DbCommonFunction::$masterDb[$this->http->req->cID];
@@ -541,7 +541,7 @@ class Login
 		$sessionFoundData = [];
 		$userSessionKeyData = [];
 
-		$userSessionKey = CacheServerKey::customerUserSessionID(
+		$userSessionKey = CacheServerKey::customerUserSessionId(
 			cID: $this->http->req->cID,
 			uID: $this->http->req->uID
 		);
@@ -627,7 +627,7 @@ class Login
 					$newSessionData['sessionID'] => $newSessionData
 				];
 			}
-			$this->updateDB(userData: $userSessionKeyData);
+			$this->updateDb(userData: $userSessionKeyData);
 
 			$sessionFoundData = &$newSessionData;
 			$sessionFound = true;
@@ -668,7 +668,7 @@ class Login
 	}
 
 	/**
-	 * Checks if cache key exist
+	 * Global cache key exist
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -679,7 +679,7 @@ class Login
 	}
 
 	/**
-	 * Get cache on basis of key
+	 * Get global cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -690,7 +690,7 @@ class Login
 	}
 
 	/**
-	 * Set cache on basis of key
+	 * Set global cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param string $value    Cache value
@@ -707,7 +707,7 @@ class Login
 	}
 
 	/**
-	 * Delete basis of key
+	 * Delete global cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *

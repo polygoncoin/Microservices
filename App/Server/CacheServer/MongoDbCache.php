@@ -137,7 +137,7 @@ class MongoDbCache implements CacheServerInterface
 	}
 
 	/**
-	 * Checks if cache key exist
+	 * Cache key exist
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -151,7 +151,7 @@ class MongoDbCache implements CacheServerInterface
 	}
 
 	/**
-	 * Get cache on basis of key
+	 * Get cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -165,7 +165,7 @@ class MongoDbCache implements CacheServerInterface
 	}
 
 	/**
-	 * Set cache on basis of key
+	 * Set cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param string $value    Cache value
@@ -185,7 +185,7 @@ class MongoDbCache implements CacheServerInterface
 	}
 
 	/**
-	 * Increment Key value with offset
+	 * Increment cache key with offset
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param int    $offset   Offset
@@ -203,7 +203,7 @@ class MongoDbCache implements CacheServerInterface
 	}
 
 	/**
-	 * Delete basis of key
+	 * Delete cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *

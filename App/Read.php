@@ -69,7 +69,7 @@ class Read
 	public $dbServerObj = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -111,7 +111,7 @@ class Read
 		// Check for configured referrer Lags
 		$this->checkReferrerLag(sqlConfig: $rSqlConfig);
 
-		// Lag Response
+		// Lag response
 		$this->lagResponse(sqlConfig: $rSqlConfig);
 
 		if (isset($rSqlConfig['__DOWNLOAD__'])) {
@@ -240,7 +240,7 @@ class Read
 	/**
 	 * Explain read configuration
 	 *
-	 * @param array $rSqlConfig   Config from file
+	 * @param array $rSqlConfig   Read SQL config
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
@@ -254,7 +254,7 @@ class Read
 		);
 		$this->dataEncode->addKeyData(
 			objectKey: 'Payload',
-			data: $this->getExplainParamArr(
+			data: $this->getExplainParam(
 				sqlConfig: $rSqlConfig,
 				isFirstCall: true,
 				flag: $useResultSet
@@ -264,9 +264,9 @@ class Read
 	}
 
 	/**
-	 * Process Function for read operation
+	 * Process read operation
 	 *
-	 * @param array $rSqlConfig   Config from file
+	 * @param array $rSqlConfig   Read SQL config
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
@@ -287,7 +287,7 @@ class Read
 
 		// Start Read operation
 		$configKeyArr = [];
-		$this->readDB(
+		$this->readDb(
 			rSqlConfig: $rSqlConfig,
 			isFirstCall: true,
 			configKeyArr: $configKeyArr,
@@ -296,16 +296,16 @@ class Read
 	}
 
 	/**
-	 * Function to select sub queries recursively
+	 * Process $rSqlConfig recursively
 	 *
-	 * @param array $rSqlConfig   Config from file
+	 * @param array $rSqlConfig   Read SQL config
 	 * @param bool  $isFirstCall  true to represent the first call in recursion
 	 * @param array $configKeyArr Config key's in recursion
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
 	 */
-	private function readDB(
+	private function readDb(
 		&$rSqlConfig,
 		$isFirstCall,
 		&$configKeyArr,
@@ -313,7 +313,7 @@ class Read
 	): void {
 		$isObject = $this->isObject(arr: $rSqlConfig);
 
-		// Execute Pre Sql Hook
+		// Execute Pre SQL Hook
 		if (isset($rSqlConfig['__PRE-SQL-HOOKS__'])) {
 			if ($this->hook === null) {
 				$this->hook = new Hook($this->http);
@@ -382,7 +382,7 @@ class Read
 			);
 		}
 
-		// Execute Post Sql Hook
+		// Execute Post SQL Hook
 		if (isset($rSqlConfig['__POST-SQL-HOOKS__'])) {
 			if ($this->hook === null) {
 				$this->hook = new Hook($this->http);
@@ -394,9 +394,9 @@ class Read
 	}
 
 	/**
-	 * Function to fetch single record
+	 * Fetch single record
 	 *
-	 * @param array $rSqlConfig   Read SQL configuration
+	 * @param array $rSqlConfig   Read SQL config
 	 * @param bool  $isFirstCall  true to represent the first call in recursion
 	 * @param array $configKeyArr Config key's
 	 * @param bool  $useResultSet Use result set recursively flag
@@ -455,7 +455,7 @@ class Read
 		$this->dbServerObj->closeCursor();
 
 		if (isset($rSqlConfig['__SUB-QUERY__'])) {
-			$this->callReadDB(
+			$this->callReadDb(
 				rSqlConfig: $rSqlConfig,
 				configKeyArr: $configKeyArr,
 				row: $row,
@@ -465,9 +465,9 @@ class Read
 	}
 
 	/**
-	 * Function to fetch row count
+	 * Fetch row count
 	 *
-	 * @param array $rSqlConfig Read SQL configuration
+	 * @param array $rSqlConfig Read SQL config
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -545,9 +545,9 @@ class Read
 	}
 
 	/**
-	 * Function to fetch multiple record
+	 * Fetch multiple record
 	 *
-	 * @param array $rSqlConfig   Read SQL configuration
+	 * @param array $rSqlConfig   Read SQL config
 	 * @param bool  $isFirstCall  true to represent the first call in recursion
 	 * @param array $configKeyArr Config key's
 	 * @param bool  $useResultSet Use result set recursively flag
@@ -627,7 +627,7 @@ class Read
 				foreach ($row as $objectKey => $value) {
 					$this->dataEncode->addKeyData(objectKey: $objectKey, data: $value);
 				}
-				$this->callReadDB(
+				$this->callReadDb(
 					rSqlConfig: $rSqlConfig,
 					configKeyArr: $configKeyArr,
 					row: $row,
@@ -642,16 +642,16 @@ class Read
 	}
 
 	/**
-	 * Validate and call readDB
+	 * Function readDb recursive helper
 	 *
-	 * @param array $rSqlConfig   Read SQL configuration
+	 * @param array $rSqlConfig   Read SQL config
 	 * @param array $configKeyArr Config key's
 	 * @param array $row          Row data fetched from DB
 	 * @param bool  $useResultSet Use result set recursively flag
 	 *
 	 * @return void
 	 */
-	private function callReadDB(
+	private function callReadDb(
 		&$rSqlConfig,
 		&$configKeyArr,
 		$row,
@@ -680,7 +680,7 @@ class Read
 						sqlConfig: $rSqlConfig,
 						keyword: 'useResultSet'
 					);
-				$this->readDB(
+				$this->readDb(
 					rSqlConfig: $rSqlConfig,
 					isFirstCall: false,
 					configKeyArr: $moduleConfigKeyArr,
@@ -691,9 +691,9 @@ class Read
 	}
 
 	/**
-	 * Validate and call readDB
+	 * Download data
 	 *
-	 * @param array $rSqlConfig Read SQL configuration
+	 * @param array $rSqlConfig Read SQL config
 	 *
 	 * @return array
 	 */

@@ -51,7 +51,7 @@ interface DataDecodeInterface
 	public function indexData(): void;
 
 	/**
-	 * Key's exist
+	 * Result exist as per $keyString
 	 *
 	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
@@ -60,7 +60,7 @@ interface DataDecodeInterface
 	public function isset($keyString = null): bool;
 
 	/**
-	 * Key exist
+	 * Datatype of result as per $keyString
 	 *
 	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
@@ -69,7 +69,7 @@ interface DataDecodeInterface
 	public function dataType($keyString = null): string;
 
 	/**
-	 * Count of array element
+	 * Count of result as per $keyString
 	 *
 	 * @param null|string $keyString Key values separated by colon
 	 *
@@ -78,7 +78,7 @@ interface DataDecodeInterface
 	public function count($keyString = null): int;
 
 	/**
-	 * Pass the key's and get whole data content belonging to key's
+	 * Get result as per $keyString
 	 *
 	 * @param string $keyString Key values separated by colon
 	 *
@@ -87,7 +87,7 @@ interface DataDecodeInterface
 	public function get($keyString = ''): mixed;
 
 	/**
-	 * Get complete Data for Kays
+	 * Get complete result as per $keyString
 	 *
 	 * @param string $keyString Key values separated by colon
 	 *
@@ -96,6 +96,7 @@ interface DataDecodeInterface
 	public function getCompleteArray($keyString = ''): mixed;
 
 	/**
+	 * Load result as per $keyString
 	 * Start processing the data string for a key's
 	 * Perform search inside key's of data like $data['data'][0]['data1']
 	 *

@@ -40,7 +40,7 @@ class Upload
 	private $uploadApi = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

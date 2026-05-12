@@ -40,7 +40,7 @@ class Custom
 	private $customApi = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

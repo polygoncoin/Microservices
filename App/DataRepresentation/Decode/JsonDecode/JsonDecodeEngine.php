@@ -337,7 +337,7 @@ class JsonDecodeEngine
 			case '[':
 				if (!$index) {
 					$arr = [
-						'key' => $this->getKeyArr(),
+						'key' => $this->getKey(),
 						'value' => $this->getObjectValues()
 					];
 				}
@@ -347,7 +347,7 @@ class JsonDecodeEngine
 			case '{':
 				if (!$index) {
 					$arr = [
-						'key' => $this->getKeyArr(),
+						'key' => $this->getKey(),
 						'value' => $this->getObjectValues()
 					];
 				}
@@ -365,7 +365,7 @@ class JsonDecodeEngine
 				}
 				if ($index) {
 					$arr = [
-						'key' => $this->getKeyArr(),
+						'key' => $this->getKey(),
 						'value' => [
 							'sIndex' => $this->currentObject->sIndex,
 							'eIndex' => $this->charCounter
@@ -374,7 +374,7 @@ class JsonDecodeEngine
 				} else {
 					if (!empty($this->currentObject->arrayValueArr)) {
 						$arr = [
-							'key' => $this->getKeyArr(),
+							'key' => $this->getKey(),
 							'value' => $this->currentObject->arrayValueArr
 						];
 					}
@@ -392,7 +392,7 @@ class JsonDecodeEngine
 				}
 				if ($index) {
 					$arr = [
-						'key' => $this->getKeyArr(),
+						'key' => $this->getKey(),
 						'value' => [
 							'sIndex' => $this->currentObject->sIndex,
 							'eIndex' => $this->charCounter
@@ -401,7 +401,7 @@ class JsonDecodeEngine
 				} else {
 					if (!empty($this->currentObject->objectValueArr)) {
 						$arr = [
-							'key' => $this->getKeyArr(),
+							'key' => $this->getKey(),
 							'value' => $this->currentObject->objectValueArr
 						];
 					}
@@ -578,7 +578,7 @@ class JsonDecodeEngine
 	 *
 	 * @return array
 	 */
-	private function getKeyArr(): array
+	private function getKey(): array
 	{
 		$keyArr = [];
 		$return = &$keyArr;

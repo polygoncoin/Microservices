@@ -70,7 +70,7 @@ class Export
 	public $dbServerObj = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -188,8 +188,8 @@ class Export
 	/**
 	 * Get Shell Command
 	 *
-	 * @param string      $sql        Sql query
-	 * @param array       $paramArr   Sql query params
+	 * @param string      $sql        SQL query
+	 * @param array       $paramArr   SQL query params
 	 * @param null|string $exportFile Absolute file path
 	 *
 	 * @return array
@@ -224,8 +224,8 @@ class Export
 	 * Initialize download.
 	 *
 	 * @param $downloadFile Name of CSV file on customer side.
-	 * @param $sql          Sql query
-	 * @param $paramArr     Sql query params
+	 * @param $sql          SQL query
+	 * @param $paramArr     SQL query params
 	 * @param $exportFile   Absolute file path with filename
 	 *
 	 * @return array
@@ -271,8 +271,8 @@ class Export
 	/**
 	 * Save Export on server
 	 *
-	 * @param $sql        Sql query
-	 * @param $paramArr   Sql query params
+	 * @param $sql        SQL query
+	 * @param $paramArr   SQL query params
 	 * @param $exportFile Absolute file path with filename
 	 *
 	 * @return array
@@ -296,7 +296,7 @@ class Export
 	}
 
 	/**
-	 * Set CSV file header
+	 * Get CSV file header
 	 *
 	 * @param $filename Name to be used to save CSV file on customer machine.
 	 *
@@ -315,7 +315,7 @@ class Export
 	}
 
 	/**
-	 * Get data from CSV file
+	 * Get CSV file data
 	 *
 	 * @param $exportFile   Absolute file location of CSV file.
 	 * @param $downloadFile Name to be used to save CSV file on customer machine.

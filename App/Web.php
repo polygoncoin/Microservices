@@ -35,7 +35,7 @@ class Web
 	 * Return cURL Config
 	 *
 	 * @param string $homeURL     Site URL
-	 * @param string $method      Http method
+	 * @param string $method      HTTP method
 	 * @param string $route       Route
 	 * @param string $queryString Query String
 	 * @param array  $header      Header
@@ -88,7 +88,7 @@ class Web
 	 * Trigger cURL
 	 *
 	 * @param string $homeURL Site URL
-	 * @param string $method  Http method
+	 * @param string $method  HTTP method
 	 * @param string $route   Route
 	 * @param array  $header  Header
 	 * @param string $payload Payload
@@ -272,29 +272,29 @@ class Web
 	/**
 	 * Generates XML Payload
 	 *
-	 * @param array $paramArr        ParamArr
+	 * @param array $xmlParamArr     Xml param's
 	 * @param array $payload         Payload
 	 * @param bool  $rowTagStartFlag Flag
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public static function genXmlPayload(&$paramArr, &$payload, $rowTagStartFlag = false): void
+	public static function genXmlPayload(&$xmlParamArr, &$payload, $rowTagStartFlag = false): void
 	{
-		if (empty($paramArr)) {
+		if (empty($xmlParamArr)) {
 			return;
 		}
 
 		$rowTagStartFlag = false;
 
-		$isObject = (isset($paramArr[0])) ? false : true;
+		$isObject = (isset($xmlParamArr[0])) ? false : true;
 
 		if (
 			!$isObject
-			&& count(value: $paramArr) === 1
+			&& count(value: $xmlParamArr) === 1
 		) {
-			$paramArr = $paramArr[0];
-			if (empty($paramArr)) {
+			$xmlParamArr = $xmlParamArr[0];
+			if (empty($xmlParamArr)) {
 				return;
 			}
 			$isObject = true;
@@ -308,12 +308,12 @@ class Web
 		if ($rowTagStartFlag) {
 			$payload .= '<Row>';
 		}
-		foreach ($paramArr as $column => &$value) {
+		foreach ($xmlParamArr as $column => &$value) {
 			if ($isObject) {
 				$payload .= "<{$column}>";
 			}
 			if (is_array(value: $value)) {
-				self::genXmlPayload(paramArr: $value, payload: $payload, rowTagStartFlag: $rowTagStartFlag);
+				self::genXmlPayload(xmlParamArr: $value, payload: $payload, rowTagStartFlag: $rowTagStartFlag);
 			} else {
 				$payload .= htmlspecialchars(string: $value);
 			}

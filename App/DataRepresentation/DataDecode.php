@@ -98,7 +98,7 @@ class DataDecode
 	}
 
 	/**
-	 * Key's exist
+	 * Result exist as per $keyString
 	 *
 	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
@@ -110,7 +110,7 @@ class DataDecode
 	}
 
 	/**
-	 * Key exist
+	 * Datatype of result as per $keyString
 	 *
 	 * @param null|string $keyString Key's exist (values separated by colon)
 	 *
@@ -122,7 +122,7 @@ class DataDecode
 	}
 
 	/**
-	 * Count of array element
+	 * Count of result as per $keyString
 	 *
 	 * @param null|string $keyString Key values separated by colon
 	 *
@@ -134,7 +134,7 @@ class DataDecode
 	}
 
 	/**
-	 * Pass the key's and get whole raw data content belonging to key's
+	 * Get result as per $keyString
 	 *
 	 * @param string $keyString Key values separated by colon
 	 *
@@ -146,7 +146,7 @@ class DataDecode
 	}
 
 	/**
-	 * Get complete array for key's
+	 * Get complete result as per $keyString
 	 *
 	 * @param string $keyString Key values separated by colon
 	 *
@@ -158,6 +158,7 @@ class DataDecode
 	}
 
 	/**
+	 * Load result as per $keyString
 	 * Start processing the JSON string for a key's
 	 * Perform search inside key's of JSON like $json['data'][0]['data1']
 	 *

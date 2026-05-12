@@ -57,9 +57,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	}
 
 	/**
-	 * For Custom Session Handler - Validate session ID
+	 * For Custom Session Handler - Validate session id
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool|string
 	 */
@@ -86,7 +86,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Write session data
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
@@ -112,7 +112,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session data
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool|int
@@ -139,7 +139,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Update session timestamp
 	 *
-	 * @param string $sessionID   Session ID
+	 * @param string $sessionID   Session id
 	 * @param string $sessionData Session Data
 	 *
 	 * @return bool
@@ -181,7 +181,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool
 	 */
@@ -231,8 +231,8 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * Get Session
 	 *
-	 * @param string $sql      Sql
-	 * @param array  $paramArr ParamArr
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 *
 	 * @return mixed
 	 */
@@ -266,8 +266,8 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * Execute SQL
 	 *
-	 * @param string $sql      Sql
-	 * @param array  $paramArr ParamArr
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 *
 	 * @return bool
 	 */

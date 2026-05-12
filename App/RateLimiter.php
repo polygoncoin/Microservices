@@ -41,8 +41,6 @@ class RateLimiter
 
 	/**
 	 * Constructor
-	 *
-	 * @param HttpRequest $req Http Request object
 	 */
 	public function __construct()
 	{
@@ -62,7 +60,7 @@ class RateLimiter
 	}
 
 	/**
-	 * Check the request is valid
+	 * Check rate limit is valid
 	 *
 	 * @param string $prefix        Prefix
 	 * @param int    $maxRequest    Max request

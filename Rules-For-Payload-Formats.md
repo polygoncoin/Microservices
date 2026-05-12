@@ -1,6 +1,6 @@
-# HTTP Request Payload
+# HTTP request Payload
 
-## GET Request
+## GET request
 
 - [http://localhost/Microservices/www/public\_html/index.php?route=/reload](http://localhost/Microservices/www/public_html/index.php?route=/reload)
 
@@ -8,7 +8,7 @@
 
 One can clean the URL by making the required changes in the web server .conf file.
 
-## Pagination in GET Request
+## Pagination in GET request
 
 Requires **countQuery** SQL in the configuration for GET request
 ```ini
@@ -22,7 +22,7 @@ maxResultsPerPage=1000
 
 >One need to urlencode orderBy value
 
-## POST, PUT, PATCH, and DELETE Request
+## POST, PUT, PATCH, and DELETE request
 
 - Single
 
@@ -60,7 +60,7 @@ This remains same for every request and contains key's like id, group\_id, custo
 - **$session\['routeParamArr'\]** Data passed in URI.
 Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $session\['routeParamArr'\] will hold these dynamic values as below.
 
-- **$session\['payload'\]** Request data.
+- **$session\['payload'\]** request data.
 For **GET** method, the **$\_GET** is the payload.
 
 - **$session\['__INSERT-IDs__'\]** Insert IDs Data as per configuration.
@@ -106,9 +106,9 @@ return [
 ];
 ```
 
-### Hierarchy Request
+### Hierarchy request
 
-- Request - 1: Single object.
+- request - 1: Single object.
 
 ```javascript
 var payload = {
@@ -119,7 +119,7 @@ var payload = {
 }
 ```
 
-- Request - 2: Array of module1
+- request - 2: Array of module1
 
 ```javascript
 var payload = {
@@ -137,7 +137,7 @@ var payload = {
 }
 ```
 
-- Request - 3: Array of payload and arrays of module1
+- request - 3: Array of payload and arrays of module1
 
 ```javascript
 var payload = [

@@ -38,7 +38,7 @@ class CustomerValidator implements ValidatorInterface
 	use ValidatorTrait;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -85,11 +85,11 @@ class CustomerValidator implements ValidatorInterface
 	}
 
 	/**
-	 * Gets primary key count
+	 * Get primary key count
 	 *
 	 * @param string $table   Table Name
 	 * @param string $primary Primary Key
-	 * @param int    $id      Primary ID
+	 * @param int    $id      Primary id
 	 *
 	 * @return int 0/1
 	 */
@@ -107,7 +107,7 @@ class CustomerValidator implements ValidatorInterface
 	}
 
 	/**
-	 * Checks primary key exist
+	 * Check primary key exist
 	 *
 	 * @param array $argArr Arguments
 	 *

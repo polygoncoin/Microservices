@@ -94,7 +94,7 @@ return [
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10,
 	'responseLag' => [
-		// No of Request => Seconds Lag
+		// No of request => Seconds Lag
 		1 => 0,
 		// 2 => 10,
 	]

@@ -32,9 +32,9 @@ use Microservices\App\Constant;
 class Log
 {
 	/**
-	 * Validates password from its hash present in cache
+	 * Log details
 	 *
-	 * @param array $logDetail Detail to be logged
+	 * @param array $logDetail detail to be logged
 	 *
 	 * @return void
 	 */

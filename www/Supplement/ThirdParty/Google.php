@@ -39,7 +39,7 @@ class Google implements ThirdPartyInterface
 	use ThirdPartyTrait;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

@@ -24,9 +24,9 @@ use Microservices\App\Microservices;
 class Start
 {
 	/**
-	 * Process http request data
+	 * Process HTTP request data
 	 *
-	 * @param array $httpReqDetailArr Http request detail
+	 * @param array $httpReqDetailArr HTTP request detail
 	 *
 	 * @return array
 	 */
@@ -95,7 +95,7 @@ class Start
 				$headerArr['Retry-After'] = $e->getMessage();
 				$arr = [
 					'Status' => $e->getCode(),
-					'Message' => 'Too Many Request',
+					'Message' => 'Too Many request',
 					'RetryAfter' => $e->getMessage()
 				];
 			} else {

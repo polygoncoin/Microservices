@@ -14,7 +14,7 @@
  */
 
 return [
-	// Detail of data to perform task
+	// detail of data to perform task
 	'__PAYLOAD__' => [
 		// [
 		//     'column' => 'id',

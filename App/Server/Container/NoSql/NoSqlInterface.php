@@ -38,7 +38,7 @@ interface NoSqlInterface
 	public function connect(): void;
 
 	/**
-	 * Checks if cache key exist
+	 * Cache key exist
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -47,7 +47,7 @@ interface NoSqlInterface
 	public function cacheExist($cacheKey): mixed;
 
 	/**
-	 * Get cache on basis of key
+	 * Get cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -56,7 +56,7 @@ interface NoSqlInterface
 	public function cacheGet($cacheKey): mixed;
 
 	/**
-	 * Set cache on basis of key
+	 * Set cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param string $value    Cache value
@@ -67,7 +67,7 @@ interface NoSqlInterface
 	public function cacheSet($cacheKey, $value, $expire = null): mixed;
 
 	/**
-	 * Increment Key value with offset
+	 * Increment cache key with offset
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param int    $offset   Offset
@@ -77,7 +77,7 @@ interface NoSqlInterface
 	public function cacheIncrement($cacheKey, $offset = 1): int;
 
 	/**
-	 * Delete basis of key
+	 * Delete cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *

@@ -12,7 +12,7 @@ To enable Rate Limiting checks one can do this as below in .env.rateLimiting
 enableRateLimiting=0                    ; 1 = true / 0 = false in
 ```
 
-## Configure Rate Limiting Server Detail (Memcached / Redis)
+## Configure Rate Limiting Server detail (Memcached / Redis)
 
 ```ini
 ; Supported Container - Memcached / Redis without AUTH
@@ -26,12 +26,12 @@ rateLimitServerPort=11211               ; Redis-6379 / Memcached-11211
 ```ini
 ; 1 = true / 0 = false
 enableRateLimitForIp=0              ; Function = IP
-enableRateLimitForCustomer=0          ; Function = Customer ID
-enableRateLimitForGroup=0           ; Function = Group ID
-enableRateLimitForUser=0            ; Function = User ID
+enableRateLimitForCustomer=0          ; Function = Customer id
+enableRateLimitForGroup=0           ; Function = Group id
+enableRateLimitForUser=0            ; Function = User id
 enableRateLimitForRoute=0           ; Function = Configured Route
-enableRateLimitForUserPerIp=0      ; Function = IP & User ID
-enableRateLimitForUserRequest=0    ; Function = Request & User ID
+enableRateLimitForUserPerIp=0      ; Function = IP & User id
+enableRateLimitForUserRequest=0    ; Function = request & User id
 ```
 
 ## Setting Rate Limiting key's to be used as identifier with Function(s) combined
@@ -56,7 +56,7 @@ rateLimitUserRequestPrefix='URRL:'
 ## Setting Rate Limiting key's Limit with window in seconds
 
 ```ini
-; Rate Limiting No. of Request per IP ('IPRL:')
+; Rate Limiting No. of request per IP ('IPRL:')
 rateLimitIPMaxRequest=600              ; Max request allowed per IP
 rateLimitIPMaxRequestWindow=300        ; Window in seconds of Max request allowed per IP
 
@@ -64,8 +64,8 @@ rateLimitIPMaxRequestWindow=300        ; Window in seconds of Max request allowe
 rateLimitMaxUserPerIp=10          ; Max User allowed per IP
 rateLimitMaxUserPerIpWindow=300   ; Window in seconds of Max User allowed per IP
 
-; Rate Limiting No. of Request per User ('URRL:')
-; Delay Between Consecutive Request (allow n request only for seconds configured for each user)
+; Rate Limiting No. of request per User ('URRL:')
+; Delay Between Consecutive request (allow n request only for seconds configured for each user)
 rateLimitUserMaxRequest=1             ; Max one request allowed for 10 seconds
 rateLimitUserMaxRequestWindow=10      ; Max one request allowed for 10 seconds
 ```

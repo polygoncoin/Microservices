@@ -105,7 +105,7 @@ class DatabaseServer
 	}
 
 	/**
-	 * Init server connection based on $fetchFrom
+	 * Connect Database
 	 *
 	 * @return DatabaseServerInterface
 	 */

@@ -26,7 +26,7 @@ Add, Comment or Uncomment depending on the requirement.
 
 ## Adding Test Cases
 
-- GET Request
+- GET request
 
 ```PHP
 $response[] = include GET . DIRECTORY_SEPARATOR . '<get-route-file-1>.php';
@@ -45,7 +45,7 @@ $response[] = include DELETE . DIRECTORY_SEPARATOR . '<delete-route-file-1>.php'
 $response[] = include DELETE . DIRECTORY_SEPARATOR . '<delete-route-file-2>.php';
 ```
 
-- POST / PUT / PATCH / DELETE Request
+- POST / PUT / PATCH / DELETE request
 
 These contain payload
 

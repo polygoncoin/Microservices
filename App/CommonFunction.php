@@ -103,13 +103,13 @@ class CommonFunction
 	}
 
 	/**
-	 * Returns Start IP and End IP for a given CIDR
+	 * Returns start and end IP number for a given CIDR
 	 *
 	 * @param string $cidrString IP address range in CIDR notation for check
 	 *
 	 * @return array
 	 */
-	public static function cidrStringIpNumber($cidrString): array
+	public static function cidrStringIpNumberRange($cidrString): array
 	{
 		$response = [];
 
@@ -165,7 +165,7 @@ class CommonFunction
 	}
 
 	/**
-	 * Check Cache CIDR
+	 * Check IP with CIDR based on cache key containing start and end IP number
 	 *
 	 * @param string $IP           $this->http->httpReqDetailArr['server']['httpRequestIP']
 	 * @param string $cidrCacheKey Cache Key(s)
@@ -179,13 +179,13 @@ class CommonFunction
 			return false;
 		}
 
-		$cidrArr = json_decode(
+		$cidrIpNumberRangeArr = json_decode(
 			json: DbCommonFunction::$gCacheServer->cacheGet(
 				cacheKey: $cidrCacheKey
 			),
 			associative: true
 		);
-		$isValidIp = self::belongsToCidrArrRange(IP: $IP, cidrArr: $cidrArr);
+		$isValidIp = self::belongsToCidrIpNumberRange(IP: $IP, cidrIpNumberRangeArr: $cidrIpNumberRangeArr);
 		if (!$isValidIp) {
 			throw new \Exception(
 				message: 'IP not supported',
@@ -197,7 +197,7 @@ class CommonFunction
 	}
 
 	/**
-	 * Check CIDR
+	 * Check IP with CIDR
 	 *
 	 * @param string $IP         $this->http->httpReqDetailArr['server']['httpRequestIP']
 	 * @param string $cidrString CIDRs
@@ -207,8 +207,8 @@ class CommonFunction
 	 */
 	public static function checkCidr($IP, $cidrString): null|bool
 	{
-		$cidrArr = self::cidrStringIpNumber(cidrString: $cidrString);
-		$isValidIp = self::belongsToCidrArrRange(IP: $IP, cidrArr: $cidrArr);
+		$cidrIpNumberRangeArr = self::cidrStringIpNumberRange(cidrString: $cidrString);
+		$isValidIp = self::belongsToCidrIpNumberRange(IP: $IP, cidrIpNumberRangeArr: $cidrIpNumberRangeArr);
 		if (!$isValidIp) {
 			throw new \Exception(
 				message: 'IP not supported',
@@ -220,29 +220,29 @@ class CommonFunction
 	}
 
 	/**
-	 * Belongs to CidrArr range
+	 * Belongs to Cidr IP number range
 	 *
-	 * @param string $IP      $this->http->httpReqDetailArr['server']['httpRequestIP']
-	 * @param array  $cidrArr Cache Key(s)
+	 * @param string $IP                   IP
+	 * @param array  $cidrIpNumberRangeArr Cidr IP number ranges
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public static function belongsToCidrArrRange($IP, $cidrArr): bool
+	public static function belongsToCidrIpNumberRange($IP, $cidrIpNumberRangeArr): bool
 	{
 		$ipNumber = ip2long(ip: $IP);
 
 		$isValidIp = false;
-		foreach ($cidrArr as $cidr) {
+		foreach ($cidrIpNumberRangeArr as $cidrIpNumber) {
 			if (
-				$cidr['start'] === 0
-				&& $cidr['end'] === 0
+				$cidrIpNumber['start'] === 0
+				&& $cidrIpNumber['end'] === 0
 			) {
 				$isValidIp = true;
 				break;
 			} elseif (
-				$cidr['start'] <= $ipNumber
-				&& $ipNumber <= $cidr['end']
+				$cidrIpNumber['start'] <= $ipNumber
+				&& $ipNumber <= $cidrIpNumber['end']
 			) {
 				$isValidIp = true;
 				break;
@@ -253,7 +253,7 @@ class CommonFunction
 	}
 
 	/**
-	 * Unique http Request hash
+	 * Unique HTTP request hash
 	 *
 	 * @param array $hashArray Hash array
 	 *
@@ -265,11 +265,11 @@ class CommonFunction
 	}
 
 	/**
-	 * Get Request IP
+	 * Get request IP
 	 *
 	 * @return string
 	 */
-	public static function getHttpRequestIP() {
+	public static function getHttpRequestIp() {
 		// Check for shared internet connections (e.g., Cloudflare, proxy)
 		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 			$ip = $_SERVER['HTTP_CLIENT_IP'];

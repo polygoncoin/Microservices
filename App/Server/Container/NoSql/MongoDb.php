@@ -173,7 +173,7 @@ class MongoDb implements NoSqlInterface
 	}
 
 	/**
-	 * Checks if cache key exist
+	 * Cache key exist
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -192,7 +192,7 @@ class MongoDb implements NoSqlInterface
 	}
 
 	/**
-	 * Get cache on basis of key
+	 * Get cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -207,7 +207,7 @@ class MongoDb implements NoSqlInterface
 	}
 
 	/**
-	 * Set cache on basis of key
+	 * Set cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param string $value    Cache value
@@ -241,7 +241,7 @@ class MongoDb implements NoSqlInterface
 	}
 
 	/**
-	 * Increment Key value with offset
+	 * Increment cache key with offset
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param int    $offset   Offset
@@ -260,7 +260,7 @@ class MongoDb implements NoSqlInterface
 	}
 
 	/**
-	 * Delete basis of key
+	 * Delete cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *

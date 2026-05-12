@@ -79,7 +79,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 - **/PATCHroutes.php** for all PATCH method routes configuration.
 - **/DELETEroutes.php** for all DELETE method routes configuration.
 
-### Sql Folder
+### SQL Folder
 
 These files locations are used in routes config to be used for generating response.
 

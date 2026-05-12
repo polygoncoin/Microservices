@@ -87,7 +87,7 @@ return [
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
-			'errorMessage' => 'Invalid Group ID'
+			'errorMessage' => 'Invalid Group id'
 		],
 	]
 ];

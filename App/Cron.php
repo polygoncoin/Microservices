@@ -41,7 +41,7 @@ class Cron
 	private $cronApi = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

@@ -1,4 +1,4 @@
-# Global Container Detail
+# Global Container detail
 
 ## Global cache
 
@@ -39,7 +39,7 @@ customerMasterDB='customer_master'             ; contains all entities necessary
 customerTable='customer'
 groupsTable='group'
 
-; Sql query placeholder
+; SQL query placeholder
 queryPlaceholder='Named'            ; Named(:param) / Unnamed(?)
 ```
 

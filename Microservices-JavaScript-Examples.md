@@ -29,7 +29,7 @@ xmlhttp . send( JSON.stringify(payload) );
 
 ## For other API's
 
-- GET Request
+- GET request
 
 ```javascript
 var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/routes";
@@ -50,7 +50,7 @@ xmlhttp . onreadystatechange = function() {
 xmlhttp . send();
 ```
 
-- POST Request
+- POST request
 
 ```javascript
 var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/ajax-handler-route";
@@ -76,7 +76,7 @@ var payload = {
 xmlhttp . send( JSON.stringify(payload) );
 ```
 
-- PUT Request
+- PUT request
 
 ```javascript
 var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/custom/password";
@@ -102,7 +102,7 @@ var payload = {
 xmlhttp . send( JSON.stringify(payload) );
 ```
 
-- XML Request example
+- XML request example
 
 ```javascript
 var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address&iRepresentation=XML&oRepresentation=XML";

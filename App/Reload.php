@@ -69,12 +69,12 @@ class Reload
 		DbCommonFunction::$gDbServer->closeCursor();
 		foreach ($cRowArr as $cRow) {
 			if ($cRow['allowed_cidr'] !== null) {
-				$cCidrArr = CommonFunction::cidrStringIpNumber(cidrString: $cRow['allowed_cidr']);
-				if (count(value: $cCidrArr) > 0) {
+				$cCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(cidrString: $cRow['allowed_cidr']);
+				if (count(value: $cCidrIpNumberRangeArr) > 0) {
 					$cCidrKey = CacheServerKey::customerCidr(cID: $cRow['id']);
 					DbCommonFunction::$gCacheServer->cacheSet(
 						cacheKey: $cCidrKey,
-						value: json_encode(value: $cCidrArr)
+						value: json_encode(value: $cCidrIpNumberRangeArr)
 					);
 				}
 			}
@@ -121,15 +121,15 @@ class Reload
 				);
 				DbCommonFunction::$gCacheServer->cacheSet(cacheKey: $g_key, value: json_encode(value: $gRow));
 				if ($gRow['allowed_cidr'] !== null) {
-					$cidrArr = CommonFunction::cidrStringIpNumber(cidrString: $gRow['allowed_cidr']);
-					if (count(value: $cidrArr) > 0) {
+					$cidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(cidrString: $gRow['allowed_cidr']);
+					if (count(value: $cidrIpNumberRangeArr) > 0) {
 						$cidrKey = CacheServerKey::customerGroupCidr(
 							cID: $cRow['id'],
 							gID: $gRow['id']
 						);
 						DbCommonFunction::$gCacheServer->cacheSet(
 							cacheKey: $cidrKey,
-							value: json_encode(value: $cidrArr)
+							value: json_encode(value: $cidrIpNumberRangeArr)
 						);
 					}
 				}
@@ -149,15 +149,15 @@ class Reload
 			$dbServerObj->closeCursor();
 			foreach ($uRowArr as $uRow) {
 				if ($uRow['allowed_cidr'] !== null) {
-					$uCidrArr = CommonFunction::cidrStringIpNumber(cidrString: $uRow['allowed_cidr']);
-					if (count(value: $uCidrArr) > 0) {
+					$uCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(cidrString: $uRow['allowed_cidr']);
+					if (count(value: $uCidrIpNumberRangeArr) > 0) {
 						$uCidrKey = CacheServerKey::customerUserCidr(
 							cID: $cRow['id'],
 							uID: $uRow['id']
 						);
 						DbCommonFunction::$gCacheServer->cacheSet(
 							cacheKey: $uCidrKey,
-							value: json_encode(value: $uCidrArr)
+							value: json_encode(value: $uCidrIpNumberRangeArr)
 						);
 					}
 				}

@@ -34,7 +34,7 @@ use Microservices\App\Http;
 class Route
 {
 	/**
-	 * Supported http methods of routeArr
+	 * Supported HTTP methods of routeArr
 	 *
 	 * @var array
 	 */
@@ -62,7 +62,7 @@ class Route
 	private $reservedKeyArr = ['dataType'];
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -144,7 +144,7 @@ class Route
 	 *
 	 * @param array  $routeArr     Route
 	 * @param string $route        Current Route
-	 * @param array  $httpRouteArr All http Route
+	 * @param array  $httpRouteArr All HTTP Route
 	 *
 	 * @return void
 	 */

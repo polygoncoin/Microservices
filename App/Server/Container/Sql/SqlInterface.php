@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Sql Container
+ * SQL Container
  * php version 8.3
  *
  * @category  SqlContainers
@@ -16,7 +16,7 @@
 namespace Microservices\App\Server\Container\Sql;
 
 /**
- * Sql Interface
+ * SQL Interface
  * php version 8.3
  *
  * @category  Sql_Interface
@@ -30,7 +30,7 @@ namespace Microservices\App\Server\Container\Sql;
 interface SqlInterface
 {
 	/**
-	 * Database Server Object
+	 * Connect Database
 	 *
 	 * @return void
 	 */
@@ -65,24 +65,24 @@ interface SqlInterface
 	public function rollBack(): void;
 
 	/**
-	 * Affected Rows by PDO
+	 * Affected row count
 	 *
 	 * @return bool|int
 	 */
 	public function affectedRowCount(): bool|int;
 
 	/**
-	 * Last Insert ID by PDO
+	 * Last insert id
 	 *
 	 * @return bool|int
 	 */
-	public function lastInsertID(): bool|int;
+	public function lastInsertId(): bool|int;
 
 	/**
-	 * Execute Parameterized query
+	 * Execute query
 	 *
-	 * @param string $sql      Parameterized query
-	 * @param array  $paramArr Parameterized query params
+	 * @param string $sql      SQL query 
+	 * @param array  $paramArr SQL query params
 	 * @param bool   $pushPop  Push Pop result set stmt
 	 *
 	 * @return void
@@ -90,14 +90,14 @@ interface SqlInterface
 	public function execDbQuery($sql, $paramArr = [], $pushPop = false): void;
 
 	/**
-	 * Fetch row from statement
+	 * Fetch row
 	 *
 	 * @return mixed
 	 */
 	public function fetch(): mixed;
 
 	/**
-	 * Fetch all rows from statement
+	 * Fetch all rows
 	 *
 	 * @return array|bool
 	 */

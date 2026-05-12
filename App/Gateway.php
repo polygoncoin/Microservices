@@ -57,7 +57,7 @@ class Gateway
 	private $rateLimitChecked = false;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -74,11 +74,11 @@ class Gateway
 	}
 
 	/**
-	 * Initialize Gateway
+	 * Initialize
 	 *
 	 * @return void
 	 */
-	public function initGateway(): void
+	public function init(): void
 	{
 		$this->http->req->loadCustomerDetail();
 
@@ -90,7 +90,7 @@ class Gateway
 	}
 
 	/**
-	 * Check Rate Limit
+	 * Rate Limit request
 	 *
 	 * @return void
 	 */
@@ -108,7 +108,7 @@ class Gateway
 			// User Rate Limiting
 			$this->rateLimitUser();
 
-			// User Rate Limiting Request Delay
+			// User Rate Limiting request Delay
 			$this->rateLimitUserRequest();
 		}
 
@@ -152,7 +152,7 @@ class Gateway
 				// Process the request
 				return true;
 			} else {
-				// Return 429 Too Many Request
+				// Return 429 Too Many request
 				throw new \Exception(
 					message: $result['resetOn'] - Env::$timestamp,
 					code: HttpStatus::$TooManyRequest
@@ -201,7 +201,7 @@ class Gateway
 	}
 
 	/**
-	 * Rate Limit Customer Request
+	 * Rate Limit Customer
 	 *
 	 * @return void
 	 */
@@ -231,7 +231,7 @@ class Gateway
 	}
 
 	/**
-	 * Rate Limit Customer Group Request
+	 * Rate Limit Customer Group
 	 *
 	 * @return void
 	 */
@@ -263,7 +263,7 @@ class Gateway
 	}
 
 	/**
-	 * Rate Limit Customer Group User Request
+	 * Rate Limit Customer Group User
 	 *
 	 * @return void
 	 */
@@ -294,7 +294,7 @@ class Gateway
 	}
 
 	/**
-	 * Rate Limit Customer Group User Request Delay
+	 * Rate Limit Customer Group User request Delay
 	 *
 	 * @return void
 	 */
@@ -319,7 +319,7 @@ class Gateway
 	}
 
 	/**
-	 * Rate Limit Request from source IP
+	 * Rate Limit request from source IP
 	 *
 	 * @return void
 	 */

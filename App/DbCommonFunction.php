@@ -88,7 +88,7 @@ class DbCommonFunction
 	public static $slaveCache = [];
 
 	/**
-	 * Set Cache
+	 * Connect Cache
 	 *
 	 * @param string      $cacheServerType     Cache Server Type
 	 * @param string      $cacheServerHostname Cache Server Hostname
@@ -123,7 +123,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Initialize Global DB Connection
+	 * Connect global Cache
 	 *
 	 * @return void
 	 */
@@ -144,7 +144,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Init server connection based on $fetchFrom
+	 * Connect client Cache based on $fetchFrom
 	 *
 	 * @param HttpRequest $req
 	 * @param string      $fetchFrom Master/Slave
@@ -209,7 +209,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Init server connection based on $fetchFrom
+	 * Connect query Cache
 	 *
 	 * @param string $fetchFrom Master/Slave
 	 *
@@ -235,7 +235,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Set DB
+	 * Connect Database
 	 *
 	 * @param string      $dbServerType     Database Server Type
 	 * @param string      $dbServerHostname Database Server Hostname
@@ -267,7 +267,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Initialize Global DB Connection
+	 * Connect global Database
 	 *
 	 * @return void
 	 */
@@ -287,7 +287,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Init server connection based on $fetchFrom
+	 * Connect client Database based on $fetchFrom
 	 *
 	 * @param HttpRequest $req
 	 * @param string      $fetchFrom Master/Slave
@@ -353,9 +353,9 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Get Query cache
+	 * Get Query Cache key
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return mixed
 	 */
@@ -372,9 +372,9 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Increment Query Cache Counter
+	 * Increment Query Cache key counter
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return int
 	 */
@@ -386,9 +386,9 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Set Query cache
+	 * Set Query Cache key
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 * @param string $json          JSON
 	 *
 	 * @return void
@@ -402,9 +402,9 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Delete Query Cache
+	 * Delete Query Cache key
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return void
 	 */
@@ -416,7 +416,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Returns Cache Master Server Detail
+	 * Returns Cache Master Server detail
 	 *
 	 * @param array $cDetail Customer detail
 	 *
@@ -436,7 +436,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Returns Cache Slave Server Detail
+	 * Returns Cache Slave Server detail
 	 *
 	 * @param array $cDetail Customer detail
 	 *
@@ -456,7 +456,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Returns Db Master Server Detail
+	 * Returns Db Master Server detail
 	 *
 	 * @param array $cDetail Customer detail
 	 *
@@ -475,7 +475,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Returns Database Slave Server Detail
+	 * Returns Database Slave Server detail
 	 *
 	 * @param array $cDetail Customer detail
 	 *

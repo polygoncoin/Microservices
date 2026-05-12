@@ -111,7 +111,7 @@ class CacheServer
 	}
 
 	/**
-	 * Init server connection based on $fetchFrom
+	 * Connect Cache
 	 *
 	 * @return CacheServerInterface
 	 */

@@ -33,7 +33,7 @@ use Microservices\App\Env;
 class Counter
 {
 	/**
-	 * Get Global Auto Increment Counter
+	 * Get Global counter
 	 *
 	 * @return int
 	 */
@@ -60,7 +60,7 @@ class Counter
 				$sqlParamArr = [];
 
 				DbCommonFunction::$gDbServer->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
-				$id = DbCommonFunction::$gDbServer->lastInsertID();
+				$id = DbCommonFunction::$gDbServer->lastInsertId();
 				break;
 		}
 

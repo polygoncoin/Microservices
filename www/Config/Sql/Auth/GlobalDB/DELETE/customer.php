@@ -50,7 +50,7 @@ return [
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
-			'errorMessage' => 'Invalid Customer ID'
+			'errorMessage' => 'Invalid Customer id'
 		],
 		[
 			'function' => '_checkColumnValueExist',

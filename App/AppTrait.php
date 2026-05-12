@@ -67,9 +67,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Sets required payload
+	 * Get required payload
 	 *
-	 * @param array $sqlConfig   Config from file
+	 * @param array $sqlConfig   SQL config
 	 * @param bool  $isFirstCall true to represent the first call in recursion
 	 * @param bool  $flag        useHierarchy / useResultSet flag
 	 *
@@ -216,9 +216,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Returns Query and ParamArr for execution
+	 * Generate SQL query and its param's in Named format
 	 *
-	 * @param array      $sqlConfig    Sql config
+	 * @param array      $sqlConfig    SQL config
 	 * @param array|null $configKeyArr Config key's
 	 *
 	 * @return array
@@ -256,7 +256,7 @@ trait AppTrait
 			&& count(value: $sqlConfig['__SET__']) !== 0
 		) {
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$paramArr, $errorArr, $missExecution] = $this->getSqlParamArr(
+			[$paramArr, $errorArr, $missExecution] = $this->getSqlParam(
 				$sqlConfig['__SET__'],
 				$payloadVariableArr
 			);
@@ -267,18 +267,18 @@ trait AppTrait
 				if (!empty($paramArr)) {
 					// __SET__ not compulsory in query
 					$found = strpos(haystack: $sql, needle: '__SET__') !== false;
-					foreach ($paramArr as $param => &$v) {
-						$param = str_replace(
+					foreach ($paramArr as $paramKey => &$paramValue) {
+						$paramKey = str_replace(
 							search: ['`', ' '],
 							replace: '',
-							subject: $param
+							subject: $paramKey
 						);
-						$paramKeyArr[] = $param;
+						$paramKeyArr[] = $paramKey;
 						if ($found) {
-							$__SET__[] = "`{$param}` = :{$param}";
+							$__SET__[] = "`{$paramKey}` = :{$paramKey}";
 						}
-						$sqlParamArr[":{$param}"] = $v;
-						$row[$param] = $v;
+						$sqlParamArr[":{$paramKey}"] = $paramValue;
+						$row[$paramKey] = $paramValue;
 					}
 				}
 			}
@@ -293,7 +293,7 @@ trait AppTrait
 		) {
 			$wErrorArr = [];
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$sqlWhereParamArr, $wErrorArr, $wMissExecution] = $this->getSqlParamArr(
+			[$sqlWhereParamArr, $wErrorArr, $wMissExecution] = $this->getSqlParam(
 				$sqlConfig['__WHERE__'],
 				$payloadVariableArr
 			);
@@ -349,9 +349,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Returns Query and ParamArr for execution
+	 * Generate SQL query and its param's in Unnamed format
 	 *
-	 * @param array      $sqlConfig    Sql config
+	 * @param array      $sqlConfig    SQL config
 	 * @param array|null $configKeyArr Config key's
 	 *
 	 * @return array
@@ -389,7 +389,7 @@ trait AppTrait
 			&& count(value: $sqlConfig['__SET__']) !== 0
 		) {
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$paramArr, $errorArr, $missExecution] = $this->getSqlParamArr(
+			[$paramArr, $errorArr, $missExecution] = $this->getSqlParam(
 				$sqlConfig['__SET__'],
 				$payloadVariableArr
 			);
@@ -400,13 +400,13 @@ trait AppTrait
 				if (!empty($paramArr)) {
 					// __SET__ not compulsory in query
 					$found = strpos(haystack: $sql, needle: '__SET__') !== false;
-					foreach ($paramArr as $param => &$v) {
-						$paramKeyArr[] = $param;
+					foreach ($paramArr as $paramKey => &$paramValue) {
+						$paramKeyArr[] = $paramKey;
 						if ($found) {
-							$__SET__[] = "{$param} = ?";
+							$__SET__[] = "{$paramKey} = ?";
 						}
-						$sqlParamArr[] = $v;
-						$row[$param] = $v;
+						$sqlParamArr[] = $paramValue;
+						$row[$paramKey] = $paramValue;
 					}
 				}
 			}
@@ -421,7 +421,7 @@ trait AppTrait
 		) {
 			$wErrorArr = [];
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$sqlWhereParamArr, $wErrorArr, $wMissExecution] = $this->getSqlParamArr(
+			[$sqlWhereParamArr, $wErrorArr, $wMissExecution] = $this->getSqlParam(
 				$sqlConfig['__WHERE__'],
 				$payloadVariableArr
 			);
@@ -475,13 +475,13 @@ trait AppTrait
 	/**
 	 * Generates ParamArr for statement to execute
 	 *
-	 * @param array $sqlConfig          Sql config
+	 * @param array $sqlConfig          SQL config
 	 * @param array $payloadVariableArr Payload Variables
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function getSqlParamArr(&$sqlConfig, &$payloadVariableArr): array
+	private function getSqlParam(&$sqlConfig, &$payloadVariableArr): array
 	{
 		$missExecution = false;
 		$sqlParamArr = [];
@@ -577,7 +577,7 @@ trait AppTrait
 	}
 
 	/**
-	 * Function to find wether provided array is associative/simple array
+	 * Function to find array is associative/simple array
 	 *
 	 * @param array $arr Array to search for associative/simple array
 	 *
@@ -601,7 +601,7 @@ trait AppTrait
 	/**
 	 * Use results in where clause of sub queries recursively
 	 *
-	 * @param array  $sqlConfig Sql config
+	 * @param array  $sqlConfig SQL config
 	 * @param string $keyword   useHierarchy/useResultSet
 	 *
 	 * @return bool
@@ -632,14 +632,14 @@ trait AppTrait
 	/**
 	 * Return explain params recursively
 	 *
-	 * @param array $sqlConfig   Sql config
+	 * @param array $sqlConfig   SQL config
 	 * @param bool  $isFirstCall Flag to check if this is first request
 	 * @param bool  $flag        useHierarchy/useResultSet flag
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function getExplainParamArr(&$sqlConfig, $isFirstCall, $flag): array
+	private function getExplainParam(&$sqlConfig, $isFirstCall, $flag): array
 	{
 		$explainParamArr = [];
 
@@ -735,7 +735,7 @@ trait AppTrait
 			if (isset($sqlConfig[$option])) {
 				foreach ($sqlConfig[$option] as $module => &$moduleSqlConfig) {
 					$flag = ($flag) ?? $this->getUseHierarchy($moduleSqlConfig);
-					$moduleExplainParamArr = $this->getExplainParamArr(
+					$moduleExplainParamArr = $this->getExplainParam(
 						$moduleSqlConfig,
 						false,
 						$flag
@@ -789,9 +789,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Rate Limiting request if configured for Route Sql
+	 * Rate Limiting request on basis of SQL config
 	 *
-	 * @param array $sqlConfig Config from file
+	 * @param array $sqlConfig SQL config
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -833,7 +833,7 @@ trait AppTrait
 	/**
 	 * Check Referrer Lag
 	 *
-	 * @param array $sqlConfig Config from file
+	 * @param array $sqlConfig SQL config
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -919,7 +919,7 @@ trait AppTrait
 	/**
 	 * Check for Idempotent Window
 	 *
-	 * @param array $sqlConfig       Sql config
+	 * @param array $sqlConfig       SQL config
 	 * @param array $payloadIndexArr Payload Indexes
 	 *
 	 * @return array
@@ -970,9 +970,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Lag Response
+	 * Lag response
 	 *
-	 * @param array $sqlConfig Sql config
+	 * @param array $sqlConfig SQL config
 	 *
 	 * @return void
 	 */
@@ -1027,7 +1027,7 @@ trait AppTrait
 	}
 
 	/**
-	 * Check Rate Limit
+	 * Check Rate limit
 	 *
 	 * @param string $rateLimitPrefix           Prefix
 	 * @param int    $rateLimitMaxRequest       Max request
@@ -1059,7 +1059,7 @@ trait AppTrait
 				// Process the request
 				return true;
 			} else {
-				// Return 429 Too Many Request
+				// Return 429 Too Many request
 				throw new \Exception(
 					message: $result['resetOn'] - Env::$timestamp,
 					code: HttpStatus::$TooManyRequest
@@ -1075,7 +1075,7 @@ trait AppTrait
 	}
 
 	/**
-	 * Get Trigger Data
+	 * Get Trigger data
 	 *
 	 * @param array $triggerConfig Trigger Config
 	 *
@@ -1123,7 +1123,7 @@ trait AppTrait
 	}
 
 	/**
-	 * Get Trigger Detail
+	 * Get Trigger detail
 	 *
 	 * @param array $triggerConfig Trigger Config
 	 *
@@ -1132,7 +1132,7 @@ trait AppTrait
 	public function getTriggerHttp($triggerConfig)
 	{
 		$method = $triggerConfig['__METHOD__'];
-		[$routeElementArrArr, $errorArr] = $this->getTriggerParamArr(
+		[$routeElementArrArr, $errorArr] = $this->getTriggerParam(
 			payloadConfig: $triggerConfig['__ROUTE__']
 		);
 
@@ -1146,7 +1146,7 @@ trait AppTrait
 		$payloadArr = [];
 
 		if (isset($triggerConfig['__QUERY-STRING__'])) {
-			[$queryStringArr, $errorArr] = $this->getTriggerParamArr(
+			[$queryStringArr, $errorArr] = $this->getTriggerParam(
 				payloadConfig: $triggerConfig['__QUERY-STRING__']
 			);
 
@@ -1155,7 +1155,7 @@ trait AppTrait
 			}
 		}
 		if (isset($triggerConfig['__PAYLOAD__'])) {
-			[$payloadArr, $errorArr] = $this->getTriggerParamArr(
+			[$payloadArr, $errorArr] = $this->getTriggerParam(
 				payloadConfig: $triggerConfig['__PAYLOAD__']
 			);
 			if ($errorArr) {
@@ -1177,7 +1177,7 @@ trait AppTrait
 	}
 
 	/**
-	 * Generates ParamArr for statement to execute
+	 * Get Trigger param's
 	 *
 	 * @param array $payloadConfig      API Payload configuration
 	 * @param array $payloadVariableArr Payload Variables
@@ -1185,7 +1185,7 @@ trait AppTrait
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function getTriggerParamArr(&$payloadConfig): array
+	private function getTriggerParam(&$payloadConfig): array
 	{
 		$sqlParamArr = [];
 		$errorArr = [];
@@ -1256,14 +1256,14 @@ trait AppTrait
 	/**
 	 * Process import function of configuration
 	 *
-	 * @param array $wSqlConfig   Write sql config
+	 * @param array $wSqlConfig   Write SQL config
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return string
 	 */
-	private function processImportConfig(&$wSqlConfig, $useHierarchy): string
+	private function processImportSqlConfig(&$wSqlConfig, $useHierarchy): string
 	{
-		$explainParamArr = $this->getExplainParamArr(
+		$explainParamArr = $this->getExplainParam(
 			sqlConfig: $wSqlConfig,
 			isFirstCall: true,
 			flag: $useHierarchy

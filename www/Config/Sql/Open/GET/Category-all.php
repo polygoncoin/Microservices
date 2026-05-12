@@ -93,7 +93,7 @@ return [
 		isOpenToWebRequest: true
 	),
 	'responseLag' => [
-		// No of Request => Seconds Lag
+		// No of request => Seconds Lag
 		1 => 0,
 		// 2 => 10,
 	],

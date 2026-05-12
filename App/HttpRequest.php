@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Http Request
+ * HTTP request
  * php version 8.3
  *
- * @category  Http Request
+ * @category  HTTP request
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -27,10 +27,10 @@ use Microservices\App\Middleware\Auth;
 use Microservices\App\RouteParser;
 
 /**
- * Http Request
+ * HTTP request
  * php version 8.3
  *
- * @category  Http Request
+ * @category  HTTP request
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -55,7 +55,7 @@ class HttpRequest
 	public $dataDecode = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -69,7 +69,7 @@ class HttpRequest
 	public $s = null;
 
 	/**
-	 * Open To Web Request
+	 * Open To Web request
 	 *
 	 * @var null|bool
 	 */
@@ -88,21 +88,21 @@ class HttpRequest
 	public $rParser = null;
 
 	/**
-	 * Customer ID
+	 * Customer id
 	 *
 	 * @var null|int
 	 */
 	public $cID = null;
 
 	/**
-	 * Group ID
+	 * Group id
 	 *
 	 * @var null|int
 	 */
 	public $gID = null;
 
 	/**
-	 * User ID
+	 * User id
 	 *
 	 * @var null|int
 	 */
@@ -246,7 +246,7 @@ class HttpRequest
 	}
 
 	/**
-	 * Load Customer Detail
+	 * Load Customer detail
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -281,7 +281,7 @@ class HttpRequest
 	}
 
 	/**
-	 * Loads request payload
+	 * Load payload
 	 *
 	 * @return void
 	 */
@@ -423,7 +423,7 @@ class HttpRequest
 	}
 
 	/**
-	 * Function to find payload is an object/array
+	 * urldecode string or array
 	 *
 	 * @param array|string $value Array vales to be decoded. Basically $httpReqDetailArr['get']
 	 *
@@ -445,7 +445,7 @@ class HttpRequest
 	}
 
 	/**
-	 * Format Csv Payload
+	 * Format CSV Payload
 	 *
 	 * @param string $csvFile
 	 *
@@ -562,7 +562,7 @@ class HttpRequest
 	}
 
 	/**
-	 * Format Csv Payload
+	 * Format CSV Payload
 	 *
 	 * @param string $csvContent CSV string
 	 *

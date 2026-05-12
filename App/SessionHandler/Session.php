@@ -99,7 +99,7 @@ class Session
 	public static $memcachedServerPort = 11211;
 
 	/**
-	 * Session ID Cookie name
+	 * Session id Cookie name
 	 *
 	 * @var string
 	 */
@@ -487,7 +487,7 @@ class Session
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionID Session ID
+	 * @param string $sessionID Session id
 	 *
 	 * @return bool
 	 */

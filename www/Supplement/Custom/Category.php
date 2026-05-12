@@ -37,7 +37,7 @@ class Category implements CustomInterface
 	use CustomTrait;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

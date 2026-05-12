@@ -36,14 +36,14 @@ use Microservices\App\HttpStatus;
 class Auth
 {
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
 	private $http = null;
 
 	/**
-	 * Request ID
+	 * Request id
 	 *
 	 * @var null|int
 	 */
@@ -60,7 +60,7 @@ class Auth
 	}
 
 	/**
-	 * Load User Detail
+	 * Load User detail
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -151,7 +151,7 @@ class Auth
 	}
 
 	/**
-	 * Load User Detail
+	 * Load Group detail
 	 *
 	 * @return void
 	 * @throws \Exception

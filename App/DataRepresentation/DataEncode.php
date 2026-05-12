@@ -43,7 +43,7 @@ class DataEncode
 	private $tempStream = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -136,7 +136,7 @@ class DataEncode
 	}
 
 	/**
-	 * Start simple array
+	 * Start array
 	 *
 	 * @param null|string $objectKey Used while creating simple array inside an object
 	 *
@@ -148,7 +148,7 @@ class DataEncode
 	}
 
 	/**
-	 * Add simple array/value as in the data format
+	 * Add array/value as in the data format
 	 *
 	 * @param string|array $data Representation Data
 	 *
@@ -161,7 +161,7 @@ class DataEncode
 	}
 
 	/**
-	 * End simple array
+	 * End array
 	 *
 	 * @return void
 	 */
@@ -171,7 +171,7 @@ class DataEncode
 	}
 
 	/**
-	 * Start simple array
+	 * Start object
 	 *
 	 * @param null|string $objectKey Used while creating associative array inside an object
 	 *
@@ -184,7 +184,7 @@ class DataEncode
 	}
 
 	/**
-	 * Add simple array/value as in the data format
+	 * Add array/value as in the data format
 	 *
 	 * @param string       $objectKey Key of associative array
 	 * @param string|array $data      Representation Data
@@ -198,7 +198,7 @@ class DataEncode
 	}
 
 	/**
-	 * End associative array
+	 * End object
 	 *
 	 * @return void
 	 */
@@ -208,7 +208,7 @@ class DataEncode
 	}
 
 	/**
-	 * Encodes both simple and associative array to json
+	 * Encode data
 	 *
 	 * @param string|array $data Representation Data
 	 *
@@ -232,7 +232,7 @@ class DataEncode
 	}
 
 	/**
-	 * Append raw data string
+	 * Append object data
 	 *
 	 * @param string $objectKey Key of associative array
 	 * @param string $data      Representation Data
@@ -245,7 +245,7 @@ class DataEncode
 	}
 
 	/**
-	 * Checks data was properly closed
+	 * End encoding
 	 *
 	 * @return void
 	 */
@@ -255,7 +255,7 @@ class DataEncode
 	}
 
 	/**
-	 * Stream Data String
+	 * Stream encoded data
 	 *
 	 * @return void
 	 */
@@ -300,7 +300,7 @@ class DataEncode
 	}
 
 	/**
-	 * Return JSON String
+	 * Get encoded data
 	 *
 	 * @return bool|string
 	 */

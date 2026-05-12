@@ -109,7 +109,7 @@ class RedisQueryCache implements QueryCacheServerInterface
 	}
 
 	/**
-	 * Query Cache Server Object
+	 * Connect Query Cache
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -138,9 +138,9 @@ class RedisQueryCache implements QueryCacheServerInterface
 	}
 
 	/**
-	 * Checks if cache key exist
+	 * Query Cache key exist
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return mixed
 	 */
@@ -152,9 +152,9 @@ class RedisQueryCache implements QueryCacheServerInterface
 	}
 
 	/**
-	 * Get cache on basis of key
+	 * Get Query Cache key
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return mixed
 	 */
@@ -166,10 +166,10 @@ class RedisQueryCache implements QueryCacheServerInterface
 	}
 
 	/**
-	 * Set cache on basis of key
+	 * Set cache key
 	 *
-	 * @param string $queryCacheKey Query cache key
-	 * @param string $value         Cache value
+	 * @param string $queryCacheKey Query Cache key
+	 * @param string $value         Query Cache value
 	 *
 	 * @return mixed
 	 */
@@ -181,10 +181,10 @@ class RedisQueryCache implements QueryCacheServerInterface
 	}
 
 	/**
-	 * Increment cache on basis of key
+	 * Increment Query Cache key as per offset
 	 *
-	 * @param string $queryCacheKey Query cache key
-	 * @param int    $offset        Offset
+	 * @param string $queryCacheKey Query Cache key
+	 * @param int    $offset        Query Cache offset
 	 *
 	 * @return mixed
 	 */
@@ -196,9 +196,9 @@ class RedisQueryCache implements QueryCacheServerInterface
 	}
 
 	/**
-	 * Delete basis of key
+	 * Delete Query Cache key
 	 *
-	 * @param string $queryCacheKey Query cache key
+	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return mixed
 	 */

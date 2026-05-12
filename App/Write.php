@@ -69,7 +69,7 @@ class Write
 	public $dataEncode = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -141,7 +141,7 @@ class Write
 				$headerArr['Pragma'] = 'no-cache';
 				$headerArr['Expires'] = '0';
 
-				$csv = $this->processImportConfig(
+				$csv = $this->processImportSqlConfig(
 					wSqlConfig: $wSqlConfig,
 					useHierarchy: $useHierarchy
 				);
@@ -200,7 +200,7 @@ class Write
 	/**
 	 * Explain write configuration
 	 *
-	 * @param array $wSqlConfig   Config from file
+	 * @param array $wSqlConfig   Write SQL config
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return void
@@ -215,7 +215,7 @@ class Write
 		if (Env::$enablePayloadInResponse) {
 			$this->dataEncode->addKeyData(
 				objectKey: Env::$payloadKeyInResponse,
-				data: $this->getExplainParamArr(
+				data: $this->getExplainParam(
 					sqlConfig: $wSqlConfig,
 					isFirstCall: true,
 					flag: $useHierarchy
@@ -226,9 +226,9 @@ class Write
 	}
 
 	/**
-	 * Process Function to insert/update
+	 * Process for insert/update
 	 *
-	 * @param array $wSqlConfig   Config from file
+	 * @param array $wSqlConfig   Write SQL config
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return void
@@ -305,7 +305,7 @@ class Write
 					$this->dbServerObj->begin();
 				}
 				$response = [];
-				$this->writeDB(
+				$this->writeDb(
 					wSqlConfig: $wSqlConfig,
 					payloadIndexArr: $payloadIndexArr,
 					configKeyArr: $configKeyArr,
@@ -386,9 +386,9 @@ class Write
 	}
 
 	/**
-	 * Function to insert/update sub queries recursively
+	 * Process $wSqlConfig recursively
 	 *
-	 * @param array $wSqlConfig       Config from file
+	 * @param array $wSqlConfig       Write SQL config
 	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
 	 * @param bool  $useHierarchy     Use results in where clause of sub queries
@@ -398,7 +398,7 @@ class Write
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function writeDB(
+	private function writeDb(
 		&$wSqlConfig,
 		$payloadIndexArr,
 		$configKeyArr,
@@ -490,7 +490,7 @@ class Write
 				continue;
 			}
 
-			// Execute Pre Sql Hook
+			// Execute Pre SQL Hook
 			if (isset($wSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
 					$this->hook = new Hook($this->http);
@@ -500,7 +500,7 @@ class Write
 				);
 			}
 
-			// Get Sql and ParamArr
+			// Get SQL and ParamArr
 			[$id, $sql, $sqlParamArr, $errorArr, $missExecution] = $this->$function(
 				sqlConfig: $wSqlConfig
 			);
@@ -532,7 +532,7 @@ class Write
 				) {
 					$id = $wSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'];
 				} else {
-					$id = $this->dbServerObj->lastInsertID();
+					$id = $this->dbServerObj->lastInsertId();
 				}
 				$_response[$wSqlConfig['__INSERT-IDs__']] = $id;
 				$this->http->req->s['__INSERT-IDs__'][$wSqlConfig['__INSERT-IDs__']] = $id;
@@ -552,7 +552,7 @@ class Write
 				);
 			}
 
-			// Execute Post Sql Hook
+			// Execute Post SQL Hook
 			if (isset($wSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
 					$this->hook = new Hook($this->http);
@@ -564,7 +564,7 @@ class Write
 
 			// subQuery for payload
 			if (isset($wSqlConfig['__SUB-QUERY__'])) {
-				$this->callWriteDB(
+				$this->callWriteDb(
 					wSqlConfig: $wSqlConfig,
 					payloadIndexArr: $payloadIndexArr,
 					configKeyArr: $configKeyArr,
@@ -577,9 +577,9 @@ class Write
 	}
 
 	/**
-	 * Validate and call _writeDB
+	 * Function writeDb recursive helper
 	 *
-	 * @param array $wSqlConfig       Config from file
+	 * @param array $wSqlConfig       Write SQL config
 	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
 	 * @param bool  $useHierarchy     Use results in where clause of sub queries
@@ -588,7 +588,7 @@ class Write
 	 *
 	 * @return void
 	 */
-	private function callWriteDB(
+	private function callWriteDb(
 		&$wSqlConfig,
 		$payloadIndexArr,
 		$configKeyArr,
@@ -665,7 +665,7 @@ class Write
 						);
 						$response[$module] = [];
 						$response = &$response[$module];
-						$this->writeDB(
+						$this->writeDb(
 							wSqlConfig: $wSqlConfig,
 							payloadIndexArr: $modulePayloadIndexItt,
 							configKeyArr: $moduleConfigKeyArr,
@@ -680,9 +680,9 @@ class Write
 	}
 
 	/**
-	 * Checks if the payload is valid
+	 * Validate payload
 	 *
-	 * @param array $wSqlConfig Config from file
+	 * @param array $wSqlConfig Write SQL config
 	 * @param array $response   Response by reference
 	 *
 	 * @return bool

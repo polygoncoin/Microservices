@@ -38,7 +38,7 @@ class Category implements CronInterface
 	use CronTrait;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */

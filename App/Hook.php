@@ -34,7 +34,7 @@ use Microservices\App\HttpStatus;
 class Hook
 {
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -51,7 +51,7 @@ class Hook
 	}
 
 	/**
-	 * Triggers Hook
+	 * Trigger Hook
 	 *
 	 * @param array $hookConfig Hook configuration
 	 *

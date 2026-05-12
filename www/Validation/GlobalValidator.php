@@ -37,7 +37,7 @@ class GlobalValidator implements ValidatorInterface
 	use ValidatorTrait;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -83,7 +83,7 @@ class GlobalValidator implements ValidatorInterface
 	}
 
 	/**
-	 * Checks primary key exist
+	 * Check primary key exist
 	 *
 	 * @param array $argArr Arguments
 	 *
@@ -101,7 +101,7 @@ class GlobalValidator implements ValidatorInterface
 	}
 
 	/**
-	 * Checks column value exist
+	 * Check column value exist
 	 *
 	 * @param array $argArr Arguments
 	 *

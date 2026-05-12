@@ -51,70 +51,69 @@ $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Route.php';
 
 $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Config.php';
 $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Category.php';
+
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Address.php';
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Category.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR
+	. 'RegistrationWithAddressSingle.php';
+
+$response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Address.php';
+
+$response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
+
+$response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
+
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
+
+// Admin login
+$payload = [
+	'username' => 'customer_1_admin_1',
+	'password' => 'shames11'
+];
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Login.php';
+
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Route.php';
+
+$response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'CategoryTruncate.php';
+
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Category.php';
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Address.php';
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Category.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Address.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+$response[] = include AUTH_GET . DIRECTORY_SEPARATOR
+	. 'RegistrationWithAddressSingle.php';
+
+$response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Address.php';
+$response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+
+$response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
+$response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+
+$response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
+$response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
+$response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+
+$response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
+
 return $response;
-
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Address.php';
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Category.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR
-// 	. 'RegistrationWithAddressSingle.php';
-
-// $response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Address.php';
-
-// $response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
-
-// $response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
-
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
-
-// // Admin login
-// $payload = [
-// 	'username' => 'customer_1_admin_1',
-// 	'password' => 'shames11'
-// ];
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Login.php';
-
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Route.php';
-
-// $response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'CategoryTruncate.php';
-
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Category.php';
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'Address.php';
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Category.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'Address.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-// $response[] = include AUTH_GET . DIRECTORY_SEPARATOR
-// 	. 'RegistrationWithAddressSingle.php';
-
-// $response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'Address.php';
-// $response[] = include AUTH_PUT . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-
-// $response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
-// $response[] = include AUTH_PATCH . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-
-// $response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
-// $response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
-// $response[] = include AUTH_DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-
-// $response[] = include AUTH_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
-
-// return $response;

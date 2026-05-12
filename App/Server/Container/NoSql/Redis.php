@@ -149,7 +149,7 @@ class Redis implements NoSqlInterface
 	}
 
 	/**
-	 * Checks if cache key exist
+	 * Cache key exist
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -163,7 +163,7 @@ class Redis implements NoSqlInterface
 	}
 
 	/**
-	 * Get cache on basis of key
+	 * Get cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -177,7 +177,7 @@ class Redis implements NoSqlInterface
 	}
 
 	/**
-	 * Set cache on basis of key
+	 * Set cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param string $value    Cache value
@@ -197,7 +197,7 @@ class Redis implements NoSqlInterface
 	}
 
 	/**
-	 * Increment Key value with offset
+	 * Increment cache key with offset
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param int    $offset   Offset
@@ -212,7 +212,7 @@ class Redis implements NoSqlInterface
 	}
 
 	/**
-	 * Delete basis of key
+	 * Delete cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *

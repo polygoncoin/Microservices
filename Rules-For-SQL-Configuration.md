@@ -21,7 +21,7 @@ return [
 		'var2' => 'var2-data',
 	],
 
-	// Detail of data to be set by Query to perform task
+	// detail of data to be set by Query to perform task
 	'__SET__' => [
 		[
 			'column' => 'id',
@@ -29,8 +29,8 @@ return [
 			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 			// 'fetchFrom' => 'payload', // Fetch value from payload
 			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-			// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+			// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+			// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 			// 'fetchFrom' => 'custom', // Static values
 			// 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ key's
 			'fetchFromDetail' => 'id',                       // key (id)
@@ -59,8 +59,8 @@ return [
 			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 			// 'fetchFrom' => 'payload', // Fetch value from payload
 			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-			// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+			// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+			// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 			// 'fetchFrom' => 'custom', // Static values
 			// 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ key's
 			'fetchFromDetail' => 'id',                       // key (id)
@@ -110,8 +110,8 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
 					// 'fetchFrom' => 'variables', // to fetch values as per current module/<sub-key> __VARIABLES__ key's
 					'fetchFromDetail' => 'id',                       // key (id)
@@ -130,12 +130,12 @@ return [
 					'fetchFrom' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
 					'fetchFromDetail' => '<return:keys-separated-by-colon>'
 				],
-					// Fetch values of sql results from previous queries
+					// Fetch values of SQL results from previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
 					'fetchFromDetail' => '<return:keys-separated-by-colon>'
 				],
-					// Fetch values of sql payload for previous queries
+					// Fetch values of SQL payload for previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
 					'fetchFromDetail' => '<return:keys-separated-by-colon>'
@@ -169,13 +169,13 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
+					// 'fetchFrom' => '__INSERT-IDs__', // SQL Insert IDs
 					'fetchFromDetail' => 'address'
 				],
-					// Sql Insert IDs
+					// SQL Insert IDs
 					'fetchFrom' => '__INSERT-IDs__',
 					'fetchFromDetail' => 'address:id'
 				]
@@ -187,10 +187,10 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
+					// 'fetchFrom' => '__INSERT-IDs__', // SQL Insert IDs
 					'fetchFromDetail' => 'address'
 				],
 				[...]
@@ -203,10 +203,10 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // Sql Insert IDs
+					// 'fetchFrom' => '__INSERT-IDs__', // SQL Insert IDs
 					'fetchFromDetail' => 'address'
 				],
 				[...]
@@ -232,7 +232,7 @@ return [
 			'functionArgs' => [
 				'id' => ['payload', 'id']
 			],
-			'errorMessage' => 'Invalid Group ID'
+			'errorMessage' => 'Invalid Group id'
 		],
 		[...]
 	],
@@ -251,17 +251,17 @@ return [
 
 	// Control response time as per number of hits by configuring lags in seconds as below
 	'responseLag' => [
-		// No of Request => Seconds Lag
+		// No of request => Seconds Lag
 		10	=> 0,
 		20	=> 10,
 	],
 
 	// Enable referrer lag for current route
-	// To be configured in source route sql config
+	// To be configured in source route SQL config
 	'enableReferrerLag' => true,
 
 	// Minimum Lag time between current request and referrer/previous request
-	// To be configured in target route sql config
+	// To be configured in target route SQL config
 	'referrerLagWindow' => [
 		[
 			'referrer' => '/referrer-route-1',
@@ -325,8 +325,8 @@ return [
 			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 			// 'fetchFrom' => 'payload', // Fetch value from payload
 			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-			// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+			// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+			// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 			// 'fetchFrom' => 'custom', // Static values
 			'fetchFromDetail' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
@@ -344,7 +344,7 @@ return [
 ```PHP
 //return represents root for sqlResults
 return [
-	// Detail of data to perform task
+	// detail of data to perform task
 	'__PAYLOAD__' => [
 		[
 			'column' => 'id',
@@ -352,8 +352,8 @@ return [
 			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 			// 'fetchFrom' => 'payload', // Fetch value from payload
 			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-			// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+			// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+			// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 			// 'fetchFrom' => 'custom', // Static values
 			'fetchFromDetail' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
@@ -385,8 +385,8 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
 					'fetchFromDetail' => 'id',                       // key (id)
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
@@ -399,12 +399,12 @@ return [
 					'fetchFrom' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
 					'fetchFromDetail' => '<return:keys-separated-by-colon>'
 				],
-					// Fetch values of sql results from previous queries
+					// Fetch values of SQL results from previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
 					'fetchFromDetail' => '<return:keys-separated-by-colon>'
 				],
-					// Fetch values of sql payload for previous queries
+					// Fetch values of SQL payload for previous queries
 					'column' => 'id',
 					'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
 					'fetchFromDetail' => '<return:keys-separated-by-colon>'
@@ -434,8 +434,8 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
 					'fetchFromDetail' => 'address'
 				],
@@ -448,8 +448,8 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
 					'fetchFromDetail' => 'address'
 				],
@@ -463,8 +463,8 @@ return [
 					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
 					// 'fetchFrom' => 'payload', // Fetch value from payload
 					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'cDetail', // Fetch value from customer Detail
-					// 'fetchFrom' => 'uDetail', // Fetch value from user Detail session
+					// 'fetchFrom' => 'cDetail', // Fetch value from customer detail
+					// 'fetchFrom' => 'uDetail', // Fetch value from user detail session
 					// 'fetchFrom' => 'custom', // Static values
 					'fetchFromDetail' => 'address'
 				],
@@ -491,7 +491,7 @@ return [
 			'functionArgs' => [
 				'id' => ['payload', 'id']
 			],
-			'errorMessage' => 'Invalid Group ID'
+			'errorMessage' => 'Invalid Group id'
 		],
 		[...]
 	],
@@ -509,17 +509,17 @@ return [
 
 	// Control response time as per number of hits by configuring lags in seconds as below
 	'responseLag' => [
-		// No of Request => Seconds Lag
+		// No of request => Seconds Lag
 		10	=> 0,
 		20	=> 10,
 	],
 
 	// Enable referrer lag for current route
-	// To be configured in source route sql config
+	// To be configured in source route SQL config
 	'enableReferrerLag' => true,
 
 	// Minimum Lag time between current request and referrer/previous request
-	// To be configured in target route sql config
+	// To be configured in target route SQL config
 	'referrerLagWindow' => [
 		[
 			'referrer' => '/referrer-route-1',

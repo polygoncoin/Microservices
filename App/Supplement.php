@@ -76,7 +76,7 @@ class Supplement
 	public $supplementObj = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -151,7 +151,7 @@ class Supplement
 				$headerArr['Pragma'] = 'no-cache';
 				$headerArr['Expires'] = '0';
 
-				$csv = $this->processImportConfig(
+				$csv = $this->processImportSqlConfig(
 					wSqlConfig: $wSqlConfig,
 					useHierarchy: $useHierarchy
 				);
@@ -177,7 +177,7 @@ class Supplement
 			$this->dataEncode->phpFile = $sSqlConfig['phpFile'];
 		}
 
-		// Lag Response
+		// Lag response
 		$this->lagResponse(sqlConfig: $sSqlConfig);
 
 		// Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
@@ -210,7 +210,7 @@ class Supplement
 	/**
 	 * Explain supplement configuration
 	 *
-	 * @param array $sSqlConfig   Config from file
+	 * @param array $sSqlConfig   SQL config
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return void
@@ -224,7 +224,7 @@ class Supplement
 		);
 		$this->dataEncode->addKeyData(
 			objectKey: 'Payload',
-			data: $this->getExplainParamArr(
+			data: $this->getExplainParam(
 				sqlConfig: $sSqlConfig,
 				isFirstCall: true,
 				flag: $useHierarchy
@@ -236,7 +236,7 @@ class Supplement
 	/**
 	 * Process Function to insert/update
 	 *
-	 * @param array $sSqlConfig   Config from file
+	 * @param array $sSqlConfig   SQL config
 	 * @param bool  $useHierarchy Use results in where clause of sub queries
 	 *
 	 * @return void
@@ -396,7 +396,7 @@ class Supplement
 	/**
 	 * Function to execute supplement recursively
 	 *
-	 * @param array $sSqlConfig       Config from file
+	 * @param array $sSqlConfig       SQL config
 	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
 	 * @param bool  $useHierarchy     Use results in where clause of sub queries
@@ -495,7 +495,7 @@ class Supplement
 				continue;
 			}
 
-			// Execute Pre Sql Hook
+			// Execute Pre SQL Hook
 			if (isset($sSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
 					$this->hook = new Hook($this->http);
@@ -531,7 +531,7 @@ class Supplement
 				);
 			}
 
-			// Execute Post Sql Hook
+			// Execute Post SQL Hook
 			if (isset($sSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
 					$this->hook = new Hook($this->http);
@@ -556,9 +556,9 @@ class Supplement
 	}
 
 	/**
-	 * Validate and call _writeDB
+	 * Function execSupplement recursive helper
 	 *
-	 * @param array $sSqlConfig       Config from file
+	 * @param array $sSqlConfig       SQL config
 	 * @param array $payloadIndexArr  Payload Indexes
 	 * @param array $configKeyArr     Config key's
 	 * @param bool  $useHierarchy     Use results in where clause of sub queries
@@ -642,7 +642,7 @@ class Supplement
 	/**
 	 * Checks if the payload is valid
 	 *
-	 * @param array $sSqlConfig Config from file
+	 * @param array $sSqlConfig SQL config
 	 * @param array $response   Response by reference
 	 *
 	 * @return bool

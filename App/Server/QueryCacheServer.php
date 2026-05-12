@@ -111,7 +111,7 @@ class QueryCacheServer
 	}
 
 	/**
-	 * Connect Query Cache Server
+	 * Connect Query Cache
 	 *
 	 * @return QueryCacheServerInterface
 	 */

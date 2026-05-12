@@ -51,14 +51,14 @@ class Microservices
 	private $tsEnd = null;
 
 	/**
-	 * Http Request Detail
+	 * HTTP request detail
 	 *
 	 * @var null|array
 	 */
 	public $httpReqDetailArr = null;
 
 	/**
-	 * Http Object
+	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
@@ -67,7 +67,7 @@ class Microservices
 	/**
 	 * Constructor
 	 *
-	 * @param array $httpReqDetailArr Http Request Detail
+	 * @param array $httpReqDetailArr HTTP request detail
 	 */
 	public function __construct(&$httpReqDetailArr)
 	{
@@ -137,7 +137,7 @@ class Microservices
 				$class = __NAMESPACE__ . '\\Logout';
 				break;
 
-			// Requires http auth username and password
+			// Requires HTTP auth username and password
 			case (
 					Env::$enableReloadRequest
 					&& $this->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
@@ -177,7 +177,7 @@ class Microservices
 				$this->http->init();
 
 				$gateway = new Gateway($this->http);
-				$gateway->initGateway();
+				$gateway->init();
 				$gateway = null;
 
 				$class = __NAMESPACE__ . '\\Api';
@@ -226,7 +226,7 @@ class Microservices
 	}
 
 	/**
-	 * Add Status
+	 * Add HTTP status in response
 	 *
 	 * @return void
 	 */
@@ -242,7 +242,7 @@ class Microservices
 	}
 
 	/**
-	 * Add Performance detail
+	 * Add Performance detail in response
 	 *
 	 * @return void
 	 */
@@ -276,7 +276,7 @@ class Microservices
 	}
 
 	/**
-	 * End Data Output
+	 * End response
 	 *
 	 * @return void
 	 */
@@ -290,7 +290,7 @@ class Microservices
 	}
 
 	/**
-	 * Output
+	 * Output response
 	 *
 	 * @return void
 	 */
@@ -304,7 +304,7 @@ class Microservices
 	}
 
 	/**
-	 * Output
+	 * Return encoded result
 	 *
 	 * @return bool|string
 	 */

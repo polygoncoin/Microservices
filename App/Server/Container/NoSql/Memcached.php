@@ -106,7 +106,7 @@ class Memcached implements NoSqlInterface
 	}
 
 	/**
-	 * Checks if cache key exist
+	 * Cache key exist
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -120,7 +120,7 @@ class Memcached implements NoSqlInterface
 	}
 
 	/**
-	 * Get cache on basis of key
+	 * Get cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
@@ -134,7 +134,7 @@ class Memcached implements NoSqlInterface
 	}
 
 	/**
-	 * Set cache on basis of key
+	 * Set cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param string $value    Cache value
@@ -154,7 +154,7 @@ class Memcached implements NoSqlInterface
 	}
 
 	/**
-	 * Increment Key value with offset
+	 * Increment cache key with offset
 	 *
 	 * @param string $cacheKey Cache key
 	 * @param int    $offset   Offset
@@ -169,7 +169,7 @@ class Memcached implements NoSqlInterface
 	}
 
 	/**
-	 * Delete basis of key
+	 * Delete cache key
 	 *
 	 * @param string $cacheKey Cache key
 	 *
