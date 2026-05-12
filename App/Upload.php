@@ -63,7 +63,7 @@ class Upload
 	 */
 	public function init(): bool
 	{
-		$class = 'Microservices\\Supplement\\Upload\\'
+		$class = 'Microservices\\www\\Supplement\\Upload\\'
 			. ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
 
 		$this->uploadApi = new $class($this->http);
