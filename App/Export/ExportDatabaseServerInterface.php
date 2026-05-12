@@ -45,7 +45,7 @@ interface ExportDatabaseServerInterface
 	/**
 	 * Returns Shell Command
 	 *
-	 * @param string $sql      SQL query 
+	 * @param string $sql      SQL query
 	 * @param array  $paramArr SQL query params
 	 *
 	 * @return string

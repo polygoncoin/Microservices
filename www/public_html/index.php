@@ -39,9 +39,9 @@ foreach ([
 	'.env.global.container',
 	'.env.rateLimiting'
 ] as $envFilename) {
-	$envData = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
-	foreach ($envData as $name => $value) {
-		putenv(assignment: "{$name}={$value}");
+	$envDataArr = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
+	foreach ($envDataArr as $envVarName => $envVarValue) {
+		putenv(assignment: "{$envVarName}={$envVarValue}");
 	}
 }
 
@@ -133,8 +133,8 @@ if (
 	$responseCode = $responseCode ?? 200;
 	http_response_code(response_code: $responseCode);
 
-	foreach ($responseHeaderArr as $k => $v) {
-		header(header: "{$k}: {$v}");
+	foreach ($responseHeaderArr as $headerName => $headerValue) {
+		header(header: "{$headerName}: {$headerValue}");
 	}
 
 	die($responseContent);

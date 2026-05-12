@@ -64,7 +64,11 @@ class Start
 				}
 
 				$data = $Microservices->returnResults();
-				$status = $Microservices->http->res->httpStatus;
+				if ($Microservices->http === null) {
+					$status = 200;	
+				} else {
+					$status = $Microservices->http->res->httpStatus;
+				}
 
 				return [$headerArr, $data, $status];
 			}

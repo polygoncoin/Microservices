@@ -396,7 +396,7 @@ class DbCommonFunction
 	public static function queryCacheSet($queryCacheKey, &$json): void
 	{
 		self::connectQueryCache();
-		
+
 		self::$queryCacheServer->queryCacheSet(queryCacheKey: $queryCacheKey, value: $json);
 		self::$queryCacheServer->queryCacheDelete(queryCacheKey: 'i:' . $queryCacheKey);
 	}
