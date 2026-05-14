@@ -302,6 +302,13 @@ class HttpRequest
 			associative: true
 		);
 		$this->cID = $this->s['cDetail']['id'];
+
+		if (!$this->isOpenToWebRequest) {
+			$this->clientCacheObj = DbCommonFunction::connectClientCache(
+				cDetail: $this->http->req->s['cDetail']
+			);
+			$this->rateLimiter = new RateLimiter($this->http);
+		}
 	}
 
 	/**

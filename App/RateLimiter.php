@@ -52,10 +52,6 @@ class RateLimiter
 		if (!Env::$enableRateLimiting) {
 			return;
 		}
-
-		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache(
-			cDetail: $this->http->req->s['cDetail']
-		);
 	}
 
 	/**

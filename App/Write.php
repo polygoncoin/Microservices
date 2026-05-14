@@ -289,68 +289,70 @@ class Write
 			}
 
 			// Check for Idempotent Window
-			[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
-				sqlConfig: $wSqlConfig,
-				payloadIndexArr: $payloadIndexArr
-			);
-
-			// Begin DML operation
-			if ($hashJson === null) {
-				if ($this->operateAsTransaction) {
-					$this->http->req->clientDbObj->begin();
-				}
-				$response = [];
-				$this->writeDb(
-					wSqlConfig: $wSqlConfig,
-					payloadIndexArr: $payloadIndexArr,
-					configKeyArr: $configKeyArr,
-					useHierarchy: $useHierarchy,
-					response: $response,
-					requiredFieldArr: $this->http->req->s['requiredFieldArrCollection']
+			if (!$this->http->req->isOpenToWebRequest) {
+				[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
+					sqlConfig: $wSqlConfig,
+					payloadIndexArr: $payloadIndexArr
 				);
 
-				if ($this->http->res->httpStatus === HttpStatus::$Ok) {
-					if (
-						$this->operateAsTransaction
-						&& ($this->http->req->clientDbObj->beganTransaction === true)
-					) {
-						$this->http->req->clientDbObj->commit();
+				// Begin DML operation
+				if ($hashJson === null) {
+					if ($this->operateAsTransaction) {
+						$this->http->req->clientDbObj->begin();
 					}
+					$response = [];
+					$this->writeDb(
+						wSqlConfig: $wSqlConfig,
+						payloadIndexArr: $payloadIndexArr,
+						configKeyArr: $configKeyArr,
+						useHierarchy: $useHierarchy,
+						response: $response,
+						requiredFieldArr: $this->http->req->s['requiredFieldArrCollection']
+					);
 
-					$arr = [];
-					$arr['Status'] = HttpStatus::$Ok;
-					if (Env::$enablePayloadInResponse) {
-						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-							keyString: implode(
-								separator: ':',
-								array: $payloadIndexArr
-							)
-						);
-					}
-					$arr['Response'] = $response;
+					if ($this->http->res->httpStatus === HttpStatus::$Ok) {
+						if (
+							$this->operateAsTransaction
+							&& ($this->http->req->clientDbObj->beganTransaction === true)
+						) {
+							$this->http->req->clientDbObj->commit();
+						}
 
-					if ($idempotentWindow) {
-						$this->http->req->clientCacheObj->cacheSet(
-							cacheKey: $hashKey,
-							value: json_encode(value: $arr),
-							expire: $idempotentWindow
-						);
+						$arr = [];
+						$arr['Status'] = HttpStatus::$Ok;
+						if (Env::$enablePayloadInResponse) {
+							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
+								keyString: implode(
+									separator: ':',
+									array: $payloadIndexArr
+								)
+							);
+						}
+						$arr['Response'] = $response;
+
+						if ($idempotentWindow) {
+							$this->http->req->clientCacheObj->cacheSet(
+								cacheKey: $hashKey,
+								value: json_encode(value: $arr),
+								expire: $idempotentWindow
+							);
+						}
+					} else { // Failure
+						$arr = [];
+						$arr['Status'] = $this->http->res->httpStatus;
+						if (Env::$enablePayloadInResponse) {
+							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
+								keyString: implode(
+									separator: ':',
+									array: $payloadIndexArr
+								)
+							);
+						}
+						$arr['Error'] = $response;
 					}
-				} else { // Failure
-					$arr = [];
-					$arr['Status'] = $this->http->res->httpStatus;
-					if (Env::$enablePayloadInResponse) {
-						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-							keyString: implode(
-								separator: ':',
-								array: $payloadIndexArr
-							)
-						);
-					}
-					$arr['Error'] = $response;
+				} else {
+					$arr = json_decode(json: $hashJson, associative: true);
 				}
-			} else {
-				$arr = json_decode(json: $hashJson, associative: true);
 			}
 
 			if ($payloadIndexArr[0] === '') {

@@ -111,7 +111,6 @@ class Login
 		$this->validatePassword();
 
 		if (Env::$enableRateLimitForUserPerIp) {
-			$this->http->req->rateLimiter = new RateLimiter($this->http);
 			$this->http->req->rateLimiter->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserPerIpPrefix,
 				rateLimitMaxRequest: Env::$rateLimitMaxUserPerIp,
@@ -175,10 +174,6 @@ class Login
 	 */
 	private function loadUserDetail(): void
 	{
-		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache(
-			cDetail: $this->http->req->s['cDetail']
-		);
-
 		$cID = $this->http->req->cID;
 		$customerUserKey = CacheServerKey::customerUsername(
 			cID: $cID,
@@ -220,7 +215,6 @@ class Login
 	 */
 	private function validatePassword(): void
 	{
-		$this->http->req->rateLimiter = new RateLimiter($this->http);
 		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: Env::$rateLimitUserLoginPrefix,
 			rateLimitMaxRequest: Env::$rateLimitMaxUserLoginRequest,

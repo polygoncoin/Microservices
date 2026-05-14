@@ -70,10 +70,6 @@ class Auth
 		if (isset($this->http->req->s['uDetail'])) {
 			return;
 		}
-		
-		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache(
-			cDetail: $this->http->req->s['cDetail']
-		);
 
 		if (
 			isset($_SESSION)

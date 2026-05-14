@@ -65,7 +65,7 @@ class Start
 
 				$data = $Microservices->returnResults();
 				if ($Microservices->http === null) {
-					$status = 200;	
+					$status = 200;
 				} else {
 					$status = $Microservices->http->res->httpStatus;
 				}

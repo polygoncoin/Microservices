@@ -75,12 +75,13 @@ class Gateway
 	 */
 	private function rateLimitRequest(): void
 	{
-		$this->http->req->rateLimiter = new RateLimiter($this->http);
-
-		// Customer Rate Limiting
-		$this->rateLimitCustomer();
-
 		if (!$this->http->req->isOpenToWebRequest) {
+			// IP Rate Limiting
+			$this->rateLimitIp();
+
+			// Customer Rate Limiting
+			$this->rateLimitCustomer();
+
 			// Group Rate Limiting
 			$this->rateLimitGroup();
 
@@ -90,10 +91,6 @@ class Gateway
 			// User Rate Limiting request Delay
 			$this->rateLimitUserRequest();
 		}
-
-		// Rate limit open traffic (not limited by allowed IPs/CIDR and allowed
-		// IP Rate Limiting
-		$this->rateLimitIp();
 	}
 
 	/**
@@ -228,7 +225,7 @@ class Gateway
 		$rateLimitIPPrefix = Env::$rateLimitIPPrefix;
 		$rateLimitIPMaxRequest = Env::$rateLimitIPMaxRequest;
 		$rateLimitIPMaxRequestWindow = Env::$rateLimitIPMaxRequestWindow;
-		$rateLimitKey = $this->http->httpReqDetailArr['server']['httpRequestIP'];
+		$rateLimitKey = $this->http->req->cID . ':' . $this->http->httpReqDetailArr['server']['httpRequestIP'];
 
 		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitIPPrefix,

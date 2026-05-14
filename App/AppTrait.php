@@ -791,7 +791,8 @@ trait AppTrait
 	private function rateLimitRoute(&$sqlConfig): void
 	{
 		if (
-			Env::$enableRateLimitForRoute
+			$this->http->req->isOpenToWebRequest
+			|| !Env::$enableRateLimitForRoute
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
 		) {
@@ -971,50 +972,52 @@ trait AppTrait
 	private function lagResponse($sqlConfig): void
 	{
 		if (
-			isset($sqlConfig['responseLag'])
-			&& isset($sqlConfig['responseLag'])
+			$this->http->req->isOpenToWebRequest
+			|| !isset($sqlConfig['responseLag'])
 		) {
-			$payloadSignature = [
-				'IP' => $this->http->httpReqDetailArr['server']['httpRequestIP'],
-				'cID' => $this->http->req->cID,
-				'httpMethod' => $this->http->httpReqDetailArr['server']['httpMethod'],
-				'Route' => $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM],
-			];
-			if (isset($this->http->req->s['uDetail'])) {
-				$payloadSignature['gID'] = ($this->http->req->s['gDetail']['id'] !== null
-					? $this->http->req->s['gDetail']['id'] : 0);
-				$payloadSignature['uID'] = ($this->http->req->uID !== null
-					? $this->http->req->uID : 0);
-			}
+			return;
+		}
 
-			$hash = json_encode(value: $payloadSignature);
-			$hashKey = 'LAG:' . md5(string: $hash);
+		$payloadSignature = [
+			'IP' => $this->http->httpReqDetailArr['server']['httpRequestIP'],
+			'cID' => $this->http->req->cID,
+			'httpMethod' => $this->http->httpReqDetailArr['server']['httpMethod'],
+			'Route' => $this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM],
+		];
+		if (isset($this->http->req->s['uDetail'])) {
+			$payloadSignature['gID'] = ($this->http->req->s['gDetail']['id'] !== null
+				? $this->http->req->s['gDetail']['id'] : 0);
+			$payloadSignature['uID'] = ($this->http->req->uID !== null
+				? $this->http->req->uID : 0);
+		}
 
-			if ($this->http->req->clientCacheObj->cacheExist(cacheKey: $hashKey)) {
-				$noOfRequest = $this->http->req->clientCacheObj->cacheGet(cacheKey: $hashKey);
-			} else {
-				$noOfRequest = 0;
-			}
+		$hash = json_encode(value: $payloadSignature);
+		$hashKey = 'LAG:' . md5(string: $hash);
 
-			$this->http->req->clientCacheObj->cacheSet(
-				cacheKey: $hashKey,
-				value: ++$noOfRequest,
-				expire: 3600
-			);
+		if ($this->http->req->clientCacheObj->cacheExist(cacheKey: $hashKey)) {
+			$noOfRequest = $this->http->req->clientCacheObj->cacheGet(cacheKey: $hashKey);
+		} else {
+			$noOfRequest = 0;
+		}
 
-			$lag = 0;
-			$responseLag = &$sqlConfig['responseLag'];
-			if (is_array(value: $responseLag)) {
-				foreach ($responseLag as $start => $newLag) {
-					if ($noOfRequest > $start) {
-						$lag = $newLag;
-					}
+		$this->http->req->clientCacheObj->cacheSet(
+			cacheKey: $hashKey,
+			value: ++$noOfRequest,
+			expire: 3600
+		);
+
+		$lag = 0;
+		$responseLag = &$sqlConfig['responseLag'];
+		if (is_array(value: $responseLag)) {
+			foreach ($responseLag as $start => $newLag) {
+				if ($noOfRequest > $start) {
+					$lag = $newLag;
 				}
 			}
+		}
 
-			if ($lag > 0) {
-				sleep(seconds: $lag);
-			}
+		if ($lag > 0) {
+			sleep(seconds: $lag);
 		}
 	}
 
