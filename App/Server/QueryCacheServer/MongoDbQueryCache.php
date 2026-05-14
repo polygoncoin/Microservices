@@ -16,8 +16,8 @@
 namespace Microservices\App\Server\Container\NoSql;
 
 use Microservices\App\HttpStatus;
+use Microservices\App\Server\CacheServer\MongoDbCache as QueryCache_MongoDb;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
-use Microservices\App\Server\Container\NoSql\MongoDb as QueryCache_MongoDb;
 
 /**
  * Caching via MongoDb
@@ -159,7 +159,9 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 	{
 		$this->connect();
 
-		return $this->queryCacheServerObj->cacheExist(cacheKey: $queryCacheKey);
+		return $this->queryCacheServerObj->cacheExist(
+			cacheKey: $queryCacheKey
+		);
 	}
 
 	/**
@@ -173,37 +175,45 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 	{
 		$this->connect();
 
-		return $this->queryCacheServerObj->cacheGet($queryCacheKey);
+		return $this->queryCacheServerObj->cacheGet(
+			cacheKey: $queryCacheKey
+		);
 	}
 
 	/**
 	 * Set cache key
 	 *
-	 * @param string $queryCacheKey Query Cache key
-	 * @param string $value         Cache value
+	 * @param string $queryCacheKey   Query Cache key
+	 * @param string $queryCacheValue Query Cache value
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheSet($queryCacheKey, $value): mixed
+	public function queryCacheSet($queryCacheKey, $queryCacheValue): mixed
 	{
 		$this->connect();
 
-		return $this->queryCacheServerObj->cacheSet($queryCacheKey, $value);
+		return $this->queryCacheServerObj->cacheSet(
+			cacheKey: $queryCacheKey,
+			cacheValue: $queryCacheValue
+		);
 	}
 
 	/**
 	 * Increment Query Cache key as per offset
 	 *
-	 * @param string $queryCacheKey Query Cache key
-	 * @param int    $offset        Offset
+	 * @param string $queryCacheKey    Query Cache key
+	 * @param int    $queryCacheOffset Query Cache Offset
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheIncrement($queryCacheKey, $offset = 1): mixed
+	public function queryCacheIncrement($queryCacheKey, $queryCacheOffset = 1): mixed
 	{
 		$this->connect();
 
-		return $this->queryCacheServerObj->cacheIncrement($queryCacheKey, $offset);
+		return $this->queryCacheServerObj->cacheIncrement(
+			cacheKey: $queryCacheKey,
+			cacheOffset: $queryCacheOffset
+		);
 	}
 
 	/**
@@ -217,6 +227,8 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 	{
 		$this->connect();
 
-		return $this->queryCacheServerObj->cacheDelete($queryCacheKey);
+		return $this->queryCacheServerObj->cacheDelete(
+			cacheKey: $queryCacheKey
+		);
 	}
 }

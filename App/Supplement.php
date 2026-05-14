@@ -145,7 +145,7 @@ class Supplement
 				$headerArr['Expires'] = '0';
 
 				$csv = $this->processImportSqlConfig(
-					wSqlConfig: $wSqlConfig,
+					writeSqlConfig: $writeSqlConfig,
 					useHierarchy: $useHierarchy
 				);
 
@@ -179,7 +179,7 @@ class Supplement
 
 		// Set Server mode to execute query on - Read / Write Server
 		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb(
-			cDetail: $this->http->req->s['cDetail'],
+			customerData: $this->http->req->s['customerData'],
 			fetchFrom: 'Master'
 		);
 
@@ -194,7 +194,7 @@ class Supplement
 				$i++
 			) {
 				DbCommonFunction::queryCacheDelete(
-					cID: $this->http->req->cID,
+					customerId: $this->http->req->customerId,
 					queryCacheKey: $sSqlConfig['affectedCacheKeyArr'][$i]
 				);
 			}
@@ -342,8 +342,8 @@ class Supplement
 						if ($idempotentWindow) {
 							$this->http->req->clientCacheObj->cacheSet(
 								cacheKey: $hashKey,
-								value: json_encode(value: $arr),
-								expire: $idempotentWindow
+								cacheValue: json_encode(value: $arr),
+								cacheExpire: $idempotentWindow
 							);
 						}
 					} else { // Failure
@@ -496,7 +496,7 @@ class Supplement
 			// Execute Pre SQL Hook
 			if (isset($sSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
-					$this->hook = new Hook($this->http);
+					$this->hook = new Hook(http: $this->http);
 				}
 				$this->hook->triggerHook(
 					hookConfig: $sSqlConfig['__PRE-SQL-HOOKS__']
@@ -532,7 +532,7 @@ class Supplement
 			// Execute Post SQL Hook
 			if (isset($sSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
-					$this->hook = new Hook($this->http);
+					$this->hook = new Hook(http: $this->http);
 				}
 				$this->hook->triggerHook(
 					hookConfig: $sSqlConfig['__POST-SQL-HOOKS__']

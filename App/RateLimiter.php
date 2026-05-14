@@ -89,7 +89,7 @@ class RateLimiter
 
 		$rateLimitKey = $prefix . $rateLimitKey;
 
-		if ($this->http->req->clientCacheObj->cacheExist($rateLimitKey)) {
+		if ($this->http->req->clientCacheObj->cacheExist(cacheKey: $rateLimitKey)) {
 			$requestCount = (int)$this->http->req->clientCacheObj->cacheGet(
 				cacheKey: $rateLimitKey
 			);
@@ -97,8 +97,8 @@ class RateLimiter
 			$requestCount = 0;
 			$this->http->req->clientCacheObj->cacheSet(
 				cacheKey: $rateLimitKey,
-				value: $requestCount,
-				expire: $remainder
+				cacheValue: $requestCount,
+				cacheExpire: $remainder
 			);
 		}
 		$requestCount++;

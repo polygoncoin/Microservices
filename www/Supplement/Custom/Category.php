@@ -52,7 +52,7 @@ class Category implements CustomInterface
 	{
 		$this->http = &$http;
 		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb(
-			cDetail: $this->http->req->s['cDetail'],
+			customerData: $this->http->req->s['customerData'],
 			fetchFrom: 'Slave'
 		);
 	}

@@ -54,7 +54,7 @@ var payload = [
 
 ## HttpRequest Variables
 
-- **$session\['uDetail'\]** Session Data.
+- **$session\['userData'\]** Session Data.
 This remains same for every request and contains key's like id, group\_id, customer\_id
 
 - **$session\['routeParamArr'\]** Data passed in URI.
@@ -78,7 +78,7 @@ For **GET** method, the **$\_GET** is the payload.
 [
 	'column' => 'parent_id',
 	'fetchFrom' => 'sqlResults',
-	'fetchFromDetail' => 'return:id'
+	'fetchFromData' => 'return:id'
 ],
 ```
 

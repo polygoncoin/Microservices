@@ -112,7 +112,7 @@ class Route
 				. DIRECTORY_SEPARATOR . 'Auth'
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . $this->http->req->s['gDetail']['name'];
+				. DIRECTORY_SEPARATOR . $this->http->req->s['groupData']['name'];
 		}
 
 		foreach ($this->httpMethodArr as $method) {

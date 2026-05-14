@@ -487,26 +487,26 @@ class Session
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param string $sessionID Session id
+	 * @param string $sessionId Session id
 	 *
 	 * @return bool
 	 */
-	public static function deleteSession($sessionID): bool
+	public static function deleteSession($sessionId): bool
 	{
-		return self::$sessionContainer->deleteSession($sessionID);
+		return self::$sessionContainer->deleteSession($sessionId);
 	}
 
 	/**
 	 * For Custom Session Handler - Destroy a session
 	 *
-	 * @param array $sessionIDs Session IDs
+	 * @param array $sessionIds Session IDs
 	 *
 	 * @return void
 	 */
-	public static function deleteSessions($sessionIDs): void
+	public static function deleteSessions($sessionIds): void
 	{
-		for ($i = 0, $iCount = count($sessionIDs); $i < $iCount; $i++) {
-			self::deleteSession($sessionIDs[$i]);
+		for ($i = 0, $iCount = count($sessionIds); $i < $iCount; $i++) {
+			self::deleteSession($sessionIds[$i]);
 		}
 	}
 }

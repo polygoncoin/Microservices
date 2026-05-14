@@ -46,18 +46,18 @@ class QueryCacheServerKey
 	/**
 	 * Query Cache Customer key
 	 *
-	 * @param int  $customerID         Customer id
+	 * @param int  $customerId    Customer Id
 	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function customer(
-		$customerID,
+		$customerId,
 		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isAuthRequest);
-		$customerKey = self::customerKey($customerID);
+		$appKey = self::appKey(isAuthRequest: $isAuthRequest);
+		$customerKey = self::customerKey(customerId: $customerId);
 
 		return $appKey . $customerKey;
 	}
@@ -65,21 +65,21 @@ class QueryCacheServerKey
 	/**
 	 * Query Cache Customer Group key
 	 *
-	 * @param int  $customerID         Customer id
-	 * @param int  $groupID            Group id
+	 * @param int  $customerId    Customer Id
+	 * @param int  $groupId       Group Id
 	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function group(
-		$customerID = null,
-		$groupID = null,
+		$customerId = null,
+		$groupId = null,
 		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isAuthRequest);
-		$customerKey = self::customerKey($customerID);
-		$groupKey = self::groupKey($groupID);
+		$appKey = self::appKey(isAuthRequest: $isAuthRequest);
+		$customerKey = self::customerKey(customerId: $customerId);
+		$groupKey = self::groupKey(groupId: $groupId);
 
 		return $appKey . $customerKey . $groupKey;
 	}
@@ -87,24 +87,24 @@ class QueryCacheServerKey
 	/**
 	 * Query Cache Customer Group User key
 	 *
-	 * @param int  $customerID         Customer id
-	 * @param int  $groupID            Group id
-	 * @param int  $userID             User id
+	 * @param int  $customerId    Customer Id
+	 * @param int  $groupId       Group Id
+	 * @param int  $userId        User Id
 	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function user(
-		$customerID = null,
-		$groupID = null,
-		$userID = null,
+		$customerId = null,
+		$groupId = null,
+		$userId = null,
 		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isAuthRequest);
-		$customerKey = self::customerKey($customerID);
-		$groupKey = self::groupKey($groupID);
-		$userKey = self::userKey($userID);
+		$appKey = self::appKey(isAuthRequest: $isAuthRequest);
+		$customerKey = self::customerKey(customerId: $customerId);
+		$groupKey = self::groupKey(groupId: $groupId);
+		$userKey = self::userKey(userId: $userId);
 
 		return $appKey . $customerKey . $groupKey . $userKey;
 	}
@@ -112,22 +112,21 @@ class QueryCacheServerKey
 	/**
 	 * Category
 	 *
-	 * @param int  $customerID         Customer id
-	 * @param int  $groupID            Group id
-	 * @param int  $userID             User id
+	 * @param int  $customerId    Customer Id
+	 * @param int  $groupId       Group Id
 	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function category(
-		$customerID = null,
-		$groupID = null,
+		$customerId = null,
+		$groupId = null,
 		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isAuthRequest);
-		$customerKey = self::customerKey($customerID);
-		$groupKey = self::groupKey($groupID);
+		$appKey = self::appKey(isAuthRequest: $isAuthRequest);
+		$customerKey = self::customerKey(customerId: $customerId);
+		$groupKey = self::groupKey(groupId: $groupId);
 
 		return $appKey . $customerKey . $groupKey . ':category';
 	}
@@ -135,21 +134,21 @@ class QueryCacheServerKey
 	/**
 	 * Category1
 	 *
-	 * @param int  $customerID         Customer id
-	 * @param int  $groupID            Group id
+	 * @param int  $customerId    Customer Id
+	 * @param int  $groupId       Group Id
 	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function category1(
-		$customerID = null,
-		$groupID = null,
+		$customerId = null,
+		$groupId = null,
 		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isAuthRequest);
-		$customerKey = self::customerKey($customerID);
-		$groupKey = self::groupKey($groupID);
+		$appKey = self::appKey(isAuthRequest: $isAuthRequest);
+		$customerKey = self::customerKey(customerId: $customerId);
+		$groupKey = self::groupKey(groupId: $groupId);
 
 		return $appKey . $customerKey . $groupKey . ':category:1';
 	}
@@ -169,36 +168,36 @@ class QueryCacheServerKey
 	/**
 	 * Query Cache Customer key
 	 *
-	 * @param int $customerID Customer id
+	 * @param int $customerId Customer Id
 	 *
 	 * @return string
 	 */
-	private static function customerKey($customerID): string
+	private static function customerKey($customerId): string
 	{
-		return $customerID !== null ? ":c:{$customerID}" : '';
+		return $customerId !== null ? ":c:{$customerId}" : '';
 	}
 
 	/**
 	 * Query Cache Group key
 	 *
-	 * @param int $groupID Group id
+	 * @param int $groupId Group Id
 	 *
 	 * @return string
 	 */
-	private static function groupKey($groupID): string
+	private static function groupKey($groupId): string
 	{
-		return $groupID !== null ? ":g:{$groupID}" : '';
+		return $groupId !== null ? ":g:{$groupId}" : '';
 	}
 
 	/**
 	 * Query Cache User key
 	 *
-	 * @param int $userID User id
+	 * @param int $userId User Id
 	 *
 	 * @return string
 	 */
-	private static function userKey($userID): string
+	private static function userKey($userId): string
 	{
-		return $userID !== null ? ":u:{$userID}" : '';
+		return $customerId !== null ? ":u:{$userId}" : '';
 	}
 }

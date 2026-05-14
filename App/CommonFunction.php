@@ -37,7 +37,7 @@ class CommonFunction
 	/**
 	 * Check Errors related to File Upload
 	 *
-	 * @param array $httpFileArr $this->http->httpReqDetailArr['files']
+	 * @param array $httpFileArr $this->http->httpReqData['files']
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -173,7 +173,7 @@ class CommonFunction
 	 * Check IP with CIDR based on cache key containing start and end IP number
 	 *
 	 * @param CacheServerInterface $cacheObj     Cache Server object
-	 * @param string               $IP           $this->http->httpReqDetailArr['server']['httpRequestIP']
+	 * @param string               $IP           $this->http->httpReqData['server']['httpRequestIP']
 	 * @param string               $cidrCacheKey Cache Key(s)
 	 *
 	 * @return void
@@ -203,7 +203,7 @@ class CommonFunction
 	/**
 	 * Check IP with CIDR
 	 *
-	 * @param string $IP         $this->http->httpReqDetailArr['server']['httpRequestIP']
+	 * @param string $IP         $this->http->httpReqData['server']['httpRequestIP']
 	 * @param string $cidrString CIDRs
 	 *
 	 * @return null|bool
@@ -273,28 +273,28 @@ class CommonFunction
 
 		self::checkCacheCidr(
 			cacheObj: DbCommonFunction::$gCacheServer,
-			IP: $http->httpReqDetailArr['server']['httpRequestIP'],
+			IP: $http->httpReqData['server']['httpRequestIP'],
 			cidrCacheKey: CacheServerKey::customerCidr(
-				cID: $http->req->cID
+				customerId: $http->req->customerId
 			)
 		);
 
 		if ($http !== null) {
 			self::checkCacheCidr(
 				cacheObj: $http->req->clientCacheObj,
-				IP: $http->httpReqDetailArr['server']['httpRequestIP'],
+				IP: $http->httpReqData['server']['httpRequestIP'],
 				cidrCacheKey: CacheServerKey::customerGroupCidr(
-					cID: $http->req->cID,
-					gID: $http->req->gID
+					customerId: $http->req->customerId,
+					groupId: $http->req->groupId
 				)
 			);
 
 			self::checkCacheCidr(
 				cacheObj: $http->req->clientCacheObj,
-				IP: $http->httpReqDetailArr['server']['httpRequestIP'],
+				IP: $http->httpReqData['server']['httpRequestIP'],
 				cidrCacheKey: CacheServerKey::customerUserCidr(
-					cID: $http->req->cID,
-					uID: $http->req->uID
+					customerId: $http->req->customerId,
+					userId: $http->req->userId
 				)
 			);
 		}
@@ -309,7 +309,7 @@ class CommonFunction
 	 */
 	public static function httpRequestHash($hashArray): string
 	{
-		return md5(json_encode($hashArray));
+		return md5(json_encode(value: $hashArray));
 	}
 
 	/**

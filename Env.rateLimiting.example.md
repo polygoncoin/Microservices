@@ -17,12 +17,12 @@ enableRateLimiting=0                    ; 1 = true / 0 = false in
 ```ini
 ; 1 = true / 0 = false
 enableRateLimitForIp=0              ; Function = IP
-enableRateLimitForCustomer=0          ; Function = Customer id
-enableRateLimitForGroup=0           ; Function = Group id
-enableRateLimitForUser=0            ; Function = User id
+enableRateLimitForCustomer=0          ; Function = Customer Id
+enableRateLimitForGroup=0           ; Function = Group Id
+enableRateLimitForUser=0            ; Function = User Id
 enableRateLimitForRoute=0           ; Function = Configured Route
-enableRateLimitForUserPerIp=0      ; Function = IP & User id
-enableRateLimitForUserRequest=0    ; Function = request & User id
+enableRateLimitForUserPerIp=0      ; Function = IP & User Id
+enableRateLimitForUserRequest=0    ; Function = request & User Id
 ```
 
 ## Setting Rate Limiting key's to be used as identifier with Function(s) combined
