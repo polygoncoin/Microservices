@@ -65,7 +65,7 @@ class MemcachedCache implements CacheServerInterface
 	 *
 	 * @var null|string
 	 */
-	private $cacheServerDb = null;
+	private $cacheServerDatabase = null;
 
 	/**
 	 * Cache collection
@@ -88,7 +88,7 @@ class MemcachedCache implements CacheServerInterface
 	 * @param int         $cacheServerPort     Cache Server Port
 	 * @param string      $cacheServerUsername Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDb       Cache Server Database
+	 * @param null|string $cacheServerDatabase Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
@@ -96,14 +96,14 @@ class MemcachedCache implements CacheServerInterface
 		$cacheServerPort,
 		$cacheServerUsername,
 		$cacheServerPassword,
-		$cacheServerDb,
+		$cacheServerDatabase,
 		$cacheServerTable
 	) {
 		$this->cacheServerHostname = $cacheServerHostname;
 		$this->cacheServerPort = $cacheServerPort;
 		$this->cacheServerUsername = $cacheServerUsername;
 		$this->cacheServerPassword = $cacheServerPassword;
-		$this->cacheServerDb = $cacheServerDb;
+		$this->cacheServerDatabase = $cacheServerDatabase;
 		$this->cacheServerTable = $cacheServerTable;
 	}
 
@@ -125,7 +125,7 @@ class MemcachedCache implements CacheServerInterface
 				cacheServerPort: $this->cacheServerPort,
 				cacheServerUsername: $this->cacheServerUsername,
 				cacheServerPassword: $this->cacheServerPassword,
-				cacheServerDb: $this->cacheServerDb,
+				cacheServerDatabase: $this->cacheServerDatabase,
 				cacheServerTable: $this->cacheServerTable
 			);
 		} catch (\Exception $e) {

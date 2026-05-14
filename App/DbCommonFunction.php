@@ -69,7 +69,7 @@ class DbCommonFunction
 	 * @param int         $cacheServerPort     Cache Server Port
 	 * @param string      $cacheServerUsername Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDb       Cache Server Database
+	 * @param null|string $cacheServerDatabase Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 *
 	 * @return CacheServerInterface
@@ -80,7 +80,7 @@ class DbCommonFunction
 		$cacheServerPort,
 		$cacheServerUsername,
 		$cacheServerPassword,
-		$cacheServerDb,
+		$cacheServerDatabase,
 		$cacheServerTable
 	): CacheServerInterface {
 		$cacheServer = new CacheServer(
@@ -89,7 +89,7 @@ class DbCommonFunction
 			cacheServerPort: $cacheServerPort,
 			cacheServerUsername: $cacheServerUsername,
 			cacheServerPassword: $cacheServerPassword,
-			cacheServerDb: $cacheServerDb,
+			cacheServerDatabase: $cacheServerDatabase,
 			cacheServerTable: $cacheServerTable
 		);
 
@@ -112,7 +112,7 @@ class DbCommonFunction
 			cacheServerPort: Env::$gCacheServerPort,
 			cacheServerUsername: Env::$gCacheServerUsername,
 			cacheServerPassword: Env::$gCacheServerPassword,
-			cacheServerDb: Env::$gCacheServerDb,
+			cacheServerDatabase: Env::$gCacheServerDatabase,
 			cacheServerTable: Env::$gCacheServerTable
 		);
 	}
@@ -134,7 +134,7 @@ class DbCommonFunction
 			cacheServerPort: $clientCacheDetail['cacheServerPort'],
 			cacheServerUsername: $clientCacheDetail['cacheServerUsername'],
 			cacheServerPassword: $clientCacheDetail['cacheServerPassword'],
-			cacheServerDb: $clientCacheDetail['cacheServerDb'],
+			cacheServerDatabase: $clientCacheDetail['cacheServerDatabase'],
 			cacheServerTable: $clientCacheDetail['cacheServerTable']
 		);
 	}
@@ -158,7 +158,7 @@ class DbCommonFunction
 			queryCacheServerPort: Env::$queryCacheServerPort,
 			queryCacheServerUsername: Env::$queryCacheServerUsername,
 			queryCacheServerPassword: Env::$queryCacheServerPassword,
-			queryCacheServerDb: Env::$queryCacheServerDb,
+			queryCacheServerDatabase: Env::$queryCacheServerDatabase,
 			queryCacheServerTable: Env::$queryCacheServerTable
 		);
 
@@ -173,7 +173,7 @@ class DbCommonFunction
 	 * @param int         $dbServerPort     Database Server Port
 	 * @param string      $dbServerUsername Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDb       Database Server Database
+	 * @param null|string $dbServerDatabase Database Server Database
 	 *
 	 * @return DatabaseServerInterface
 	 */
@@ -183,7 +183,7 @@ class DbCommonFunction
 		$dbServerPort,
 		$dbServerUsername,
 		$dbServerPassword,
-		$dbServerDb
+		$dbServerDatabase
 	): DatabaseServerInterface {
 		$dbServer = new DatabaseServer(
 			dbServerType: $dbServerType,
@@ -191,7 +191,7 @@ class DbCommonFunction
 			dbServerPort: $dbServerPort,
 			dbServerUsername: $dbServerUsername,
 			dbServerPassword: $dbServerPassword,
-			dbServerDb: $dbServerDb
+			dbServerDatabase: $dbServerDatabase
 		);
 
 		return $dbServer->connectDb();
@@ -213,7 +213,7 @@ class DbCommonFunction
 			dbServerPort: Env::$gDbServerPort,
 			dbServerUsername: Env::$gDbServerUsername,
 			dbServerPassword: Env::$gDbServerPassword,
-			dbServerDb: Env::$gDbServerDb
+			dbServerDatabase: Env::$gDbServerDatabase
 		);
 	}
 
@@ -238,7 +238,7 @@ class DbCommonFunction
 					dbServerPort: $clientDbMasterDetail['dbServerPort'],
 					dbServerUsername: $clientDbMasterDetail['dbServerUsername'],
 					dbServerPassword: $clientDbMasterDetail['dbServerPassword'],
-					dbServerDb: $clientDbMasterDetail['dbServerDb']
+					dbServerDatabase: $clientDbMasterDetail['dbServerDatabase']
 				);
 				break;
 			case 'Slave':
@@ -249,7 +249,7 @@ class DbCommonFunction
 					dbServerPort: $dbSlaveDetail['dbServerPort'],
 					dbServerUsername: $dbSlaveDetail['dbServerUsername'],
 					dbServerPassword: $dbSlaveDetail['dbServerPassword'],
-					dbServerDb: $dbSlaveDetail['dbServerDb']
+					dbServerDatabase: $dbSlaveDetail['dbServerDatabase']
 				);
 				break;
 			default:
@@ -375,7 +375,7 @@ class DbCommonFunction
 			'cacheServerPort' => getenv(name: $cDetail['cache_server_port']),
 			'cacheServerUsername' => getenv(name: $cDetail['cache_server_username']),
 			'cacheServerPassword' => getenv(name: $cDetail['cache_server_password']),
-			'cacheServerDb' => getenv(name: $cDetail['cache_server_db']),
+			'cacheServerDatabase' => getenv(name: $cDetail['cache_server_db']),
 			'cacheServerTable' => getenv(name: $cDetail['cache_server_table'])
 		];
 	}
@@ -395,7 +395,7 @@ class DbCommonFunction
 			'dbServerPort' => getenv(name: $cDetail['master_db_server_port']),
 			'dbServerUsername' => getenv(name: $cDetail['master_db_server_username']),
 			'dbServerPassword' => getenv(name: $cDetail['master_db_server_password']),
-			'dbServerDb' => getenv(name: $cDetail['master_db_server_db']),
+			'dbServerDatabase' => getenv(name: $cDetail['master_db_server_db']),
 		];
 	}
 
@@ -414,7 +414,7 @@ class DbCommonFunction
 			'dbServerPort' => getenv(name: $cDetail['slave_db_server_port']),
 			'dbServerUsername' => getenv(name: $cDetail['slave_db_server_username']),
 			'dbServerPassword' => getenv(name: $cDetail['slave_db_server_password']),
-			'dbServerDb' => getenv(name: $cDetail['slave_db_server_db']),
+			'dbServerDatabase' => getenv(name: $cDetail['slave_db_server_db']),
 		];
 	}
 }

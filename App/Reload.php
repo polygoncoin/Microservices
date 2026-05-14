@@ -100,7 +100,7 @@ class Reload
 				cacheServerPort: $clientCacheDetail['cacheServerPort'],
 				cacheServerUsername: $clientCacheDetail['cacheServerUsername'],
 				cacheServerPassword: $clientCacheDetail['cacheServerPassword'],
-				cacheServerDb: $clientCacheDetail['cacheServerDb'],
+				cacheServerDatabase: $clientCacheDetail['cacheServerDatabase'],
 				cacheServerTable: $clientCacheDetail['cacheServerTable']
 			);
 
@@ -111,7 +111,7 @@ class Reload
 				dbServerPort: $clientDbMasterDetail['dbServerPort'],
 				dbServerUsername: $clientDbMasterDetail['dbServerUsername'],
 				dbServerPassword: $clientDbMasterDetail['dbServerPassword'],
-				dbServerDb: $clientDbMasterDetail['dbServerDb']
+				dbServerDatabase: $clientDbMasterDetail['dbServerDatabase']
 			);
 
 			// Groups

@@ -66,7 +66,7 @@ class RedisQueryCache implements QueryCacheServerInterface
 	 *
 	 * @var null|string
 	 */
-	private $queryCacheServerDb = null;
+	private $queryCacheServerDatabase = null;
 
 	/**
 	 * Cache collection
@@ -89,7 +89,7 @@ class RedisQueryCache implements QueryCacheServerInterface
 	 * @param int         $queryCacheServerPort     Query Cache Server Port
 	 * @param string      $queryCacheServerUsername Query Cache Server Username
 	 * @param string      $queryCacheServerPassword Query Cache Server Password
-	 * @param null|string $queryCacheServerDb       Query Cache Server Database
+	 * @param null|string $queryCacheServerDatabase Query Cache Server Database
 	 * @param null|string $queryCacheServerTable    Query Cache Server Table
 	 */
 	public function __construct(
@@ -97,14 +97,14 @@ class RedisQueryCache implements QueryCacheServerInterface
 		$queryCacheServerPort,
 		$queryCacheServerUsername,
 		$queryCacheServerPassword,
-		$queryCacheServerDb,
+		$queryCacheServerDatabase,
 		$queryCacheServerTable
 	) {
 		$this->queryCacheServerHostname = $queryCacheServerHostname;
 		$this->queryCacheServerPort = $queryCacheServerPort;
 		$this->queryCacheServerUsername = $queryCacheServerUsername;
 		$this->queryCacheServerPassword = $queryCacheServerPassword;
-		$this->queryCacheServerDb = $queryCacheServerDb;
+		$this->queryCacheServerDatabase = $queryCacheServerDatabase;
 		$this->queryCacheServerTable = $queryCacheServerTable;
 	}
 
@@ -126,7 +126,7 @@ class RedisQueryCache implements QueryCacheServerInterface
 				cacheServerPort: $this->queryCacheServerPort,
 				cacheServerUsername: $this->queryCacheServerUsername,
 				cacheServerPassword: $this->queryCacheServerPassword,
-				cacheServerDb: $this->queryCacheServerDb,
+				cacheServerDatabase: $this->queryCacheServerDatabase,
 				cacheServerTable: $this->queryCacheServerTable
 			);
 		} catch (\Exception $e) {

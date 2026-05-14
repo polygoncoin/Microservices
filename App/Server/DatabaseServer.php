@@ -72,7 +72,7 @@ class DatabaseServer
 	 *
 	 * @var null|string
 	 */
-	private $dbServerDb = null;
+	private $dbServerDatabase = null;
 
 	/**
 	 * Constructor
@@ -82,7 +82,7 @@ class DatabaseServer
 	 * @param int         $dbServerPort     Database Server Port
 	 * @param string      $dbServerUsername Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDb       Database Server Database
+	 * @param null|string $dbServerDatabase Database Server Database
 	 *
 	 * @return DatabaseServerInterface
 	 */
@@ -92,14 +92,14 @@ class DatabaseServer
 		$dbServerPort,
 		$dbServerUsername,
 		$dbServerPassword,
-		$dbServerDb
+		$dbServerDatabase
 	) {
 		$this->dbServerType = $dbServerType;
 		$this->dbServerHostname = $dbServerHostname;
 		$this->dbServerPort = $dbServerPort;
 		$this->dbServerUsername = $dbServerUsername;
 		$this->dbServerPassword = $dbServerPassword;
-		$this->dbServerDb = $dbServerDb;
+		$this->dbServerDatabase = $dbServerDatabase;
 
 		return $this->connectDb();
 	}
@@ -126,7 +126,7 @@ class DatabaseServer
 			dbServerPort: $this->dbServerPort,
 			dbServerUsername: $this->dbServerUsername,
 			dbServerPassword: $this->dbServerPassword,
-			dbServerDb: $this->dbServerDb
+			dbServerDatabase: $this->dbServerDatabase
 		);
 	}
 }

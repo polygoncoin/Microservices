@@ -71,7 +71,7 @@ class ExportDatabaseServer
 	 * @param int         $dbServerPort     Database Server Port
 	 * @param string      $dbServerUsername Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDb       Database Server Database
+	 * @param null|string $dbServerDatabase Database Server Database
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -81,14 +81,14 @@ class ExportDatabaseServer
 		$dbServerPort,
 		$dbServerUsername,
 		$dbServerPassword,
-		$dbServerDb
+		$dbServerDatabase
 	): void {
 		$this->exportDbServerObj->init(
 			dbServerHostname: $dbServerHostname,
 			dbServerPort: $dbServerPort,
 			dbServerUsername: $dbServerUsername,
 			dbServerPassword: $dbServerPassword,
-			dbServerDb: $dbServerDb
+			dbServerDatabase: $dbServerDatabase
 		);
 	}
 

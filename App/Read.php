@@ -728,7 +728,7 @@ class Read
 			dbServerPort: $exportDbDetail['dbServerPort'],
 			dbServerUsername: $exportDbDetail['dbServerUsername'],
 			dbServerPassword: $exportDbDetail['dbServerPassword'],
-			dbServerDb: $exportDbDetail['dbServerDb']
+			dbServerDatabase: $exportDbDetail['dbServerDatabase']
 		);
 
 		if (isset($rSqlConfig['downloadFile'])) {

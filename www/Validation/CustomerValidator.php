@@ -95,10 +95,10 @@ class CustomerValidator implements ValidatorInterface
 	 */
 	private function getPrimaryCount(&$table, $primary, &$id): int
 	{
-		$dbServerDb = $this->http->req->clientDbObj->dbServerDb;
+		$dbServerDatabase = $this->http->req->clientDbObj->dbServerDatabase;
 		$sql = "
 			SELECT count(1) as `count`
-			FROM `{$dbServerDb}`.`{$table}`
+			FROM `{$dbServerDatabase}`.`{$table}`
 			WHERE `{$primary}` = ?
 		";
 		$paramArr = [$id];

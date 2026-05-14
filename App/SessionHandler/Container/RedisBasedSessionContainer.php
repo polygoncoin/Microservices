@@ -37,7 +37,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	public $redisServerPort = null;
 	public $redisServerUsername = null;
 	public $redisServerPassword = null;
-	public $redisServerDb = null;
+	public $redisServerDatabase = null;
 
 	private $redisServerObj = null;
 
@@ -213,7 +213,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 			$this->redisServerObj = new \Redis( // phpcs:ignore
 				$connParamArr
 			);
-			$this->redisServerObj->select($this->redisServerDb);
+			$this->redisServerObj->select($this->redisServerDatabase);
 		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}

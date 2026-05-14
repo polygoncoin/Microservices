@@ -65,7 +65,7 @@ class Redis implements NoSqlInterface
 	 *
 	 * @var null|string
 	 */
-	private $cacheServerDb = null;
+	private $cacheServerDatabase = null;
 
 	/**
 	 * Cache Server Object
@@ -81,7 +81,7 @@ class Redis implements NoSqlInterface
 	 * @param int         $cacheServerPort     Cache Server Port
 	 * @param string      $cacheServerUsername Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDb       Cache Server Database
+	 * @param null|string $cacheServerDatabase Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
@@ -89,14 +89,14 @@ class Redis implements NoSqlInterface
 		$cacheServerPort,
 		$cacheServerUsername,
 		$cacheServerPassword,
-		$cacheServerDb,
+		$cacheServerDatabase,
 		$cacheServerTable
 	) {
 		$this->cacheServerHostname = $cacheServerHostname;
 		$this->cacheServerPort = $cacheServerPort;
 		$this->cacheServerUsername = $cacheServerUsername;
 		$this->cacheServerPassword = $cacheServerPassword;
-		$this->cacheServerDb = $cacheServerDb;
+		$this->cacheServerDatabase = $cacheServerDatabase;
 	}
 
 	/**
@@ -130,8 +130,8 @@ class Redis implements NoSqlInterface
 			}
 			$this->cacheServerObj = new \Redis($connParamArr);
 
-			if (!empty($this->cacheServerDb)) {
-				$this->cacheServerObj->select($this->cacheServerDb);
+			if (!empty($this->cacheServerDatabase)) {
+				$this->cacheServerObj->select($this->cacheServerDatabase);
 			}
 
 			if (!$this->cacheServerObj->ping()) {
