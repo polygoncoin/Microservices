@@ -194,6 +194,7 @@ class Supplement
 				$i++
 			) {
 				DbCommonFunction::queryCacheDelete(
+					cID: $this->http->req->cID,
 					queryCacheKey: $sSqlConfig['affectedCacheKeyArr'][$i]
 				);
 			}

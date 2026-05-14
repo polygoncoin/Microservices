@@ -184,6 +184,7 @@ class Write
 				$i++
 			) {
 				DbCommonFunction::queryCacheDelete(
+					cID: $this->http->req->cID,
 					queryCacheKey: $wSqlConfig['affectedCacheKeyArr'][$i]
 				);
 			}

@@ -261,15 +261,34 @@ class DbCommonFunction
 	}
 
 	/**
+	 * Prepend Query Cache key
+	 *
+	 * @param int    $cID           Customer id
+	 * @param string $queryCacheKey Query Cache key
+	 *
+	 * @return string
+	 */
+	public static function queryCachePrepend($cID, $queryCacheKey): string
+	{
+		return "qc:{$cID}:{$queryCacheKey}";
+	}
+
+	/**
 	 * Get Query Cache key
 	 *
+	 * @param int    $cID           Customer id
 	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return mixed
 	 */
-	public static function queryCacheGet($queryCacheKey): mixed
+	public static function queryCacheGet($cID, $queryCacheKey): mixed
 	{
 		self::connectQueryCache();
+
+		$queryCacheKey = self::queryCachePrepend(
+			cID: $cID,
+			queryCacheKey: $queryCacheKey
+		);
 
 		$json = null;
 		if (self::$queryCacheServer->queryCacheExist(queryCacheKey: $queryCacheKey)) {
@@ -282,13 +301,19 @@ class DbCommonFunction
 	/**
 	 * Increment Query Cache key counter
 	 *
+	 * @param int    $cID           Customer id
 	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return int
 	 */
-	public static function queryCacheIncrement($queryCacheKey): int
+	public static function queryCacheIncrement($cID, $queryCacheKey): int
 	{
 		self::connectQueryCache();
+
+		$queryCacheKey = self::queryCachePrepend(
+			cID: $cID,
+			queryCacheKey: $queryCacheKey
+		);
 
 		return self::$queryCacheServer->queryCacheIncrement(queryCacheKey: 'i:' . $queryCacheKey);
 	}
@@ -296,14 +321,20 @@ class DbCommonFunction
 	/**
 	 * Set Query Cache key
 	 *
+	 * @param int    $cID           Customer id
 	 * @param string $queryCacheKey Query Cache key
 	 * @param string $json          JSON
 	 *
 	 * @return void
 	 */
-	public static function queryCacheSet($queryCacheKey, &$json): void
+	public static function queryCacheSet($cID, $queryCacheKey, &$json): void
 	{
 		self::connectQueryCache();
+
+		$queryCacheKey = self::queryCachePrepend(
+			cID: $cID,
+			queryCacheKey: $queryCacheKey
+		);
 
 		self::$queryCacheServer->queryCacheSet(queryCacheKey: $queryCacheKey, value: $json);
 		self::$queryCacheServer->queryCacheDelete(queryCacheKey: 'i:' . $queryCacheKey);
@@ -312,13 +343,19 @@ class DbCommonFunction
 	/**
 	 * Delete Query Cache key
 	 *
+	 * @param int    $cID           Customer id
 	 * @param string $queryCacheKey Query Cache key
 	 *
 	 * @return void
 	 */
-	public static function queryCacheDelete($queryCacheKey): void
+	public static function queryCacheDelete($cID, $queryCacheKey): void
 	{
 		self::connectQueryCache();
+
+		$queryCacheKey = self::queryCachePrepend(
+			cID: $cID,
+			queryCacheKey: $queryCacheKey
+		);
 
 		self::$queryCacheServer->queryCacheDelete(queryCacheKey: $queryCacheKey);
 	}

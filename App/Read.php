@@ -122,6 +122,7 @@ class Read
 			$queryCacheReqFlag = false;
 			for ($i = 0;$i < 5; $i++) {
 				$json = DbCommonFunction::queryCacheGet(
+					cID: $this->http->req->cID,
 					queryCacheKey: $rSqlConfig['cacheKey']
 				);
 				if ($json !== null) {
@@ -134,7 +135,10 @@ class Read
 					return true;
 				} else {
 					if (!$queryCacheReqFlag) {
-						$cacheReqCount = DbCommonFunction::queryCacheIncrement(queryCacheKey: $rSqlConfig['cacheKey']);
+						$cacheReqCount = DbCommonFunction::queryCacheIncrement(
+							cID: $this->http->req->cID,
+							queryCacheKey: $rSqlConfig['cacheKey']
+						);
 						if ($cacheReqCount === 1) {
 							$toBeCached = true;
 							break;
@@ -221,6 +225,7 @@ class Read
 		) {
 			$json = $this->dataEncode->getData();
 			DbCommonFunction::queryCacheSet(
+				cID: $this->http->req->cID,
 				queryCacheKey: $rSqlConfig['cacheKey'],
 				json: $json
 			);
