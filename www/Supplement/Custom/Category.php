@@ -51,7 +51,10 @@ class Category implements CustomInterface
 	public function __construct(Http &$http)
 	{
 		$this->http = &$http;
-		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Slave');
+		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb(
+			cDetail: $this->http->req->s['cDetail'],
+			fetchFrom: 'Slave'
+		);
 	}
 
 	/**

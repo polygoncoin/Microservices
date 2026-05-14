@@ -54,8 +54,7 @@ class RateLimiter
 		}
 
 		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache(
-			req: $this->http->req,
-			fetchFrom: 'Master'
+			cDetail: $this->http->req->s['cDetail']
 		);
 	}
 

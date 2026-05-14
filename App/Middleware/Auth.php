@@ -71,7 +71,9 @@ class Auth
 			return;
 		}
 		
-		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache($this->http->req, fetchFrom: 'Master');
+		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache(
+			cDetail: $this->http->req->s['cDetail']
+		);
 
 		if (
 			isset($_SESSION)

@@ -178,7 +178,10 @@ class Supplement
 			? $sSqlConfig['isTransaction'] : false;
 
 		// Set Server mode to execute query on - Read / Write Server
-		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Master');
+		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb(
+			cDetail: $this->http->req->s['cDetail'],
+			fetchFrom: 'Master'
+		);
 
 		$this->processSupplement(
 			sSqlConfig: $sSqlConfig,

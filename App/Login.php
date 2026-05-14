@@ -184,7 +184,9 @@ class Login
 	 */
 	private function loadUserDetail(): void
 	{
-		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache($this->http->req, fetchFrom: 'Master');
+		$this->http->req->clientCacheObj = DbCommonFunction::connectClientCache(
+			cDetail: $this->http->req->s['cDetail']
+		);
 
 		$cID = $this->http->req->cID;
 		$customerUserKey = CacheServerKey::customerUsername(
@@ -497,7 +499,10 @@ class Login
 	 */
 	private function updateDb(&$userData): void
 	{
-		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb($this->http->req, fetchFrom: 'Master');
+		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb(
+			cDetail: $this->http->req->s['cDetail'],
+			fetchFrom: 'Master'
+		);
 
 		$this->http->req->clientDbObj->execDbQuery(
 			sql: "

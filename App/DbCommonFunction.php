@@ -16,7 +16,6 @@
 namespace Microservices\App;
 
 use Microservices\App\Env;
-use Microservices\App\HttpRequest;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer;
 use Microservices\App\Server\DatabaseServer;
@@ -121,53 +120,23 @@ class DbCommonFunction
 	/**
 	 * Connect client Cache based on $fetchFrom
 	 *
-	 * @param HttpRequest $req
-	 * @param string      $fetchFrom Master/Slave
+	 * @param array $cDetail Customer detail
 	 *
 	 * @return CacheServerInterface
 	 * @throws \Exception
 	 */
-	public static function connectClientCache(&$req, $fetchFrom): CacheServerInterface
+	public static function connectClientCache(&$cDetail): CacheServerInterface
 	{
-		if ($req->s['cDetail'] === null) {
-			throw new \Exception(
-				message: 'Yet to set connection params',
-				code: HttpStatus::$InternalServerError
-			);
-		}
-
-		// Set Database credentials
-		switch ($fetchFrom) {
-			case 'Master':
-				$clientCacheMasterDetail = self::clientCacheMasterDetail(cDetail: $req->s['cDetail']);
-				return self::connectCache(
-					cacheServerType: $clientCacheMasterDetail['cacheServerType'],
-					cacheServerHostname: $clientCacheMasterDetail['cacheServerHostname'],
-					cacheServerPort: $clientCacheMasterDetail['cacheServerPort'],
-					cacheServerUsername: $clientCacheMasterDetail['cacheServerUsername'],
-					cacheServerPassword: $clientCacheMasterDetail['cacheServerPassword'],
-					cacheServerDb: $clientCacheMasterDetail['cacheServerDb'],
-					cacheServerTable: $clientCacheMasterDetail['cacheServerTable']
-				);
-				break;
-			case 'Slave':
-				$cacheSlaveDetail = self::cacheSlaveDetail(cDetail: $req->s['cDetail']);
-				return self::connectCache(
-					cacheServerType: $cacheSlaveDetail['cacheServerType'],
-					cacheServerHostname: $cacheSlaveDetail['cacheServerHostname'],
-					cacheServerPort: $cacheSlaveDetail['cacheServerPort'],
-					cacheServerUsername: $cacheSlaveDetail['cacheServerUsername'],
-					cacheServerPassword: $cacheSlaveDetail['cacheServerPassword'],
-					cacheServerDb: $cacheSlaveDetail['cacheServerDb'],
-					cacheServerTable: $cacheSlaveDetail['cacheServerTable']
-				);
-				break;
-			default:
-				throw new \Exception(
-					message: "Invalid fetchFrom value '{$fetchFrom}'",
-					code: HttpStatus::$InternalServerError
-				);
-		}
+		$clientCacheDetail = self::clientCacheDetail(cDetail: $cDetail);
+		return self::connectCache(
+			cacheServerType: $clientCacheDetail['cacheServerType'],
+			cacheServerHostname: $clientCacheDetail['cacheServerHostname'],
+			cacheServerPort: $clientCacheDetail['cacheServerPort'],
+			cacheServerUsername: $clientCacheDetail['cacheServerUsername'],
+			cacheServerPassword: $clientCacheDetail['cacheServerPassword'],
+			cacheServerDb: $clientCacheDetail['cacheServerDb'],
+			cacheServerTable: $clientCacheDetail['cacheServerTable']
+		);
 	}
 
 	/**
@@ -251,25 +220,18 @@ class DbCommonFunction
 	/**
 	 * Connect client Database based on $fetchFrom
 	 *
-	 * @param HttpRequest $req
-	 * @param string      $fetchFrom Master/Slave
+	 * @param array  $cDetail Customer detail
+	 * @param string $fetchFrom Master/Slave
 	 *
 	 * @return DatabaseServerInterface
 	 * @throws \Exception
 	 */
-	public static function connectClientDb(&$req, $fetchFrom): DatabaseServerInterface
+	public static function connectClientDb(&$cDetail, $fetchFrom): DatabaseServerInterface
 	{
-		if ($req->s['cDetail'] === null) {
-			throw new \Exception(
-				message: 'Yet to set connection params',
-				code: HttpStatus::$InternalServerError
-			);
-		}
-
 		// Set Database credentials
 		switch ($fetchFrom) {
 			case 'Master':
-				$clientDbMasterDetail = self::clientDbMasterDetail(cDetail: $req->s['cDetail']);
+				$clientDbMasterDetail = self::clientDbMasterDetail(cDetail: $cDetail);
 				return self::connectDb(
 					dbServerType: $clientDbMasterDetail['dbServerType'],
 					dbServerHostname: $clientDbMasterDetail['dbServerHostname'],
@@ -280,7 +242,7 @@ class DbCommonFunction
 				);
 				break;
 			case 'Slave':
-				$dbSlaveDetail = self::dbSlaveDetail(cDetail: $req->s['cDetail']);
+				$dbSlaveDetail = self::dbSlaveDetail(cDetail: $cDetail);
 				return self::connectDb(
 					dbServerType: $dbSlaveDetail['dbServerType'],
 					dbServerHostname: $dbSlaveDetail['dbServerHostname'],
@@ -368,36 +330,16 @@ class DbCommonFunction
 	 *
 	 * @return array
 	 */
-	public static function clientCacheMasterDetail(&$cDetail): array
+	public static function clientCacheDetail(&$cDetail): array
 	{
 		return [
-			'cacheServerType' => getenv(name: $cDetail['master_cache_server_type']),
-			'cacheServerHostname' => getenv(name: $cDetail['master_cache_server_hostname']),
-			'cacheServerPort' => getenv(name: $cDetail['master_cache_server_port']),
-			'cacheServerUsername' => getenv(name: $cDetail['master_cache_server_username']),
-			'cacheServerPassword' => getenv(name: $cDetail['master_cache_server_password']),
-			'cacheServerDb' => getenv(name: $cDetail['master_cache_server_db']),
-			'cacheServerTable' => getenv(name: $cDetail['master_cache_server_table'])
-		];
-	}
-
-	/**
-	 * Returns Cache Slave Server detail
-	 *
-	 * @param array $cDetail Customer detail
-	 *
-	 * @return array
-	 */
-	public static function cacheSlaveDetail(&$cDetail): array
-	{
-		return [
-			'cacheServerType' => getenv(name: $cDetail['slave_cache_server_type']),
-			'cacheServerHostname' => getenv(name: $cDetail['slave_cache_server_hostname']),
-			'cacheServerPort' => getenv(name: $cDetail['slave_cache_server_port']),
-			'cacheServerUsername' => getenv(name: $cDetail['slave_cache_server_username']),
-			'cacheServerPassword' => getenv(name: $cDetail['slave_cache_server_password']),
-			'cacheServerDb' => getenv(name: $cDetail['slave_cache_server_db']),
-			'cacheServerTable' => getenv(name: $cDetail['slave_cache_server_table'])
+			'cacheServerType' => getenv(name: $cDetail['cache_server_type']),
+			'cacheServerHostname' => getenv(name: $cDetail['cache_server_hostname']),
+			'cacheServerPort' => getenv(name: $cDetail['cache_server_port']),
+			'cacheServerUsername' => getenv(name: $cDetail['cache_server_username']),
+			'cacheServerPassword' => getenv(name: $cDetail['cache_server_password']),
+			'cacheServerDb' => getenv(name: $cDetail['cache_server_db']),
+			'cacheServerTable' => getenv(name: $cDetail['cache_server_table'])
 		];
 	}
 

@@ -188,7 +188,10 @@ class Read
 		// Set Server mode to execute query on - Read / Write Server
 		$fetchFrom = $rSqlConfig['fetchFrom'] ?? 'Slave';
 		$this->modeColumn = strtolower($fetchFrom) . '_db_server_query_placeholder';
-		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb($this->http->req, fetchFrom: $fetchFrom);
+		$this->http->req->clientDbObj = DbCommonFunction::connectClientDb(
+			cDetail: $this->http->req->s['cDetail'],
+			fetchFrom: $fetchFrom
+		);
 
 		// Use result set recursively flag
 		$useResultSet = $this->getUseHierarchy(

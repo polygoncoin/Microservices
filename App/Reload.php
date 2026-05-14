@@ -15,7 +15,6 @@
 
 namespace Microservices\App;
 
-use Microservices\App\AppTrait;
 use Microservices\App\CacheServerKey;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\CommonFunction;
@@ -34,8 +33,6 @@ use Microservices\App\CommonFunction;
  */
 class Reload
 {
-	use AppTrait;
-
 	/**
 	 * Initialize
 	 *
@@ -56,12 +53,13 @@ class Reload
 		DbCommonFunction::connectGlobalCache();
 		DbCommonFunction::connectGlobalDb();
 
+		$customerTable = getenv(name: 'customerTable');
 		DbCommonFunction::$gDbServer->execDbQuery(
 			sql: "
 				SELECT
 					 *
 				FROM
-					`{$this->execPhpFunc(param: getenv(name: 'customerTable'))}` C
+					`{$customerTable}` C
 				",
 			paramArr: []
 		);
@@ -95,15 +93,15 @@ class Reload
 				}
 			}
 
-			$clientCacheMasterDetail = DbCommonFunction::clientCacheMasterDetail(cDetail: $cRow);
+			$clientCacheDetail = DbCommonFunction::clientCacheDetail(cDetail: $cRow);
 			$clientCacheObj = DbCommonFunction::connectCache(
-				cacheServerType: $clientCacheMasterDetail['cacheServerType'],
-				cacheServerHostname: $clientCacheMasterDetail['cacheServerHostname'],
-				cacheServerPort: $clientCacheMasterDetail['cacheServerPort'],
-				cacheServerUsername: $clientCacheMasterDetail['cacheServerUsername'],
-				cacheServerPassword: $clientCacheMasterDetail['cacheServerPassword'],
-				cacheServerDb: $clientCacheMasterDetail['cacheServerDb'],
-				cacheServerTable: $clientCacheMasterDetail['cacheServerTable']
+				cacheServerType: $clientCacheDetail['cacheServerType'],
+				cacheServerHostname: $clientCacheDetail['cacheServerHostname'],
+				cacheServerPort: $clientCacheDetail['cacheServerPort'],
+				cacheServerUsername: $clientCacheDetail['cacheServerUsername'],
+				cacheServerPassword: $clientCacheDetail['cacheServerPassword'],
+				cacheServerDb: $clientCacheDetail['cacheServerDb'],
+				cacheServerTable: $clientCacheDetail['cacheServerTable']
 			);
 
 			$clientDbMasterDetail = DbCommonFunction::clientDbMasterDetail(cDetail: $cRow);
