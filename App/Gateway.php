@@ -16,7 +16,6 @@
 namespace Microservices\App;
 
 use Microservices\App\CommonFunction;
-use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
@@ -36,20 +35,6 @@ use Microservices\App\RateLimiter;
  */
 class Gateway
 {
-	/**
-	 * Rate Limiter
-	 *
-	 * @var null|RateLimiter
-	 */
-	private $rateLimiter = null;
-
-	/**
-	 * Rate Limit check flag
-	 *
-	 * @var bool
-	 */
-	private $rateLimitChecked = false;
-
 	/**
 	 * HTTP object
 	 *
@@ -78,7 +63,7 @@ class Gateway
 
 		if (!$this->http->req->isOpenToWebRequest) {
 			$this->http->req->auth->loadUserDetail();
-			$this->checkCidr();
+			CommonFunction::checkClosedWebRequestCidr($this->http);
 		}
 		$this->rateLimitRequest();
 	}
@@ -90,7 +75,7 @@ class Gateway
 	 */
 	private function rateLimitRequest(): void
 	{
-		$this->rateLimiter = new RateLimiter($this->http);
+		$this->http->req->rateLimiter = new RateLimiter($this->http);
 
 		// Customer Rate Limiting
 		$this->rateLimitCustomer();
@@ -107,96 +92,8 @@ class Gateway
 		}
 
 		// Rate limit open traffic (not limited by allowed IPs/CIDR and allowed
-		// Rate Limit to user)
-		if ($this->rateLimitChecked === false) {
-			// IP Rate Limiting
-			$this->rateLimitIp();
-		}
-	}
-
-	/**
-	 * Check Rate Limit
-	 *
-	 * @param string $rateLimitPrefix           Prefix
-	 * @param int    $rateLimitMaxRequest       Max request
-	 * @param int    $rateLimitMaxRequestWindow Window in seconds
-	 * @param string $rateLimitKey              Rate limit key
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function checkRateLimit(
-		$rateLimitPrefix,
-		$rateLimitMaxRequest,
-		$rateLimitMaxRequestWindow,
-		$rateLimitKey
-	): bool {
-		try {
-			$result = $this->rateLimiter->check(
-				prefix: $rateLimitPrefix,
-				maxRequest: $rateLimitMaxRequest,
-				secondsWindow: $rateLimitMaxRequestWindow,
-				rateLimitKey: $rateLimitKey
-			);
-
-			if ($result['allowed']) {
-				// Process the request
-				return true;
-			} else {
-				// Return 429 Too Many request
-				throw new \Exception(
-					message: $result['resetOn'] - Env::$timestamp,
-					code: HttpStatus::$TooManyRequest
-				);
-			}
-		} catch (\Exception $e) {
-			// Handle connection errorArr
-			throw new \Exception(
-				message: $e->getMessage(),
-				code: $e->getCode()
-			);
-		}
-	}
-
-	/**
-	 * Validate remote IP
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function checkCidr(): void
-	{
-		if (!Env::$enableCidrCheck) {
-			return;
-		}
-
-		CommonFunction::checkCacheCidr(
-			cacheObj: DbCommonFunction::$gCacheServer,
-			IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-			cidrCacheKey: CacheServerKey::customerCidr(
-				cID: $this->http->req->cID
-			)
-		);
-
-		if ($this->http !== null) {
-			CommonFunction::checkCacheCidr(
-				cacheObj: $this->http->req->clientCacheObj,
-				IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-				cidrCacheKey: CacheServerKey::customerGroupCidr(
-					cID: $this->http->req->cID,
-					gID: $this->http->req->gID
-				)
-			);
-
-			CommonFunction::checkCacheCidr(
-				cacheObj: $this->http->req->clientCacheObj,
-				IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-				cidrCacheKey: CacheServerKey::customerUserCidr(
-					cID: $this->http->req->cID,
-					uID: $this->http->req->uID
-				)
-			);
-		}
+		// IP Rate Limiting
+		$this->rateLimitIp();
 	}
 
 	/**
@@ -221,7 +118,7 @@ class Gateway
 				$this->http->req->s['cDetail']['rateLimitMaxRequestWindow'];
 		$rateLimitKey = $this->http->req->cID;
 
-		$this->rateLimitChecked = $this->checkRateLimit(
+		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitCustomerPrefix,
 			rateLimitMaxRequest: $rateLimitMaxRequest,
 			rateLimitMaxRequestWindow: $rateLimitMaxRequestWindow,
@@ -253,7 +150,7 @@ class Gateway
 		$rateLimitKey = $this->http->req->cID . ':'
 			. $this->http->req->uID;
 
-		$this->rateLimitChecked = $this->checkRateLimit(
+		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitGroupPrefix,
 			rateLimitMaxRequest: $rateLimitMaxRequest,
 			rateLimitMaxRequestWindow: $rateLimitMaxRequestWindow,
@@ -284,7 +181,7 @@ class Gateway
 		$rateLimitKey = $this->http->req->cID . ':'
 			. $this->http->req->uID;
 
-		$this->rateLimitChecked = $this->checkRateLimit(
+		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitUserPrefix,
 			rateLimitMaxRequest: $rateLimitMaxRequest,
 			rateLimitMaxRequestWindow: $rateLimitMaxRequestWindow,
@@ -309,7 +206,7 @@ class Gateway
 		$rateLimitKey = $this->http->req->cID . ':'
 			. $this->http->req->uID;
 
-		$this->rateLimitChecked = $this->checkRateLimit(
+		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitUserPrefix,
 			rateLimitMaxRequest: $rateLimitMaxRequest,
 			rateLimitMaxRequestWindow: $rateLimitMaxRequestWindow,
@@ -333,7 +230,7 @@ class Gateway
 		$rateLimitIPMaxRequestWindow = Env::$rateLimitIPMaxRequestWindow;
 		$rateLimitKey = $this->http->httpReqDetailArr['server']['httpRequestIP'];
 
-		$this->checkRateLimit(
+		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitIPPrefix,
 			rateLimitMaxRequest: $rateLimitIPMaxRequest,
 			rateLimitMaxRequestWindow: $rateLimitIPMaxRequestWindow,

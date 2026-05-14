@@ -121,4 +121,48 @@ class RateLimiter
 			'resetOn' => $resetOn
 		];
 	}
+
+	/**
+	 * Check Rate limit
+	 *
+	 * @param string $rateLimitPrefix           Prefix
+	 * @param int    $rateLimitMaxRequest       Max request
+	 * @param int    $rateLimitMaxRequestWindow Window in seconds
+	 * @param string $rateLimitKey              Rate limit key
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function checkRateLimit(
+		$rateLimitPrefix,
+		$rateLimitMaxRequest,
+		$rateLimitMaxRequestWindow,
+		$rateLimitKey
+	): void {
+		try {
+			$result = $this->check(
+				prefix: $rateLimitPrefix,
+				maxRequest: $rateLimitMaxRequest,
+				secondsWindow: $rateLimitMaxRequestWindow,
+				rateLimitKey: $rateLimitKey
+			);
+
+			if ($result['allowed']) {
+				// Process the request
+				return;
+			} else {
+				// Return 429 Too Many request
+				throw new \Exception(
+					message: $result['resetOn'] - Env::$timestamp,
+					code: HttpStatus::$TooManyRequest
+				);
+			}
+		} catch (\Exception $e) {
+			// Handle connection errorArr
+			throw new \Exception(
+				message: $e->getMessage(),
+				code: $e->getCode()
+			);
+		}
+	}
 }

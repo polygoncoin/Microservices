@@ -107,26 +107,17 @@ class Login
 
 		$this->loadPayload();
 		$this->loadUserDetail();
-		$this->validateRequestIp();
+		CommonFunction::checkClosedWebRequestCidr($this->http);
 		$this->validatePassword();
 
 		if (Env::$enableRateLimitForUserPerIp) {
-			$rateLimiter = new RateLimiter($this->http);
-			$result = $rateLimiter->check(
-				prefix: Env::$rateLimitUserPerIpPrefix,
-				maxRequest: Env::$rateLimitMaxUserPerIp,
-				secondsWindow: Env::$rateLimitMaxUserPerIpWindow,
+			$this->http->req->rateLimiter = new RateLimiter($this->http);
+			$this->http->req->rateLimiter->checkRateLimit(
+				rateLimitPrefix: Env::$rateLimitUserPerIpPrefix,
+				rateLimitMaxRequest: Env::$rateLimitMaxUserPerIp,
+				rateLimitMaxRequestWindow: Env::$rateLimitMaxUserPerIpWindow,
 				rateLimitKey: $this->http->httpReqDetailArr['server']['httpRequestIP']
 			);
-			if ($result['allowed']) {
-				// Process the request
-			} else {
-				// Return 429 Too Many request
-				throw new \Exception(
-					message: $result['resetOn'] - Env::$timestamp,
-					code: HttpStatus::$TooManyRequest
-				);
-			}
 		}
 
 		switch (Env::$authMode) {
@@ -222,45 +213,6 @@ class Login
 	}
 
 	/**
-	 * Validate source ip
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	private function validateRequestIp(): void
-	{
-		$ipNumber = ip2long(ip: $this->http->httpReqDetailArr['server']['httpRequestIP']);
-
-		CommonFunction::checkCacheCidr(
-			cacheObj: DbCommonFunction::$gCacheServer,
-			IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-			cidrCacheKey: CacheServerKey::customerCidr(
-				cID: $this->http->req->cID
-			)
-		);
-
-		if ($this->http !== null) {
-			CommonFunction::checkCacheCidr(
-				cacheObj: $this->http->req->clientCacheObj,
-				IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-				cidrCacheKey: CacheServerKey::customerGroupCidr(
-					cID: $this->http->req->cID,
-					gID: $this->http->req->gID
-				)
-			);
-
-			CommonFunction::checkCacheCidr(
-				cacheObj: $this->http->req->clientCacheObj,
-				IP: $this->http->httpReqDetailArr['server']['httpRequestIP'],
-				cidrCacheKey: CacheServerKey::customerUserCidr(
-					cID: $this->http->req->cID,
-					uID: $this->http->req->uID
-				)
-			);
-		}
-	}
-
-	/**
 	 * Validates password from its hash present in cache
 	 *
 	 * @return void
@@ -268,22 +220,13 @@ class Login
 	 */
 	private function validatePassword(): void
 	{
-		$rateLimiter = new RateLimiter($this->http);
-		$result = $rateLimiter->check(
-			prefix: Env::$rateLimitUserLoginPrefix,
-			maxRequest: Env::$rateLimitMaxUserLoginRequest,
-			secondsWindow: Env::$rateLimitMaxUserLoginRequestWindow,
+		$this->http->req->rateLimiter = new RateLimiter($this->http);
+		$this->http->req->rateLimiter->checkRateLimit(
+			rateLimitPrefix: Env::$rateLimitUserLoginPrefix,
+			rateLimitMaxRequest: Env::$rateLimitMaxUserLoginRequest,
+			rateLimitMaxRequestWindow: Env::$rateLimitMaxUserLoginRequestWindow,
 			rateLimitKey: $this->http->httpReqDetailArr['server']['httpRequestIP'] . $this->username
 		);
-		if ($result['allowed']) {
-			// Process the request
-		} else {
-			// Return 429 Too Many request
-			throw new \Exception(
-				message: $result['resetOn'] - Env::$timestamp,
-				code: HttpStatus::$TooManyRequest
-			);
-		}
 		// get hash from cache and compares with password
 		if (
 			!password_verify(

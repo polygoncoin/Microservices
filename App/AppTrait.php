@@ -23,7 +23,6 @@ use Microservices\App\DatabaseServerDataType;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
-use Microservices\App\RateLimiter;
 use Microservices\App\Validator;
 
 /**
@@ -40,13 +39,6 @@ use Microservices\App\Validator;
  */
 trait AppTrait
 {
-	/**
-	 * Rate Limiter
-	 *
-	 * @var null|RateLimiter
-	 */
-	private $rateLimiter = null;
-
 	/**
 	 * Validator class object
 	 *
@@ -822,7 +814,7 @@ trait AppTrait
 		$rateLimitKey = md5(string: $hash);
 
 		// @throws \Exception
-		$rateLimitChecked = $this->checkRateLimit(
+		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: Env::$rateLimitRoutePrefix,
 			rateLimitMaxRequest: $sqlConfig['rateLimitMaxRequest'],
 			rateLimitMaxRequestWindow: $sqlConfig['rateLimitMaxRequestWindow'],
@@ -1023,54 +1015,6 @@ trait AppTrait
 			if ($lag > 0) {
 				sleep(seconds: $lag);
 			}
-		}
-	}
-
-	/**
-	 * Check Rate limit
-	 *
-	 * @param string $rateLimitPrefix           Prefix
-	 * @param int    $rateLimitMaxRequest       Max request
-	 * @param int    $rateLimitMaxRequestWindow Window in seconds
-	 * @param string $rateLimitKey              Rate limit key
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function checkRateLimit(
-		$rateLimitPrefix,
-		$rateLimitMaxRequest,
-		$rateLimitMaxRequestWindow,
-		$rateLimitKey
-	): bool {
-		if ($this->rateLimiter === null) {
-			$this->rateLimiter = new RateLimiter($this->http);
-		}
-
-		try {
-			$result = $this->rateLimiter->check(
-				prefix: $rateLimitPrefix,
-				maxRequest: $rateLimitMaxRequest,
-				secondsWindow: $rateLimitMaxRequestWindow,
-				rateLimitKey: $rateLimitKey
-			);
-
-			if ($result['allowed']) {
-				// Process the request
-				return true;
-			} else {
-				// Return 429 Too Many request
-				throw new \Exception(
-					message: $result['resetOn'] - Env::$timestamp,
-					code: HttpStatus::$TooManyRequest
-				);
-			}
-		} catch (\Exception $e) {
-			// Handle connection errorArr
-			throw new \Exception(
-				message: $e->getMessage(),
-				code: $e->getCode()
-			);
 		}
 	}
 

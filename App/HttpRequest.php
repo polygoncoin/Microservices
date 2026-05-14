@@ -24,6 +24,7 @@ use Microservices\App\Env;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
 use Microservices\App\Middleware\Auth;
+use Microservices\App\RateLimiter;
 use Microservices\App\RouteParser;
 use Microservices\App\Server\CacheServer\CacheServerInterface;
 use Microservices\App\Server\DatabaseServer\DatabaseServerInterface;
@@ -42,6 +43,13 @@ use Microservices\App\Server\DatabaseServer\DatabaseServerInterface;
  */
 class HttpRequest
 {
+	/**
+	 * Rate Limiter
+	 *
+	 * @var null|RateLimiter
+	 */
+	public $rateLimiter = null;
+
 	/**
 	 * Auth middleware object
 	 *

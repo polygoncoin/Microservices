@@ -15,6 +15,9 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CacheServerKey;
+use Microservices\App\DbCommonFunction;
+use Microservices\App\Http;
 use Microservices\App\Server\CacheServer\CacheServerInterface;
 
 /**
@@ -251,6 +254,50 @@ class CommonFunction
 		}
 
 		return $isValidIp;
+	}
+
+
+	/**
+	 * Validate remote IP
+	 *
+	 * @param Http $http
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public static function checkClosedWebRequestCidr(&$http): void
+	{
+		if (!Env::$enableCidrCheck) {
+			return;
+		}
+
+		self::checkCacheCidr(
+			cacheObj: DbCommonFunction::$gCacheServer,
+			IP: $http->httpReqDetailArr['server']['httpRequestIP'],
+			cidrCacheKey: CacheServerKey::customerCidr(
+				cID: $http->req->cID
+			)
+		);
+
+		if ($http !== null) {
+			self::checkCacheCidr(
+				cacheObj: $http->req->clientCacheObj,
+				IP: $http->httpReqDetailArr['server']['httpRequestIP'],
+				cidrCacheKey: CacheServerKey::customerGroupCidr(
+					cID: $http->req->cID,
+					gID: $http->req->gID
+				)
+			);
+
+			self::checkCacheCidr(
+				cacheObj: $http->req->clientCacheObj,
+				IP: $http->httpReqDetailArr['server']['httpRequestIP'],
+				cidrCacheKey: CacheServerKey::customerUserCidr(
+					cID: $http->req->cID,
+					uID: $http->req->uID
+				)
+			);
+		}
 	}
 
 	/**
