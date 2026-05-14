@@ -79,7 +79,7 @@ class HttpRequest
 	public $clientCacheObj = null;
 
 	/**
-	 * Client DB Object
+	 * Client Database Object
 	 *
 	 * @var null|DatabaseServerInterface
 	 */
@@ -174,38 +174,6 @@ class HttpRequest
 							message: 'Current session has expired. Please login',
 							code: HttpStatus::$InternalServerError
 						);
-					}
-					if (Env::$enableConcurrentLogin) {
-						$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
-							cID: $this->cID,
-							uID: $this->uID
-						);
-						$sessionID = session_id();
-						if ($this->http->req->clientCacheObj->cacheExist(cacheKey: $userConcurrencyKey)) {
-							$userConcurrencyKeyData = $this->http->req->clientCacheObj->cacheGet(
-								cacheKey: $userConcurrencyKey
-							);
-							if ($userConcurrencyKeyData !== $sessionID) {
-								throw new \Exception(
-									message: 'Account already in use. '
-										. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
-									code: HttpStatus::$Conflict
-								);
-							}
-						} else {
-							$this->cacheSet(
-								cacheKey: $userConcurrencyKey,
-								value: $sessionID,
-								expire: Env::$concurrentAccessInterval
-							);
-						}
-					} else {
-						if ($this->http->req->s['uDetail']['httpRequestHash'] !== $this->http->httpReqDetailArr['httpRequestHash']) {
-							throw new \Exception(
-								message: 'Session not supported from this Browser/Device',
-								code: HttpStatus::$PreconditionFailed
-							);
-						}
 					}
 					$this->isOpenToWebRequest = false;
 				} elseif ($this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login') {

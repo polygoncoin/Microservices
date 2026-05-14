@@ -39,14 +39,14 @@ class ExportDatabaseServer
 	public $useTmpFile = false;
 
 	/**
-	 * DB Engine
+	 * Database Engine
 	 *
 	 * @var null|string
 	 */
 	public $dbServerType = null;
 
 	/**
-	 * DB Class Object as per dbServerType
+	 * Database Class Object as per dbServerType
 	 *
 	 * @var null|ExportDatabaseServerInterface
 	 */

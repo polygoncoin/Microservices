@@ -22,7 +22,6 @@ use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
-use Microservices\App\RateLimiter;
 use Microservices\App\SessionHandler\Session;
 
 /**
@@ -428,7 +427,7 @@ class Login
 	}
 
 	/**
-	 * Update token detail in DB for respective account
+	 * Update token detail in Database for respective account
 	 *
 	 * @param array $userData Token Data
 	 *

@@ -56,14 +56,14 @@ class Export
 	public $unlink = true;
 
 	/**
-	 * DB Engine
+	 * Database Engine
 	 *
 	 * @var null|string
 	 */
 	public $dbServerType = null;
 
 	/**
-	 * DB Object
+	 * Database Object
 	 *
 	 * @var null|ExportDatabaseServer
 	 */

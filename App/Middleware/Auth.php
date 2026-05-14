@@ -76,7 +76,7 @@ class Auth
 			&& isset($_SESSION['id'])
 		) {
 			$this->http->req->s['uDetail'] = $_SESSION;
-			$this->http->req->s['token'] = 'sessions';
+			$this->http->req->s['token'] = session_id();
 			$this->http->req->uID = $_SESSION['id'];
 		} elseif (
 			($this->http->httpReqDetailArr['header']['tokenHeader'] !== null)
@@ -115,37 +115,37 @@ class Auth
 			);
 			$this->http->req->uID = $this->http->req->s['uDetail']['id'];
 			$this->http->req->gID = $this->http->req->s['uDetail']['group_id'];
+		}
 
-			if (Env::$enableConcurrentLogin) {
-				$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
-					cID: $this->http->req->cID,
-					uID: $this->http->req->uID
+		if (Env::$enableConcurrentLogin) {
+			$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
+				cID: $this->http->req->cID,
+				uID: $this->http->req->uID
+			);
+			if ($this->http->req->clientCacheObj->cacheExist(cacheKey: $userConcurrencyKey)) {
+				$userConcurrencyKeyData = $this->http->req->clientCacheObj->cacheGet(
+					cacheKey: $userConcurrencyKey
 				);
-				if ($this->http->req->clientCacheObj->cacheExist(cacheKey: $userConcurrencyKey)) {
-					$userConcurrencyKeyData = $this->http->req->clientCacheObj->cacheGet(
-						cacheKey: $userConcurrencyKey
-					);
-					if ($userConcurrencyKeyData !== $this->http->req->s['token']) {
-						throw new \Exception(
-							message: 'Account already in use. '
-								. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
-							code: HttpStatus::$Conflict
-						);
-					}
-				} else {
-					$this->cacheSet(
-						cacheKey: $userConcurrencyKey,
-						value: $this->http->req->s['token'],
-						expire: Env::$concurrentAccessInterval
+				if ($userConcurrencyKeyData !== $this->http->req->s['token']) {
+					throw new \Exception(
+						message: 'Account already in use. '
+							. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
+						code: HttpStatus::$Conflict
 					);
 				}
 			} else {
-				if ($this->http->req->s['uDetail']['httpRequestHash'] !== $this->http->httpReqDetailArr['httpRequestHash']) {
-					throw new \Exception(
-						message: 'Token not supported from this Browser/Device',
-						code: HttpStatus::$PreconditionFailed
-					);
-				}
+				$this->cacheSet(
+					cacheKey: $userConcurrencyKey,
+					value: $this->http->req->s['token'],
+					expire: Env::$concurrentAccessInterval
+				);
+			}
+		} else {
+			if ($this->http->req->s['uDetail']['httpRequestHash'] !== $this->http->httpReqDetailArr['httpRequestHash']) {
+				throw new \Exception(
+					message: 'Token not supported from this Browser/Device',
+					code: HttpStatus::$PreconditionFailed
+				);
 			}
 		}
 	}

@@ -66,9 +66,9 @@ The slave detail can take same values as master if presently your system doesn't
 
 ## Setting Cache / Database Server configuration in customer table for working
 
-### Different database on DB server
+### Different database on Database server
 
-If there is a requirement from customer X to have a dedicated database like <database-x> on the DB server one can do this.<br /><br />
+If there is a requirement from customer X to have a dedicated database like <database-x> on the database server one can do this.<br /><br />
 
 Make a new config variable as below and set this Key in the above table for customer X record in customer table.
 
@@ -76,7 +76,7 @@ Make a new config variable as below and set this Key in the above table for cust
 cDatabaseServerDb='<database-x>'
 ```
 
-### Dedicated DB server
+### Dedicated Database Server
 
 If the same customer X in future prefer to have a dedicated database server one can do this as well.<br />
 
@@ -95,7 +95,7 @@ cCacheServerDb001=0
 cCacheServerTable001='customer_001'      ; For MongoDb
 ```
 
-- Dedicated database
+- Dedicated Database
 
 ```ini
 ; Supported Container - MySql / PostgreSql

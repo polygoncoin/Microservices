@@ -61,7 +61,7 @@ rateLimitUserMaxRequest=1             ; Max one request allowed for 10 seconds
 rateLimitUserMaxRequestWindow=10      ; Max one request allowed for 10 seconds
 ```
 
-## Customer/Group/User based Rate Limiting detail are set in respective DB Tables for records
+## Customer/Group/User based Rate Limiting detail are set in respective Database Tables for records
 
 ```SQL
 -- Customer level

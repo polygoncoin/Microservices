@@ -42,7 +42,7 @@ routesRestrictedCidr='0.0.0.0/0'        ; routesRequestRoute in .env.enable
 reloadRestrictedCidr='0.0.0.0/0'        ; reloadRequestRoutePrefix in .env.enable
 ```
 
-## Configuring in DB Tables
+## Configuring in Database Tables
 
 To enable CIDR settings at Customer / Group / User level one can set them in respective table and record
 

@@ -1,10 +1,10 @@
 <?php
 
 /**
- * DB Common Function
+ * Database Common Function
  * php version 8.3
  *
- * @category  Db Common Function
+ * @category  Database Common Function
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -25,10 +25,10 @@ use Microservices\App\Server\DatabaseServer\DatabaseServerInterface;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
 
 /**
- * DB Common Function
+ * Database Common Function
  * php version 8.3
  *
- * @category  Db Common Function
+ * @category  Database Common Function
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -344,7 +344,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Returns Db Master Server detail
+	 * Returns Database Master Server detail
 	 *
 	 * @param array $cDetail Customer detail
 	 *
