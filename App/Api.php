@@ -80,7 +80,7 @@ class Api
 	public function process(): mixed
 	{
 		if (
-			!$this->http->req->isOpenToWebRequest
+			$this->http->req->isAuthRequest
 			&& $this->http->httpReqDetailArr['server']['httpMethod'] === Constant::$GET
 		) {
 			$dropboxCache = new Dropbox(httpReqDetailArr: $this->http->httpReqDetailArr, http: $this->http);

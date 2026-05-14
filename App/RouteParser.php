@@ -148,14 +148,14 @@ class RouteParser
 		// }
 
 		if ($routeFileLocation === null) {
-			if ($this->http->req->isOpenToWebRequest) {
-				$routeFileLocation = Constant::$OPEN_ROUTES_DIR
-					. DIRECTORY_SEPARATOR . $this->http->httpReqDetailArr['server']['httpMethod'] . 'routes.php';
-			} else {
+			if ($this->http->req->isAuthRequest) {
 				$routeFileLocation = Constant::$AUTH_ROUTES_DIR
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'
 					. DIRECTORY_SEPARATOR . $this->http->req->s['gDetail']['name']
+					. DIRECTORY_SEPARATOR . $this->http->httpReqDetailArr['server']['httpMethod'] . 'routes.php';
+			} else {
+				$routeFileLocation = Constant::$OPEN_ROUTES_DIR
 					. DIRECTORY_SEPARATOR . $this->http->httpReqDetailArr['server']['httpMethod'] . 'routes.php';
 			}
 		}

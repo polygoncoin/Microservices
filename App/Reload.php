@@ -67,7 +67,7 @@ class Reload
 		DbCommonFunction::$gDbServer->closeCursor();
 		foreach ($cRowArr as $cRow) {
 			if (!empty($cRow['open_api_domain'])) {
-				$c_key = CacheServerKey::openToWebDomain(
+				$c_key = CacheServerKey::openDomain(
 					domainName: $cRow['open_api_domain']
 				);
 				DbCommonFunction::$gCacheServer->cacheSet(
@@ -76,7 +76,7 @@ class Reload
 				);
 			}
 
-			$c_key = CacheServerKey::closedToWebDomain(domainName: $cRow['api_domain']);
+			$c_key = CacheServerKey::authDomain(domainName: $cRow['api_domain']);
 			DbCommonFunction::$gCacheServer->cacheSet(
 				cacheKey: $c_key,
 				value: json_encode(value: $cRow)

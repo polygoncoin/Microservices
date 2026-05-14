@@ -36,7 +36,7 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function openToWebDomain(&$domainName): string
+	public static function openDomain(&$domainName): string
 	{
 		return "otw:{$domainName}";
 	}
@@ -48,7 +48,7 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function closedToWebDomain($domainName): string
+	public static function authDomain($domainName): string
 	{
 		return "ctw:{$domainName}";
 	}

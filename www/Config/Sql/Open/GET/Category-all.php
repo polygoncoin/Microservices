@@ -90,7 +90,7 @@ return [
 	'cacheKey' => QueryCacheServerKey::category(
 		customerID: $this->http->req->cID,
 		groupID: null,
-		isOpenToWebRequest: true
+		isAuthRequest: true
 	),
 	'responseLag' => [
 		// No of request => Seconds Lag

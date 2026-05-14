@@ -60,7 +60,7 @@ class Gateway
 	{
 		$this->http->req->loadCustomerDetail();
 
-		if (!$this->http->req->isOpenToWebRequest) {
+		if ($this->http->req->isAuthRequest) {
 			$this->http->req->auth->loadUserDetail();
 			CommonFunction::checkClosedWebRequestCidr($this->http);
 		}
@@ -74,7 +74,7 @@ class Gateway
 	 */
 	private function rateLimitRequest(): void
 	{
-		if (!$this->http->req->isOpenToWebRequest) {
+		if ($this->http->req->isAuthRequest) {
 			// IP Rate Limiting
 			$this->rateLimitIp();
 

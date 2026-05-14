@@ -93,11 +93,11 @@ class HttpRequest
 	public $s = null;
 
 	/**
-	 * Open To Web request
+	 * Flag for Auth request
 	 *
 	 * @var null|bool
 	 */
-	public $isOpenToWebRequest = null;
+	public $isAuthRequest = null;
 
 	/**
 	 * Payload stream
@@ -157,11 +157,11 @@ class HttpRequest
 					&& isset($this->http->httpReqDetailArr['header']['tokenHeader'])
 					&& $this->http->httpReqDetailArr['header']['tokenHeader'] !== null
 				) {
-					$this->isOpenToWebRequest = false;
+					$this->isAuthRequest = true;
 				} elseif ($this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login') {
-					$this->isOpenToWebRequest = false;
+					$this->isAuthRequest = true;
 				} elseif (Env::$enableOpenRequest) {
-					$this->isOpenToWebRequest = true;
+					$this->isAuthRequest = false;
 				}
 				break;
 			case 'Session':
@@ -175,16 +175,16 @@ class HttpRequest
 							code: HttpStatus::$InternalServerError
 						);
 					}
-					$this->isOpenToWebRequest = false;
+					$this->isAuthRequest = true;
 				} elseif ($this->http->httpReqDetailArr['get'][ROUTE_URL_PARAM] === '/login') {
-					$this->isOpenToWebRequest = false;
+					$this->isAuthRequest = true;
 				} else {
-					$this->isOpenToWebRequest = true;
+					$this->isAuthRequest = false;
 				}
 				break;
 		}
 
-		if ($this->isOpenToWebRequest === null) {
+		if ($this->isAuthRequest === null) {
 			throw new \Exception(
 				message: "Open to web & Auth based request are disabled",
 				code: HttpStatus::$InternalServerError
@@ -192,7 +192,7 @@ class HttpRequest
 		}
 
 		if (
-			$this->isOpenToWebRequest === true
+			$this->isAuthRequest === false
 			&& !Env::$enableOpenRequest
 		) {
 			throw new \Exception(
@@ -202,7 +202,7 @@ class HttpRequest
 		}
 
 		if (
-			$this->isOpenToWebRequest === false
+			$this->isAuthRequest === true
 			&& !Env::$enableAuthRequest
 		) {
 			throw new \Exception(
@@ -211,7 +211,7 @@ class HttpRequest
 			);
 		}
 
-		if (!$this->isOpenToWebRequest) {
+		if ($this->isAuthRequest) {
 			$this->auth = new Auth(http: $this->http);
 		}
 
@@ -227,7 +227,7 @@ class HttpRequest
 	{
 		$this->loadCustomerDetail();
 
-		if (!$this->isOpenToWebRequest) {
+		if ($this->isAuthRequest) {
 			$this->auth->loadUserDetail();
 			$this->auth->loadGroupDetail();
 		}
@@ -251,10 +251,10 @@ class HttpRequest
 
 		DbCommonFunction::connectGlobalCache();
 
-		if ($this->isOpenToWebRequest) {
-			$cKey = CacheServerKey::openToWebDomain(domainName: $this->http->httpReqDetailArr['server']['domainName']);
+		if ($this->isAuthRequest) {
+			$cKey = CacheServerKey::authDomain(domainName: $this->http->httpReqDetailArr['server']['domainName']);
 		} else {
-			$cKey = CacheServerKey::closedToWebDomain(domainName: $this->http->httpReqDetailArr['server']['domainName']);
+			$cKey = CacheServerKey::openDomain(domainName: $this->http->httpReqDetailArr['server']['domainName']);
 		}
 		if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cKey)) {
 			throw new \Exception(
@@ -271,7 +271,7 @@ class HttpRequest
 		);
 		$this->cID = $this->s['cDetail']['id'];
 
-		if (!$this->isOpenToWebRequest) {
+		if ($this->isAuthRequest) {
 			$this->clientCacheObj = DbCommonFunction::connectClientCache(
 				cDetail: $this->http->req->s['cDetail']
 			);

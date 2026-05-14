@@ -47,16 +47,16 @@ class QueryCacheServerKey
 	 * Query Cache Customer key
 	 *
 	 * @param int  $customerID         Customer id
-	 * @param bool $isOpenToWebRequest
+	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function customer(
 		$customerID,
-		$isOpenToWebRequest = false
+		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isOpenToWebRequest);
+		$appKey = self::appKey($isAuthRequest);
 		$customerKey = self::customerKey($customerID);
 
 		return $appKey . $customerKey;
@@ -67,17 +67,17 @@ class QueryCacheServerKey
 	 *
 	 * @param int  $customerID         Customer id
 	 * @param int  $groupID            Group id
-	 * @param bool $isOpenToWebRequest
+	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function group(
 		$customerID = null,
 		$groupID = null,
-		$isOpenToWebRequest = false
+		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isOpenToWebRequest);
+		$appKey = self::appKey($isAuthRequest);
 		$customerKey = self::customerKey($customerID);
 		$groupKey = self::groupKey($groupID);
 
@@ -90,7 +90,7 @@ class QueryCacheServerKey
 	 * @param int  $customerID         Customer id
 	 * @param int  $groupID            Group id
 	 * @param int  $userID             User id
-	 * @param bool $isOpenToWebRequest
+	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
@@ -98,10 +98,10 @@ class QueryCacheServerKey
 		$customerID = null,
 		$groupID = null,
 		$userID = null,
-		$isOpenToWebRequest = false
+		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isOpenToWebRequest);
+		$appKey = self::appKey($isAuthRequest);
 		$customerKey = self::customerKey($customerID);
 		$groupKey = self::groupKey($groupID);
 		$userKey = self::userKey($userID);
@@ -115,17 +115,17 @@ class QueryCacheServerKey
 	 * @param int  $customerID         Customer id
 	 * @param int  $groupID            Group id
 	 * @param int  $userID             User id
-	 * @param bool $isOpenToWebRequest
+	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function category(
 		$customerID = null,
 		$groupID = null,
-		$isOpenToWebRequest = false
+		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isOpenToWebRequest);
+		$appKey = self::appKey($isAuthRequest);
 		$customerKey = self::customerKey($customerID);
 		$groupKey = self::groupKey($groupID);
 
@@ -137,17 +137,17 @@ class QueryCacheServerKey
 	 *
 	 * @param int  $customerID         Customer id
 	 * @param int  $groupID            Group id
-	 * @param bool $isOpenToWebRequest
+	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
 	public static function category1(
 		$customerID = null,
 		$groupID = null,
-		$isOpenToWebRequest = false
+		$isAuthRequest = false
 	): string
 	{
-		$appKey = self::appKey($isOpenToWebRequest);
+		$appKey = self::appKey($isAuthRequest);
 		$customerKey = self::customerKey($customerID);
 		$groupKey = self::groupKey($groupID);
 
@@ -157,13 +157,13 @@ class QueryCacheServerKey
 	/**
 	 * Set application key
 	 *
-	 * @param bool $isOpenToWebRequest
+	 * @param bool $isAuthRequest
 	 *
 	 * @return string
 	 */
-	private static function appKey($isOpenToWebRequest = false): string
+	private static function appKey($isAuthRequest = false): string
 	{
-		return $isOpenToWebRequest ? self::$oApp : self::$aApp;
+		return $isAuthRequest ? self::$oApp : self::$aApp;
 	}
 
 	/**

@@ -90,6 +90,6 @@ return [
 	'cacheKey' => QueryCacheServerKey::category(
 		customerID: $this->http->req->cID,
 		groupID: $this->http->req->s['gDetail']['id'],
-		isOpenToWebRequest: false
+		isAuthRequest: false
 	)
 ];

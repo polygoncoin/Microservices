@@ -289,7 +289,7 @@ class Write
 			}
 
 			// Check for Idempotent Window
-			if (!$this->http->req->isOpenToWebRequest) {
+			if ($this->http->req->isAuthRequest) {
 				[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
 					sqlConfig: $wSqlConfig,
 					payloadIndexArr: $payloadIndexArr

@@ -791,7 +791,7 @@ trait AppTrait
 	private function rateLimitRoute(&$sqlConfig): void
 	{
 		if (
-			$this->http->req->isOpenToWebRequest
+			!$this->http->req->isAuthRequest
 			|| !Env::$enableRateLimitForRoute
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
@@ -972,7 +972,7 @@ trait AppTrait
 	private function lagResponse($sqlConfig): void
 	{
 		if (
-			$this->http->req->isOpenToWebRequest
+			!$this->http->req->isAuthRequest
 			|| !isset($sqlConfig['responseLag'])
 		) {
 			return;

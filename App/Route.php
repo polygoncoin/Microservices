@@ -104,7 +104,7 @@ class Route
 		$Env = __NAMESPACE__ . '\Env';
 
 		$httpRouteArr = [];
-		if ($this->http->req->isOpenToWebRequest) {
+		if (!$this->http->req->isAuthRequest) {
 			$userRoutesFolder = Constant::$WWW . $this->routesFolder
 				. DIRECTORY_SEPARATOR . 'Open';
 		} else {

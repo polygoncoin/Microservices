@@ -71,12 +71,12 @@ return [
 		QueryCacheServerKey::category(
 			customerID: $this->http->req->cID,
 			groupID: $this->http->req->s['gDetail']['id'],
-			isOpenToWebRequest: false
+			isAuthRequest: false
 		),
 		QueryCacheServerKey::category1(
 			customerID: $this->http->req->cID,
 			groupID: $this->http->req->s['gDetail']['id'],
-			isOpenToWebRequest: false
+			isAuthRequest: false
 		)
 	]
 ];
