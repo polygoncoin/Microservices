@@ -77,7 +77,6 @@ class Auth
 		) {
 			$this->http->req->s['userData'] = $_SESSION;
 			$this->http->req->s['token'] = session_id();
-			$this->http->req->userId = $_SESSION['id'];
 		} elseif (
 			($this->http->httpReqData['header']['tokenHeader'] !== null)
 		) {
@@ -113,9 +112,9 @@ class Auth
 				),
 				associative: true
 			);
-			$this->http->req->userId = $this->http->req->s['userData']['id'];
-			$this->http->req->groupId = $this->http->req->s['userData']['group_id'];
 		}
+		$this->http->req->userId = $this->http->req->s['userData']['id'];
+		$this->http->req->groupId = $this->http->req->s['userData']['group_id'];
 
 		if (Env::$enableConcurrentLogin) {
 			$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
