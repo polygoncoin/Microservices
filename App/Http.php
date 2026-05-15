@@ -47,7 +47,7 @@ class Http
 	public $res = null;
 
 	/**
-	 * HTTP request detail
+	 * HTTP request data
 	 *
 	 * @var null|array
 	 */

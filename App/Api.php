@@ -79,18 +79,6 @@ class Api
 	 */
 	public function process(): mixed
 	{
-		if (
-			$this->http->req->isAuthRequest
-			&& $this->http->httpReqData['server']['httpMethod'] === Constant::$GET
-		) {
-			$dropboxCache = new Dropbox(httpReqData: $this->http->httpReqData, http: $this->http);
-			if ($dropboxCache->init(mode: 'Closed')) {
-				// File exists - Serve from Dropbox
-				return $dropboxCache->process();
-			}
-			$dropboxCache = null;
-		}
-
 		// Execute Pre Route Hook
 		if (isset($this->http->req->rParser->routeHook['__PRE-ROUTE-HOOKS__'])) {
 			if ($this->hook === null) {
