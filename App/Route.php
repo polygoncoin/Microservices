@@ -88,6 +88,7 @@ class Route
 		if (Env::$enableRoutesRequest) {
 			return true;
 		}
+
 		return false;
 	}
 

@@ -102,7 +102,13 @@ class Api
 			$this->http->req->loadPayload();
 		}
 
-		if ($this->processBeforePayload()) {
+		if ($return = $this->preProcess()) {
+			if (
+				is_array($return)
+				&& count($return) === 3
+			) {
+				return $return;
+			}
 			return true;
 		}
 
@@ -152,9 +158,9 @@ class Api
 	/**
 	 * Process before collecting Payload
 	 *
-	 * @return bool
+	 * @return mixed
 	 */
-	private function processBeforePayload(): bool
+	private function preProcess(): mixed
 	{
 		$supplementProcessed = false;
 
@@ -171,40 +177,33 @@ class Api
 		} else {
 			$supplementApiClass = null;
 			switch (true) {
-				case (
-						Env::$enableCustomRequest
-						&& (Env::$customRequestRoutePrefix
-							=== $this->http->req->rParser->routeElementArr[0])
-
-					):
+				case ($this->checkSupplement(Env::$customRequestRoutePrefix)):
 					$supplementApiClass = __NAMESPACE__ . '\\Custom';
 					break;
-				case (
-						Env::$enableUploadRequest
-						&& (Env::$uploadRequestRoutePrefix
-							=== $this->http->req->rParser->routeElementArr[0])
-					):
+				case ($this->checkSupplement(Env::$dropboxRequestRoutePrefix)):
+					$supplementApiClass = __NAMESPACE__ . '\\Dropbox';
+					$supplementObj = new $supplementApiClass(http: $this->http);
+					if ($supplementObj->init()) {
+						$return = $supplementObj->process();
+						if (
+							is_array($return)
+							&& count($return) === 3
+						) {
+							return $return;
+						}
+						return $supplementProcessed;
+					}
+					break;
+				case ($this->checkSupplement(Env::$uploadRequestRoutePrefix)):
 					$supplementApiClass = __NAMESPACE__ . '\\Upload';
 					break;
-				case (
-						Env::$enableThirdPartyRequest
-						&& (Env::$thirdPartyRequestRoutePrefix
-							=== $this->http->req->rParser->routeElementArr[0])
-					):
+				case ($this->checkSupplement(Env::$thirdPartyRequestRoutePrefix)):
 					$supplementApiClass = __NAMESPACE__ . '\\ThirdParty';
-					break;
-				case (
-						Env::$enableDropboxRequest
-						&& (Env::$dropboxRequestRoutePrefix
-							=== $this->http->req->rParser->routeElementArr[0])
-					):
-					$supplementApiClass = __NAMESPACE__ . '\\Dropbox';
 					break;
 			}
 
 			if (!empty($supplementApiClass)) {
 				$supplementObj = new $supplementApiClass(http: $this->http);
-				$supplementObj->init();
 				$supplement = new Supplement(http: $this->http);
 				if ($supplement->init(supplementObj: $supplementObj)) {
 					$supplement->process();
@@ -214,6 +213,21 @@ class Api
 		}
 
 		return $supplementProcessed;
+	}
+
+	/**
+	 * Process before collecting Payload
+	 *
+	 * @param string $supplementMode
+	 *
+	 * @return bool
+	 */
+	private function checkSupplement($supplementMode): bool
+	{
+		return (
+			$this->http->req->rParser->routeStartingWithReservedKeywordFlag
+			&& $this->http->req->rParser->routeStartingReservedKeyword === $supplementMode
+		);
 	}
 
 	/**

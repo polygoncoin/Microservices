@@ -96,7 +96,7 @@ class Supplement
 	public function init(&$supplementObj): bool
 	{
 		$this->supplementObj = &$supplementObj;
-		return true;
+		return $this->supplementObj->init();
 	}
 
 	/**

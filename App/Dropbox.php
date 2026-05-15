@@ -91,10 +91,6 @@ class Dropbox
 	 */
 	public function init(): bool
 	{
-		if (!isset($this->http->httpReqData['get'][ROUTE_URL_PARAM])) {
-			return false;
-		}
-		
 		// $mode = Public (Public access) / Private (Requires Auth)
 		$mode = $this->http->req->isAuthRequest ? 'Private' : 'Public';
 
@@ -105,7 +101,7 @@ class Dropbox
 			string: str_replace(
 				search: ['../', '..\\', '/', '\\'],
 				replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-				subject: urldecode(string: $this->http->httpReqData['get'][ROUTE_URL_PARAM])
+				subject: urldecode(string: $this->http->req->rParser->configuredRoute)
 			),
 			characters: './\\'
 		);
@@ -140,9 +136,9 @@ class Dropbox
 	/**
 	 * Serve File content
 	 *
-	 * @return array
+	 * @return mixed
 	 */
-	public function process(): array
+	public function process(): mixed
 	{
 		$headerArr = [];
 		$status = HttpStatus::$Ok;

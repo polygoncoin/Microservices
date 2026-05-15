@@ -19,6 +19,7 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\CommonFunction;
 use Microservices\App\Start;
+use Microservices\App\SessionHandler\Session;
 use Microservices\TestCase\Test;
 
 ini_set(option: 'display_errors', value: true);
@@ -48,6 +49,14 @@ foreach ([
 Constant::init();
 Env::$timestamp = time();
 Env::init();
+
+if (Env::$authMode === 'Session') {
+	// Initialize Session Handler
+	Session::initSessionHandler(sessionMode: Env::$sessionMode, options: []);
+
+	// Start session in readonly mode
+	Session::sessionStartReadonly();
+}
 
 // Process the request
 $httpReqData = [];

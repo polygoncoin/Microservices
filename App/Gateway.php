@@ -54,9 +54,9 @@ class Gateway
 	/**
 	 * Initialize
 	 *
-	 * @return void
+	 * @return bool
 	 */
-	public function init(): void
+	public function init(): bool
 	{
 		$this->http->req->loadCustomerData();
 
@@ -65,6 +65,8 @@ class Gateway
 			CommonFunction::checkClosedWebRequestCidr(http: $this->http);
 		}
 		$this->rateLimitRequest();
+
+		return true;
 	}
 
 	/**

@@ -280,7 +280,7 @@ class Login
 
 		$tokenFound = false;
 		$tokenFoundData = [];
-		
+
 		$userConcurrencyKey = null;
 		$userConcurrencyKeyData = null;
 
@@ -478,7 +478,7 @@ class Login
 
 		$sessionFound = false;
 		$sessionFoundData = [];
-		
+
 		$userConcurrencyKey = null;
 		$userConcurrencyKeyData = null;
 
