@@ -92,7 +92,7 @@ class Dropbox
 	public function init(): bool
 	{
 		// $mode = Public (Public access) / Private (Requires Auth)
-		$mode = $this->http->req->isAuthRequest ? 'Private' : 'Public';
+		$mode = $this->http->req->isPrivateRequest ? 'Private' : 'Public';
 
 		$this->modeDropBox = Constant::$DROP_BOX_DIR
 			. DIRECTORY_SEPARATOR . $mode;
@@ -109,7 +109,7 @@ class Dropbox
 		if (
 			$this->http !== null
 			&& $this->http->req !== null
-			&& $this->http->req->isAuthRequest
+			&& $this->http->req->isPrivateRequest
 		) {
 			$this->modeDropBox .= DIRECTORY_SEPARATOR . $this->http->req->customerId;
 			$this->validateFileRequest();

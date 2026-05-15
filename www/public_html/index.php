@@ -121,16 +121,16 @@ if (
 			echo '<pre>'.print_r(value: $testObj->processAllTest(), return: true);
 			break;
 		case '/auth-test':
-			echo '<pre>'.print_r(value: $testObj->processAuth(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPrivate(), return: true);
 			break;
 		case '/open-test':
-			echo '<pre>'.print_r(value: $testObj->processOpen(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPublic(), return: true);
 			break;
 		case '/open-test-xml':
-			echo '<pre>'.print_r(value: $testObj->processXml(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPublicXml(), return: true);
 			break;
 		case '/supp-test':
-			echo '<pre>'.print_r(value: $testObj->processSupplement(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPrivateSupplement(), return: true);
 			break;
 	}
 } else {

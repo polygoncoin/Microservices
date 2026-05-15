@@ -87,7 +87,7 @@ These files locations are used in routes config to be used for generating respon
 
 - **/Config/Sql/Private/GlobalDB** for global database.
 - **/Config/Sql/Private/CustomerDB** for customer (including all hosts and their databases).
-- **/Config/Sql/Public** for Open to Web API's (No Authentication).
+- **/Config/Sql/Public** for Public Web API's (No Authentication).
 
 #### File
 

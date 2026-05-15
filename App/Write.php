@@ -331,7 +331,7 @@ class Write
 					$arr['Response'] = $response;
 
 					if (
-						$this->http->req->isAuthRequest
+						$this->http->req->isPrivateRequest
 						&& $idempotentWindow
 					) {
 						$this->http->req->clientCacheObj->cacheSet(

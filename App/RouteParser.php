@@ -148,7 +148,7 @@ class RouteParser
 		// }
 
 		if ($routeFileLocation === null) {
-			if ($this->http->req->isAuthRequest) {
+			if ($this->http->req->isPrivateRequest) {
 				$routeFileLocation = Constant::$PRIVATE_ROUTES_DIR
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'

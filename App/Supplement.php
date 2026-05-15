@@ -183,7 +183,7 @@ class Supplement
 			fetchFrom: 'Master'
 		);
 
-		$this->processSupplement(
+		$this->processPrivateSupplement(
 			sSqlConfig: $sSqlConfig,
 			useHierarchy: $useHierarchy
 		);
@@ -238,7 +238,7 @@ class Supplement
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function processSupplement(&$sSqlConfig, $useHierarchy): void
+	private function processPrivateSupplement(&$sSqlConfig, $useHierarchy): void
 	{
 		// Check for payloadType
 		if (isset($sSqlConfig['__PAYLOAD-TYPE__'])) {
@@ -298,7 +298,7 @@ class Supplement
 			}
 
 			// Check for Idempotent Window
-			if ($this->http->req->isAuthRequest) {
+			if ($this->http->req->isPrivateRequest) {
 				[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
 					sqlConfig: $sSqlConfig,
 					payloadIndexArr: $payloadIndexArr
