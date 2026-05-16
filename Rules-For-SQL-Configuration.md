@@ -258,7 +258,7 @@ return [
 
 	// Enable referrer lag for current route
 	// To be configured in source route SQL config
-	'enableReferrerLag' => true,
+	'enableReferrerLag' => 'Yes',
 
 	// Minimum Lag time between current request and referrer/previous request
 	// To be configured in target route SQL config
@@ -516,7 +516,7 @@ return [
 
 	// Enable referrer lag for current route
 	// To be configured in source route SQL config
-	'enableReferrerLag' => true,
+	'enableReferrerLag' => 'Yes',
 
 	// Minimum Lag time between current request and referrer/previous request
 	// To be configured in target route SQL config

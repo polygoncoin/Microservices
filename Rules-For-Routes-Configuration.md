@@ -128,11 +128,6 @@ Examples:
 One need to enable same in .env file as below
 
 ```ini
-; Allow particular route explain request (global flag)
-; Useful to get detail of the payload by the API
-enableExplainRequest=1              ; 1 = true / 0 = false
-enableImportRequest=1               ; 1 = true / 0 = false
-
 ; Keyword to append with in route with slash.
 ; Explain Route & its Payload
 explainRequestRouteKeyword='explain'    ; to append "/explain" at the end of route

@@ -58,8 +58,6 @@ class Gateway
 	 */
 	public function init(): bool
 	{
-		$this->http->req->loadCustomerData();
-
 		if ($this->http->req->isPrivateRequest) {
 			$this->http->req->auth->loadUserData();
 			CommonFunction::checkClosedWebRequestCidr(http: $this->http);
@@ -102,7 +100,7 @@ class Gateway
 	private function rateLimitCustomer(): void
 	{
 		if (
-			!Env::$enableRateLimitForCustomer
+			$this->http->req->s['customerData']['enableRateLimitForCustomer'] === 'No'
 			|| empty($this->http->req->s['customerData']['rateLimitMaxRequest'])
 			|| empty($this->http->req->s['customerData']['rateLimitMaxRequestWindow'])
 		) {
@@ -132,7 +130,7 @@ class Gateway
 	private function rateLimitGroup(): void
 	{
 		if (
-			!Env::$enableRateLimitForGroup
+			$this->http->req->s['customerData']['enableRateLimitForGroup'] === 'No'
 			|| empty($this->http->req->s['groupData']['rateLimitMaxRequest'])
 			|| empty($this->http->req->s['groupData']['rateLimitMaxRequestWindow'])
 		) {
@@ -164,7 +162,7 @@ class Gateway
 	private function rateLimitUser(): void
 	{
 		if (
-			!Env::$enableRateLimitForUser
+			$this->http->req->s['customerData']['enableRateLimitForUser'] === 'No'
 			|| empty($this->http->req->s['userData']['rateLimitMaxRequest'])
 			|| empty($this->http->req->s['userData']['rateLimitMaxRequestWindow'])
 		) {
@@ -194,13 +192,13 @@ class Gateway
 	 */
 	private function rateLimitUserRequest(): void
 	{
-		if (!Env::$enableRateLimitForUserRequest) {
+		if ($this->http->req->s['customerData']['enableRateLimitForUserRequest'] === 'No') {
 			return;
 		}
 
 		$rateLimitUserPrefix = Env::$rateLimitUserRequestPrefix;
-		$rateLimitMaxRequest = Env::$rateLimitUserMaxRequest;
-		$rateLimitMaxRequestWindow = Env::$rateLimitUserMaxRequestWindow;
+		$rateLimitMaxRequest = $this->http->req->s['customerData']['rateLimitUserMaxRequest'];
+		$rateLimitMaxRequestWindow = $this->http->req->s['customerData']['rateLimitUserMaxRequestWindow'];
 		$rateLimitKey = $this->http->req->customerId . ':'
 			. $this->http->req->userId;
 
@@ -219,13 +217,13 @@ class Gateway
 	 */
 	private function rateLimitIp(): void
 	{
-		if (!Env::$enableRateLimitForIp) {
+		if ($this->http->req->s['customerData']['enableRateLimitForIp'] === 'No') {
 			return;
 		}
 
 		$rateLimitIPPrefix = Env::$rateLimitIPPrefix;
-		$rateLimitIPMaxRequest = Env::$rateLimitIPMaxRequest;
-		$rateLimitIPMaxRequestWindow = Env::$rateLimitIPMaxRequestWindow;
+		$rateLimitIPMaxRequest = $this->http->req->s['customerData']['rateLimitIPMaxRequest'];
+		$rateLimitIPMaxRequestWindow = $this->http->req->s['customerData']['rateLimitIPMaxRequestWindow'];
 		$rateLimitKey = $this->http->req->customerId . ':' . $this->http->httpReqData['server']['httpRequestIP'];
 
 		$this->http->req->rateLimiter->checkRateLimit(

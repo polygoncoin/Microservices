@@ -19,6 +19,7 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\CommonFunction;
 use Microservices\App\SessionHandler\Session;
+use Microservices\App\Reload;
 use Microservices\App\Start;
 use Microservices\TestCase\Test;
 
@@ -135,16 +136,22 @@ if (
 	}
 } else {
 
-	ob_start();
-	[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
-	@ob_clean();
+	if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix) {
+		Reload::process();
+		return false;
+	} else {
 
-	$responseCode = $responseCode ?? 200;
-	http_response_code(response_code: $responseCode);
+		ob_start();
+		[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
+		@ob_clean();
 
-	foreach ($responseHeaderArr as $headerName => $headerValue) {
-		header(header: "{$headerName}: {$headerValue}");
+		$responseCode = $responseCode ?? 200;
+		http_response_code(response_code: $responseCode);
+
+		foreach ($responseHeaderArr as $headerName => $headerValue) {
+			header(header: "{$headerName}: {$headerValue}");
+		}
+
+		die($responseContent);
 	}
-
-	die($responseContent);
 }

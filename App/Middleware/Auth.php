@@ -116,7 +116,7 @@ class Auth
 		$this->http->req->userId = $this->http->req->s['userData']['id'];
 		$this->http->req->groupId = $this->http->req->s['userData']['group_id'];
 
-		if (Env::$enableConcurrentLogin) {
+		if ($this->http->req->s['customerData']['enableConcurrentLogin'] === 'Yes') {
 			$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
 				customerId: $this->http->req->customerId,
 				userId: $this->http->req->userId

@@ -5,13 +5,6 @@ Classless Inter-Domain Routing (CIDR) is a method for assigning IP addresses to 
 ## More about CIDR
 To learn more about CIDR one can [Check Google](https://www.google.com/search?q=CIDR)
 
-## Enable CIDR
-
-To enable CIDR checks one can do this as below in .env.cidr
-```ini
-enableCidrCheck=0                      ; 1 = true / 0 = false in
-```
-
 ## Setting top level CIDR
 
 Below are top level CIDR settings for a set of system routes (starting / ending with)

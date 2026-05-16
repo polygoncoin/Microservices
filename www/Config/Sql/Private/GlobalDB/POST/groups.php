@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "INSERT INTO `{$Env::$groupsTable}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$Env::$groupTable}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'name',

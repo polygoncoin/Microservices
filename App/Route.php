@@ -85,7 +85,7 @@ class Route
 	 */
 	public function init(): bool
 	{
-		if (Env::$enableRoutesRequest) {
+		if ($this->http->req->s['customerData']['enableRoutesRequest'] === 'Yes') {
 			return true;
 		}
 

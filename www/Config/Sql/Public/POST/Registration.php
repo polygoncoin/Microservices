@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->http->req->s['customerData']['usersTable']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->http->req->s['customerData']['userTable']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_id',

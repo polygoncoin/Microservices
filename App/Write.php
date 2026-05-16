@@ -111,7 +111,7 @@ class Write
 			keyword: 'useHierarchy'
 		);
 
-		if (Env::$enableExplainRequest) {
+		if ($this->http->req->s['customerData']['enableExplainRequest'] === 'Yes') {
 			if (
 				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
@@ -208,7 +208,7 @@ class Write
 			objectKey: 'Route',
 			data: $this->http->req->rParser->configuredRoute
 		);
-		if (Env::$enablePayloadInResponse) {
+		if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
 			$this->dataEncode->addKeyData(
 				objectKey: Env::$payloadKeyInResponse,
 				data: $this->getExplainParam(
@@ -320,7 +320,7 @@ class Write
 
 					$arr = [];
 					$arr['Status'] = HttpStatus::$Ok;
-					if (Env::$enablePayloadInResponse) {
+					if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 							keyString: implode(
 								separator: ':',
@@ -343,7 +343,7 @@ class Write
 				} else { // Failure
 					$arr = [];
 					$arr['Status'] = $this->http->res->httpStatus;
-					if (Env::$enablePayloadInResponse) {
+					if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 							keyString: implode(
 								separator: ':',
@@ -475,7 +475,7 @@ class Write
 			}
 
 			if (
-				Env::$enableGlobalCounter
+				$this->http->req->s['customerData']['enableGlobalCounter'] === 'Yes'
 				&& isset($writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
 			) {
 				$writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
@@ -526,7 +526,7 @@ class Write
 
 			if (isset($writeSqlConfig['__INSERT-IDs__'])) {
 				if (
-					Env::$enableGlobalCounter
+					$this->http->req->s['customerData']['enableGlobalCounter'] === 'Yes'
 					&& isset($writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
 				) {
 					$id = $writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'];

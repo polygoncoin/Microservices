@@ -121,7 +121,7 @@ class Supplement
 			keyword: 'useHierarchy'
 		);
 
-		if (Env::$enableExplainRequest) {
+		if ($this->http->req->s['customerData']['enableExplainRequest'] === 'Yes') {
 			if (
 				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
@@ -329,7 +329,7 @@ class Supplement
 
 						$arr = [];
 						$arr['Status'] = HttpStatus::$Ok;
-						if (Env::$enablePayloadInResponse) {
+						if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
 							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 								keyString: implode(
 									separator: ':',
@@ -349,7 +349,7 @@ class Supplement
 					} else { // Failure
 						$arr = [];
 						$arr['Status'] = $this->http->res->httpStatus;
-						if (Env::$enablePayloadInResponse) {
+						if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
 							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 								keyString: implode(
 									separator: ':',

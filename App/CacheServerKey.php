@@ -36,9 +36,9 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function openDomain(&$domainName): string
+	public static function publicDomain(&$domainName): string
 	{
-		return "otw:{$domainName}";
+		return "pub:{$domainName}";
 	}
 
 	/**
@@ -48,9 +48,9 @@ class CacheServerKey
 	 *
 	 * @return string
 	 */
-	public static function authDomain($domainName): string
+	public static function privateDomain($domainName): string
 	{
-		return "ctw:{$domainName}";
+		return "pri:{$domainName}";
 	}
 
 	/**

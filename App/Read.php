@@ -114,7 +114,7 @@ class Read
 		// Check for cache
 		$toBeCached = false;
 		if (
-			Env::$enableResponseCaching
+			$this->http->req->s['customerData']['enableResponseCaching'] === 'Yes'
 			&& isset($readSqlConfig['queryCacheKey'])
 			&& !isset($this->http->req->s['queryParamArr']['orderBy'])
 		) {
@@ -163,7 +163,7 @@ class Read
 		}
 
 		if (
-			Env::$enableResponseCaching
+			$this->http->req->s['customerData']['enableResponseCaching'] === 'Yes'
 			&& $toBeCached
 		) {
 			$this->dataEncode = new DataEncode(http: $this->http);
@@ -204,7 +204,7 @@ class Read
 		);
 
 		if (
-			Env::$enableExplainRequest
+			$this->http->req->s['customerData']['enableExplainRequest'] === 'Yes'
 			&& $this->http->req->rParser->routeEndingWithReservedKeywordFlag
 			&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
 		) {
@@ -220,7 +220,7 @@ class Read
 		}
 
 		if (
-			Env::$enableResponseCaching
+			$this->http->req->s['customerData']['enableResponseCaching'] === 'Yes'
 			&& $toBeCached
 		) {
 			$json = $this->dataEncode->getData();
@@ -699,7 +699,7 @@ class Read
 	{
 		$return = [[], '', HttpStatus::$Ok];
 
-		if (!Env::$enableDownloadRequest) {
+		if ($this->http->req->s['customerData']['enableDownloadRequest'] === 'No') {
 			return [[], '', HttpStatus::$NotFound];
 		}
 

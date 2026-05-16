@@ -37,7 +37,7 @@ class CommonFunction
 	/**
 	 * Check Errors related to File Upload
 	 *
-	 * @param array $httpFileArr $this->http->httpReqData['files']
+	 * @param array $httpFileArr $httpReqData['files']
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -173,7 +173,7 @@ class CommonFunction
 	 * Check IP with CIDR based on cache key containing start and end IP number
 	 *
 	 * @param CacheServerInterface $cacheObj     Cache Server object
-	 * @param string               $IP           $this->http->httpReqData['server']['httpRequestIP']
+	 * @param string               $IP           Request Ip
 	 * @param string               $cidrCacheKey Cache Key(s)
 	 *
 	 * @return void
@@ -203,7 +203,7 @@ class CommonFunction
 	/**
 	 * Check IP with CIDR
 	 *
-	 * @param string $IP         $this->http->httpReqData['server']['httpRequestIP']
+	 * @param string $IP         Request Ip
 	 * @param string $cidrString CIDRs
 	 *
 	 * @return null|bool
@@ -267,7 +267,7 @@ class CommonFunction
 	 */
 	public static function checkClosedWebRequestCidr(&$http): void
 	{
-		if (!Env::$enableCidrCheck) {
+		if ($http->req->s['customerData']['enableCidrCheck'] === 'No') {
 			return;
 		}
 

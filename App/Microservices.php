@@ -94,7 +94,7 @@ class Microservices
 			$this->tsStart = microtime(as_float: true);
 		}
 
-		return true;
+		return $this->http->init();
 	}
 
 	/**
@@ -104,6 +104,7 @@ class Microservices
 	 */
 	public function process(): mixed
 	{
+		$this->http->initRequest();
 		return $this->processApi();
 	}
 
@@ -119,18 +120,16 @@ class Microservices
 
 		switch (true) {
 			case (
-					Env::$enableCronRequest
+					$this->http->req->s['customerData']['enableCronRequest'] === 'Yes'
 					&& strpos(
 						haystack: $this->httpReqData['get'][ROUTE_URL_PARAM],
 						needle: '/' . Env::$cronRequestRoutePrefix
 					) === 0
 				):
-				if ($this->httpReqData['server']['httpRequestIP'] !== Env::$cronRestrictedCidr) {
-					throw new \Exception(
-						message: 'Source IP is not supported',
-						code: HttpStatus::$NotFound
-					);
-				}
+				CommonFunction::checkCidr(
+					IP: $this->httpReqData['server']['httpRequestIP'],
+					cidrString: $this->http->req->s['customerData']['cronRestrictedCidr']
+				);
 				$class = __NAMESPACE__ . '\\Cron';
 				break;
 
@@ -138,34 +137,13 @@ class Microservices
 				$class = __NAMESPACE__ . '\\Logout';
 				break;
 
-			// Requires HTTP auth username and password
-			case (
-					Env::$enableReloadRequest
-					&& $this->httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
-				):
-				$isValidIp = CommonFunction::checkCidr(
-					IP: $this->httpReqData['server']['httpRequestIP'],
-					cidrString: Env::$reloadRestrictedCidr
-				);
-				if (!$isValidIp) {
-					throw new \Exception(
-						message: 'Source IP is not supported',
-						code: HttpStatus::$NotFound
-					);
-				}
-				$class = __NAMESPACE__ . '\\Reload';
-				break;
-
 			// Generates auth token
 			case $this->httpReqData['get'][ROUTE_URL_PARAM] === '/login':
-				$this->http->init();
 				$class = __NAMESPACE__ . '\\Login';
 				break;
 
 			// Requires auth token
 			default:
-				$this->http->init();
-
 				$gateway = new Gateway(http: $this->http);
 				$gateway->init();
 				$gateway = null;

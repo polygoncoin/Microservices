@@ -48,10 +48,6 @@ class RateLimiter
 	public function __construct(Http &$http)
 	{
 		$this->http = &$http;
-
-		if (!Env::$enableRateLimiting) {
-			return;
-		}
 	}
 
 	/**
@@ -72,7 +68,7 @@ class RateLimiter
 	): array {
 		if (
 			$this->http->req->clientCacheObj === null
-			&& (!Env::$enableRateLimiting)
+			&& $this->http->req->s['customerData']['enableRateLimiting'] === 'No'
 		) {
 			return [
 				'allowed' => true,

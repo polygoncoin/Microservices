@@ -67,8 +67,6 @@ class Api
 	 */
 	public function init(): bool
 	{
-		$this->http->initRequest();
-
 		return true;
 	}
 
@@ -165,7 +163,7 @@ class Api
 		$supplementProcessed = false;
 
 		if (
-			Env::$enableRoutesRequest
+			$this->http->req->s['customerData']['enableRoutesRequest'] === 'Yes'
 			&& Env::$routesRequestRoute === $this->http->req->rParser->routeElementArr[0]
 		) {
 			$supplementApiClass = __NAMESPACE__ . '\\Route';

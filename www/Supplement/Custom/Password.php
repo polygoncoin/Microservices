@@ -94,7 +94,7 @@ class Password implements CustomInterface
 			);
 
 			$sql = "
-				UPDATE `{$this->http->req->s['customerData']['usersTable']}`
+				UPDATE `{$this->http->req->s['customerData']['userTable']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";

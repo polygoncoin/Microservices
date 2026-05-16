@@ -10,11 +10,8 @@ DISABLE_REQUESTS_VIA_PROXIES=1          ; 1 = true / 0 = false
 
 ```ini
 ; API authentication modes - Token / Session (Cookie based Sessions)
-enablePublicRequest=1        ; 1 = true / 0 = false
-enablePrivateRequest=1        ; 1 = true / 0 = false
 authMode='Token'            ; Token / Session (Cookie based Sessions)
 sessionMode='File'          ; For Cookie based Session - 'File', 'MySql', 'PostgreSql', 'MongoDb', 'Redis', 'Memcached', 'Cookie'
-enableConcurrentLogin=1    ; 1 = true / 0 = false
 maxConcurrentLogin=2       ; simultaneous login limit
 concurrentAccessInterval=60 ; Concurrent Access Interval in Seconds
 ```
@@ -25,9 +22,6 @@ concurrentAccessInterval=60 ; Concurrent Access Interval in Seconds
 ; Data Representation: JSON/XML/XSLT/HTML/PHP
 iRepresentation='JSON'                  ; JSON/XML - Input Data Representation
 oRepresentation='JSON'                  ; JSON/XML/XSLT/HTML/PHP - Output Data Representation
-enableInputRepresentationAsQueryParam=1 ; 1 = true / 0 = false
-enableOutputRepresentationAsQueryParam=1; 1 = true / 0 = false
-enablePayloadInResponse=1               ; 1 = true / 0 = false
 payloadKeyInResponse='Payload'
 ```
 
@@ -45,11 +39,10 @@ As the heading describes below are the settings for global counter for the prima
 
 This enables identify Customer Data easily while moving him from a common database for all to a dedicated customer X database.
 
-Enable below config for same.
+Set below config.
 
 ```ini
 ; Global Auto-Increment counter detail
-enableGlobalCounter=0               ; 1 = true / 0 = false
 gCounter='global_counter'           ; Key or Table
 gCounterMode='Cache'                ; Globally configured Cache / Database
 ```

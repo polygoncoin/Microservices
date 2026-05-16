@@ -15,7 +15,7 @@
 
 return [
 	'all' => [
-		'__QUERY__' => "SELECT * FROM `{$Env::$groupsTable}` WHERE __WHERE__ ORDER BY id ASC",
+		'__QUERY__' => "SELECT * FROM `{$Env::$groupTable}` WHERE __WHERE__ ORDER BY id ASC",
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
@@ -36,7 +36,7 @@ return [
 		'__MODE__' => 'multipleRowFormat'
 	],
 	'single' => [
-		'__QUERY__' => "SELECT * FROM `{$Env::$groupsTable}` WHERE __WHERE__",
+		'__QUERY__' => "SELECT * FROM `{$Env::$groupTable}` WHERE __WHERE__",
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',

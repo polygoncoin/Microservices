@@ -1,29 +1,6 @@
-# request control
+# Request Control
 
 Control major request access and set respective keywords to make routes unique for your services.
-
-## Controlling request at top level
-
-```ini
-; Explain request Payload
-enableExplainRequest=1                  ; 1 = true / 0 = false
-; Download CSV
-enableDownloadRequest=1                 ; 1 = true / 0 = false
-; Import CSV
-enableImportRequest=1                   ; 1 = true / 0 = false
-; Import CSV Sample
-enableImportSampleRequest=1             ; 1 = true / 0 = false
-; Listing available routes
-enableRoutesRequest=1                   ; 1 = true / 0 = false
-; Supplement feature controls
-enableResponseCaching=1                 ; 1 = true / 0 = false
-enableDropboxRequest=1                  ; 1 = true / 0 = false
-enableCronRequest=1                     ; 1 = true / 0 = false
-enableCustomRequest=1                   ; 1 = true / 0 = false
-enableReloadRequest=1                   ; 1 = true / 0 = false
-enableThirdPartyRequest=1               ; 1 = true / 0 = false
-enableUploadRequest=1                   ; 1 = true / 0 = false
-```
 
 ## Route keyword
 

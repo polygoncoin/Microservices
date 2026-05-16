@@ -796,7 +796,7 @@ trait AppTrait
 	{
 		if (
 			!$this->http->req->isPrivateRequest
-			|| !Env::$enableRateLimitForRoute
+			|| $this->http->req->s['customerData']['enableRateLimitForRoute'] === 'No'
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
 		) {
@@ -894,7 +894,7 @@ trait AppTrait
 
 		if (
 			isset($sqlConfig['enableReferrerLag'])
-			&& $sqlConfig['enableReferrerLag'] === true
+			&& $sqlConfig['enableReferrerLag'] === 'Yes'
 		) {
 			if (!$this->http->req->clientCacheObj->cacheExist(cacheKey: $customerUserReferrerLagKey)) {
 				$this->http->req->clientCacheObj->cacheSet(

@@ -28,7 +28,7 @@ gDbServerPassword='password'
 gDbServerDatabase='<global>'
 
 ; Tables in <global> database on the server
-groupsTable='group'
+groupTable='group'
 customerTable='customer'
 ```
 

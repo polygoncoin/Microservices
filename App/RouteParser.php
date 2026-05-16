@@ -114,6 +114,20 @@ class RouteParser
 	private $http = null;
 
 	/**
+	 * Reserved Routes Prefix
+	 *
+	 * @var null|array
+	 */
+	public $reservedRoutesPrefix = null;
+
+	/**
+	 * Reserved Routes CIDR
+	 *
+	 * @var null|array
+	 */
+	public $reservedRoutesCidrString = null;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Http $http
@@ -140,6 +154,23 @@ class RouteParser
 			separator: '/',
 			string: trim(string: $this->http->httpReqData['get'][ROUTE_URL_PARAM], characters: '/')
 		);
+
+		if ($this->routeElementArr[0] === Env::$dropboxRequestRoutePrefix) {
+			$this->routeStartingWithReservedKeywordFlag = true;
+			$this->routeStartingReservedKeyword = Env::$dropboxRequestRoutePrefix;
+
+			unset($this->routeElementArr[0]);
+			$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
+
+			if ($this->http->req->isPrivateRequest) {
+				CommonFunction::checkCidr(
+					IP: $this->http->httpReqData['server']['httpRequestIP'],
+					cidrString: $this->http->req->s['customerData']['dropboxRestrictedCidr']
+				);
+			}
+			return;
+		}
+
 		$routeLastElementPos = count(value: $this->routeElementArr) - 1;
 		// if ($this->routeElementArr[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
 		//     if (isset($this->http->httpReqData['server']['httpMethod'])) {
@@ -177,11 +208,11 @@ class RouteParser
 			if ($element === '') {
 				continue;
 			}
+			if ($i === 0) { // Route starting with reserved keyword
+				$this->isStartingWithReservedRouteKeyword(routeStartingKeyword: $element);
+			}
 
 			if (isset($routesConfig[$element])) { // Route element is configured
-				if ($i === 0) {
-					$this->isStartingWithReservedRouteKeyword(routeStartingKeyword: $element);
-				}
 				if (isset($routesConfig[$element]['__PRE-ROUTE-HOOKS__'])) {
 					$this->routeHook[$element]['__PRE-ROUTE-HOOKS__'] = $routesConfig[$element]['__PRE-ROUTE-HOOKS__'];
 				}
@@ -191,19 +222,6 @@ class RouteParser
 				$configuredRoute[] = $element;
 				$routesConfig = &$routesConfig[$element];
 				$this->checkPresenceOfDynamicString(element: $element);
-				continue;
-			} elseif ( // Route starting with reserved keyword
-				$i === 0
-				&& $this->isStartingWithReservedRouteKeyword(routeStartingKeyword: $element)
-			) {
-				if (
-					$this->routeStartingWithReservedKeywordFlag
-					&& $this->routeStartingReservedKeyword === Env::$dropboxRequestRoutePrefix
-				) {
-					unset($this->routeElementArr[0]);
-					$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
-					return;
-				}
 				continue;
 			} elseif ( // Route ending with reserved keyword
 				$i === $routeLastElementPos
@@ -273,7 +291,7 @@ class RouteParser
 		// Input data representation over rides global and routes settings
 		// Switch Input data representation if set in URL param
 		if (
-			Env::$enableInputRepresentationAsQueryParam
+			$this->http->req->s['customerData']['enableInputRepresentationAsQueryParam'] === 'Yes'
 			&& isset($this->http->httpReqData['get']['iRepresentation'])
 			&& Env::isValidDataRep(
 				dataRepresentation: $this->http->httpReqData['get']['iRepresentation'],
@@ -297,21 +315,15 @@ class RouteParser
 	 */
 	private function isStartingWithReservedRouteKeyword($routeStartingKeyword)
 	{
-		if (in_array($routeStartingKeyword, Env::$reservedRoutesPrefix)) {
+		$this->setReservedRouteArray();
+		if (in_array($routeStartingKeyword, $this->reservedRoutesPrefix)) {
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = $routeStartingKeyword;
-			if (
-				Env::$enableCidrCheck
-				&& isset(Env::$reservedRoutesCidrString[$routeStartingKeyword])
-			) {
-				$isValidIp = CommonFunction::checkCidr(
-					IP: $this->http->httpReqData['server']['httpRequestIP'],
-					cidrString: Env::$reservedRoutesCidrString[$routeStartingKeyword]
-				);
-				if (!$isValidIp) {
-					throw new \Exception(
-						message: 'Source IP is not supported',
-						code: HttpStatus::$NotFound
+			if ($this->http->req->s['customerData']['enableCidrCheck'] === 'Yes') {
+				if (isset($this->reservedRoutesCidrString[$routeStartingKeyword])) {
+					CommonFunction::checkCidr(
+						IP: $this->http->httpReqData['server']['httpRequestIP'],
+						cidrString: $this->reservedRoutesCidrString[$routeStartingKeyword]
 					);
 				}
 			}
@@ -332,21 +344,21 @@ class RouteParser
 		$return = false;
 
 		if (
-			Env::$enableExplainRequest
+			$this->http->req->s['customerData']['enableExplainRequest'] === 'Yes'
 			&& Env::$explainRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
 			$this->routeEndingReservedKeyword = Env::$explainRequestRouteKeyword;
 			$return = true;
 		} elseif (
-			Env::$enableImportRequest
+			$this->http->req->s['customerData']['enableImportRequest'] === 'Yes'
 			&& Env::$importRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
 			$this->routeEndingReservedKeyword = Env::$importRequestRouteKeyword;
 			$return = true;
 		} elseif (
-			Env::$enableImportSampleRequest
+			$this->http->req->s['customerData']['enableImportSampleRequest'] === 'Yes'
 			&& Env::$importSampleRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
@@ -476,7 +488,7 @@ class RouteParser
 
 		// Switch Output data representation if set in URL param
 		if (
-			Env::$enableOutputRepresentationAsQueryParam
+			$this->http->req->s['customerData']['enableOutputRepresentationAsQueryParam'] === 'Yes'
 			&& isset($this->http->httpReqData['get']['oRepresentation'])
 			&& Env::isValidDataRep(
 				dataRepresentation: $this->http->httpReqData['get']['oRepresentation'],
@@ -548,5 +560,38 @@ class RouteParser
 			$foundStringRoute,
 			$foundStringParamName
 		];
+	}
+
+	/**
+	 * Set Reserved Route
+	 *
+	 * @return void
+	 */
+	private function setReservedRouteArray(): void
+	{
+		$this->reservedRoutesPrefix = [
+			Env::$cronRequestRoutePrefix,
+			Env::$reloadRequestRoutePrefix,
+			Env::$routesRequestRoute
+		];
+
+		$this->reservedRoutesCidrString = [
+			Env::$cronRequestRoutePrefix => $this->http->req->s['customerData']['cronRestrictedCidr'],
+			Env::$reloadRequestRoutePrefix => $this->http->req->s['customerData']['reloadRestrictedCidr'],
+			Env::$routesRequestRoute => $this->http->req->s['customerData']['routesRestrictedCidr']
+		];
+
+		if ($this->http->req->s['customerData']['enableCustomRequest']) {
+			$this->reservedRoutesPrefix[] = Env::$customRequestRoutePrefix;
+			$this->reservedRoutesCidrString[Env::$customRequestRoutePrefix] = $this->http->req->s['customerData']['customRestrictedCidr'];
+		}
+		if ($this->http->req->s['customerData']['enableThirdPartyRequest']) {
+			$this->reservedRoutesPrefix[] = Env::$thirdPartyRequestRoutePrefix;
+			$this->reservedRoutesCidrString[Env::$thirdPartyRequestRoutePrefix] = $this->http->req->s['customerData']['thirdPatyRestrictedCidr'];
+		}
+		if ($this->http->req->s['customerData']['enableUploadRequest']) {
+			$this->reservedRoutesPrefix[] = Env::$uploadRequestRoutePrefix;
+			$this->reservedRoutesCidrString[Env::$uploadRequestRoutePrefix] = $this->http->req->s['customerData']['uploadRestrictedCidr'];
+		}
 	}
 }
