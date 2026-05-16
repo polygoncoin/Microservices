@@ -16,6 +16,7 @@
 namespace Microservices\App\Middleware;
 
 use Microservices\App\CacheServerKey;
+use Microservices\App\CommonFunction;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\Http;
@@ -116,7 +117,7 @@ class Auth
 		$this->http->req->userId = $this->http->req->s['userData']['id'];
 		$this->http->req->groupId = $this->http->req->s['userData']['group_id'];
 
-		if ($this->http->req->s['customerData']['enableConcurrentLogin'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableConcurrentLogin')) {
 			$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
 				customerId: $this->http->req->customerId,
 				userId: $this->http->req->userId

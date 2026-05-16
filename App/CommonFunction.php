@@ -35,6 +35,19 @@ use Microservices\App\Server\CacheServer\CacheServerInterface;
 class CommonFunction
 {
 	/**
+	 * Validate remote IP
+	 *
+	 * @param Http   $http
+	 * @param string $feature
+	 *
+	 * @return bool
+	 */
+	public static function isEnabled(&$http, $feature): bool
+	{
+		return ($http->req->s['customerData'][$feature] === 'Yes') ? true : false;
+	}
+
+	/**
 	 * Check Errors related to File Upload
 	 *
 	 * @param array $httpFileArr $httpReqData['files']
@@ -230,7 +243,6 @@ class CommonFunction
 	 * @param array  $cidrIpNumberRangeArr Cidr IP number ranges
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public static function belongsToCidrIpNumberRange($IP, $cidrIpNumberRangeArr): bool
 	{
@@ -256,18 +268,16 @@ class CommonFunction
 		return $isValidIp;
 	}
 
-
 	/**
 	 * Validate remote IP
 	 *
 	 * @param Http $http
 	 *
 	 * @return void
-	 * @throws \Exception
 	 */
-	public static function checkClosedWebRequestCidr(&$http): void
+	public static function checkPrivateRequestCidr(&$http): void
 	{
-		if ($http->req->s['customerData']['enableCidrCheck'] === 'No') {
+		if (!self::isEnabled(http: $http, feature: 'enableCidrCheck')) {
 			return;
 		}
 

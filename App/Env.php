@@ -32,7 +32,7 @@ use Microservices\App\HttpStatus;
 class Env
 {
 	public static $timestamp = null;
-	
+
 	public static $ENVIRONMENT = null;
 	public static $OUTPUT_PERFORMANCE_STATS = null;
 	public static $DISABLE_REQUESTS_VIA_PROXIES = null;
@@ -114,7 +114,7 @@ class Env
 	public static $queryCacheServerPassword = null;
 	public static $queryCacheServerDatabase = null;
 	public static $queryCacheServerTable = null;
-	
+
 	public static $iAllowedRepresentation = ['JSON', 'XML'];
 	public static $oAllowedRepresentation = ['JSON', 'XML', 'XSLT', 'HTML', 'PHP'];
 

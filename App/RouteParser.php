@@ -156,18 +156,24 @@ class RouteParser
 		);
 
 		if ($this->routeElementArr[0] === Env::$dropboxRequestRoutePrefix) {
+			if ($this->http->req->isPrivateRequest) {
+				if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableDropboxRequest')) {
+					throw new \Exception(
+						message: 'Route not supported',
+						code: HttpStatus::$BadRequest
+					);
+				}
+				CommonFunction::checkCidr(
+					IP: $this->http->httpReqData['server']['httpRequestIP'],
+					cidrString: $this->http->req->s['customerData']['dropboxRestrictedCidr']
+				);
+			}
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = Env::$dropboxRequestRoutePrefix;
 
 			unset($this->routeElementArr[0]);
 			$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
 
-			if ($this->http->req->isPrivateRequest) {
-				CommonFunction::checkCidr(
-					IP: $this->http->httpReqData['server']['httpRequestIP'],
-					cidrString: $this->http->req->s['customerData']['dropboxRestrictedCidr']
-				);
-			}
 			return;
 		}
 
@@ -291,7 +297,7 @@ class RouteParser
 		// Input data representation over rides global and routes settings
 		// Switch Input data representation if set in URL param
 		if (
-			$this->http->req->s['customerData']['enableInputRepresentationAsQueryParam'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableInputRepresentationAsQueryParam')
 			&& isset($this->http->httpReqData['get']['iRepresentation'])
 			&& Env::isValidDataRep(
 				dataRepresentation: $this->http->httpReqData['get']['iRepresentation'],
@@ -319,7 +325,7 @@ class RouteParser
 		if (in_array($routeStartingKeyword, $this->reservedRoutesPrefix)) {
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = $routeStartingKeyword;
-			if ($this->http->req->s['customerData']['enableCidrCheck'] === 'Yes') {
+			if (CommonFunction::isEnabled(http: $this->http, feature: 'enableCidrCheck')) {
 				if (isset($this->reservedRoutesCidrString[$routeStartingKeyword])) {
 					CommonFunction::checkCidr(
 						IP: $this->http->httpReqData['server']['httpRequestIP'],
@@ -344,21 +350,21 @@ class RouteParser
 		$return = false;
 
 		if (
-			$this->http->req->s['customerData']['enableExplainRequest'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')
 			&& Env::$explainRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
 			$this->routeEndingReservedKeyword = Env::$explainRequestRouteKeyword;
 			$return = true;
 		} elseif (
-			$this->http->req->s['customerData']['enableImportRequest'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableImportRequest')
 			&& Env::$importRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
 			$this->routeEndingReservedKeyword = Env::$importRequestRouteKeyword;
 			$return = true;
 		} elseif (
-			$this->http->req->s['customerData']['enableImportSampleRequest'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableImportSampleRequest')
 			&& Env::$importSampleRequestRouteKeyword === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = true;
@@ -488,7 +494,7 @@ class RouteParser
 
 		// Switch Output data representation if set in URL param
 		if (
-			$this->http->req->s['customerData']['enableOutputRepresentationAsQueryParam'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableOutputRepresentationAsQueryParam')
 			&& isset($this->http->httpReqData['get']['oRepresentation'])
 			&& Env::isValidDataRep(
 				dataRepresentation: $this->http->httpReqData['get']['oRepresentation'],

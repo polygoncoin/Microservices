@@ -15,14 +15,15 @@
 
 namespace Microservices\App;
 
-use Microservices\App\Start;
 use Microservices\App\CacheServerKey;
+use Microservices\App\CommonFunction;
 use Microservices\App\Counter;
 use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
+use Microservices\App\Start;
 use Microservices\App\Validator;
 
 /**
@@ -796,7 +797,7 @@ trait AppTrait
 	{
 		if (
 			!$this->http->req->isPrivateRequest
-			|| $this->http->req->s['customerData']['enableRateLimitForRoute'] === 'No'
+			|| !CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForRoute')
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
 		) {

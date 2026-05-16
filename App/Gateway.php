@@ -60,7 +60,7 @@ class Gateway
 	{
 		if ($this->http->req->isPrivateRequest) {
 			$this->http->req->auth->loadUserData();
-			CommonFunction::checkClosedWebRequestCidr(http: $this->http);
+			CommonFunction::checkPrivateRequestCidr(http: $this->http);
 		}
 		$this->rateLimitRequest();
 
@@ -100,7 +100,7 @@ class Gateway
 	private function rateLimitCustomer(): void
 	{
 		if (
-			$this->http->req->s['customerData']['enableRateLimitForCustomer'] === 'No'
+			!CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForCustomer')
 			|| empty($this->http->req->s['customerData']['rateLimitMaxRequest'])
 			|| empty($this->http->req->s['customerData']['rateLimitMaxRequestWindow'])
 		) {
@@ -130,7 +130,7 @@ class Gateway
 	private function rateLimitGroup(): void
 	{
 		if (
-			$this->http->req->s['customerData']['enableRateLimitForGroup'] === 'No'
+			!CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForGroup')
 			|| empty($this->http->req->s['groupData']['rateLimitMaxRequest'])
 			|| empty($this->http->req->s['groupData']['rateLimitMaxRequestWindow'])
 		) {
@@ -162,7 +162,7 @@ class Gateway
 	private function rateLimitUser(): void
 	{
 		if (
-			$this->http->req->s['customerData']['enableRateLimitForUser'] === 'No'
+			!CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForUser')
 			|| empty($this->http->req->s['userData']['rateLimitMaxRequest'])
 			|| empty($this->http->req->s['userData']['rateLimitMaxRequestWindow'])
 		) {
@@ -192,7 +192,7 @@ class Gateway
 	 */
 	private function rateLimitUserRequest(): void
 	{
-		if ($this->http->req->s['customerData']['enableRateLimitForUserRequest'] === 'No') {
+		if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForUserRequest')) {
 			return;
 		}
 
@@ -217,7 +217,7 @@ class Gateway
 	 */
 	private function rateLimitIp(): void
 	{
-		if ($this->http->req->s['customerData']['enableRateLimitForIp'] === 'No') {
+		if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForIp')) {
 			return;
 		}
 

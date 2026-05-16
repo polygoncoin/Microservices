@@ -104,10 +104,10 @@ class Login
 
 		$this->loadPayload();
 		$this->loadUserData();
-		CommonFunction::checkClosedWebRequestCidr(http: $this->http);
+		CommonFunction::checkPrivateRequestCidr(http: $this->http);
 		$this->validatePassword();
 
-		if ($this->http->req->s['customerData']['enableRateLimitForUserPerIp'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimitForUserPerIp')) {
 			$this->http->req->rateLimiter->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserPerIpPrefix,
 				rateLimitMaxRequest: $this->http->req->s['customerData']['rateLimitMaxUserPerIp'],
@@ -303,7 +303,7 @@ class Login
 		) {
 			$this->cacheDelete(cacheKey: $userTokenKey);
 		} else {
-			if ($this->http->req->s['customerData']['enableConcurrentLogin'] === 'Yes') {
+			if (CommonFunction::isEnabled(http: $this->http, feature: 'enableConcurrentLogin')) {
 				$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
 					customerId: $this->http->req->customerId,
 					userId: $this->http->req->userId
@@ -392,7 +392,7 @@ class Login
 			$tokenFound = true;
 		}
 
-		if ($this->http->req->s['customerData']['enableConcurrentLogin'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableConcurrentLogin')) {
 			if (count($userTokenKeyData) >= Env::$maxConcurrentLogin) {
 				throw new \Exception(
 					message: 'Account already in use. '
@@ -501,7 +501,7 @@ class Login
 		) {
 			$this->cacheDelete(cacheKey: $userSessionKey);
 		} else {
-			if ($this->http->req->s['customerData']['enableConcurrentLogin'] === 'Yes') {
+			if (CommonFunction::isEnabled(http: $this->http, feature: 'enableConcurrentLogin')) {
 				$userConcurrencyKey = CacheServerKey::customerUserConcurrency(
 					customerId: $this->http->req->customerId,
 					userId: $this->http->req->userId
@@ -568,8 +568,7 @@ class Login
 			$sessionFound = true;
 		}
 
-
-		if ($this->http->req->s['customerData']['enableConcurrentLogin'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableConcurrentLogin')) {
 			if (count($userSessionKeyData) >= Env::$maxConcurrentLogin) {
 				throw new \Exception(
 					message: 'Account already in use. '

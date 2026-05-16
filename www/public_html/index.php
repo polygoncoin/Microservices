@@ -18,6 +18,7 @@ namespace Microservices\www\public_html;
 use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\CommonFunction;
+use Microservices\App\HttpStatus;
 use Microservices\App\SessionHandler\Session;
 use Microservices\App\Reload;
 use Microservices\App\Start;
@@ -87,6 +88,18 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 }
 
 $httpReqData['get'] = &$_GET;
+if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
+	$httpReqData['get'][ROUTE_URL_PARAM] = '/' . trim(
+		string: $httpReqData['get'][ROUTE_URL_PARAM],
+		characters: '/'
+	);
+} else {
+	throw new \Exception(
+		message: 'Missing route',
+		code: HttpStatus::$NotFound
+	);
+}
+
 $httpReqData['post'] = file_get_contents(filename: 'php://input');
 $httpReqData['files'] = [];
 if (isset($_FILES)) {

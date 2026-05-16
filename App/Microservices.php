@@ -68,6 +68,7 @@ class Microservices
 	 * Constructor
 	 *
 	 * @param array $httpReqData HTTP request data
+	 * @throws \Exception
 	 */
 	public function __construct(&$httpReqData)
 	{
@@ -79,17 +80,9 @@ class Microservices
 	 * Initialize
 	 *
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function init(): bool
 	{
-		if (!isset($this->httpReqData['get'][ROUTE_URL_PARAM])) {
-			throw new \Exception(
-				message: 'Missing route',
-				code: HttpStatus::$NotFound
-			);
-		}
-
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
 			$this->tsStart = microtime(as_float: true);
 		}
@@ -101,26 +94,17 @@ class Microservices
 	 * Process
 	 *
 	 * @return mixed
+	 * @throws \Exception
 	 */
 	public function process(): mixed
 	{
 		$this->http->initRequest();
-		return $this->processApi();
-	}
 
-	/**
-	 * Process API request
-	 *
-	 * @return mixed
-	 * @throws \Exception
-	 */
-	public function processApi(): mixed
-	{
 		$class = null;
 
 		switch (true) {
 			case (
-					$this->http->req->s['customerData']['enableCronRequest'] === 'Yes'
+					CommonFunction::isEnabled(http: $this->http, feature: 'enableCronRequest')
 					&& strpos(
 						haystack: $this->httpReqData['get'][ROUTE_URL_PARAM],
 						needle: '/' . Env::$cronRequestRoutePrefix

@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\Dropbox;
 use Microservices\App\Constant;
 use Microservices\App\Env;
@@ -163,7 +164,7 @@ class Api
 		$supplementProcessed = false;
 
 		if (
-			$this->http->req->s['customerData']['enableRoutesRequest'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableRoutesRequest')
 			&& Env::$routesRequestRoute === $this->http->req->rParser->routeElementArr[0]
 		) {
 			$supplementApiClass = __NAMESPACE__ . '\\Route';

@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Http;
@@ -85,7 +86,7 @@ class Route
 	 */
 	public function init(): bool
 	{
-		if ($this->http->req->s['customerData']['enableRoutesRequest'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableRoutesRequest')) {
 			return true;
 		}
 

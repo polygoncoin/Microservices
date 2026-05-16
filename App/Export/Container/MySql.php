@@ -220,13 +220,13 @@ class MySql implements ExportDatabaseServerInterface
 				foreach ($valueArr as $value) {
 					if (is_array(value: $value)) {
 						throw new \Exception(
-							message: "Invalid params for key '{$parameterisedColumn}'"
+							message: "Invalid param key '{$parameterisedColumn}'"
 						);
 					}
 					$newParameterisedColumn = $parameterisedColumn . $count++;
 					if (in_array(needle: $newParameterisedColumn, haystack: $tmpParamArr)) {
 						throw new \Exception(
-							message: "Invalid parameterized params '{$newParameterisedColumn}'"
+							message: "Invalid new param key '{$newParameterisedColumn}'"
 						);
 					}
 					$tmpParamArr[$newParameterisedColumn] = $value;

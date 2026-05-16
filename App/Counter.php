@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 
@@ -39,7 +40,7 @@ class Counter
 	 */
 	public static function getGlobalCounter(): int
 	{
-		if ($this->http->req->s['customerData']['enableGlobalCounter'] === 'No') {
+		if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableGlobalCounter')) {
 			throw new \Exception(
 				message: 'Enable use of Global Counter',
 				code: HttpStatus::$InternalServerError

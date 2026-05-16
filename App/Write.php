@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\AppTrait;
+use Microservices\App\CommonFunction;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
@@ -111,7 +112,7 @@ class Write
 			keyword: 'useHierarchy'
 		);
 
-		if ($this->http->req->s['customerData']['enableExplainRequest'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')) {
 			if (
 				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
@@ -208,7 +209,7 @@ class Write
 			objectKey: 'Route',
 			data: $this->http->req->rParser->configuredRoute
 		);
-		if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
 			$this->dataEncode->addKeyData(
 				objectKey: Env::$payloadKeyInResponse,
 				data: $this->getExplainParam(
@@ -320,7 +321,7 @@ class Write
 
 					$arr = [];
 					$arr['Status'] = HttpStatus::$Ok;
-					if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
+					if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 							keyString: implode(
 								separator: ':',
@@ -343,7 +344,7 @@ class Write
 				} else { // Failure
 					$arr = [];
 					$arr['Status'] = $this->http->res->httpStatus;
-					if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
+					if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 							keyString: implode(
 								separator: ':',
@@ -475,7 +476,7 @@ class Write
 			}
 
 			if (
-				$this->http->req->s['customerData']['enableGlobalCounter'] === 'Yes'
+				CommonFunction::isEnabled(http: $this->http, feature: 'enableGlobalCounter')
 				&& isset($writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
 			) {
 				$writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
@@ -526,7 +527,7 @@ class Write
 
 			if (isset($writeSqlConfig['__INSERT-IDs__'])) {
 				if (
-					$this->http->req->s['customerData']['enableGlobalCounter'] === 'Yes'
+					CommonFunction::isEnabled(http: $this->http, feature: 'enableGlobalCounter')
 					&& isset($writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
 				) {
 					$id = $writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'];

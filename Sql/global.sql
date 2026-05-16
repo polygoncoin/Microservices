@@ -18,8 +18,8 @@ CREATE TABLE `customer` (
     `enableCidrCheck` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableConcurrentLogin` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableCronRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
-    `enableCustomRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No', --
-    `enableDropboxRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No', --
+    `enableCustomRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
+    `enableDropboxRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableDownloadRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableExplainRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableGlobalCounter` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
@@ -41,8 +41,8 @@ CREATE TABLE `customer` (
     `enableReloadRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableResponseCaching` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableRoutesRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
-    `enableThirdPartyRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No', --
-    `enableUploadRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No', --
+    `enableThirdPartyRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
+    `enableUploadRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `cronRestrictedCidr` TEXT,
     `customRestrictedCidr` TEXT,
     `dropboxRestrictedCidr` TEXT,

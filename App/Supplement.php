@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\AppTrait;
+use Microservices\App\CommonFunction;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
@@ -121,7 +122,7 @@ class Supplement
 			keyword: 'useHierarchy'
 		);
 
-		if ($this->http->req->s['customerData']['enableExplainRequest'] === 'Yes') {
+		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')) {
 			if (
 				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
 				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
@@ -329,7 +330,7 @@ class Supplement
 
 						$arr = [];
 						$arr['Status'] = HttpStatus::$Ok;
-						if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
+						if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
 							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 								keyString: implode(
 									separator: ':',
@@ -349,7 +350,7 @@ class Supplement
 					} else { // Failure
 						$arr = [];
 						$arr['Status'] = $this->http->res->httpStatus;
-						if ($this->http->req->s['customerData']['enablePayloadInResponse'] === 'Yes') {
+						if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
 							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 								keyString: implode(
 									separator: ':',

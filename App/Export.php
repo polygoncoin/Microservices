@@ -144,7 +144,7 @@ class Export
 			case 'TSV':
 				if ($outputLineArr[1] !== '1') {
 					throw new \Exception(
-						message: "Issue while connecting to {$this->dbServerType} TSV Host",
+						message: "Issue connecting to {$this->dbServerType} TSV Host",
 						code: HttpStatus::$InternalServerError
 					);
 				}
@@ -152,7 +152,7 @@ class Export
 			case 'CSV':
 				if ($outputLineArr[1] !== '"1"') {
 					throw new \Exception(
-						message: "Issue while connecting to {$this->dbServerType} CSV Host",
+						message: "Issue connecting to {$this->dbServerType} CSV Host",
 						code: HttpStatus::$InternalServerError
 					);
 				}

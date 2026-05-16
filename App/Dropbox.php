@@ -85,7 +85,7 @@ class Dropbox
 	}
 
 	/**
-	 * Initialize check and serve file
+	 * Initialize
 	 *
 	 * @return bool
 	 */

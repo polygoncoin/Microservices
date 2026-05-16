@@ -78,10 +78,11 @@ class Reload
 			if ($customerData['enableReloadRequest'] === 'No') {
 				continue;
 			}
+
 			CommonFunction::checkCidr(
 				IP: CommonFunction::getHttpRequestIp(),
 				cidrString: $customerData['reloadRestrictedCidr']
-			);				
+			);
 
 			if (!empty($customerData['open_api_domain'])) {
 				$cacheKey = CacheServerKey::publicDomain(

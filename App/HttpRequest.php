@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\CacheServerKey;
+use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
 use Microservices\App\DataRepresentation\DataDecode;
 use Microservices\App\DataRepresentation\DataEncode;
@@ -141,15 +142,6 @@ class HttpRequest
 	{
 		$this->http = &$http;
 
-		if (isset($this->http->httpReqData['get'][ROUTE_URL_PARAM])) {
-			$this->http->httpReqData['get'][ROUTE_URL_PARAM] = '/' . trim(
-				string: $this->http->httpReqData['get'][ROUTE_URL_PARAM],
-				characters: '/'
-			);
-		} else {
-			$this->http->httpReqData['get'][ROUTE_URL_PARAM] = '';
-		}
-
 		switch (Env::$authMode) {
 			case 'Token':
 				if (
@@ -176,30 +168,8 @@ class HttpRequest
 				break;
 		}
 
-		if (
-			in_array($this->isPrivateRequest, [null, false])
-			&& $this->http->httpReqData['get'][ROUTE_URL_PARAM] === '/login'
-		) {
+		if ($this->http->httpReqData['get'][ROUTE_URL_PARAM] === '/login') {
 			$this->isPrivateRequest = true;
-		}
-
-		$this->loadCustomerData();
-
-		if ($this->s['customerData']['enablePublicRequest'] === 'No') {
-			throw new \Exception(
-				message: "Public web request are disabled",
-				code: HttpStatus::$InternalServerError
-			);
-		}
-
-		if (
-			$this->isPrivateRequest === true
-			&& $this->s['customerData']['enablePrivateRequest'] === 'No'
-		) {
-			throw new \Exception(
-				message: "Private request are disabled",
-				code: HttpStatus::$InternalServerError
-			);
 		}
 	}
 
@@ -210,6 +180,28 @@ class HttpRequest
 	 */
 	public function init(): bool
 	{
+		$this->loadCustomerData();
+
+		if (
+			!$this->isPrivateRequest
+			&& !CommonFunction::isEnabled(http: $this->http, feature: 'enablePublicRequest')
+		) {
+			throw new \Exception(
+				message: 'Public request are disabled',
+				code: HttpStatus::$InternalServerError
+			);
+		}
+
+		if (
+			$this->isPrivateRequest
+			&& !CommonFunction::isEnabled(http: $this->http, feature: 'enablePrivateRequest')
+		) {
+			throw new \Exception(
+				message: 'Private request are disabled',
+				code: HttpStatus::$InternalServerError
+			);
+		}
+
 		if ($this->http->httpReqData['get'][ROUTE_URL_PARAM] !== '/login') {
 			$this->rParser = new RouteParser(http: $this->http);
 
@@ -244,7 +236,7 @@ class HttpRequest
 		} else {
 			$cacheKey = CacheServerKey::publicDomain(domainName: $this->http->httpReqData['server']['domainName']);
 		}
-		
+
 		if (!DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $cacheKey)) {
 			throw new \Exception(
 				message: "Invalid Host '{$this->http->httpReqData['server']['domainName']}'",
@@ -264,8 +256,8 @@ class HttpRequest
 			$this->clientCacheObj = DbCommonFunction::connectClientCache(
 				customerData: $this->s['customerData']
 			);
-			if ($this->s['customerData']['enableRateLimiting'] === 'Yes') {
-				$this->rateLimiter = new RateLimiter(http: $this->http);
+			if (CommonFunction::isEnabled(http: $this->http, feature: 'enableRateLimiting')) {
+				$this->rateLimiter = new RateLimiter(cacheObj: $this->clientCacheObj);
 			}
 		}
 	}

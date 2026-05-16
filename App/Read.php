@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\AppTrait;
+use Microservices\App\CommonFunction;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
@@ -114,7 +115,7 @@ class Read
 		// Check for cache
 		$toBeCached = false;
 		if (
-			$this->http->req->s['customerData']['enableResponseCaching'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableResponseCaching')
 			&& isset($readSqlConfig['queryCacheKey'])
 			&& !isset($this->http->req->s['queryParamArr']['orderBy'])
 		) {
@@ -163,7 +164,7 @@ class Read
 		}
 
 		if (
-			$this->http->req->s['customerData']['enableResponseCaching'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableResponseCaching')
 			&& $toBeCached
 		) {
 			$this->dataEncode = new DataEncode(http: $this->http);
@@ -204,7 +205,7 @@ class Read
 		);
 
 		if (
-			$this->http->req->s['customerData']['enableExplainRequest'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')
 			&& $this->http->req->rParser->routeEndingWithReservedKeywordFlag
 			&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
 		) {
@@ -220,7 +221,7 @@ class Read
 		}
 
 		if (
-			$this->http->req->s['customerData']['enableResponseCaching'] === 'Yes'
+			CommonFunction::isEnabled(http: $this->http, feature: 'enableResponseCaching')
 			&& $toBeCached
 		) {
 			$json = $this->dataEncode->getData();
@@ -699,7 +700,7 @@ class Read
 	{
 		$return = [[], '', HttpStatus::$Ok];
 
-		if ($this->http->req->s['customerData']['enableDownloadRequest'] === 'No') {
+		if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableDownloadRequest')) {
 			return [[], '', HttpStatus::$NotFound];
 		}
 
