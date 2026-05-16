@@ -36,11 +36,10 @@ spl_autoload_register(callback:  'Microservices\Autoload::register');
 // Load .env(s)
 foreach ([
 	'.env',
-	'.env.cidr',
 	'.env.customer.container',
-	'.env.enable',
 	'.env.global.container',
-	'.env.rateLimiting'
+	'.env.rateLimiting',
+	'.env.route'
 ] as $envFilename) {
 	$envDataArr = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
 	foreach ($envDataArr as $envVarName => $envVarValue) {
@@ -153,7 +152,6 @@ if (
 		Reload::process();
 		return false;
 	} else {
-
 		ob_start();
 		[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
 		@ob_clean();

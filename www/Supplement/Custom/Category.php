@@ -81,11 +81,11 @@ class Category implements CustomInterface
 			FROM category
 			WHERE is_deleted = :is_deleted AND parent_id = :parent_id
 		';
-		$sqlParamArr = [
+		$paramArr = [
 			':is_deleted' => 'No',
 			':parent_id' => 0,
 		];
-		$this->http->req->clientDbObj->execDbQuery(sql: $sql, paramArr: $sqlParamArr);
+		$this->http->req->clientDbObj->execDbQuery(sql: $sql, paramArr: $paramArr);
 		$rowArr = $this->http->req->clientDbObj->fetchAll();
 		$this->http->req->clientDbObj->closeCursor();
 		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $rowArr);

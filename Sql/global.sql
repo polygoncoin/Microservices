@@ -10,7 +10,7 @@ CREATE TABLE `customer` (
     `name` VARCHAR(255) DEFAULT NULL,
     `groupTable` VARCHAR(255) NOT NULL,
     `userTable` VARCHAR(255) NOT NULL,
-    `allowed_cidr` TEXT,
+    `allowed_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
     `rateLimitMaxRequest` INT DEFAULT NULL,
     `rateLimitMaxRequestWindow` INT DEFAULT NULL,
     `api_domain` VARCHAR(255) DEFAULT NULL,
@@ -43,25 +43,25 @@ CREATE TABLE `customer` (
     `enableRoutesRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableThirdPartyRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `enableUploadRequest` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
-    `cronRestrictedCidr` TEXT,
-    `customRestrictedCidr` TEXT,
-    `dropboxRestrictedCidr` TEXT,
-    `explainRestrictedCidr` TEXT,
-    `exportRestrictedCidr` TEXT,
-    `importSampleRestrictedCidr` TEXT,
-    `importRestrictedCidr` TEXT,
-    `reloadRestrictedCidr` TEXT,
-    `routesRestrictedCidr` TEXT,
-    `thirdPatyRestrictedCidr` TEXT,
-    `uploadRestrictedCidr` TEXT,
-    `rateLimitIPMaxRequest` INT DEFAULT NULL,
-    `rateLimitIPMaxRequestWindow` INT DEFAULT NULL,
-    `rateLimitMaxUserPerIp` INT DEFAULT NULL,
-    `rateLimitMaxUserPerIpWindow` INT DEFAULT NULL,
-    `rateLimitUserMaxRequest` INT DEFAULT NULL,
-    `rateLimitUserMaxRequestWindow` INT DEFAULT NULL,
-    `rateLimitMaxUserLoginRequest` INT DEFAULT NULL,
-    `rateLimitMaxUserLoginRequestWindow` INT DEFAULT NULL,
+    `cronRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `customRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `dropboxRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `explainRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `exportRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `importSampleRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `importRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `reloadRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `routesRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `thirdPatyRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `uploadRestrictedCidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+    `rateLimitIPMaxRequest` INT DEFAULT NULL, -- ; Max request allowed per IP
+    `rateLimitIPMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed per IP
+    `rateLimitMaxUserPerIp` INT DEFAULT NULL, -- ; Max User allowed per IP
+    `rateLimitMaxUserPerIpWindow` INT DEFAULT NULL, -- ; Window for Max User allowed per IP
+    `rateLimitUserMaxRequest` INT DEFAULT NULL, -- ; Max request allowed for user
+    `rateLimitUserMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed for user
+    `rateLimitMaxUserLoginRequest` INT DEFAULT NULL, -- ; Max User Login request
+    `rateLimitMaxUserLoginRequestWindow` INT DEFAULT NULL, -- ; Window for Max User Login request
     `master_db_server_type` VARCHAR(255) NOT NULL,
     `master_db_server_hostname` VARCHAR(255) NOT NULL,
     `master_db_server_port` VARCHAR(255) NOT NULL,

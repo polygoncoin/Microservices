@@ -26,19 +26,15 @@ rateLimitUserRequestPrefix='URRL:'
 
 ## Setting Rate Limiting key's Limit with window in seconds
 
-```ini
-; Rate Limiting No. of request per IP ('IPRL:')
-rateLimitIPMaxRequest=600              ; Max request allowed per IP
-rateLimitIPMaxRequestWindow=300        ; Window in seconds of Max request allowed per IP
-
-; Rate Limiting No. of User Per IP ('UIRL:')
-rateLimitMaxUserPerIp=10          ; Max User allowed per IP
-rateLimitMaxUserPerIpWindow=300   ; Window in seconds of Max User allowed per IP
-
-; Rate Limiting No. of request per User ('URRL:')
-; Delay Between Consecutive request (allow n request only for seconds configured for each user)
-rateLimitUserMaxRequest=1             ; Max one request allowed for 10 seconds
-rateLimitUserMaxRequestWindow=10      ; Max one request allowed for 10 seconds
+```SQL
+`customer`.`rateLimitIPMaxRequest` INT DEFAULT NULL, -- ; Max request allowed per IP
+`customer`.`rateLimitIPMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed per IP
+`customer`.`rateLimitMaxUserPerIp` INT DEFAULT NULL, -- ; Max User allowed per IP
+`customer`.`rateLimitMaxUserPerIpWindow` INT DEFAULT NULL, -- ; Window for Max User allowed per IP
+`customer`.`rateLimitUserMaxRequest` INT DEFAULT NULL, -- ; Max request allowed for user
+`customer`.`rateLimitUserMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed for user
+`customer`.`rateLimitMaxUserLoginRequest` INT DEFAULT NULL, -- ; Max User Login request
+`customer`.`rateLimitMaxUserLoginRequestWindow` INT DEFAULT NULL, -- ; Window for Max User Login request
 ```
 
 ## Customer/Group/User based Rate Limiting detail are set in respective Database Tables for records
