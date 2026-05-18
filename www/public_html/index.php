@@ -70,7 +70,7 @@ if (
 	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
 	&& !isset($_SERVER['REMOTE_ADDR'])
 ) {
-	die("Invalid request");
+	die('Invalid request');
 }
 
 $httpReqData['server']['httpRequestIP'] = getHttpRequestIp();
@@ -93,10 +93,7 @@ if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
 		characters: '/'
 	);
 } else {
-	throw new \Exception(
-		message: 'Missing route',
-		code: HttpStatus::$NotFound
-	);
+	die('Missing route');
 }
 
 $httpReqData['post'] = file_get_contents(filename: 'php://input');
