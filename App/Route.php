@@ -120,7 +120,10 @@ class Route
 			$routeFileLocation =  $userRoutesFolder
 				. DIRECTORY_SEPARATOR . $method . 'routes.php';
 			if (!file_exists(filename: $routeFileLocation)) {
-				throw new \Exception(message: json_encode(value: [$routeFileLocation]), code: 400);
+				throw new \Exception(
+					message: json_encode(value: [$routeFileLocation]),
+					code: 400
+				);
 				continue;
 			}
 			$routeArr = include $routeFileLocation;

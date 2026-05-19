@@ -155,7 +155,7 @@ class RouteParser
 			string: trim(string: $this->http->httpReqData['get'][ROUTE_URL_PARAM], characters: '/')
 		);
 
-		if ($this->routeElementArr[0] === Env::$dropboxRequestRoutePrefix) {
+		if ($this->routeElementArr[1] === Env::$dropboxRequestRoutePrefix) {
 			if ($this->http->req->isPrivateRequest) {
 				if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableDropboxRequest')) {
 					throw new \Exception(
@@ -171,7 +171,6 @@ class RouteParser
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = Env::$dropboxRequestRoutePrefix;
 
-			unset($this->routeElementArr[0]);
 			$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
 
 			return;

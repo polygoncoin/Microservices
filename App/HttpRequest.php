@@ -726,7 +726,10 @@ class HttpRequest
 		}
 
 		if (!isset($csvHeaderData['__column__'])) {
-			throw new \Exception(message: json_encode(value: [$currentModeArr,$csvHeaderData]), code: 400);
+			throw new \Exception(
+				message: json_encode(value: [$currentModeArr,$csvHeaderData]),
+				code: 400
+			);
 		}
 
 		foreach ($csvHeaderData['__column__'] as $field => $column) {

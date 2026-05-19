@@ -80,7 +80,10 @@ class Api
 	{
 		// Execute Pre Route Hook
 		if (
-			isset($this->http->req->rParser->routeHook)
+			isset($this->http)
+			&& isset($this->http->req)
+			&& isset($this->http->req->rParser)
+			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
 			&& is_array($this->http->req->rParser->routeHook)
 		) {
@@ -121,10 +124,7 @@ class Api
 			$this->http->req->loadPayload();
 		}
 
-		if ($this->checkSupplement(Env::$dropboxRequestRoutePrefix)) {
-			$supplementClass = 'Microservices\\www\\Supplement\\Dropbox\\'
-				. ucfirst(string: $this->http->req->rParser->routeElementArr[1]);			
-		} elseif ($this->checkSupplement(Env::$cronRequestRoutePrefix)) {
+		if ($this->checkSupplement(Env::$cronRequestRoutePrefix)) {
 			$supplementClass = 'Microservices\\www\\Supplement\\Cron\\'
 				. ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
 		} elseif ($this->checkSupplement(Env::$customRequestRoutePrefix)) {
@@ -140,7 +140,10 @@ class Api
 			$class = null;
 			switch ($this->http->httpReqData['server']['httpMethod']) {
 				case Constant::$GET:
-					if ($this->checkSupplement(Env::$routesRequestRoute)) {
+					if ($this->checkSupplement(Env::$dropboxRequestRoutePrefix)) {
+						$class = 'Microservices\\www\\Supplement\\Dropbox\\'
+							. ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
+					} elseif ($this->checkSupplement(Env::$routesRequestRoute)) {
 						$class = __NAMESPACE__ . '\\Route';
 					} else {
 						$class = __NAMESPACE__ . '\\Read';
@@ -173,7 +176,10 @@ class Api
 
 		// Execute Post Route Hook
 		if (
-			isset($this->http->req->rParser->routeHook)
+			isset($this->http)
+			&& isset($this->http->req)
+			&& isset($this->http->req->rParser)
+			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
 			&& is_array($this->http->req->rParser->routeHook)
 		) {

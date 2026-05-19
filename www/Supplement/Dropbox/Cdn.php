@@ -15,8 +15,10 @@
 
 namespace Microservices\www\Supplement\Dropbox;
 
+use Microservices\App\Constant;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Http;
+use Microservices\App\HttpStatus;
 use Microservices\www\Supplement\Dropbox\DropboxInterface;
 use Microservices\www\Supplement\Dropbox\CacheTrait;
 
@@ -96,11 +98,17 @@ class Cdn implements DropboxInterface
 			$this->DROPBOX_DIR = Constant::$DROPBOX_PUBLIC_DIR;
 		}
 
+		$configuredRoute = str_replace(
+			'/dropbox/cdn',
+			'',
+			$this->http->req->rParser->configuredRoute
+		);
+
 		$filePath = DIRECTORY_SEPARATOR . trim(
 			string: str_replace(
 				search: ['../', '..\\', '/', '\\'],
 				replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-				subject: urldecode(string: $this->http->req->rParser->configuredRoute)
+				subject: urldecode(string: $configuredRoute)
 			),
 			characters: './\\'
 		);
