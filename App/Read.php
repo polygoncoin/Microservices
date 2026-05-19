@@ -92,9 +92,9 @@ class Read
 	/**
 	 * Process
 	 *
-	 * @return bool|array
+	 * @return mixed
 	 */
-	public function process(): bool|array
+	public function process(): mixed
 	{
 		// Load Sql
 		$readSqlConfig = &$this->http->req->rParser->sqlConfig;
@@ -171,23 +171,6 @@ class Read
 			$this->dataEncode->init(header: false);
 		} else {
 			$this->dataEncode = &$this->http->res->dataEncode;
-		}
-
-		if (
-			$this->http->res->oRepresentation === 'XSLT'
-			&& isset($readSqlConfig['xsltFile'])
-		) {
-			$this->dataEncode->xsltFile = $readSqlConfig['xsltFile'];
-		} elseif (
-			$this->http->res->oRepresentation === 'HTML'
-			&& isset($readSqlConfig['htmlFile'])
-		) {
-			$this->dataEncode->htmlFile = $readSqlConfig['htmlFile'];
-		} elseif (
-			$this->http->res->oRepresentation === 'PHP'
-			&& isset($readSqlConfig['phpFile'])
-		) {
-			$this->dataEncode->phpFile = $readSqlConfig['phpFile'];
 		}
 
 		// Set Server mode to execute query on - Read / Write Server

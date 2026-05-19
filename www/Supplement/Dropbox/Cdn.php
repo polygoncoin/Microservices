@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Customer side Dropbox Caching
+ * DropboxCacheAPI
  * php version 8.3
  *
- * @category  CustomerDropboxCache
+ * @category  DropboxCacheAPI
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -13,18 +13,18 @@
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App;
+namespace Microservices\www\Supplement\Dropbox;
 
-use Microservices\App\Constant;
+use Microservices\App\DbCommonFunction;
 use Microservices\App\Http;
-use Microservices\App\HttpStatus;
-use Microservices\App\DropboxHandler\StreamVideo;
+use Microservices\www\Supplement\Dropbox\DropboxInterface;
+use Microservices\www\Supplement\Dropbox\CacheTrait;
 
 /**
- * Customer side Caching via E-tags
+ * DropboxCacheAPI Category
  * php version 8.3
  *
- * @category  CustomerDropboxCache_Etag
+ * @category  DropboxCacheAPI_Category
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
@@ -32,8 +32,10 @@ use Microservices\App\DropboxHandler\StreamVideo;
  * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
-class Dropbox
+class Cdn implements DropboxInterface
 {
+	use CacheTrait;
+
 	/**
 	 * HTTP object
 	 *

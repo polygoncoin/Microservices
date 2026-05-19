@@ -176,6 +176,25 @@ class RouteParser
 
 			return;
 		}
+		if ($this->routeElementArr[0] === Env::$routesRequestRoute) {
+			if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableRoutesRequest')) {
+				throw new \Exception(
+					message: 'Route not supported',
+					code: HttpStatus::$BadRequest
+				);
+			}
+			CommonFunction::checkCidr(
+				IP: $this->http->httpReqData['server']['httpRequestIP'],
+				cidrString: $this->http->req->s['customerData']['routesRestrictedCidr']
+			);
+
+			$this->routeStartingWithReservedKeywordFlag = true;
+			$this->routeStartingReservedKeyword = Env::$routesRequestRoute;
+
+			$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
+
+			return;
+		}
 
 		$routeLastElementPos = count(value: $this->routeElementArr) - 1;
 		// if ($this->routeElementArr[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
@@ -199,7 +218,7 @@ class RouteParser
 
 		if (file_exists(filename: $routeFileLocation)) {
 			$this->routeFileLocation = $routeFileLocation;
-			$routesConfig = include $routeFileLocation;
+			$routeConfig = include $routeFileLocation;
 		} else {
 			throw new \Exception(
 				message: 'Route file missing: ' . $this->http->httpReqData['server']['httpMethod'] . ' method',
@@ -218,15 +237,15 @@ class RouteParser
 				$this->isStartingWithReservedRouteKeyword(routeStartingKeyword: $element);
 			}
 
-			if (isset($routesConfig[$element])) { // Route element is configured
-				if (isset($routesConfig[$element]['__PRE-ROUTE-HOOKS__'])) {
-					$this->routeHook[$element]['__PRE-ROUTE-HOOKS__'] = $routesConfig[$element]['__PRE-ROUTE-HOOKS__'];
+			if (isset($routeConfig[$element])) { // Route element is configured
+				if (isset($routeConfig[$element]['__PRE-ROUTE-HOOKS__'])) {
+					$this->routeHook[$element]['__PRE-ROUTE-HOOKS__'] = $routeConfig[$element]['__PRE-ROUTE-HOOKS__'];
 				}
-				if (isset($routesConfig[$element]['__POST-ROUTE-HOOKS__'])) {
-					$this->routeHook[$element]['__POST-ROUTE-HOOKS__'] = $routesConfig[$element]['__POST-ROUTE-HOOKS__'];
+				if (isset($routeConfig[$element]['__POST-ROUTE-HOOKS__'])) {
+					$this->routeHook[$element]['__POST-ROUTE-HOOKS__'] = $routeConfig[$element]['__POST-ROUTE-HOOKS__'];
 				}
 				$configuredRoute[] = $element;
-				$routesConfig = &$routesConfig[$element];
+				$routeConfig = &$routeConfig[$element];
 				$this->checkPresenceOfDynamicString(element: $element);
 				continue;
 			} elseif ( // Route ending with reserved keyword
@@ -237,12 +256,12 @@ class RouteParser
 			} else { // Route element is a variable/dynamic input
 				if (
 					(
-						isset($routesConfig['__FILE__'])
-						&& count(value: $routesConfig) > 2
+						isset($routeConfig['__FILE__'])
+						&& count(value: $routeConfig) > 2
 					)
 					|| (
-						!isset($routesConfig['__FILE__'])
-						&& count(value: $routesConfig) > 0
+						!isset($routeConfig['__FILE__'])
+						&& count(value: $routeConfig) > 0
 					)
 				) {
 					[
@@ -251,7 +270,7 @@ class RouteParser
 						$foundStringRoute,
 						$foundStringParamName
 					] = $this->findRouteAndParamName(
-						routesConfig: $routesConfig,
+						routeConfig: $routeConfig,
 						element: $element
 					);
 					if ($foundIntRoute) {
@@ -269,13 +288,13 @@ class RouteParser
 						);
 					}
 					$_element = $foundIntRoute ? $foundIntRoute : $foundStringRoute;
-					if (isset($routesConfig[$_element]['__PRE-ROUTE-HOOKS__'])) {
-						$this->routeHook[$_element]['__PRE-ROUTE-HOOKS__'] = $routesConfig[$_element]['__PRE-ROUTE-HOOKS__'];
+					if (isset($routeConfig[$_element]['__PRE-ROUTE-HOOKS__'])) {
+						$this->routeHook[$_element]['__PRE-ROUTE-HOOKS__'] = $routeConfig[$_element]['__PRE-ROUTE-HOOKS__'];
 					}
-					if (isset($routesConfig[$_element]['__POST-ROUTE-HOOKS__'])) {
-						$this->routeHook[$_element]['__POST-ROUTE-HOOKS__'] = $routesConfig[$_element]['__POST-ROUTE-HOOKS__'];
+					if (isset($routeConfig[$_element]['__POST-ROUTE-HOOKS__'])) {
+						$this->routeHook[$_element]['__POST-ROUTE-HOOKS__'] = $routeConfig[$_element]['__POST-ROUTE-HOOKS__'];
 					}
-					$routesConfig = &$routesConfig[$_element];
+					$routeConfig = &$routeConfig[$_element];
 				} else {
 					throw new \Exception(
 						message: 'Route not supported',
@@ -283,13 +302,13 @@ class RouteParser
 					);
 				}
 				if (
-					isset($routesConfig['iRepresentation'])
+					isset($routeConfig['iRepresentation'])
 					&& Env::isValidDataRep(
-						dataRepresentation: $routesConfig['iRepresentation'],
+						dataRepresentation: $routeConfig['iRepresentation'],
 						mode: 'input'
 					)
 				) {
-					$this->http->req->iRepresentation = $routesConfig['iRepresentation'];
+					$this->http->req->iRepresentation = $routeConfig['iRepresentation'];
 				}
 			}
 		}
@@ -308,7 +327,7 @@ class RouteParser
 		}
 
 		$this->configuredRoute = '/' . implode(separator: '/', array: $configuredRoute);
-		$this->validateConfigFile(routesConfig: $routesConfig);
+		$this->validateConfigFile(routeConfig: $routeConfig);
 	}
 
 	/**
@@ -441,16 +460,16 @@ class RouteParser
 	/**
 	 * Validate SQL config file
 	 *
-	 * @param array $routesConfig Route config
+	 * @param array $routeConfig Route config
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function validateConfigFile(&$routesConfig): void
+	private function validateConfigFile(&$routeConfig): void
 	{
 		// Set route code file
-		if (!isset($routesConfig['__FILE__'])) {
-			if (count($routesConfig) > 0) {
+		if (!isset($routeConfig['__FILE__'])) {
+			if (count($routeConfig) > 0) {
 				throw new \Exception(
 					message: 'Route not supported',
 					code: HttpStatus::$BadRequest
@@ -458,8 +477,8 @@ class RouteParser
 			}
 			if (
 				!(
-					$routesConfig['__FILE__'] === false
-					|| file_exists(filename: $routesConfig['__FILE__'])
+					$routeConfig['__FILE__'] === false
+					|| file_exists(filename: $routeConfig['__FILE__'])
 				)
 			) {
 				throw new \Exception(
@@ -470,13 +489,13 @@ class RouteParser
 		}
 
 		if (
-			!empty($routesConfig['__FILE__'])
-			&& file_exists(filename: $routesConfig['__FILE__'])
+			!empty($routeConfig['__FILE__'])
+			&& file_exists(filename: $routeConfig['__FILE__'])
 		) {
 			$Constant = __NAMESPACE__ . '\Constant';
 			$Env = __NAMESPACE__ . '\Env';
 
-			$this->sqlConfigFile = $routesConfig['__FILE__'];
+			$this->sqlConfigFile = $routeConfig['__FILE__'];
 
 			// Output data representation over rides global
 			// Output data representation set in Query config file
@@ -488,7 +507,32 @@ class RouteParser
 					mode: 'output'
 				)
 			) {
-				$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
+				if (
+					$this->http->res->oRepresentation === 'HTML'
+					&& isset($this->sqlConfig['htmlFile'])
+				) {
+					$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
+					$this->res->dataEncode->htmlFile = $this->sqlConfig['htmlFile'];
+				} elseif (
+					$this->http->res->oRepresentation === 'PHP'
+					&& isset($this->sqlConfig['phpFile'])
+				) {
+					$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
+					$this->res->dataEncode->phpFile = $this->sqlConfig['phpFile'];
+				} elseif (
+					$this->sqlConfig['oRepresentation'] === 'XSLT'
+					&& isset($this->sqlConfig['xsltFile'])
+				) {
+					$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
+					$this->res->dataEncode->xsltFile = $this->sqlConfig['xsltFile'];
+				} elseif (
+					!in_array(
+						$this->sqlConfig['oRepresentation'],
+						['HTML', 'PHP', 'XSLT']
+					)
+				) {
+					$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
+				}
 			}
 		}
 
@@ -501,7 +545,32 @@ class RouteParser
 				mode: 'output'
 			)
 		) {
-			$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
+			if (
+				$this->http->res->oRepresentation === 'HTML'
+				&& isset($this->sqlConfig['htmlFile'])
+			) {
+				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
+				$this->res->dataEncode->htmlFile = $this->sqlConfig['htmlFile'];
+			} elseif (
+				$this->http->res->oRepresentation === 'PHP'
+				&& isset($this->sqlConfig['phpFile'])
+			) {
+				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
+				$this->res->dataEncode->phpFile = $this->sqlConfig['phpFile'];
+			} elseif (
+				$this->sqlConfig['oRepresentation'] === 'XSLT'
+				&& isset($this->sqlConfig['xsltFile'])
+			) {
+				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
+				$this->res->dataEncode->xsltFile = $this->sqlConfig['xsltFile'];
+			} elseif (
+				!in_array(
+					$this->http->httpReqData['get']['oRepresentation'],
+					['HTML', 'PHP', 'XSLT']
+				)
+			) {
+				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
+			}
 		}
 	}
 
@@ -527,26 +596,26 @@ class RouteParser
 	/**
 	 * Find Ruute and Param Name from Dynamic String configured in Route file.
 	 *
-	 * @param array  $routesConfig Route config
+	 * @param array  $routeConfig Route config
 	 * @param string $element      Route element
 	 *
 	 * @return array
 	 */
-	private function findRouteAndParamName(&$routesConfig, &$element): array
+	private function findRouteAndParamName(&$routeConfig, &$element): array
 	{
 		$foundIntRoute = false;
 		$foundIntParamName = false;
 		$foundStringRoute = false;
 		$foundStringParamName = false;
-		foreach (array_keys(array: $routesConfig) as $routeElement) {
+		foreach (array_keys(array: $routeConfig) as $routeElement) {
 			if (in_array($routeElement, ['dataType'])) {
 				continue;
 			}
 			if (
 				strpos(haystack: $routeElement, needle: '{') === 0
-				&& isset($routesConfig[$routeElement]['dataType'])
+				&& isset($routeConfig[$routeElement]['dataType'])
 			) {
-				$dataType = $routesConfig[$routeElement]['dataType'];
+				$dataType = $routeConfig[$routeElement]['dataType'];
 				// Is a dynamic URI element
 				$this->processRouteElement(
 					routeElement: $routeElement,

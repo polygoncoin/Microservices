@@ -93,9 +93,9 @@ class Write
 	/**
 	 * Process
 	 *
-	 * @return bool|array
+	 * @return mixed
 	 */
-	public function process(): bool|array
+	public function process(): mixed
 	{
 		// Load Sql
 		$writeSqlConfig = &$this->http->req->rParser->sqlConfig;
@@ -142,23 +142,6 @@ class Write
 
 				return [$headerArr, $csv, HttpStatus::$Ok];
 			}
-		}
-
-		if (
-			$this->http->res->oRepresentation === 'XSLT'
-			&& isset($writeSqlConfig['xsltFile'])
-		) {
-			$this->dataEncode->xsltFile = $writeSqlConfig['xsltFile'];
-		} elseif (
-			$this->http->res->oRepresentation === 'HTML'
-			&& isset($writeSqlConfig['htmlFile'])
-		) {
-			$this->dataEncode->htmlFile = $writeSqlConfig['htmlFile'];
-		} elseif (
-			$this->http->res->oRepresentation === 'PHP'
-			&& isset($writeSqlConfig['phpFile'])
-		) {
-			$this->dataEncode->phpFile = $writeSqlConfig['phpFile'];
 		}
 
 		// Lag Response

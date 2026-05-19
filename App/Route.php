@@ -96,11 +96,9 @@ class Route
 	/**
 	 * Make allowed routeArr list of a logged-in user
 	 *
-	 * @param array $payload Payload
-	 *
-	 * @return bool
+	 * @return mixed
 	 */
-	public function process(array $payload = []): bool
+	public function process(): mixed
 	{
 		$Constant = __NAMESPACE__ . '\Constant';
 		$Env = __NAMESPACE__ . '\Env';

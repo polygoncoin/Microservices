@@ -89,10 +89,10 @@ class Login
 	/**
 	 * Process
 	 *
-	 * @return bool
+	 * @return mixed
 	 * @throws \Exception
 	 */
-	public function process(): bool
+	public function process(): mixed
 	{
 		// Check request method is POST
 		if ($this->http->httpReqData['server']['httpMethod'] !== Constant::$POST) {

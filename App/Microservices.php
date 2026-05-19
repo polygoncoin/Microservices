@@ -104,20 +104,6 @@ class Microservices
 		$class = null;
 
 		switch (true) {
-			case (
-					CommonFunction::isEnabled(http: $this->http, feature: 'enableCronRequest')
-					&& strpos(
-						haystack: $this->httpReqData['get'][ROUTE_URL_PARAM],
-						needle: '/' . Env::$cronRequestRoutePrefix
-					) === 0
-				):
-				CommonFunction::checkCidr(
-					IP: $this->httpReqData['server']['httpRequestIP'],
-					cidrString: $this->http->req->s['customerData']['cronRestrictedCidr']
-				);
-				$class = __NAMESPACE__ . '\\Cron';
-				break;
-
 			case $this->httpReqData['get'][ROUTE_URL_PARAM] === '/logout':
 				$class = __NAMESPACE__ . '\\Logout';
 				break;

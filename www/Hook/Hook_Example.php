@@ -65,9 +65,9 @@ class Hook_Example implements HookInterface
 	/**
 	 * Process
 	 *
-	 * @return bool
+	 * @return mixed
 	 */
-	public function process(): bool
+	public function process(): mixed
 	{
 		$this->execHook();
 		return true;

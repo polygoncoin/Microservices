@@ -90,22 +90,22 @@ class Supplement
 	/**
 	 * Initialize
 	 *
-	 * @param object $supplementObj Supplement API object
+	 * @param string $supplementClass Supplement class
 	 *
 	 * @return bool
 	 */
-	public function init(&$supplementObj): bool
+	public function init(&$supplementClass): bool
 	{
-		$this->supplementObj = &$supplementObj;
+		$this->supplementObj = new $supplementClass($this->http);
 		return $this->supplementObj->init();
 	}
 
 	/**
 	 * Process
 	 *
-	 * @return bool|array
+	 * @return mixed
 	 */
-	public function process(): bool|array
+	public function process(): mixed
 	{
 		// Load Sql
 		$sSqlConfig = &$this->http->req->rParser->sqlConfig;
@@ -122,53 +122,36 @@ class Supplement
 			keyword: 'useHierarchy'
 		);
 
-		if (CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')) {
-			if (
-				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
-				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
-			) {
-				$this->explainSupplement(
-					sSqlConfig: $sSqlConfig,
-					useHierarchy: $useHierarchy
-				);
-				return true;
-			}
-			if (
-				$this->http->req->rParser->routeEndingWithReservedKeywordFlag
-				&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword)
-			) {
-				$filename = date('Ymd-His') . '-import-sample.csv';
-				$headerArr = [];
-				// Export header
-				$headerArr['Content-type'] = 'text/csv';
-				$headerArr['Content-Disposition'] = "attachment; filename={$filename}";
-				$headerArr['Pragma'] = 'no-cache';
-				$headerArr['Expires'] = '0';
-
-				$csv = $this->processImportSqlConfig(
-					writeSqlConfig: $writeSqlConfig,
-					useHierarchy: $useHierarchy
-				);
-
-				return [$headerArr, $csv, HttpStatus::$Ok];
-			}
+		if (
+			$this->http->req->rParser->routeEndingWithReservedKeywordFlag
+			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
+			&& CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')
+		) {
+			$this->explainSupplement(
+				sSqlConfig: $sSqlConfig,
+				useHierarchy: $useHierarchy
+			);
+			return true;
 		}
 
 		if (
-			$this->http->res->oRepresentation === 'XSLT'
-			&& isset($sSqlConfig['xsltFile'])
+			$this->http->req->rParser->routeEndingWithReservedKeywordFlag
+			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword
 		) {
-			$this->dataEncode->xsltFile = $sSqlConfig['xsltFile'];
-		} elseif (
-			$this->http->res->oRepresentation === 'HTML'
-			&& isset($sSqlConfig['htmlFile'])
-		) {
-			$this->dataEncode->htmlFile = $sSqlConfig['htmlFile'];
-		} elseif (
-			$this->http->res->oRepresentation === 'PHP'
-			&& isset($sSqlConfig['phpFile'])
-		) {
-			$this->dataEncode->phpFile = $sSqlConfig['phpFile'];
+			$filename = date('Ymd-His') . '-import-sample.csv';
+			$headerArr = [];
+			// Export header
+			$headerArr['Content-type'] = 'text/csv';
+			$headerArr['Content-Disposition'] = "attachment; filename={$filename}";
+			$headerArr['Pragma'] = 'no-cache';
+			$headerArr['Expires'] = '0';
+
+			$csv = $this->processImportSqlConfig(
+				writeSqlConfig: $writeSqlConfig,
+				useHierarchy: $useHierarchy
+			);
+
+			return [$headerArr, $csv, HttpStatus::$Ok];
 		}
 
 		// Lag response
@@ -184,7 +167,7 @@ class Supplement
 			fetchFrom: 'Master'
 		);
 
-		$this->processPrivateSupplement(
+		$this->processSupplement(
 			sSqlConfig: $sSqlConfig,
 			useHierarchy: $useHierarchy
 		);
@@ -239,7 +222,7 @@ class Supplement
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function processPrivateSupplement(&$sSqlConfig, $useHierarchy): void
+	private function processSupplement(&$sSqlConfig, $useHierarchy): void
 	{
 		// Check for payloadType
 		if (isset($sSqlConfig['__PAYLOAD-TYPE__'])) {
@@ -298,71 +281,72 @@ class Supplement
 				$payloadIndexArr[] = "{$i}";
 			}
 
+			$hashJson = null;
 			// Check for Idempotent Window
 			if ($this->http->req->isPrivateRequest) {
 				[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
 					sqlConfig: $sSqlConfig,
 					payloadIndexArr: $payloadIndexArr
 				);
+			}
 
-				// Begin DML operation
-				if ($hashJson === null) {
-					if ($this->operateAsTransaction) {
-						$this->http->req->clientDbObj->begin();
-					}
-					$response = [];
-					$this->execSupplement(
-						sSqlConfig: $sSqlConfig,
-						payloadIndexArr: $payloadIndexArr,
-						configKeyArr: $configKeyArr,
-						useHierarchy: $useHierarchy,
-						response: $response,
-						requiredFieldArr: $this->http->req->s['requiredFieldArrCollection']
-					);
-
-					if ($this->http->res->httpStatus === HttpStatus::$Ok) {
-						if (
-							$this->operateAsTransaction
-							&& ($this->http->req->clientDbObj->beganTransaction === true)
-						) {
-							$this->http->req->clientDbObj->commit();
-						}
-
-						$arr = [];
-						$arr['Status'] = HttpStatus::$Ok;
-						if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
-							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-								keyString: implode(
-									separator: ':',
-									array: $payloadIndexArr
-								)
-							);
-						}
-						$arr['Response'] = $response;
-
-						if ($idempotentWindow) {
-							$this->http->req->clientCacheObj->cacheSet(
-								cacheKey: $hashKey,
-								cacheValue: json_encode(value: $arr),
-								cacheExpire: $idempotentWindow
-							);
-						}
-					} else { // Failure
-						$arr = [];
-						$arr['Status'] = $this->http->res->httpStatus;
-						if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
-							$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-								keyString: implode(
-									separator: ':',
-									array: $payloadIndexArr
-								)
-							);
-						}
-						$arr['Error'] = $response;
-					}
-				} else {
-					$arr = json_decode(json: $hashJson, associative: true);
+			// Begin DML operation
+			if ($hashJson === null) {
+				if ($this->operateAsTransaction) {
+					$this->http->req->clientDbObj->begin();
 				}
+				$response = [];
+				$this->execSupplement(
+					sSqlConfig: $sSqlConfig,
+					payloadIndexArr: $payloadIndexArr,
+					configKeyArr: $configKeyArr,
+					useHierarchy: $useHierarchy,
+					response: $response,
+					requiredFieldArr: $this->http->req->s['requiredFieldArrCollection']
+				);
+
+				if ($this->http->res->httpStatus === HttpStatus::$Ok) {
+					if (
+						$this->operateAsTransaction
+						&& ($this->http->req->clientDbObj->beganTransaction === true)
+					) {
+						$this->http->req->clientDbObj->commit();
+					}
+
+					$arr = [];
+					$arr['Status'] = HttpStatus::$Ok;
+					if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
+						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
+							keyString: implode(
+								separator: ':',
+								array: $payloadIndexArr
+							)
+						);
+					}
+					$arr['Response'] = $response;
+
+					if ($idempotentWindow) {
+						$this->http->req->clientCacheObj->cacheSet(
+							cacheKey: $hashKey,
+							cacheValue: json_encode(value: $arr),
+							cacheExpire: $idempotentWindow
+						);
+					}
+				} else { // Failure
+					$arr = [];
+					$arr['Status'] = $this->http->res->httpStatus;
+					if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
+						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
+							keyString: implode(
+								separator: ':',
+								array: $payloadIndexArr
+							)
+						);
+					}
+					$arr['Error'] = $response;
+				}
+			} else {
+				$arr = json_decode(json: $hashJson, associative: true);
 			}
 
 			if ($payloadIndexArr[0] === '') {
@@ -411,13 +395,9 @@ class Supplement
 		$configKeyArr,
 		$useHierarchy,
 		&$response,
-		&$requiredFieldArr
+		&$requiredFieldArr,
+		$module = ''
 	): void {
-		// Return if function is not set
-		if (!isset($sSqlConfig['__FUNCTION__'])) {
-			return;
-		}
-
 		$payloadIndex = is_array(value: $payloadIndexArr)
 			? trim(
 				string: implode(
@@ -427,15 +407,19 @@ class Supplement
 				characters: ':'
 			) : '';
 
-		$isObject = $this->http->req->dataDecode->dataType(
-			keyString: $payloadIndex
-		) === 'Object';
-
-		$iCount = $isObject
+		$isObject = null;
+		if ($payloadIndex !== '')
+			$isObject = $this->http->req->dataDecode->dataType(
+				keyString: $payloadIndex
+			) === 'Object';
+		$iCount = ($isObject || $isObject === null)
 			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
 
 		for ($i = 0; $i < $iCount; $i++) {
-			if ($isObject) {
+			if (
+				$isObject
+				|| $isObject === null
+			) {
 				$_response = &$response;
 			} else {
 				$response[$i] = [];
@@ -452,14 +436,7 @@ class Supplement
 			}
 
 			if (
-				$isObject
-				&& $i > 0
-			) {
-				return;
-			}
-
-			if (
-				!$isObject
+				$isObject === false
 				&& !$useHierarchy
 			) {
 				array_push($payloadIndexArr, $i);
@@ -468,7 +445,10 @@ class Supplement
 			$payloadIndex = is_array(value: $payloadIndexArr)
 				? implode(separator: ':', array: $payloadIndexArr) : '';
 
-			if (!$this->http->req->dataDecode->isset(keyString: $payloadIndex)) {
+			if (
+				$isObject !== null
+				&& !$this->http->req->dataDecode->isset(keyString: $payloadIndex)
+			) {
 				if ($useHierarchy) {
 					throw new \Exception(
 						message: "Payload key '{$payloadIndex}' not set",
@@ -479,9 +459,11 @@ class Supplement
 				}
 			}
 
-			$this->http->req->s['payload'] = $this->http->req->dataDecode->get(
-				keyString: $payloadIndex
-			);
+			if ($isObject !== null) {
+				$this->http->req->s['payload'] = $this->http->req->dataDecode->get(
+					keyString: $payloadIndex
+				);
+			}
 
 			if (count(value: $requiredFieldArr)) {
 				$this->http->req->s['requiredFieldArr'] = $requiredFieldArr;
@@ -505,10 +487,12 @@ class Supplement
 			}
 
 			// Execute function
-			$_response = $this->supplementObj->process(
-				$sSqlConfig['__FUNCTION__'],
-				$this->http->req->s['payload']
-			);
+			if ($module === '') {
+				$processFunction  = 'process';
+			} else {
+				$processFunction  = "{$module}Process";
+			}
+			$_response = $this->supplementObj->$processFunction();
 
 			if (
 				$this->operateAsTransaction
@@ -595,14 +579,14 @@ class Supplement
 			isset($sSqlConfig['__SUB-PAYLOAD__'])
 			&& $this->isObject(arr: $sSqlConfig['__SUB-PAYLOAD__'])
 		) {
-			foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$sSqlConfig) {
+			foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$_sSqlConfig) {
 				$dataExist = false;
-				$payloadIndexArr = $payloadIndexArr;
-				$configKeyArr = $configKeyArr;
-				array_push($payloadIndexArr, $module);
-				array_push($configKeyArr, $module);
-				$modulePayloadKey = is_array(value: $payloadIndexArr)
-					? implode(separator: ':', array: $payloadIndexArr) : '';
+				$_payloadIndexArr = $payloadIndexArr;
+				$_configKeyArr = $configKeyArr;
+				array_push($_payloadIndexArr, $module);
+				array_push($_configKeyArr, $module);
+				$modulePayloadKey = is_array(value: $_payloadIndexArr)
+					? implode(separator: ':', array: $_payloadIndexArr) : '';
 				$dataExist = $this->http->req->dataDecode->isset(
 					keyString: $modulePayloadKey
 				);
@@ -616,20 +600,21 @@ class Supplement
 					);
 				}
 				if ($dataExist) {
-					$requiredFieldArr = $requiredFieldArr[$module] ?? $requiredFieldArr;
+					$_requiredFieldArr = $requiredFieldArr[$module] ?? $requiredFieldArr;
 					$useHierarchy = $useHierarchy ?? $this->getUseHierarchy(
-						sqlConfig: $sSqlConfig,
+						sqlConfig: $_sSqlConfig,
 						keyword: 'useHierarchy'
 					);
 					$response[$module] = [];
 					$response = &$response[$module];
 					$this->execSupplement(
-						sSqlConfig: $sSqlConfig,
-						payloadIndexArr: $payloadIndexArr,
-						configKeyArr: $configKeyArr,
+						sSqlConfig: $_sSqlConfig,
+						payloadIndexArr: $_payloadIndexArr,
+						configKeyArr: $_configKeyArr,
 						useHierarchy: $useHierarchy,
 						response: $response,
-						requiredFieldArr: $requiredFieldArr
+						requiredFieldArr: $_requiredFieldArr,
+						module: $module
 					);
 				}
 			}
