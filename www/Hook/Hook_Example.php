@@ -70,6 +70,7 @@ class Hook_Example implements HookInterface
 	public function process(): mixed
 	{
 		$this->execHook();
+
 		return true;
 	}
 

@@ -79,13 +79,33 @@ class Api
 	public function process(): mixed
 	{
 		// Execute Pre Route Hook
-		if (isset($this->http->req->rParser->routeHook['__PRE-ROUTE-HOOKS__'])) {
-			if ($this->hook === null) {
-				$this->hook = new Hook(http: $this->http);
+		if (
+			isset($this->http->req->rParser->routeHook)
+			&& $this->http->req->rParser->routeHook !== null
+			&& is_array($this->http->req->rParser->routeHook)
+		) {
+			$preRouteHookArr = [];
+			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
+				if (isset($hookArr['__PRE-ROUTE-HOOKS__'])) {
+					$preRouteHookConfig = $hookArr['__PRE-ROUTE-HOOKS__'];
+					if (count($preRouteHookConfig) === 0) {
+						continue;
+					}
+					for ($i = 0, $iCount = count($preRouteHookConfig); $i < $iCount; $i++) {
+						if (!in_array($preRouteHookConfig[$i], $preRouteHookArr)) {
+							$preRouteHookArr[] = $preRouteHookConfig[$i];
+						}
+					}
+				}
 			}
-			$this->hook->triggerHook(
-				hookConfig: $this->http->req->rParser->routeHook['__PRE-ROUTE-HOOKS__']
-			);
+			if (count($preRouteHookArr) > 0) {
+				if ($this->hook === null) {
+					$this->hook = new Hook(http: $this->http);
+				}
+				$this->hook->triggerHook(
+					hookArr: $preRouteHookArr
+				);
+			}
 		}
 
 		// Load Payloads
@@ -152,13 +172,33 @@ class Api
 		}
 
 		// Execute Post Route Hook
-		if (isset($this->http->req->rParser->routeHook['__POST-ROUTE-HOOKS__'])) {
-			if ($this->hook === null) {
-				$this->hook = new Hook(http: $this->http);
+		if (
+			isset($this->http->req->rParser->routeHook)
+			&& $this->http->req->rParser->routeHook !== null
+			&& is_array($this->http->req->rParser->routeHook)
+		) {
+			$postRouteHookArr = [];
+			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
+				if (isset($hookArr['__POST-ROUTE-HOOKS__'])) {
+					$postRouteHookConfig = $hookArr['__POST-ROUTE-HOOKS__'];
+					if (count($postRouteHookConfig) === 0) {
+						continue;
+					}
+					for ($i = 0, $iCount = count($postRouteHookConfig); $i < $iCount; $i++) {
+						if (!in_array($postRouteHookConfig[$i], $postRouteHookArr)) {
+							$postRouteHookArr[] = $postRouteHookConfig[$i];
+						}
+					}
+				}
 			}
-			$this->hook->triggerHook(
-				hookConfig: $this->http->req->rParser->routeHook['__POST-ROUTE-HOOKS__']
-			);
+			if (count($postRouteHookArr) > 0) {
+				if ($this->hook === null) {
+					$this->hook = new Hook(http: $this->http);
+				}
+				$this->hook->triggerHook(
+					hookArr: $postRouteHookArr
+				);
+			}
 		}
 
 		if (

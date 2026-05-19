@@ -93,7 +93,7 @@ class Google implements ThirdPartyInterface
 		// End the calls with json response with dataEncode object
 		$this->endProcess(output: $output);
 
-		return [true];
+		return true;
 	}
 
 	/**

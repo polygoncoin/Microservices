@@ -74,7 +74,7 @@ class Module1 implements UploadInterface
 		$absFilePath = $this->getLocation();
 		$this->saveFile(absFilePath: $absFilePath);
 
-		return [true];
+		return true;
 	}
 
 	/**

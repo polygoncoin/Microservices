@@ -301,7 +301,7 @@ class Read
 				$this->hook = new Hook(http: $this->http);
 			}
 			$this->hook->triggerHook(
-				hookConfig: $readSqlConfig['__PRE-SQL-HOOKS__']
+				hookArr: $readSqlConfig['__PRE-SQL-HOOKS__']
 			);
 		}
 
@@ -370,7 +370,7 @@ class Read
 				$this->hook = new Hook(http: $this->http);
 			}
 			$this->hook->triggerHook(
-				hookConfig: $readSqlConfig['__POST-SQL-HOOKS__']
+				hookArr: $readSqlConfig['__POST-SQL-HOOKS__']
 			);
 		}
 	}

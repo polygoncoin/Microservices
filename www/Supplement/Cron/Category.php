@@ -75,5 +75,7 @@ class Category implements CronInterface
 			message: 'message as desired',
 			code: HttpStatus::$Ok
 		);
+
+		return true;
 	}
 }

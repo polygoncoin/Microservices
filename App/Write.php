@@ -247,27 +247,28 @@ class Write
 			flag: $useHierarchy
 		);
 
-		if ($this->http->req->s['payloadType'] === 'Object') {
-			$this->dataEncode->startObject(objectKey: 'Results');
-		} else {
-			$this->dataEncode->startObject(objectKey: 'Results');
+		$this->dataEncode->startObject(objectKey: 'Results');
+		if (
+			isset($this->http->req->s['payloadType'])
+			&& $this->http->req->s['payloadType'] === 'Array'
+		) {
 			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 				$this->dataEncode->startArray(objectKey: 'Rows');
 			}
 		}
 
 		// Perform action
-		$iCount = $this->http->req->s['payloadType'] === 'Object'
-			? 1 : $this->http->req->dataDecode->count();
+		$iCount = $this->http->req->s['payloadType'] === 'Array'
+			? $this->http->req->dataDecode->count() : 1;
 
 		for ($i = 0; $i < $iCount; $i++) {
 			$configKeyArr = [];
 			$payloadIndexArr = [];
 			if ($i === 0) {
-				if ($this->http->req->s['payloadType'] === 'Object') {
-					$payloadIndexArr[] = '';
-				} else {
+				if ($this->http->req->s['payloadType'] === 'Array') {
 					$payloadIndexArr[] = "{$i}";
+				} else {
+					$payloadIndexArr[] = '';
 				}
 			} else {
 				$payloadIndexArr[] = "{$i}";
@@ -358,14 +359,12 @@ class Write
 			}
 		}
 
-		if ($this->http->req->s['payloadType'] === 'Object') {
-			$this->dataEncode->endObject();
-		} else {
+		if ($this->http->req->s['payloadType'] === 'Array') {
 			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 				$this->dataEncode->endArray();
 			}
-			$this->dataEncode->endObject();
 		}
+		$this->dataEncode->endObject();
 	}
 
 	/**
@@ -396,20 +395,26 @@ class Write
 					array: $payloadIndexArr
 				),
 				characters: ':'
-			) : '';
+			) : null;
 
-		$isObject = $this->http->req->dataDecode->dataType(
-			keyString: $payloadIndex
-		) === 'Object';
+		$isObject = null;
+		if ($payloadIndex !== null) {
+			$isObject = $this->http->req->dataDecode->dataType(
+				keyString: $payloadIndex
+			) === 'Object';
+		}
 
-		$iCount = $isObject
+		$iCount = ($isObject || $isObject === null)
 			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
 
 		$mode = getenv(name: $this->http->req->s['customerData']['master_db_server_query_placeholder']);
 		$function = "getSqlAndParam{$mode}Mode";
 
 		for ($i = 0; $i < $iCount; $i++) {
-			if ($isObject) {
+			if (
+				$isObject
+				|| $isObject === null
+			) {
 				$_response = &$response;
 			} else {
 				$response[$i] = [];
@@ -479,7 +484,7 @@ class Write
 					$this->hook = new Hook(http: $this->http);
 				}
 				$this->hook->triggerHook(
-					hookConfig: $writeSqlConfig['__PRE-SQL-HOOKS__']
+					hookArr: $writeSqlConfig['__PRE-SQL-HOOKS__']
 				);
 			}
 
@@ -541,7 +546,7 @@ class Write
 					$this->hook = new Hook(http: $this->http);
 				}
 				$this->hook->triggerHook(
-					hookConfig: $writeSqlConfig['__POST-SQL-HOOKS__']
+					hookArr: $writeSqlConfig['__POST-SQL-HOOKS__']
 				);
 			}
 
@@ -604,23 +609,30 @@ class Write
 		) {
 			foreach ($writeSqlConfig['__SUB-QUERY__'] as $module => &$writeSqlConfig) {
 				$dataExist = false;
-				$modulePayloadIndex = $payloadIndexArr;
+				$modulePayloadIndexArr = $payloadIndexArr;
 				$moduleConfigKeyArr = $configKeyArr;
-				array_push($modulePayloadIndex, $module);
+				array_push($modulePayloadIndexArr, $module);
 				array_push($moduleConfigKeyArr, $module);
 
-				$modulePayloadIndexKey = is_array(value: $modulePayloadIndex)
-					? implode(separator: ':', array: $modulePayloadIndex) : '';
-				$isObject = $this->http->req->dataDecode->dataType(
-					keyString: $modulePayloadIndexKey
-				) === 'Object';
+				$modulePayloadIndexKey = is_array(value: $modulePayloadIndexArr)
+					? implode(separator: ':', array: $modulePayloadIndexArr) : null;
 
-				$iCount = $isObject
+				$isObject = null;
+				if ($payloadIndex !== null) {
+					$isObject = $this->http->req->dataDecode->dataType(
+						keyString: $modulePayloadIndexKey
+					) === 'Object';
+				}
+
+				$iCount = ($isObject || $isObject === null)
 					? 1 : $this->http->req->dataDecode->count(keyString: $modulePayloadIndexKey);
 
 				for ($i = 0; $i < $iCount; $i++) {
-					$modulePayloadIndexItt = $modulePayloadIndex;
-					if ($isObject) {
+					$modulePayloadIndexItt = $modulePayloadIndexArr;
+					if (
+						$isObject
+						|| $isObject === null
+					) {
 						$modulePayloadIndexIttKey = $modulePayloadIndexKey;
 					} else {
 						$modulePayloadIndexIttKey = "{$modulePayloadIndexKey}:{$i}";

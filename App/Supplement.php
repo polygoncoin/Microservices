@@ -255,27 +255,28 @@ class Supplement
 			flag: $useHierarchy
 		);
 
-		if ($this->http->req->s['payloadType'] === 'Object') {
-			$this->dataEncode->startObject(objectKey: 'Results');
-		} else {
-			$this->dataEncode->startObject(objectKey: 'Results');
+		$this->dataEncode->startObject(objectKey: 'Results');
+		if (
+			isset($this->http->req->s['payloadType'])
+			&& $this->http->req->s['payloadType'] === 'Array'
+		) {
 			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 				$this->dataEncode->startArray(objectKey: 'Rows');
 			}
 		}
 
 		// Perform action
-		$iCount = $this->http->req->s['payloadType'] === 'Object'
-			? 1 : $this->http->req->dataDecode->count();
+		$iCount = $this->http->req->s['payloadType'] === 'Array'
+			? $this->http->req->dataDecode->count() : 1;
 
 		for ($i = 0; $i < $iCount; $i++) {
 			$configKeyArr = [];
 			$payloadIndexArr = [];
 			if ($i === 0) {
-				if ($this->http->req->s['payloadType'] === 'Object') {
-					$payloadIndexArr[] = '';
-				} else {
+				if ($this->http->req->s['payloadType'] === 'Array') {
 					$payloadIndexArr[] = "{$i}";
+				} else {
+					$payloadIndexArr[] = '';
 				}
 			} else {
 				$payloadIndexArr[] = "{$i}";
@@ -366,14 +367,12 @@ class Supplement
 			}
 		}
 
-		if ($this->http->req->s['payloadType'] === 'Object') {
-			$this->dataEncode->endObject();
-		} else {
+		if ($this->http->req->s['payloadType'] === 'Array') {
 			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
 				$this->dataEncode->endArray();
 			}
-			$this->dataEncode->endObject();
 		}
+		$this->dataEncode->endObject();
 	}
 
 	/**
@@ -405,13 +404,15 @@ class Supplement
 					array: $payloadIndexArr
 				),
 				characters: ':'
-			) : '';
+			) : null;
 
 		$isObject = null;
-		if ($payloadIndex !== '')
+		if ($payloadIndex !== null) {
 			$isObject = $this->http->req->dataDecode->dataType(
 				keyString: $payloadIndex
 			) === 'Object';
+		}
+
 		$iCount = ($isObject || $isObject === null)
 			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
 
@@ -482,7 +483,7 @@ class Supplement
 					$this->hook = new Hook(http: $this->http);
 				}
 				$this->hook->triggerHook(
-					hookConfig: $sSqlConfig['__PRE-SQL-HOOKS__']
+					hookArr: $sSqlConfig['__PRE-SQL-HOOKS__']
 				);
 			}
 
@@ -518,7 +519,7 @@ class Supplement
 					$this->hook = new Hook(http: $this->http);
 				}
 				$this->hook->triggerHook(
-					hookConfig: $sSqlConfig['__POST-SQL-HOOKS__']
+					hookArr: $sSqlConfig['__POST-SQL-HOOKS__']
 				);
 			}
 
