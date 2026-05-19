@@ -111,7 +111,7 @@ class RouteParser
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	public $http = null;
 
 	/**
 	 * Reserved Routes Prefix
@@ -155,7 +155,10 @@ class RouteParser
 			string: trim(string: $this->http->httpReqData['get'][ROUTE_URL_PARAM], characters: '/')
 		);
 
-		if ($this->routeElementArr[1] === Env::$dropboxRequestRoutePrefix) {
+		if (
+			isset($this->routeElementArr[1])
+			&& $this->routeElementArr[1] === Env::$dropboxRequestRoutePrefix
+		) {
 			if ($this->http->req->isPrivateRequest) {
 				if (!CommonFunction::isEnabled(http: $this->http, feature: 'enableDropboxRequest')) {
 					throw new \Exception(
@@ -507,23 +510,23 @@ class RouteParser
 				)
 			) {
 				if (
-					$this->http->res->oRepresentation === 'HTML'
+					$this->sqlConfig['oRepresentation'] === 'HTML'
 					&& isset($this->sqlConfig['htmlFile'])
 				) {
 					$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
-					$this->res->dataEncode->htmlFile = $this->sqlConfig['htmlFile'];
+					$this->http->res->dataEncode->htmlFile = $this->sqlConfig['htmlFile'];
 				} elseif (
-					$this->http->res->oRepresentation === 'PHP'
+					$this->sqlConfig['oRepresentation'] === 'PHP'
 					&& isset($this->sqlConfig['phpFile'])
 				) {
 					$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
-					$this->res->dataEncode->phpFile = $this->sqlConfig['phpFile'];
+					$this->http->res->dataEncode->phpFile = $this->sqlConfig['phpFile'];
 				} elseif (
 					$this->sqlConfig['oRepresentation'] === 'XSLT'
 					&& isset($this->sqlConfig['xsltFile'])
 				) {
 					$this->http->res->oRepresentation = $this->sqlConfig['oRepresentation'];
-					$this->res->dataEncode->xsltFile = $this->sqlConfig['xsltFile'];
+					$this->http->res->dataEncode->xsltFile = $this->sqlConfig['xsltFile'];
 				} elseif (
 					!in_array(
 						$this->sqlConfig['oRepresentation'],
@@ -545,23 +548,23 @@ class RouteParser
 			)
 		) {
 			if (
-				$this->http->res->oRepresentation === 'HTML'
+				$this->http->httpReqData['get']['oRepresentation'] === 'HTML'
 				&& isset($this->sqlConfig['htmlFile'])
 			) {
 				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
-				$this->res->dataEncode->htmlFile = $this->sqlConfig['htmlFile'];
+				$this->http->res->dataEncode->htmlFile = $this->sqlConfig['htmlFile'];
 			} elseif (
-				$this->http->res->oRepresentation === 'PHP'
+				$this->http->httpReqData['get']['oRepresentation'] === 'PHP'
 				&& isset($this->sqlConfig['phpFile'])
 			) {
 				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
-				$this->res->dataEncode->phpFile = $this->sqlConfig['phpFile'];
+				$this->http->res->dataEncode->phpFile = $this->sqlConfig['phpFile'];
 			} elseif (
-				$this->sqlConfig['oRepresentation'] === 'XSLT'
+				$this->http->httpReqData['get']['oRepresentation'] === 'XSLT'
 				&& isset($this->sqlConfig['xsltFile'])
 			) {
 				$this->http->res->oRepresentation = $this->http->httpReqData['get']['oRepresentation'];
-				$this->res->dataEncode->xsltFile = $this->sqlConfig['xsltFile'];
+				$this->http->res->dataEncode->xsltFile = $this->sqlConfig['xsltFile'];
 			} elseif (
 				!in_array(
 					$this->http->httpReqData['get']['oRepresentation'],

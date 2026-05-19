@@ -128,9 +128,6 @@ class Microservices
 			if ($class !== null) {
 				$api = new $class(http: $this->http);
 				if ($api->init()) {
-					if ($this->http->res !== null) {
-						$this->http->initResponse();
-					}
 					$this->startData();
 					$return = $api->process();
 					if (

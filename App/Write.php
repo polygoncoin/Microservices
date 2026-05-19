@@ -618,7 +618,7 @@ class Write
 					? implode(separator: ':', array: $modulePayloadIndexArr) : null;
 
 				$isObject = null;
-				if ($payloadIndex !== null) {
+				if ($modulePayloadIndexKey !== null) {
 					$isObject = $this->http->req->dataDecode->dataType(
 						keyString: $modulePayloadIndexKey
 					) === 'Object';

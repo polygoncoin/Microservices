@@ -258,16 +258,6 @@ class HttpRequest
 			);
 		}
 
-		// if (
-		// 	!$this->isPrivateRequest
-		// 	&& $this->http->httpReqData['get'][ROUTE_URL_PARAM] === '/login'
-		// ) {
-		// 	throw new \Exception(
-		// 		message: 'Login not allowed from Public domain',
-		// 		code: HttpStatus::$BadRequest
-		// 	);
-		// }
-	
 		if ($this->isPrivateRequest) {
 			$this->clientCacheObj = DbCommonFunction::connectClientCache(
 				customerData: $this->s['customerData']
@@ -278,15 +268,18 @@ class HttpRequest
 		}
 
 		if ($this->http->httpReqData['get'][ROUTE_URL_PARAM] !== '/login') {
-			$this->rParser = new RouteParser(http: $this->http);
-
 			if ($this->isPrivateRequest) {
 				$this->auth = new Auth(http: $this->http);
 				$this->auth->loadUserData();
 				$this->auth->loadGroupData();
 			}
 
+			$this->rParser = new RouteParser(http: $this->http);
 			$this->rParser->parseRoute();
+
+			if ($this->http->res !== null) {
+				$this->http->initResponse();
+			}
 		}
 
 		return true;
