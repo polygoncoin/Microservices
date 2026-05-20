@@ -36,14 +36,6 @@ Constant::init();
 Env::$timestamp = time();
 Env::init();
 
-if (Env::$authMode === 'Session') {
-	// Initialize Session Handler
-	Session::initSessionHandler(sessionMode: Env::$sessionMode, options: []);
-
-	// Start session in readonly mode
-	Session::sessionStartReadonly();
-}
-
 // Process the request
 $httpReqData = [];
 

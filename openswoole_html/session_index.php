@@ -9,7 +9,7 @@
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
- * @link      https://github.com/polygoncoin/Openswoole-Microservices
+ * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
 
@@ -22,7 +22,6 @@ use Microservices\App\Env;
 use Microservices\App\CommonFunction;
 use Microservices\App\HttpStatus;
 use Microservices\App\Reload;
-use Microservices\App\SessionHandler\Session;
 use Microservices\App\Start;
 use Microservices\TestCase\Test;
 
@@ -62,14 +61,6 @@ $server->on(
 		Constant::init();
 		Env::$timestamp = time();
 		Env::init();
-
-		if (Env::$authMode === 'Session') {
-			// Initialize Session Handler
-			Session::initSessionHandler(sessionMode: Env::$sessionMode, options: []);
-
-			// Start session in readonly mode
-			Session::sessionStartReadonly();
-		}
 
 		$httpReqData = [];
 
