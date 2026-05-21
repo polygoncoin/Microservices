@@ -102,7 +102,7 @@ if (
 	)
 	&& $httpReqData['server']['domainName'] === 'localhost'
 ) {
-	$testObj = new Test();
+	$testObj = new Test($httpReqData);
 	switch ($httpReqData['get'][ROUTE_URL_PARAM]) {
 		case '/all-test':
 			echo '<pre>'.print_r(value: $testObj->processAllTest(), return: true);

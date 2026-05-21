@@ -83,7 +83,7 @@ $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
 
 $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
 
-$homeURL = 'http://customer001.localhost/Microservices/www/public_html/index.php';
+$homeURL = 'http://web.customer001.localhost/Microservices/www/public_html/index.php';
 
 // Admin login
 $payload = [

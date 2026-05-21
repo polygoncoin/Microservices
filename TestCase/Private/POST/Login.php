@@ -43,7 +43,8 @@ if (isset($res['HttpResponse']['Headers']['Set-Cookie'])) {
 	);
 } elseif (isset($res['HttpResponse']['ResponseBody']['Results']['Token'])) {
 	$token = $res['HttpResponse']['ResponseBody']['Results']['Token'];
+} elseif (isset($res['HttpResponse']['ResponseBody']['Results']['SessionId'])) {
+	$sessionCookie = "PHPSESSID={$res['HttpResponse']['ResponseBody']['Results']['SessionId']}";
 }
-
 
 return $res;

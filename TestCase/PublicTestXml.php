@@ -45,7 +45,7 @@ $defaultHeaderArr[] = $cacheControl;
 
 $response = [];
 
-$homeURL = 'http://localhost/Microservices/www/public_html/index.php';
+$homeURL = 'http://customer001.localhost/Microservices/www/public_html/index.php';
 
 $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Reload.php';
 

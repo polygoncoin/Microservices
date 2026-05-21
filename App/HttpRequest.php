@@ -192,6 +192,13 @@ class HttpRequest
 	public $userId = null;
 
 	/**
+	 * Session object
+	 *
+	 * @var null|Session
+	 */
+	public $session = null;
+	
+	/**
 	 * Constructor
 	 *
 	 * @param Http $http
@@ -260,11 +267,9 @@ class HttpRequest
 		);
 
 		if ($this->isPrivateSessionDomain) {
-			// Initialize Session Handler
-			Session::initSessionHandler(sessionMode: Env::$sessionMode, options: []);
-
-			// Start session in readonly mode
-			Session::sessionStartReadonly();
+			$this->session = new Session();
+			$this->session->initSessionHandler(sessionMode: Env::$sessionMode, options: []);
+			$this->session->sessionStartReadonly();
 		}
 
 		$this->customerId = $this->s['customerData']['id'];
