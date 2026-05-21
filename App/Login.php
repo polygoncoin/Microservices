@@ -303,6 +303,7 @@ class Login
 	{
 		if ($this->http->req->session === null) {
 			$this->http->req->session = new Session();
+			$this->http->req->session->sessionDomain = $this->http->httpReqData['server']['domainName'];
 			$this->http->req->session->initSessionHandler(
 				customerData: $this->http->req->s['customerData'],
 				options: []
@@ -363,6 +364,7 @@ class Login
 			if ($this->cacheExist(cacheKey: $customerUserConcurrencyKey)) {
 				if ($this->http->req->session === null) {
 					$this->http->req->session = new Session();
+					$this->http->req->session->sessionDomain = $this->http->httpReqData['server']['domainName'];
 					$this->http->req->session->initSessionHandler(
 						customerData: $this->http->req->s['customerData'],
 						options: []
@@ -508,6 +510,7 @@ class Login
 			if ($this->cacheExist(cacheKey: $customerUserConcurrencyKey)) {
 				if ($this->http->req->session === null) {
 					$this->http->req->session = new Session();
+					$this->http->req->session->sessionDomain = $this->http->httpReqData['server']['domainName'];
 					$this->http->req->session->initSessionHandler(
 						customerData: $this->http->req->s['customerData'],
 						options: []
@@ -549,6 +552,7 @@ class Login
 		} else {
 			if ($this->http->req->session === null) {
 				$this->http->req->session = new Session();
+				$this->http->req->session->sessionDomain = $this->http->httpReqData['server']['domainName'];
 				$this->http->req->session->initSessionHandler(
 					customerData: $this->http->req->s['customerData'],
 					options: []
@@ -611,7 +615,8 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheExist($cacheKey) {
+	private function cacheExist($cacheKey): mixed
+	{
 		return $this->http->req->clientCacheObj->cacheExist(cacheKey: $cacheKey);
 	}
 
@@ -622,7 +627,8 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheGet($cacheKey) {
+	private function cacheGet($cacheKey): mixed
+	{
 		return $this->http->req->clientCacheObj->cacheGet(cacheKey: $cacheKey);
 	}
 
@@ -635,7 +641,8 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheSet($cacheKey, $cacheValue, $cacheExpire = 0) {
+	private function cacheSet($cacheKey, $cacheValue, $cacheExpire = 0): mixed
+	{
 		return $this->http->req->clientCacheObj->cacheSet(
 			cacheKey: $cacheKey,
 			cacheValue: $cacheValue,
@@ -650,7 +657,8 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheDelete($cacheKey) {
+	private function cacheDelete($cacheKey): mixed
+	{
 		return $this->http->req->clientCacheObj->cacheDelete(cacheKey: $cacheKey);
 	}
 }
