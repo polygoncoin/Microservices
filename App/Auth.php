@@ -18,7 +18,6 @@ namespace Microservices\App;
 use Microservices\App\CacheServerKey;
 use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
-use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
@@ -93,7 +92,7 @@ class Auth
 				token: $this->http->req->s['authId']
 			);
 			if (
-				!$this->http->req->clientCacheObj->cacheExist(
+				!$this->http->req->customerCacheObj->cacheExist(
 					cacheKey: $tokenKey
 				)
 			) {
@@ -103,7 +102,7 @@ class Auth
 				);
 			}
 			$this->http->req->s['userData'] = json_decode(
-				json: $this->http->req->clientCacheObj->cacheGet(
+				json: $this->http->req->customerCacheObj->cacheGet(
 					cacheKey: $tokenKey
 				),
 				associative: true
@@ -150,7 +149,7 @@ class Auth
 			customerId: $this->http->req->customerId,
 			groupId: $this->http->req->groupId
 		);
-		if (!$this->http->req->clientCacheObj->cacheExist(cacheKey: $groupCacheKey)) {
+		if (!$this->http->req->customerCacheObj->cacheExist(cacheKey: $groupCacheKey)) {
 			throw new \Exception(
 				message: "Cache '{$groupCacheKey}' missing",
 				code: HttpStatus::$InternalServerError
@@ -158,7 +157,7 @@ class Auth
 		}
 
 		$this->http->req->s['groupData'] = json_decode(
-			json: $this->http->req->clientCacheObj->cacheGet(
+			json: $this->http->req->customerCacheObj->cacheGet(
 				cacheKey: $groupCacheKey
 			),
 			associative: true

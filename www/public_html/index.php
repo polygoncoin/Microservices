@@ -132,7 +132,7 @@ if (
 		[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
 		@ob_clean();
 
-		$responseCode = $responseCode ?? 200;
+		$responseCode = $responseCode ?? HttpStatus::$Ok;
 		http_response_code(response_code: $responseCode);
 
 		foreach ($responseHeaderArr as $headerName => $headerValue) {

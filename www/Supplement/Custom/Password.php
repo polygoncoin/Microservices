@@ -16,7 +16,6 @@
 namespace Microservices\www\Supplement\Custom;
 
 use Microservices\App\CacheServerKey;
-use Microservices\App\DbCommonFunction;
 use Microservices\App\Http;
 use Microservices\App\Reload;
 use Microservices\www\Supplement\Custom\CustomInterface;
@@ -106,8 +105,8 @@ class Password implements CustomInterface
 				':is_deleted' => 'No',
 			];
 
-			$this->http->req->clientDbObj->execQuery(sql: $sql, paramArr: $paramArr);
-			$this->http->req->clientDbObj->closeCursor();
+			$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+			$this->http->req->customerDbObj->closeCursor();
 
 			$customerId = $this->http->req->customerId;
 			$cacheKey = CacheServerKey::customerUsername(
@@ -119,7 +118,7 @@ class Password implements CustomInterface
 				customerData: $this->http->req->s['customerData'],
 				userId: $this->http->req->userId
 			);
-			$this->http->req->clientCacheObj->cacheDelete(
+			$this->http->req->customerCacheObj->cacheDelete(
 				cacheKey: CacheServerKey::token(token: $this->http->req->s['authId'])
 			);
 
