@@ -98,7 +98,8 @@ if (
 			'/open-test',
 			'/open-test-xml',
 			'/supp-test'
-		]
+		],
+		strict: true
 	)
 	&& $httpReqData['server']['domainName'] === 'localhost'
 ) {

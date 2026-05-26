@@ -125,7 +125,10 @@ class Supplement
 		if (
 			$this->http->req->rParser->routeEndingWithReservedKeywordFlag
 			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
-			&& CommonFunction::isEnabled(http: $this->http, feature: 'enableExplainRequest')
+			&& CommonFunction::isEnabled(
+				http: $this->http,
+				feature: 'enableExplainRequest'
+			)
 		) {
 			return $this->explainSupplement(
 				sSqlConfig: $sSqlConfig,
@@ -187,8 +190,10 @@ class Supplement
 	 *
 	 * @return bool
 	 */
-	private function explainSupplement(&$sSqlConfig, $useHierarchy): bool
-	{
+	private function explainSupplement(
+		&$sSqlConfig,
+		$useHierarchy
+	): bool {
 		$this->dataEncode->startObject(objectKey: 'Config');
 		$this->dataEncode->addKeyData(
 			objectKey: 'Route',
@@ -216,8 +221,10 @@ class Supplement
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function processSupplement(&$sSqlConfig, $useHierarchy): void
-	{
+	private function processSupplement(
+		&$sSqlConfig,
+		$useHierarchy
+	): void {
 		// Check for payloadType
 		if (isset($sSqlConfig['__PAYLOAD-TYPE__'])) {
 			$payloadType = $this->http->req->s['payloadType'];
@@ -254,7 +261,13 @@ class Supplement
 			isset($this->http->req->s['payloadType'])
 			&& $this->http->req->s['payloadType'] === 'Array'
 		) {
-			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
+			if (
+				in_array(
+					needle: $this->http->res->oRepresentation,
+					haystack: ['XML', 'XSLT', 'HTML'],
+					strict: true
+				)
+			) {
 				$this->dataEncode->startArray(objectKey: 'Rows');
 			}
 		}
@@ -310,7 +323,12 @@ class Supplement
 
 					$arr = [];
 					$arr['Status'] = HttpStatus::$Ok;
-					if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
+					if (
+						CommonFunction::isEnabled(
+							http: $this->http,
+							feature: 'enablePayloadInResponse'
+						)
+					) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 							keyString: implode(
 								separator: ':',
@@ -330,7 +348,12 @@ class Supplement
 				} else { // Failure
 					$arr = [];
 					$arr['Status'] = $this->http->res->httpStatus;
-					if (CommonFunction::isEnabled(http: $this->http, feature: 'enablePayloadInResponse')) {
+					if (
+						CommonFunction::isEnabled(
+							http: $this->http,
+							feature: 'enablePayloadInResponse'
+						)
+					) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
 							keyString: implode(
 								separator: ':',
@@ -341,7 +364,10 @@ class Supplement
 					$arr['Error'] = $response;
 				}
 			} else {
-				$arr = json_decode(json: $hashJson, associative: true);
+				$arr = json_decode(
+					json: $hashJson,
+					associative: true
+				);
 			}
 
 			if ($payloadIndexArr[0] === '') {
@@ -349,7 +375,13 @@ class Supplement
 					$this->dataEncode->addKeyData(objectKey: $k, data: $v);
 				}
 			} else {
-				if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
+				if (
+					in_array(
+						needle: $this->http->res->oRepresentation,
+						haystack: ['XML', 'XSLT', 'HTML'],
+						strict: true
+					)
+				) {
 					$this->dataEncode->startObject(objectKey: 'Row');
 					foreach ($arr as $k => $v) {
 						$this->dataEncode->addKeyData(objectKey: $k, data: $v);
@@ -362,7 +394,13 @@ class Supplement
 		}
 
 		if ($this->http->req->s['payloadType'] === 'Array') {
-			if (in_array($this->http->res->oRepresentation, ['XML', 'XSLT', 'HTML'])) {
+			if (
+				in_array(
+					needle: $this->http->res->oRepresentation,
+					haystack: ['XML', 'XSLT', 'HTML'],
+					strict: true
+				)
+			) {
 				$this->dataEncode->endArray();
 			}
 		}
@@ -434,7 +472,10 @@ class Supplement
 				$isObject === false
 				&& !$useHierarchy
 			) {
-				array_push($payloadIndexArr, $i);
+				array_push(
+					$payloadIndexArr,
+					$i
+				);
 			}
 
 			$payloadIndex = is_array(value: $payloadIndexArr)
@@ -578,8 +619,14 @@ class Supplement
 				$dataExist = false;
 				$_payloadIndexArr = $payloadIndexArr;
 				$_configKeyArr = $configKeyArr;
-				array_push($_payloadIndexArr, $module);
-				array_push($_configKeyArr, $module);
+				array_push(
+					$_payloadIndexArr,
+					$module
+				);
+				array_push(
+					$_configKeyArr,
+					$module
+				);
 				$modulePayloadKey = is_array(value: $_payloadIndexArr)
 					? implode(separator: ':', array: $_payloadIndexArr) : '';
 				$dataExist = $this->http->req->dataDecode->isset(
@@ -624,8 +671,10 @@ class Supplement
 	 *
 	 * @return bool
 	 */
-	private function isValidPayload($sSqlConfig, $response): bool
-	{
+	private function isValidPayload(
+		$sSqlConfig,
+		$response
+	): bool {
 		$return = true;
 		$isValidData = true;
 		if (isset($sSqlConfig['__VALIDATE__'])) {
