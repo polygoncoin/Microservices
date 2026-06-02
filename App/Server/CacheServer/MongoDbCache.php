@@ -148,7 +148,7 @@ class MongoDbCache implements CacheServerInterface
 	{
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -166,7 +166,7 @@ class MongoDbCache implements CacheServerInterface
 	{
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -189,7 +189,7 @@ class MongoDbCache implements CacheServerInterface
 	): mixed {
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -214,7 +214,7 @@ class MongoDbCache implements CacheServerInterface
 	): mixed {
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -235,7 +235,7 @@ class MongoDbCache implements CacheServerInterface
 	{
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 

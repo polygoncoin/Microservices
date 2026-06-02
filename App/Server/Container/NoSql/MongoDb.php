@@ -187,7 +187,7 @@ class MongoDb implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -210,7 +210,7 @@ class MongoDb implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -234,7 +234,7 @@ class MongoDb implements NoSqlInterface
 	): mixed {
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -273,7 +273,7 @@ class MongoDb implements NoSqlInterface
 	): mixed {
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -298,7 +298,7 @@ class MongoDb implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 

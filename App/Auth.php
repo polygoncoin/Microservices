@@ -67,7 +67,7 @@ class Auth
 
 		if (
 			isset($_SESSION)
-			&& isset($_SESSION['id'])
+			&& isset($_SESSION['customer_user_id'])
 		) {
 			$this->http->req->s['userData'] = $_SESSION;
 			$this->http->req->s['authId'] = session_id();
@@ -128,8 +128,8 @@ class Auth
 			);
 		}
 
-		$this->http->req->userId = $this->http->req->s['userData']['id'];
-		$this->http->req->groupId = $this->http->req->s['userData']['group_id'];
+		$this->http->req->customerUserId = $this->http->req->s['userData']['customer_user_id'];
+		$this->http->req->customerUserGroupId = $this->http->req->s['userData']['customer_user_group_id'];
 	}
 
 	/**
@@ -147,7 +147,7 @@ class Auth
 		// Load groupData
 		$groupCacheKey = CacheServerKey::customerGroup(
 			customerId: $this->http->req->customerId,
-			groupId: $this->http->req->groupId
+			customerUserGroupId: $this->http->req->customerUserGroupId
 		);
 		if (!$this->http->req->customerCacheObj->cacheExist(cacheKey: $groupCacheKey)) {
 			throw new \Exception(

@@ -41,12 +41,7 @@ class Counter
 	 */
 	public static function getGlobalCounter(): int
 	{
-		if (
-			!CommonFunction::isEnabled(
-				http: $this->http,
-				feature: 'enableGlobalCounter'
-			)
-		) {
+		if (!Env::$enableGlobalCounter) {
 			throw new \Exception(
 				message: 'Enable use of Global Counter',
 				code: HttpStatus::$InternalServerError

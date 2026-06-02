@@ -21,7 +21,7 @@ $headerArr = $defaultHeaderArr;
 $headerArr[] = $contentType;
 
 $paramArr = [
-	'user_id' => 1,
+	'id' => 1,
 	'address' => '203'
 ];
 

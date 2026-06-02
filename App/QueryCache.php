@@ -117,7 +117,7 @@ class QueryCache
 	): mixed {
         $this->connectCustomerQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -148,7 +148,7 @@ class QueryCache
 	): mixed {
         $this->connectCustomerQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -177,7 +177,7 @@ class QueryCache
 	): mixed {
         $this->connectCustomerQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -211,7 +211,7 @@ class QueryCache
 	): mixed {
         $this->connectCustomerQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 

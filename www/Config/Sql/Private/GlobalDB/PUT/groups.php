@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$Env::$groupTable}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->http->req->s['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'name',
@@ -36,7 +36,7 @@ return [
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
-			'column' => 'allowed_cidr',
+			'column' => 'customer_allowed_cidr',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'allowed_cidr'
 		],
@@ -83,7 +83,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$groupTable],
+				'table' => ['custom', $this->http->req->s['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],

@@ -257,13 +257,13 @@ class DbCommonFunction
 	public static function customerCacheServerCred(&$customerData): array
 	{
 		return [
-			'cacheServerType' => getenv(name: $customerData['cache_server_type']),
-			'cacheServerHostname' => getenv(name: $customerData['cache_server_hostname']),
-			'cacheServerPort' => getenv(name: $customerData['cache_server_port']),
-			'cacheServerUsername' => getenv(name: $customerData['cache_server_username']),
-			'cacheServerPassword' => getenv(name: $customerData['cache_server_password']),
-			'cacheServerDatabase' => getenv(name: $customerData['cache_server_db']),
-			'cacheServerTable' => getenv(name: $customerData['cache_server_table'])
+			'cacheServerType' => getenv(name: $customerData['customer_cache_server_type']),
+			'cacheServerHostname' => getenv(name: $customerData['customer_cache_server_hostname']),
+			'cacheServerPort' => getenv(name: $customerData['customer_cache_server_port']),
+			'cacheServerUsername' => getenv(name: $customerData['customer_cache_server_username']),
+			'cacheServerPassword' => getenv(name: $customerData['customer_cache_server_password']),
+			'cacheServerDatabase' => getenv(name: $customerData['customer_cache_server_db']),
+			'cacheServerTable' => getenv(name: $customerData['customer_cache_server_table'])
 		];
 	}
 
@@ -277,13 +277,13 @@ class DbCommonFunction
 	public static function customerQueryCacheServerCred(&$customerData): array
 	{
 		return [
-			'cacheServerType' => getenv(name: $customerData['query_cache_server_type']),
-			'cacheServerHostname' => getenv(name: $customerData['query_cache_server_hostname']),
-			'cacheServerPort' => getenv(name: $customerData['query_cache_server_port']),
-			'cacheServerUsername' => getenv(name: $customerData['query_cache_server_username']),
-			'cacheServerPassword' => getenv(name: $customerData['query_cache_server_password']),
-			'cacheServerDatabase' => getenv(name: $customerData['query_cache_server_db']),
-			'cacheServerTable' => getenv(name: $customerData['query_cache_server_table'])
+			'cacheServerType' => getenv(name: $customerData['customer_query_cache_server_type']),
+			'cacheServerHostname' => getenv(name: $customerData['customer_query_cache_server_hostname']),
+			'cacheServerPort' => getenv(name: $customerData['customer_query_cache_server_port']),
+			'cacheServerUsername' => getenv(name: $customerData['customer_query_cache_server_username']),
+			'cacheServerPassword' => getenv(name: $customerData['customer_query_cache_server_password']),
+			'cacheServerDatabase' => getenv(name: $customerData['customer_query_cache_server_db']),
+			'cacheServerTable' => getenv(name: $customerData['customer_query_cache_server_table'])
 		];
 	}
 
@@ -297,12 +297,12 @@ class DbCommonFunction
 	public static function customerMasterDatabaseServerCred(&$customerData): array
 	{
 		return [
-			'dbServerType' => getenv(name: $customerData['master_db_server_type']),
-			'dbServerHostname' => getenv(name: $customerData['master_db_server_hostname']),
-			'dbServerPort' => getenv(name: $customerData['master_db_server_port']),
-			'dbServerUsername' => getenv(name: $customerData['master_db_server_username']),
-			'dbServerPassword' => getenv(name: $customerData['master_db_server_password']),
-			'dbServerDatabase' => getenv(name: $customerData['master_db_server_db']),
+			'dbServerType' => getenv(name: $customerData['customer_master_db_server_type']),
+			'dbServerHostname' => getenv(name: $customerData['customer_master_db_server_hostname']),
+			'dbServerPort' => getenv(name: $customerData['customer_master_db_server_port']),
+			'dbServerUsername' => getenv(name: $customerData['customer_master_db_server_username']),
+			'dbServerPassword' => getenv(name: $customerData['customer_master_db_server_password']),
+			'dbServerDatabase' => getenv(name: $customerData['customer_master_db_server_db']),
 		];
 	}
 
@@ -316,12 +316,12 @@ class DbCommonFunction
 	public static function customerSlaveDatabaseServerCred(&$customerData): array
 	{
 		return [
-			'dbServerType' => getenv(name: $customerData['slave_db_server_type']),
-			'dbServerHostname' => getenv(name: $customerData['slave_db_server_hostname']),
-			'dbServerPort' => getenv(name: $customerData['slave_db_server_port']),
-			'dbServerUsername' => getenv(name: $customerData['slave_db_server_username']),
-			'dbServerPassword' => getenv(name: $customerData['slave_db_server_password']),
-			'dbServerDatabase' => getenv(name: $customerData['slave_db_server_db']),
+			'dbServerType' => getenv(name: $customerData['customer_slave_db_server_type']),
+			'dbServerHostname' => getenv(name: $customerData['customer_slave_db_server_hostname']),
+			'dbServerPort' => getenv(name: $customerData['customer_slave_db_server_port']),
+			'dbServerUsername' => getenv(name: $customerData['customer_slave_db_server_username']),
+			'dbServerPassword' => getenv(name: $customerData['customer_slave_db_server_password']),
+			'dbServerDatabase' => getenv(name: $customerData['customer_slave_db_server_db']),
 		];
 	}
 }

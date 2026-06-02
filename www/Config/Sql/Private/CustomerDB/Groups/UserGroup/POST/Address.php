@@ -21,12 +21,12 @@ return [
 		[
 			'column' => 'customer_id',
 			'fetchFrom' => 'customerData',
-			'fetchFromData' => 'id'
+			'fetchFromData' => 'customer_id'
 		],
 		[
 			'column' => 'user_id',
 			'fetchFrom' => 'payload',
-			'fetchFromData' => 'user_id',
+			'fetchFromData' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[

@@ -117,7 +117,7 @@ class Write
 			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
 			&& CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableExplainRequest'
+				feature: 'customer_enabled_explain_request'
 			)
 		) {
 			return $this->explainWrite(
@@ -191,7 +191,7 @@ class Write
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enablePayloadInResponse'
+				feature: 'customer_enabled_payload_in_response'
 			)
 		) {
 			$this->dataEncode->addKeyData(
@@ -319,7 +319,7 @@ class Write
 					if (
 						CommonFunction::isEnabled(
 							http: $this->http,
-							feature: 'enablePayloadInResponse'
+							feature: 'customer_enabled_payload_in_response'
 						)
 					) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
@@ -347,7 +347,7 @@ class Write
 					if (
 						CommonFunction::isEnabled(
 							http: $this->http,
-							feature: 'enablePayloadInResponse'
+							feature: 'customer_enabled_payload_in_response'
 						)
 					) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
@@ -443,7 +443,7 @@ class Write
 		$iCount = ($isObject || $isObject === null)
 			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
 
-		$mode = getenv(name: $this->http->req->s['customerData']['master_db_server_query_placeholder']);
+		$mode = getenv(name: $this->http->req->s['customerData']['customer_master_db_server_query_placeholder']);
 		$function = "getSqlAndParam{$mode}Mode";
 
 		for ($i = 0; $i < $iCount; $i++) {
@@ -503,10 +503,7 @@ class Write
 			}
 
 			if (
-				CommonFunction::isEnabled(
-					http: $this->http,
-					feature: 'enableGlobalCounter'
-				)
+				Env::$enableGlobalCounter
 				&& isset($writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
 			) {
 				$writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
@@ -557,10 +554,7 @@ class Write
 
 			if (isset($writeSqlConfig['__INSERT-IDs__'])) {
 				if (
-					CommonFunction::isEnabled(
-						http: $this->http,
-						feature: 'enableGlobalCounter'
-					)
+					Env::$enableGlobalCounter
 					&& isset($writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
 				) {
 					$id = $writeSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'];

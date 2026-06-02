@@ -14,31 +14,26 @@
  */
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->http->req->s['customerData']['userTable']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->http->req->s['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
-			'column' => 'customer_id',
-			'fetchFrom' => 'customerData',
-			'fetchFromData' => 'id'
-		],
-		[
-			'column' => 'firstname',
+			'column' => 'customer_user_contact_name',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'firstname'],
 		[
-			'column' => 'lastname',
+			'column' => 'customer_user_contact_person',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'lastname'],
 		[
-			'column' => 'email',
+			'column' => 'customer_user_contact_email_address',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'email'],
 		[
-			'column' => 'username',
+			'column' => 'customer_user_username',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'username'],
 		[
-			'column' => 'password_hash',
+			'column' => 'customer_user_password_hash',
 			'fetchFrom' => 'function',
 			'fetchFromData' => function($session) {
 				if (
@@ -50,15 +45,17 @@ return [
 						algo: PASSWORD_DEFAULT
 					);
 				}
-		}],
+			}
+		],
 		[
-			'column' => 'allowed_cidr',
+			'column' => 'customer_user_allowed_cidr',
 			'fetchFrom' => 'custom',
 			'fetchFromData' => '0.0.0.0/0'],
 		[
-			'column' => 'group_id',
+			'column' => 'customer_user_group_id',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => '1'],
+			'fetchFromData' => '1'
+		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
 	'idempotentWindow' => 10

@@ -169,7 +169,7 @@ class CacheServer
 	{
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -187,7 +187,7 @@ class CacheServer
 	{
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -210,7 +210,7 @@ class CacheServer
 	): mixed {
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -235,7 +235,7 @@ class CacheServer
 	): mixed {
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 
@@ -256,7 +256,7 @@ class CacheServer
 	{
 		$this->connectCache();
 
-		if (strlen($cacheKey) === 0) {
+		if (empty($cacheKey)) {
 			return false;
 		}
 

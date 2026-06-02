@@ -102,6 +102,7 @@ $server->on(
 			$response->end('Missing route');
 			return;
 		}
+		// echo $httpReqData['get'][ROUTE_URL_PARAM] . PHP_EOL;
 
 		$httpReqData['post'] = $request->rawContent();
 		$httpReqData['files'] = &$request->files;
@@ -147,7 +148,10 @@ $server->on(
 					break;
 			}
 		} else {
-			if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix) {
+			if (
+				Env::$enableReloadRequest
+				&& $httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix
+			) {
 				Reload::process(
 					httpRequestIp: $httpReqData['server']['httpRequestIP']
 				);

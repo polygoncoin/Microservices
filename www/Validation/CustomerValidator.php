@@ -122,6 +122,6 @@ class CustomerValidator implements ValidatorInterface
 		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
 		$row = $this->http->req->customerDbObj->fetch();
 		$this->http->req->customerDbObj->closeCursor();
-		return ($row['count'] === 0) ? false : true;
+		return (isset($row['count']) && $row['count'] === 0) ? false : true;
 	}
 }

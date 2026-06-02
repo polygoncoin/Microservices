@@ -148,7 +148,7 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	{
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -168,7 +168,7 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	{
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -191,7 +191,7 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	): mixed {
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -215,7 +215,7 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	): mixed {
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -236,7 +236,7 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	{
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 

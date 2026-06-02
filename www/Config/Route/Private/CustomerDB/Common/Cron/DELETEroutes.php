@@ -19,10 +19,6 @@ return [
 	$Env::$cronRequestRoutePrefix => [
 		'{cron:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
-			'{id:int}'  => [
-				'dataType' => DatabaseServerDataType::$PrimaryKey,
-				'__FILE__' => false
-			]
 		]
 	]
 ];

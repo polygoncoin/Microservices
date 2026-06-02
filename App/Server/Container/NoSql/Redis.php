@@ -161,7 +161,7 @@ class Redis implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -179,7 +179,7 @@ class Redis implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -202,7 +202,7 @@ class Redis implements NoSqlInterface
 	): mixed {
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -234,7 +234,7 @@ class Redis implements NoSqlInterface
 	): mixed {
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -255,7 +255,7 @@ class Redis implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 

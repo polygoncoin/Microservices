@@ -152,12 +152,12 @@ class Session
 		$this->sessionContainer->sessionName = $this->sessionName;
 		$this->sessionContainer->sessionMaxLifetime = (int)$this->sessionMaxLifetime;
 
-		$sessionServerHostname = getenv(name: $this->customerData['session_server_hostname']);
-		$sessionServerPort = (int)getenv(name: $this->customerData['session_server_port']);
-		$sessionServerUsername = getenv(name: $this->customerData['session_server_username']);
-		$sessionServerPassword = getenv(name: $this->customerData['session_server_password']);
-		$sessionServerDatabase = getenv(name: $this->customerData['session_server_db']);
-		$sessionServerTable = getenv(name: $this->customerData['session_server_table']);
+		$sessionServerHostname = getenv(name: $this->customerData['customer_session_server_hostname']);
+		$sessionServerPort = (int)getenv(name: $this->customerData['customer_session_server_port']);
+		$sessionServerUsername = getenv(name: $this->customerData['customer_session_server_username']);
+		$sessionServerPassword = getenv(name: $this->customerData['customer_session_server_password']);
+		$sessionServerDatabase = getenv(name: $this->customerData['customer_session_server_db']);
+		$sessionServerTable = getenv(name: $this->customerData['customer_session_server_table']);
 
 		// Setting required parameters as per session Mode / Type
 		switch ($this->sessionMode) {
@@ -321,7 +321,7 @@ class Session
 		}
 
 		$this->customerData = $customerData;
-		$this->sessionMode = getenv(name: $this->customerData['session_server_type']);
+		$this->sessionMode = getenv(name: $this->customerData['customer_session_server_type']);
 
 		// Set optoptionsionArr from php.ini if not set in this class
 		if (empty($this->sessionName)) {

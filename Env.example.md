@@ -41,8 +41,9 @@ Set below config.
 
 ```ini
 ; Global Auto-Increment counter detail
-gCounter='global_counter'           ; Key or Table
-gCounterMode='Cache'                ; Globally configured Cache / Database
+enableGlobalCounter=1                   ; 1 = true / 0 = false
+gCounter='global_counter'               ; Key or Table
+gCounterMode='Cache'                    ; Globally configured Cache / Database
 ```
 
 ## Idempotent

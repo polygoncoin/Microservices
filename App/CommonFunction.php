@@ -323,7 +323,7 @@ class CommonFunction
 		if (
 			!self::isEnabled(
 				http: $http,
-				feature: 'enableCidrCheck'
+				feature: 'customer_enabled_cidr_check'
 			)
 		) {
 			return;
@@ -343,7 +343,7 @@ class CommonFunction
 				ip: $http->httpReqData['server']['httpRequestIP'],
 				cidrCacheKey: CacheServerKey::customerGroupCidr(
 					customerId: $http->req->customerId,
-					groupId: $http->req->groupId
+					customerUserGroupId: $http->req->customerUserGroupId
 				)
 			);
 
@@ -352,7 +352,7 @@ class CommonFunction
 				ip: $http->httpReqData['server']['httpRequestIP'],
 				cidrCacheKey: CacheServerKey::customerUserCidr(
 					customerId: $http->req->customerId,
-					userId: $http->req->userId
+					customerUserId: $http->req->customerUserId
 				)
 			);
 		}

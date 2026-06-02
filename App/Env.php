@@ -37,6 +37,11 @@ class Env
 	public static $OUTPUT_PERFORMANCE_STATS = null;
 	public static $DISABLE_REQUESTS_VIA_PROXIES = null;
 
+	public static $enableGlobalCounter = null;
+	public static $enableReloadRequest = null;
+
+	public static $reloadRestrictedCidr = null;
+
 	public static $sessionMode = null;
 	public static $maxConcurrentLogin = null;
 	public static $concurrentAccessInterval = null;
@@ -63,7 +68,6 @@ class Env
 
 	public static $customerMasterDb = null;
 	public static $customerTable = null;
-	public static $groupTable = null;
 	public static $queryPlaceholder = null;
 	public static $defaultPerPage = null;
 	public static $maxResultsPerPage = null;
@@ -84,18 +88,6 @@ class Env
 	public static $reloadRequestRoutePrefix = null;
 	public static $thirdPartyRequestRoutePrefix = null;
 	public static $uploadRequestRoutePrefix = null;
-
-	public static $explainRestrictedCidr = null;
-	public static $exportRestrictedCidr = null;
-	public static $importRestrictedCidr = null;
-	public static $importSampleRestrictedCidr = null;
-	public static $routesRestrictedCidr = null;
-	public static $dropboxRestrictedCidr = null;
-	public static $cronRestrictedCidr = null;
-	public static $customRestrictedCidr = null;
-	public static $reloadRestrictedCidr = null;
-	public static $thirdPatyRestrictedCidr = null;
-	public static $uploadRestrictedCidr = null;
 
 	public static $rateLimitIPPrefix = null;
 	public static $rateLimitCustomerPrefix = null;
@@ -134,6 +126,11 @@ class Env
 		self::$OUTPUT_PERFORMANCE_STATS = getenv(name: 'OUTPUT_PERFORMANCE_STATS');
 		self::$DISABLE_REQUESTS_VIA_PROXIES = getenv(name: 'DISABLE_REQUESTS_VIA_PROXIES');
 
+		self::$enableGlobalCounter = (bool)getenv(name: 'enableGlobalCounter');
+		self::$enableReloadRequest = (bool)getenv(name: 'enableReloadRequest');
+
+		self::$reloadRestrictedCidr = getenv(name: 'reloadRestrictedCidr');
+
 		self::$sessionMode = getenv(name: 'sessionMode');
 		self::$maxConcurrentLogin = getenv(name: 'maxConcurrentLogin');
 		self::$concurrentAccessInterval = getenv(name: 'concurrentAccessInterval');
@@ -160,7 +157,6 @@ class Env
 
 		self::$customerMasterDb = getenv(name: 'customerMasterDb');
 		self::$customerTable = getenv(name: 'customerTable');
-		self::$groupTable = getenv(name: 'groupTable');
 		self::$queryPlaceholder = getenv(name: 'queryPlaceholder');
 		self::$defaultPerPage = (int)getenv(name: 'defaultPerPage');
 		self::$maxResultsPerPage = (int)getenv(name: 'maxResultsPerPage');

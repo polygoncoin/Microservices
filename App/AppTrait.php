@@ -876,7 +876,7 @@ trait AppTrait
 			$this->http->req->isPublicRequest
 			|| !CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableRateLimitForRoute'
+				feature: 'customer_enabled_rate_limiting_for_route'
 			)
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
@@ -891,10 +891,10 @@ trait AppTrait
 			'Route' => $this->http->httpReqData['get'][ROUTE_URL_PARAM],
 		];
 		if (isset($this->http->req->s['userData'])) {
-			$payloadSignature['groupId'] = ($this->http->req->s['groupData']['id'] !== null
-				? $this->http->req->s['groupData']['id'] : 0);
-			$payloadSignature['userId'] = ($this->http->req->userId !== null
-				? $this->http->req->userId : 0);
+			$payloadSignature['customerUserGroupId'] = ($this->http->req->s['userData']['customer_user_group_id'] !== null
+				? $this->http->req->s['userData']['customer_user_group_id'] : 0);
+			$payloadSignature['customerUserId'] = ($this->http->req->customerUserId !== null
+				? $this->http->req->customerUserId : 0);
 		}
 		$hash = json_encode(value: $payloadSignature);
 		$rateLimitKey = md5(string: $hash);
@@ -918,13 +918,13 @@ trait AppTrait
 	 */
 	private function checkReferrerLag(&$sqlConfig): void
 	{
-		$userId = 0;
-		if (isset($this->http->req->userId)) {
-			$userId = $this->http->req->userId;
+		$customerUserId = 0;
+		if (isset($this->http->req->customerUserId)) {
+			$customerUserId = $this->http->req->customerUserId;
 		}
 		$customerUserReferrerLagKey = CacheServerKey::customerUserReferrerLag(
 			customerId: $this->http->req->customerId,
-			userId: $userId
+			customerUserId: $customerUserId
 		);
 		if (
 			isset($sqlConfig['referrerLagWindow'])
@@ -1032,10 +1032,10 @@ trait AppTrait
 					)
 				];
 				if (isset($this->http->req->s['userData'])) {
-					$payloadSignature['groupId'] = ($this->http->req->s['groupData']['id'] !== null
-						? $this->http->req->s['groupData']['id'] : 0);
-					$payloadSignature['userId'] = ($this->http->req->userId !== null
-						? $this->http->req->userId : 0);
+					$payloadSignature['customerUserGroupId'] = ($this->http->req->s['userData']['customer_user_group_id'] !== null
+						? $this->http->req->s['userData']['customer_user_group_id'] : 0);
+					$payloadSignature['customerUserId'] = ($this->http->req->customerUserId !== null
+						? $this->http->req->customerUserId : 0);
 				}
 
 				$hash = json_encode(value: $payloadSignature);
@@ -1079,10 +1079,10 @@ trait AppTrait
 			'Route' => $this->http->httpReqData['get'][ROUTE_URL_PARAM],
 		];
 		if (isset($this->http->req->s['userData'])) {
-			$payloadSignature['groupId'] = ($this->http->req->s['groupData']['id'] !== null
-				? $this->http->req->s['groupData']['id'] : 0);
-			$payloadSignature['userId'] = ($this->http->req->userId !== null
-				? $this->http->req->userId : 0);
+			$payloadSignature['customerUserGroupId'] = ($this->http->req->s['userData']['customer_user_group_id'] !== null
+				? $this->http->req->s['userData']['customer_user_group_id'] : 0);
+			$payloadSignature['customerUserId'] = ($this->http->req->customerUserId !== null
+				? $this->http->req->customerUserId : 0);
 		}
 
 		$hash = json_encode(value: $payloadSignature);

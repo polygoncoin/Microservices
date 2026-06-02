@@ -36,7 +36,7 @@ return [
 			'fetchFromData' => 'No'
 		],
 		[
-			'column' => 'id',
+			'column' => 'customer_id',
 			'fetchFrom' => 'routeParamArr',
 			'fetchFromData' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -47,7 +47,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', $Env::$customerTable],
-				'primary' => ['custom', 'id'],
+				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
 			'errorMessage' => 'Invalid Customer Id'
@@ -58,7 +58,7 @@ return [
 				'table' => ['custom', $Env::$customerTable],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', 'No'],
-				'primary' => ['custom', 'id'],
+				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is already deleted'

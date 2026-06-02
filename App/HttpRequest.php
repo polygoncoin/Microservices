@@ -197,14 +197,14 @@ class HttpRequest
 	 *
 	 * @var null|int
 	 */
-	public $groupId = null;
+	public $customerUserGroupId = null;
 
 	/**
 	 * User Id
 	 *
 	 * @var null|int
 	 */
-	public $userId = null;
+	public $customerUserId = null;
 
 	/**
 	 * Session object
@@ -270,6 +270,7 @@ class HttpRequest
 			!$this->isPublicDomain
 			&& !$this->isPrivateSessionDomain
 			&& !$this->isPrivateTokenDomain
+			&& $this->http->httpReqData['get'][ROUTE_URL_PARAM] !== '/' . Env::$reloadRequestRoutePrefix
 		) {
 			throw new \Exception(
 				message: "Invalid domain: '{$this->http->httpReqData['server']['domainName']}'",
@@ -283,6 +284,7 @@ class HttpRequest
 			),
 			associative: true
 		);
+		$this->customerId = $this->s['customerData']['customer_id'];
 
 		if ($this->isPrivateSessionDomain) {
 			$this->session = new Session();
@@ -294,13 +296,11 @@ class HttpRequest
 			$this->session->sessionStartReadonly();
 		}
 
-		$this->customerId = $this->s['customerData']['id'];
-
 		if (
 			$this->isPublicRequest
 			&& !CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enablePublicRequest'
+				feature: 'customer_enabled_public_request'
 			)
 		) {
 			throw new \Exception(
@@ -313,7 +313,7 @@ class HttpRequest
 			$this->isPrivateRequest
 			&& !CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enablePrivateRequest'
+				feature: 'customer_enabled_private_request'
 			)
 		) {
 			throw new \Exception(
@@ -327,14 +327,14 @@ class HttpRequest
 				$this->isPublicRequest
 				&& CommonFunction::isEnabled(
 					http: $this->http,
-					feature: 'enableQueryCacheForPublic'
+					feature: 'customer_enabled_query_cache_for_public_request'
 				)
 			)
 			|| (
 				$this->isPrivateRequest
 				&& CommonFunction::isEnabled(
 					http: $this->http,
-					feature: 'enableQueryCacheForPrivate'
+					feature: 'customer_enabled_query_cache_for_private_request'
 				)
 			)
 		) {
@@ -348,7 +348,7 @@ class HttpRequest
 			if (
 				CommonFunction::isEnabled(
 					http: $this->http,
-					feature: 'enableRateLimiting'
+					feature: 'customer_enabled_rate_limiting'
 				)
 			) {
 				$this->rateLimiter = new RateLimiter(cacheObj: $this->customerCacheObj);
@@ -438,15 +438,15 @@ class HttpRequest
 
 				$sql = 'INSERT INTO `import_file_detail` SET
 					customer_id = :customer_id,
-					group_id = :group_id,
-					user_id = :user_id,
+					customer_user_group_id = :customer_user_group_id,
+					customer_user_id = :customer_user_id,
 					uploaded_file_name = :uploaded_file_name,
 					uploaded_file_md5 = :uploaded_file_md5,
 					request_ip = :request_ip
 				';
 				$paramArr[':customer_id'] = $this->customerId;
-				$paramArr[':group_id'] = $this->groupId;
-				$paramArr[':user_id'] = $this->userId;
+				$paramArr[':customer_user_group_id'] = $this->customerUserGroupId;
+				$paramArr[':customer_user_id'] = $this->customerUserId;
 				$paramArr[':uploaded_file_name'] = $uploadedFileName;
 				$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
 				$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
@@ -521,16 +521,16 @@ class HttpRequest
 			DbCommonFunction::connectGlobalDb();
 			$sql = 'INSERT INTO `request` SET
 				customer_id = :customer_id,
-				group_id = :group_id,
-				user_id = :user_id,
+				customer_user_group_id = :customer_user_group_id,
+				customer_user_id = :customer_user_id,
 				request_route = :request_route,
 				request_method = :request_method,
 				request_payload_json = :request_payload_json,
 				request_ip = :request_ip
 			';
 			$paramArr[':customer_id'] = $this->customerId;
-			$paramArr[':group_id'] = $this->groupId;
-			$paramArr[':user_id'] = $this->userId;
+			$paramArr[':customer_user_group_id'] = $this->customerUserGroupId;
+			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->http->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->http->httpReqData['server']['httpMethod'];
 			$paramArr[':request_payload_json'] = $payloadJson;
@@ -562,8 +562,8 @@ class HttpRequest
 				debug_mode = :debug_mode,
 				request_id = :request_id,
 				customer_id = :customer_id,
-				group_id = :group_id,
-				user_id = :user_id,
+				customer_user_group_id = :customer_user_group_id,
+				customer_user_id = :customer_user_id,
 				request_route = :request_route,
 				request_method = :request_method,
 				request_payload_json = :request_payload_json,
@@ -575,8 +575,8 @@ class HttpRequest
 			$paramArr[':debug_mode'] = $debugMode;
 			$paramArr[':request_id'] = $this->requestId;
 			$paramArr[':customer_id'] = $this->customerId;
-			$paramArr[':group_id'] = $this->groupId;
-			$paramArr[':user_id'] = $this->userId;
+			$paramArr[':customer_user_group_id'] = $this->customerUserGroupId;
+			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->http->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->http->httpReqData['server']['httpMethod'];
 			$paramArr[':request_payload_json'] = isset($this->s['payload']) ? json_encode(value: $this->s['payload']) : '{}';
@@ -607,8 +607,8 @@ class HttpRequest
 			$sql = 'INSERT INTO `error_log` SET
 				request_id = :request_id,
 				customer_id = :customer_id,
-				group_id = :group_id,
-				user_id = :user_id,
+				customer_user_group_id = :customer_user_group_id,
+				customer_user_id = :customer_user_id,
 				request_route = :request_route,
 				request_method = :request_method,
 				request_payload_json = :request_payload_json,
@@ -619,8 +619,8 @@ class HttpRequest
 			';
 			$paramArr[':request_id'] = $this->requestId;
 			$paramArr[':customer_id'] = $this->customerId;
-			$paramArr[':group_id'] = $this->groupId;
-			$paramArr[':user_id'] = $this->userId;
+			$paramArr[':customer_user_group_id'] = $this->customerUserGroupId;
+			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->http->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->http->httpReqData['server']['httpMethod'];
 			$paramArr[':request_payload_json'] = isset($this->s['payload']) ? json_encode(value: $this->s['payload']) : '{}';

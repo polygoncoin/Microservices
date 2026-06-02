@@ -41,21 +41,21 @@ rateLimitUserRequestPrefix='URRL:'
 
 ```SQL
 -- Customer level
-`customer`.`rateLimitMaxRequest` int DEFAULT NULL,
-`customer`.`rateLimitMaxRequestWindow` int DEFAULT NULL,
+`customer`.`customer_rate_limit_max_request` int DEFAULT NULL,
+`customer`.`customer_rate_limit_max_request_window` int DEFAULT NULL,
 
 -- Group level
-`group`.`rateLimitMaxRequest` int DEFAULT NULL,
-`group`.`rateLimitMaxRequestWindow` int DEFAULT NULL,
+`group`.`customer_user_group_rate_limit_max_request` int DEFAULT NULL,
+`group`.`customer_user_group_rate_limit_max_request_window` int DEFAULT NULL,
 
 -- User level
-`user`.`rateLimitMaxRequest` int DEFAULT NULL,
-`user`.`rateLimitMaxRequestWindow` int DEFAULT NULL,
+`user`.`customer_user_rate_limit_max_request` int DEFAULT NULL,
+`user`.`customer_user_rate_limit_max_request_window` int DEFAULT NULL,
 ```
 
 ## Rate Limiting at route level
 
-If **enableRateLimitForRoute** is **enabled** the Rate Limiting settings indicates settings are present in SQL config file of the route. Each route can have different limits and windows or may also ignore (not compulsary for every route).
+If **customer_enabled_rate_limiting_for_route** is **enabled** the Rate Limiting settings indicates settings are present in SQL config file of the route. Each route can have different limits and windows or may also ignore (not compulsary for every route).
 
 ## Rate Limiting Key
 

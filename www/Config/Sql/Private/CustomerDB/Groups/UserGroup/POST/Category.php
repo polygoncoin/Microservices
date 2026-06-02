@@ -66,7 +66,7 @@ return [
 	],
 	'useHierarchy' => true,
 	'affectedQueryCacheKeyArr' => [
-		$this->http->req->s['customerData']['id'] . ':category',
-		$this->http->req->s['customerData']['id'] . ':category1'
+		$this->http->req->s['customerData']['customer_id'] . ':category',
+		$this->http->req->s['customerData']['customer_id'] . ':category1'
 	]
 ];

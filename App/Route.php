@@ -90,7 +90,7 @@ class Route
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableRoutesRequest'
+				feature: 'customer_enabled_routes_request'
 			)
 		) {
 			return true;
@@ -118,7 +118,7 @@ class Route
 				. DIRECTORY_SEPARATOR . 'Private'
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . $this->http->req->s['groupData']['name'];
+				. DIRECTORY_SEPARATOR . $this->http->req->s['groupData']['customer_user_group_name'];
 		}
 
 		foreach ($this->httpMethodArr as $method) {

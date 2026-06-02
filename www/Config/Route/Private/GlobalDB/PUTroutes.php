@@ -17,7 +17,7 @@ use Microservices\App\DatabaseServerDataType;
 
 return [
 	'group' => [
-		'{id:int}'  => [
+		'{customer_user_group_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
 			'__FILE__' => $this->http->req->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
@@ -26,7 +26,7 @@ return [
 		],
 	],
 	'customer' => [
-		'{id:int}'  => [
+		'{customer_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
 			'__FILE__' => $this->http->req->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GlobalDB'

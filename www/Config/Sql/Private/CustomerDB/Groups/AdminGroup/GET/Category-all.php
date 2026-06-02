@@ -85,5 +85,5 @@ return [
 	],
 	'useResultSet' => true,
 	'fetchFrom' => 'Master',
-	'queryCacheKey' => $this->http->req->s['customerData']['id'] . ':category'
+	'queryCacheKey' => $this->http->req->s['customerData']['customer_id'] . ':category'
 ];

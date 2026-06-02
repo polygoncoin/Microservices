@@ -96,7 +96,7 @@ class GlobalValidator implements ValidatorInterface
 		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
 		$row = $this->http->req->customerDbObj->fetch();
 		$this->http->req->customerDbObj->closeCursor();
-		return (int)(($row['count'] === 0) ? false : true);
+		return (int)((isset($row['count']) && $row['count'] === 0) ? false : true);
 	}
 
 	/**

@@ -14,7 +14,7 @@
  */
 
 return [
-	'__QUERY__' => "SELECT * FROM `{$this->http->req->s['customerData']['userTable']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->http->req->s['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
@@ -38,7 +38,7 @@ return [
 					'fetchFromData' => 'No'
 				],
 				[
-					'column' => 'user_id',
+					'column' => 'customer_id',
 					'fetchFrom' => 'sqlResults',
 					'fetchFromData' => 'return:id'
 				],

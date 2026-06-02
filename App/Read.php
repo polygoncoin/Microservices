@@ -117,7 +117,7 @@ class Read
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableResponseCaching'
+				feature: 'customer_enabled_response_caching'
 			)
 			&& isset($readSqlConfig['queryCacheKey'])
 			&& !isset($this->http->req->s['queryParamArr']['orderBy'])
@@ -169,7 +169,7 @@ class Read
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableResponseCaching'
+				feature: 'customer_enabled_response_caching'
 			)
 			&& $toBeCached
 		) {
@@ -181,7 +181,7 @@ class Read
 
 		// Set Server mode to execute query on - Read / Write Server
 		$fetchFrom = $readSqlConfig['fetchFrom'] ?? 'Slave';
-		$this->modeColumn = strtolower($fetchFrom) . '_db_server_query_placeholder';
+		$this->modeColumn = 'customer_' . strtolower($fetchFrom) . '_db_server_query_placeholder';
 		$this->http->req->customerDbObj = DbCommonFunction::connectCustomerDb(
 			customerData: $this->http->req->s['customerData'],
 			fetchFrom: $fetchFrom
@@ -196,7 +196,7 @@ class Read
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableExplainRequest'
+				feature: 'customer_enabled_explain_request'
 			)
 			&& $this->http->req->rParser->routeEndingWithReservedKeywordFlag
 			&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
@@ -215,7 +215,7 @@ class Read
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableResponseCaching'
+				feature: 'customer_enabled_response_caching'
 			)
 			&& $toBeCached
 		) {
@@ -527,7 +527,7 @@ class Read
 		$row = $this->http->req->customerDbObj->fetch();
 		$this->http->req->customerDbObj->closeCursor();
 
-		$totalRowsCount = $row['count'];
+		$totalRowsCount = isset($row['count']) ? $row['count'] : 0;
 		$totalPages = ceil(
 			num: $totalRowsCount / $this->http->req->s['queryParamArr']['perPage']
 		);
@@ -716,7 +716,7 @@ class Read
 		if (
 			!CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableDownloadRequest'
+				feature: 'customer_enabled_download_request'
 			)
 		) {
 			return [[], '', HttpStatus::$NotFound];

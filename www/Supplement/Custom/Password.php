@@ -95,7 +95,7 @@ class Password implements CustomInterface
 			);
 
 			$sql = "
-				UPDATE `{$this->http->req->s['customerData']['userTable']}`
+				UPDATE `{$this->http->req->s['customerData']['customer_user_table']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";
@@ -116,7 +116,7 @@ class Password implements CustomInterface
 			Reload::processUser(
 				httpRequestIp: $this->http->httpReqData['server']['httpRequestIP'],
 				customerData: $this->http->req->s['customerData'],
-				userId: $this->http->req->userId
+				customerUserId: $this->http->req->customerUserId
 			);
 			$this->http->req->customerCacheObj->cacheDelete(
 				cacheKey: CacheServerKey::token(token: $this->http->req->s['authId'])

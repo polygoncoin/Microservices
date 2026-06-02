@@ -42,14 +42,14 @@ class Login
 	 *
 	 * @var null|string
 	 */
-	public $username = null;
+	public $customer_user_username = null;
 
 	/**
 	 * Password for login
 	 *
 	 * @var null|string
 	 */
-	public $password = null;
+	public $customer_user_password = null;
 
 	/**
 	 * Payload
@@ -113,7 +113,7 @@ class Login
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableRateLimitForUserPerIp'
+				feature: 'customer_enabled_rate_limiting_for_user_per_ip'
 			)
 			&& !empty($this->http->req->s['customerData']['rateLimitMaxUserPerIp'])
 			&& !empty($this->http->req->s['customerData']['rateLimitMaxUserPerIpWindow'])
@@ -160,17 +160,22 @@ class Login
 		$this->payload = $this->http->req->dataDecode->get();
 
 		// Check for required conditions variables
-		foreach (['username', 'password'] as $value) {
+		$requiredParamData = [
+			'username' => 'customer_user_username',
+			'password' => 'customer_user_password'
+		];
+		
+		foreach ($requiredParamData as $param => $value) {
 			if (
-				!isset($this->payload[$value])
-				|| empty($this->payload[$value])
+				!isset($this->payload[$param])
+				|| empty($this->payload[$param])
 			) {
 				throw new \Exception(
 					message: 'Missing required parameters',
 					code: HttpStatus::$NotFound
 				);
 			} else {
-				$this->$value = $this->payload[$value];
+				$this->$value = $this->payload[$param];
 			}
 		}
 	}
@@ -188,7 +193,7 @@ class Login
 			customerId: $customerId,
 			username: $this->payload['username']
 		);
-		// Redis - one can find the userId from customer username
+		// Redis - one can find the customerUserId from customer username
 		if (!$this->cacheExist(cacheKey: $customerUserKey)) {
 			throw new \Exception(
 				message: 'Invalid credentials',
@@ -203,8 +208,8 @@ class Login
 			associative: true
 		);
 		if (
-			empty($userData['id'])
-			|| empty($userData['id'])
+			empty($userData['customer_user_id'])
+			|| empty($userData['customer_user_id'])
 		) {
 			throw new \Exception(
 				message: 'Invalid credentials',
@@ -212,8 +217,8 @@ class Login
 			);
 		}
 		$this->http->req->s['userData'] = $userData;
-		$this->http->req->userId = $userData['id'];
-		$this->http->req->groupId = $userData['group_id'];
+		$this->http->req->customerUserId = $userData['customer_user_id'];
+		$this->http->req->customerUserGroupId = $userData['customer_user_group_id'];
 	}
 
 	/**
@@ -232,15 +237,15 @@ class Login
 				rateLimitPrefix: Env::$rateLimitUserLoginPrefix,
 				rateLimitMaxRequest: $this->http->req->s['customerData']['rateLimitMaxUserLoginRequest'],
 				rateLimitMaxRequestWindow: $this->http->req->s['customerData']['rateLimitMaxUserLoginRequestWindow'],
-				rateLimitKey: $this->http->httpReqData['server']['httpRequestIP'] . ':' . $this->username
+				rateLimitKey: $this->http->httpReqData['server']['httpRequestIP'] . ':' . $this->customer_user_username
 			);
 		}
 
 		// get hash from cache and compares with password
 		if (
 			!password_verify(
-				password: $this->password,
-				hash: $this->http->req->s['userData']['password_hash']
+				password: $this->customer_user_password,
+				hash: $this->http->req->s['userData']['customer_user_password_hash']
 			)
 		) {
 			throw new \Exception(
@@ -348,7 +353,7 @@ class Login
 
 		$customerUserTokenKey = CacheServerKey::customerUserToken(
 			customerId: $this->http->req->customerId,
-			userId: $this->http->req->userId
+			customerUserId: $this->http->req->customerUserId
 		);
 
 		if ($this->cacheExist(cacheKey: $customerUserTokenKey)) {
@@ -360,12 +365,12 @@ class Login
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableConcurrentLogin'
+				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
 			$customerUserConcurrencyKey = CacheServerKey::customerUserConcurrency(
 				customerId: $this->http->req->customerId,
-				userId: $this->http->req->userId
+				customerUserId: $this->http->req->customerUserId
 			);
 
 			if ($this->cacheExist(cacheKey: $customerUserConcurrencyKey)) {
@@ -440,7 +445,7 @@ class Login
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableConcurrentLogin'
+				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
 			if (count(value: $customerUserConcurrencyData) >= Env::$maxConcurrentLogin) {
@@ -452,7 +457,7 @@ class Login
 			}
 			$customerUserConcurrencyKey = $customerUserConcurrencyKey ?? CacheServerKey::customerUserConcurrency(
 				customerId: $this->http->req->customerId,
-				userId: $this->http->req->userId
+				customerUserId: $this->http->req->customerUserId
 			);
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
@@ -504,7 +509,7 @@ class Login
 
 		$customerUserSessionIdKey = CacheServerKey::customerUserSessionId(
 			customerId: $this->http->req->customerId,
-			userId: $this->http->req->userId
+			customerUserId: $this->http->req->customerUserId
 		);
 
 		if ($this->cacheExist(cacheKey: $customerUserSessionIdKey)) {
@@ -516,12 +521,12 @@ class Login
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableConcurrentLogin'
+				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
 			$customerUserConcurrencyKey = CacheServerKey::customerUserConcurrency(
 				customerId: $this->http->req->customerId,
-				userId: $this->http->req->userId
+				customerUserId: $this->http->req->customerUserId
 			);
 
 			if ($this->cacheExist(cacheKey: $customerUserConcurrencyKey)) {
@@ -600,7 +605,7 @@ class Login
 		if (
 			CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableConcurrentLogin'
+				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
 			if (count(value: $customerUserConcurrencyData) >= Env::$maxConcurrentLogin) {
@@ -612,7 +617,7 @@ class Login
 			}
 			$customerUserConcurrencyKey = $customerUserConcurrencyKey ?? CacheServerKey::customerUserConcurrency(
 				customerId: $this->http->req->customerId,
-				userId: $this->http->req->userId
+				customerUserId: $this->http->req->customerUserId
 			);
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,

@@ -16,32 +16,32 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->http->req->s['customerData']['userTable']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->http->req->s['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
-			'column' => 'firstname',
+			'column' => 'customer_user_contact_name',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'firstname'
 		],
 		[
-			'column' => 'lastname',
+			'column' => 'customer_user_contact_person',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'lastname'
 		],
 		[
-			'column' => 'email',
+			'column' => 'customer_user_contact_email_address',
 			'fetchFrom' => 'payload',
 			'fetchFromData' => 'email'
 		],
 	],
 	'__WHERE__' => [
 		[
-			'column' => 'is_deleted',
+			'column' => 'customer_user_is_deleted',
 			'fetchFrom' => 'custom',
 			'fetchFromData' => 'No'
 		],
 		[
-			'column' => 'id',
+			'column' => 'customer_user_id',
 			'fetchFrom' => 'routeParamArr',
 			'fetchFromData' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
@@ -76,8 +76,8 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->http->req->s['customerData']['userTable']],
-				'primary' => ['custom', 'id'],
+				'table' => ['custom', $this->http->req->s['customerData']['customer_user_table']],
+				'primary' => ['custom', 'customer_user_id'],
 				'id' => ['routeParamArr', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

@@ -119,7 +119,7 @@ class Memcached implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -137,7 +137,7 @@ class Memcached implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -160,7 +160,7 @@ class Memcached implements NoSqlInterface
 	): mixed {
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -192,7 +192,7 @@ class Memcached implements NoSqlInterface
 	): mixed {
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 
@@ -213,7 +213,7 @@ class Memcached implements NoSqlInterface
 	{
 		$this->connect();
 
-		if (strlen($key) === 0) {
+		if (empty($key)) {
 			return false;
 		}
 

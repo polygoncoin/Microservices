@@ -169,7 +169,7 @@ class QueryCacheServer
 	{
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -189,7 +189,7 @@ class QueryCacheServer
 	{
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -212,7 +212,7 @@ class QueryCacheServer
 	): mixed {
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -236,7 +236,7 @@ class QueryCacheServer
 	): mixed {
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 
@@ -257,7 +257,7 @@ class QueryCacheServer
 	{
 		$this->connectQueryCache();
 
-		if (strlen($queryCacheKey) === 0) {
+		if (empty($queryCacheKey)) {
 			return false;
 		}
 

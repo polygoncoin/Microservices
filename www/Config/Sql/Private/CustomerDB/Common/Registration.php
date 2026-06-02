@@ -14,13 +14,13 @@
  */
 
 return [
-	'__QUERY__' => "UPDATE `{$this->http->req->s['customerData']['userTable']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->http->req->s['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__VALIDATE__' => [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->http->req->s['customerData']['userTable']],
-				'primary' => ['custom', 'id'],
+				'table' => ['custom', $this->http->req->s['customerData']['customer_user_table']],
+				'primary' => ['custom', 'customer_user_id'],
 				'id' => ['routeParamArr', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

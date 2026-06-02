@@ -127,7 +127,7 @@ class Supplement
 			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
 			&& CommonFunction::isEnabled(
 				http: $this->http,
-				feature: 'enableExplainRequest'
+				feature: 'customer_enabled_explain_request'
 			)
 		) {
 			return $this->explainSupplement(
@@ -326,7 +326,7 @@ class Supplement
 					if (
 						CommonFunction::isEnabled(
 							http: $this->http,
-							feature: 'enablePayloadInResponse'
+							feature: 'customer_enabled_payload_in_response'
 						)
 					) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
@@ -351,7 +351,7 @@ class Supplement
 					if (
 						CommonFunction::isEnabled(
 							http: $this->http,
-							feature: 'enablePayloadInResponse'
+							feature: 'customer_enabled_payload_in_response'
 						)
 					) {
 						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(

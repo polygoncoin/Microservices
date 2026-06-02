@@ -56,7 +56,7 @@ return [
 			'fetchFromData' => 'No'
 		],
 		[
-			'column' => 'id',
+			'column' => 'customer_id',
 			'fetchFrom' => 'routeParamArr',
 			'fetchFromData' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -67,7 +67,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', $Env::$customerTable],
-				'primary' => ['custom', 'id'],
+				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
 			'errorMessage' => 'Invalid Customer Id'

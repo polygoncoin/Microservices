@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$Env::$groupTable}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->http->req->s['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'is_disabled',
@@ -56,7 +56,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$groupTable],
+				'table' => ['custom', $this->http->req->s['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
@@ -65,7 +65,7 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$groupTable],
+				'table' => ['custom', $this->http->req->s['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', 'No'],
 				'primary' => ['custom', 'id'],
@@ -76,7 +76,7 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$groupTable],
+				'table' => ['custom', $this->http->req->s['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_disabled'],
 				'columnValue' => ['custom', 'No'],
 				'primary' => ['custom', 'id'],

@@ -21,7 +21,7 @@ return [
 			. DIRECTORY_SEPARATOR . 'GlobalDB'
 			. DIRECTORY_SEPARATOR . 'GET'
 			. DIRECTORY_SEPARATOR . 'groups.php',
-		'{id:int}'  => [
+		'{customer_user_group_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
 			'__FILE__' => $this->http->req->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
@@ -34,7 +34,7 @@ return [
 			. DIRECTORY_SEPARATOR . 'GlobalDB'
 			. DIRECTORY_SEPARATOR . 'GET'
 			. DIRECTORY_SEPARATOR . 'customer.php',
-		'{id:int}'  => [
+		'{customer_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
 			'__FILE__' => $this->http->req->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
