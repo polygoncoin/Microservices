@@ -27,14 +27,14 @@ rateLimitUserRequestPrefix='URRL:'
 ## Setting Rate Limiting key's Limit with window in seconds
 
 ```SQL
-`customer`.`rateLimitIPMaxRequest` INT DEFAULT NULL, -- ; Max request allowed per IP
-`customer`.`rateLimitIPMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed per IP
-`customer`.`rateLimitMaxUserPerIp` INT DEFAULT NULL, -- ; Max User allowed per IP
-`customer`.`rateLimitMaxUserPerIpWindow` INT DEFAULT NULL, -- ; Window for Max User allowed per IP
-`customer`.`rateLimitUserMaxRequest` INT DEFAULT NULL, -- ; Max request allowed for user
-`customer`.`rateLimitUserMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed for user
-`customer`.`rateLimitMaxUserLoginRequest` INT DEFAULT NULL, -- ; Max User Login request
-`customer`.`rateLimitMaxUserLoginRequestWindow` INT DEFAULT NULL, -- ; Window for Max User Login request
+`customer`.`customer_rate_limit_ip_max_request` INT DEFAULT NULL, -- ; Max request allowed per IP
+`customer`.`customer_rate_limit_ip_max_request_window` INT DEFAULT NULL, -- ; Window for Max request allowed per IP
+`customer`.`customer_rate_limit_max_user_per_ip` INT DEFAULT NULL, -- ; Max User allowed per IP
+`customer`.`customer_rate_limit_max_user_per_ip_window` INT DEFAULT NULL, -- ; Window for Max User allowed per IP
+`customer`.`customer_rate_limit_user_max_request` INT DEFAULT NULL, -- ; Max request allowed for user
+`customer`.`customer_rate_limit_user_max_request_window` INT DEFAULT NULL, -- ; Window for Max request allowed for user
+`customer`.`customer_rate_limit_max_user_login_request` INT DEFAULT NULL, -- ; Max User Login request
+`customer`.`customer_rate_limit_max_user_login_request_window` INT DEFAULT NULL, -- ; Window for Max User Login request
 ```
 
 ## Customer/Group/User based Rate Limiting detail are set in respective Database Tables for records

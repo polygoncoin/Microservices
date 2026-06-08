@@ -283,7 +283,7 @@ class DbCommonFunction
 			'cacheServerUsername' => getenv(name: $customerData['customer_query_cache_server_username']),
 			'cacheServerPassword' => getenv(name: $customerData['customer_query_cache_server_password']),
 			'cacheServerDatabase' => getenv(name: $customerData['customer_query_cache_server_db']),
-			'cacheServerTable' => getenv(name: $customerData['customer_query_cache_server_table'])
+			'cacheServerTable' => getenv(name: $customerData['customer_query_cache_server_collection'])
 		];
 	}
 

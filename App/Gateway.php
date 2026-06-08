@@ -206,15 +206,15 @@ class Gateway
 				http: $this->http,
 				feature: 'customer_enabled_rate_limiting_for_user_request'
 			)
-			|| empty($this->http->req->s['customerData']['rateLimitUserMaxRequest'])
-			|| empty($this->http->req->s['customerData']['rateLimitUserMaxRequestWindow'])
+			|| empty($this->http->req->s['customerData']['customer_rate_limit_user_max_request'])
+			|| empty($this->http->req->s['customerData']['customer_rate_limit_user_max_request_window'])
 		) {
 			return;
 		}
 
 		$rateLimitUserPrefix = Env::$rateLimitUserRequestPrefix;
-		$rateLimitMaxRequest = $this->http->req->s['customerData']['rateLimitUserMaxRequest'];
-		$rateLimitMaxRequestWindow = $this->http->req->s['customerData']['rateLimitUserMaxRequestWindow'];
+		$rateLimitMaxRequest = $this->http->req->s['customerData']['customer_rate_limit_user_max_request'];
+		$rateLimitMaxRequestWindow = $this->http->req->s['customerData']['customer_rate_limit_user_max_request_window'];
 		$rateLimitKey = $this->http->req->customerId . ':'
 			. $this->http->req->customerUserId;
 
@@ -243,14 +243,14 @@ class Gateway
 		}
 
 		$rateLimitIPPrefix = Env::$rateLimitIPPrefix;
-		$rateLimitIPMaxRequest = $this->http->req->s['customerData']['rateLimitIPMaxRequest'];
-		$rateLimitIPMaxRequestWindow = $this->http->req->s['customerData']['rateLimitIPMaxRequestWindow'];
+		$customer_rate_limit_ip_max_request = $this->http->req->s['customerData']['customer_rate_limit_ip_max_request'];
+		$customer_rate_limit_ip_max_request_window = $this->http->req->s['customerData']['customer_rate_limit_ip_max_request_window'];
 		$rateLimitKey = $this->http->req->customerId . ':' . $this->http->httpReqData['server']['httpRequestIP'];
 
 		$this->http->req->rateLimiter->checkRateLimit(
 			rateLimitPrefix: $rateLimitIPPrefix,
-			rateLimitMaxRequest: $rateLimitIPMaxRequest,
-			rateLimitMaxRequestWindow: $rateLimitIPMaxRequestWindow,
+			rateLimitMaxRequest: $customer_rate_limit_ip_max_request,
+			rateLimitMaxRequestWindow: $customer_rate_limit_ip_max_request_window,
 			rateLimitKey: $rateLimitKey
 		);
 	}

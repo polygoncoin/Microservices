@@ -151,7 +151,7 @@ CREATE TABLE `customer` (
     `customer_public_domain` VARCHAR(255) DEFAULT NULL,
     `customer_enabled_cidr_check` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `customer_enabled_concurrent_login` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
-    `customer_enabled_cron_request` ENUM('Yes', 'No') NOT NULL DEFAULT 'No', --
+    `customer_enabled_cron_request` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `customer_enabled_custom_request` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `customer_enabled_dropbox_request` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     `customer_enabled_download_request` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
@@ -187,14 +187,14 @@ CREATE TABLE `customer` (
     `customer_routes_request_restricted_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_thirdparty_request_restricted_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_upload_request_restricted_cidr` VARCHAR(250) DEFAULT NULL,
-    `rateLimitIPMaxRequest` INT DEFAULT NULL, -- ; Max request allowed per IP
-    `rateLimitIPMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed per IP
-    `rateLimitMaxUserPerIp` INT DEFAULT NULL, -- ; Max User allowed per IP
-    `rateLimitMaxUserPerIpWindow` INT DEFAULT NULL, -- ; Window for Max User allowed per IP
-    `rateLimitUserMaxRequest` INT DEFAULT NULL, -- ; Max request allowed for user
-    `rateLimitUserMaxRequestWindow` INT DEFAULT NULL, -- ; Window for Max request allowed for user
-    `rateLimitMaxUserLoginRequest` INT DEFAULT NULL, -- ; Max User Login request
-    `rateLimitMaxUserLoginRequestWindow` INT DEFAULT NULL, -- ; Window for Max User Login request
+    `customer_rate_limit_ip_max_request` INT DEFAULT NULL, -- ; Max request allowed per IP
+    `customer_rate_limit_ip_max_request_window` INT DEFAULT NULL, -- ; Window for Max request allowed per IP
+    `customer_rate_limit_max_user_per_ip` INT DEFAULT NULL, -- ; Max User allowed per IP
+    `customer_rate_limit_max_user_per_ip_window` INT DEFAULT NULL, -- ; Window for Max User allowed per IP
+    `customer_rate_limit_user_max_request` INT DEFAULT NULL, -- ; Max request allowed for user
+    `customer_rate_limit_user_max_request_window` INT DEFAULT NULL, -- ; Window for Max request allowed for user
+    `customer_rate_limit_max_user_login_request` INT DEFAULT NULL, -- ; Max User Login request
+    `customer_rate_limit_max_user_login_request_window` INT DEFAULT NULL, -- ; Window for Max User Login request
     `customer_master_db_server_type` VARCHAR(255) NOT NULL,
     `customer_master_db_server_hostname` VARCHAR(255) NOT NULL,
     `customer_master_db_server_port` VARCHAR(255) NOT NULL,
@@ -229,7 +229,7 @@ CREATE TABLE `customer` (
     `customer_query_cache_server_username` VARCHAR(255) DEFAULT NULL,
     `customer_query_cache_server_password` VARCHAR(255) DEFAULT NULL,
     `customer_query_cache_server_db` VARCHAR(255) DEFAULT NULL,
-    `customer_query_cache_server_table` VARCHAR(255) DEFAULT NULL, -- ; For MongoDb
+    `customer_query_cache_server_collection` VARCHAR(255) DEFAULT NULL, -- ; For MongoDb
     `customer_comments` VARCHAR(255) DEFAULT NULL,
     `customer_created_by` INT DEFAULT NULL,
     `customer_created_on` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

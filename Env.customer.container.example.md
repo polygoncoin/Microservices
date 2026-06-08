@@ -74,7 +74,7 @@ These **Global Cache Server configuration (Redis)** and **Global Database Server
 `customer`.`customer_query_cache_server_username` VARCHAR(255) DEFAULT NULL,
 `customer`.`customer_query_cache_server_password` VARCHAR(255) DEFAULT NULL,
 `customer`.`customer_query_cache_server_db` VARCHAR(255) DEFAULT NULL,
-`customer`.`customer_query_cache_server_table` VARCHAR(255) DEFAULT NULL,
+`customer`.`customer_query_cache_server_collection` VARCHAR(255) DEFAULT NULL,
 ```
 
 - **Note**: Only the Key detail in the environment file are to be set in columns of respective record. Eg. for column master_db_server_hostname the value to be set is 'gDbServerType' and not '127.0.0.1'. The configured values for the Key are picked from the env files.

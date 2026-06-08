@@ -115,13 +115,13 @@ class Login
 				http: $this->http,
 				feature: 'customer_enabled_rate_limiting_for_user_per_ip'
 			)
-			&& !empty($this->http->req->s['customerData']['rateLimitMaxUserPerIp'])
-			&& !empty($this->http->req->s['customerData']['rateLimitMaxUserPerIpWindow'])
+			&& !empty($this->http->req->s['customerData']['customer_rate_limit_max_user_per_ip'])
+			&& !empty($this->http->req->s['customerData']['customer_rate_limit_max_user_per_ip_window'])
 		) {
 			$this->http->req->rateLimiter->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserPerIpPrefix,
-				rateLimitMaxRequest: $this->http->req->s['customerData']['rateLimitMaxUserPerIp'],
-				rateLimitMaxRequestWindow: $this->http->req->s['customerData']['rateLimitMaxUserPerIpWindow'],
+				rateLimitMaxRequest: $this->http->req->s['customerData']['customer_rate_limit_max_user_per_ip'],
+				rateLimitMaxRequestWindow: $this->http->req->s['customerData']['customer_rate_limit_max_user_per_ip_window'],
 				rateLimitKey: $this->http->httpReqData['server']['httpRequestIP']
 			);
 		}
@@ -230,13 +230,13 @@ class Login
 	private function validatePassword(): void
 	{
 		if (
-			!empty($this->http->req->s['customerData']['rateLimitMaxUserLoginRequest'])
-			&& !empty($this->http->req->s['customerData']['rateLimitMaxUserLoginRequestWindow'])
+			!empty($this->http->req->s['customerData']['customer_rate_limit_max_user_login_request'])
+			&& !empty($this->http->req->s['customerData']['customer_rate_limit_max_user_login_request_window'])
 		) {
 			$this->http->req->rateLimiter->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserLoginPrefix,
-				rateLimitMaxRequest: $this->http->req->s['customerData']['rateLimitMaxUserLoginRequest'],
-				rateLimitMaxRequestWindow: $this->http->req->s['customerData']['rateLimitMaxUserLoginRequestWindow'],
+				rateLimitMaxRequest: $this->http->req->s['customerData']['customer_rate_limit_max_user_login_request'],
+				rateLimitMaxRequestWindow: $this->http->req->s['customerData']['customer_rate_limit_max_user_login_request_window'],
 				rateLimitKey: $this->http->httpReqData['server']['httpRequestIP'] . ':' . $this->customer_user_username
 			);
 		}
