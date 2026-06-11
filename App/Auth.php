@@ -101,11 +101,8 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->http->req->s['userData'] = json_decode(
-				json: $this->http->req->customerCacheObj->cacheGet(
-					cacheKey: $tokenKey
-				),
-				associative: true
+			$this->http->req->s['userData'] = $this->http->req->customerCacheObj->cacheGet(
+				cacheKey: $tokenKey
 			);
 		} else {
 			throw new \Exception(
@@ -156,11 +153,8 @@ class Auth
 			);
 		}
 
-		$this->http->req->s['groupData'] = json_decode(
-			json: $this->http->req->customerCacheObj->cacheGet(
-				cacheKey: $groupCacheKey
-			),
-			associative: true
+		$this->http->req->s['groupData'] = $this->http->req->customerCacheObj->cacheGet(
+			cacheKey: $groupCacheKey
 		);
 	}
 }

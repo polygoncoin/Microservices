@@ -192,7 +192,7 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 	 * Set cache key
 	 *
 	 * @param string $queryCacheKey   Query Cache key
-	 * @param string $queryCacheValue Query Cache value
+	 * @param mixed  $queryCacheValue Query Cache value
 	 *
 	 * @return mixed
 	 */

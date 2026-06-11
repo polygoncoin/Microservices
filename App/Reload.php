@@ -92,7 +92,7 @@ class Reload
 				);
 				DbCommonFunction::$gCacheServer->cacheSet(
 					cacheKey: $privateTokenDomainCacheKey,
-					cacheValue: json_encode(value: $customerData)
+					cacheValue: $customerData
 				);
 			}
 
@@ -102,7 +102,7 @@ class Reload
 				);
 				DbCommonFunction::$gCacheServer->cacheSet(
 					cacheKey: $privateSessionDomainCacheKey,
-					cacheValue: json_encode(value: $customerData)
+					cacheValue: $customerData
 				);
 			}
 
@@ -112,7 +112,7 @@ class Reload
 				);
 				DbCommonFunction::$gCacheServer->cacheSet(
 					cacheKey: $publicDomainCacheKey,
-					cacheValue: json_encode(value: $customerData)
+					cacheValue: $customerData
 				);
 			}
 
@@ -124,7 +124,7 @@ class Reload
 					$customerCidrCacheKey = CacheServerKey::customerCidr(customerId: $customerData['customer_id']);
 					DbCommonFunction::$gCacheServer->cacheSet(
 						cacheKey: $customerCidrCacheKey,
-						cacheValue: json_encode(value: $customerCidrIpNumberRangeArr)
+						cacheValue: $customerCidrIpNumberRangeArr
 					);
 				}
 			}
@@ -200,7 +200,7 @@ class Reload
 			);
 			$customerCacheObj->cacheSet(
 				cacheKey: $g_key,
-				cacheValue: json_encode(value: $groupData)
+				cacheValue: $groupData
 			);
 			if ($groupData['customer_user_group_allowed_cidr'] !== null) {
 				$groupCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
@@ -213,7 +213,7 @@ class Reload
 					);
 					$customerCacheObj->cacheSet(
 						cacheKey: $groupCidrCacheKey,
-						cacheValue: json_encode(value: $groupCidrIpNumberRangeArr)
+						cacheValue: $groupCidrIpNumberRangeArr
 					);
 				}
 			}
@@ -284,7 +284,7 @@ class Reload
 					);
 					$customerCacheObj->cacheSet(
 						cacheKey: $userCidrCacheKey,
-						cacheValue: json_encode(value: $userCidrIpNumberRangeArr)
+						cacheValue: $userCidrIpNumberRangeArr
 					);
 				}
 			}
@@ -294,7 +294,7 @@ class Reload
 			);
 			$customerCacheObj->cacheSet(
 				cacheKey: $cu_key,
-				cacheValue: json_encode(value: $userData)
+				cacheValue: $userData
 			);
 		}
 

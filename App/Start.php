@@ -48,23 +48,19 @@ class Start
 		$headerArr = [];
 
 		if ($httpReqData['server']['httpMethod'] == Constant::$POST) {
-			$startArrayPos = strpos(
+			$isArray = str_starts_with(
 				haystack: $httpReqData['post'],
 				needle: '['
 			);
-			$startObjectPos = strpos(
+			$isObject = str_starts_with(
 				haystack: $httpReqData['post'],
 				needle: '{'
 			);
-			$startXmlPos = strpos(
+			$isXml = str_starts_with(
 				haystack: $httpReqData['post'],
 				needle: '<'
 			);
-			if (
-				$startArrayPos !== 0
-				&& $startObjectPos !== 0
-				&& $startXmlPos !== 0
-			) {
+			if (!$isArray && !$isObject && !$isXml) {
 				parse_str(
 					$httpReqData['post'],
 					$httpReqData['post']

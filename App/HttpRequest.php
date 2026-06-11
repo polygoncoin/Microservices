@@ -278,11 +278,8 @@ class HttpRequest
 			);
 		}
 
-		$this->s['customerData'] = json_decode(
-			json: DbCommonFunction::$gCacheServer->cacheGet(
-				cacheKey: $this->domainCacheKey
-			),
-			associative: true
+		$this->s['customerData'] = DbCommonFunction::$gCacheServer->cacheGet(
+			cacheKey: $this->domainCacheKey
 		);
 		$this->customerId = $this->s['customerData']['customer_id'];
 

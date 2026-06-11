@@ -183,14 +183,32 @@ class Redis implements NoSqlInterface
 			return false;
 		}
 
-		return $this->cacheServerObj->get($key);
+		$return = $this->cacheServerObj->get($key);
+
+		$isArray = str_starts_with(
+			haystack: $return,
+			needle: '['
+		);
+		$isObject = str_starts_with(
+			haystack: $return,
+			needle: '{'
+		);
+
+		if ($isArray || $isObject) {
+			$return = json_decode(
+				json: $return,
+				associative: true
+			);
+		}
+
+		return $return;
 	}
 
 	/**
 	 * Set cache key
 	 *
 	 * @param string $key    Key
-	 * @param string $value  Cache value
+	 * @param mixed  $value  Cache value
 	 * @param int    $expire Seconds to expire. Default 0 - doesn't expire
 	 *
 	 * @return mixed
@@ -205,6 +223,9 @@ class Redis implements NoSqlInterface
 		if (empty($key)) {
 			return false;
 		}
+
+		$value = json_encode(value: $value);
+
 
 		if ($expire === null) {
 			return $this->cacheServerObj->set(

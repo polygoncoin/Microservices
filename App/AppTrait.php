@@ -936,11 +936,8 @@ trait AppTrait
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$referrerLagData = json_decode(
-				json: $this->http->req->customerCacheObj->cacheGet(
-					cacheKey: $customerUserReferrerLagKey
-				),
-				associative: true
+			$referrerLagData = $this->http->req->customerCacheObj->cacheGet(
+				cacheKey: $customerUserReferrerLagKey
 			);
 			if (
 				isset($referrerLagData['initRoute'])
@@ -984,10 +981,10 @@ trait AppTrait
 			if (!$this->http->req->customerCacheObj->cacheExist(cacheKey: $customerUserReferrerLagKey)) {
 				$this->http->req->customerCacheObj->cacheSet(
 					cacheKey: $customerUserReferrerLagKey,
-					cacheValue: json_encode(value: [
+					cacheValue: [
 						'initRoute' => $this->http->req->rParser->configuredRoute,
 						'timestamp' => Env::$timestamp
-					])
+					]
 				);
 			} else {
 				throw new \Exception(
@@ -1046,7 +1043,7 @@ trait AppTrait
 				) {
 					$hashJson = str_replace(
 						search: 'JSON',
-						replace: $this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey),
+						replace: json_encode($this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey)),
 						subject: '{"Idempotent": JSON, "Status": 200}'
 					);
 				}

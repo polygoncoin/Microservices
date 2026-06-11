@@ -59,7 +59,7 @@ interface CacheServerInterface
 	 * Set cache key
 	 *
 	 * @param string $cacheKey    Cache key
-	 * @param string $cacheValue  Cache value
+	 * @param mixed  $cacheValue  Cache value
 	 * @param int    $cacheExpire Seconds to expire. Default 0 - doesn't expire
 	 *
 	 * @return mixed

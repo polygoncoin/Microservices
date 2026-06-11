@@ -337,7 +337,7 @@ class Write
 					) {
 						$this->http->req->customerCacheObj->cacheSet(
 							cacheKey: $hashKey,
-							cacheValue: json_encode(value: $arr),
+							cacheValue: $arr,
 							cacheExpire: $idempotentWindow
 						);
 					}

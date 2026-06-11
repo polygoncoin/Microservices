@@ -201,11 +201,8 @@ class Login
 			);
 		}
 
-		$userData = json_decode(
-			json: $this->cacheGet(
-				cacheKey: $customerUserKey
-			),
-			associative: true
+		$userData = $this->cacheGet(
+			cacheKey: $customerUserKey
 		);
 		if (
 			empty($userData['customer_user_id'])
@@ -292,9 +289,7 @@ class Login
 
 		$this->cacheSet(
 			cacheKey: CacheServerKey::token(token: $userTokenData['authId']),
-			cacheValue: json_encode(
-				value: $userTokenData
-			),
+			cacheValue: $userTokenData,
 			cacheExpire: Constant::$TOKEN_EXPIRY_TIME
 		);
 
@@ -382,11 +377,8 @@ class Login
 						options: []
 					);
 				}
-				$customerUserConcurrencyData = json_decode(
-					json: $this->cacheGet(
-						cacheKey: $customerUserConcurrencyKey
-					),
-					associative: true
+				$customerUserConcurrencyData = $this->cacheGet(
+					cacheKey: $customerUserConcurrencyKey
 				);
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
@@ -461,7 +453,7 @@ class Login
 			);
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
-				cacheValue: json_encode(value: $customerUserConcurrencyData),
+				cacheValue: $customerUserConcurrencyData,
 				cacheExpire: Env::$concurrentAccessInterval
 			);
 		}
@@ -538,11 +530,8 @@ class Login
 						options: []
 					);
 				}
-				$customerUserConcurrencyData = json_decode(
-					json: $this->cacheGet(
-						cacheKey: $customerUserConcurrencyKey
-					),
-					associative: true
+				$customerUserConcurrencyData = $this->cacheGet(
+					cacheKey: $customerUserConcurrencyKey
 				);
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
@@ -621,7 +610,7 @@ class Login
 			);
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
-				cacheValue: json_encode(value: $customerUserConcurrencyData),
+				cacheValue: $customerUserConcurrencyData,
 				cacheExpire: Env::$concurrentAccessInterval
 			);
 		}
@@ -663,7 +652,7 @@ class Login
 	 * Set global cache key
 	 *
 	 * @param string $cacheKey    Cache key
-	 * @param string $cacheValue  Cache value
+	 * @param mixed  $cacheValue  Cache value
 	 * @param int    $cacheExpire Seconds to expire. Default 0 - doesn't expire
 	 *
 	 * @return mixed

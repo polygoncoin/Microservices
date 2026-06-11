@@ -176,27 +176,25 @@ class Web
 
 		$requestPayload = $payload;
 		if (!empty($payload)) {
-			$startArrayPos = strpos(
+			$isArray = str_starts_with(
 				haystack: $payload,
 				needle: '['
 			);
-			$startObjectPos = strpos(
+			$isObject = str_starts_with(
 				haystack: $payload,
 				needle: '{'
 			);
-			$startXmlPos = strpos(
+			$isXml = str_starts_with(
 				haystack: $payload,
 				needle: '<'
 			);
-			if (
-				$startArrayPos === 0
-				|| $startObjectPos === 0
-			) {
+	
+			if ($isArray || $isObject) {
 				$requestPayload = json_decode(
 					json: $payload,
 					associative: true
 				);
-			} elseif($startXmlPos === 0) {
+			} elseif($isXml) {
 				$requestPayload = htmlspecialchars(
 					string: $payload
 				);
@@ -268,27 +266,24 @@ class Web
 			isset($return['HttpResponse']['ResponseBody'])
 			&& !is_array(value: $return['HttpResponse']['ResponseBody'])
 		) {
-			$startArrayPos = strpos(
+			$isArray = str_starts_with(
 				haystack: $return['HttpResponse']['ResponseBody'],
 				needle: '['
 			);
-			$startObjectPos = strpos(
+			$isObject = str_starts_with(
 				haystack: $return['HttpResponse']['ResponseBody'],
 				needle: '{'
 			);
-			$startXmlPos = strpos(
+			$isXml = str_starts_with(
 				haystack: $return['HttpResponse']['ResponseBody'],
 				needle: '<'
 			);
-			if (
-				$startArrayPos === 0
-				|| $startObjectPos === 0
-			) {
+			if ($isArray || $isObject) {
 				$return['HttpResponse']['ResponseBody'] = json_decode(
 					json: $return['HttpResponse']['ResponseBody'],
 					associative: true
 				);
-			} elseif($startXmlPos === 0) {
+			} elseif($isXml) {
 				$return['HttpResponse']['ResponseBody'] = htmlspecialchars(
 					string: $return['HttpResponse']['ResponseBody']
 				);

@@ -59,7 +59,7 @@ interface NoSqlInterface
 	 * Set cache key
 	 *
 	 * @param string $key    Key
-	 * @param string $value  Cache value
+	 * @param mixed  $value  Cache value
 	 * @param int    $expire Seconds to expire. Default 0 - doesn't expire
 	 *
 	 * @return mixed
