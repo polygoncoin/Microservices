@@ -63,9 +63,9 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
-
+	public function getSession(
+		$sessionId
+	): bool|string {
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
 
@@ -142,8 +142,9 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		$datetime = date(
 			format: 'Y-m-dTH:i:s+0000',
 			timestamp: (Env::$timestamp - $sessionMaxLifetime)
@@ -163,8 +164,9 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
 		if (file_exists(filename: $filepath)) {

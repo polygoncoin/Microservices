@@ -53,8 +53,9 @@ class Hook
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -65,8 +66,9 @@ class Hook
 	 *
 	 * @return bool
 	 */
-	public function triggerHook($hookArr): bool
-	{
+	public function triggerHook(
+		$hookArr
+	): bool {
 		if (is_array(value: $hookArr)) {
 			for ($i = 0, $iCount = count(value: $hookArr); $i < $iCount; $i++) {
 				$hookName = $hookArr[$i];

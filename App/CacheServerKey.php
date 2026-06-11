@@ -36,8 +36,9 @@ class CacheServerKey
 	 *
 	 * @return null|string
 	 */
-	public static function publicDomain(&$domainName): null|string
-	{
+	public static function publicDomain(
+		&$domainName
+	): null|string {
 		if (empty($domainName)) {
 			return null;
 		}
@@ -51,8 +52,9 @@ class CacheServerKey
 	 *
 	 * @return null|string
 	 */
-	public static function privateTokenDomain($domainName): null|string
-	{
+	public static function privateTokenDomain(
+		$domainName
+	): null|string {
 		if (empty($domainName)) {
 			return null;
 		}
@@ -66,8 +68,9 @@ class CacheServerKey
 	 *
 	 * @return null|string
 	 */
-	public static function privateSessionDomain($domainName): null|string
-	{
+	public static function privateSessionDomain(
+		$domainName
+	): null|string {
 		if (empty($domainName)) {
 			return null;
 		}
@@ -123,8 +126,9 @@ class CacheServerKey
 	 *
 	 * @return null|string
 	 */
-	public static function customerCidr($customerId): null|string
-	{
+	public static function customerCidr(
+		$customerId
+	): null|string {
 		if (empty($customerId)) {
 			return null;
 		}
@@ -180,8 +184,9 @@ class CacheServerKey
 	 *
 	 * @return null|string
 	 */
-	public static function token($token): null|string
-	{
+	public static function token(
+		$token
+	): null|string {
 		if (empty($token)) {
 			return null;
 		}

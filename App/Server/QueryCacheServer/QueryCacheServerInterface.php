@@ -43,7 +43,9 @@ interface QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheExist($queryCacheKey): mixed;
+	public function queryCacheExist(
+		$queryCacheKey
+	): mixed;
 
 	/**
 	 * Get Query Cache key
@@ -52,7 +54,9 @@ interface QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheGet($queryCacheKey): mixed;
+	public function queryCacheGet(
+		$queryCacheKey
+	): mixed;
 
 	/**
 	 * Set cache key
@@ -87,5 +91,7 @@ interface QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheDelete($queryCacheKey): mixed;
+	public function queryCacheDelete(
+		$queryCacheKey
+	): mixed;
 }

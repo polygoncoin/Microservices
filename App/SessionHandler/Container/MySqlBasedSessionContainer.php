@@ -65,8 +65,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
+	public function getSession(
+		$sessionId
+	): bool|string {
 		$sql = "
 			SELECT `sessionData`
 			FROM `{$this->mySqlServerDatabase}`.`{$this->mySqlServerTable}`
@@ -173,8 +174,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		$lastAccessed = Env::$timestamp - $sessionMaxLifetime;
 		$sql = "
 			DELETE FROM `{$this->mySqlServerDatabase}`.`{$this->mySqlServerTable}`
@@ -193,8 +195,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		$sql = "
 			DELETE FROM `{$this->mySqlServerDatabase}`.`{$this->mySqlServerTable}`
 			WHERE `sessionId` = :sessionId
@@ -305,8 +308,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return never
 	 */
-	private function manageException(\Exception $e): never
-	{
+	private function manageException(
+		\Exception $e
+	): never {
 		die($e->getMessage());
 	}
 }

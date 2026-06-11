@@ -110,8 +110,7 @@ class Export
 		$dbServerUsername,
 		$dbServerPassword,
 		$dbServerDatabase
-	): void
-	{
+	): void {
 		$this->exportDbServerObj->init(
 			dbServerHostname: $dbServerHostname,
 			dbServerPort: $dbServerPort,
@@ -170,8 +169,9 @@ class Export
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function vFileLocation($filename): void
-	{
+	private function vFileLocation(
+		$filename
+	): void {
 		if (!is_file(filename: $filename)) {
 			throw new \Exception(
 				message: "File '{$filename}' is not a file",
@@ -304,8 +304,9 @@ class Export
 	 *
 	 * @return array
 	 */
-	private function getCsvHeaders($filename): array
-	{
+	private function getCsvHeaders(
+		$filename
+	): array {
 		$headerArr = [];
 		// Export header
 		$headerArr['Content-type'] = 'text/csv';

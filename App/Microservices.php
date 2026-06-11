@@ -15,7 +15,6 @@
 
 namespace Microservices\App;
 
-use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
 use Microservices\App\Dropbox;
 use Microservices\App\Env;
@@ -70,10 +69,13 @@ class Microservices
 	 * @param array $httpReqData HTTP request data
 	 * @throws \Exception
 	 */
-	public function __construct(&$httpReqData)
-	{
+	public function __construct(
+		&$httpReqData
+	) {
 		$this->httpReqData = &$httpReqData;
-		$this->http = new Http($this->httpReqData);
+		$this->http = new Http(
+			$this->httpReqData
+		);
 	}
 
 	/**
@@ -341,8 +343,9 @@ class Microservices
 	 * @return never
 	 * @throws \Exception
 	 */
-	private function log($e): never
-	{
+	private function log(
+		$e
+	): never {
 		throw new \Exception(
 			message: $e->getMessage(),
 			code: $e->getCode()

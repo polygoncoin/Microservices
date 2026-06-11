@@ -20,7 +20,6 @@ use Openswoole\Http\Response;
 
 use Microservices\App\Constant;
 use Microservices\App\Env;
-use Microservices\App\CommonFunction;
 use Microservices\App\HttpStatus;
 use Microservices\App\Reload;
 use Microservices\App\Start;
@@ -208,7 +207,12 @@ $server->start();
  *
  * @return string
  */
-function httpRequestHash($hashArray): string
-{
-	return md5(json_encode(value: $hashArray));
+function httpRequestHash(
+	$hashArray
+): string {
+	return md5(
+		json_encode(
+			value: $hashArray
+		)
+	);
 }

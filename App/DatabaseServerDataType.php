@@ -427,7 +427,9 @@ class DatabaseServerDataType
 				$data = (string)$data;
 				break;
 			case 'json':
-				$data = (string)json_encode(value: $data);
+				$data = (string)json_encode(
+					value: $data
+				);
 				break;
 			default:
 				throw new \Exception(

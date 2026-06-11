@@ -88,8 +88,9 @@ class HttpResponse
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 		$this->httpStatus = HttpStatus::$Ok;
 		$this->oRepresentation = Env::$oRepresentation;

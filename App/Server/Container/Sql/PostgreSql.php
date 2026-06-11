@@ -347,8 +347,9 @@ class PostgreSql implements SqlInterface
 	 *
 	 * @return void
 	 */
-	public function closeCursor($pushPop = false): void
-	{
+	public function closeCursor(
+		$pushPop = false
+	): void {
 		try {
 			if ($this->stmt) {
 				$this->stmt->closeCursor();
@@ -374,8 +375,9 @@ class PostgreSql implements SqlInterface
 	 * @return never
 	 * @throws \Exception
 	 */
-	private function log($e): never
-	{
+	private function log(
+		$e
+	): never {
 		throw new \Exception(
 			message: $e->getMessage(),
 			code: HttpStatus::$InternalServerError

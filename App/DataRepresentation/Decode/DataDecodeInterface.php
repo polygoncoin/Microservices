@@ -57,7 +57,9 @@ interface DataDecodeInterface
 	 *
 	 * @return bool
 	 */
-	public function isset($keyString = null): bool;
+	public function isset(
+		$keyString = null
+	): bool;
 
 	/**
 	 * Datatype of result as per $keyString
@@ -66,7 +68,9 @@ interface DataDecodeInterface
 	 *
 	 * @return string Object/Array
 	 */
-	public function dataType($keyString = null): string;
+	public function dataType(
+		$keyString = null
+	): string;
 
 	/**
 	 * Count of result as per $keyString
@@ -75,7 +79,9 @@ interface DataDecodeInterface
 	 *
 	 * @return int
 	 */
-	public function count($keyString = null): int;
+	public function count(
+		$keyString = null
+	): int;
 
 	/**
 	 * Get result as per $keyString
@@ -84,7 +90,9 @@ interface DataDecodeInterface
 	 *
 	 * @return mixed
 	 */
-	public function get($keyString = ''): mixed;
+	public function get(
+		$keyString = ''
+	): mixed;
 
 	/**
 	 * Get complete result as per $keyString
@@ -93,7 +101,9 @@ interface DataDecodeInterface
 	 *
 	 * @return mixed
 	 */
-	public function getCompleteArray($keyString = ''): mixed;
+	public function getCompleteArray(
+		$keyString = ''
+	): mixed;
 
 	/**
 	 * Load result as per $keyString
@@ -105,5 +115,7 @@ interface DataDecodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function load($keyString): void;
+	public function load(
+		$keyString
+	): void;
 }

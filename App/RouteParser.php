@@ -132,8 +132,9 @@ class RouteParser
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -145,8 +146,9 @@ class RouteParser
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function parseRoute($routeFileLocation = null): void
-	{
+	public function parseRoute(
+		$routeFileLocation = null
+	): void {
 		$Constant = __NAMESPACE__ . '\Constant';
 		$Env = __NAMESPACE__ . '\Env';
 
@@ -353,8 +355,9 @@ class RouteParser
 	 * @return bool
 	 * @throws \Exception
 	 */
-	private function isStartingWithReservedRouteKeyword($routeStartingKeyword)
-	{
+	private function isStartingWithReservedRouteKeyword(
+		$routeStartingKeyword
+	) :bool {
 		$this->setReservedRouteArray();
 		if (
 			in_array(
@@ -390,8 +393,9 @@ class RouteParser
 	 *
 	 * @return bool
 	 */
-	private function isEndingWithReservedRouteKeyword($routeEndingKeyword)
-	{
+	private function isEndingWithReservedRouteKeyword(
+		$routeEndingKeyword
+	): bool {
 		$return = false;
 
 		if (
@@ -511,8 +515,9 @@ class RouteParser
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function validateConfigFile(&$routeConfig): void
-	{
+	private function validateConfigFile(
+		&$routeConfig
+	): void {
 		// Set route code file
 		if (!isset($routeConfig['__FILE__'])) {
 			if (count(value: $routeConfig) > 0) {
@@ -632,8 +637,9 @@ class RouteParser
 	 *
 	 * @return void
 	 */
-	private function checkPresenceOfDynamicString($element): void
-	{
+	private function checkPresenceOfDynamicString(
+		$element
+	): void {
 		if (
 			strpos(
 				haystack: $element,
@@ -660,8 +666,10 @@ class RouteParser
 	 *
 	 * @return array
 	 */
-	private function findRouteAndParamName(&$routeConfig, &$element): array
-	{
+	private function findRouteAndParamName(
+		&$routeConfig,
+		&$element
+	): array {
 		$foundIntRoute = false;
 		$foundIntParamName = false;
 		$foundStringRoute = false;

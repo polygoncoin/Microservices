@@ -36,8 +36,9 @@ class Autoload
 	 *
 	 * @return void
 	 */
-	public static function register($className): void
-	{
+	public static function register(
+		$className
+	): void {
 		$className = substr(
 			string: $className,
 			offset: strlen(string: __NAMESPACE__)

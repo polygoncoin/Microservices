@@ -36,5 +36,7 @@ interface ValidatorInterface
 	 *
 	 * @return array
 	 */
-	public function validate(&$validationConfig): array;
+	public function validate(
+		&$validationConfig
+	): array;
 }

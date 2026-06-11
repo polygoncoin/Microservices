@@ -43,8 +43,9 @@ class Start
 	 *
 	 * @return array
 	 */
-	public static function http(&$httpReqData)
-	{
+	public static function http(
+		&$httpReqData
+	): array {
 		$headerArr = [];
 
 		if ($httpReqData['server']['httpMethod'] == Constant::$POST) {
@@ -65,7 +66,9 @@ class Start
 					$httpReqData['post'],
 					$httpReqData['post']
 				);
-				$httpReqData['post'] = json_encode(value: $httpReqData['post']);
+				$httpReqData['post'] = json_encode(
+					value: $httpReqData['post']
+				);
 			}
 		}
 
@@ -178,7 +181,9 @@ class Start
 			} else {
 				$errorArr = ['Error' => $arr];
 			}
-			$data = json_encode(value: $errorArr);
+			$data = json_encode(
+				value: $errorArr
+			);
 			$status = $e->getCode();
 
 			return [$headerArr, $data, $status];

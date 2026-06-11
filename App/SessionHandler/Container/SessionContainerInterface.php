@@ -49,7 +49,9 @@ interface SessionContainerInterface
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string;
+	public function getSession(
+		$sessionId
+	): bool|string;
 
 	/**
 	 * For Custom Session Handler - Write session data
@@ -97,7 +99,9 @@ interface SessionContainerInterface
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool;
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool;
 
 	/**
 	 * For Custom Session Handler - Destroy a session
@@ -106,7 +110,9 @@ interface SessionContainerInterface
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool;
+	public function deleteSession(
+		$sessionId
+	): bool;
 
 	/**
 	 * For Custom Session Handler - Close container connection

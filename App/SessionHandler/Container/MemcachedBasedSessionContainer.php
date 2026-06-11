@@ -61,8 +61,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
+	public function getSession(
+		$sessionId
+	): bool|string {
 		try {
 			if ($data = $this->memcachedServerObj->get($sessionId)) {
 				return $this->decryptData(cipherText: $data);
@@ -153,8 +154,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		return true;
 	}
 
@@ -165,8 +167,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		try {
 			if ($this->memcachedServerObj->delete($sessionId)) {
 				return true;
@@ -219,8 +222,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return never
 	 */
-	private function manageException(\Exception $e): never
-	{
+	private function manageException(
+		\Exception $e
+	): never {
 		die($e->getMessage());
 	}
 }

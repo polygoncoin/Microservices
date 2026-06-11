@@ -41,8 +41,9 @@ class Test
 	 *
 	 * @param array $httpReqData
 	 */
-	public function __construct(&$httpReqData)
-	{
+	public function __construct(
+		&$httpReqData
+	) {
 		$this->httpReqData = &$httpReqData;
 	}
 

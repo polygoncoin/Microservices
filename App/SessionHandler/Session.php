@@ -238,7 +238,10 @@ class Session
 		if ($this->sessionMode === 'Cookie') {
 			$customSessionHandler->sessionDataName = $this->sessionDataName;
 		}
-		session_set_save_handler($customSessionHandler, true);
+		session_set_save_handler(
+			$customSessionHandler,
+			true
+		);
 
 		$this->initProcessInitialized = true;
 	}
@@ -250,8 +253,9 @@ class Session
 	 *
 	 * @return void
 	 */
-	private function setOptions($optionArr = []): void
-	{
+	private function setOptions(
+		$optionArr = []
+	): void {
 		if (isset($optionArr['name'])) {
 			$this->sessionName = $optionArr['name'];
 		}
@@ -403,9 +407,12 @@ class Session
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
-		return $this->sessionContainer->deleteSession($sessionId);
+	public function deleteSession(
+		$sessionId
+	): bool {
+		return $this->sessionContainer->deleteSession(
+			$sessionId
+		);
 	}
 
 	/**
@@ -415,10 +422,13 @@ class Session
 	 *
 	 * @return void
 	 */
-	public function deleteSessions($sessionIds): void
-	{
+	public function deleteSessions(
+		$sessionIds
+	): void {
 		for ($i = 0, $iCount = count(value: $sessionIds); $i < $iCount; $i++) {
-			$this->deleteSession($sessionIds[$i]);
+			$this->deleteSession(
+				$sessionIds[$i]
+			);
 		}
 	}
 }

@@ -36,8 +36,9 @@ trait ValidatorTrait
 	 *
 	 * @return bool|int
 	 */
-	private function isAlphanumeric(&$v): bool|int
-	{
+	private function isAlphanumeric(
+		&$v
+	): bool|int {
 		return preg_match(pattern: '/^[a-z0-9 .\-]+$/i', subject: $v);
 	}
 
@@ -48,8 +49,9 @@ trait ValidatorTrait
 	 *
 	 * @return mixed
 	 */
-	private function isEmail(&$v): mixed
-	{
+	private function isEmail(
+		&$v
+	): mixed {
 		return filter_var(value: $v, filter: FILTER_VALIDATE_EMAIL);
 	}
 }

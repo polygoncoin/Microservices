@@ -54,8 +54,9 @@ class Validator
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 		if ($this->http->req->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
 			$this->v = new GlobalValidator(http: $this->http);
@@ -71,8 +72,9 @@ class Validator
 	 *
 	 * @return array
 	 */
-	public function validate(&$validationConfig): array
-	{
+	public function validate(
+		&$validationConfig
+	): array {
 		if (
 			isset(($this->http->req->s['requiredFieldArr']))
 			&& count(value: $this->http->req->s['requiredFieldArr']) > 0

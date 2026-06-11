@@ -15,6 +15,7 @@
 
 namespace Microservices\www\Supplement\ThirdParty;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
 use Microservices\www\Supplement\ThirdParty\ThirdPartyInterface;
@@ -49,8 +50,9 @@ class Google implements ThirdPartyInterface
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -87,9 +89,8 @@ class Google implements ThirdPartyInterface
 			$output = ['Error' => 'Nothing returned by ipify'];
 			$this->http->res->httpStatus = HttpStatus::$InternalServerError;
 		} else {
-			$output = json_decode(
-				json: $output,
-				associative: true
+			$output = CommonFunction::jsonDecode(
+				value: $output
 			);
 		}
 		// End the calls with json response with dataEncode object
@@ -105,8 +106,9 @@ class Google implements ThirdPartyInterface
 	 *
 	 * @return void
 	 */
-	private function endProcess($output): void
-	{
+	private function endProcess(
+		$output
+	): void {
 		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $output);
 	}
 }

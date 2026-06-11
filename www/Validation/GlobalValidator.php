@@ -47,8 +47,9 @@ class GlobalValidator implements ValidatorInterface
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -59,8 +60,9 @@ class GlobalValidator implements ValidatorInterface
 	 *
 	 * @return array
 	 */
-	public function validate(&$validationConfig): array
-	{
+	public function validate(
+		&$validationConfig
+	): array {
 		$isValidData = true;
 		$errorArr = [];
 		foreach ($validationConfig as &$v) {
@@ -88,8 +90,9 @@ class GlobalValidator implements ValidatorInterface
 	 *
 	 * @return int 0/1
 	 */
-	private function primaryKeyExist(&$argArr): int
-	{
+	private function primaryKeyExist(
+		&$argArr
+	): int {
 		extract(array: $argArr);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
@@ -106,8 +109,9 @@ class GlobalValidator implements ValidatorInterface
 	 *
 	 * @return bool
 	 */
-	private function checkColumnValueExist(&$argArr): bool
-	{
+	private function checkColumnValueExist(
+		&$argArr
+	): bool {
 		extract(array: $argArr);
 		$sql = "
 			SELECT count(1) as `count`

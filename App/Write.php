@@ -74,8 +74,9 @@ class Write
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 		$this->dataEncode = &$this->http->res->dataEncode;
 	}
@@ -360,9 +361,8 @@ class Write
 					$arr['Error'] = $response;
 				}
 			} else {
-				$arr = json_decode(
-					json: $hashJson,
-					associative: true
+				$arr = CommonFunction::jsonDecode(
+					value: $hashJson
 				);
 			}
 
@@ -636,7 +636,9 @@ class Write
 			isset($payloadIndexArr[0])
 			&& $payloadIndexArr[0] === ''
 		) {
-			$payloadIndexArr = array_shift($payloadIndexArr);
+			$payloadIndexArr = array_shift(
+				$payloadIndexArr
+			);
 		}
 		if (!is_array(value: $payloadIndexArr)) {
 			$payloadIndexArr = [];
@@ -730,8 +732,10 @@ class Write
 	 *
 	 * @return bool
 	 */
-	private function isValidPayload($writeSqlConfig, &$response): bool
-	{
+	private function isValidPayload(
+		$writeSqlConfig,
+		&$response
+	): bool {
 		$return = true;
 		$isValidData = true;
 		if (isset($writeSqlConfig['__VALIDATE__'])) {

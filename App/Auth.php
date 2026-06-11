@@ -16,7 +16,6 @@
 namespace Microservices\App;
 
 use Microservices\App\CacheServerKey;
-use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Http;
@@ -48,8 +47,9 @@ class Auth
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 

@@ -52,8 +52,10 @@ class DataDecode
 	 * @param string   $iRepresentation Input Representation
 	 * @param resource $dataFileHandle  File handle
 	 */
-	public function __construct($iRepresentation, &$dataFileHandle)
-	{
+	public function __construct(
+		$iRepresentation,
+		&$dataFileHandle
+	) {
 		$this->dataFileHandle = &$dataFileHandle;
 
 		if ($iRepresentation === 'JSON') {
@@ -104,8 +106,9 @@ class DataDecode
 	 *
 	 * @return bool
 	 */
-	public function isset($keyString = null): bool
-	{
+	public function isset(
+		$keyString = null
+	): bool {
 		return $this->dataDecoder->isset(keyString: $keyString);
 	}
 
@@ -116,8 +119,9 @@ class DataDecode
 	 *
 	 * @return string Object/Array
 	 */
-	public function dataType($keyString = null): string
-	{
+	public function dataType(
+		$keyString = null
+	): string {
 		return $this->dataDecoder->dataType(keyString: $keyString);
 	}
 
@@ -128,8 +132,9 @@ class DataDecode
 	 *
 	 * @return int
 	 */
-	public function count($keyString = null): int
-	{
+	public function count(
+		$keyString = null
+	): int {
 		return $this->dataDecoder->count(keyString: $keyString);
 	}
 
@@ -140,8 +145,9 @@ class DataDecode
 	 *
 	 * @return mixed
 	 */
-	public function get($keyString = ''): mixed
-	{
+	public function get(
+		$keyString = ''
+	): mixed {
 		return $this->dataDecoder->get(keyString: $keyString);
 	}
 
@@ -152,8 +158,9 @@ class DataDecode
 	 *
 	 * @return mixed
 	 */
-	public function getCompleteArray($keyString = ''): mixed
-	{
+	public function getCompleteArray(
+		$keyString = ''
+	): mixed {
 		return $this->dataDecoder->getCompleteArray(keyString: $keyString);
 	}
 
@@ -167,8 +174,9 @@ class DataDecode
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function load($keyString): void
-	{
+	public function load(
+		$keyString
+	): void {
 		$this->dataDecoder->load(keyString: $keyString);
 	}
 }

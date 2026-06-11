@@ -92,8 +92,9 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function init($header = true): void
-	{
+	public function init(
+		$header = true
+	): void {
 	}
 
 	/**
@@ -103,8 +104,9 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	private function write($data): void
-	{
+	private function write(
+		$data
+	): void {
 		fwrite(stream: $this->tempStream, data: $data);
 	}
 
@@ -115,13 +117,18 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function encode($data): void
-	{
+	public function encode(
+		$data
+	): void {
 		if ($this->currentObject) {
 			$this->write(data: $this->currentObject->comma);
 		}
 		if (is_array(value: $data)) {
-			$this->write(data: json_encode(value: $data));
+			$this->write(
+				data: json_encode(
+					value: $data
+				)
+			);
 		} else {
 			$this->write(data: $this->escape(data: $data));
 		}
@@ -137,8 +144,9 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return string
 	 */
-	private function escape($data): string
-	{
+	private function escape(
+		$data
+	): string {
 		if ($data === null) {
 			return 'null';
 		}
@@ -157,8 +165,9 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function appendData(&$data): void
-	{
+	public function appendData(
+		&$data
+	): void {
 		if ($this->currentObject) {
 			$this->write(data: $this->currentObject->comma);
 			$this->write(data: $data);
@@ -174,8 +183,10 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($objectKey, &$data): void
-	{
+	public function appendKeyData(
+		$objectKey,
+		&$data
+	): void {
 		if (
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
@@ -194,8 +205,9 @@ class JsonEncode implements DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addArrayData($data): void
-	{
+	public function addArrayData(
+		$data
+	): void {
 		if ($this->currentObject->mode !== 'Array') {
 			throw new \Exception(
 				message: 'Mode should be Array',
@@ -237,8 +249,9 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function startArray($objectKey = null): void
-	{
+	public function startArray(
+		$objectKey = null
+	): void {
 		if ($this->currentObject) {
 			$this->write(data: $this->currentObject->comma);
 			array_push(
@@ -276,8 +289,9 @@ class JsonEncode implements DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($objectKey = null): void
-	{
+	public function startObject(
+		$objectKey = null
+	): void {
 		if ($this->currentObject) {
 			if (
 				$this->currentObject->mode === 'Object'

@@ -44,7 +44,9 @@ interface CacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function cacheExist($cacheKey): mixed;
+	public function cacheExist(
+		$cacheKey
+	): mixed;
 
 	/**
 	 * Get cache key
@@ -53,7 +55,9 @@ interface CacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function cacheGet($cacheKey): mixed;
+	public function cacheGet(
+		$cacheKey
+	): mixed;
 
 	/**
 	 * Set cache key
@@ -90,5 +94,7 @@ interface CacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function cacheDelete($cacheKey): mixed;
+	public function cacheDelete(
+		$cacheKey
+	): mixed;
 }

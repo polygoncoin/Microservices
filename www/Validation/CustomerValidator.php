@@ -47,8 +47,9 @@ class CustomerValidator implements ValidatorInterface
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -59,8 +60,9 @@ class CustomerValidator implements ValidatorInterface
 	 *
 	 * @return array
 	 */
-	public function validate(&$validationConfig): array
-	{
+	public function validate(
+		&$validationConfig
+	): array {
 		$isValidData = true;
 		$errorArr = [];
 		foreach ($validationConfig as &$v) {
@@ -114,8 +116,9 @@ class CustomerValidator implements ValidatorInterface
 	 *
 	 * @return bool
 	 */
-	private function primaryKeyExist(&$argArr): bool
-	{
+	private function primaryKeyExist(
+		&$argArr
+	): bool {
 		extract(array: $argArr);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];

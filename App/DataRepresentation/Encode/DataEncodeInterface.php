@@ -36,7 +36,9 @@ interface DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function init($header = true): void;
+	public function init(
+		$header = true
+	): void;
 
 	/**
 	 * Start simple array
@@ -45,7 +47,9 @@ interface DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function startArray($objectKey = null): void;
+	public function startArray(
+		$objectKey = null
+	): void;
 
 	/**
 	 * Add simple array/value as in the data format
@@ -55,7 +59,9 @@ interface DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addArrayData($data): void;
+	public function addArrayData(
+		$data
+	): void;
 
 	/**
 	 * End simple array
@@ -72,7 +78,9 @@ interface DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($objectKey = null): void;
+	public function startObject(
+		$objectKey = null
+	): void;
 
 	/**
 	 * Add simple array/value as in the data format
@@ -102,7 +110,9 @@ interface DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function encode($data): void;
+	public function encode(
+		$data
+	): void;
 
 	/**
 	 * Append raw data string

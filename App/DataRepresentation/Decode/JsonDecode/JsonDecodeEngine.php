@@ -104,8 +104,9 @@ class JsonDecodeEngine
 	 *
 	 * @param null|resource $jsonFileHandle JSON file handle
 	 */
-	public function __construct(&$jsonFileHandle)
-	{
+	public function __construct(
+		&$jsonFileHandle
+	) {
 		$this->jsonFileHandle = &$jsonFileHandle;
 	}
 
@@ -116,8 +117,9 @@ class JsonDecodeEngine
 	 *
 	 * @return Generator
 	 */
-	public function process($index = false): Generator
-	{
+	public function process(
+		$index = false
+	): Generator {
 		// Flags Variable
 		$quote = false;
 
@@ -448,8 +450,9 @@ class JsonDecodeEngine
 	 *
 	 * @return bool|int|null
 	 */
-	private function checkNullStr($nullStr): bool|int|null
-	{
+	private function checkNullStr(
+		$nullStr
+	): bool|int|null {
 		$return = false;
 		if ($nullStr === 'null') {
 			$return = null;
@@ -469,10 +472,16 @@ class JsonDecodeEngine
 	 *
 	 * @return void
 	 */
-	private function startArray($objectKey = null): void
-	{
-		$this->pushCurrentObject(objectKey: $objectKey);
-		$this->currentObject = new JsonDecodeObject(mode: 'Array', objectKey: $objectKey);
+	private function startArray(
+		$objectKey = null
+	): void {
+		$this->pushCurrentObject(
+			objectKey: $objectKey
+		);
+		$this->currentObject = new JsonDecodeObject(
+			mode: 'Array',
+			objectKey: $objectKey
+		);
 		$this->currentObject->sIndex = $this->charCounter;
 	}
 
@@ -483,10 +492,16 @@ class JsonDecodeEngine
 	 *
 	 * @return void
 	 */
-	private function startObject($objectKey = null): void
-	{
-		$this->pushCurrentObject(objectKey: $objectKey);
-		$this->currentObject = new JsonDecodeObject(mode: 'Object', objectKey: $objectKey);
+	private function startObject(
+		$objectKey = null
+	): void {
+		$this->pushCurrentObject(
+			objectKey: $objectKey
+		);
+		$this->currentObject = new JsonDecodeObject(
+			mode: 'Object',
+			objectKey: $objectKey
+		);
 		$this->currentObject->sIndex = $this->charCounter;
 	}
 
@@ -497,8 +512,9 @@ class JsonDecodeEngine
 	 *
 	 * @return void
 	 */
-	private function pushCurrentObject($objectKey): void
-	{
+	private function pushCurrentObject(
+		$objectKey
+	): void {
 		if ($this->currentObject) {
 			if (
 				$this->currentObject->mode === 'Object'
@@ -507,7 +523,9 @@ class JsonDecodeEngine
 					|| empty(trim(string: $objectKey))
 				)
 			) {
-				$this->isBadJson(str: $objectKey);
+				$this->isBadJson(
+					str: $objectKey
+				);
 			}
 			if (
 				$this->currentObject->mode === 'Array'
@@ -516,7 +534,9 @@ class JsonDecodeEngine
 					|| empty(trim(string: $objectKey))
 				)
 			) {
-				$this->isBadJson(str: $objectKey);
+				$this->isBadJson(
+					str: $objectKey
+				);
 			}
 			array_push(
 				$this->objectArr,
@@ -584,8 +604,9 @@ class JsonDecodeEngine
 	 *
 	 * @return void
 	 */
-	private function isBadJson($str): void
-	{
+	private function isBadJson(
+		$str
+	): void {
 		$str =  $str !== null ? trim(string: $str) : $str;
 		if (!empty($str)) {
 			throw new \Exception(

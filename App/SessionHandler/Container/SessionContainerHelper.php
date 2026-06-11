@@ -61,8 +61,9 @@ class SessionContainerHelper
 	 *
 	 * @return string
 	 */
-	protected function encryptData($plainText): string
-	{
+	protected function encryptData(
+		$plainText
+	): string {
 		if (
 			!empty($this->passphrase)
 			&& !empty($this->iv)
@@ -87,8 +88,9 @@ class SessionContainerHelper
 	 *
 	 * @return bool|string
 	 */
-	protected function decryptData($cipherText): bool|string
-	{
+	protected function decryptData(
+		$cipherText
+	): bool|string {
 		if (
 			!empty($this->passphrase)
 			&& !empty($this->iv)

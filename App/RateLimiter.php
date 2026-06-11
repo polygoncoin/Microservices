@@ -45,8 +45,9 @@ class RateLimiter
 	 *
 	 * @param object $cacheObj
 	 */
-	public function __construct(&$cacheObj)
-	{
+	public function __construct(
+		&$cacheObj
+	) {
 		$this->cacheObj = &$cacheObj;
 	}
 
@@ -66,7 +67,6 @@ class RateLimiter
 		$rateLimitMaxRequestWindow,
 		$rateLimitKey
 	): array {
-
 		if (
 			empty($rateLimitPrefix)
 			|| empty($rateLimitMaxRequest)
@@ -143,7 +143,6 @@ class RateLimiter
 		$rateLimitMaxRequestWindow,
 		$rateLimitKey
 	): void {
-
 		if (
 			empty($rateLimitPrefix)
 			|| empty($rateLimitMaxRequest)

@@ -64,17 +64,22 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
+	public function getSession(
+		$sessionId
+	): bool|string {
 		try {
 			if (
 				$this->redisServerObj->exists($sessionId)
 				&& ($data = $this->redisServerObj->get($sessionId))
 			) {
-				return $this->decryptData(cipherText: $data);
+				return $this->decryptData(
+					cipherText: $data
+				);
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -159,8 +164,9 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		return true;
 	}
 
@@ -171,14 +177,17 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		try {
 			if ($this->redisServerObj->del($sessionId)) {
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -227,7 +236,9 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 			$this->redisServerObj = new \Redis( // phpcs:ignore
 				$connParamArr
 			);
-			$this->redisServerObj->select($this->redisServerDatabase);
+			$this->redisServerObj->select(
+				$this->redisServerDatabase
+			);
 		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
@@ -240,8 +251,9 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return never
 	 */
-	private function manageException(\Exception $e): never
-	{
+	private function manageException(
+		\Exception $e
+	): never {
 		die($e->getMessage());
 	}
 }

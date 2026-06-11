@@ -44,7 +44,9 @@ interface NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function exist($key): mixed;
+	public function exist(
+		$key
+	): mixed;
 
 	/**
 	 * Get cache key
@@ -53,7 +55,9 @@ interface NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function get($key): mixed;
+	public function get(
+		$key
+	): mixed;
 
 	/**
 	 * Set cache key
@@ -90,5 +94,7 @@ interface NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function delete($key): mixed;
+	public function delete(
+		$key
+	): mixed;
 }

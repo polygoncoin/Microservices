@@ -115,8 +115,9 @@ class DbCommonFunction
 	 * @return CacheServer
 	 * @throws \Exception
 	 */
-	public static function connectCustomerCache(&$customerData): CacheServer
-	{
+	public static function connectCustomerCache(
+		&$customerData
+	): CacheServer {
 		$customerCacheServerCred = self::customerCacheServerCred(customerData: $customerData);
 		return self::connectCache(
 			cacheServerType: $customerCacheServerCred['cacheServerType'],
@@ -254,8 +255,9 @@ class DbCommonFunction
 	 *
 	 * @return array
 	 */
-	public static function customerCacheServerCred(&$customerData): array
-	{
+	public static function customerCacheServerCred(
+		&$customerData
+	): array {
 		return [
 			'cacheServerType' => getenv(name: $customerData['customer_cache_server_type']),
 			'cacheServerHostname' => getenv(name: $customerData['customer_cache_server_hostname']),
@@ -274,8 +276,9 @@ class DbCommonFunction
 	 *
 	 * @return array
 	 */
-	public static function customerQueryCacheServerCred(&$customerData): array
-	{
+	public static function customerQueryCacheServerCred(
+		&$customerData
+	): array {
 		return [
 			'cacheServerType' => getenv(name: $customerData['customer_query_cache_server_type']),
 			'cacheServerHostname' => getenv(name: $customerData['customer_query_cache_server_hostname']),
@@ -294,8 +297,9 @@ class DbCommonFunction
 	 *
 	 * @return array
 	 */
-	public static function customerMasterDatabaseServerCred(&$customerData): array
-	{
+	public static function customerMasterDatabaseServerCred(
+		&$customerData
+	): array {
 		return [
 			'dbServerType' => getenv(name: $customerData['customer_master_db_server_type']),
 			'dbServerHostname' => getenv(name: $customerData['customer_master_db_server_hostname']),
@@ -313,8 +317,9 @@ class DbCommonFunction
 	 *
 	 * @return array
 	 */
-	public static function customerSlaveDatabaseServerCred(&$customerData): array
-	{
+	public static function customerSlaveDatabaseServerCred(
+		&$customerData
+	): array {
 		return [
 			'dbServerType' => getenv(name: $customerData['customer_slave_db_server_type']),
 			'dbServerHostname' => getenv(name: $customerData['customer_slave_db_server_hostname']),

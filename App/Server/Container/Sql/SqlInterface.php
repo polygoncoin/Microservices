@@ -114,5 +114,7 @@ interface SqlInterface
 	 *
 	 * @return void
 	 */
-	public function closeCursor($pushPop = false): void;
+	public function closeCursor(
+		$pushPop = false
+	): void;
 }

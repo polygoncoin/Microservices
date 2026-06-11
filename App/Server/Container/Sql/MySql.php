@@ -307,7 +307,9 @@ class MySql implements SqlInterface
 					is_array(value: $paramArr)
 					&& count(value: $paramArr) > 0
 				) {
-					$this->stmt->execute($paramArr);
+					$this->stmt->execute(
+						$paramArr
+					);
 				} else {
 					$this->stmt->execute();
 				}
@@ -367,8 +369,9 @@ class MySql implements SqlInterface
 	 *
 	 * @return void
 	 */
-	public function closeCursor($pushPop = false): void
-	{
+	public function closeCursor(
+		$pushPop = false
+	): void {
 		try {
 			if ($this->stmt) {
 				$this->stmt->closeCursor();
@@ -394,8 +397,9 @@ class MySql implements SqlInterface
 	 * @return never
 	 * @throws \Exception
 	 */
-	private function log($e): never
-	{
+	private function log(
+		$e
+	): never {
 		throw new \Exception(
 			message: $e->getMessage(),
 			code: HttpStatus::$InternalServerError

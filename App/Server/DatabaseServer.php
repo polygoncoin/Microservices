@@ -292,8 +292,9 @@ class DatabaseServer
 	 *
 	 * @return void
 	 */
-	public function closeCursor($pushPop = false): void
-	{
+	public function closeCursor(
+		$pushPop = false
+	): void {
         $this->dbServerObj->closeCursor(pushPop: $pushPop);
 	}
 }

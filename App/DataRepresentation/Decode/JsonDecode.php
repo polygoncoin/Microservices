@@ -16,6 +16,7 @@
 namespace Microservices\App\DataRepresentation\Decode;
 
 use Generator;
+use Microservices\App\CommonFunction;
 use Microservices\App\DataRepresentation\Decode\DataDecodeInterface;
 use Microservices\App\DataRepresentation\Decode\JsonDecode\JsonDecodeEngine;
 use Microservices\App\HttpStatus;
@@ -68,8 +69,9 @@ class JsonDecode implements DataDecodeInterface
 	 *
 	 * @param resource $jsonFileHandle File handle
 	 */
-	public function __construct(&$jsonFileHandle)
-	{
+	public function __construct(
+		&$jsonFileHandle
+	) {
 		if (!$jsonFileHandle) {
 			throw new \Exception(
 				message: 'Invalid file',
@@ -187,8 +189,9 @@ class JsonDecode implements DataDecodeInterface
 	 *
 	 * @return string Object/Array
 	 */
-	public function dataType($keyString = null): string
-	{
+	public function dataType(
+		$keyString = null
+	): string {
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
 			($keyString !== null)
@@ -220,8 +223,9 @@ class JsonDecode implements DataDecodeInterface
 	 *
 	 * @return int
 	 */
-	public function count($keyString = null): int
-	{
+	public function count(
+		$keyString = null
+	): int {
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
 			($keyString !== null)
@@ -259,8 +263,9 @@ class JsonDecode implements DataDecodeInterface
 	 *
 	 * @return mixed
 	 */
-	public function get($keyString = ''): mixed
-	{
+	public function get(
+		$keyString = ''
+	): mixed {
 		if (!$this->isset(keyString: $keyString)) {
 			return false;
 		}
@@ -279,15 +284,15 @@ class JsonDecode implements DataDecodeInterface
 	 *
 	 * @return mixed
 	 */
-	public function getCompleteArray($keyString = ''): mixed
-	{
+	public function getCompleteArray(
+		$keyString = ''
+	): mixed {
 		if (!$this->isset(keyString: $keyString)) {
 			return false;
 		}
 		$this->load(keyString: $keyString);
-		return json_decode(
-			json: $this->jsonDecodeEngine->getJsonString(),
-			associative: true
+		return CommonFunction::jsonDecode(
+			value: $this->jsonDecodeEngine->getJsonString()
 		);
 	}
 
@@ -301,8 +306,9 @@ class JsonDecode implements DataDecodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function load($keyString): void
-	{
+	public function load(
+		$keyString
+	): void {
 		if (
 			in_array(
 				needle: $keyString,

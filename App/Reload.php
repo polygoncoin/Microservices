@@ -41,12 +41,15 @@ class Reload
 	 *
 	 * @return bool
 	 */
-	public static function process($httpRequestIp): bool
-	{
+	public static function process(
+		$httpRequestIp
+	): bool {
 		DbCommonFunction::connectGlobalCache();
 		DbCommonFunction::connectGlobalDb();
 
-		return self::processCustomer($httpRequestIp);
+		return self::processCustomer(
+			httpRequestIp: $httpRequestIp
+		);
 	}
 
 	/**

@@ -144,8 +144,9 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheExist($queryCacheKey): mixed
-	{
+	public function queryCacheExist(
+		$queryCacheKey
+	): mixed {
 		$this->connectQueryCache();
 
 		if (empty($queryCacheKey)) {
@@ -164,8 +165,9 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheGet($queryCacheKey): mixed
-	{
+	public function queryCacheGet(
+		$queryCacheKey
+	): mixed {
 		$this->connectQueryCache();
 
 		if (empty($queryCacheKey)) {
@@ -232,8 +234,9 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	 *
 	 * @return mixed
 	 */
-	public function queryCacheDelete($queryCacheKey): mixed
-	{
+	public function queryCacheDelete(
+		$queryCacheKey
+	): mixed {
 		$this->connectQueryCache();
 
 		if (empty($queryCacheKey)) {

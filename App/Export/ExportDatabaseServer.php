@@ -57,8 +57,9 @@ class ExportDatabaseServer
 	 *
 	 * @param string $dbServerType Database Type (eg. MySql)
 	 */
-	public function __construct($dbServerType)
-	{
+	public function __construct(
+		$dbServerType
+	) {
 		$this->dbServerType = $dbServerType;
 		$class = "Microservices\\App\\Export\\Container\\" . $this->dbServerType;
 		$this->exportDbServerObj = new $class();

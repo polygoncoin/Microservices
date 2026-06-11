@@ -71,8 +71,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
+	public function getSession(
+		$sessionId
+	): bool|string {
 		try {
 			$filter = ['sessionId' => $sessionId];
 
@@ -190,8 +191,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		return true;
 	}
 
@@ -202,8 +204,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		try {
 			$filter = ['sessionId' => $sessionId];
 
@@ -245,13 +248,19 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				$this->mongoDbServerUri = 'mongodb://' . $UP
 					. $this->mongoDbServerHostname . ':' . $this->mongoDbServerPort;
 			}
-			$this->mongoDbServerObj = new \MongoDB\Customer($this->mongoDbServerUri);
+			$this->mongoDbServerObj = new \MongoDB\Customer(
+				$this->mongoDbServerUri
+			);
 
 			// Select a database
-			$this->dbObj = $this->mongoDbServerObj->selectDatabase($this->mongoDbServerDatabase);
+			$this->dbObj = $this->mongoDbServerObj->selectDatabase(
+				$this->mongoDbServerDatabase
+			);
 
 			// Select a collection
-			$this->collectionObj = $this->dbObj->selectCollection($this->mongoDbServerCollection);
+			$this->collectionObj = $this->dbObj->selectCollection(
+				$this->mongoDbServerCollection
+			);
 		} catch (\Exception $e) {
 			$this->manageException(e: $e);
 		}
@@ -264,8 +273,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return never
 	 */
-	private function manageException(\Exception $e): never
-	{
+	private function manageException(
+		\Exception $e
+	): never {
 		die($e->getMessage());
 	}
 }

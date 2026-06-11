@@ -100,8 +100,9 @@ class CustomSessionHandler implements
 	 *
 	 * @param SessionContainerInterface $container Container
 	 */
-	public function __construct(&$container)
-	{
+	public function __construct(
+		&$container
+	) {
 		$this->container = &$container;
 	}
 
@@ -137,8 +138,9 @@ class CustomSessionHandler implements
 	 *
 	 * @return bool true if the session id is valid otherwise false
 	 */
-	public function validateId($sessionId): bool
-	{
+	public function validateId(
+		$sessionId
+	): bool {
 		if ($sessionData = $this->container->getSession(sessionId: $sessionId)) {
 			if (is_null(value: $this->creatingSessionId)) {
 				$this->sessionData = &$sessionData;
@@ -193,8 +195,9 @@ class CustomSessionHandler implements
 	 *
 	 * @return string|false the session data or an empty string
 	 */
-	public function read($sessionId): string|false
-	{
+	public function read(
+		$sessionId
+	): string|false {
 		$this->sessionId = $sessionId;
 		return $this->sessionData;
 	}
@@ -290,8 +293,9 @@ class CustomSessionHandler implements
 	 *
 	 * @return bool true for success or false for failure
 	 */
-	public function gc($sessionMaxLifetime): int|false
-	{
+	public function gc(
+		$sessionMaxLifetime
+	): int|false {
 		return $this->container->gcSession(sessionMaxLifetime: $sessionMaxLifetime);
 	}
 
@@ -304,8 +308,9 @@ class CustomSessionHandler implements
 	 *
 	 * @return bool true for success or false for failure
 	 */
-	public function destroy($sessionId): bool
-	{
+	public function destroy(
+		$sessionId
+	): bool {
 		// Deleting session cookies set on customer end
 		$this->unsetSessionCookie();
 

@@ -75,8 +75,9 @@ class Route
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -127,7 +128,9 @@ class Route
 				. DIRECTORY_SEPARATOR . $method . 'routes.php';
 			if (!file_exists(filename: $routeFileLocation)) {
 				throw new \Exception(
-					message: json_encode(value: [$routeFileLocation]),
+					message: json_encode(
+						value: [$routeFileLocation]
+					),
 					code: HttpStatus::$BadRequest
 				);
 				continue;

@@ -15,7 +15,6 @@
 
 namespace Microservices\App;
 
-use Microservices\App\CommonFunction;
 use Microservices\App\Dropbox;
 use Microservices\App\Constant;
 use Microservices\App\Env;
@@ -57,8 +56,9 @@ class Api
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -275,8 +275,9 @@ class Api
 	 *
 	 * @return bool
 	 */
-	private function checkSupplement($supplementMode): bool
-	{
+	private function checkSupplement(
+		$supplementMode
+	): bool {
 		return (
 			$this->http->req->rParser->routeStartingWithReservedKeywordFlag
 			&& $this->http->req->rParser->routeStartingReservedKeyword === $supplementMode

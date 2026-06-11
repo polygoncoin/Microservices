@@ -36,8 +36,9 @@ trait UploadTrait
 	 *
 	 * @return bool
 	 */
-	private function saveFile($absFilePath): bool
-	{
+	private function saveFile(
+		$absFilePath
+	): bool {
 		$src = fopen(filename: "php://input", mode: "rb");
 		$dest = fopen(filename: $absFilePath, mode: 'wb');
 

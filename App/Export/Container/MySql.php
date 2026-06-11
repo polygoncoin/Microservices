@@ -114,8 +114,7 @@ class MySql implements ExportDatabaseServerInterface
 		$dbServerUsername,
 		$dbServerPassword,
 		$dbServerDatabase
-	): void
-	{
+	): void {
 		$this->dbServerHostname = $dbServerHostname;
 		$this->dbServerPort = $dbServerPort;
 		$this->dbServerUsername = $dbServerUsername;

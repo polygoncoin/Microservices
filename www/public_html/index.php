@@ -2,7 +2,6 @@
 
 use Microservices\App\Constant;
 use Microservices\App\Env;
-use Microservices\App\CommonFunction;
 use Microservices\App\HttpStatus;
 use Microservices\App\SessionHandler\Session;
 use Microservices\App\Reload;
@@ -153,7 +152,11 @@ if (
  */
 function httpRequestHash($hashArray): string
 {
-	return md5(json_encode(value: $hashArray));
+	return md5(
+		json_encode(
+			value: $hashArray
+		)
+	);
 }
 
 /**

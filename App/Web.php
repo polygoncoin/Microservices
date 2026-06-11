@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
 
 /**
@@ -76,7 +77,9 @@ class Web
 		}
 		$curlConfig[\CURLOPT_RETURNTRANSFER] = true;
 
-		$cookieFileName = '/' . md5($homeURL) . '-cookies.txt';
+		$cookieFileName = '/' . md5(
+			$homeURL
+		) . '-cookies.txt';
 		$cookieFile = Constant::$WEB_COOKIES_DIR . $cookieFileName;
 		$curlConfig[\CURLOPT_COOKIEJAR] = $cookieFile; // Store cookies
 		$curlConfig[\CURLOPT_COOKIEFILE] = $cookieFile; // Read cookies
@@ -190,9 +193,8 @@ class Web
 			);
 	
 			if ($isArray || $isObject) {
-				$requestPayload = json_decode(
-					json: $payload,
-					associative: true
+				$requestPayload = CommonFunction::jsonDecode(
+					value: $payload
 				);
 			} elseif($isXml) {
 				$requestPayload = htmlspecialchars(
@@ -250,9 +252,8 @@ class Web
 					) === 0
 				)
 			) {
-				$response = json_decode(
-					json: $responseBody,
-					associative: true
+				$response = CommonFunction::jsonDecode(
+					value: $responseBody
 				);
 			} else {
 				$response = $responseBody;
@@ -279,9 +280,8 @@ class Web
 				needle: '<'
 			);
 			if ($isArray || $isObject) {
-				$return['HttpResponse']['ResponseBody'] = json_decode(
-					json: $return['HttpResponse']['ResponseBody'],
-					associative: true
+				$return['HttpResponse']['ResponseBody'] = CommonFunction::jsonDecode(
+					value: $return['HttpResponse']['ResponseBody']
 				);
 			} elseif($isXml) {
 				$return['HttpResponse']['ResponseBody'] = htmlspecialchars(
@@ -301,8 +301,9 @@ class Web
 	 * @return array
 	 * @throws \Exception
 	 */
-	private static function httpParseHeaders($rawHeaderArr): array
-	{
+	private static function httpParseHeaders(
+		$rawHeaderArr
+	): array {
 		$headerArr = [];
 		$headerName = '';
 

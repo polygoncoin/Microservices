@@ -73,8 +73,9 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function init($header = true): void
-	{
+	public function init(
+		$header = true
+	): void {
 	}
 
 	/**
@@ -84,8 +85,9 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	private function write($data): void
-	{
+	private function write(
+		$data
+	): void {
 		if ($this->currentObject) {
 			if ($this->currentObject->mode === 'Object') {
 				if (is_array(value: $data)) {
@@ -112,27 +114,33 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function encode($data): void
-	{
+	public function encode(
+		$data
+	): void {
 		$this->write(data: $data);
 	}
 
 	/**
 	 * Escape the json string key or value
 	 *
-	 * @param null|string|array $data Representation Data
+	 * @param mixed $data Representation Data
 	 *
-	 * @return null|string|array
+	 * @return mixed
 	 */
-	private function escape(&$data)
-	{
+	private function escape(
+		&$data
+	): mixed {
 		if ($data !== null) {
 			if (is_array(value: $data)) {
 				foreach ($data as $k => $v) {
 					$data[$k] = $this->escape($v);
 				}
 			} else {
-				$data = nl2br(htmlspecialchars($data));
+				$data = nl2br(
+					htmlspecialchars(
+						$data
+					)
+				);
 			}
 		}
 
@@ -146,8 +154,9 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function appendData(&$data): void
-	{
+	public function appendData(
+		&$data
+	): void {
 		$this->write(data: $data);
 	}
 
@@ -159,8 +168,10 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($objectKey, &$data): void
-	{
+	public function appendKeyData(
+		$objectKey,
+		&$data
+	): void {
 		if (
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
@@ -177,8 +188,9 @@ class PhpEncode implements DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addArrayData($data): void
-	{
+	public function addArrayData(
+		$data
+	): void {
 		if ($this->currentObject->mode !== 'Array') {
 			throw new \Exception(
 				message: 'Mode should be Array',
@@ -217,8 +229,9 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function startArray($objectKey = null): void
-	{
+	public function startArray(
+		$objectKey = null
+	): void {
 		if ($this->currentObject) {
 			array_push(
 				$this->objectArr,
@@ -261,8 +274,9 @@ class PhpEncode implements DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($objectKey = null): void
-	{
+	public function startObject(
+		$objectKey = null
+	): void {
 		if ($this->currentObject) {
 			if (
 				$this->currentObject->mode === 'Object'

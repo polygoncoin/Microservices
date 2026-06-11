@@ -218,8 +218,9 @@ class HttpRequest
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 		$this->iRepresentation = Env::$iRepresentation;
 
@@ -335,7 +336,9 @@ class HttpRequest
 				)
 			)
 		) {
-			$this->customerQueryCacheObj = new QueryCache($this->http);
+			$this->customerQueryCacheObj = new QueryCache(
+				$this->http
+			);
 		}
 
 		if ($this->isPrivateRequest) {
@@ -385,7 +388,9 @@ class HttpRequest
 		if ($this->http->httpReqData['server']['httpMethod'] === Constant::$GET) {
 			$this->urlDecode(value: $this->http->httpReqData['get']);
 			$this->s['payloadType'] = 'Object';
-			$payloadJson = json_encode(value: $this->http->httpReqData['get']);
+			$payloadJson = json_encode(
+				value: $this->http->httpReqData['get']
+			);
 		} else {
 			$payloadJson = $this->setPayloadStream();
 			rewind(stream: $this->payloadStream);
@@ -418,7 +423,9 @@ class HttpRequest
 				&& isset($this->http->httpReqData['files']['file']['tmp_name'])
 			):
 				$uploadedFileName = $this->http->httpReqData['files']['file']['tmp_name'];
-				$uploadedFileMd5 = md5_file($this->http->httpReqData['files']['file']['tmp_name']);
+				$uploadedFileMd5 = md5_file(
+					$this->http->httpReqData['files']['file']['tmp_name']
+				);
 
 				$this->customerDbObj = DbCommonFunction::connectCustomerDb(
 					customerData: $this->http->req->s['customerData'],
@@ -481,8 +488,9 @@ class HttpRequest
 	 *
 	 * @return mixed
 	 */
-	public function getUploadedFileMd5Data($uploadedFileMd5): mixed
-	{
+	public function getUploadedFileMd5Data(
+		$uploadedFileMd5
+	): mixed {
 		$uploadedFileMd5Data = false;
 
 		$sql = "SELECT
@@ -511,8 +519,9 @@ class HttpRequest
 	 *
 	 * @return int
 	 */
-	public function getRequestId($payloadJson): int
-	{
+	public function getRequestId(
+		$payloadJson
+	): int {
 		$requestId = 0;
 		if ($this->isPrivateRequest) {
 			DbCommonFunction::connectGlobalDb();
@@ -576,9 +585,15 @@ class HttpRequest
 			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->http->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->http->httpReqData['server']['httpMethod'];
-			$paramArr[':request_payload_json'] = isset($this->s['payload']) ? json_encode(value: $this->s['payload']) : '{}';
-			$paramArr[':request_config_json'] = isset($this->rParser->sqlConfig) ? json_encode(value: $this->rParser->sqlConfig) : '{}';
-			$paramArr[':request_session_json'] = isset($this->s) ? json_encode(value: $this->s) : '{}';
+			$paramArr[':request_payload_json'] = isset($this->s['payload']) ? json_encode(
+				value: $this->s['payload']
+			) : '{}';
+			$paramArr[':request_config_json'] = isset($this->rParser->sqlConfig) ? json_encode(
+				value: $this->rParser->sqlConfig
+			) : '{}';
+			$paramArr[':request_session_json'] = isset($this->s) ? json_encode(
+				value: $this->s
+			) : '{}';
 			$paramArr[':request_debug_json'] = $debugJson;
 			$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
 
@@ -596,8 +611,9 @@ class HttpRequest
 	 *
 	 * @return int
 	 */
-	public function logErrorData($exceptionJson): int
-	{
+	public function logErrorData(
+		$exceptionJson
+	): int {
 		$logId = 0;
 		if ($this->isPrivateRequest) {
 			DbCommonFunction::connectGlobalDb();
@@ -620,9 +636,15 @@ class HttpRequest
 			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->http->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->http->httpReqData['server']['httpMethod'];
-			$paramArr[':request_payload_json'] = isset($this->s['payload']) ? json_encode(value: $this->s['payload']) : '{}';
-			$paramArr[':request_config_json'] = isset($this->rParser->sqlConfig) ? json_encode(value: $this->rParser->sqlConfig) : '{}';
-			$paramArr[':request_session_json'] = isset($this->s) ? json_encode(value: $this->s) : '{}';
+			$paramArr[':request_payload_json'] = isset($this->s['payload']) ? json_encode(
+				value: $this->s['payload']
+			) : '{}';
+			$paramArr[':request_config_json'] = isset($this->rParser->sqlConfig) ? json_encode(
+				value: $this->rParser->sqlConfig
+			) : '{}';
+			$paramArr[':request_session_json'] = isset($this->s) ? json_encode(
+				value: $this->s
+			) : '{}';
 			$paramArr[':request_exception_json'] = $exceptionJson;
 			$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
 
@@ -640,21 +662,25 @@ class HttpRequest
 	 *
 	 * @return string
 	 */
-	private function convertXmlToJson($xmlString): string
-	{
+	private function convertXmlToJson(
+		$xmlString
+	): string {
 		$xml = simplexml_load_string(
 			data: $xmlString
 		);
-		$arrayFromXml = json_decode(
-			json: json_encode(value: $xml),
-			associative: true
+		$arrayFromXml = CommonFunction::jsonDecode(
+			value: json_encode(
+				value: $xml
+			)
 		);
 		unset($xml);
 
 		$result = [];
 		$this->formatXmlArray(arrayFromXml: $arrayFromXml, result: $result);
 
-		return json_encode(value: $result);
+		return json_encode(
+			value: $result
+		);
 	}
 
 	/**
@@ -665,8 +691,10 @@ class HttpRequest
 	 *
 	 * @return void
 	 */
-	private function formatXmlArray(&$arrayFromXml, &$result): void
-	{
+	private function formatXmlArray(
+		&$arrayFromXml,
+		&$result
+	): void {
 		if (
 			isset($arrayFromXml['Rows'])
 			&& is_array(value: $arrayFromXml['Rows'])
@@ -720,8 +748,9 @@ class HttpRequest
 	 *
 	 * @return void
 	 */
-	public function urlDecode(&$value): void
-	{
+	public function urlDecode(
+		&$value
+	): void {
 		if (is_array(value: $value)) {
 			foreach ($value as &$v) {
 				if (is_array(value: $v)) {
@@ -742,8 +771,9 @@ class HttpRequest
 	 *
 	 * @return string
 	 */
-	public function formatCsvPayload($csvFile): string
-	{
+	public function formatCsvPayload(
+		$csvFile
+	): string {
 		$dataEncode = new DataEncode(http: $this->http);
 		$dataEncode->init(header: false);
 		$dataEncode->startObject();
@@ -757,7 +787,12 @@ class HttpRequest
 			if (empty($csvString)) {
 				continue;
 			}
-			$csvRecordArr = str_getcsv($csvString, ",", "\"", "\\");
+			$csvRecordArr = str_getcsv(
+				$csvString,
+				",",
+				"\"",
+				"\\"
+			);
 			if (empty($csvRecordArr)) {
 				continue;
 			}
@@ -889,7 +924,9 @@ class HttpRequest
 
 		if (!isset($csvHeaderData['__column__'])) {
 			throw new \Exception(
-				message: json_encode(value: [$currentModeArr,$csvHeaderData]),
+				message: json_encode(
+					value: [$currentModeArr,$csvHeaderData]
+				),
 				code: HttpStatus::$BadRequest
 			);
 		}

@@ -82,8 +82,9 @@ class DataEncode
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -94,8 +95,9 @@ class DataEncode
 	 *
 	 * @return void
 	 */
-	public function init($header = true): void
-	{
+	public function init(
+		$header = true
+	): void {
 		if ($this->http->httpReqData['server']['httpMethod'] === Constant::$GET) {
 			if ($this->http->res->oRepresentation === 'PHP') {
 				$this->tempStream = [];
@@ -142,8 +144,9 @@ class DataEncode
 	 *
 	 * @return void
 	 */
-	public function startArray($objectKey = null): void
-	{
+	public function startArray(
+		$objectKey = null
+	): void {
 		$this->dataEncoder->startArray(objectKey: $objectKey);
 	}
 
@@ -155,8 +158,9 @@ class DataEncode
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addArrayData($data): void
-	{
+	public function addArrayData(
+		$data
+	): void {
 		$this->dataEncoder->addArrayData(data: $data);
 	}
 
@@ -178,9 +182,12 @@ class DataEncode
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($objectKey = null): void
-	{
-		$this->dataEncoder->startObject(objectKey: $objectKey);
+	public function startObject(
+		$objectKey = null
+	): void {
+		$this->dataEncoder->startObject(
+			objectKey: $objectKey
+		);
 	}
 
 	/**
@@ -216,8 +223,9 @@ class DataEncode
 	 *
 	 * @return void
 	 */
-	public function encode($data): void
-	{
+	public function encode(
+		$data
+	): void {
 		$this->dataEncoder->encode(data: $data);
 	}
 
@@ -241,8 +249,10 @@ class DataEncode
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($objectKey, &$data): void
-	{
+	public function appendKeyData(
+		$objectKey,
+		&$data
+	): void {
 		$this->dataEncoder->appendKeyData(objectKey: $objectKey, data: $data);
 	}
 
@@ -355,8 +365,9 @@ class DataEncode
 	 *
 	 * @return string
 	 */
-	private function processPublicXml($xmlFile)
-	{
+	private function processPublicXml(
+		$xmlFile
+	): string {
 		rewind(stream: $this->tempStream);
 		$xml = new \DOMDocument();
 		$xml->loadXML(source: stream_get_contents(stream: $this->tempStream));

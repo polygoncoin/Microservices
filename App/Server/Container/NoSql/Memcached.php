@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\Container\NoSql;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\NoSql\NoSqlInterface;
 
@@ -115,15 +116,18 @@ class Memcached implements NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function exist($key): mixed
-	{
+	public function exist(
+		$key
+	): mixed {
 		$this->connect();
 
 		if (empty($key)) {
 			return false;
 		}
 
-		return $this->get($key) !== false;
+		return $this->get(
+			$key
+		) !== false;
 	}
 
 	/**
@@ -133,31 +137,20 @@ class Memcached implements NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function get($key): mixed
-	{
+	public function get(
+		$key
+	): mixed {
 		$this->connect();
 
 		if (empty($key)) {
 			return false;
 		}
 
-		$return = $this->cacheServerObj->get($key);
-
-		$isArray = str_starts_with(
-			haystack: $return,
-			needle: '['
+		$return = CommonFunction::jsonDecode(
+			value: $this->cacheServerObj->get(
+				$key
+			)
 		);
-		$isObject = str_starts_with(
-			haystack: $return,
-			needle: '{'
-		);
-
-		if ($isArray || $isObject) {
-			$return = json_decode(
-				json: $return,
-				associative: true
-			);
-		}
 
 		return $return;
 	}
@@ -182,7 +175,9 @@ class Memcached implements NoSqlInterface
 			return false;
 		}
 
-		$value = json_encode(value: $value);
+		$value = json_encode(
+			value: $value
+		);
 
 		if ($expire === null) {
 			return $this->cacheServerObj->set(
@@ -229,14 +224,17 @@ class Memcached implements NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function delete($key): mixed
-	{
+	public function delete(
+		$key
+	): mixed {
 		$this->connect();
 
 		if (empty($key)) {
 			return false;
 		}
 
-		return $this->cacheServerObj->delete($key);
+		return $this->cacheServerObj->delete(
+			$key
+		);
 	}
 }

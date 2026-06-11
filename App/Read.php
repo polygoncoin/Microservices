@@ -74,8 +74,9 @@ class Read
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -478,8 +479,9 @@ class Read
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function fetchRowsCount($readSqlConfig): void
-	{
+	private function fetchRowsCount(
+		$readSqlConfig
+	): void {
 		if (!isset($readSqlConfig['countQuery'])) {
 			return;
 		}
@@ -588,9 +590,8 @@ class Read
 		if ($isFirstCall) {
 			if (isset($this->http->req->s['queryParamArr']['orderBy'])) {
 				$orderByStrArr = [];
-				$orderByArr = json_decode(
-					json: $this->http->req->s['queryParamArr']['orderBy'],
-					associative: true
+				$orderByArr = CommonFunction::jsonDecode(
+					value: $this->http->req->s['queryParamArr']['orderBy']
 				);
 				foreach ($orderByArr as $k => $v) {
 					$k = str_replace(search: ['`', ' '], replace: '', subject: $k);
@@ -709,8 +710,9 @@ class Read
 	 *
 	 * @return array
 	 */
-	private function download($readSqlConfig): array
-	{
+	private function download(
+		$readSqlConfig
+	): array {
 		$return = [[], '', HttpStatus::$Ok];
 
 		if (

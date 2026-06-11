@@ -39,8 +39,9 @@ class JsonEncoderObject
 	 *
 	 * @param string $mode Values can be one among Array/object
 	 */
-	public function __construct($mode)
-	{
+	public function __construct(
+		$mode
+	) {
 		$this->mode = $mode;
 	}
 }

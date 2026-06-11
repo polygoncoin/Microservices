@@ -15,7 +15,6 @@
 
 namespace Microservices\App;
 
-use Microservices\App\CommonFunction;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;

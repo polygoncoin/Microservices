@@ -68,8 +68,9 @@ class CommonFunction
 	 * @return void
 	 * @throws \Exception
 	 */
-	public static function validateFileUpload($httpFileArr): void
-	{
+	public static function validateFileUpload(
+		$httpFileArr
+	): void {
 		if (count(value: $httpFileArr) > 1) {
 			throw new \Exception(
 				message: 'Supports only one file with each request',
@@ -140,8 +141,9 @@ class CommonFunction
 	 *
 	 * @return array
 	 */
-	public static function cidrStringIpNumberRange($cidrString): array
-	{
+	public static function cidrStringIpNumberRange(
+		$cidrString
+	): array {
 		$response = [];
 
 		if (empty($cidrString)) {
@@ -230,11 +232,8 @@ class CommonFunction
 			return;
 		}
 
-		$cidrIpNumberRangeArr = json_decode(
-			json: $cacheObj->cacheGet(
-				cacheKey: $cidrCacheKey
-			),
-			associative: true
+		$cidrIpNumberRangeArr = $cacheObj->cacheGet(
+			cacheKey: $cidrCacheKey
 		);
 		$isValidIp = self::belongsToCidrIpNumberRange(ip: $ip, cidrIpNumberRangeArr: $cidrIpNumberRangeArr);
 		if (!$isValidIp) {
@@ -318,8 +317,9 @@ class CommonFunction
 	 *
 	 * @return void
 	 */
-	public static function checkPrivateRequestCidr(&$http): void
-	{
+	public static function checkPrivateRequestCidr(
+		&$http
+	): void {
 		if (
 			!self::isEnabled(
 				http: $http,
@@ -356,5 +356,34 @@ class CommonFunction
 				)
 			);
 		}
+	}
+
+	/**
+	 * JSON Decode
+	 *
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	public static function jsonDecode(
+		$value
+	): mixed {
+		$isArray = str_starts_with(
+			haystack: $value,
+			needle: '['
+		);
+		$isObject = str_starts_with(
+			haystack: $value,
+			needle: '{'
+		);
+
+		if ($isArray || $isObject) {
+			$value = json_decode(
+				json: $value,
+				associative: true
+			);
+		}
+
+		return $value;
 	}
 }

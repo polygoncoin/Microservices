@@ -81,8 +81,9 @@ class Supplement
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 		$this->dataEncode = &$this->http->res->dataEncode;
 	}
@@ -94,9 +95,12 @@ class Supplement
 	 *
 	 * @return bool
 	 */
-	public function init(&$supplementClass): bool
-	{
-		$this->supplementObj = new $supplementClass($this->http);
+	public function init(
+		&$supplementClass
+	): bool {
+		$this->supplementObj = new $supplementClass(
+			$this->http
+		);
 		return $this->supplementObj->init();
 	}
 
@@ -364,9 +368,8 @@ class Supplement
 					$arr['Error'] = $response;
 				}
 			} else {
-				$arr = json_decode(
-					json: $hashJson,
-					associative: true
+				$arr = CommonFunction::jsonDecode(
+					value: $hashJson
 				);
 			}
 
@@ -605,7 +608,9 @@ class Supplement
 			isset($payloadIndexArr[0])
 			&& $payloadIndexArr[0] === ''
 		) {
-			$payloadIndexArr = array_shift($payloadIndexArr);
+			$payloadIndexArr = array_shift(
+				$payloadIndexArr
+			);
 		}
 		if (!is_array(value: $payloadIndexArr)) {
 			$payloadIndexArr = [];

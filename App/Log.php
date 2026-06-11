@@ -44,8 +44,9 @@ class Log
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -56,13 +57,18 @@ class Log
 	 *
 	 * @return int
 	 */
-	public function log(&$logData): int
-	{
+	public function log(
+		&$logData
+	): int {
 		// Uncomment to log in DB
-		return $this->logIntoDb($logData);
+		return $this->logIntoDb(
+			$logData
+		);
 
 		// Uncomment to log in Filesystem
-		// return $this->logInFilesystem($logData);
+		// return $this->logInFilesystem(
+		// 	$logData
+		// );
 	}
 
 	/**
@@ -72,16 +78,23 @@ class Log
 	 *
 	 * @return int
 	 */
-	public function logIntoDb(&$logData): int
-	{
-		$exceptionJson = json_encode(value: $logData);
+	public function logIntoDb(
+		&$logData
+	): int {
+		$exceptionJson = json_encode(
+			value: $logData
+		);
 		if (isset($this->http->req)) {
-			$exceptionJson = json_encode(value: $logData);
+			$exceptionJson = json_encode(
+				value: $logData
+			);
 			return $this->http->req->logErrorData(
 				exceptionJson: $exceptionJson
 			);
 		} else {
-			return $this->logInFilesystem($logData);
+			return $this->logInFilesystem(
+				$logData
+			);
 		}
 	}
 
@@ -92,8 +105,9 @@ class Log
 	 *
 	 * @return int
 	 */
-	public function logInFilesystem(&$logData): int
-	{
+	public function logInFilesystem(
+		&$logData
+	): int {
 		$logFile = Constant::$LOG_DIR
 			. DIRECTORY_SEPARATOR . 'log-' . date(format: 'YmdH');
 		if (!file_exists(filename: $logFile)) {
@@ -102,7 +116,9 @@ class Log
 
 		file_put_contents(
 			filename: $logFile,
-			data: json_encode(value: $logData) . PHP_EOL,
+			data: json_encode(
+				value: $logData
+			) . PHP_EOL,
 			flags: FILE_APPEND
 		);
 

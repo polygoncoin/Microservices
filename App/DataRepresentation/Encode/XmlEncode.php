@@ -78,8 +78,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function init($header = true): void
-	{
+	public function init(
+		$header = true
+	): void {
 	}
 
 	/**
@@ -89,8 +90,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	private function write($data): void
-	{
+	private function write(
+		$data
+	): void {
 		fwrite(stream: $this->tempStream, data: $data);
 	}
 
@@ -101,8 +103,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function encode($data): void
-	{
+	public function encode(
+		$data
+	): void {
 		if (is_array(value: $data)) {
 			$isObject = (isset($data[0])) ? false : true;
 			if (!$isObject) {
@@ -133,8 +136,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return string
 	 */
-	private function escape($data): string
-	{
+	private function escape(
+		$data
+	): string {
 		if ($data === null) {
 			return 'null';
 		}
@@ -148,8 +152,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function appendData(&$data): void
-	{
+	public function appendData(
+		&$data
+	): void {
 		if ($this->currentObject) {
 			$this->write(data: $data);
 		}
@@ -163,8 +168,10 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function appendKeyData($objectKey, &$data): void
-	{
+	public function appendKeyData(
+		$objectKey,
+		&$data
+	): void {
 		if (
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
@@ -182,8 +189,9 @@ class XmlEncode implements DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function addArrayData($data): void
-	{
+	public function addArrayData(
+		$data
+	): void {
 		if ($this->currentObject->mode !== 'Array') {
 			throw new \Exception(
 				message: 'Mode should be Array',
@@ -218,8 +226,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return void
 	 */
-	public function startArray($objectKey = null): void
-	{
+	public function startArray(
+		$objectKey = null
+	): void {
 		if ($objectKey === null) {
 			$objectKey = 'Rows';
 		}
@@ -243,7 +252,9 @@ class XmlEncode implements DataEncodeInterface
 		$this->write(data: "</{$this->currentObject->objectKey}>");
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
-			$this->currentObject = array_pop($this->objectArr);
+			$this->currentObject = array_pop(
+				$this->objectArr
+			);
 		}
 	}
 
@@ -255,8 +266,9 @@ class XmlEncode implements DataEncodeInterface
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function startObject($objectKey = null): void
-	{
+	public function startObject(
+		$objectKey = null
+	): void {
 		if ($objectKey === null) {
 			$objectKey = ($this->currentObject === null) ? 'Resultset' : 'Row';
 		}
@@ -289,7 +301,9 @@ class XmlEncode implements DataEncodeInterface
 		$this->write(data: "</{$this->currentObject->objectKey}>");
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
-			$this->currentObject = array_pop($this->objectArr);
+			$this->currentObject = array_pop(
+				$this->objectArr
+			);
 		}
 	}
 
@@ -322,8 +336,9 @@ class XmlEncode implements DataEncodeInterface
 	 *
 	 * @return array|string
 	 */
-	private function escapeTag($objectKey): array|string
-	{
+	private function escapeTag(
+		$objectKey
+	): array|string {
 		return str_replace(search: ':', replace: '-', subject: $objectKey);
 	}
 }

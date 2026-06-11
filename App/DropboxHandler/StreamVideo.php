@@ -76,8 +76,9 @@ class StreamVideo
 	 *
 	 * @param array $httpReqData HTTP request data
 	 */
-	public function __construct(&$httpReqData)
-	{
+	public function __construct(
+		&$httpReqData
+	) {
 		$this->httpReqData = &$httpReqData;
 	}
 
@@ -88,8 +89,9 @@ class StreamVideo
 	 *
 	 * @return bool|int
 	 */
-	public function init($fileLocation): bool|int
-	{
+	public function init(
+		$fileLocation
+	): bool|int {
 		// Check Range header
 		if (
 			!isset($this->httpReqData['header']['range'])
@@ -111,13 +113,22 @@ class StreamVideo
 
 		//Set detail of file to be served.
 		// Set file name
-		$this->name = basename(path: $this->fileLocation);
+		$this->name = basename(
+			path: $this->fileLocation
+		);
 		// Get file mime
-		$this->mimeType = mime_content_type($this->fileLocation);
+		$this->mimeType = mime_content_type(
+			$this->fileLocation
+		);
 		// Get file modified time
-		$this->modifiedTimeStamp = filemtime(filename: $this->fileLocation);
+		$this->modifiedTimeStamp = filemtime(
+			filename: $this->fileLocation
+		);
 		// Get file size
-		$this->size = filesize(filename: $this->fileLocation);
+		$this->size = filesize(
+	
+		filename: $this->fileLocation
+		);
 
 		return $this->validateFile();
 	}

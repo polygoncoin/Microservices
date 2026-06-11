@@ -165,8 +165,9 @@ class CacheServer
 	 *
 	 * @return mixed
 	 */
-	public function cacheExist($cacheKey): mixed
-	{
+	public function cacheExist(
+		$cacheKey
+	): mixed {
 		$this->connectCache();
 
 		if (empty($cacheKey)) {
@@ -183,8 +184,9 @@ class CacheServer
 	 *
 	 * @return mixed
 	 */
-	public function cacheGet($cacheKey): mixed
-	{
+	public function cacheGet(
+		$cacheKey
+	): mixed {
 		$this->connectCache();
 
 		if (empty($cacheKey)) {
@@ -252,8 +254,9 @@ class CacheServer
 	 *
 	 * @return mixed
 	 */
-	public function cacheDelete($cacheKey): mixed
-	{
+	public function cacheDelete(
+		$cacheKey
+	): mixed {
 		$this->connectCache();
 
 		if (empty($cacheKey)) {

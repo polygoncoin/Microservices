@@ -70,8 +70,9 @@ class Login
 	 *
 	 * @param Http $http
 	 */
-	public function __construct(Http &$http)
-	{
+	public function __construct(
+		Http &$http
+	) {
 		$this->http = &$http;
 	}
 
@@ -631,8 +632,9 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheExist($cacheKey): mixed
-	{
+	private function cacheExist(
+		$cacheKey
+	): mixed {
 		return $this->http->req->customerCacheObj->cacheExist(cacheKey: $cacheKey);
 	}
 
@@ -643,8 +645,9 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheGet($cacheKey): mixed
-	{
+	private function cacheGet(
+		$cacheKey
+	): mixed {
 		return $this->http->req->customerCacheObj->cacheGet(cacheKey: $cacheKey);
 	}
 
@@ -676,8 +679,9 @@ class Login
 	 *
 	 * @return mixed
 	 */
-	private function cacheDelete($cacheKey): mixed
-	{
+	private function cacheDelete(
+		$cacheKey
+	): mixed {
 		return $this->http->req->customerCacheObj->cacheDelete(cacheKey: $cacheKey);
 	}
 }

@@ -266,8 +266,11 @@ class MySqlDatabase implements DatabaseServerInterface
 	 *
 	 * @return void
 	 */
-	public function closeCursor($pushPop = false): void
-	{
-        $this->sqlServerObj->closeCursor(pushPop: $pushPop);
+	public function closeCursor(
+		$pushPop = false
+	): void {
+        $this->sqlServerObj->closeCursor(
+			pushPop: $pushPop
+		);
 	}
 }

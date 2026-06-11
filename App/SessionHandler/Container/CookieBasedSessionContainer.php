@@ -61,8 +61,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
+	public function getSession(
+		$sessionId
+	): bool|string {
 		if (
 			isset($_COOKIE[$this->sessionDataName])
 			&& !empty($_COOKIE[$this->sessionDataName])
@@ -186,8 +187,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		return true;
 	}
 
@@ -198,8 +200,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		if (isset($_COOKIE[$this->sessionDataName])) {
 			unset($_COOKIE[$this->sessionDataName]);
 		}

@@ -53,8 +53,9 @@ trait AppTrait
 	 *
 	 * @return mixed
 	 */
-	public function execPhpFunc($param): mixed
-	{
+	public function execPhpFunc(
+		$param
+	): mixed {
 		return $param;
 	}
 
@@ -896,8 +897,12 @@ trait AppTrait
 			$payloadSignature['customerUserId'] = ($this->http->req->customerUserId !== null
 				? $this->http->req->customerUserId : 0);
 		}
-		$hash = json_encode(value: $payloadSignature);
-		$rateLimitKey = md5(string: $hash);
+		$hash = json_encode(
+			value: $payloadSignature
+		);
+		$rateLimitKey = md5(
+			string: $hash
+		);
 
 		// @throws \Exception
 		$this->http->req->rateLimiter->checkRateLimit(
@@ -1035,15 +1040,21 @@ trait AppTrait
 						? $this->http->req->customerUserId : 0);
 				}
 
-				$hash = json_encode(value: $payloadSignature);
-				$hashKey = md5(string: $hash);
+				$hash = json_encode(
+					value: $payloadSignature
+				);
+				$hashKey = md5(
+					string: $hash
+				);
 				if (
 					$this->http->req->isPrivateRequest
 					&& $this->http->req->customerCacheObj->cacheExist(cacheKey: $hashKey)
 				) {
 					$hashJson = str_replace(
 						search: 'JSON',
-						replace: json_encode($this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey)),
+						replace: json_encode(
+							value: $this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey)
+						),
 						subject: '{"Idempotent": JSON, "Status": 200}'
 					);
 				}
@@ -1082,8 +1093,12 @@ trait AppTrait
 				? $this->http->req->customerUserId : 0);
 		}
 
-		$hash = json_encode(value: $payloadSignature);
-		$hashKey = 'LAG:' . md5(string: $hash);
+		$hash = json_encode(
+			value: $payloadSignature
+		);
+		$hashKey = 'LAG:' . md5(
+			string: $hash
+		);
 
 		if ($this->http->req->customerCacheObj->cacheExist(cacheKey: $hashKey)) {
 			$noOfRequest = $this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey);
@@ -1206,7 +1221,9 @@ trait AppTrait
 		$httpReqData['server']['httpMethod'] = $method;
 		$httpReqData['server']['httpRequestIP'] = $this->http->httpReqData['server']['httpRequestIP'];
 		$httpReqData['header'] = $this->http->httpReqData['header'];
-		$httpReqData['post'] = json_encode(value: $payloadArr);
+		$httpReqData['post'] = json_encode(
+			value: $payloadArr
+		);
 		$httpReqData['get'] = $queryStringArr;
 		$httpReqData['get'][ROUTE_URL_PARAM] = $route;
 		$httpReqData['isWebRequest'] = false;

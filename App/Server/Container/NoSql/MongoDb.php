@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\Container\NoSql;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\NoSql\NoSqlInterface;
@@ -150,7 +151,9 @@ class MongoDb implements NoSqlInterface
 				$this->uri = 'mongodb://' . $UP
 					. $this->cacheServerHostname . ':' . $this->cacheServerPort;
 			}
-			$this->cacheServerObj = new \MongoDB\Customer($this->uri);
+			$this->cacheServerObj = new \MongoDB\Customer(
+				$this->uri
+			);
 
 			// Select a database
 			$this->cacheServerDatabaseObj = $this->cacheServerObj->selectDatabase(
@@ -183,8 +186,9 @@ class MongoDb implements NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function exist($key): mixed
-	{
+	public function exist(
+		$key
+	): mixed {
 		$this->connect();
 
 		if (empty($key)) {
@@ -193,7 +197,11 @@ class MongoDb implements NoSqlInterface
 
 		$filter = ['key' => $key];
 
-		if ($document = $this->collectionObj->findOne($filter)) {
+		if (
+			$document = $this->collectionObj->findOne(
+				$filter
+			)
+		) {
 			return true;
 		}
 		return false;
@@ -206,8 +214,9 @@ class MongoDb implements NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function get($key): mixed
-	{
+	public function get(
+		$key
+	): mixed {
 		$this->connect();
 
 		if (empty($key)) {
@@ -215,23 +224,12 @@ class MongoDb implements NoSqlInterface
 		}
 
 		$filter = ['key' => $key];
-		$return = $this->collectionObj->findOne($filter);
 		
-		$isArray = str_starts_with(
-			haystack: $return,
-			needle: '['
+		$return = CommonFunction::jsonDecode(
+			value: $this->collectionObj->findOne(
+				$filter
+			)
 		);
-		$isObject = str_starts_with(
-			haystack: $return,
-			needle: '{'
-		);
-
-		if ($isArray || $isObject) {
-			$return = json_decode(
-				json: $return,
-				associative: true
-			);
-		}
 
 		return $return;
 	}
@@ -256,7 +254,9 @@ class MongoDb implements NoSqlInterface
 			return false;
 		}
 
-		$value = json_encode(value: $value);
+		$value = json_encode(
+			value: $value
+		);
 
 		$document = [
 			'key' => $key,
@@ -314,8 +314,9 @@ class MongoDb implements NoSqlInterface
 	 *
 	 * @return mixed
 	 */
-	public function delete($key): mixed
-	{
+	public function delete(
+		$key
+	): mixed {
 		$this->connect();
 
 		if (empty($key)) {

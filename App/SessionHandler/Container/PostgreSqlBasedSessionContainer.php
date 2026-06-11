@@ -65,8 +65,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool|string
 	 */
-	public function getSession($sessionId): bool|string
-	{
+	public function getSession(
+		$sessionId
+	): bool|string {
 		$sql = "
 			SELECT session_data
 			FROM {$this->pgSqlServerTable}
@@ -169,8 +170,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function gcSession($sessionMaxLifetime): bool
-	{
+	public function gcSession(
+		$sessionMaxLifetime
+	): bool {
 		$sql = "
 			DELETE FROM {$this->pgSqlServerTable}
 			WHERE last_accessed < $1
@@ -188,8 +190,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return bool
 	 */
-	public function deleteSession($sessionId): bool
-	{
+	public function deleteSession(
+		$sessionId
+	): bool {
 		$sql = "
 			DELETE FROM {$this->pgSqlServerTable}
 			WHERE session_id = $1
@@ -207,7 +210,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 */
 	public function closeSession(): void
 	{
-		pg_close($this->pgSqlServerObj);
+		pg_close(
+			$this->pgSqlServerObj
+		);
 		$this->pgSqlServerObj = null;
 	}
 
@@ -257,11 +262,17 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			);
 			if ($result) {
 				$row = [];
-				$rowsCount = pg_num_rows($result);
+				$rowsCount = pg_num_rows(
+					$result
+				);
 				if ($rowsCount === 1) {
-					$row = pg_fetch_assoc($result);
+					$row = pg_fetch_assoc(
+						$result
+					);
 				}
-				pg_free_result($result);
+				pg_free_result(
+					$result
+				);
 				return $row;
 			}
 		} catch (\Exception $e) {
@@ -304,8 +315,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 *
 	 * @return never
 	 */
-	private function manageException(\Exception $e): never
-	{
+	private function manageException(
+		\Exception $e
+	): never {
 		die($e->getMessage());
 	}
 }
