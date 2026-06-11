@@ -86,9 +86,7 @@ class Api
 			&& isset($this->http->req->rParser)
 			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
-			&& is_array(
-				value: $this->http->req->rParser->routeHook
-			)
+			&& is_array($this->http->req->rParser->routeHook)
 		) {
 			$preRouteHookArr = [];
 			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
@@ -304,9 +302,7 @@ class Api
 			&& isset($this->http->req->rParser)
 			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
-			&& is_array(
-				value: $this->http->req->rParser->routeHook
-			)
+			&& is_array($this->http->req->rParser->routeHook)
 		) {
 			$postRouteHookArr = [];
 			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
@@ -353,9 +349,7 @@ class Api
 		}
 
 		if (
-			is_array(
-				value: $return
-			)
+			is_array($return)
 			&& count(
 				value: $return
 			) === 3

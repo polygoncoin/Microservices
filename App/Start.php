@@ -97,9 +97,7 @@ class Start
 
 				$return = $Microservices->process();
 				if (
-					is_array(
-						value: $return
-					)
+					is_array($return)
 					&& count(
 						value: $return
 					) === 3

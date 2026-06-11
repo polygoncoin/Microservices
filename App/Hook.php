@@ -69,11 +69,7 @@ class Hook
 	public function triggerHook(
 		$hookArr
 	): bool {
-		if (
-			is_array(
-				value: $hookArr
-			)
-		) {
+		if (is_array($hookArr)) {
 			$iCount = count(
 				value: $hookArr
 			);

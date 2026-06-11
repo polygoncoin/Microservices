@@ -281,9 +281,7 @@ class Web
 
 		if (
 			isset($return['HttpResponse']['ResponseBody'])
-			&& !is_array(
-				value: $return['HttpResponse']['ResponseBody']
-			)
+			&& !is_array($return['HttpResponse']['ResponseBody'])
 		) {
 			$isArray = str_starts_with(
 				haystack: $return['HttpResponse']['ResponseBody'],
@@ -344,12 +342,9 @@ class Web
 					);
 				} elseif (
 					isset($headerArr[$h[0]])
-					&& is_array(
-						value: $headerArr[$h[0]]
-					)
+					&& is_array($headerArr[$h[0]])
 				) {
-					$headerArr[$h[0]] = array_merge(
-						$headerArr[$h[0]],
+					$headerArr[$h[0]] = array_merge($headerArr[$h[0]],
 						[
 							trim(
 								string: $h[1]
@@ -357,8 +352,7 @@ class Web
 						]
 					);
 				} else {
-					$headerArr[$h[0]] = array_merge(
-						[$headerArr[$h[0]]],
+					$headerArr[$h[0]] = array_merge([$headerArr[$h[0]]],
 						[
 							trim(
 								string: $h[1]
@@ -438,11 +432,7 @@ class Web
 			if ($isObject) {
 				$payload .= "<{$column}>";
 			}
-			if (
-				is_array(
-					value: $value
-				)
-			) {
+			if (is_array($value)) {
 				$_xmlParamArr = $value;
 				self::genXmlPayload(
 					xmlParamArr: $_xmlParamArr,

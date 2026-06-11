@@ -90,11 +90,7 @@ class PhpEncode implements DataEncodeInterface
 	): void {
 		if ($this->currentObject) {
 			if ($this->currentObject->mode === 'Object') {
-				if (
-					is_array(
-						value: $data
-					)
-				) {
+				if (is_array($data)) {
 					foreach ($data as $k => $v) {
 						$this->currentObject->returnArray[$k] = $this->escape(
 							data: $v
@@ -102,11 +98,7 @@ class PhpEncode implements DataEncodeInterface
 					}
 				}
 			} else {
-				if (
-					is_array(
-						value: $data
-					)
-				) {
+				if (is_array($data)) {
 					foreach ($data as $v) {
 						$this->currentObject->returnArray[] = $this->escape(
 							data: $v
@@ -147,11 +139,7 @@ class PhpEncode implements DataEncodeInterface
 		&$data
 	): mixed {
 		if ($data !== null) {
-			if (
-				is_array(
-					value: $data
-				)
-			) {
+			if (is_array($data)) {
 				foreach ($data as $k => $v) {
 					$data[$k] = $this->escape($v);
 				}

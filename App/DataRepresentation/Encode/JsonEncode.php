@@ -128,11 +128,7 @@ class JsonEncode implements DataEncodeInterface
 				data: $this->currentObject->comma
 			);
 		}
-		if (
-			is_array(
-				value: $data
-			)
-		) {
+		if (is_array($data)) {
 			$this->write(
 				data: json_encode(
 					value: $data

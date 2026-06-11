@@ -182,11 +182,7 @@ class Route
 			if ($routeElement === '__FILE__') {
 				$httpRouteArr[] = $route;
 			}
-			if (
-				is_array(
-					value: $_routeArr
-				)
-			) {
+			if (is_array($_routeArr)) {
 				$_route = $route . '/' . $routeElement;
 				$this->getRoutes(
 					routeArr: $_routeArr,

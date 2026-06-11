@@ -368,10 +368,7 @@ trait AppTrait
 					}
 				}
 			} else {
-				$errorArr = array_merge(
-					$errorArr,
-					$wErrorArr
-				);
+				$errorArr = array_merge($errorArr, $wErrorArr);
 			}
 		}
 		if (!empty($__SET__)) {
@@ -519,10 +516,7 @@ trait AppTrait
 					}
 				}
 			} else {
-				$errorArr = array_merge(
-					$errorArr,
-					$wErrorArr
-				);
+				$errorArr = array_merge($errorArr, $wErrorArr);
 			}
 		}
 		if (!empty($__SET__)) {
@@ -1063,9 +1057,7 @@ trait AppTrait
 		$hashJson = null;
 		if (
 			isset($sqlConfig['idempotentWindow'])
-			&& is_numeric(
-				value: $sqlConfig['idempotentWindow']
-			)
+			&& is_numeric($sqlConfig['idempotentWindow'])
 			&& $sqlConfig['idempotentWindow'] > 0
 		) {
 			$idempotentWindow = (int)$sqlConfig['idempotentWindow'];
@@ -1175,9 +1167,7 @@ trait AppTrait
 		$lag = 0;
 		$responseLag = &$sqlConfig['responseLag'];
 		if (
-			is_array(
-				value: $responseLag
-			)
+			is_array($responseLag)
 		) {
 			foreach ($responseLag as $start => $newLag) {
 				if ($noOfRequest > $start) {
@@ -1413,11 +1403,7 @@ trait AppTrait
 		$header = [];
 		$header[] = '__mode__';
 		foreach ($paramArr as $r => $p) {
-			if (
-				is_array(
-					value: $p
-				)
-			) {
+			if (is_array($p)) {
 				$iCount = count(
 					value: $p
 				);

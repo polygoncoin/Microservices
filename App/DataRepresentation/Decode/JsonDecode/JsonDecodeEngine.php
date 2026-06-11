@@ -474,11 +474,7 @@ class JsonDecodeEngine
 		$return = false;
 		if ($nullStr === 'null') {
 			$return = null;
-		} elseif (
-			is_numeric(
-				value: $nullStr
-			)
-		) {
+		} elseif (is_numeric($nullStr)) {
 			$return = (int)$nullStr;
 		}
 		if ($return === false) {

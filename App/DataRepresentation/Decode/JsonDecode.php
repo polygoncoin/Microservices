@@ -145,20 +145,14 @@ class JsonDecode implements DataDecodeInterface
 				);
 				for ($i = 0; $i < $iCount; $i++) {
 					if (
-						is_numeric(
-							value: $keyArr[$i]
-						)
+						is_numeric($keyArr[$i])
 						&& !isset($jsonFileIndex[$keyArr[$i]])
 					) {
 						$jsonFileIndex[$keyArr[$i]] = [];
 						if (!isset($jsonFileIndex['_c_'])) {
 							$jsonFileIndex['_c_'] = 0;
 						}
-						if (
-							is_numeric(
-								value: $keyArr[$i]
-							)
-						) {
+						if (is_numeric($keyArr[$i])) {
 							$jsonFileIndex['_c_']++;
 						}
 					}

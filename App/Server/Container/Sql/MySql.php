@@ -320,9 +320,7 @@ class MySql implements SqlInterface
 			);
 			if ($this->stmt) {
 				if (
-					is_array(
-						value: $paramArr
-					)
+					is_array($paramArr)
 					&& count(
 						value: $paramArr
 					) > 0

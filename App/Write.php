@@ -446,9 +446,7 @@ class Write
 		&$response,
 		&$requiredFieldArr
 	): void {
-		$payloadIndex = is_array(
-			value: $payloadIndexArr
-		) ? trim(
+		$payloadIndex = is_array($payloadIndexArr) ? trim(
 			string: implode(
 				separator: ':',
 				array: $payloadIndexArr
@@ -507,9 +505,7 @@ class Write
 					$i
 				);
 			}
-			$payloadIndex = is_array(
-				value: $payloadIndexArr
-			) ? implode(
+			$payloadIndex = is_array($payloadIndexArr) ? implode(
 				separator: ':',
 				array: $payloadIndexArr
 			) : '';
@@ -687,11 +683,7 @@ class Write
 				$payloadIndexArr
 			);
 		}
-		if (
-			!is_array(
-				value: $payloadIndexArr
-			)
-		) {
+		if (!is_array($payloadIndexArr)) {
 			$payloadIndexArr = [];
 		}
 
@@ -714,9 +706,7 @@ class Write
 					$module
 				);
 
-				$modulePayloadIndexKey = is_array(
-					value: $modulePayloadIndexArr
-				) ? implode(
+				$modulePayloadIndexKey = is_array($modulePayloadIndexArr) ? implode(
 					separator: ':',
 					array: $modulePayloadIndexArr
 				) : null;
