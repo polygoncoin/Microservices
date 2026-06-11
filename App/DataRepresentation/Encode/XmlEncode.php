@@ -67,7 +67,9 @@ class XmlEncode implements DataEncodeInterface
 		$this->tempStream = &$tempStream;
 		if ($header) {
 			$xml = '<?xml version="1.0" encoding="UTF-8"?>';
-			$this->write(data: $xml);
+			$this->write(
+				data: $xml
+			);
 		}
 	}
 
@@ -93,7 +95,10 @@ class XmlEncode implements DataEncodeInterface
 	private function write(
 		$data
 	): void {
-		fwrite(stream: $this->tempStream, data: $data);
+		fwrite(
+			stream: $this->tempStream,
+			data: $data
+		);
 	}
 
 	/**
@@ -109,23 +114,36 @@ class XmlEncode implements DataEncodeInterface
 		if (is_array(value: $data)) {
 			$isObject = (isset($data[0])) ? false : true;
 			if (!$isObject) {
-				$this->write(data: "<{$this->currentObject->objectKey}>");
+				$this->write(
+					data: "<{$this->currentObject->objectKey}>"
+				);
 			}
 			foreach ($data as $objectKey => $value) {
 				if (!is_array(value: $value)) {
-					$objectKey = $this->escapeTag(objectKey: $objectKey);
+					$objectKey = $this->escapeTag(
+						objectKey: $objectKey
+					);
 					$this->write(
 						data: "<{$objectKey}>{$this->escape(data: $value)}</{$objectKey}>"
 					);
 				} else {
-					$this->addKeyData(objectKey: $objectKey, data: $value);
+					$this->addKeyData(
+						objectKey: $objectKey,
+						data: $value
+					);
 				}
 			}
 			if (!$isObject) {
-				$this->write(data: "</{$this->currentObject->objectKey}>");
+				$this->write(
+					data: "</{$this->currentObject->objectKey}>"
+				);
 			}
 		} else {
-			$this->write(data: $this->escape(data: $data));
+			$this->write(
+				data: $this->escape(
+					data: $data
+				)
+			);
 		}
 	}
 
@@ -142,7 +160,9 @@ class XmlEncode implements DataEncodeInterface
 		if ($data === null) {
 			return 'null';
 		}
-		return htmlspecialchars(string: $data);
+		return htmlspecialchars(
+			string: $data
+		);
 	}
 
 	/**
@@ -156,7 +176,9 @@ class XmlEncode implements DataEncodeInterface
 		&$data
 	): void {
 		if ($this->currentObject) {
-			$this->write(data: $data);
+			$this->write(
+				data: $data
+			);
 		}
 	}
 
@@ -176,8 +198,12 @@ class XmlEncode implements DataEncodeInterface
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
 		) {
-			$objectKey = $this->escapeTag(objectKey: $objectKey);
-			$this->write(data: "<{$objectKey}>{$this->escape(data: $data)}</{$objectKey}>");
+			$objectKey = $this->escapeTag(
+				objectKey: $objectKey
+			);
+			$this->write(
+				data: "<{$objectKey}>{$this->escape(data: $data)}</{$objectKey}>"
+			);
 		}
 	}
 
@@ -198,7 +224,9 @@ class XmlEncode implements DataEncodeInterface
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		$this->encode(data: $data);
+		$this->encode(
+			data: $data
+		);
 	}
 
 	/**
@@ -214,8 +242,12 @@ class XmlEncode implements DataEncodeInterface
 		$objectKey,
 		$data
 	): void {
-		$this->startObject(objectKey: $objectKey);
-		$this->encode(data: $data);
+		$this->startObject(
+			objectKey: $objectKey
+		);
+		$this->encode(
+			data: $data
+		);
 		$this->endObject();
 	}
 
@@ -238,8 +270,13 @@ class XmlEncode implements DataEncodeInterface
 				$this->currentObject
 			);
 		}
-		$this->currentObject = new XmlEncoderObject(mode: 'Array', objectKey: $objectKey);
-		$this->write(data: "<{$this->currentObject->objectKey}>");
+		$this->currentObject = new XmlEncoderObject(
+			mode: 'Array',
+			objectKey: $objectKey
+		);
+		$this->write(
+			data: "<{$this->currentObject->objectKey}>"
+		);
 	}
 
 	/**
@@ -249,7 +286,9 @@ class XmlEncode implements DataEncodeInterface
 	 */
 	public function endArray(): void
 	{
-		$this->write(data: "</{$this->currentObject->objectKey}>");
+		$this->write(
+			data: "</{$this->currentObject->objectKey}>"
+		);
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
 			$this->currentObject = array_pop(
@@ -287,8 +326,12 @@ class XmlEncode implements DataEncodeInterface
 				$this->currentObject
 			);
 		}
-		$this->currentObject = new XmlEncoderObject(mode: 'Object', objectKey: $objectKey);
-		$this->write(data: "<{$this->currentObject->objectKey}>");
+		$this->currentObject = new XmlEncoderObject(
+			mode: 'Object', objectKey: $objectKey
+		);
+		$this->write(
+			data: "<{$this->currentObject->objectKey}>"
+		);
 	}
 
 	/**
@@ -298,7 +341,9 @@ class XmlEncode implements DataEncodeInterface
 	 */
 	public function endObject(): void
 	{
-		$this->write(data: "</{$this->currentObject->objectKey}>");
+		$this->write(
+			data: "</{$this->currentObject->objectKey}>"
+		);
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
 			$this->currentObject = array_pop(
@@ -339,6 +384,10 @@ class XmlEncode implements DataEncodeInterface
 	private function escapeTag(
 		$objectKey
 	): array|string {
-		return str_replace(search: ':', replace: '-', subject: $objectKey);
+		return str_replace(
+			search: ':',
+			replace: '-',
+			subject: $objectKey
+		);
 	}
 }

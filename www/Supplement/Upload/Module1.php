@@ -72,7 +72,9 @@ class Module1 implements UploadInterface
 	public function process(): mixed
 	{
 		$absFilePath = $this->getLocation();
-		$this->saveFile(absFilePath: $absFilePath);
+		$this->saveFile(
+			absFilePath: $absFilePath
+		);
 
 		return true;
 	}

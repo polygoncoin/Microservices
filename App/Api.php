@@ -86,13 +86,19 @@ class Api
 			&& isset($this->http->req->rParser)
 			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
-			&& is_array(value: $this->http->req->rParser->routeHook)
+			&& is_array(
+				value: $this->http->req->rParser->routeHook
+			)
 		) {
 			$preRouteHookArr = [];
 			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
 				if (isset($hookArr['__PRE-ROUTE-HOOKS__'])) {
 					$preRouteHookConfig = $hookArr['__PRE-ROUTE-HOOKS__'];
-					if (count(value: $preRouteHookConfig) === 0) {
+					if (
+						count(
+							value: $preRouteHookConfig
+						) === 0
+					) {
 						continue;
 					}
 					for ($i = 0, $iCount = count(value: $preRouteHookConfig); $i < $iCount; $i++) {
@@ -110,7 +116,9 @@ class Api
 			}
 			if (count(value: $preRouteHookArr) > 0) {
 				if ($this->hook === null) {
-					$this->hook = new Hook(http: $this->http);
+					$this->hook = new Hook(
+						http: $this->http
+					);
 				}
 				$this->hook->triggerHook(
 					hookArr: $preRouteHookArr
@@ -134,8 +142,14 @@ class Api
 
 		$class = null;
 		$supplementClass = null;
-		if ($this->checkSupplement(Env::$cronRequestRoutePrefix)) {
-			$supplementClassFileName = ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
+		if (
+			$this->checkSupplement(
+				Env::$cronRequestRoutePrefix
+			)
+		) {
+			$supplementClassFileName = ucfirst(
+				string: $this->http->req->rParser->routeElementArr[1]
+			);
 			$supplementClassFileLocation = Constant::$WWW
 					. DIRECTORY_SEPARATOR . 'Supplement'
 					. DIRECTORY_SEPARATOR . 'Cron'
@@ -144,8 +158,14 @@ class Api
 			if (file_exists(filename: $supplementClassFileLocation)) {
 				$supplementClass = 'Microservices\\www\\Supplement\\Cron\\' . $supplementClassFileName;
 			}
-		} elseif ($this->checkSupplement(Env::$customRequestRoutePrefix)) {
-			$supplementClassFileName = ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
+		} elseif (
+			$this->checkSupplement(
+				Env::$customRequestRoutePrefix
+			)
+		) {
+			$supplementClassFileName = ucfirst(
+				string: $this->http->req->rParser->routeElementArr[1]
+			);
 			$supplementClassFileLocation = Constant::$WWW
 					. DIRECTORY_SEPARATOR . 'Supplement'
 					. DIRECTORY_SEPARATOR . 'Custom'
@@ -154,8 +174,14 @@ class Api
 			if (file_exists(filename: $supplementClassFileLocation)) {
 				$supplementClass = 'Microservices\\www\\Supplement\\Custom\\' . $supplementClassFileName;
 			}
-		} elseif ($this->checkSupplement(Env::$uploadRequestRoutePrefix)) {
-			$supplementClassFileName = ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
+		} elseif (
+			$this->checkSupplement(
+				Env::$uploadRequestRoutePrefix
+			)
+		) {
+			$supplementClassFileName = ucfirst(
+				string: $this->http->req->rParser->routeElementArr[1]
+			);
 			$supplementClassFileLocation = Constant::$WWW
 					. DIRECTORY_SEPARATOR . 'Supplement'
 					. DIRECTORY_SEPARATOR . 'Upload'
@@ -164,8 +190,14 @@ class Api
 			if (file_exists(filename: $supplementClassFileLocation)) {
 				$supplementClass = 'Microservices\\www\\Supplement\\Upload\\' . $supplementClassFileName;
 			}
-		} elseif ($this->checkSupplement(Env::$thirdPartyRequestRoutePrefix)) {
-			$supplementClassFileName = ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
+		} elseif (
+			$this->checkSupplement(
+				Env::$thirdPartyRequestRoutePrefix
+			)
+		) {
+			$supplementClassFileName = ucfirst(
+				string: $this->http->req->rParser->routeElementArr[1]
+			);
 			$supplementClassFileLocation = Constant::$WWW
 					. DIRECTORY_SEPARATOR . 'Supplement'
 					. DIRECTORY_SEPARATOR . 'ThirdParty'
@@ -177,8 +209,14 @@ class Api
 		} else {
 			switch ($this->http->httpReqData['server']['httpMethod']) {
 				case Constant::$GET:
-					if ($this->checkSupplement(Env::$dropboxRequestRoutePrefix)) {
-						$classFileName = ucfirst(string: $this->http->req->rParser->routeElementArr[1]);
+					if (
+						$this->checkSupplement(
+							Env::$dropboxRequestRoutePrefix
+						)
+					) {
+						$classFileName = ucfirst(
+							string: $this->http->req->rParser->routeElementArr[1]
+						);
 						$classFileLocation = Constant::$WWW
 								. DIRECTORY_SEPARATOR . 'Supplement'
 								. DIRECTORY_SEPARATOR . 'Dropbox'
@@ -187,7 +225,11 @@ class Api
 						if (file_exists(filename: $classFileLocation)) {
 							$class = 'Microservices\\www\\Supplement\\Dropbox\\' . $classFileName;
 						}
-					} elseif ($this->checkSupplement(Env::$routesRequestRoute)) {
+					} elseif (
+						$this->checkSupplement(
+							Env::$routesRequestRoute
+						)
+					) {
 						$class = __NAMESPACE__ . '\\Route';
 					} else {
 						$class = __NAMESPACE__ . '\\Read';
@@ -203,12 +245,20 @@ class Api
 		}
 
 		if ($supplementClass !== null) {
-			$supplementObj = new Supplement(http: $this->http);
-			if ($supplementObj->init(supplementClass: $supplementClass)) {
+			$supplementObj = new Supplement(
+				http: $this->http
+			);
+			if (
+				$supplementObj->init(
+					supplementClass: $supplementClass
+				)
+			) {
 				$return = $supplementObj->process();
 			}
 		} elseif ($class !== null) {
-			$api = new $class(http: $this->http);
+			$api = new $class(
+				http: $this->http
+			);
 			if ($api->init()) {
 				$return = $api->process();
 			}
@@ -250,7 +300,9 @@ class Api
 			}
 			if (count(value: $postRouteHookArr) > 0) {
 				if ($this->hook === null) {
-					$this->hook = new Hook(http: $this->http);
+					$this->hook = new Hook(
+						http: $this->http
+					);
 				}
 				$this->hook->triggerHook(
 					hookArr: $postRouteHookArr

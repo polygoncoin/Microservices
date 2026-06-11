@@ -81,10 +81,22 @@ class Google implements ThirdPartyInterface
 			option: \CURLOPT_URL,
 			value: 'https://api.ipify.org?format=json'
 		);
-		curl_setopt(handle: $curl_handle, option: \CURLOPT_CONNECTTIMEOUT, value: 2);
-		curl_setopt(handle: $curl_handle, option: \CURLOPT_RETURNTRANSFER, value: 1);
-		$output = curl_exec(handle: $curl_handle);
-		curl_close(handle: $curl_handle);
+		curl_setopt(
+			handle: $curl_handle,
+			option: \CURLOPT_CONNECTTIMEOUT,
+			value: 2
+		);
+		curl_setopt(
+			handle: $curl_handle,
+			option: \CURLOPT_RETURNTRANSFER,
+			value: 1
+		);
+		$output = curl_exec(
+			handle: $curl_handle
+		);
+		curl_close(
+			handle: $curl_handle
+		);
 		if (empty($output)) {
 			$output = ['Error' => 'Nothing returned by ipify'];
 			$this->http->res->httpStatus = HttpStatus::$InternalServerError;
@@ -94,7 +106,9 @@ class Google implements ThirdPartyInterface
 			);
 		}
 		// End the calls with json response with dataEncode object
-		$this->endProcess(output: $output);
+		$this->endProcess(
+			output: $output
+		);
 
 		return true;
 	}
@@ -109,6 +123,9 @@ class Google implements ThirdPartyInterface
 	private function endProcess(
 		$output
 	): void {
-		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $output);
+		$this->http->res->dataEncode->addKeyData(
+			objectKey: 'Results',
+			data: $output
+		);
 	}
 }

@@ -115,10 +115,14 @@ class Supplement
 		$sSqlConfig = &$this->http->req->rParser->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
-		$this->rateLimitRoute(sqlConfig: $sSqlConfig);
+		$this->rateLimitRoute(
+			sqlConfig: $sSqlConfig
+		);
 
 		// Check for configured referrer Lags
-		$this->checkReferrerLag(sqlConfig: $sSqlConfig);
+		$this->checkReferrerLag(
+			sqlConfig: $sSqlConfig
+		);
 
 		// Use results in where clause of sub queries recursively
 		$useHierarchy = $this->getUseHierarchy(
@@ -151,7 +155,9 @@ class Supplement
 		}
 
 		// Lag response
-		$this->lagResponse(sqlConfig: $sSqlConfig);
+		$this->lagResponse(
+			sqlConfig: $sSqlConfig
+		);
 
 		// Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
 		$this->operateAsTransaction = isset($sSqlConfig['isTransaction'])
@@ -198,7 +204,9 @@ class Supplement
 		&$sSqlConfig,
 		$useHierarchy
 	): bool {
-		$this->dataEncode->startObject(objectKey: 'Config');
+		$this->dataEncode->startObject(
+			objectKey: 'Config'
+		);
 		$this->dataEncode->addKeyData(
 			objectKey: 'Route',
 			data: $this->http->req->rParser->configuredRoute
@@ -260,7 +268,9 @@ class Supplement
 			flag: $useHierarchy
 		);
 
-		$this->dataEncode->startObject(objectKey: 'Results');
+		$this->dataEncode->startObject(
+			objectKey: 'Results'
+		);
 		if (
 			isset($this->http->req->s['payloadType'])
 			&& $this->http->req->s['payloadType'] === 'Array'
@@ -272,7 +282,9 @@ class Supplement
 					strict: true
 				)
 			) {
-				$this->dataEncode->startArray(objectKey: 'Rows');
+				$this->dataEncode->startArray(
+					objectKey: 'Rows'
+				);
 			}
 		}
 
@@ -375,7 +387,10 @@ class Supplement
 
 			if ($payloadIndexArr[0] === '') {
 				foreach ($arr as $k => $v) {
-					$this->dataEncode->addKeyData(objectKey: $k, data: $v);
+					$this->dataEncode->addKeyData(
+						objectKey: $k,
+						data: $v
+					);
 				}
 			} else {
 				if (
@@ -385,13 +400,21 @@ class Supplement
 						strict: true
 					)
 				) {
-					$this->dataEncode->startObject(objectKey: 'Row');
+					$this->dataEncode->startObject(
+						objectKey: 'Row'
+					);
 					foreach ($arr as $k => $v) {
-						$this->dataEncode->addKeyData(objectKey: $k, data: $v);
+						$this->dataEncode->addKeyData(
+							objectKey: $k,
+							data: $v
+						);
 					}
 					$this->dataEncode->endObject();
 				} else {
-					$this->dataEncode->addKeyData(objectKey: $i, data: $arr);
+					$this->dataEncode->addKeyData(
+						objectKey: $i,
+						data: $arr
+					);
 				}
 			}
 		}
@@ -449,7 +472,9 @@ class Supplement
 		}
 
 		$iCount = ($isObject || $isObject === null)
-			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
+			? 1 : $this->http->req->dataDecode->count(
+				keyString: $payloadIndex
+			);
 
 		for ($i = 0; $i < $iCount; $i++) {
 			if (
@@ -486,7 +511,9 @@ class Supplement
 
 			if (
 				$isObject !== null
-				&& !$this->http->req->dataDecode->isset(keyString: $payloadIndex)
+				&& !$this->http->req->dataDecode->isset(
+					keyString: $payloadIndex
+				)
 			) {
 				if ($useHierarchy) {
 					throw new \Exception(
@@ -511,14 +538,21 @@ class Supplement
 			}
 
 			// Validation
-			if (!$this->isValidPayload(sSqlConfig: $sSqlConfig, response: $_response)) {
+			if (
+				!$this->isValidPayload(
+					sSqlConfig: $sSqlConfig,
+					response: $_response
+				)
+			) {
 				continue;
 			}
 
 			// Execute Pre SQL Hook
 			if (isset($sSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
-					$this->hook = new Hook(http: $this->http);
+					$this->hook = new Hook(
+						http: $this->http
+					);
 				}
 				$this->hook->triggerHook(
 					hookArr: $sSqlConfig['__PRE-SQL-HOOKS__']
@@ -554,7 +588,9 @@ class Supplement
 			// Execute Post SQL Hook
 			if (isset($sSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
-					$this->hook = new Hook(http: $this->http);
+					$this->hook = new Hook(
+						http: $this->http
+					);
 				}
 				$this->hook->triggerHook(
 					hookArr: $sSqlConfig['__POST-SQL-HOOKS__']
@@ -618,7 +654,9 @@ class Supplement
 
 		if (
 			isset($sSqlConfig['__SUB-PAYLOAD__'])
-			&& $this->isObject(arr: $sSqlConfig['__SUB-PAYLOAD__'])
+			&& $this->isObject(
+				arr: $sSqlConfig['__SUB-PAYLOAD__']
+			)
 		) {
 			foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$_sSqlConfig) {
 				$dataExist = false;

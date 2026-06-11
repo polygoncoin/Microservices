@@ -147,9 +147,14 @@ class Web
 					break;
 			}
 		}
-		curl_setopt_array(handle: $curl, options: $curlConfig);
+		curl_setopt_array(
+			handle: $curl,
+			options: $curlConfig
+		);
 
-		$curlResponse = curl_exec(handle: $curl);
+		$curlResponse = curl_exec(
+			handle: $curl
+		);
 
 		$responseHttpCode = curl_getinfo(
 			handle: $curl,
@@ -161,7 +166,10 @@ class Web
 			option: \CURLINFO_CONTENT_TYPE
 		);
 
-		$headerSize = curl_getinfo(handle: $curl, option: \CURLINFO_HEADER_SIZE);
+		$headerSize = curl_getinfo(
+			handle: $curl,
+			option: \CURLINFO_HEADER_SIZE
+		);
 
 		$responseHeaderArr = self::httpParseHeaders(
 			rawHeaderArr: substr(
@@ -204,7 +212,9 @@ class Web
 		}
 
 		$return['HttpRequest'] = [
-			'URL' => htmlspecialchars(string: "{$homeURL}?route={$route}{$queryString}"),
+			'URL' => htmlspecialchars(
+				string: "{$homeURL}?route={$route}{$queryString}"
+			),
 			'Method' => $method,
 			'Headers' => $curlConfig[\CURLOPT_HTTPHEADER],
 			'Payload' => $requestPayload,
@@ -218,8 +228,12 @@ class Web
 		];
 
 		if ($curlResponse === false) {
-			$errorCode = curl_errno(handle: $curl);
-			$errorMessage = curl_error(handle: $curl);
+			$errorCode = curl_errno(
+				handle: $curl
+			);
+			$errorMessage = curl_error(
+				handle: $curl
+			);
 
 			$errorConstant = [];
 
@@ -395,9 +409,15 @@ class Web
 			}
 			if (is_array(value: $value)) {
 				$_xmlParamArr = $value;
-				self::genXmlPayload(xmlParamArr: $_xmlParamArr, payload: $payload, rowTagStartFlag: $rowTagStartFlag);
+				self::genXmlPayload(
+					xmlParamArr: $_xmlParamArr,
+					payload: $payload,
+					rowTagStartFlag: $rowTagStartFlag
+				);
 			} else {
-				$payload .= htmlspecialchars(string: $value);
+				$payload .= htmlspecialchars(
+					string: $value
+				);
 			}
 			if ($isObject) {
 				$payload .= "</{$column}>";

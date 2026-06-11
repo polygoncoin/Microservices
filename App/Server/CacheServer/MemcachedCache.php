@@ -153,7 +153,9 @@ class MemcachedCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->exist(key: $cacheKey);
+		return $this->noSqlServerObj->exist(
+			key: $cacheKey
+		);
 	}
 
 	/**
@@ -172,7 +174,9 @@ class MemcachedCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->get(key: $cacheKey);
+		return $this->noSqlServerObj->get(
+			key: $cacheKey
+		);
 	}
 
 	/**
@@ -242,6 +246,8 @@ class MemcachedCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->delete(key: $cacheKey);
+		return $this->noSqlServerObj->delete(
+			key: $cacheKey
+		);
 	}
 }

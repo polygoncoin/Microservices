@@ -248,7 +248,9 @@ class RouteParser
 				continue;
 			}
 			if ($i === 0) { // Route starting with reserved keyword
-				$this->isStartingWithReservedRouteKeyword(routeStartingKeyword: $element);
+				$this->isStartingWithReservedRouteKeyword(
+					routeStartingKeyword: $element
+				);
 			}
 
 			if (isset($routeConfig[$element])) { // Route element is configured
@@ -260,11 +262,15 @@ class RouteParser
 				}
 				$configuredRoute[] = $element;
 				$routeConfig = &$routeConfig[$element];
-				$this->checkPresenceOfDynamicString(element: $element);
+				$this->checkPresenceOfDynamicString(
+					element: $element
+				);
 				continue;
 			} elseif ( // Route ending with reserved keyword
 				$i === $routeLastElementPos
-				&& $this->isEndingWithReservedRouteKeyword(routeEndingKeyword: $element)
+				&& $this->isEndingWithReservedRouteKeyword(
+					routeEndingKeyword: $element
+				)
 			) {
 				break;
 			} else { // Route element is a variable/dynamic input
@@ -344,7 +350,9 @@ class RouteParser
 		}
 
 		$this->configuredRoute = '/' . implode(separator: '/', array: $configuredRoute);
-		$this->validateConfigFile(routeConfig: $routeConfig);
+		$this->validateConfigFile(
+			routeConfig: $routeConfig
+		);
 	}
 
 	/**

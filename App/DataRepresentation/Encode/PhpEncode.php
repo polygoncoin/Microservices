@@ -92,16 +92,22 @@ class PhpEncode implements DataEncodeInterface
 			if ($this->currentObject->mode === 'Object') {
 				if (is_array(value: $data)) {
 					foreach ($data as $k => $v) {
-						$this->currentObject->returnArray[$k] = $this->escape(data: $v);
+						$this->currentObject->returnArray[$k] = $this->escape(
+							data: $v
+						);
 					}
 				}
 			} else {
 				if (is_array(value: $data)) {
 					foreach ($data as $v) {
-						$this->currentObject->returnArray[] = $this->escape(data: $v);
+						$this->currentObject->returnArray[] = $this->escape(
+							data: $v
+						);
 					}
 				} else {
-					$this->currentObject->returnArray[] = $this->escape(data: $data);
+					$this->currentObject->returnArray[] = $this->escape(
+						data: $data
+					);
 				}
 			}
 		}
@@ -157,7 +163,9 @@ class PhpEncode implements DataEncodeInterface
 	public function appendData(
 		&$data
 	): void {
-		$this->write(data: $data);
+		$this->write(
+			data: $data
+		);
 	}
 
 	/**
@@ -176,7 +184,9 @@ class PhpEncode implements DataEncodeInterface
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
 		) {
-			$this->write(data: [$objectKey => $data]);
+			$this->write(
+				data: [$objectKey => $data]
+			);
 		}
 	}
 
@@ -197,7 +207,9 @@ class PhpEncode implements DataEncodeInterface
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		$this->encode(data: $data);
+		$this->encode(
+			data: $data
+		);
 	}
 
 	/**
@@ -219,7 +231,9 @@ class PhpEncode implements DataEncodeInterface
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		$this->encode(data: [$objectKey => $data]);
+		$this->encode(
+			data: [$objectKey => $data]
+		);
 	}
 
 	/**
@@ -238,7 +252,9 @@ class PhpEncode implements DataEncodeInterface
 				$this->currentObject
 			);
 		}
-		$this->currentObject = new PhpEncoderObject(mode: 'Array');
+		$this->currentObject = new PhpEncoderObject(
+			mode: 'Array'
+		);
 		if ($objectKey !== null) {
 			$this->currentObject->objectKey = $objectKey;
 		}
@@ -255,7 +271,9 @@ class PhpEncode implements DataEncodeInterface
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
-			$this->currentObject = array_pop(array: $this->objectArr);
+			$this->currentObject = array_pop(
+				array: $this->objectArr
+			);
 			if ($objectKey !== '') {
 				$this->currentObject->returnArray[$objectKey] = &$returnArray;
 			} else {
@@ -292,7 +310,9 @@ class PhpEncode implements DataEncodeInterface
 				$this->currentObject
 			);
 		}
-		$this->currentObject = new PhpEncoderObject(mode: 'Object');
+		$this->currentObject = new PhpEncoderObject(
+			mode: 'Object'
+		);
 		if ($objectKey !== null) {
 			$this->currentObject->objectKey = $objectKey;
 		}
@@ -309,7 +329,9 @@ class PhpEncode implements DataEncodeInterface
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
-			$this->currentObject = array_pop(array: $this->objectArr);
+			$this->currentObject = array_pop(
+				array: $this->objectArr
+			);
 			if ($objectKey !== '') {
 				$this->currentObject->returnArray[$objectKey] = &$returnArray;
 			} else {

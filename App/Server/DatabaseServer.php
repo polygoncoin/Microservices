@@ -295,6 +295,8 @@ class DatabaseServer
 	public function closeCursor(
 		$pushPop = false
 	): void {
-        $this->dbServerObj->closeCursor(pushPop: $pushPop);
+        $this->dbServerObj->closeCursor(
+			pushPop: $pushPop
+		);
 	}
 }

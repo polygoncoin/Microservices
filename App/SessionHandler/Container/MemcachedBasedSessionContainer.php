@@ -66,10 +66,14 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	): bool|string {
 		try {
 			if ($data = $this->memcachedServerObj->get($sessionId)) {
-				return $this->decryptData(cipherText: $data);
+				return $this->decryptData(
+					cipherText: $data
+				);
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -90,14 +94,18 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 			if (
 				$this->memcachedServerObj->set(
 					$sessionId,
-					$this->encryptData(plainText: $sessionData),
+					$this->encryptData(
+						plainText: $sessionData
+					),
 					$this->sessionMaxLifetime
 				)
 			) {
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -142,7 +150,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -175,7 +185,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -211,7 +223,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 				$this->memcachedServerPort
 			);
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 	}
 

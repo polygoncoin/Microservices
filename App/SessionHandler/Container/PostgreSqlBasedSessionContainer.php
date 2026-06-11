@@ -78,9 +78,14 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			(Env::$timestamp - $this->sessionMaxLifetime)
 		];
 
-		$row = $this->getSql(sql: $sql, paramArr: $paramArr);
+		$row = $this->getSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		if (isset($row['session_data'])) {
-			return $this->decryptData(cipherText: $row['session_data']);
+			return $this->decryptData(
+				cipherText: $row['session_data']
+			);
 		}
 		return false;
 	}
@@ -104,10 +109,15 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		$paramArr = [
 			$sessionId,
 			Env::$timestamp,
-			$this->encryptData(plainText: $sessionData),
+			$this->encryptData(
+				plainText: $sessionData
+			),
 		];
 
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -132,11 +142,16 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		";
 		$paramArr = [
 			Env::$timestamp,
-			$this->encryptData(plainText: $sessionData),
+			$this->encryptData(
+				plainText: $sessionData
+			),
 			$sessionId
 		];
 
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -160,7 +175,10 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			Env::$timestamp,
 			$sessionId
 		];
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -180,7 +198,10 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		$paramArr = [
 			(Env::$timestamp - $sessionMaxLifetime)
 		];
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -200,7 +221,10 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		$paramArr = [
 			$sessionId
 		];
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -237,7 +261,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 				. "dbname={$this->pgSqlServerDatabase} {$UP}"
 			);
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 	}
 
@@ -276,7 +302,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 				return $row;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -303,7 +331,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}

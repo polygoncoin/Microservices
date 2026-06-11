@@ -156,7 +156,9 @@ trait AppTrait
 		) {
 			if (
 				isset($sqlConfig['__SUB-QUERY__'])
-				&& !$this->isObject(arr: $sqlConfig['__SUB-QUERY__'])
+				&& !$this->isObject(
+					arr: $sqlConfig['__SUB-QUERY__']
+				)
 			) {
 				throw new \Exception(
 					message: 'Sub-Query should be an associative array',
@@ -165,7 +167,9 @@ trait AppTrait
 			}
 			if (
 				isset($sqlConfig['__SUB-PAYLOAD__'])
-				&& !$this->isObject(arr: $sqlConfig['__SUB-PAYLOAD__'])
+				&& !$this->isObject(
+					arr: $sqlConfig['__SUB-PAYLOAD__']
+				)
 			) {
 				throw new \Exception(
 					message: 'Sub-Payload should be an associative array',
@@ -221,10 +225,14 @@ trait AppTrait
 	public function validate(&$validationConfig): array
 	{
 		if ($this->validator === null) {
-			$this->validator = new Validator(http: $this->http);
+			$this->validator = new Validator(
+				http: $this->http
+			);
 		}
 
-		return $this->validator->validate(validationConfig: $validationConfig);
+		return $this->validator->validate(
+			validationConfig: $validationConfig
+		);
 	}
 
 	/**
@@ -935,7 +943,11 @@ trait AppTrait
 			isset($sqlConfig['referrerLagWindow'])
 			&& count(value: $sqlConfig['referrerLagWindow']) > 0
 		) {
-			if (!$this->http->req->customerCacheObj->cacheExist(cacheKey: $customerUserReferrerLagKey)) {
+			if (
+				!$this->http->req->customerCacheObj->cacheExist(
+					cacheKey: $customerUserReferrerLagKey
+				)
+			) {
 				throw new \Exception(
 					message: 'Referrer lag not initiated',
 					code: HttpStatus::$BadRequest
@@ -960,13 +972,17 @@ trait AppTrait
 								if ($tsDiff <= $referrerSqlConfig['maximumReferrerLagWindow']) {
 									$found = true;
 								} else {
-									$this->http->req->customerCacheObj->cacheDelete(cacheKey: $customerUserReferrerLagKey);
+									$this->http->req->customerCacheObj->cacheDelete(
+										cacheKey: $customerUserReferrerLagKey
+									);
 								}
 							} else {
 								$found = true;
 							}
 						} else {
-							$this->http->req->customerCacheObj->cacheDelete(cacheKey: $customerUserReferrerLagKey);
+							$this->http->req->customerCacheObj->cacheDelete(
+								cacheKey: $customerUserReferrerLagKey
+							);
 						}
 					}
 				}
@@ -983,7 +999,11 @@ trait AppTrait
 			isset($sqlConfig['enableReferrerLag'])
 			&& $sqlConfig['enableReferrerLag'] === 'Yes'
 		) {
-			if (!$this->http->req->customerCacheObj->cacheExist(cacheKey: $customerUserReferrerLagKey)) {
+			if (
+				!$this->http->req->customerCacheObj->cacheExist(
+					cacheKey: $customerUserReferrerLagKey
+				)
+			) {
 				$this->http->req->customerCacheObj->cacheSet(
 					cacheKey: $customerUserReferrerLagKey,
 					cacheValue: [
@@ -1048,12 +1068,16 @@ trait AppTrait
 				);
 				if (
 					$this->http->req->isPrivateRequest
-					&& $this->http->req->customerCacheObj->cacheExist(cacheKey: $hashKey)
+					&& $this->http->req->customerCacheObj->cacheExist(
+						cacheKey: $hashKey
+					)
 				) {
 					$hashJson = str_replace(
 						search: 'JSON',
 						replace: json_encode(
-							value: $this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey)
+							value: $this->http->req->customerCacheObj->cacheGet(
+								cacheKey: $hashKey
+							)
 						),
 						subject: '{"Idempotent": JSON, "Status": 200}'
 					);
@@ -1100,8 +1124,14 @@ trait AppTrait
 			string: $hash
 		);
 
-		if ($this->http->req->customerCacheObj->cacheExist(cacheKey: $hashKey)) {
-			$noOfRequest = $this->http->req->customerCacheObj->cacheGet(cacheKey: $hashKey);
+		if (
+			$this->http->req->customerCacheObj->cacheExist(
+				cacheKey: $hashKey
+			)
+		) {
+			$noOfRequest = $this->http->req->customerCacheObj->cacheGet(
+				cacheKey: $hashKey
+			);
 		} else {
 			$noOfRequest = 0;
 		}
@@ -1157,8 +1187,12 @@ trait AppTrait
 
 		$triggerOutput = [];
 		if ($isObject) {
-			$httpReqData = $this->getTriggerHttp(triggerConfig: $triggerConfig);
-			[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
+			$httpReqData = $this->getTriggerHttp(
+				triggerConfig: $triggerConfig
+			);
+			[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+				httpReqData: $httpReqData
+			);
 			$triggerOutput = &$responseContent;
 		} else {
 			for (
@@ -1166,8 +1200,12 @@ trait AppTrait
 				$iTrigger < $iTriggerCount;
 				$iTrigger++
 			) {
-				$httpReqData = $this->getTriggerHttp(triggerConfig: $triggerConfig[$iTrigger]);
-				[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
+				$httpReqData = $this->getTriggerHttp(
+					triggerConfig: $triggerConfig[$iTrigger]
+				);
+				[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+					httpReqData: $httpReqData
+				);
 				$triggerOutput[] = &$responseContent;
 			}
 		}

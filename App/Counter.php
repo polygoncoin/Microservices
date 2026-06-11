@@ -51,7 +51,9 @@ class Counter
 			case 'Cache':
 				$cacheKey = Env::$gCounter;
 				DbCommonFunction::connectGlobalCache();
-				$id = (int)DbCommonFunction::$gCacheServer->cacheIncrement(cacheKey: $cacheKey);
+				$id = (int)DbCommonFunction::$gCacheServer->cacheIncrement(
+					cacheKey: $cacheKey
+				);
 				break;
 			case 'Database':
 				DbCommonFunction::connectGlobalDb();
@@ -60,7 +62,10 @@ class Counter
 				$sql = "INSERT INTO {$table}() VALUES()";
 				$paramArr = [];
 
-				DbCommonFunction::$gDbServer->execQuery(sql: $sql, paramArr: $paramArr);
+				DbCommonFunction::$gDbServer->execQuery(
+					sql: $sql,
+					paramArr: $paramArr
+				);
 				$id = DbCommonFunction::$gDbServer->lastInsertId();
 				break;
 		}

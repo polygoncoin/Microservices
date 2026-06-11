@@ -140,10 +140,15 @@ class PostgreSql implements SqlInterface
 				username: $this->dbServerUsername,
 				password: $this->dbServerPassword,
 			);
-			$pgsqlServerObj->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$pgsqlServerObj->setAttribute(
+				\PDO::ATTR_ERRMODE,
+				\PDO::ERRMODE_EXCEPTION
+			);
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -172,7 +177,9 @@ class PostgreSql implements SqlInterface
 			$this->pgsqlServerObj->beginTransaction();
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -191,7 +198,9 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -210,7 +219,9 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -231,7 +242,9 @@ class PostgreSql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -253,7 +266,9 @@ class PostgreSql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -290,14 +305,18 @@ class PostgreSql implements SqlInterface
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
 			if ($this->stmt) {
-				$this->stmt->execute(paramArr: $paramArr);
+				$this->stmt->execute(
+					paramArr: $paramArr
+				);
 			}
 		} catch (\PDOException $e) {
 			if ($this->beganTransaction) {
 				$this->rollBack();
 			}
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -311,11 +330,15 @@ class PostgreSql implements SqlInterface
 	{
 		try {
 			if ($this->stmt) {
-				return $this->stmt->fetch(mode: \PDO::FETCH_ASSOC);
+				return $this->stmt->fetch(
+					mode: \PDO::FETCH_ASSOC
+				);
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -330,11 +353,15 @@ class PostgreSql implements SqlInterface
 	{
 		try {
 			if ($this->stmt) {
-				return $this->stmt->fetchAll(mode: \PDO::FETCH_ASSOC);
+				return $this->stmt->fetchAll(
+					mode: \PDO::FETCH_ASSOC
+				);
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -357,12 +384,16 @@ class PostgreSql implements SqlInterface
 					$pushPop
 					&& count(value: $this->stmtArr)
 				) {
-					$this->stmt = array_pop(array: $this->stmtArr);
+					$this->stmt = array_pop(
+						array: $this->stmtArr
+					);
 				}
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}

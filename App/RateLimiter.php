@@ -94,7 +94,11 @@ class RateLimiter
 
 		$rateLimitCacheKey = $rateLimitPrefix . $rateLimitKey;
 
-		if ($this->cacheObj->cacheExist(cacheKey: $rateLimitKey)) {
+		if (
+			$this->cacheObj->cacheExist(
+				cacheKey: $rateLimitKey
+			)
+		) {
 			$requestCount = (int)$this->cacheObj->cacheGet(
 				cacheKey: $rateLimitCacheKey
 			);
@@ -116,7 +120,9 @@ class RateLimiter
 		$resetOn = Env::$timestamp + $remainder;
 
 		if ($allowed) {
-			$this->cacheObj->cacheIncrement(cacheKey: $rateLimitKey);
+			$this->cacheObj->cacheIncrement(
+				cacheKey: $rateLimitKey
+			);
 		}
 
 		return [

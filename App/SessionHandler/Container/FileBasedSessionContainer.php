@@ -51,7 +51,11 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 		$sessionName
 	): void {
 		if (!is_dir(filename: $sessionSavePath)) {
-			mkdir(directory: $sessionSavePath, permissions: 0755, recursive: true);
+			mkdir(
+				directory: $sessionSavePath,
+				permissions: 0755,
+				recursive: true
+			);
 		}
 		$this->sessionSavePath = $sessionSavePath;
 	}
@@ -73,7 +77,9 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 			$fileatime = fileatime(filename: $filepath);
 			if ((Env::$timestamp - $fileatime) < $this->sessionMaxLifetime) {
 				return $this->decryptData(
-					cipherText: file_get_contents(filename: $filepath)
+					cipherText: file_get_contents(
+						filename: $filepath
+					)
 				);
 			}
 		}
@@ -95,11 +101,15 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
 		if (!file_exists(filename: $filepath)) {
-			touch(filename: $filepath);
+			touch(
+				filename: $filepath
+			);
 		}
 		return file_put_contents(
 			filename: $filepath,
-			data: $this->encryptData(plainText: $sessionData)
+			data: $this->encryptData(
+				plainText: $sessionData
+			)
 		);
 	}
 
@@ -115,7 +125,10 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		return $this->setSession(sessionId: $sessionId, sessionData: $sessionData);
+		return $this->setSession(
+			sessionId: $sessionId,
+			sessionData: $sessionData
+		);
 	}
 
 	/**
@@ -132,7 +145,9 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 	): bool {
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
-		return touch(filename: $filepath);
+		return touch(
+			filename: $filepath
+		);
 	}
 
 	/**
@@ -170,7 +185,9 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
 		if (file_exists(filename: $filepath)) {
-			unlink(filename: $filepath);
+			unlink(
+				filename: $filepath
+			);
 		}
 		return true;
 	}

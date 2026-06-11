@@ -73,7 +73,9 @@ class Start
 		}
 
 		try {
-			$Microservices = new Microservices(httpReqData: $httpReqData);
+			$Microservices = new Microservices(
+				httpReqData: $httpReqData
+			);
 
 			if (
 				$httpReqData['streamData']
@@ -139,8 +141,12 @@ class Start
 					'HttpMessage' => $e->getMessage(),
 				];
 
-				$logObj = new Log(http: $Microservices->http);
-				$logId = $logObj->log(logData: $logData);
+				$logObj = new Log(
+					http: $Microservices->http
+				);
+				$logId = $logObj->log(
+					logData: $logData
+				);
 			}
 
 			$headerArr = [];
@@ -164,10 +170,15 @@ class Start
 				];
 			}
 
-			// $dataEncode = new DataEncode(httpReqData: $httpReqData);
+			// $dataEncode = new DataEncode(
+			// httpReqData: $httpReqData
+			// );
 			// $dataEncode->init();
 			// $dataEncode->startObject();
-			// $dataEncode->addKeyData(objectKey: 'Error', data: $arr);
+			// $dataEncode->addKeyData(
+			// objectKey: 'Error',
+			// data: $arr
+			// );
 
 			// $data = $dataEncode->getData();
 

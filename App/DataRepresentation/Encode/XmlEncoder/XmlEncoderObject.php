@@ -46,7 +46,11 @@ class XmlEncoderObject
 	) {
 		$this->mode = $mode;
 		if ($objectKey !== null) {
-			$this->objectKey = str_replace(search: ':', replace: '-', subject: $objectKey);
+			$this->objectKey = str_replace(
+				search: ':',
+				replace: '-',
+				subject: $objectKey
+			);
 		} else {
 			$this->objectKey = $objectKey;
 		}

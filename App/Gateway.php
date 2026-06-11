@@ -60,7 +60,9 @@ class Gateway
 	{
 		if ($this->http->req->isPrivateRequest) {
 			$this->http->req->auth->loadUserData();
-			CommonFunction::checkPrivateRequestCidr(http: $this->http);
+			CommonFunction::checkPrivateRequestCidr(
+				http: $this->http
+			);
 
 			$this->rateLimitRequest();
 		}

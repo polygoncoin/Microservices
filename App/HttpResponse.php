@@ -94,7 +94,9 @@ class HttpResponse
 		$this->http = &$http;
 		$this->httpStatus = HttpStatus::$Ok;
 		$this->oRepresentation = Env::$oRepresentation;
-		$this->dataEncode = new DataEncode(http: $this->http);
+		$this->dataEncode = new DataEncode(
+			http: $this->http
+		);
 	}
 
 	/**

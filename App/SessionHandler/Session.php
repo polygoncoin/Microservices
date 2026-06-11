@@ -343,7 +343,9 @@ class Session
 		}
 
 		// Initialize
-		$this->setOptions(optionArr: $options);
+		$this->setOptions(
+			optionArr: $options
+		);
 		$this->initProcess();
 	}
 
@@ -379,7 +381,9 @@ class Session
 			$this->optionArr['read_and_close'] = true;
 
 			$this->sessionContainer->sessionOptionArr = $this->optionArr;
-			return session_start(options: $this->optionArr);
+			return session_start(
+				options: $this->optionArr
+			);
 		}
 		return false;
 	}
@@ -397,7 +401,9 @@ class Session
 			unset($this->optionArr['read_and_close']);
 		}
 
-		return session_start(options: $this->optionArr);
+		return session_start(
+			options: $this->optionArr
+		);
 	}
 
 	/**

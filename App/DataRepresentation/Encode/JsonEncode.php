@@ -107,7 +107,10 @@ class JsonEncode implements DataEncodeInterface
 	private function write(
 		$data
 	): void {
-		fwrite(stream: $this->tempStream, data: $data);
+		fwrite(
+			stream: $this->tempStream,
+			data: $data
+		);
 	}
 
 	/**
@@ -121,7 +124,9 @@ class JsonEncode implements DataEncodeInterface
 		$data
 	): void {
 		if ($this->currentObject) {
-			$this->write(data: $this->currentObject->comma);
+			$this->write(
+				data: $this->currentObject->comma
+			);
 		}
 		if (is_array(value: $data)) {
 			$this->write(
@@ -130,7 +135,11 @@ class JsonEncode implements DataEncodeInterface
 				)
 			);
 		} else {
-			$this->write(data: $this->escape(data: $data));
+			$this->write(
+				data: $this->escape(
+					data: $data
+				)
+			);
 		}
 		if ($this->currentObject) {
 			$this->currentObject->comma = ', ';
@@ -169,8 +178,12 @@ class JsonEncode implements DataEncodeInterface
 		&$data
 	): void {
 		if ($this->currentObject) {
-			$this->write(data: $this->currentObject->comma);
-			$this->write(data: $data);
+			$this->write(
+				data: $this->currentObject->comma
+			);
+			$this->write(
+				data: $data
+			);
 			$this->currentObject->comma = ', ';
 		}
 	}
@@ -191,8 +204,14 @@ class JsonEncode implements DataEncodeInterface
 			$this->currentObject
 			&& $this->currentObject->mode === 'Object'
 		) {
-			$this->write(data: $this->currentObject->comma);
-			$this->write(data: $this->escape(data: $objectKey) . ':' . $data);
+			$this->write(
+				data: $this->currentObject->comma
+			);
+			$this->write(
+				data: $this->escape(
+					data: $objectKey
+				) . ':' . $data
+			);
 			$this->currentObject->comma = ', ';
 		}
 	}
@@ -214,7 +233,9 @@ class JsonEncode implements DataEncodeInterface
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		$this->encode(data: $data);
+		$this->encode(
+			data: $data
+		);
 	}
 
 	/**
@@ -236,10 +257,18 @@ class JsonEncode implements DataEncodeInterface
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		$this->write(data: $this->currentObject->comma);
-		$this->write(data: $this->escape(data: $objectKey) . ':');
+		$this->write(
+			data: $this->currentObject->comma
+		);
+		$this->write(
+			data: $this->escape(
+				data: $objectKey
+			) . ':'
+		);
 		$this->currentObject->comma = '';
-		$this->encode(data: $data);
+		$this->encode(
+			data: $data
+		);
 	}
 
 	/**
@@ -253,17 +282,27 @@ class JsonEncode implements DataEncodeInterface
 		$objectKey = null
 	): void {
 		if ($this->currentObject) {
-			$this->write(data: $this->currentObject->comma);
+			$this->write(
+				data: $this->currentObject->comma
+			);
 			array_push(
 				$this->objectArr,
 				$this->currentObject
 			);
 		}
-		$this->currentObject = new JsonEncoderObject(mode: 'Array');
+		$this->currentObject = new JsonEncoderObject(
+			mode: 'Array'
+		);
 		if ($objectKey !== null) {
-			$this->write(data: $this->escape(data: $objectKey) . ':');
+			$this->write(
+				data: $this->escape(
+					data: $objectKey
+				) . ':'
+			);
 		}
-		$this->write(data: '[');
+		$this->write(
+			data: '['
+		);
 	}
 
 	/**
@@ -273,10 +312,14 @@ class JsonEncode implements DataEncodeInterface
 	 */
 	public function endArray(): void
 	{
-		$this->write(data: ']');
+		$this->write(
+			data: ']'
+		);
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
-			$this->currentObject = array_pop(array: $this->objectArr);
+			$this->currentObject = array_pop(
+				array: $this->objectArr
+			);
 			$this->currentObject->comma = ', ';
 		}
 	}
@@ -302,17 +345,27 @@ class JsonEncode implements DataEncodeInterface
 					code: HttpStatus::$InternalServerError
 				);
 			}
-			$this->write(data: $this->currentObject->comma);
+			$this->write(
+				data: $this->currentObject->comma
+			);
 			array_push(
 				$this->objectArr,
 				$this->currentObject
 			);
 		}
-		$this->currentObject = new JsonEncoderObject(mode: 'Object');
+		$this->currentObject = new JsonEncoderObject(
+			mode: 'Object'
+		);
 		if ($objectKey !== null) {
-			$this->write(data: $this->escape(data: $objectKey) . ':');
+			$this->write(
+				data: $this->escape(
+					data: $objectKey
+				) . ':'
+			);
 		}
-		$this->write(data: '{');
+		$this->write(
+			data: '{'
+		);
 	}
 
 	/**
@@ -322,10 +375,14 @@ class JsonEncode implements DataEncodeInterface
 	 */
 	public function endObject(): void
 	{
-		$this->write(data: '}');
+		$this->write(
+			data: '}'
+		);
 		$this->currentObject = null;
 		if (count(value: $this->objectArr) > 0) {
-			$this->currentObject = array_pop(array: $this->objectArr);
+			$this->currentObject = array_pop(
+				array: $this->objectArr
+			);
 			$this->currentObject->comma = ', ';
 		}
 	}

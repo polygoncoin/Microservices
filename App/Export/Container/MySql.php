@@ -277,11 +277,17 @@ class MySql implements ExportDatabaseServerInterface
 					string: $value
 				) . "'";
 			}
-			$sql = str_replace(search: $parameterisedColumn, replace: $value, subject: $sql);
+			$sql = str_replace(
+				search: $parameterisedColumn,
+				replace: $value,
+				subject: $sql
+			);
 		}
 
 		// Close mysqli connection.
-		mysqli_close(mysql: $mysqli);
+		mysqli_close(
+			mysql: $mysqli
+		);
 
 		return $sql;
 	}
@@ -298,7 +304,10 @@ class MySql implements ExportDatabaseServerInterface
 		$sql,
 		$paramArr = null
 	): string {
-		$sql = $this->generateRawSqlQuery(sql: $sql, paramArr: $paramArr);
+		$sql = $this->generateRawSqlQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 
 		// Shell command.
 		$shellCommand = $this->binaryLoc . ' '

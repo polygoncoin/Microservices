@@ -41,7 +41,9 @@ class Autoload
 	): void {
 		$className = substr(
 			string: $className,
-			offset: strlen(string: __NAMESPACE__)
+			offset: strlen(
+				string: __NAMESPACE__
+			)
 		);
 		$className = str_replace(
 			search: "\\",
@@ -49,7 +51,11 @@ class Autoload
 			subject: $className
 		);
 		$file = __DIR__ . $className . '.php';
-		if (!file_exists(filename: $file)) {
+		if (
+			!file_exists(
+				filename: $file
+			)
+		) {
 			echo PHP_EOL . "File '{$file}' missing" . PHP_EOL;
 		} else {
 			include_once $file;

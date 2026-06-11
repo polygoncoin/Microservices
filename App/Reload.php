@@ -124,7 +124,9 @@ class Reload
 					cidrString: $customerData['customer_allowed_cidr']
 				);
 				if (count(value: $customerCidrIpNumberRangeArr) > 0) {
-					$customerCidrCacheKey = CacheServerKey::customerCidr(customerId: $customerData['customer_id']);
+					$customerCidrCacheKey = CacheServerKey::customerCidr(
+						customerId: $customerData['customer_id']
+					);
 					DbCommonFunction::$gCacheServer->cacheSet(
 						cacheKey: $customerCidrCacheKey,
 						cacheValue: $customerCidrIpNumberRangeArr
@@ -159,7 +161,9 @@ class Reload
 		$customerData,
 		$customerUserGroupId = null
 	): bool {
-		$customerCacheServerCred = DbCommonFunction::customerCacheServerCred(customerData: $customerData);
+		$customerCacheServerCred = DbCommonFunction::customerCacheServerCred(
+			customerData: $customerData
+		);
 		$customerCacheObj = DbCommonFunction::connectCache(
 			cacheServerType: $customerCacheServerCred['cacheServerType'],
 			cacheServerHostname: $customerCacheServerCred['cacheServerHostname'],
@@ -170,7 +174,9 @@ class Reload
 			cacheServerTable: $customerCacheServerCred['cacheServerTable']
 		);
 
-		$customerMasterDatabaseServerCred = DbCommonFunction::customerMasterDatabaseServerCred(customerData: $customerData);
+		$customerMasterDatabaseServerCred = DbCommonFunction::customerMasterDatabaseServerCred(
+			customerData: $customerData
+		);
 		$customerDbObj = DbCommonFunction::connectDb(
 			dbServerType: $customerMasterDatabaseServerCred['dbServerType'],
 			dbServerHostname: $customerMasterDatabaseServerCred['dbServerHostname'],
@@ -239,7 +245,9 @@ class Reload
 		$customerData,
 		$customerUserId = null
 	): bool {
-		$customerCacheServerCred = DbCommonFunction::customerCacheServerCred(customerData: $customerData);
+		$customerCacheServerCred = DbCommonFunction::customerCacheServerCred(
+			customerData: $customerData
+		);
 		$customerCacheObj = DbCommonFunction::connectCache(
 			cacheServerType: $customerCacheServerCred['cacheServerType'],
 			cacheServerHostname: $customerCacheServerCred['cacheServerHostname'],
@@ -250,7 +258,9 @@ class Reload
 			cacheServerTable: $customerCacheServerCred['cacheServerTable']
 		);
 
-		$customerMasterDatabaseServerCred = DbCommonFunction::customerMasterDatabaseServerCred(customerData: $customerData);
+		$customerMasterDatabaseServerCred = DbCommonFunction::customerMasterDatabaseServerCred(
+			customerData: $customerData
+		);
 		$customerDbObj = DbCommonFunction::connectDb(
 			dbServerType: $customerMasterDatabaseServerCred['dbServerType'],
 			dbServerHostname: $customerMasterDatabaseServerCred['dbServerHostname'],

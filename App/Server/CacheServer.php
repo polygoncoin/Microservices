@@ -174,7 +174,9 @@ class CacheServer
 			return false;
 		}
 
-		return $this->cacheServerObj->cacheExist(cacheKey: $cacheKey);
+		return $this->cacheServerObj->cacheExist(
+			cacheKey: $cacheKey
+		);
 	}
 
 	/**
@@ -193,7 +195,9 @@ class CacheServer
 			return false;
 		}
 
-		return $this->cacheServerObj->cacheGet(cacheKey: $cacheKey);
+		return $this->cacheServerObj->cacheGet(
+			cacheKey: $cacheKey
+		);
 	}
 
 	/**
@@ -263,6 +267,8 @@ class CacheServer
 			return false;
 		}
 
-		return $this->cacheServerObj->cacheDelete(cacheKey: $cacheKey);
+		return $this->cacheServerObj->cacheDelete(
+			cacheKey: $cacheKey
+		);
 	}
 }

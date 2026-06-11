@@ -108,7 +108,9 @@ class Login
 
 		$this->loadPayload();
 		$this->loadUserData();
-		CommonFunction::checkPrivateRequestCidr(http: $this->http);
+		CommonFunction::checkPrivateRequestCidr(
+			http: $this->http
+		);
 		$this->validatePassword();
 
 		if (
@@ -195,7 +197,11 @@ class Login
 			username: $this->payload['username']
 		);
 		// Redis - one can find the customerUserId from customer username
-		if (!$this->cacheExist(cacheKey: $customerUserKey)) {
+		if (
+			!$this->cacheExist(
+				cacheKey: $customerUserKey
+			)
+		) {
 			throw new \Exception(
 				message: 'Invalid credentials',
 				code: HttpStatus::$Unauthorized
@@ -262,15 +268,23 @@ class Login
 	{
 		//generates a crypto-secure 64 characters long
 		while (true) {
-			$authId = bin2hex(string: random_bytes(length: 32));
+			$authId = bin2hex(
+				string: random_bytes(
+					length: 32
+				)
+			);
 
 			if (
 				!$this->cacheExist(
-					cacheKey: CacheServerKey::token(token: $authId)
+					cacheKey: CacheServerKey::token(
+						token: $authId
+					)
 				)
 			) {
 				$this->cacheSet(
-					cacheKey: CacheServerKey::token(token: $authId),
+					cacheKey: CacheServerKey::token(
+						token: $authId
+					),
 					cacheValue: '{}',
 					cacheExpire: Constant::$TOKEN_EXPIRY_TIME
 				);
@@ -289,7 +303,9 @@ class Login
 		}
 
 		$this->cacheSet(
-			cacheKey: CacheServerKey::token(token: $userTokenData['authId']),
+			cacheKey: CacheServerKey::token(
+				token: $userTokenData['authId']
+			),
 			cacheValue: $userTokenData,
 			cacheExpire: Constant::$TOKEN_EXPIRY_TIME
 		);
@@ -352,7 +368,11 @@ class Login
 			customerUserId: $this->http->req->customerUserId
 		);
 
-		if ($this->cacheExist(cacheKey: $customerUserTokenKey)) {
+		if (
+			$this->cacheExist(
+				cacheKey: $customerUserTokenKey
+			)
+		) {
 			$customerUserToken = $this->cacheGet(
 				cacheKey: $customerUserTokenKey
 			);
@@ -369,7 +389,11 @@ class Login
 				customerUserId: $this->http->req->customerUserId
 			);
 
-			if ($this->cacheExist(cacheKey: $customerUserConcurrencyKey)) {
+			if (
+				$this->cacheExist(
+					cacheKey: $customerUserConcurrencyKey
+				)
+			) {
 				if ($this->http->req->session === null) {
 					$this->http->req->session = new Session();
 					$this->http->req->session->sessionDomain = $this->http->httpReqData['server']['domainName'];
@@ -385,7 +409,11 @@ class Login
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
 						$authData['authMode'] === 'Token'
-						&& !$this->cacheExist(cacheKey: CacheServerKey::token(token: $authId))
+						&& !$this->cacheExist(
+							cacheKey: CacheServerKey::token(
+								token: $authId
+							)
+						)
 					) {
 						unset($customerUserConcurrencyData[$authId]);
 						continue;
@@ -393,7 +421,9 @@ class Login
 					if ($authData['authMode'] === 'Session') {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
 						if ((Constant::$TOKEN_EXPIRY_TIME - $timeLeft) <= 0) {
-							$this->http->req->session->deleteSession(sessionId: $authId);
+							$this->http->req->session->deleteSession(
+								sessionId: $authId
+							);
 							unset($customerUserConcurrencyData[$authId]);
 							continue;
 						}
@@ -411,10 +441,18 @@ class Login
 		} else {
 			if (
 				$customerUserToken !== null
-				&& $this->cacheExist(cacheKey: CacheServerKey::token(token: $customerUserToken))
+				&& $this->cacheExist(
+					cacheKey: CacheServerKey::token(
+						token: $customerUserToken
+					)
+				)
 			) {
 				$authId = $customerUserToken;
-				$authData = $this->cacheGet(cacheKey: CacheServerKey::token(token: $customerUserToken));
+				$authData = $this->cacheGet(
+					cacheKey: CacheServerKey::token(
+						token: $customerUserToken
+					)
+				);
 				if ($authData['httpRequestHash'] === $httpRequestHash) {
 					$authFoundData = $authData;
 					$authFound = true;
@@ -465,7 +503,9 @@ class Login
 			'Expires' => date('d\ \d\a\y H\ \h\o\u\r i\ \m\i\n s\ \s\e\c', (Constant::$TOKEN_EXPIRY_TIME - $timeLeft))
 		];
 
-		$this->outputDetail(output: $output);
+		$this->outputDetail(
+			output: $output
+		);
 	}
 
 	/**
@@ -479,7 +519,10 @@ class Login
 	{
 		$this->http->initResponse();
 		$this->http->res->dataEncode->startObject();
-		$this->http->res->dataEncode->addKeyData(objectKey: 'Results', data: $output);
+		$this->http->res->dataEncode->addKeyData(
+			objectKey: 'Results',
+			data: $output
+		);
 	}
 
 	/**
@@ -505,7 +548,11 @@ class Login
 			customerUserId: $this->http->req->customerUserId
 		);
 
-		if ($this->cacheExist(cacheKey: $customerUserSessionIdKey)) {
+		if (
+			$this->cacheExist(
+				cacheKey: $customerUserSessionIdKey
+			)
+		) {
 			$customerUserSessionId = $this->cacheGet(
 				cacheKey: $customerUserSessionIdKey
 			);
@@ -522,7 +569,11 @@ class Login
 				customerUserId: $this->http->req->customerUserId
 			);
 
-			if ($this->cacheExist(cacheKey: $customerUserConcurrencyKey)) {
+			if (
+				$this->cacheExist(
+					cacheKey: $customerUserConcurrencyKey
+				)
+			) {
 				if ($this->http->req->session === null) {
 					$this->http->req->session = new Session();
 					$this->http->req->session->sessionDomain = $this->http->httpReqData['server']['domainName'];
@@ -538,7 +589,11 @@ class Login
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
 						$authData['authMode'] === 'Token'
-						&& !$this->cacheExist(cacheKey: CacheServerKey::token(token: $authId))
+						&& !$this->cacheExist(
+							cacheKey: CacheServerKey::token(
+								token: $authId
+							)
+						)
 					) {
 						unset($customerUserConcurrencyData[$authId]);
 						continue;
@@ -546,7 +601,9 @@ class Login
 					if ($authData['authMode'] === 'Session') {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
 						if ((Constant::$TOKEN_EXPIRY_TIME - $timeLeft) <= 0) {
-							$this->http->req->session->deleteSession(sessionId: $authId);
+							$this->http->req->session->deleteSession(
+								sessionId: $authId
+							);
 							unset($customerUserConcurrencyData[$authId]);
 							continue;
 						}
@@ -622,7 +679,9 @@ class Login
 			'Expires' => date('d\ \d\a\y H\ \h\o\u\r i\ \m\i\n s\ \s\e\c', (Constant::$TOKEN_EXPIRY_TIME - $timeLeft))
 		];
 
-		$this->outputDetail(output: $output);
+		$this->outputDetail(
+			output: $output
+		);
 	}
 
 	/**
@@ -635,7 +694,9 @@ class Login
 	private function cacheExist(
 		$cacheKey
 	): mixed {
-		return $this->http->req->customerCacheObj->cacheExist(cacheKey: $cacheKey);
+		return $this->http->req->customerCacheObj->cacheExist(
+			cacheKey: $cacheKey
+		);
 	}
 
 	/**
@@ -648,7 +709,9 @@ class Login
 	private function cacheGet(
 		$cacheKey
 	): mixed {
-		return $this->http->req->customerCacheObj->cacheGet(cacheKey: $cacheKey);
+		return $this->http->req->customerCacheObj->cacheGet(
+			cacheKey: $cacheKey
+		);
 	}
 
 	/**
@@ -682,6 +745,8 @@ class Login
 	private function cacheDelete(
 		$cacheKey
 	): mixed {
-		return $this->http->req->customerCacheObj->cacheDelete(cacheKey: $cacheKey);
+		return $this->http->req->customerCacheObj->cacheDelete(
+			cacheKey: $cacheKey
+		);
 	}
 }

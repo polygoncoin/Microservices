@@ -100,14 +100,18 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 			if (
 				$this->redisServerObj->set(
 					$sessionId,
-					$this->encryptData(plainText: $sessionData),
+					$this->encryptData(
+						plainText: $sessionData
+					),
 					$this->sessionMaxLifetime
 				)
 			) {
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -152,7 +156,9 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -240,7 +246,9 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 				$this->redisServerDatabase
 			);
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 	}
 

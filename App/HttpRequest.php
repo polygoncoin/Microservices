@@ -230,16 +230,28 @@ class HttpRequest
 		$this->isPrivateSessionDomain = false;
 		$this->isPrivateTokenDomain = false;
 
-		$publicDomainCacheKey = CacheServerKey::publicDomain(domainName: $this->http->httpReqData['server']['domainName']);
-		if (DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $publicDomainCacheKey)) {
+		$publicDomainCacheKey = CacheServerKey::publicDomain(
+			domainName: $this->http->httpReqData['server']['domainName']
+		);
+		if (
+			DbCommonFunction::$gCacheServer->cacheExist(
+				cacheKey: $publicDomainCacheKey
+			)
+		) {
 			$this->isPublicDomain = true;
 			$this->domainCacheKey = $publicDomainCacheKey;
 			$this->isPrivateRequest = false;
 			$this->isPublicRequest = true;
 		}
 		if (!$this->isPublicDomain) {
-			$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(domainName: $this->http->httpReqData['server']['domainName']);
-			if (DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $privateSessionDomainCacheKey)) {
+			$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(
+				domainName: $this->http->httpReqData['server']['domainName']
+			);
+			if (
+				DbCommonFunction::$gCacheServer->cacheExist(
+					cacheKey: $privateSessionDomainCacheKey
+				)
+			) {
 				$this->isPrivateSessionDomain = true;
 				$this->domainCacheKey = $privateSessionDomainCacheKey;
 				$this->isPrivateRequest = true;
@@ -250,8 +262,14 @@ class HttpRequest
 			!$this->isPublicDomain
 			&& !$this->isPrivateSessionDomain
 		) {
-			$privateTokenDomainCacheKey = CacheServerKey::privateTokenDomain(domainName: $this->http->httpReqData['server']['domainName']);
-			if (DbCommonFunction::$gCacheServer->cacheExist(cacheKey: $privateTokenDomainCacheKey)) {
+			$privateTokenDomainCacheKey = CacheServerKey::privateTokenDomain(
+				domainName: $this->http->httpReqData['server']['domainName']
+			);
+			if (
+				DbCommonFunction::$gCacheServer->cacheExist(
+					cacheKey: $privateTokenDomainCacheKey
+				)
+			) {
 				$this->isPrivateTokenDomain = true;
 				$this->domainCacheKey = $privateTokenDomainCacheKey;
 				$this->isPrivateRequest = true;
@@ -351,18 +369,24 @@ class HttpRequest
 					feature: 'customer_enabled_rate_limiting'
 				)
 			) {
-				$this->rateLimiter = new RateLimiter(cacheObj: $this->customerCacheObj);
+				$this->rateLimiter = new RateLimiter(
+					cacheObj: $this->customerCacheObj
+				);
 			}
 		}
 
 		if ($this->http->httpReqData['get'][ROUTE_URL_PARAM] !== '/login') {
 			if ($this->isPrivateRequest) {
-				$this->auth = new Auth(http: $this->http);
+				$this->auth = new Auth(
+					http: $this->http
+				);
 				$this->auth->loadUserData();
 				$this->auth->loadGroupData();
 			}
 
-			$this->rParser = new RouteParser(http: $this->http);
+			$this->rParser = new RouteParser(
+				http: $this->http
+			);
 			$this->rParser->parseRoute();
 
 			if ($this->http->res !== null) {
@@ -386,14 +410,18 @@ class HttpRequest
 
 		$this->s['queryParamArr'] = &$this->http->httpReqData['get'];
 		if ($this->http->httpReqData['server']['httpMethod'] === Constant::$GET) {
-			$this->urlDecode(value: $this->http->httpReqData['get']);
+			$this->urlDecode(
+				value: $this->http->httpReqData['get']
+			);
 			$this->s['payloadType'] = 'Object';
 			$payloadJson = json_encode(
 				value: $this->http->httpReqData['get']
 			);
 		} else {
 			$payloadJson = $this->setPayloadStream();
-			rewind(stream: $this->payloadStream);
+			rewind(
+				stream: $this->payloadStream
+			);
 
 			$this->dataDecode = new DataDecode(
 				iRepresentation: $this->iRepresentation,
@@ -404,7 +432,9 @@ class HttpRequest
 			$this->dataDecode->indexData();
 			$this->s['payloadType'] = $this->dataDecode->dataType();
 		}
-		$this->requestId = $this->getRequestId(payloadJson: $payloadJson);
+		$this->requestId = $this->getRequestId(
+			payloadJson: $payloadJson
+		);
 	}
 
 	/**
@@ -455,7 +485,10 @@ class HttpRequest
 				$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
 				$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
 
-				$this->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+				$this->customerDbObj->execQuery(
+					sql: $sql,
+					paramArr: $paramArr
+				);
 				$importFileMd5Id = $this->customerDbObj->lastInsertId();
 
 				$payloadJson = $this->formatCsvPayload(
@@ -463,7 +496,9 @@ class HttpRequest
 				);
 				break;
 			case $this->iRepresentation === 'XML':
-				$payloadJson = $this->convertXmlToJson(xmlString: $this->http->httpReqData['post']);
+				$payloadJson = $this->convertXmlToJson(
+					xmlString: $this->http->httpReqData['post']
+				);
 				break;
 			default:
 				$payloadJson = $this->http->httpReqData['post'];
@@ -504,7 +539,10 @@ class HttpRequest
 		";
 		$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
 
-		$this->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+		$this->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		if ($row = $this->customerDbObj->fetch()) {
 			$uploadedFileMd5Data = &$row;
 		}
@@ -542,7 +580,10 @@ class HttpRequest
 			$paramArr[':request_payload_json'] = $payloadJson;
 			$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
 
-			DbCommonFunction::$gDbServer->execQuery(sql: $sql, paramArr: $paramArr);
+			DbCommonFunction::$gDbServer->execQuery(
+				sql: $sql,
+				paramArr: $paramArr
+			);
 			$requestId = DbCommonFunction::$gDbServer->lastInsertId();
 		}
 
@@ -597,7 +638,10 @@ class HttpRequest
 			$paramArr[':request_debug_json'] = $debugJson;
 			$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
 
-			DbCommonFunction::$gDbServer->execQuery(sql: $sql, paramArr: $paramArr);
+			DbCommonFunction::$gDbServer->execQuery(
+				sql: $sql,
+				paramArr: $paramArr
+			);
 			$logId = DbCommonFunction::$gDbServer->lastInsertId();
 		}
 
@@ -648,7 +692,10 @@ class HttpRequest
 			$paramArr[':request_exception_json'] = $exceptionJson;
 			$paramArr[':request_ip'] = $this->http->httpReqData['server']['httpRequestIP'];
 
-			DbCommonFunction::$gDbServer->execQuery(sql: $sql, paramArr: $paramArr);
+			DbCommonFunction::$gDbServer->execQuery(
+				sql: $sql,
+				paramArr: $paramArr
+			);
 			$logId = DbCommonFunction::$gDbServer->lastInsertId();
 		}
 
@@ -676,7 +723,10 @@ class HttpRequest
 		unset($xml);
 
 		$result = [];
-		$this->formatXmlArray(arrayFromXml: $arrayFromXml, result: $result);
+		$this->formatXmlArray(
+			arrayFromXml: $arrayFromXml,
+			result: $result
+		);
 
 		return json_encode(
 			value: $result
@@ -734,7 +784,10 @@ class HttpRequest
 			}
 			if (is_array(value: $columnValue)) {
 				$result[$column] = [];
-				$this->formatXmlArray(arrayFromXml: $columnValue, result: $result[$column]);
+				$this->formatXmlArray(
+					arrayFromXml: $columnValue,
+					result: $result[$column]
+				);
 				continue;
 			}
 			$result[$column] = $columnValue;
@@ -754,13 +807,19 @@ class HttpRequest
 		if (is_array(value: $value)) {
 			foreach ($value as &$v) {
 				if (is_array(value: $v)) {
-					$this->urlDecode(value: $v);
+					$this->urlDecode(
+						value: $v
+					);
 				} else {
-					$v = urldecode(string: $v);
+					$v = urldecode(
+						string: $v
+					);
 				}
 			}
 		} else {
-			$value = urldecode(string: $value);
+			$value = urldecode(
+				string: $value
+			);
 		}
 	}
 
@@ -774,8 +833,12 @@ class HttpRequest
 	public function formatCsvPayload(
 		$csvFile
 	): string {
-		$dataEncode = new DataEncode(http: $this->http);
-		$dataEncode->init(header: false);
+		$dataEncode = new DataEncode(
+			http: $this->http
+		);
+		$dataEncode->init(
+			header: false
+		);
 		$dataEncode->startObject();
 
 		$csvHeaderData = false;
@@ -830,10 +893,15 @@ class HttpRequest
 
 			if ($counter === 0) {
 				$headerModeArr = $currentModeArr;
-				$dataEncode->startArray(objectKey: $currentModeArr[0]);
+				$dataEncode->startArray(
+					objectKey: $currentModeArr[0]
+				);
 				$dataEncode->startObject();
 				foreach ($csvFieldRecordArr as $objectKey => $objectValue) {
-					$dataEncode->addKeyData(objectKey: $objectKey, data: $objectValue);
+					$dataEncode->addKeyData(
+						objectKey: $objectKey,
+						data: $objectValue
+					);
 				}
 				$counter = 1;
 				continue;
@@ -875,14 +943,19 @@ class HttpRequest
 					}
 					for ($_i = $i; $_i < $currentModeCount; $_i++) {
 						$_headerModeArr[$_i] = $currentModeArr[$_i];
-						$dataEncode->startArray(objectKey: $currentModeArr[$_i]);
+						$dataEncode->startArray(
+							objectKey: $currentModeArr[$_i]
+						);
 						$dataEncode->startObject();
 					}
 				}
 				$headerModeArr = $_headerModeArr;
 			}
 			foreach ($csvFieldRecordArr as $objectKey => $objectValue) {
-				$dataEncode->addKeyData(objectKey: $objectKey, data: $objectValue);
+				$dataEncode->addKeyData(
+					objectKey: $objectKey,
+					data: $objectValue
+				);
 			}
 		}
 		$dataEncode->endObject();

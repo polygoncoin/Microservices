@@ -80,11 +80,15 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			if ($document = $this->collectionObj->findOne($filter)) {
 				$lastAccessed = Env::$timestamp - $this->sessionMaxLifetime;
 				if ($document['lastAccessed'] > $lastAccessed) {
-					return $this->decryptData(cipherText: $document['sessionData']);
+					return $this->decryptData(
+						cipherText: $document['sessionData']
+					);
 				}
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -105,13 +109,17 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			$document = [
 				"sessionId" => $sessionId,
 				"lastAccessed" => Env::$timestamp,
-				"sessionData" => $this->encryptData(plainText: $sessionData)
+				"sessionData" => $this->encryptData(
+					plainText: $sessionData
+				)
 			];
 			if ($this->collectionObj->insertOne($document)) {
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -133,7 +141,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			$update = [
 				'$set' => [
 					'lastAccessed' => Env::$timestamp,
-					"sessionData" => $this->encryptData(plainText: $sessionData)
+					"sessionData" => $this->encryptData(
+						plainText: $sessionData
+					)
 				]
 			];
 			if (
@@ -145,7 +155,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -179,7 +191,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -214,7 +228,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				return true;
 			}
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return false;
 	}
@@ -262,7 +278,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				$this->mongoDbServerCollection
 			);
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 	}
 

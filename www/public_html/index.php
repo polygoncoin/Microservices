@@ -15,7 +15,9 @@ define('ROOT', realpath(path: __DIR__ . '/../../'));
 define('ROUTE_URL_PARAM', 'route');
 
 require_once ROOT . DIRECTORY_SEPARATOR . 'Autoload.php';
-spl_autoload_register(callback:  'Microservices\Autoload::register');
+spl_autoload_register(
+	callback:  'Microservices\Autoload::register'
+);
 
 // Load .env(s)
 foreach ([
@@ -25,9 +27,13 @@ foreach ([
 	'.env.rateLimiting',
 	'.env.route'
 ] as $envFilename) {
-	$envDataArr = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
+	$envDataArr = parse_ini_file(
+		filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
+	);
 	foreach ($envDataArr as $envVarName => $envVarValue) {
-		putenv(assignment: "{$envVarName}={$envVarValue}");
+		putenv(
+			assignment: "{$envVarName}={$envVarValue}"
+		);
 	}
 }
 
@@ -72,7 +78,9 @@ if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
 	die('Missing route');
 }
 
-$httpReqData['post'] = file_get_contents(filename: 'php://input');
+$httpReqData['post'] = file_get_contents(
+	filename: 'php://input'
+);
 $httpReqData['files'] = [];
 if (isset($_FILES)) {
 	$httpReqData['files'] = &$_FILES;
@@ -129,14 +137,18 @@ if (
 		return false;
 	} else {
 		ob_start();
-		[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
+		[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+			httpReqData: $httpReqData
+		);
 		@ob_clean();
 
 		$responseCode = $responseCode ?? HttpStatus::$Ok;
 		http_response_code(response_code: $responseCode);
 
 		foreach ($responseHeaderArr as $headerName => $headerValue) {
-			header(header: "{$headerName}: {$headerValue}");
+			header(
+				header: "{$headerName}: {$headerValue}"
+			);
 		}
 
 		die($responseContent);

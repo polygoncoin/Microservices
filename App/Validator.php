@@ -59,9 +59,13 @@ class Validator
 	) {
 		$this->http = &$http;
 		if ($this->http->req->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
-			$this->v = new GlobalValidator(http: $this->http);
+			$this->v = new GlobalValidator(
+				http: $this->http
+			);
 		} else {
-			$this->v = new CustomerValidator(http: $this->http);
+			$this->v = new CustomerValidator(
+				http: $this->http
+			);
 		}
 	}
 
@@ -87,7 +91,9 @@ class Validator
 			}
 		}
 
-		return $this->v->validate(validationConfig: $validationConfig);
+		return $this->v->validate(
+			validationConfig: $validationConfig
+		);
 	}
 
 	/**

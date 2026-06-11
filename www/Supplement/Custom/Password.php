@@ -106,7 +106,10 @@ class Password implements CustomInterface
 				':is_deleted' => 'No',
 			];
 
-			$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+			$this->http->req->customerDbObj->execQuery(
+				sql: $sql,
+				paramArr: $paramArr
+			);
 			$this->http->req->customerDbObj->closeCursor();
 
 			$customerId = $this->http->req->customerId;
@@ -120,7 +123,9 @@ class Password implements CustomInterface
 				customerUserId: $this->http->req->customerUserId
 			);
 			$this->http->req->customerCacheObj->cacheDelete(
-				cacheKey: CacheServerKey::token(token: $this->http->req->s['authId'])
+				cacheKey: CacheServerKey::token(
+					token: $this->http->req->s['authId']
+				)
 			);
 
 			$this->http->res->dataEncode->addKeyData(

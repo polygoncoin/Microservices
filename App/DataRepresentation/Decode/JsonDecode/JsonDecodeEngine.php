@@ -195,7 +195,9 @@ class JsonDecodeEngine
 							$char === ','
 							&& ($nullStr !== null)
 						):
-							$nullStr = $this->checkNullStr(nullStr: $nullStr);
+							$nullStr = $this->checkNullStr(
+								nullStr: $nullStr
+							);
 							switch ($this->currentObject->mode) {
 								case 'Array':
 									$this->currentObject->arrayValueArr[] = $nullStr;
@@ -324,8 +326,12 @@ class JsonDecodeEngine
 			($this->sIndex === null)
 			&& ($this->eIndex === null)
 		) {
-			rewind(stream: $this->jsonFileHandle);
-			return stream_get_contents(stream: $this->jsonFileHandle);
+			rewind(
+				stream: $this->jsonFileHandle
+			);
+			return stream_get_contents(
+				stream: $this->jsonFileHandle
+			);
 		} else {
 			$offset = $this->sIndex !== null ? $this->sIndex : 0;
 			$length = $this->eIndex - $offset + 1;
@@ -363,7 +369,9 @@ class JsonDecodeEngine
 					];
 				}
 				$this->increment();
-				$this->startArray(objectKey: $keyValue);
+				$this->startArray(
+					objectKey: $keyValue
+				);
 				break;
 			case '{':
 				if (!$index) {
@@ -373,7 +381,9 @@ class JsonDecodeEngine
 					];
 				}
 				$this->increment();
-				$this->startObject(objectKey: $keyValue);
+				$this->startObject(
+					objectKey: $keyValue
+				);
 				break;
 			case ']':
 				if (!empty($keyValue)) {
@@ -408,7 +418,9 @@ class JsonDecodeEngine
 					!empty($keyValue)
 					&& !empty($nullStr)
 				) {
-					$nullStr = $this->checkNullStr(nullStr: $nullStr);
+					$nullStr = $this->checkNullStr(
+						nullStr: $nullStr
+					);
 					$this->currentObject->objectValueArr[$keyValue] = $nullStr;
 				}
 				if ($index) {
@@ -460,7 +472,9 @@ class JsonDecodeEngine
 			$return = (int)$nullStr;
 		}
 		if ($return === false) {
-			$this->isBadJson(str: $nullStr);
+			$this->isBadJson(
+				str: $nullStr
+			);
 		}
 		return $return;
 	}

@@ -71,7 +71,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 			$sessionData = $this->decryptData(
 				cipherText: $_COOKIE[$this->sessionDataName]
 			);
-			$sessionDataArr = unserialize(data: $sessionData);
+			$sessionDataArr = unserialize(
+				data: $sessionData
+			);
 			if (
 				isset($sessionDataArr['_TS_'])
 				&& ($time = $sessionDataArr['_TS_'] + $this->sessionMaxLifetime)
@@ -95,11 +97,17 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		$sessionDataArr = unserialize(data: $sessionData);
+		$sessionDataArr = unserialize(
+			data: $sessionData
+		);
 		$sessionDataArr['_TS_'] = Env::$timestamp;
-		$sessionData = serialize(value: $sessionDataArr);
+		$sessionData = serialize(
+			value: $sessionDataArr
+		);
 
-		$cookieData = $this->encryptData(plainText: $sessionData);
+		$cookieData = $this->encryptData(
+			plainText: $sessionData
+		);
 		if (strlen(string: $cookieData) > 4096) {
 			ob_end_clean();
 			die(
@@ -136,7 +144,10 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		return $this->setSession(sessionId: $sessionId, sessionData: $sessionData);
+		return $this->setSession(
+			sessionId: $sessionId,
+			sessionData: $sessionData
+		);
 	}
 
 	/**
@@ -151,11 +162,17 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool {
-		$sessionDataArr = unserialize(data: $sessionData);
+		$sessionDataArr = unserialize(
+			data: $sessionData
+		);
 		$sessionDataArr['_TS_'] = Env::$timestamp;
-		$sessionData = serialize(value: $sessionDataArr);
+		$sessionData = serialize(
+			value: $sessionDataArr
+		);
 
-		$cookieData = $this->encryptData(plainText: $sessionData);
+		$cookieData = $this->encryptData(
+			plainText: $sessionData
+		);
 		if (strlen(string: $cookieData) > 4096) {
 			ob_end_clean();
 			die(

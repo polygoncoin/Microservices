@@ -78,10 +78,17 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 			':lastAccessed' => (Env::$timestamp - $this->sessionMaxLifetime)
 		];
 		if (
-			($row = $this->getSql(sql: $sql, paramArr: $paramArr))
+			(
+				$row = $this->getSql(
+					sql: $sql,
+					paramArr: $paramArr
+				)
+			)
 			&& isset($row['sessionData'])
 		) {
-			return $this->decryptData(cipherText: $row['sessionData']);
+			return $this->decryptData(
+				cipherText: $row['sessionData']
+			);
 		}
 		return false;
 	}
@@ -107,11 +114,16 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		";
 		$paramArr = [
 			':sessionId' => $sessionId,
-			':sessionData' => $this->encryptData(plainText: $sessionData),
+			':sessionData' => $this->encryptData(
+				plainText: $sessionData
+			),
 			':lastAccessed' => Env::$timestamp
 		];
 
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -136,11 +148,16 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		";
 		$paramArr = [
 			':sessionId' => $sessionId,
-			':sessionData' => $this->encryptData(plainText: $sessionData),
+			':sessionData' => $this->encryptData(
+				plainText: $sessionData
+			),
 			':lastAccessed' => Env::$timestamp
 		];
 
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -164,7 +181,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 			':sessionId' => $sessionId,
 			':lastAccessed' => Env::$timestamp
 		];
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -185,7 +205,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$paramArr = [
 			':lastAccessed' => $lastAccessed
 		];
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -205,7 +228,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$paramArr = [
 			':sessionId' => $sessionId
 		];
-		return $this->execSql(sql: $sql, paramArr: $paramArr);
+		return $this->execSql(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 	}
 
 	/**
@@ -235,7 +261,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 				]
 			);
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 	}
 
@@ -257,7 +285,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 				query: $sql,
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
-			$stmt->execute(paramArr: $paramArr);
+			$stmt->execute(
+				paramArr: $paramArr
+			);
 			switch ($stmt->rowCount()) {
 				case 0:
 					$row = [];
@@ -271,7 +301,9 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 			}
 			$stmt->closeCursor();
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return $row;
 	}
@@ -293,10 +325,14 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 				query: $sql,
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
-			$stmt->execute(paramArr: $paramArr);
+			$stmt->execute(
+				paramArr: $paramArr
+			);
 			$stmt->closeCursor();
 		} catch (\Exception $e) {
-			$this->manageException(e: $e);
+			$this->manageException(
+				e: $e
+			);
 		}
 		return true;
 	}

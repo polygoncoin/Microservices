@@ -109,9 +109,13 @@ class Log
 		&$logData
 	): int {
 		$logFile = Constant::$LOG_DIR
-			. DIRECTORY_SEPARATOR . 'log-' . date(format: 'YmdH');
+			. DIRECTORY_SEPARATOR . 'log-' . date(
+				format: 'YmdH'
+			);
 		if (!file_exists(filename: $logFile)) {
-			touch(filename: $logFile);
+			touch(
+				filename: $logFile
+			);
 		}
 
 		file_put_contents(

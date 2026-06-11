@@ -29,7 +29,9 @@ define('ROOT', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '../'));
 define('ROUTE_URL_PARAM', 'route');
 
 require_once ROOT . DIRECTORY_SEPARATOR . 'Autoload.php';
-spl_autoload_register(callback:  'Microservices\Autoload::register');
+spl_autoload_register(
+	callback:  'Microservices\Autoload::register'
+);
 
 // Set coroutine options before you start a server...
 Coroutine::set(
@@ -62,9 +64,13 @@ $server->on(
 			'.env.rateLimiting',
 			'.env.route'
 		] as $envFilename) {
-			$envDataArr = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
+			$envDataArr = parse_ini_file(
+				filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
+			);
 			foreach ($envDataArr as $envVarName => $envVarValue) {
-				putenv(assignment: "{$envVarName}={$envVarValue}");
+				putenv(
+					assignment: "{$envVarName}={$envVarValue}"
+				);
 			}
 		}
 
@@ -163,7 +169,9 @@ $server->on(
 				$response->end();
 			} else {
 				ob_start();
-				[$responseHeaderArr, $responseContent, $responseCode] = Start::http(httpReqData: $httpReqData);
+				[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+					httpReqData: $httpReqData
+				);
 				@ob_clean();
 
 				$responseCode = $responseCode ?? HttpStatus::$Ok;

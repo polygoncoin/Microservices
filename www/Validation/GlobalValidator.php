@@ -96,7 +96,10 @@ class GlobalValidator implements ValidatorInterface
 		extract(array: $argArr);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
-		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+		$this->http->req->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		$row = $this->http->req->customerDbObj->fetch();
 		$this->http->req->customerDbObj->closeCursor();
 		return (int)((isset($row['count']) && $row['count'] === 0) ? false : true);
@@ -122,7 +125,10 @@ class GlobalValidator implements ValidatorInterface
 			$columnValue,
 			$id
 		];
-		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+		$this->http->req->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		$row = $this->http->req->customerDbObj->fetch();
 		$this->http->req->customerDbObj->closeCursor();
 		return ($row['count'] === 0) ? false : true;

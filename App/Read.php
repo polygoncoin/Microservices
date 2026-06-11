@@ -101,16 +101,24 @@ class Read
 		$readSqlConfig = &$this->http->req->rParser->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
-		$this->rateLimitRoute(sqlConfig: $readSqlConfig);
+		$this->rateLimitRoute(
+			sqlConfig: $readSqlConfig
+		);
 
 		// Check for configured referrer Lags
-		$this->checkReferrerLag(sqlConfig: $readSqlConfig);
+		$this->checkReferrerLag(
+			sqlConfig: $readSqlConfig
+		);
 
 		// Lag response
-		$this->lagResponse(sqlConfig: $readSqlConfig);
+		$this->lagResponse(
+			sqlConfig: $readSqlConfig
+		);
 
 		if (isset($readSqlConfig['__DOWNLOAD__'])) {
-			return $this->download(readSqlConfig: $readSqlConfig);
+			return $this->download(
+				readSqlConfig: $readSqlConfig
+			);
 		}
 
 		// Check for cache
@@ -136,7 +144,9 @@ class Read
 						objectKey: 'cacheHit',
 						data: $cacheHit
 					);
-					$this->http->res->dataEncode->appendData(data: $json);
+					$this->http->res->dataEncode->appendData(
+						data: $json
+					);
 					return true;
 				} else {
 					if (!$queryCacheReqFlag) {
@@ -174,8 +184,12 @@ class Read
 			)
 			&& $toBeCached
 		) {
-			$this->dataEncode = new DataEncode(http: $this->http);
-			$this->dataEncode->init(header: false);
+			$this->dataEncode = new DataEncode(
+				http: $this->http
+			);
+			$this->dataEncode->init(
+				header: false
+			);
 		} else {
 			$this->dataEncode = &$this->http->res->dataEncode;
 		}
@@ -226,7 +240,9 @@ class Read
 				queryCacheKey: $readSqlConfig['queryCacheKey'],
 				queryCacheValue: $json
 			);
-			$this->http->res->dataEncode->appendData(data: $json);
+			$this->http->res->dataEncode->appendData(
+				data: $json
+			);
 		}
 
 		return true;
@@ -244,7 +260,9 @@ class Read
 		&$readSqlConfig,
 		$useResultSet
 	): bool {
-		$this->dataEncode->startObject(objectKey: 'Config');
+		$this->dataEncode->startObject(
+			objectKey: 'Config'
+		);
 		$this->dataEncode->addKeyData(
 			objectKey: 'Route',
 			data: $this->http->req->rParser->configuredRoute
@@ -312,12 +330,16 @@ class Read
 		&$configKeyArr,
 		$useResultSet
 	): void {
-		$isObject = $this->isObject(arr: $readSqlConfig);
+		$isObject = $this->isObject(
+			arr: $readSqlConfig
+		);
 
 		// Execute Pre SQL Hook
 		if (isset($readSqlConfig['__PRE-SQL-HOOKS__'])) {
 			if ($this->hook === null) {
-				$this->hook = new Hook(http: $this->http);
+				$this->hook = new Hook(
+					http: $this->http
+				);
 			}
 			$this->hook->triggerHook(
 				hookArr: $readSqlConfig['__PRE-SQL-HOOKS__']
@@ -329,7 +351,9 @@ class Read
 				// Query will return single row
 				case 'singleRowFormat':
 					if ($isFirstCall) {
-						$this->dataEncode->startObject(objectKey: 'Results');
+						$this->dataEncode->startObject(
+							objectKey: 'Results'
+						);
 					} else {
 						$this->dataEncode->startObject();
 					}
@@ -345,11 +369,19 @@ class Read
 				case 'multipleRowFormat':
 					if ($isFirstCall) {
 						if (isset($readSqlConfig['countQuery'])) {
-							$this->dataEncode->startObject(objectKey: 'Results');
-							$this->fetchRowsCount(readSqlConfig: $readSqlConfig);
-							$this->dataEncode->startArray(objectKey: 'Data');
+							$this->dataEncode->startObject(
+								objectKey: 'Results'
+							);
+							$this->fetchRowsCount(
+								readSqlConfig: $readSqlConfig
+							);
+							$this->dataEncode->startArray(
+								objectKey: 'Data'
+							);
 						} else {
-							$this->dataEncode->startArray(objectKey: 'Results');
+							$this->dataEncode->startArray(
+								objectKey: 'Results'
+							);
 						}
 					} else {
 						$this->dataEncode->startArray(
@@ -386,7 +418,9 @@ class Read
 		// Execute Post SQL Hook
 		if (isset($readSqlConfig['__POST-SQL-HOOKS__'])) {
 			if ($this->hook === null) {
-				$this->hook = new Hook(http: $this->http);
+				$this->hook = new Hook(
+					http: $this->http
+				);
 			}
 			$this->hook->triggerHook(
 				hookArr: $readSqlConfig['__POST-SQL-HOOKS__']
@@ -429,10 +463,16 @@ class Read
 			return;
 		}
 
-		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+		$this->http->req->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		if ($row = $this->http->req->customerDbObj->fetch()) {
 			foreach ($row as $objectKey => $value) {
-				$this->dataEncode->addKeyData(objectKey: $objectKey, data: $value);
+				$this->dataEncode->addKeyData(
+					objectKey: $objectKey,
+					data: $value
+				);
 			}
 			// check if selected column-name mismatches or conflicts with
 			// configured module/submodule names
@@ -525,7 +565,10 @@ class Read
 			return;
 		}
 
-		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+		$this->http->req->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		$row = $this->http->req->customerDbObj->fetch();
 		$this->http->req->customerDbObj->closeCursor();
 
@@ -623,7 +666,11 @@ class Read
 
 		$singleColumn = false;
 		$pushPop = true;
-		$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr, pushPop: $pushPop);
+		$this->http->req->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr,
+			pushPop: $pushPop
+		);
 		for ($i = 0; $row = $this->http->req->customerDbObj->fetch();) {
 			if ($i === 0) {
 				if (count(value: $row) === 1) {
@@ -634,11 +681,16 @@ class Read
 				$i++;
 			}
 			if ($singleColumn) {
-				$this->dataEncode->encode(data: $row[key(array: $row)]);
+				$this->dataEncode->encode(
+					data: $row[key(array: $row)]
+				);
 			} elseif (isset($readSqlConfig['__SUB-QUERY__'])) {
 				$this->dataEncode->startObject();
 				foreach ($row as $objectKey => $value) {
-					$this->dataEncode->addKeyData(objectKey: $objectKey, data: $value);
+					$this->dataEncode->addKeyData(
+						objectKey: $objectKey,
+						data: $value
+					);
 				}
 				$this->callReadDb(
 					readSqlConfig: $readSqlConfig,
@@ -648,10 +700,14 @@ class Read
 				);
 				$this->dataEncode->endObject();
 			} else {
-				$this->dataEncode->encode(data: $row);
+				$this->dataEncode->encode(
+					data: $row
+				);
 			}
 		}
-		$this->http->req->customerDbObj->closeCursor(pushPop: $pushPop);
+		$this->http->req->customerDbObj->closeCursor(
+			pushPop: $pushPop
+		);
 	}
 
 	/**
@@ -683,7 +739,9 @@ class Read
 
 		if (
 			isset($readSqlConfig['__SUB-QUERY__'])
-			&& $this->isObject(arr: $readSqlConfig['__SUB-QUERY__'])
+			&& $this->isObject(
+				arr: $readSqlConfig['__SUB-QUERY__']
+			)
 		) {
 			foreach ($readSqlConfig['__SUB-QUERY__'] as $module => &$readSqlConfig) {
 				$moduleConfigKeyArr = $configKeyArr;
@@ -735,15 +793,22 @@ class Read
 		$exportDbData = [];
 		switch ($serverMode) {
 			case 'Master':
-				$exportDbData = DbCommonFunction::customerMasterDatabaseServerCred(customerData: $this->http->req->s['customerData']);
+				$exportDbData = DbCommonFunction::customerMasterDatabaseServerCred(
+					customerData: $this->http->req->s['customerData']
+				);
 				break;
 			case 'Slave':
-				$exportDbData = DbCommonFunction::customerSlaveDatabaseServerCred(customerData: $this->http->req->s['customerData']);
+				$exportDbData = DbCommonFunction::customerSlaveDatabaseServerCred(
+					customerData: $this->http->req->s['customerData']
+				);
 				break;
 		}
 
 		// Export
-		$export = new Export(http: $this->http, dbServerType: $exportDbData['dbServerType']);
+		$export = new Export(
+			http: $this->http,
+			dbServerType: $exportDbData['dbServerType']
+		);
 		$export->init(
 			dbServerHostname: $exportDbData['dbServerHostname'],
 			dbServerPort: $exportDbData['dbServerPort'],

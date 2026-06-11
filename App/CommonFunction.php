@@ -228,14 +228,21 @@ class CommonFunction
 		$ip,
 		$cidrCacheKey
 	): void {
-		if (!$cacheObj->cacheExist(cacheKey: $cidrCacheKey)) {
+		if (
+			!$cacheObj->cacheExist(
+				cacheKey: $cidrCacheKey
+			)
+		) {
 			return;
 		}
 
 		$cidrIpNumberRangeArr = $cacheObj->cacheGet(
 			cacheKey: $cidrCacheKey
 		);
-		$isValidIp = self::belongsToCidrIpNumberRange(ip: $ip, cidrIpNumberRangeArr: $cidrIpNumberRangeArr);
+		$isValidIp = self::belongsToCidrIpNumberRange(
+			ip: $ip,
+			cidrIpNumberRangeArr: $cidrIpNumberRangeArr
+		);
 		if (!$isValidIp) {
 			throw new \Exception(
 				message: 'IP not supported',
@@ -258,9 +265,14 @@ class CommonFunction
 		$cidrString
 	): null|bool {
 		$isValidIp = true;
-		$cidrIpNumberRangeArr = self::cidrStringIpNumberRange(cidrString: $cidrString);
+		$cidrIpNumberRangeArr = self::cidrStringIpNumberRange(
+			cidrString: $cidrString
+		);
 		if (count(value: $cidrIpNumberRangeArr) > 0) {
-			$isValidIp = self::belongsToCidrIpNumberRange(ip: $ip, cidrIpNumberRangeArr: $cidrIpNumberRangeArr);
+			$isValidIp = self::belongsToCidrIpNumberRange(
+				ip: $ip,
+				cidrIpNumberRangeArr: $cidrIpNumberRangeArr
+			);
 			if (!$isValidIp) {
 				throw new \Exception(
 					message: 'IP not supported',

@@ -81,7 +81,9 @@ class JsonDecode implements DataDecodeInterface
 		$this->jsonFileHandle = &$jsonFileHandle;
 
 		// File Stats - Check for size
-		$fileStats = fstat(stream: $this->jsonFileHandle);
+		$fileStats = fstat(
+			stream: $this->jsonFileHandle
+		);
 		if (
 			isset($fileStats['size'])
 			&& $fileStats['size'] > $this->allowedPayloadLength
@@ -270,7 +272,9 @@ class JsonDecode implements DataDecodeInterface
 			return false;
 		}
 		$valueArr = [];
-		$this->load(keyString: $keyString);
+		$this->load(
+			keyString: $keyString
+		);
 		foreach ($this->jsonDecodeEngine->process() as $valueArr) {
 			break;
 		}
@@ -290,7 +294,9 @@ class JsonDecode implements DataDecodeInterface
 		if (!$this->isset(keyString: $keyString)) {
 			return false;
 		}
-		$this->load(keyString: $keyString);
+		$this->load(
+			keyString: $keyString
+		);
 		return CommonFunction::jsonDecode(
 			value: $this->jsonDecodeEngine->getJsonString()
 		);

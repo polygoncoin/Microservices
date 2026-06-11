@@ -116,7 +116,9 @@ class Microservices
 
 			// Requires auth token
 			default:
-				$gateway = new Gateway(http: $this->http);
+				$gateway = new Gateway(
+					http: $this->http
+				);
 				$gateway->init();
 				$gateway = null;
 
@@ -127,7 +129,9 @@ class Microservices
 		// Class found
 		try {
 			if ($class !== null) {
-				$api = new $class(http: $this->http);
+				$api = new $class(
+					http: $this->http
+				);
 				if ($api->init()) {
 					$this->startData();
 					$return = $api->process();
@@ -143,7 +147,9 @@ class Microservices
 				}
 			}
 		} catch (\Exception $e) {
-			$this->log(e: $e);
+			$this->log(
+				e: $e
+			);
 		}
 
 		return true;
@@ -193,8 +199,12 @@ class Microservices
 			$time = ceil(num: ($this->tsEnd - $this->tsStart) * 1000);
 			$memory = ceil(num: memory_get_peak_usage() / 1000);
 
-			$this->http->res->dataEncode->startObject(objectKey: 'Stats');
-			$this->http->res->dataEncode->startObject(objectKey: 'Performance');
+			$this->http->res->dataEncode->startObject(
+				objectKey: 'Stats'
+			);
+			$this->http->res->dataEncode->startObject(
+				objectKey: 'Performance'
+			);
 			$this->http->res->dataEncode->addKeyData(
 				objectKey: 'total-time-taken',
 				data: "{$time} ms"

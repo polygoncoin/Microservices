@@ -79,7 +79,9 @@ class Hook
 
 				if (file_exists(filename: $hookFile)) {
 					$hookClass = 'Microservices\\www\\Hook\\' . $hookName;
-					$this->hookObj = new $hookClass(http: $this->http);
+					$this->hookObj = new $hookClass(
+						http: $this->http
+					);
 					if ($this->hookObj->init()) {
 						$this->hookObj->process();
 					}

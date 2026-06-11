@@ -147,7 +147,9 @@ class DataEncode
 	public function startArray(
 		$objectKey = null
 	): void {
-		$this->dataEncoder->startArray(objectKey: $objectKey);
+		$this->dataEncoder->startArray(
+			objectKey: $objectKey
+		);
 	}
 
 	/**
@@ -161,7 +163,9 @@ class DataEncode
 	public function addArrayData(
 		$data
 	): void {
-		$this->dataEncoder->addArrayData(data: $data);
+		$this->dataEncoder->addArrayData(
+			data: $data
+		);
 	}
 
 	/**
@@ -203,7 +207,10 @@ class DataEncode
 		$objectKey,
 		$data
 	): void {
-		$this->dataEncoder->addKeyData(objectKey: $objectKey, data: $data);
+		$this->dataEncoder->addKeyData(
+			objectKey: $objectKey,
+			data: $data
+		);
 	}
 
 	/**
@@ -226,7 +233,9 @@ class DataEncode
 	public function encode(
 		$data
 	): void {
-		$this->dataEncoder->encode(data: $data);
+		$this->dataEncoder->encode(
+			data: $data
+		);
 	}
 
 	/**
@@ -238,7 +247,9 @@ class DataEncode
 	 */
 	public function appendData(&$data): void
 	{
-		$this->dataEncoder->appendData(data: $data);
+		$this->dataEncoder->appendData(
+			data: $data
+		);
 	}
 
 	/**
@@ -253,7 +264,10 @@ class DataEncode
 		$objectKey,
 		&$data
 	): void {
-		$this->dataEncoder->appendKeyData(objectKey: $objectKey, data: $data);
+		$this->dataEncoder->appendKeyData(
+			objectKey: $objectKey,
+			data: $data
+		);
 	}
 
 	/**
@@ -281,16 +295,24 @@ class DataEncode
 					&& $this->xsltFile !== null
 					&& file_exists(filename: $this->xsltFile)
 				):
-				echo $this->processPublicXml(xmlFile: $this->xsltFile);
-				fclose(stream: $this->tempStream);
+				echo $this->processPublicXml(
+					xmlFile: $this->xsltFile
+				);
+				fclose(
+					stream: $this->tempStream
+				);
 				break;
 			case (
 					$this->http->res->oRepresentation === 'HTML'
 					&& $this->htmlFile !== null
 					&& file_exists(filename: $this->htmlFile)
 				):
-				echo $this->processPublicXml(xmlFile: $this->htmlFile);
-				fclose(stream: $this->tempStream);
+				echo $this->processPublicXml(
+					xmlFile: $this->htmlFile
+				);
+				fclose(
+					stream: $this->tempStream
+				);
 				break;
 			case (
 					$this->http->res->oRepresentation === 'PHP'
@@ -302,11 +324,23 @@ class DataEncode
 				$this->tempStream = null;
 				break;
 			default:
-				rewind(stream: $this->tempStream);
-				$outputStream = fopen(filename: 'php://output', mode: 'wb');
-				stream_copy_to_stream(from: $this->tempStream, to: $outputStream);
-				fclose(stream: $outputStream);
-				fclose(stream: $this->tempStream);
+				rewind(
+					stream: $this->tempStream
+				);
+				$outputStream = fopen(
+					filename: 'php://output',
+					mode: 'wb'
+				);
+				stream_copy_to_stream(
+					from: $this->tempStream,
+					to: $outputStream
+				);
+				fclose(
+					stream: $outputStream
+				);
+				fclose(
+					stream: $this->tempStream
+				);
 				break;
 		}
 	}
@@ -326,16 +360,24 @@ class DataEncode
 					&& $this->xsltFile !== null
 					&& file_exists(filename: $this->xsltFile)
 				):
-				$streamContent = $this->processPublicXml(xmlFile: $this->xsltFile);
-				fclose(stream: $this->tempStream);
+				$streamContent = $this->processPublicXml(
+					xmlFile: $this->xsltFile
+				);
+				fclose(
+					stream: $this->tempStream
+				);
 				break;
 			case (
 					$this->http->res->oRepresentation === 'HTML'
 					&& $this->htmlFile !== null
 					&& file_exists(filename: $this->htmlFile)
 				):
-				$streamContent = $this->processPublicXml(xmlFile: $this->htmlFile);
-				fclose(stream: $this->tempStream);
+				$streamContent = $this->processPublicXml(
+					xmlFile: $this->htmlFile
+				);
+				fclose(
+					stream: $this->tempStream
+				);
 				break;
 			case (
 					$this->http->res->oRepresentation === 'PHP'
@@ -349,9 +391,15 @@ class DataEncode
 				$this->tempStream = null;
 				break;
 			default:
-				rewind(stream: $this->tempStream);
-				$streamContent = stream_get_contents(stream: $this->tempStream);
-				fclose(stream: $this->tempStream);
+				rewind(
+					stream: $this->tempStream
+				);
+				$streamContent = stream_get_contents(
+					stream: $this->tempStream
+				);
+				fclose(
+					stream: $this->tempStream
+				);
 				break;
 		}
 
@@ -368,14 +416,26 @@ class DataEncode
 	private function processPublicXml(
 		$xmlFile
 	): string {
-		rewind(stream: $this->tempStream);
+		rewind(
+			stream: $this->tempStream
+		);
 		$xml = new \DOMDocument();
-		$xml->loadXML(source: stream_get_contents(stream: $this->tempStream));
+		$xml->loadXML(
+			source: stream_get_contents(
+				stream: $this->tempStream
+			)
+		);
 
 		$xslt = new \XSLTProcessor();
 		$XSL = new \DOMDocument();
-		$XSL->load(filename: $this->xmlFile);
-		$xslt->importStylesheet(stylesheet: $XSL);
-		return $xslt->transformToXML(document: $xml);
+		$XSL->load(
+			filename: $this->xmlFile
+		);
+		$xslt->importStylesheet(
+			stylesheet: $XSL
+		);
+		return $xslt->transformToXML(
+			document: $xml
+		);
 	}
 }

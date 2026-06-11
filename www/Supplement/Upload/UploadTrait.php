@@ -42,7 +42,10 @@ trait UploadTrait
 		$src = fopen(filename: "php://input", mode: "rb");
 		$dest = fopen(filename: $absFilePath, mode: 'wb');
 
-		stream_copy_to_stream(from: $src, to: $dest);
+		stream_copy_to_stream(
+			from: $src,
+			to: $dest
+		);
 
 		fclose(stream: $dest);
 		fclose(stream: $src);

@@ -118,7 +118,9 @@ class DbCommonFunction
 	public static function connectCustomerCache(
 		&$customerData
 	): CacheServer {
-		$customerCacheServerCred = self::customerCacheServerCred(customerData: $customerData);
+		$customerCacheServerCred = self::customerCacheServerCred(
+			customerData: $customerData
+		);
 		return self::connectCache(
 			cacheServerType: $customerCacheServerCred['cacheServerType'],
 			cacheServerHostname: $customerCacheServerCred['cacheServerHostname'],
@@ -139,7 +141,9 @@ class DbCommonFunction
 	 */
 	public static function connectCustomerQueryCache(): QueryCacheServer
 	{
-		$customerQueryCacheServerCred = self::customerQueryCacheServerCred(customerData: $customerData);
+		$customerQueryCacheServerCred = self::customerQueryCacheServerCred(
+			customerData: $customerData
+		);
 		return new QueryCacheServer(
 			queryCacheServerType: $customerQueryCacheServerCred['cacheServerType'],
 			queryCacheServerHostname: $customerQueryCacheServerCred['cacheServerHostname'],
@@ -219,7 +223,9 @@ class DbCommonFunction
 		// Set Database credentials
 		switch ($fetchFrom) {
 			case 'Master':
-				$customerMasterDatabaseServerCred = self::customerMasterDatabaseServerCred(customerData: $customerData);
+				$customerMasterDatabaseServerCred = self::customerMasterDatabaseServerCred(
+					customerData: $customerData
+				);
 				return self::connectDb(
 					dbServerType: $customerMasterDatabaseServerCred['dbServerType'],
 					dbServerHostname: $customerMasterDatabaseServerCred['dbServerHostname'],
@@ -230,7 +236,9 @@ class DbCommonFunction
 				);
 				break;
 			case 'Slave':
-				$customerSlaveDatabaseServerCred = self::customerSlaveDatabaseServerCred(customerData: $customerData);
+				$customerSlaveDatabaseServerCred = self::customerSlaveDatabaseServerCred(
+					customerData: $customerData
+				);
 				return self::connectDb(
 					dbServerType: $customerSlaveDatabaseServerCred['dbServerType'],
 					dbServerHostname: $customerSlaveDatabaseServerCred['dbServerHostname'],

@@ -172,7 +172,9 @@ class CustomSessionHandler implements
 		// Delete session if previous sessionId exist eg; used for
 		// session_regenerate_id()
 		if (!empty($this->sessionId)) {
-			$this->container->deleteSession(sessionId: $this->sessionId);
+			$this->container->deleteSession(
+				sessionId: $this->sessionId
+			);
 		}
 
 		$this->creatingSessionId = true;
@@ -296,7 +298,9 @@ class CustomSessionHandler implements
 	public function gc(
 		$sessionMaxLifetime
 	): int|false {
-		return $this->container->gcSession(sessionMaxLifetime: $sessionMaxLifetime);
+		return $this->container->gcSession(
+			sessionMaxLifetime: $sessionMaxLifetime
+		);
 	}
 
 	/**
@@ -314,7 +318,9 @@ class CustomSessionHandler implements
 		// Deleting session cookies set on customer end
 		$this->unsetSessionCookie();
 
-		return $this->container->deleteSession(sessionId: $sessionId);
+		return $this->container->deleteSession(
+			sessionId: $sessionId
+		);
 	}
 
 	/**
@@ -418,7 +424,9 @@ class CustomSessionHandler implements
 			if ($headerFound) {
 				header_remove();
 				foreach ($headerArr as &$header) {
-					header(header: $header);
+					header(
+						header: $header
+					);
 				}
 			}
 		}

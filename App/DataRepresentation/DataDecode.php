@@ -109,7 +109,9 @@ class DataDecode
 	public function isset(
 		$keyString = null
 	): bool {
-		return $this->dataDecoder->isset(keyString: $keyString);
+		return $this->dataDecoder->isset(
+			keyString: $keyString
+		);
 	}
 
 	/**
@@ -122,7 +124,9 @@ class DataDecode
 	public function dataType(
 		$keyString = null
 	): string {
-		return $this->dataDecoder->dataType(keyString: $keyString);
+		return $this->dataDecoder->dataType(
+			keyString: $keyString
+		);
 	}
 
 	/**
@@ -135,7 +139,9 @@ class DataDecode
 	public function count(
 		$keyString = null
 	): int {
-		return $this->dataDecoder->count(keyString: $keyString);
+		return $this->dataDecoder->count(
+			keyString: $keyString
+		);
 	}
 
 	/**
@@ -148,7 +154,9 @@ class DataDecode
 	public function get(
 		$keyString = ''
 	): mixed {
-		return $this->dataDecoder->get(keyString: $keyString);
+		return $this->dataDecoder->get(
+			keyString: $keyString
+		);
 	}
 
 	/**
@@ -161,7 +169,9 @@ class DataDecode
 	public function getCompleteArray(
 		$keyString = ''
 	): mixed {
-		return $this->dataDecoder->getCompleteArray(keyString: $keyString);
+		return $this->dataDecoder->getCompleteArray(
+			keyString: $keyString
+		);
 	}
 
 	/**
@@ -177,6 +187,8 @@ class DataDecode
 	public function load(
 		$keyString
 	): void {
-		$this->dataDecoder->load(keyString: $keyString);
+		$this->dataDecoder->load(
+			keyString: $keyString
+		);
 	}
 }

@@ -102,10 +102,14 @@ class Write
 		$writeSqlConfig = &$this->http->req->rParser->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
-		$this->rateLimitRoute(sqlConfig: $writeSqlConfig);
+		$this->rateLimitRoute(
+			sqlConfig: $writeSqlConfig
+		);
 
 		// Check for configured referrer Lags
-		$this->checkReferrerLag(sqlConfig: $writeSqlConfig);
+		$this->checkReferrerLag(
+			sqlConfig: $writeSqlConfig
+		);
 
 		// Use results in where clause of sub queries recursively
 		$useHierarchy = $this->getUseHierarchy(
@@ -138,7 +142,9 @@ class Write
 		}
 
 		// Lag Response
-		$this->lagResponse(sqlConfig: $writeSqlConfig);
+		$this->lagResponse(
+			sqlConfig: $writeSqlConfig
+		);
 
 		// Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
 		$this->operateAsTransaction = isset($writeSqlConfig['isTransaction'])
@@ -184,7 +190,9 @@ class Write
 		&$writeSqlConfig,
 		$useHierarchy
 	): bool {
-		$this->dataEncode->startObject(objectKey: 'Config');
+		$this->dataEncode->startObject(
+			objectKey: 'Config'
+		);
 		$this->dataEncode->addKeyData(
 			objectKey: 'Route',
 			data: $this->http->req->rParser->configuredRoute
@@ -253,7 +261,9 @@ class Write
 			flag: $useHierarchy
 		);
 
-		$this->dataEncode->startObject(objectKey: 'Results');
+		$this->dataEncode->startObject(
+			objectKey: 'Results'
+		);
 		if (
 			isset($this->http->req->s['payloadType'])
 			&& $this->http->req->s['payloadType'] === 'Array'
@@ -265,7 +275,9 @@ class Write
 					strict: true
 				)
 			) {
-				$this->dataEncode->startArray(objectKey: 'Rows');
+				$this->dataEncode->startArray(
+					objectKey: 'Rows'
+				);
 			}
 		}
 
@@ -368,7 +380,10 @@ class Write
 
 			if ($payloadIndexArr[0] === '') {
 				foreach ($arr as $k => $v) {
-					$this->dataEncode->addKeyData(objectKey: $k, data: $v);
+					$this->dataEncode->addKeyData(
+						objectKey: $k,
+						data: $v
+					);
 				}
 			} else {
 				if (
@@ -378,13 +393,21 @@ class Write
 						strict: true
 					)
 				) {
-					$this->dataEncode->startObject(objectKey: 'Row');
+					$this->dataEncode->startObject(
+						objectKey: 'Row'
+					);
 					foreach ($arr as $k => $v) {
-						$this->dataEncode->addKeyData(objectKey: $k, data: $v);
+						$this->dataEncode->addKeyData(
+							objectKey: $k,
+							data: $v
+						);
 					}
 					$this->dataEncode->endObject();
 				} else {
-					$this->dataEncode->addKeyData(objectKey: $i, data: $arr);
+					$this->dataEncode->addKeyData(
+						objectKey: $i,
+						data: $arr
+					);
 				}
 			}
 		}
@@ -441,7 +464,9 @@ class Write
 		}
 
 		$iCount = ($isObject || $isObject === null)
-			? 1 : $this->http->req->dataDecode->count(keyString: $payloadIndex);
+			? 1 : $this->http->req->dataDecode->count(
+				keyString: $payloadIndex
+			);
 
 		$mode = getenv(name: $this->http->req->s['customerData']['customer_master_db_server_query_placeholder']);
 		$function = "getSqlAndParam{$mode}Mode";
@@ -485,7 +510,11 @@ class Write
 			$payloadIndex = is_array(value: $payloadIndexArr)
 				? implode(separator: ':', array: $payloadIndexArr) : '';
 
-			if (!$this->http->req->dataDecode->isset(keyString: $payloadIndex)) {
+			if (
+				!$this->http->req->dataDecode->isset(
+					keyString: $payloadIndex
+				)
+			) {
 				throw new \Exception(
 					message: "Payload key '{$payloadIndex}' not set",
 					code: HttpStatus::$NotFound
@@ -512,7 +541,10 @@ class Write
 			// Validation
 			if (
 				isset($writeSqlConfig['__VALIDATE__'])
-				&& !$this->isValidPayload(writeSqlConfig: $writeSqlConfig, response: $_response)
+				&& !$this->isValidPayload(
+					writeSqlConfig: $writeSqlConfig,
+					response: $_response
+				)
 			) {
 				continue;
 			}
@@ -520,7 +552,9 @@ class Write
 			// Execute Pre SQL Hook
 			if (isset($writeSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
-					$this->hook = new Hook(http: $this->http);
+					$this->hook = new Hook(
+						http: $this->http
+					);
 				}
 				$this->hook->triggerHook(
 					hookArr: $writeSqlConfig['__PRE-SQL-HOOKS__']
@@ -543,7 +577,10 @@ class Write
 			}
 
 			// Execute Query
-			$this->http->req->customerDbObj->execQuery(sql: $sql, paramArr: $paramArr);
+			$this->http->req->customerDbObj->execQuery(
+				sql: $sql,
+				paramArr: $paramArr
+			);
 			if (
 				$this->operateAsTransaction
 				&& !$this->http->req->customerDbObj->beganTransaction
@@ -582,7 +619,9 @@ class Write
 			// Execute Post SQL Hook
 			if (isset($writeSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hook === null) {
-					$this->hook = new Hook(http: $this->http);
+					$this->hook = new Hook(
+						http: $this->http
+					);
 				}
 				$this->hook->triggerHook(
 					hookArr: $writeSqlConfig['__POST-SQL-HOOKS__']
@@ -646,7 +685,9 @@ class Write
 
 		if (
 			isset($writeSqlConfig['__SUB-QUERY__'])
-			&& $this->isObject(arr: $writeSqlConfig['__SUB-QUERY__'])
+			&& $this->isObject(
+				arr: $writeSqlConfig['__SUB-QUERY__']
+			)
 		) {
 			foreach ($writeSqlConfig['__SUB-QUERY__'] as $module => &$writeSqlConfig) {
 				$dataExist = false;
@@ -672,7 +713,9 @@ class Write
 				}
 
 				$iCount = ($isObject || $isObject === null)
-					? 1 : $this->http->req->dataDecode->count(keyString: $modulePayloadIndexKey);
+					? 1 : $this->http->req->dataDecode->count(
+						keyString: $modulePayloadIndexKey
+					);
 
 				for ($i = 0; $i < $iCount; $i++) {
 					$modulePayloadIndexItt = $modulePayloadIndexArr;

@@ -67,7 +67,10 @@ $paramArr = [
 ];
 
 $payload = '<?xml version="1.0" encoding="UTF-8" ?>';
-Web::genXmlPayload(xmlParamArr: $paramArr, payload: $payload);
+Web::genXmlPayload(
+	xmlParamArr: $paramArr,
+	payload: $payload
+);
 
 $response[] = Web::trigger(
 	homeURL: $homeURL,

@@ -72,8 +72,12 @@ class Http
 	 */
 	public function init(): bool
 	{
-		$this->req = new HttpRequest(http: $this);
-		$this->res = new HttpResponse(http: $this);
+		$this->req = new HttpRequest(
+			http: $this
+		);
+		$this->res = new HttpResponse(
+			http: $this
+		);
 
 		if ($this->req->isPrivateRequest) {
 			$this->req->ROUTES_DIR = Constant::$ROUTES_PRIVATE_DIR;

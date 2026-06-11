@@ -145,7 +145,9 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -161,11 +163,15 @@ class MySql implements SqlInterface
 
 		try {
 			if ($this->dbServerDatabase !== null) {
-				$this->mysqlServerObj->exec(statement: "USE `{$this->dbServerDatabase}`");
+				$this->mysqlServerObj->exec(
+					statement: "USE `{$this->dbServerDatabase}`"
+				);
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 				$this->rollBack();
 			}
 		}
@@ -185,7 +191,9 @@ class MySql implements SqlInterface
 			$this->mysqlServerObj->beginTransaction();
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -204,7 +212,9 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -223,7 +233,9 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -244,7 +256,9 @@ class MySql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -266,7 +280,9 @@ class MySql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -319,7 +335,9 @@ class MySql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}
@@ -333,11 +351,15 @@ class MySql implements SqlInterface
 	{
 		try {
 			if ($this->stmt) {
-				return $this->stmt->fetch(mode: \PDO::FETCH_ASSOC);
+				return $this->stmt->fetch(
+					mode: \PDO::FETCH_ASSOC
+				);
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -352,11 +374,15 @@ class MySql implements SqlInterface
 	{
 		try {
 			if ($this->stmt) {
-				return $this->stmt->fetchAll(mode: \PDO::FETCH_ASSOC);
+				return $this->stmt->fetchAll(
+					mode: \PDO::FETCH_ASSOC
+				);
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 		return false;
@@ -384,7 +410,9 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(e: $e);
+				$this->log(
+					e: $e
+				);
 			}
 		}
 	}

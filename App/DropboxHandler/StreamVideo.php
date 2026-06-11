@@ -105,7 +105,10 @@ class StreamVideo
 
 		$this->fileLocation = $fileLocation;
 		// Set buffer Range
-		$range = explode(separator: '=', string: $this->httpReqData['header']['range'])[1];
+		$range = explode(
+			separator: '=',
+			string: $this->httpReqData['header']['range']
+		)[1];
 		list($this->streamFrom, $this->streamTill) = explode(
 			separator: '-',
 			string: $range

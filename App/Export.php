@@ -90,7 +90,9 @@ class Export
 	) {
 		$this->http = &$http;
 		$this->dbServerType = $dbServerType;
-		$this->exportDbServerObj = new ExportDatabaseServer(dbServerType: $this->dbServerType);
+		$this->exportDbServerObj = new ExportDatabaseServer(
+			dbServerType: $this->dbServerType
+		);
 	}
 
 	/**
@@ -138,8 +140,13 @@ class Export
 		);
 		$this->useTmpFile = $toggleUseTmpFile;
 
-		$shellOutput = shell_exec(command: $shellCommand);
-		$outputLineArr = explode(separator: PHP_EOL, string: $shellOutput);
+		$shellOutput = shell_exec(
+			command: $shellCommand
+		);
+		$outputLineArr = explode(
+			separator: PHP_EOL,
+			string: $shellOutput
+		);
 
 		switch ($this->exportMode) {
 			case 'TSV':
@@ -202,18 +209,28 @@ class Export
 		$paramArr = [],
 		$exportFile = null
 	): array {
-		$shellCommand = $this->exportDbServerObj->getShellCommand(sql: $sql, paramArr: $paramArr);
+		$shellCommand = $this->exportDbServerObj->getShellCommand(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 		if ($this->exportMode === 'CSV') {
 			$shellCommand .= ' | sed -e \'s/"/""/g ; s/\t/","/g ; s/^/"/g ; s/$/"/g\'';
 		}
 
 		if (!is_null(value: $exportFile)) {
 			$tmpFilename = $exportFile;
-			$shellCommand .= ' > ' . escapeshellarg(arg: $tmpFilename);
+			$shellCommand .= ' > ' . escapeshellarg(
+				arg: $tmpFilename
+			);
 		} elseif ($this->useTmpFile) {
 			// Generate temporary file for storing output of shell command on server
-			$tmpFilename = tempnam(directory: sys_get_temp_dir(), prefix: 'CSV');
-			$shellCommand .= ' > ' . escapeshellarg(arg: $tmpFilename);
+			$tmpFilename = tempnam(
+				directory: sys_get_temp_dir(),
+				prefix: 'CSV'
+			);
+			$shellCommand .= ' > ' . escapeshellarg(
+				arg: $tmpFilename
+			);
 		} else {
 			$tmpFilename = null;
 			$shellCommand .= ' 2>&1';
@@ -252,18 +269,24 @@ class Export
 		if ($this->useTmpFile) {
 			// Execute shell command
 			// The shell command to create CSV export file.
-			shell_exec(command: $shellCommand);
+			shell_exec(
+				command: $shellCommand
+			);
 			$return = $this->getCsvFileData(
 				exportFile: $tmpFilename,
 				downloadFile: $downloadFile
 			);
 		} else {
 			// Set header
-			$headerArr = $this->getCsvHeaders(filename: $downloadFile);
+			$headerArr = $this->getCsvHeaders(
+				filename: $downloadFile
+			);
 
 			// Execute shell command
 			// The shell command echos the output.
-			$data = shell_exec(command: $shellCommand);
+			$data = shell_exec(
+				command: $shellCommand
+			);
 			$return = [$headerArr, $data, HttpStatus::$Ok];
 		}
 
@@ -292,7 +315,9 @@ class Export
 
 		// Execute shell command
 		// The shell command saves exported CSV data to provided path
-		shell_exec(command: $shellCommand);
+		shell_exec(
+			command: $shellCommand
+		);
 
 		return [$headerArr = [], $data = '', HttpStatus::$Ok];
 	}
@@ -330,13 +355,19 @@ class Export
 		$downloadFile
 	): array {
 		// Validation
-		$this->vFileLocation(filename: $exportFile);
+		$this->vFileLocation(
+			filename: $exportFile
+		);
 
 		// Set header
-		$headerArr = $this->getCsvHeaders(filename: $downloadFile);
+		$headerArr = $this->getCsvHeaders(
+			filename: $downloadFile
+		);
 
 		// Start streaming
-		$data = file_get_contents(filename: $exportFile);
+		$data = file_get_contents(
+			filename: $exportFile
+		);
 
 		if (
 			$this->unlink

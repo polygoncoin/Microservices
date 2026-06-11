@@ -146,7 +146,11 @@ class Auth
 			customerId: $this->http->req->customerId,
 			customerUserGroupId: $this->http->req->customerUserGroupId
 		);
-		if (!$this->http->req->customerCacheObj->cacheExist(cacheKey: $groupCacheKey)) {
+		if (
+			!$this->http->req->customerCacheObj->cacheExist(
+				cacheKey: $groupCacheKey
+			)
+		) {
 			throw new \Exception(
 				message: "Cache '{$groupCacheKey}' missing",
 				code: HttpStatus::$InternalServerError

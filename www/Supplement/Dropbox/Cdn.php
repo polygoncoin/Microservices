@@ -107,7 +107,9 @@ class Cdn implements DropboxInterface
 			string: str_replace(
 				search: ['../', '..\\', '/', '\\'],
 				replace: ['', '', DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR],
-				subject: urldecode(string: $configuredRoute)
+				subject: urldecode(
+					string: $configuredRoute
+				)
 			),
 			characters: './\\'
 		);
@@ -160,10 +162,14 @@ class Cdn implements DropboxInterface
 				strict: true
 			):
 				// Serve Video
-				$videoStream = new StreamVideo(httpReqData: $this->http->httpReqData);
+				$videoStream = new StreamVideo(
+					httpReqData: $this->http->httpReqData
+				);
 				if (
 					(
-						$httpStatus = $videoStream->init(fileLocation: $this->fileLocation)
+						$httpStatus = $videoStream->init(
+							fileLocation: $this->fileLocation
+						)
 					) !== HttpStatus::$Ok
 				) {
 					$return = [$headerArr, $data, $httpStatus];
@@ -190,7 +196,9 @@ class Cdn implements DropboxInterface
 		$data = '';
 
 		// Let Etag be last modified timestamp of file
-		$modifiedTime = filemtime(filename: $this->fileLocation);
+		$modifiedTime = filemtime(
+			filename: $this->fileLocation
+		);
 		$eTag = "{$modifiedTime}";
 
 		if (

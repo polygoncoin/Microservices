@@ -68,7 +68,9 @@ class QueryCache
             return;
         }
 
-		$customerQueryCacheServerCred = DbCommonFunction::customerQueryCacheServerCred(customerData: $this->http->req->s['customerData']);
+		$customerQueryCacheServerCred = DbCommonFunction::customerQueryCacheServerCred(
+			customerData: $this->http->req->s['customerData']
+		);
 		$this->customerQueryCacheServer = new QueryCacheServer(
 			queryCacheServerType: $customerQueryCacheServerCred['cacheServerType'],
 			queryCacheServerHostname: $customerQueryCacheServerCred['cacheServerHostname'],
@@ -128,8 +130,14 @@ class QueryCache
 		);
 
 		$json = null;
-		if ($this->customerQueryCacheServer->queryCacheExist(queryCacheKey: $queryCacheKey)) {
-			$json = $this->customerQueryCacheServer->queryCacheGet(queryCacheKey: $queryCacheKey);
+		if (
+			$this->customerQueryCacheServer->queryCacheExist(
+				queryCacheKey: $queryCacheKey
+			)
+		) {
+			$json = $this->customerQueryCacheServer->queryCacheGet(
+				queryCacheKey: $queryCacheKey
+			);
 		}
 
 		return $json;
@@ -159,7 +167,9 @@ class QueryCache
 			queryCacheKey: $queryCacheKey
 		);
 
-		return $this->customerQueryCacheServer->queryCacheIncrement(queryCacheKey: $queryCacheKey);
+		return $this->customerQueryCacheServer->queryCacheIncrement(
+			queryCacheKey: $queryCacheKey
+		);
 	}
 
 	/**
@@ -194,8 +204,13 @@ class QueryCache
 			queryCacheKey: $delQueryCacheKey
 		);
 
-		$this->customerQueryCacheServer->queryCacheDelete(queryCacheKey: $delQueryCacheKey);
-		return $this->customerQueryCacheServer->queryCacheSet(queryCacheKey: $queryCacheKey, queryCacheValue: $queryCacheValue);
+		$this->customerQueryCacheServer->queryCacheDelete(
+			queryCacheKey: $delQueryCacheKey
+		);
+		return $this->customerQueryCacheServer->queryCacheSet(
+			queryCacheKey: $queryCacheKey,
+			queryCacheValue: $queryCacheValue
+		);
 	}
 
 	/**
@@ -221,6 +236,8 @@ class QueryCache
 			queryCacheKey: $queryCacheKey
 		);
 
-		return $this->customerQueryCacheServer->queryCacheDelete(queryCacheKey: $queryCacheKey);
+		return $this->customerQueryCacheServer->queryCacheDelete(
+			queryCacheKey: $queryCacheKey
+		);
 	}
 }
