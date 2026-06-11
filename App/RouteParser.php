@@ -184,7 +184,10 @@ class RouteParser
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = Env::$dropboxRequestRoutePrefix;
 
-			$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
+			$this->configuredRoute = '/' . implode(
+				separator: '/',
+				array: $this->routeElementArr
+			);
 
 			return;
 		}
@@ -208,12 +211,17 @@ class RouteParser
 			$this->routeStartingWithReservedKeywordFlag = true;
 			$this->routeStartingReservedKeyword = Env::$routesRequestRoute;
 
-			$this->configuredRoute = '/' . implode(separator: '/', array: $this->routeElementArr);
+			$this->configuredRoute = '/' . implode(
+				separator: '/',
+				array: $this->routeElementArr
+			);
 
 			return;
 		}
 
-		$routeLastElementPos = count(value: $this->routeElementArr) - 1;
+		$routeLastElementPos = count(
+			value: $this->routeElementArr
+		) - 1;
 		// if ($this->routeElementArr[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
 		//     if (isset($this->http->httpReqData['server']['httpMethod'])) {
 		//         $this->http->httpReqData['server']['httpMethod'] = $this->http->httpReqData['server']['httpMethod'];
@@ -248,8 +256,10 @@ class RouteParser
 		}
 
 		$configuredRoute = [];
-
-		for ($i = 0, $iCount = count(value: $this->routeElementArr); $i < $iCount; $i++) {
+		$iCount = count(
+			value: $this->routeElementArr
+		);
+		for ($i = 0; $i < $iCount; $i++) {
 			$element = $this->routeElementArr[$i];
 			if ($element === '') {
 				continue;
@@ -711,7 +721,11 @@ class RouteParser
 		$foundIntParamName = false;
 		$foundStringRoute = false;
 		$foundStringParamName = false;
-		foreach (array_keys(array: $routeConfig) as $routeElement) {
+		foreach (
+			array_keys(
+				array: $routeConfig
+			) as $routeElement
+		) {
 			if (
 				in_array(
 					needle: $routeElement,

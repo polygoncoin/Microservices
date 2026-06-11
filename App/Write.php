@@ -163,11 +163,10 @@ class Write
 			useHierarchy: $useHierarchy
 		);
 		if (isset($writeSqlConfig['affectedQueryCacheKeyArr'])) {
-			for (
-				$i = 0, $iCount = count(value: $writeSqlConfig['affectedQueryCacheKeyArr']);
-				$i < $iCount;
-				$i++
-			) {
+			$iCount = count(
+				value: $writeSqlConfig['affectedQueryCacheKeyArr']
+			);
+			for ($i = 0; $i < $iCount; $i++) {
 				$this->http->req->customerQueryCacheObj->queryCacheDelete(
 					customerId: $this->http->req->customerId,
 					queryCacheKey: $writeSqlConfig['affectedQueryCacheKeyArr'][$i]

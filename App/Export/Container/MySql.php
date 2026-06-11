@@ -172,7 +172,11 @@ class MySql implements ExportDatabaseServerInterface
 		}
 
 		$paramPos = [];
-		foreach (array_keys(array: $paramArr) as $parameterisedColumn) {
+		foreach (
+			array_keys(
+				array: $paramArr
+			) as $parameterisedColumn
+		) {
 			if (
 				substr_count(
 					haystack: $sql,

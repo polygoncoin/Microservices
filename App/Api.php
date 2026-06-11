@@ -101,7 +101,11 @@ class Api
 					) {
 						continue;
 					}
-					for ($i = 0, $iCount = count(value: $preRouteHookConfig); $i < $iCount; $i++) {
+
+					 $iCount = count(
+						value: $preRouteHookConfig
+					 );
+					for ($i = 0; $i < $iCount; $i++) {
 						if (
 							!in_array(
 								needle: $preRouteHookConfig[$i],
@@ -315,7 +319,11 @@ class Api
 					) {
 						continue;
 					}
-					for ($i = 0, $iCount = count(value: $postRouteHookConfig); $i < $iCount; $i++) {
+					
+					$iCount = count(
+						value: $postRouteHookConfig
+					);
+					for ($i = 0; $i < $iCount; $i++) {
 						if (
 							!in_array(
 								needle: $postRouteHookConfig[$i],

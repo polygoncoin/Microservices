@@ -385,7 +385,11 @@ class Read
 						}
 					} else {
 						$this->dataEncode->startArray(
-							objectKey: $configKeyArr[count(value: $configKeyArr) - 1]
+							objectKey: $configKeyArr[
+								count(
+									value: $configKeyArr
+								) - 1
+							]
 						);
 					}
 					$this->fetchMultipleRows(
@@ -698,7 +702,11 @@ class Read
 			}
 			if ($singleColumn) {
 				$this->dataEncode->encode(
-					data: $row[key(array: $row)]
+					data: $row[
+						key(
+							array: $row
+						)
+					]
 				);
 			} elseif (isset($readSqlConfig['__SUB-QUERY__'])) {
 				$this->dataEncode->startObject();

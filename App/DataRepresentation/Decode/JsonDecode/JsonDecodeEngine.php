@@ -146,7 +146,11 @@ class JsonDecodeEngine
 		for (
 			;
 			(
-				($char = fgetc(stream: $this->jsonFileHandle)) !== false
+				(
+					$char = fgetc(
+						stream: $this->jsonFileHandle
+					)
+				) !== false
 				&& (
 					($this->eIndex === null)
 					|| (

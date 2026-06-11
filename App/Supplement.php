@@ -177,11 +177,10 @@ class Supplement
 			useHierarchy: $useHierarchy
 		);
 		if (isset($sSqlConfig['affectedQueryCacheKeyArr'])) {
-			for (
-				$i = 0, $iCount = count(value: $sSqlConfig['affectedQueryCacheKeyArr']);
-				$i < $iCount;
-				$i++
-			) {
+			$iCount = count(
+				value: $sSqlConfig['affectedQueryCacheKeyArr']
+			);
+			for ($i = 0; $i < $iCount; $i++) {
 				$this->http->req->customerQueryCacheObj->queryCacheDelete(
 					customerId: $this->http->req->customerId,
 					queryCacheKey: $sSqlConfig['affectedQueryCacheKeyArr'][$i]

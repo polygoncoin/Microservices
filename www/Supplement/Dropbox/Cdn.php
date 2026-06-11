@@ -236,7 +236,9 @@ class Cdn implements DropboxInterface
 		$headerArr['Etag'] = "\"{$eTag}\"";
 		$headerArr['Expires'] = -1;
 		$headerArr['Content-Type'] = "{$this->mimeType}";
-		$headerArr['Content-Length'] = filesize(filename: $this->fileLocation);
+		$headerArr['Content-Length'] = filesize(
+			filename: $this->fileLocation
+		);
 
 		return [$headerArr, file_get_contents($this->fileLocation), $status];
 	}

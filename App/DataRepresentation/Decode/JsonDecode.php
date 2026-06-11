@@ -130,13 +130,20 @@ class JsonDecode implements DataDecodeInterface
 	public function indexData(): void
 	{
 		$this->jsonFileIndex = null;
-		foreach ($this->jsonDecodeEngine->process(index: true) as $keyArr => $val) {
+		foreach (
+			$this->jsonDecodeEngine->process(
+				index: true
+			) as $keyArr => $val
+		) {
 			if (
 				isset($val['sIndex'])
 				&& isset($val['eIndex'])
 			) {
 				$jsonFileIndex = &$this->jsonFileIndex;
-				for ($i = 0, $iCount = count(value: $keyArr); $i < $iCount; $i++) {
+				$iCount = count(
+					value: $keyArr
+				);
+				for ($i = 0; $i < $iCount; $i++) {
 					if (
 						is_numeric(
 							value: $keyArr[$i]
@@ -147,7 +154,11 @@ class JsonDecode implements DataDecodeInterface
 						if (!isset($jsonFileIndex['_c_'])) {
 							$jsonFileIndex['_c_'] = 0;
 						}
-						if (is_numeric(value: $keyArr[$i])) {
+						if (
+							is_numeric(
+								value: $keyArr[$i]
+							)
+						) {
 							$jsonFileIndex['_c_']++;
 						}
 					}
@@ -176,7 +187,12 @@ class JsonDecode implements DataDecodeInterface
 			) !== 0
 		) {
 			$jsonFileIndex = &$this->jsonFileIndex;
-			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+			foreach (
+				explode(
+					separator: ':',
+					string: $keyString
+				) as $objectKey
+			) {
 				if (isset($jsonFileIndex[$objectKey])) {
 					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
@@ -205,7 +221,12 @@ class JsonDecode implements DataDecodeInterface
 				string: $keyString
 			) > 0
 		) {
-			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+			foreach (
+				explode(
+					separator: ':',
+					string: $keyString
+				) as $objectKey
+			) {
 				if (isset($jsonFileIndex[$objectKey])) {
 					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
@@ -241,7 +262,12 @@ class JsonDecode implements DataDecodeInterface
 				string: $keyString
 			) !== 0
 		) {
-			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+			foreach (
+				explode(
+					separator: ':',
+					string: $keyString
+				) as $objectKey
+			) {
 				if (isset($jsonFileIndex[$objectKey])) {
 					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {
@@ -349,7 +375,12 @@ class JsonDecode implements DataDecodeInterface
 				string: $keyString
 			) !== 0
 		) {
-			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
+			foreach (
+				explode(
+					separator: ':',
+					string: $keyString
+				) as $objectKey
+			) {
 				if (isset($jsonFileIndex[$objectKey])) {
 					$jsonFileIndex = &$jsonFileIndex[$objectKey];
 				} else {

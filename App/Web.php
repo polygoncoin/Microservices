@@ -325,7 +325,12 @@ class Web
 		$headerArr = [];
 		$headerName = '';
 
-		foreach (explode(separator: "\n", string: $rawHeaderArr) as $i => $h) {
+		foreach (
+			explode(
+				separator: "\n",
+				string: $rawHeaderArr
+			) as $i => $h
+		) {
 			$h = explode(
 				separator: ':',
 				string: $h,

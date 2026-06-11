@@ -74,7 +74,10 @@ class Hook
 				value: $hookArr
 			)
 		) {
-			for ($i = 0, $iCount = count(value: $hookArr); $i < $iCount; $i++) {
+			$iCount = count(
+				value: $hookArr
+			);
+			for ($i = 0; $i < $iCount; $i++) {
 				$hookName = $hookArr[$i];
 
 				$hookFile = Constant::$WWW

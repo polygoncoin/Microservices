@@ -506,7 +506,10 @@ class DatabaseServerDataType
 		if (
 			$returnFlag
 			&& isset($dataType['regex'])
-			&& preg_match(pattern: $dataType['regex'], subject: $data) === 0
+			&& preg_match(
+				pattern: $dataType['regex'],
+				subject: $data
+			) === 0
 		) {
 			$returnFlag = false;
 		}

@@ -1233,11 +1233,10 @@ trait AppTrait
 			);
 			$triggerOutput = &$responseContent;
 		} else {
-			for (
-				$iTrigger = 0, $iTriggerCount = count(value: $triggerConfig);
-				$iTrigger < $iTriggerCount;
-				$iTrigger++
-			) {
+			$iTriggerCount = count(
+				value: $triggerConfig
+			);
+			for ($iTrigger = 0; $iTrigger < $iTriggerCount; $iTrigger++) {
 				$httpReqData = $this->getTriggerHttp(
 					triggerConfig: $triggerConfig[$iTrigger]
 				);
@@ -1419,7 +1418,10 @@ trait AppTrait
 					value: $p
 				)
 			) {
-				for ($i = 0, $iCount = count(value: $p); $i < $iCount; $i++) {
+				$iCount = count(
+					value: $p
+				);
+				for ($i = 0; $i < $iCount; $i++) {
 					$header[] = $p[$i];
 				}
 			} else {
@@ -1433,7 +1435,10 @@ trait AppTrait
 		$blankStr = '';
 		foreach ($paramArr as $r => $p) {
 			if ($r === 'CSV') {
-				for ($i = 1, $iCount = count(value: $header); $i < $iCount; $i++) {
+				$iCount = count(
+					value: $header
+				);
+				for ($i = 1; $i < $iCount; $i++) {
 					$blankStr = ',""';
 				}
 			}

@@ -891,11 +891,10 @@ class HttpRequest
 						$value
 					);
 					$_csvHeaderData = &$csvHeaderData;
-					for (
-						$i = 0, $iCount = count(value: $v);
-						$i < $iCount;
-						$i++
-					) {
+					$iCount = count(
+						value: $v
+					);
+					for ($i = 0; $i < $iCount; $i++) {
 						if (($i+1) === $iCount) {
 							$_csvHeaderData['__column__'][$v[$i]] = $columnPosition;
 						} else {
