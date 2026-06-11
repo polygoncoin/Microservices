@@ -811,8 +811,7 @@ class Read
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig
 		);
-		$serverMode = isset($readSqlConfig['fetchFrom'])
-			? $readSqlConfig['fetchFrom'] : 'Slave';
+		$serverMode = $readSqlConfig['fetchFrom'] ?? 'Slave';
 
 		$exportDbData = [];
 		switch ($serverMode) {
