@@ -447,14 +447,15 @@ class Write
 		&$response,
 		&$requiredFieldArr
 	): void {
-		$payloadIndex = is_array(value: $payloadIndexArr)
-			? trim(
-				string: implode(
-					separator: ':',
-					array: $payloadIndexArr
-				),
-				characters: ':'
-			) : null;
+		$payloadIndex = is_array(
+			value: $payloadIndexArr
+		) ? trim(
+			string: implode(
+				separator: ':',
+				array: $payloadIndexArr
+			),
+			characters: ':'
+		) : null;
 
 		$isObject = null;
 		if ($payloadIndex !== null) {
@@ -507,8 +508,12 @@ class Write
 					$i
 				);
 			}
-			$payloadIndex = is_array(value: $payloadIndexArr)
-				? implode(separator: ':', array: $payloadIndexArr) : '';
+			$payloadIndex = is_array(
+				value: $payloadIndexArr
+			) ? implode(
+				separator: ':',
+				array: $payloadIndexArr
+			) : '';
 
 			if (
 				!$this->http->req->dataDecode->isset(
@@ -525,7 +530,11 @@ class Write
 				keyString: $payloadIndex
 			);
 
-			if (count(value: $requiredFieldArr)) {
+			if (
+				count(
+					value: $requiredFieldArr
+				)
+			) {
 				$this->http->req->s['requiredFieldArr'] = $requiredFieldArr;
 			} else {
 				$this->http->req->s['requiredFieldArr'] = [];
@@ -679,7 +688,11 @@ class Write
 				$payloadIndexArr
 			);
 		}
-		if (!is_array(value: $payloadIndexArr)) {
+		if (
+			!is_array(
+				value: $payloadIndexArr
+			)
+		) {
 			$payloadIndexArr = [];
 		}
 
@@ -702,8 +715,12 @@ class Write
 					$module
 				);
 
-				$modulePayloadIndexKey = is_array(value: $modulePayloadIndexArr)
-					? implode(separator: ':', array: $modulePayloadIndexArr) : null;
+				$modulePayloadIndexKey = is_array(
+					value: $modulePayloadIndexArr
+				) ? implode(
+					separator: ':',
+					array: $modulePayloadIndexArr
+				) : null;
 
 				$isObject = null;
 				if ($modulePayloadIndexKey !== null) {

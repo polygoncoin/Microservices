@@ -320,8 +320,12 @@ class MySql implements SqlInterface
 			);
 			if ($this->stmt) {
 				if (
-					is_array(value: $paramArr)
-					&& count(value: $paramArr) > 0
+					is_array(
+						value: $paramArr
+					)
+					&& count(
+						value: $paramArr
+					) > 0
 				) {
 					$this->stmt->execute(
 						$paramArr
@@ -403,9 +407,13 @@ class MySql implements SqlInterface
 				$this->stmt->closeCursor();
 				if (
 					$pushPop
-					&& count(value: $this->stmtArr)
+					&& count(
+						value: $this->stmtArr
+					)
 				) {
-					$this->stmt = array_pop(array: $this->stmtArr);
+					$this->stmt = array_pop(
+						array: $this->stmtArr
+					);
 				}
 			}
 		} catch (\PDOException $e) {

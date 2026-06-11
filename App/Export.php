@@ -179,14 +179,22 @@ class Export
 	private function vFileLocation(
 		$filename
 	): void {
-		if (!is_file(filename: $filename)) {
+		if (
+			!is_file(
+				filename: $filename
+			)
+		) {
 			throw new \Exception(
 				message: "File '{$filename}' is not a file",
 				code: HttpStatus::$InternalServerError
 			);
 		}
 
-		if (file_exists(filename: $filename)) {
+		if (
+			file_exists(
+				filename: $filename
+			)
+		) {
 			throw new \Exception(
 				message: "File '{$filename}' already exists",
 				code: HttpStatus::$InternalServerError
@@ -217,7 +225,11 @@ class Export
 			$shellCommand .= ' | sed -e \'s/"/""/g ; s/\t/","/g ; s/^/"/g ; s/$/"/g\'';
 		}
 
-		if (!is_null(value: $exportFile)) {
+		if (
+			!is_null(
+				value: $exportFile
+			)
+		) {
 			$tmpFilename = $exportFile;
 			$shellCommand .= ' > ' . escapeshellarg(
 				arg: $tmpFilename
@@ -261,7 +273,11 @@ class Export
 			exportFile: $exportFile
 		);
 
-		if (!is_null(value: $exportFile)) {
+		if (
+			!is_null(
+				value: $exportFile
+			)
+		) {
 			$this->useTmpFile = true;
 			$this->unlink = false;
 		}
@@ -371,7 +387,9 @@ class Export
 
 		if (
 			$this->unlink
-			&& !unlink(filename: $exportFile)
+			&& !unlink(
+				filename: $exportFile
+			)
 		) { // Unable to delete
 			//handle error via logs.
 		}

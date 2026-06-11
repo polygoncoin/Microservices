@@ -465,14 +465,18 @@ class DatabaseServerDataType
 		if (
 			$returnFlag
 			&& isset($dataType['minLength'])
-			&& $dataType['minLength'] <= strlen(string: $data)
+			&& $dataType['minLength'] <= strlen(
+				string: $data
+			)
 		) {
 			$returnFlag = false;
 		}
 		if (
 			$returnFlag
 			&& isset($dataType['maxLength'])
-			&& strlen(string: $data) <= $dataType['maxLength']
+			&& strlen(
+				string: $data
+			) <= $dataType['maxLength']
 		) {
 			$returnFlag = false;
 		}

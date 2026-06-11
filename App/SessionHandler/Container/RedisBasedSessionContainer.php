@@ -216,7 +216,11 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	private function connect(): void
 	{
 		try {
-			if (!extension_loaded(extension: 'redis')) {
+			if (
+				!extension_loaded(
+					extension: 'redis'
+				)
+			) {
 				throw new \Exception(
 					message: "Unable to find Redis extension",
 					code: HttpStatus::$InternalServerError

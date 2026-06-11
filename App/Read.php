@@ -477,7 +477,9 @@ class Read
 			// check if selected column-name mismatches or conflicts with
 			// configured module/submodule names
 			if (isset($readSqlConfig['__SUB-QUERY__'])) {
-				$subQueryKeyArr = array_keys(array: $readSqlConfig['__SUB-QUERY__']);
+				$subQueryKeyArr = array_keys(
+					array: $readSqlConfig['__SUB-QUERY__']
+				);
 				foreach ($row as $objectKey => $value) {
 					if (
 						in_array(
@@ -637,8 +639,14 @@ class Read
 					value: $this->http->req->s['queryParamArr']['orderBy']
 				);
 				foreach ($orderByArr as $k => $v) {
-					$k = str_replace(search: ['`', ' '], replace: '', subject: $k);
-					$v = strtoupper(string: $v);
+					$k = str_replace(
+						search: ['`', ' '],
+						replace: '',
+						subject: $k
+					);
+					$v = strtoupper(
+						string: $v
+					);
 					if (
 						in_array(
 							needle: $v,
@@ -649,7 +657,11 @@ class Read
 						$orderByStrArr[] = "`{$k}` {$v}";
 					}
 				}
-				if (count(value: $orderByStrArr) > 0) {
+				if (
+					count(
+						value: $orderByStrArr
+					) > 0
+				) {
 					$sql .= ' ORDER BY ' . implode(
 						separator: ', ',
 						array: $orderByStrArr
@@ -673,7 +685,11 @@ class Read
 		);
 		for ($i = 0; $row = $this->http->req->customerDbObj->fetch();) {
 			if ($i === 0) {
-				if (count(value: $row) === 1) {
+				if (
+					count(
+						value: $row
+					) === 1
+				) {
 					$singleColumn = true;
 				}
 				$singleColumn = $singleColumn

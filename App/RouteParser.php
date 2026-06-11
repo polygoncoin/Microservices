@@ -154,7 +154,10 @@ class RouteParser
 
 		$this->routeElementArr = explode(
 			separator: '/',
-			string: trim(string: $this->http->httpReqData['get'][ROUTE_URL_PARAM], characters: '/')
+			string: trim(
+				string: $this->http->httpReqData['get'][ROUTE_URL_PARAM],
+				characters: '/'
+			)
 		);
 
 		if (
@@ -230,7 +233,11 @@ class RouteParser
 			}
 		}
 
-		if (file_exists(filename: $routeFileLocation)) {
+		if (
+			file_exists(
+				filename: $routeFileLocation
+			)
+		) {
 			$this->routeFileLocation = $routeFileLocation;
 			$routeConfig = include $routeFileLocation;
 		} else {
@@ -277,11 +284,15 @@ class RouteParser
 				if (
 					(
 						isset($routeConfig['__FILE__'])
-						&& count(value: $routeConfig) > 2
+						&& count(
+							value: $routeConfig
+						) > 2
 					)
 					|| (
 						!isset($routeConfig['__FILE__'])
-						&& count(value: $routeConfig) > 0
+						&& count(
+							value: $routeConfig
+						) > 0
 					)
 				) {
 					[
@@ -300,7 +311,9 @@ class RouteParser
 					} elseif ($foundStringRoute) {
 						$configuredRoute[] = $foundStringRoute;
 						$this->http->req->s['routeParamArr'][$foundStringParamName] =
-							urldecode(string: $element);
+							urldecode(
+								string: $element
+							);
 					} else {
 						throw new \Exception(
 							message: 'Route not supported',
@@ -349,7 +362,10 @@ class RouteParser
 			$this->http->req->iRepresentation = $this->http->httpReqData['get']['iRepresentation'];
 		}
 
-		$this->configuredRoute = '/' . implode(separator: '/', array: $configuredRoute);
+		$this->configuredRoute = '/' . implode(
+			separator: '/',
+			array: $configuredRoute
+		);
 		$this->validateConfigFile(
 			routeConfig: $routeConfig
 		);
@@ -473,7 +489,10 @@ class RouteParser
 			return false;
 		}
 
-		$dynamicRoute = trim(string: $routeElement, characters: '{}');
+		$dynamicRoute = trim(
+			string: $routeElement,
+			characters: '{}'
+		);
 		[$paramName, $paramDataType] = explode(
 			separator: ':',
 			string: $dynamicRoute
@@ -494,7 +513,9 @@ class RouteParser
 
 		if (
 			$paramDataType === 'int'
-			&& ctype_digit(text: $element)
+			&& ctype_digit(
+				text: $element
+			)
 		) {
 			$foundIntRoute = $routeElement;
 			$foundIntParamName = $paramName;
@@ -528,7 +549,11 @@ class RouteParser
 	): void {
 		// Set route code file
 		if (!isset($routeConfig['__FILE__'])) {
-			if (count(value: $routeConfig) > 0) {
+			if (
+				count(
+					value: $routeConfig
+				) > 0
+			) {
 				throw new \Exception(
 					message: 'Route not supported',
 					code: HttpStatus::$BadRequest
@@ -537,7 +562,9 @@ class RouteParser
 			if (
 				!(
 					$routeConfig['__FILE__'] === false
-					|| file_exists(filename: $routeConfig['__FILE__'])
+					|| file_exists(
+						filename: $routeConfig['__FILE__']
+					)
 				)
 			) {
 				throw new \Exception(
@@ -549,7 +576,9 @@ class RouteParser
 
 		if (
 			!empty($routeConfig['__FILE__'])
-			&& file_exists(filename: $routeConfig['__FILE__'])
+			&& file_exists(
+				filename: $routeConfig['__FILE__']
+			)
 		) {
 			$Constant = __NAMESPACE__ . '\Constant';
 			$Env = __NAMESPACE__ . '\Env';

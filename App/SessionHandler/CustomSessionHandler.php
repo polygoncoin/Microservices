@@ -141,13 +141,25 @@ class CustomSessionHandler implements
 	public function validateId(
 		$sessionId
 	): bool {
-		if ($sessionData = $this->container->getSession(sessionId: $sessionId)) {
-			if (is_null(value: $this->creatingSessionId)) {
+		if (
+			$sessionData = $this->container->getSession(
+				sessionId: $sessionId
+			)
+		) {
+			if (
+				is_null(
+					value: $this->creatingSessionId
+				)
+			) {
 				$this->sessionData = &$sessionData;
 			}
 			$this->foundSession = true;
 		} else {
-			if (is_null(value: $this->creatingSessionId)) {
+			if (
+				is_null(
+					value: $this->creatingSessionId
+				)
+			) {
 				$this->unsetSessionCookie();
 			}
 			$this->foundSession = false;
@@ -181,7 +193,11 @@ class CustomSessionHandler implements
 
 		do {
 			$sessionId = $this->getRandomString();
-		} while ($this->validateId(sessionId: $sessionId) === true);
+		} while (
+			$this->validateId(
+				sessionId: $sessionId
+			) === true
+		);
 
 		$this->creatingSessionId = null;
 
@@ -226,7 +242,11 @@ class CustomSessionHandler implements
 		// unless previous data is not empty
 		if (
 			empty($sessionData)
-			&& empty(unserialize(data: $sessionData))
+			&& empty(
+				unserialize(
+					data: $sessionData
+				)
+			)
 		) {
 			$this->unsetSessionCookie();
 			return true;
@@ -268,7 +288,11 @@ class CustomSessionHandler implements
 		// unless previous data is not empty
 		if (
 			empty($sessionData)
-			&& empty(unserialize(data: $sessionData))
+			&& empty(
+				unserialize(
+					data: $sessionData
+				)
+			)
 		) {
 			$this->unsetSessionCookie();
 			return true;
@@ -360,7 +384,11 @@ class CustomSessionHandler implements
 	 */
 	private function getRandomString(): string
 	{
-		return bin2hex(string: random_bytes(length: 32));
+		return bin2hex(
+			string: random_bytes(
+				length: 32
+			)
+		);
 	}
 
 	/**

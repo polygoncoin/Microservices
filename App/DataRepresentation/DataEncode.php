@@ -102,13 +102,19 @@ class DataEncode
 			if ($this->http->res->oRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
-				$this->tempStream = fopen(filename: "php://temp", mode: "rw+b");
+				$this->tempStream = fopen(
+					filename: "php://temp",
+					mode: "rw+b"
+				);
 			}
 		} else {
 			if ($this->http->res->oRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
-				$this->tempStream = fopen(filename: "php://memory", mode: "rw+b");
+				$this->tempStream = fopen(
+					filename: "php://memory",
+					mode: "rw+b"
+				);
 			}
 		}
 		switch ($this->http->res->oRepresentation) {
@@ -293,7 +299,9 @@ class DataEncode
 			case (
 					$this->http->res->oRepresentation === 'XSLT'
 					&& $this->xsltFile !== null
-					&& file_exists(filename: $this->xsltFile)
+					&& file_exists(
+						filename: $this->xsltFile
+					)
 				):
 				echo $this->processPublicXml(
 					xmlFile: $this->xsltFile
@@ -305,7 +313,9 @@ class DataEncode
 			case (
 					$this->http->res->oRepresentation === 'HTML'
 					&& $this->htmlFile !== null
-					&& file_exists(filename: $this->htmlFile)
+					&& file_exists(
+						filename: $this->htmlFile
+					)
 				):
 				echo $this->processPublicXml(
 					xmlFile: $this->htmlFile
@@ -317,7 +327,9 @@ class DataEncode
 			case (
 					$this->http->res->oRepresentation === 'PHP'
 					&& $this->phpFile !== null
-					&& file_exists(filename: $this->phpFile)
+					&& file_exists(
+						filename: $this->phpFile
+					)
 				):
 				$finalArray = &$this->tempStream->finalArray;
 				include_once $this->phpFile;
@@ -358,7 +370,9 @@ class DataEncode
 			case (
 					$this->http->res->oRepresentation === 'XSLT'
 					&& $this->xsltFile !== null
-					&& file_exists(filename: $this->xsltFile)
+					&& file_exists(
+						filename: $this->xsltFile
+					)
 				):
 				$streamContent = $this->processPublicXml(
 					xmlFile: $this->xsltFile
@@ -370,7 +384,9 @@ class DataEncode
 			case (
 					$this->http->res->oRepresentation === 'HTML'
 					&& $this->htmlFile !== null
-					&& file_exists(filename: $this->htmlFile)
+					&& file_exists(
+						filename: $this->htmlFile
+					)
 				):
 				$streamContent = $this->processPublicXml(
 					xmlFile: $this->htmlFile
@@ -382,7 +398,9 @@ class DataEncode
 			case (
 					$this->http->res->oRepresentation === 'PHP'
 					&& $this->phpFile !== null
-					&& file_exists(filename: $this->phpFile)
+					&& file_exists(
+						filename: $this->phpFile
+					)
 				):
 				$finalArray = &$this->dataEncoder->finalArray;
 				@ob_clean();

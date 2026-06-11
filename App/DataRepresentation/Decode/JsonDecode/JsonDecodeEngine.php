@@ -448,7 +448,9 @@ class JsonDecodeEngine
 			&& !empty($arr)
 			&& isset($arr['value'])
 			&& $arr['value'] !== false
-			&& count(value: $arr['value']) > 0
+			&& count(
+				value: $arr['value']
+			) > 0
 		) {
 			return $arr;
 		}
@@ -468,7 +470,11 @@ class JsonDecodeEngine
 		$return = false;
 		if ($nullStr === 'null') {
 			$return = null;
-		} elseif (is_numeric(value: $nullStr)) {
+		} elseif (
+			is_numeric(
+				value: $nullStr
+			)
+		) {
 			$return = (int)$nullStr;
 		}
 		if ($return === false) {
@@ -534,7 +540,11 @@ class JsonDecodeEngine
 				$this->currentObject->mode === 'Object'
 				&& (
 					($objectKey === null)
-					|| empty(trim(string: $objectKey))
+					|| empty(
+						trim(
+							string: $objectKey
+						)
+					)
 				)
 			) {
 				$this->isBadJson(
@@ -545,7 +555,11 @@ class JsonDecodeEngine
 				$this->currentObject->mode === 'Array'
 				&& (
 					($objectKey === null)
-					|| empty(trim(string: $objectKey))
+					|| empty(
+						trim(
+							string: $objectKey
+						)
+					)
 				)
 			) {
 				$this->isBadJson(
@@ -566,7 +580,11 @@ class JsonDecodeEngine
 	 */
 	private function popPreviousObject(): void
 	{
-		if (count(value: $this->objectArr) > 0) {
+		if (
+			count(
+				value: $this->objectArr
+			) > 0
+		) {
 			$this->currentObject = array_pop($this->objectArr);
 		} else {
 			$this->currentObject = null;
@@ -603,7 +621,9 @@ class JsonDecodeEngine
 		if (
 			$this->currentObject !== null
 			&& $this->currentObject->mode === 'Object'
-			&& count(value: $this->currentObject->objectValueArr) > 0
+			&& count(
+				value: $this->currentObject->objectValueArr
+			) > 0
 		) {
 			$arr = $this->currentObject->objectValueArr;
 			$this->currentObject->objectValueArr = [];
@@ -621,7 +641,9 @@ class JsonDecodeEngine
 	private function isBadJson(
 		$str
 	): void {
-		$str =  $str !== null ? trim(string: $str) : $str;
+		$str =  $str !== null ? trim(
+			string: $str
+		) : $str;
 		if (!empty($str)) {
 			throw new \Exception(
 				message: "Invalid JSON: {$str}",
@@ -639,7 +661,9 @@ class JsonDecodeEngine
 	{
 		$keyArr = [];
 		$return = &$keyArr;
-		$objCount = count(value: $this->objectArr);
+		$objCount = count(
+			value: $this->objectArr
+		);
 		if ($objCount > 0) {
 			for ($i = 0; $i < $objCount; $i++) {
 				switch ($this->objectArr[$i]->mode) {

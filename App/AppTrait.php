@@ -273,7 +273,9 @@ trait AppTrait
 		// Check __SET__
 		if (
 			isset($sqlConfig['__SET__'])
-			&& count(value: $sqlConfig['__SET__']) !== 0
+			&& count(
+				value: $sqlConfig['__SET__']
+			) !== 0
 		) {
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
 			[$setParamArr, $errorArr, $missExecution] = $this->getSqlParam(
@@ -312,7 +314,9 @@ trait AppTrait
 			empty($errorArr)
 			&& !$missExecution
 			&& isset($sqlConfig['__WHERE__'])
-			&& count(value: $sqlConfig['__WHERE__']) !== 0
+			&& count(
+				value: $sqlConfig['__WHERE__']
+			) !== 0
 		) {
 			$wErrorArr = [];
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
@@ -356,7 +360,9 @@ trait AppTrait
 						}
 						$sql = str_replace(
 							search: '__WHERE__',
-							replace: implode(separator: ' AND ', array: $__WHERE__),
+							replace: implode(
+								separator: ' AND ', array: $__WHERE__
+							),
 							subject: $sql
 						);
 					}
@@ -371,7 +377,9 @@ trait AppTrait
 		if (!empty($__SET__)) {
 			$sql = str_replace(
 				search: '__SET__',
-				replace: implode(separator: ', ', array: $__SET__),
+				replace: implode(
+					separator: ', ', array: $__SET__
+				),
 				subject: $sql
 			);
 		}
@@ -425,7 +433,9 @@ trait AppTrait
 		// Check __SET__
 		if (
 			isset($sqlConfig['__SET__'])
-			&& count(value: $sqlConfig['__SET__']) !== 0
+			&& count(
+				value: $sqlConfig['__SET__']
+			) !== 0
 		) {
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
 			[$setParamArr, $errorArr, $missExecution] = $this->getSqlParam(
@@ -459,7 +469,9 @@ trait AppTrait
 			empty($errorArr)
 			&& !$missExecution
 			&& isset($sqlConfig['__WHERE__'])
-			&& count(value: $sqlConfig['__WHERE__']) !== 0
+			&& count(
+				value: $sqlConfig['__WHERE__']
+			) !== 0
 		) {
 			$wErrorArr = [];
 			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
@@ -499,7 +511,9 @@ trait AppTrait
 						}
 						$sql = str_replace(
 							search: '__WHERE__',
-							replace: implode(separator: ' AND ', array: $__WHERE__),
+							replace: implode(
+								separator: ' AND ', array: $__WHERE__
+							),
 							subject: $sql
 						);
 					}
@@ -514,7 +528,9 @@ trait AppTrait
 		if (!empty($__SET__)) {
 			$sql = str_replace(
 				search: '__SET__',
-				replace: implode(separator: ', ', array: $__SET__),
+				replace: implode(
+					separator: ', ', array: $__SET__
+				),
 				subject: $sql
 			);
 		}
@@ -568,7 +584,10 @@ trait AppTrait
 					$errorArr[] = "Missing key '{$fetchFromData}' in '{$fetchFrom}'";
 					continue;
 				}
-				$fetchFromDataArr = explode(separator: ':', string: $fetchFromData);
+				$fetchFromDataArr = explode(
+					separator: ':',
+					string: $fetchFromData
+				);
 				$value = $this->http->req->s[$fetchFrom];
 				foreach ($fetchFromDataArr as $_fetchFromData) {
 					if (!isset($value[$_fetchFromData])) {
@@ -584,7 +603,10 @@ trait AppTrait
 					$missExecution = true;
 					continue;
 				}
-				$fetchFromDataArr = explode(separator: ':', string: $fetchFromData);
+				$fetchFromDataArr = explode(
+					separator: ':',
+					string: $fetchFromData
+				);
 				$value = $this->http->req->s[$fetchFrom];
 				foreach ($fetchFromDataArr as $_fetchFromData) {
 					if (!isset($value[$_fetchFromData])) {
@@ -854,7 +876,9 @@ trait AppTrait
 	): void {
 		if (
 			empty($moduleKeyArr)
-			|| count(value: $moduleKeyArr) === 0
+			|| count(
+				value: $moduleKeyArr
+			) === 0
 		) {
 			$this->http->req->s[$fetchFrom] = [];
 			$this->http->req->s[$fetchFrom]['return'] = [];
@@ -941,7 +965,9 @@ trait AppTrait
 		);
 		if (
 			isset($sqlConfig['referrerLagWindow'])
-			&& count(value: $sqlConfig['referrerLagWindow']) > 0
+			&& count(
+				value: $sqlConfig['referrerLagWindow']
+			) > 0
 		) {
 			if (
 				!$this->http->req->customerCacheObj->cacheExist(
@@ -1037,7 +1063,9 @@ trait AppTrait
 		$hashJson = null;
 		if (
 			isset($sqlConfig['idempotentWindow'])
-			&& is_numeric(value: $sqlConfig['idempotentWindow'])
+			&& is_numeric(
+				value: $sqlConfig['idempotentWindow']
+			)
 			&& $sqlConfig['idempotentWindow'] > 0
 		) {
 			$idempotentWindow = (int)$sqlConfig['idempotentWindow'];
@@ -1050,7 +1078,9 @@ trait AppTrait
 					'httpMethod' => $this->http->httpReqData['server']['httpMethod'],
 					'Route' => $this->http->httpReqData['get'][ROUTE_URL_PARAM],
 					'payload' => $this->http->req->dataDecode->get(
-						keyString: implode(separator: ':', array: $payloadIndexArr)
+						keyString: implode(
+							separator: ':', array: $payloadIndexArr
+						)
 					)
 				];
 				if (isset($this->http->req->s['userData'])) {
@@ -1144,7 +1174,11 @@ trait AppTrait
 
 		$lag = 0;
 		$responseLag = &$sqlConfig['responseLag'];
-		if (is_array(value: $responseLag)) {
+		if (
+			is_array(
+				value: $responseLag
+			)
+		) {
 			foreach ($responseLag as $start => $newLag) {
 				if ($noOfRequest > $start) {
 					$lag = $newLag;
@@ -1153,7 +1187,9 @@ trait AppTrait
 		}
 
 		if ($lag > 0) {
-			sleep(seconds: $lag);
+			sleep(
+				seconds: $lag
+			);
 		}
 	}
 
@@ -1179,7 +1215,9 @@ trait AppTrait
 		if (
 			!$isObject
 			&& isset($triggerConfig[0])
-			&& count(value: $triggerConfig) === 1
+			&& count(
+				value: $triggerConfig
+			) === 1
 		) {
 			$triggerConfig = $triggerConfig[0];
 			$isObject = true;
@@ -1231,7 +1269,9 @@ trait AppTrait
 			return $errorArr;
 		}
 
-		$route = '/' . implode(separator: '/', array: $routeElementArrArr);
+		$route = '/' . implode(
+			separator: '/', array: $routeElementArrArr
+		);
 
 		$queryStringArr = [];
 		$payloadArr = [];
@@ -1305,7 +1345,9 @@ trait AppTrait
 					strict: true
 				)
 			) {
-				$fetchFromDataArr = explode(separator: ':', string: $fetchFromData);
+				$fetchFromDataArr = explode(
+					separator: ':', string: $fetchFromData
+				);
 				$value = $this->http->req->s[$fetchFrom];
 				foreach ($fetchFromDataArr as $_fetchFromData) {
 					if (!isset($value[$_fetchFromData])) {
@@ -1372,7 +1414,11 @@ trait AppTrait
 		$header = [];
 		$header[] = '__mode__';
 		foreach ($paramArr as $r => $p) {
-			if (is_array(value: $p)) {
+			if (
+				is_array(
+					value: $p
+				)
+			) {
 				for ($i = 0, $iCount = count(value: $p); $i < $iCount; $i++) {
 					$header[] = $p[$i];
 				}
@@ -1380,7 +1426,10 @@ trait AppTrait
 				$header[] = $p;
 			}
 		}
-		$csv = '"' . implode(separator: '","', array: $header) . '"' . PHP_EOL;
+		$csv = '"' . implode(
+			separator: '","',
+			array: $header
+		) . '"' . PHP_EOL;
 		$blankStr = '';
 		foreach ($paramArr as $r => $p) {
 			if ($r === 'CSV') {

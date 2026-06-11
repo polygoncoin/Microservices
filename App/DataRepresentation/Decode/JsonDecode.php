@@ -138,7 +138,9 @@ class JsonDecode implements DataDecodeInterface
 				$jsonFileIndex = &$this->jsonFileIndex;
 				for ($i = 0, $iCount = count(value: $keyArr); $i < $iCount; $i++) {
 					if (
-						is_numeric(value: $keyArr[$i])
+						is_numeric(
+							value: $keyArr[$i]
+						)
 						&& !isset($jsonFileIndex[$keyArr[$i]])
 					) {
 						$jsonFileIndex[$keyArr[$i]] = [];
@@ -169,7 +171,9 @@ class JsonDecode implements DataDecodeInterface
 		$return = true;
 		if (
 			($keyString !== null)
-			&& strlen(string: $keyString) !== 0
+			&& strlen(
+				string: $keyString
+			) !== 0
 		) {
 			$jsonFileIndex = &$this->jsonFileIndex;
 			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
@@ -197,7 +201,9 @@ class JsonDecode implements DataDecodeInterface
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
 			($keyString !== null)
-			&& strlen(string: $keyString) > 0
+			&& strlen(
+				string: $keyString
+			) > 0
 		) {
 			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
 				if (isset($jsonFileIndex[$objectKey])) {
@@ -231,7 +237,9 @@ class JsonDecode implements DataDecodeInterface
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
 			($keyString !== null)
-			&& strlen(string: $keyString) !== 0
+			&& strlen(
+				string: $keyString
+			) !== 0
 		) {
 			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
 				if (isset($jsonFileIndex[$objectKey])) {
@@ -268,7 +276,11 @@ class JsonDecode implements DataDecodeInterface
 	public function get(
 		$keyString = ''
 	): mixed {
-		if (!$this->isset(keyString: $keyString)) {
+		if (
+			!$this->isset(
+				keyString: $keyString
+			)
+		) {
 			return false;
 		}
 		$valueArr = [];
@@ -291,7 +303,11 @@ class JsonDecode implements DataDecodeInterface
 	public function getCompleteArray(
 		$keyString = ''
 	): mixed {
-		if (!$this->isset(keyString: $keyString)) {
+		if (
+			!$this->isset(
+				keyString: $keyString
+			)
+		) {
 			return false;
 		}
 		$this->load(
@@ -329,7 +345,9 @@ class JsonDecode implements DataDecodeInterface
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
 			($keyString !== null)
-			&& strlen(string: $keyString) !== 0
+			&& strlen(
+				string: $keyString
+			) !== 0
 		) {
 			foreach (explode(separator: ':', string: $keyString) as $objectKey) {
 				if (isset($jsonFileIndex[$objectKey])) {

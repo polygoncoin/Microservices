@@ -71,7 +71,11 @@ class CommonFunction
 	public static function validateFileUpload(
 		$httpFileArr
 	): void {
-		if (count(value: $httpFileArr) > 1) {
+		if (
+			count(
+				value: $httpFileArr
+			) > 1
+		) {
 			throw new \Exception(
 				message: 'Supports only one file with each request',
 				code: HttpStatus::$BadRequest
@@ -175,10 +179,18 @@ class CommonFunction
 			) {
 				[$cidrIp, $bits] = explode(
 					separator: '/',
-					string: str_replace(search: ' ', replace: '', subject: $cidr)
+					string: str_replace(
+						search: ' ',
+						replace: '',
+						subject: $cidr
+					)
 				);
 				$binCidrIpStr = str_pad(
-					string: decbin(num: ip2long(ip: $cidrIp)),
+					string: decbin(
+						num: ip2long(
+							ip: $cidrIp
+						)
+					),
 					length: 32,
 					pad_string: 0,
 					pad_type: STR_PAD_LEFT
@@ -195,13 +207,20 @@ class CommonFunction
 						pad_type: STR_PAD_RIGHT
 					)
 				);
-				$endIpNumber = $startIpNumber + pow(num: 2, exponent: $bits) - 1;
+				$endIpNumber = $startIpNumber + pow(
+					num: 2,
+					exponent: $bits
+				) - 1;
 				$response[] = [
 					'start' => $startIpNumber,
 					'end' => $endIpNumber
 				];
 			} else {
-				if ($ipNumber = ip2long(ip: $cidr)) {
+				if (
+					$ipNumber = ip2long(
+						ip: $cidr
+					)
+				) {
 					$response[] = [
 						'start' => $ipNumber,
 						'end' => $ipNumber
@@ -268,7 +287,11 @@ class CommonFunction
 		$cidrIpNumberRangeArr = self::cidrStringIpNumberRange(
 			cidrString: $cidrString
 		);
-		if (count(value: $cidrIpNumberRangeArr) > 0) {
+		if (
+			count(
+				value: $cidrIpNumberRangeArr
+			) > 0
+		) {
 			$isValidIp = self::belongsToCidrIpNumberRange(
 				ip: $ip,
 				cidrIpNumberRangeArr: $cidrIpNumberRangeArr
@@ -297,11 +320,17 @@ class CommonFunction
 		$cidrIpNumberRangeArr
 	): bool {
 		$isValidIp = false;
-		if (count(value: $cidrIpNumberRangeArr) === 0) {
+		if (
+			count(
+				value: $cidrIpNumberRangeArr
+			) === 0
+		) {
 			return $isValidIp;
 		}
 
-		$ipNumber = ip2long(ip: $ip);
+		$ipNumber = ip2long(
+			ip: $ip
+		);
 
 		foreach ($cidrIpNumberRangeArr as $cidrIpNumber) {
 			if (

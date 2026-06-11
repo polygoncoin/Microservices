@@ -275,11 +275,15 @@ class Web
 
 			$return['HttpResponse']['ResponseBody'] = $response;
 		}
-		curl_close(handle: $curl);
+		curl_close(
+			handle: $curl
+		);
 
 		if (
 			isset($return['HttpResponse']['ResponseBody'])
-			&& !is_array(value: $return['HttpResponse']['ResponseBody'])
+			&& !is_array(
+				value: $return['HttpResponse']['ResponseBody']
+			)
 		) {
 			$isArray = str_starts_with(
 				haystack: $return['HttpResponse']['ResponseBody'],
@@ -322,23 +326,39 @@ class Web
 		$headerName = '';
 
 		foreach (explode(separator: "\n", string: $rawHeaderArr) as $i => $h) {
-			$h = explode(separator: ':', string: $h, limit: 2);
+			$h = explode(
+				separator: ':',
+				string: $h,
+				limit: 2
+			);
 
 			if (isset($h[1])) {
 				if (!isset($headerArr[$h[0]])) {
-					$headerArr[$h[0]] = trim(string: $h[1]);
+					$headerArr[$h[0]] = trim(
+						string: $h[1]
+					);
 				} elseif (
 					isset($headerArr[$h[0]])
-					&& is_array(value: $headerArr[$h[0]])
+					&& is_array(
+						value: $headerArr[$h[0]]
+					)
 				) {
 					$headerArr[$h[0]] = array_merge(
 						$headerArr[$h[0]],
-						[trim(string: $h[1])]
+						[
+							trim(
+								string: $h[1]
+							)
+						]
 					);
 				} else {
 					$headerArr[$h[0]] = array_merge(
 						[$headerArr[$h[0]]],
-						[trim(string: $h[1])]
+						[
+							trim(
+								string: $h[1]
+							)
+						]
 					);
 				}
 
@@ -351,9 +371,13 @@ class Web
 						length: 1
 					) == "\t"
 				) {
-					$headerArr[$headerName] .= "\r\n\t" . trim(string: $h[0]);
+					$headerArr[$headerName] .= "\r\n\t" . trim(
+						string: $h[0]
+					);
 				} elseif (!$headerName) {
-					$headerArr[0] = trim(string: $h[0]);
+					$headerArr[0] = trim(
+						string: $h[0]
+					);
 				}
 			}
 		}
@@ -386,7 +410,9 @@ class Web
 
 		if (
 			!$isObject
-			&& count(value: $xmlParamArr) === 1
+			&& count(
+				value: $xmlParamArr
+			) === 1
 		) {
 			$xmlParamArr = $xmlParamArr[0];
 			if (empty($xmlParamArr)) {
@@ -407,7 +433,11 @@ class Web
 			if ($isObject) {
 				$payload .= "<{$column}>";
 			}
-			if (is_array(value: $value)) {
+			if (
+				is_array(
+					value: $value
+				)
+			) {
 				$_xmlParamArr = $value;
 				self::genXmlPayload(
 					xmlParamArr: $_xmlParamArr,

@@ -84,7 +84,9 @@ class Constant
 			return;
 		}
 
-		self::$ROOT = dirname(path: __DIR__ . '..' . DIRECTORY_SEPARATOR);
+		self::$ROOT = dirname(
+			path: __DIR__ . '..' . DIRECTORY_SEPARATOR
+		);
 		self::$WWW = self::$ROOT . DIRECTORY_SEPARATOR . 'www';
 
 		self::$FILE_DIR = self::$WWW . DIRECTORY_SEPARATOR . 'File';
@@ -120,13 +122,29 @@ class Constant
 			. DIRECTORY_SEPARATOR . 'Public';
 
 		self::$WEB_COOKIES_DIR = self::$ROOT . DIRECTORY_SEPARATOR . 'WebCookie';
-		if (!is_dir(filename: self::$WEB_COOKIES_DIR)) {
-			mkdir(directory: self::$WEB_COOKIES_DIR, permissions: 0755, recursive: true);
+		if (
+			!is_dir(
+				filename: self::$WEB_COOKIES_DIR
+			)
+		) {
+			mkdir(
+				directory: self::$WEB_COOKIES_DIR,
+				permissions: 0755,
+				recursive: true
+			);
 		}
 
 		self::$LOG_DIR = self::$ROOT . DIRECTORY_SEPARATOR . 'Log';
-		if (!is_dir(filename: self::$LOG_DIR)) {
-			mkdir(directory: self::$LOG_DIR, permissions: 0755, recursive: true);
+		if (
+			!is_dir(
+				filename: self::$LOG_DIR
+			)
+		) {
+			mkdir(
+				directory: self::$LOG_DIR,
+				permissions: 0755,
+				recursive: true
+			);
 		}
 
 		self::$initialized = true;

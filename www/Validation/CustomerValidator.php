@@ -122,7 +122,9 @@ class CustomerValidator implements ValidatorInterface
 	private function primaryKeyExist(
 		&$argArr
 	): bool {
-		extract(array: $argArr);
+		extract(
+			array: $argArr
+		);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
 		$this->http->req->customerDbObj->execQuery(

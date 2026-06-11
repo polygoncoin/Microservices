@@ -319,9 +319,13 @@ class Session
 		$options = []
 	): void {
 		$envFilename = '.env.session';
-		$envDataArr = parse_ini_file(filename: ROOT . DIRECTORY_SEPARATOR . $envFilename);
+		$envDataArr = parse_ini_file(
+			filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
+		);
 		foreach ($envDataArr as $envVarName => $envVarValue) {
-			putenv(assignment: "{$envVarName}={$envVarValue}");
+			putenv(
+				assignment: "{$envVarName}={$envVarValue}"
+			);
 		}
 
 		$this->customerData = $customerData;

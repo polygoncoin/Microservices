@@ -455,14 +455,15 @@ class Supplement
 		&$requiredFieldArr,
 		$module = ''
 	): void {
-		$payloadIndex = is_array(value: $payloadIndexArr)
-			? trim(
-				string: implode(
-					separator: ':',
-					array: $payloadIndexArr
-				),
-				characters: ':'
-			) : null;
+		$payloadIndex = is_array(
+			value: $payloadIndexArr
+		) ? trim(
+			string: implode(
+				separator: ':',
+				array: $payloadIndexArr
+			),
+			characters: ':'
+		) : null;
 
 		$isObject = null;
 		if ($payloadIndex !== null) {
@@ -506,8 +507,12 @@ class Supplement
 				);
 			}
 
-			$payloadIndex = is_array(value: $payloadIndexArr)
-				? implode(separator: ':', array: $payloadIndexArr) : '';
+			$payloadIndex = is_array(
+				value: $payloadIndexArr
+			) ? implode(
+				separator: ':',
+				array: $payloadIndexArr
+			) : '';
 
 			if (
 				$isObject !== null
@@ -531,7 +536,11 @@ class Supplement
 				);
 			}
 
-			if (count(value: $requiredFieldArr)) {
+			if (
+				count(
+					value: $requiredFieldArr
+				)
+			) {
 				$this->http->req->s['requiredFieldArr'] = $requiredFieldArr;
 			} else {
 				$this->http->req->s['requiredFieldArr'] = [];
@@ -648,7 +657,11 @@ class Supplement
 				$payloadIndexArr
 			);
 		}
-		if (!is_array(value: $payloadIndexArr)) {
+		if (
+			!is_array(
+				value: $payloadIndexArr
+			)
+		) {
 			$payloadIndexArr = [];
 		}
 
@@ -670,8 +683,13 @@ class Supplement
 					$_configKeyArr,
 					$module
 				);
-				$modulePayloadKey = is_array(value: $_payloadIndexArr)
-					? implode(separator: ':', array: $_payloadIndexArr) : '';
+				$modulePayloadKey = is_array(
+					value: $_payloadIndexArr
+				) ? implode(
+					separator: ':',
+					array: $_payloadIndexArr
+				) : '';
+
 				$dataExist = $this->http->req->dataDecode->isset(
 					keyString: $modulePayloadKey
 				);

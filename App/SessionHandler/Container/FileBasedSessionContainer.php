@@ -50,7 +50,11 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 		$sessionSavePath,
 		$sessionName
 	): void {
-		if (!is_dir(filename: $sessionSavePath)) {
+		if (
+			!is_dir(
+				filename: $sessionSavePath
+			)
+		) {
 			mkdir(
 				directory: $sessionSavePath,
 				permissions: 0755,
@@ -73,8 +77,14 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
 
-		if (file_exists(filename: $filepath)) {
-			$fileatime = fileatime(filename: $filepath);
+		if (
+			file_exists(
+				filename: $filepath
+			)
+		) {
+			$fileatime = fileatime(
+				filename: $filepath
+			);
 			if ((Env::$timestamp - $fileatime) < $this->sessionMaxLifetime) {
 				return $this->decryptData(
 					cipherText: file_get_contents(
@@ -100,7 +110,11 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 	): bool|int {
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
-		if (!file_exists(filename: $filepath)) {
+		if (
+			!file_exists(
+				filename: $filepath
+			)
+		) {
 			touch(
 				filename: $filepath
 			);
@@ -184,7 +198,11 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 	): bool {
 		$filepath = $this->sessionSavePath . '/'
 			. $this->sessionFilePrefix . $sessionId;
-		if (file_exists(filename: $filepath)) {
+		if (
+			file_exists(
+				filename: $filepath
+			)
+		) {
 			unlink(
 				filename: $filepath
 			);

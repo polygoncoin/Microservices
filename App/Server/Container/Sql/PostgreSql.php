@@ -382,7 +382,9 @@ class PostgreSql implements SqlInterface
 				$this->stmt->closeCursor();
 				if (
 					$pushPop
-					&& count(value: $this->stmtArr)
+					&& count(
+						value: $this->stmtArr
+					)
 				) {
 					$this->stmt = array_pop(
 						array: $this->stmtArr

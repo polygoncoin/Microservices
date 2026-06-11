@@ -125,8 +125,12 @@ class Cdn implements DropboxInterface
 		$this->fileLocation = $this->DROPBOX_DIR . $filePath;
 
 		return (
-			is_file(filename: $this->fileLocation)
-			&& file_exists(filename: $this->fileLocation)
+			is_file(
+				filename: $this->fileLocation
+			)
+			&& file_exists(
+				filename: $this->fileLocation
+			)
 		);
 	}
 

@@ -123,7 +123,11 @@ class Reload
 				$customerCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $customerData['customer_allowed_cidr']
 				);
-				if (count(value: $customerCidrIpNumberRangeArr) > 0) {
+				if (
+					count(
+						value: $customerCidrIpNumberRangeArr
+					) > 0
+				) {
 					$customerCidrCacheKey = CacheServerKey::customerCidr(
 						customerId: $customerData['customer_id']
 					);
@@ -215,7 +219,11 @@ class Reload
 				$groupCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $groupData['customer_user_group_allowed_cidr']
 				);
-				if (count(value: $groupCidrIpNumberRangeArr) > 0) {
+				if (
+					count(
+						value: $groupCidrIpNumberRangeArr
+					) > 0
+				) {
 					$groupCidrCacheKey = CacheServerKey::customerGroupCidr(
 						customerId: $customerData['customer_id'],
 						customerUserGroupId: $groupData['customer_user_group_id']
@@ -290,7 +298,11 @@ class Reload
 				$userCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $userData['customer_user_allowed_cidr']
 				);
-				if (count(value: $userCidrIpNumberRangeArr) > 0) {
+				if (
+					count(
+						value: $userCidrIpNumberRangeArr
+					) > 0
+				) {
 					$userCidrCacheKey = CacheServerKey::customerUserCidr(
 						customerId: $customerData['customer_id'],
 						customerUserId: $userData['customer_user_id']

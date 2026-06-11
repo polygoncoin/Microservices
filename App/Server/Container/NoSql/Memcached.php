@@ -88,7 +88,11 @@ class Memcached implements NoSqlInterface
 			return;
 		}
 
-		if (!extension_loaded(extension: 'memcached')) {
+		if (
+			!extension_loaded(
+				extension: 'memcached'
+			)
+		) {
 			throw new \Exception(
 				message: 'Unable to find Memcached extension',
 				code: HttpStatus::$InternalServerError

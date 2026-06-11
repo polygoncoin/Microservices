@@ -114,7 +114,11 @@ class Api
 					}
 				}
 			}
-			if (count(value: $preRouteHookArr) > 0) {
+			if (
+				count(
+					value: $preRouteHookArr
+				) > 0
+			) {
 				if ($this->hook === null) {
 					$this->hook = new Hook(
 						http: $this->http
@@ -155,7 +159,11 @@ class Api
 					. DIRECTORY_SEPARATOR . 'Cron'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
-			if (file_exists(filename: $supplementClassFileLocation)) {
+			if (
+				file_exists(
+					filename: $supplementClassFileLocation
+				)
+			) {
 				$supplementClass = 'Microservices\\www\\Supplement\\Cron\\' . $supplementClassFileName;
 			}
 		} elseif (
@@ -171,7 +179,11 @@ class Api
 					. DIRECTORY_SEPARATOR . 'Custom'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
-			if (file_exists(filename: $supplementClassFileLocation)) {
+			if (
+				file_exists(
+					filename: $supplementClassFileLocation
+				)
+			) {
 				$supplementClass = 'Microservices\\www\\Supplement\\Custom\\' . $supplementClassFileName;
 			}
 		} elseif (
@@ -187,7 +199,11 @@ class Api
 					. DIRECTORY_SEPARATOR . 'Upload'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
-			if (file_exists(filename: $supplementClassFileLocation)) {
+			if (
+				file_exists(
+					filename: $supplementClassFileLocation
+				)
+			) {
 				$supplementClass = 'Microservices\\www\\Supplement\\Upload\\' . $supplementClassFileName;
 			}
 		} elseif (
@@ -203,7 +219,11 @@ class Api
 					. DIRECTORY_SEPARATOR . 'ThirdParty'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
-			if (file_exists(filename: $supplementClassFileLocation)) {
+			if (
+				file_exists(
+					filename: $supplementClassFileLocation
+				)
+			) {
 				$supplementClass = 'Microservices\\www\\Supplement\\ThirdParty\\' . $supplementClassFileName;
 			}
 		} else {
@@ -222,7 +242,11 @@ class Api
 								. DIRECTORY_SEPARATOR . 'Dropbox'
 								. DIRECTORY_SEPARATOR . $classFileName . '.php';
 
-						if (file_exists(filename: $classFileLocation)) {
+						if (
+							file_exists(
+								filename: $classFileLocation
+							)
+						) {
 							$class = 'Microservices\\www\\Supplement\\Dropbox\\' . $classFileName;
 						}
 					} elseif (
@@ -276,13 +300,19 @@ class Api
 			&& isset($this->http->req->rParser)
 			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
-			&& is_array(value: $this->http->req->rParser->routeHook)
+			&& is_array(
+				value: $this->http->req->rParser->routeHook
+			)
 		) {
 			$postRouteHookArr = [];
 			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
 				if (isset($hookArr['__POST-ROUTE-HOOKS__'])) {
 					$postRouteHookConfig = $hookArr['__POST-ROUTE-HOOKS__'];
-					if (count(value: $postRouteHookConfig) === 0) {
+					if (
+						count(
+							value: $postRouteHookConfig
+						) === 0
+					) {
 						continue;
 					}
 					for ($i = 0, $iCount = count(value: $postRouteHookConfig); $i < $iCount; $i++) {
@@ -298,7 +328,11 @@ class Api
 					}
 				}
 			}
-			if (count(value: $postRouteHookArr) > 0) {
+			if (
+				count(
+					value: $postRouteHookArr
+				) > 0
+			) {
 				if ($this->hook === null) {
 					$this->hook = new Hook(
 						http: $this->http
@@ -311,8 +345,12 @@ class Api
 		}
 
 		if (
-			is_array(value: $return)
-			&& count(value: $return) === 3
+			is_array(
+				value: $return
+			)
+			&& count(
+				value: $return
+			) === 3
 		) {
 			return $return;
 		}

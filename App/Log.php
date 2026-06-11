@@ -112,7 +112,11 @@ class Log
 			. DIRECTORY_SEPARATOR . 'log-' . date(
 				format: 'YmdH'
 			);
-		if (!file_exists(filename: $logFile)) {
+		if (
+			!file_exists(
+				filename: $logFile
+			)
+		) {
 			touch(
 				filename: $logFile
 			);

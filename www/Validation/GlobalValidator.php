@@ -93,7 +93,9 @@ class GlobalValidator implements ValidatorInterface
 	private function primaryKeyExist(
 		&$argArr
 	): int {
-		extract(array: $argArr);
+		extract(
+			array: $argArr
+		);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
 		$this->http->req->customerDbObj->execQuery(
@@ -115,7 +117,9 @@ class GlobalValidator implements ValidatorInterface
 	private function checkColumnValueExist(
 		&$argArr
 	): bool {
-		extract(array: $argArr);
+		extract(
+			array: $argArr
+		);
 		$sql = "
 			SELECT count(1) as `count`
 			FROM `{$table}`

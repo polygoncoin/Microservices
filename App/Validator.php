@@ -81,7 +81,9 @@ class Validator
 	): array {
 		if (
 			isset(($this->http->req->s['requiredFieldArr']))
-			&& count(value: $this->http->req->s['requiredFieldArr']) > 0
+			&& count(
+				value: $this->http->req->s['requiredFieldArr']
+			) > 0
 		) {
 			if (
 				([$isValidData, $errorArr] = $this->validateRequired())

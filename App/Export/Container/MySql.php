@@ -82,7 +82,11 @@ class MySql implements ExportDatabaseServerInterface
 	public function __construct()
 	{
 		$requiredExtension = 'mysqli';
-		if (!extension_loaded(extension: $requiredExtension)) {
+		if (
+			!extension_loaded(
+				extension: $requiredExtension
+			)
+		) {
 			if (!dl(extension_filename: $requiredExtension . '.so')) {
 				throw new \Exception(
 					message: "Required PHP extension '{$requiredExtension}' missing"
@@ -90,7 +94,11 @@ class MySql implements ExportDatabaseServerInterface
 			}
 		}
 		$this->binaryLoc = Env::$mySqlBinaryLocationOnWebServer;
-		if (!file_exists(filename: $this->binaryLoc)) {
+		if (
+			!file_exists(
+				filename: $this->binaryLoc
+			)
+		) {
 			throw new \Exception(
 				message: 'Issue: missing MySql Customer locally'
 			);
@@ -141,7 +149,11 @@ class MySql implements ExportDatabaseServerInterface
 			);
 		}
 
-		if (count(value: $paramArr) === 0) {
+		if (
+			count(
+				value: $paramArr
+			) === 0
+		) {
 			return;
 		}
 
@@ -150,7 +162,9 @@ class MySql implements ExportDatabaseServerInterface
 			substr_count(
 				haystack: $sql,
 				needle: ':'
-			) !== count(value: $paramArr)
+			) !== count(
+				value: $paramArr
+			)
 		) {
 			throw new \Exception(
 				message: 'Parameterized query has mismatch in number of params'
@@ -180,7 +194,9 @@ class MySql implements ExportDatabaseServerInterface
 				substr(
 					string: $sql,
 					offset: $value,
-					length: strlen(string: $parameterisedColumn)
+					length: strlen(
+						string: $parameterisedColumn
+					)
 				) !== $parameterisedColumn
 			) {
 				throw new \Exception(
@@ -205,12 +221,17 @@ class MySql implements ExportDatabaseServerInterface
 	): string {
 		if (
 			empty($paramArr)
-			|| count(value: $paramArr) === 0
+			|| count(
+				value: $paramArr
+			) === 0
 		) {
 			return $sql;
 		}
 
-		$this->validate(sql: $sql, paramArr: $paramArr);
+		$this->validate(
+			sql: $sql,
+			paramArr: $paramArr
+		);
 
 		//mysqli connection
 		$mysqli = mysqli_connect(
@@ -229,11 +250,19 @@ class MySql implements ExportDatabaseServerInterface
 		//Generate bind params
 		$bindParamArr = [];
 		foreach ($paramArr as $parameterisedColumn => $valueArr) {
-			if (is_array(value: $valueArr)) {
+			if (
+				is_array(
+					value: $valueArr
+				)
+			) {
 				$tmpParamArr = [];
 				$count = 1;
 				foreach ($valueArr as $value) {
-					if (is_array(value: $value)) {
+					if (
+						is_array(
+							value: $value
+						)
+					) {
 						throw new \Exception(
 							message: "Invalid param key '{$parameterisedColumn}'"
 						);
@@ -256,7 +285,9 @@ class MySql implements ExportDatabaseServerInterface
 					search: $parameterisedColumn,
 					replace: implode(
 						separator: ', ',
-						array: array_keys(array: $tmpParamArr)
+						array: array_keys(
+							array: $tmpParamArr
+						)
 					),
 					subject: $sql
 				);
@@ -271,7 +302,11 @@ class MySql implements ExportDatabaseServerInterface
 
 		//Replace parameterized valueArr.
 		foreach ($bindParamArr as $parameterisedColumn => $value) {
-			if (!ctype_digit(text: $value)) {
+			if (
+				!ctype_digit(
+					text: $value
+				)
+			) {
 				$value = "'" . mysqli_real_escape_string(
 					mysql: $mysqli,
 					string: $value

@@ -96,7 +96,9 @@ class SessionContainerHelper
 			&& !empty($this->iv)
 		) {
 			return openssl_decrypt(
-				data: base64_decode(string: $cipherText),
+				data: base64_decode(
+					string: $cipherText
+				),
 				cipher_algo: $this->cipher_algo,
 				passphrase: $this->passphrase,
 				options: $this->options,

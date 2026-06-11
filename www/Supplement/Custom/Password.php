@@ -87,7 +87,12 @@ class Password implements CustomInterface
 		$oldPassword = $this->http->req->s['payload']['old_password'];
 		$oldPasswordHash = $this->http->req->s['userData']['password_hash'];
 
-		if (password_verify(password: $oldPassword, hash: $oldPasswordHash)) {
+		if (
+			password_verify(
+				password: $oldPassword,
+				hash: $oldPasswordHash
+			)
+		) {
 			$userName = $this->http->req->s['userData']['username'];
 			$newPassword = $this->http->req->s['payload']['new_password'];
 			$newPasswordHash = password_hash(

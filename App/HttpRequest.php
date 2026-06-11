@@ -747,22 +747,30 @@ class HttpRequest
 	): void {
 		if (
 			isset($arrayFromXml['Rows'])
-			&& is_array(value: $arrayFromXml['Rows'])
+			&& is_array(
+				value: $arrayFromXml['Rows']
+			)
 		) {
 			$arrayFromXml = &$arrayFromXml['Rows'];
 		}
 
 		if (
 			isset($arrayFromXml['Row'])
-			&& is_array(value: $arrayFromXml['Row'])
+			&& is_array(
+				value: $arrayFromXml['Row']
+			)
 		) {
 			$arrayFromXml = &$arrayFromXml['Row'];
 		}
 
 		if (
 			isset($arrayFromXml[0])
-			&& is_array(value: $arrayFromXml[0])
-			&& count(value: $arrayFromXml) === 1
+			&& is_array(
+				value: $arrayFromXml[0]
+			)
+			&& count(
+				value: $arrayFromXml
+			) === 1
 		) {
 			$arrayFromXml = &$arrayFromXml[0];
 			if (empty($arrayFromXml)) {
@@ -770,7 +778,11 @@ class HttpRequest
 			}
 		}
 
-		if (!is_array(value: $arrayFromXml)) {
+		if (
+			!is_array(
+				value: $arrayFromXml
+			)
+		) {
 			return;
 		}
 
@@ -782,7 +794,11 @@ class HttpRequest
 				}
 				continue;
 			}
-			if (is_array(value: $columnValue)) {
+			if (
+				is_array(
+					value: $columnValue
+				)
+			) {
 				$result[$column] = [];
 				$this->formatXmlArray(
 					arrayFromXml: $columnValue,
@@ -804,9 +820,17 @@ class HttpRequest
 	public function urlDecode(
 		&$value
 	): void {
-		if (is_array(value: $value)) {
+		if (
+			is_array(
+				value: $value
+			)
+		) {
 			foreach ($value as &$v) {
-				if (is_array(value: $v)) {
+				if (
+					is_array(
+						value: $v
+					)
+				) {
 					$this->urlDecode(
 						value: $v
 					);
@@ -912,8 +936,12 @@ class HttpRequest
 				$dataEncode->startObject();
 			} else {
 				$_headerModeArr = [];
-				$headerModeCount = count(value: $headerModeArr);
-				$currentModeCount = count(value: $currentModeArr);
+				$headerModeCount = count(
+					value: $headerModeArr
+				);
+				$currentModeCount = count(
+					value: $currentModeArr
+				);
 
 				for (
 					$i = 0;

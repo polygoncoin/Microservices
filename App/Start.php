@@ -97,8 +97,12 @@ class Start
 
 				$return = $Microservices->process();
 				if (
-					is_array(value: $return)
-					&& count(value: $return) === 3
+					is_array(
+						value: $return
+					)
+					&& count(
+						value: $return
+					) === 3
 				) {
 					return $return;
 				}
@@ -123,7 +127,10 @@ class Start
 					strict: true
 				)
 			) {
-				list($usec, $sec) = explode(separator: ' ', string: microtime());
+				list($usec, $sec) = explode(
+					separator: ' ',
+					string: microtime()
+				);
 				$dateTime = date(
 					format: 'Y-m-d H:i:s',
 					timestamp: $sec

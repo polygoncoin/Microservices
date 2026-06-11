@@ -108,7 +108,11 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$cookieData = $this->encryptData(
 			plainText: $sessionData
 		);
-		if (strlen(string: $cookieData) > 4096) {
+		if (
+			strlen(
+				string: $cookieData
+			) > 4096
+		) {
 			ob_end_clean();
 			die(
 				'Session data length exceeds max 4 kilobytes (KB)'
@@ -173,7 +177,11 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$cookieData = $this->encryptData(
 			plainText: $sessionData
 		);
-		if (strlen(string: $cookieData) > 4096) {
+		if (
+			strlen(
+				string: $cookieData
+			) > 4096
+		) {
 			ob_end_clean();
 			die(
 				'Session data length exceeds max 4 kilobytes (KB)'

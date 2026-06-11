@@ -210,7 +210,11 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	private function connect(): void
 	{
 		try {
-			if (!extension_loaded(extension: 'memcached')) {
+			if (
+				!extension_loaded(
+					extension: 'memcached'
+				)
+			) {
 				throw new \Exception(
 					message: "Unable to find Memcached extension",
 					code: HttpStatus::$InternalServerError

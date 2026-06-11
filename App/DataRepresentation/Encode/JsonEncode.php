@@ -128,7 +128,11 @@ class JsonEncode implements DataEncodeInterface
 				data: $this->currentObject->comma
 			);
 		}
-		if (is_array(value: $data)) {
+		if (
+			is_array(
+				value: $data
+			)
+		) {
 			$this->write(
 				data: json_encode(
 					value: $data
@@ -316,7 +320,11 @@ class JsonEncode implements DataEncodeInterface
 			data: ']'
 		);
 		$this->currentObject = null;
-		if (count(value: $this->objectArr) > 0) {
+		if (
+			count(
+				value: $this->objectArr
+			) > 0
+		) {
 			$this->currentObject = array_pop(
 				array: $this->objectArr
 			);
@@ -379,7 +387,11 @@ class JsonEncode implements DataEncodeInterface
 			data: '}'
 		);
 		$this->currentObject = null;
-		if (count(value: $this->objectArr) > 0) {
+		if (
+			count(
+				value: $this->objectArr
+			) > 0
+		) {
 			$this->currentObject = array_pop(
 				array: $this->objectArr
 			);

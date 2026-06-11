@@ -136,8 +136,12 @@ class Microservices
 					$this->startData();
 					$return = $api->process();
 					if (
-						is_array(value: $return)
-						&& count(value: $return) === 3
+						is_array(
+							value: $return
+						)
+						&& count(
+							value: $return
+						) === 3
 					) {
 						return $return;
 					}
@@ -196,8 +200,12 @@ class Microservices
 		}
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
 			$this->tsEnd = microtime(as_float: true);
-			$time = ceil(num: ($this->tsEnd - $this->tsStart) * 1000);
-			$memory = ceil(num: memory_get_peak_usage() / 1000);
+			$time = ceil(
+				num: ($this->tsEnd - $this->tsStart) * 1000
+			);
+			$memory = ceil(
+				num: memory_get_peak_usage() / 1000
+			);
 
 			$this->http->res->dataEncode->startObject(
 				objectKey: 'Stats'
@@ -235,8 +243,12 @@ class Microservices
 		$returnPerformance = [];
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
 			$this->tsEnd = microtime(as_float: true);
-			$time = ceil(num: ($this->tsEnd - $this->tsStart) * 1000);
-			$memory = ceil(num: memory_get_peak_usage() / 1000);
+			$time = ceil(
+				num: ($this->tsEnd - $this->tsStart) * 1000
+			);
+			$memory = ceil(
+				num: memory_get_peak_usage() / 1000
+			);
 
 			$returnPerformance = [
 				'Stats' => [

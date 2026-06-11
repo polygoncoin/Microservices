@@ -69,7 +69,11 @@ class Hook
 	public function triggerHook(
 		$hookArr
 	): bool {
-		if (is_array(value: $hookArr)) {
+		if (
+			is_array(
+				value: $hookArr
+			)
+		) {
 			for ($i = 0, $iCount = count(value: $hookArr); $i < $iCount; $i++) {
 				$hookName = $hookArr[$i];
 
@@ -77,7 +81,11 @@ class Hook
 					. DIRECTORY_SEPARATOR . 'Hook'
 					. DIRECTORY_SEPARATOR . $hookName . '.php';
 
-				if (file_exists(filename: $hookFile)) {
+				if (
+					file_exists(
+						filename: $hookFile
+					)
+				) {
 					$hookClass = 'Microservices\\www\\Hook\\' . $hookName;
 					$this->hookObj = new $hookClass(
 						http: $this->http

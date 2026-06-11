@@ -90,7 +90,11 @@ class PhpEncode implements DataEncodeInterface
 	): void {
 		if ($this->currentObject) {
 			if ($this->currentObject->mode === 'Object') {
-				if (is_array(value: $data)) {
+				if (
+					is_array(
+						value: $data
+					)
+				) {
 					foreach ($data as $k => $v) {
 						$this->currentObject->returnArray[$k] = $this->escape(
 							data: $v
@@ -98,7 +102,11 @@ class PhpEncode implements DataEncodeInterface
 					}
 				}
 			} else {
-				if (is_array(value: $data)) {
+				if (
+					is_array(
+						value: $data
+					)
+				) {
 					foreach ($data as $v) {
 						$this->currentObject->returnArray[] = $this->escape(
 							data: $v
@@ -123,7 +131,9 @@ class PhpEncode implements DataEncodeInterface
 	public function encode(
 		$data
 	): void {
-		$this->write(data: $data);
+		$this->write(
+			data: $data
+		);
 	}
 
 	/**
@@ -137,7 +147,11 @@ class PhpEncode implements DataEncodeInterface
 		&$data
 	): mixed {
 		if ($data !== null) {
-			if (is_array(value: $data)) {
+			if (
+				is_array(
+					value: $data
+				)
+			) {
 				foreach ($data as $k => $v) {
 					$data[$k] = $this->escape($v);
 				}
@@ -270,7 +284,11 @@ class PhpEncode implements DataEncodeInterface
 		$objectKey = $this->currentObject->objectKey;
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
-		if (count(value: $this->objectArr) > 0) {
+		if (
+			count(
+				value: $this->objectArr
+			) > 0
+		) {
 			$this->currentObject = array_pop(
 				array: $this->objectArr
 			);
@@ -328,7 +346,11 @@ class PhpEncode implements DataEncodeInterface
 		$objectKey = $this->currentObject->objectKey;
 		$returnArray = &$this->currentObject->returnArray;
 		$this->currentObject = null;
-		if (count(value: $this->objectArr) > 0) {
+		if (
+			count(
+				value: $this->objectArr
+			) > 0
+		) {
 			$this->currentObject = array_pop(
 				array: $this->objectArr
 			);

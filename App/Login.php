@@ -479,7 +479,11 @@ class Login
 				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
-			if (count(value: $customerUserConcurrencyData) >= Env::$maxConcurrentLogin) {
+			if (
+				count(
+					value: $customerUserConcurrencyData
+				) >= Env::$maxConcurrentLogin
+			) {
 				throw new \Exception(
 					message: 'Account already in use. '
 						. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
@@ -655,7 +659,11 @@ class Login
 				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
-			if (count(value: $customerUserConcurrencyData) >= Env::$maxConcurrentLogin) {
+			if (
+				count(
+					value: $customerUserConcurrencyData
+				) >= Env::$maxConcurrentLogin
+			) {
 				throw new \Exception(
 					message: 'Account already in use. '
 						. 'Please try after ' . Env::$concurrentAccessInterval . ' second(s)',
