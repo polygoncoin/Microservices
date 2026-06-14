@@ -243,6 +243,9 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	private function manageException(
 		\Exception $e
 	): never {
-		die($e->getMessage());
+		throw new \Exception(
+			message: $e->getMessage(),
+			code: HttpStatus::$InternalServerError
+		);
 	}
 }

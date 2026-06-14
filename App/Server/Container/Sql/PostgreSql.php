@@ -146,7 +146,7 @@ class PostgreSql implements SqlInterface
 			);
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -177,7 +177,7 @@ class PostgreSql implements SqlInterface
 			$this->pgsqlServerObj->beginTransaction();
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -198,7 +198,7 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -219,7 +219,7 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -242,7 +242,7 @@ class PostgreSql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -266,7 +266,7 @@ class PostgreSql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -314,7 +314,7 @@ class PostgreSql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -336,7 +336,7 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -359,7 +359,7 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -393,7 +393,7 @@ class PostgreSql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->pgsqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -408,7 +408,7 @@ class PostgreSql implements SqlInterface
 	 * @return never
 	 * @throws \Exception
 	 */
-	private function log(
+	private function manageException(
 		$e
 	): never {
 		throw new \Exception(

@@ -111,7 +111,11 @@ class XmlEncode implements DataEncodeInterface
 	public function encode(
 		$data
 	): void {
-		if (is_array($data)) {
+		if (
+			is_array(
+				value: $data
+			)
+		) {
 			$isObject = (isset($data[0])) ? false : true;
 			if (!$isObject) {
 				$this->write(
@@ -119,7 +123,11 @@ class XmlEncode implements DataEncodeInterface
 				);
 			}
 			foreach ($data as $objectKey => $value) {
-				if (!is_array($value)) {
+				if (
+					!is_array(
+						value: $value
+					)
+				) {
 					$objectKey = $this->escapeTag(
 						objectKey: $objectKey
 					);

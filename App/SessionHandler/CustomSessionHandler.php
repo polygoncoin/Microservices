@@ -146,12 +146,20 @@ class CustomSessionHandler implements
 				sessionId: $sessionId
 			)
 		) {
-			if (is_null($this->creatingSessionId)) {
+			if (
+				is_null(
+					value: $this->creatingSessionId
+				)
+			) {
 				$this->sessionData = &$sessionData;
 			}
 			$this->foundSession = true;
 		} else {
-			if (is_null($this->creatingSessionId)) {
+			if (
+				is_null(
+					value: $this->creatingSessionId
+				)
+			) {
 				$this->unsetSessionCookie();
 			}
 			$this->foundSession = false;

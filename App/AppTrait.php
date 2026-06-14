@@ -1057,7 +1057,9 @@ trait AppTrait
 		$hashJson = null;
 		if (
 			isset($sqlConfig['idempotentWindow'])
-			&& is_numeric($sqlConfig['idempotentWindow'])
+			&& is_numeric(
+				value: $sqlConfig['idempotentWindow']
+			)
 			&& $sqlConfig['idempotentWindow'] > 0
 		) {
 			$idempotentWindow = (int)$sqlConfig['idempotentWindow'];
@@ -1167,7 +1169,9 @@ trait AppTrait
 		$lag = 0;
 		$responseLag = &$sqlConfig['responseLag'];
 		if (
-			is_array($responseLag)
+			is_array(
+				value: $responseLag
+			)
 		) {
 			foreach ($responseLag as $start => $newLag) {
 				if ($noOfRequest > $start) {
@@ -1403,7 +1407,11 @@ trait AppTrait
 		$header = [];
 		$header[] = '__mode__';
 		foreach ($paramArr as $r => $p) {
-			if (is_array($p)) {
+			if (
+				is_array(
+					value: $p
+				)
+			) {
 				$iCount = count(
 					value: $p
 				);

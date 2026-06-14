@@ -225,7 +225,11 @@ class Export
 			$shellCommand .= ' | sed -e \'s/"/""/g ; s/\t/","/g ; s/^/"/g ; s/$/"/g\'';
 		}
 
-		if (!is_null($exportFile)) {
+		if (
+			!is_null(
+				value: $exportFile
+			)
+		) {
 			$tmpFilename = $exportFile;
 			$shellCommand .= ' > ' . escapeshellarg(
 				arg: $tmpFilename
@@ -269,7 +273,11 @@ class Export
 			exportFile: $exportFile
 		);
 
-		if (!is_null($exportFile)) {
+		if (
+			!is_null(
+				value: $exportFile
+			)
+		) {
 			$this->useTmpFile = true;
 			$this->unlink = false;
 		}

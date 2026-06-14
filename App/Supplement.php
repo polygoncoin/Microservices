@@ -454,7 +454,9 @@ class Supplement
 		&$requiredFieldArr,
 		$module = ''
 	): void {
-		$payloadIndex = is_array($payloadIndexArr) ? trim(
+		$payloadIndex = is_array(
+			value: $payloadIndexArr
+		) ? trim(
 			string: implode(
 				separator: ':',
 				array: $payloadIndexArr
@@ -504,7 +506,9 @@ class Supplement
 				);
 			}
 
-			$payloadIndex = is_array($payloadIndexArr) ? implode(
+			$payloadIndex = is_array(
+				value: $payloadIndexArr
+			) ? implode(
 				separator: ':',
 				array: $payloadIndexArr
 			) : '';
@@ -652,7 +656,11 @@ class Supplement
 				$payloadIndexArr
 			);
 		}
-		if (!is_array($payloadIndexArr)) {
+		if (
+			!is_array(
+				value: $payloadIndexArr
+			)
+		) {
 			$payloadIndexArr = [];
 		}
 
@@ -674,7 +682,9 @@ class Supplement
 					$_configKeyArr,
 					$module
 				);
-				$modulePayloadKey = is_array($_payloadIndexArr) ? implode(
+				$modulePayloadKey = is_array(
+					value: $_payloadIndexArr
+				) ? implode(
 					separator: ':',
 					array: $_payloadIndexArr
 				) : '';

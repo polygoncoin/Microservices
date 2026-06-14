@@ -86,7 +86,9 @@ class Api
 			&& isset($this->http->req->rParser)
 			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
-			&& is_array($this->http->req->rParser->routeHook)
+			&& is_array(
+				value: $this->http->req->rParser->routeHook
+			)
 		) {
 			$preRouteHookArr = [];
 			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
@@ -156,8 +158,7 @@ class Api
 			$supplementClassFileName = ucfirst(
 				string: $this->http->req->rParser->routeElementArr[1]
 			);
-			$supplementClassFileLocation = Constant::$WWW
-					. DIRECTORY_SEPARATOR . 'Supplement'
+			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIR
 					. DIRECTORY_SEPARATOR . 'Cron'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
@@ -166,7 +167,7 @@ class Api
 					filename: $supplementClassFileLocation
 				)
 			) {
-				$supplementClass = 'Microservices\\www\\Supplement\\Cron\\' . $supplementClassFileName;
+				$supplementClass = Constant::$SUPPLEMENT_NS . '\\Cron\\' . $supplementClassFileName;
 			}
 		} elseif (
 			$this->checkSupplement(
@@ -176,8 +177,7 @@ class Api
 			$supplementClassFileName = ucfirst(
 				string: $this->http->req->rParser->routeElementArr[1]
 			);
-			$supplementClassFileLocation = Constant::$WWW
-					. DIRECTORY_SEPARATOR . 'Supplement'
+			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIR
 					. DIRECTORY_SEPARATOR . 'Custom'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
@@ -186,7 +186,7 @@ class Api
 					filename: $supplementClassFileLocation
 				)
 			) {
-				$supplementClass = 'Microservices\\www\\Supplement\\Custom\\' . $supplementClassFileName;
+				$supplementClass = Constant::$SUPPLEMENT_NS . '\\Custom\\' . $supplementClassFileName;
 			}
 		} elseif (
 			$this->checkSupplement(
@@ -196,8 +196,7 @@ class Api
 			$supplementClassFileName = ucfirst(
 				string: $this->http->req->rParser->routeElementArr[1]
 			);
-			$supplementClassFileLocation = Constant::$WWW
-					. DIRECTORY_SEPARATOR . 'Supplement'
+			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIR
 					. DIRECTORY_SEPARATOR . 'Upload'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
@@ -206,7 +205,7 @@ class Api
 					filename: $supplementClassFileLocation
 				)
 			) {
-				$supplementClass = 'Microservices\\www\\Supplement\\Upload\\' . $supplementClassFileName;
+				$supplementClass = Constant::$SUPPLEMENT_NS . '\\Upload\\' . $supplementClassFileName;
 			}
 		} elseif (
 			$this->checkSupplement(
@@ -216,8 +215,7 @@ class Api
 			$supplementClassFileName = ucfirst(
 				string: $this->http->req->rParser->routeElementArr[1]
 			);
-			$supplementClassFileLocation = Constant::$WWW
-					. DIRECTORY_SEPARATOR . 'Supplement'
+			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIR
 					. DIRECTORY_SEPARATOR . 'ThirdParty'
 					. DIRECTORY_SEPARATOR . $supplementClassFileName . '.php';
 
@@ -226,7 +224,7 @@ class Api
 					filename: $supplementClassFileLocation
 				)
 			) {
-				$supplementClass = 'Microservices\\www\\Supplement\\ThirdParty\\' . $supplementClassFileName;
+				$supplementClass = Constant::$SUPPLEMENT_NS . '\\ThirdParty\\' . $supplementClassFileName;
 			}
 		} else {
 			switch ($this->http->httpReqData['server']['httpMethod']) {
@@ -239,8 +237,7 @@ class Api
 						$classFileName = ucfirst(
 							string: $this->http->req->rParser->routeElementArr[1]
 						);
-						$classFileLocation = Constant::$WWW
-								. DIRECTORY_SEPARATOR . 'Supplement'
+						$classFileLocation = Constant::$SUPPLEMENT_DIR
 								. DIRECTORY_SEPARATOR . 'Dropbox'
 								. DIRECTORY_SEPARATOR . $classFileName . '.php';
 
@@ -249,7 +246,7 @@ class Api
 								filename: $classFileLocation
 							)
 						) {
-							$class = 'Microservices\\www\\Supplement\\Dropbox\\' . $classFileName;
+							$class = Constant::$SUPPLEMENT_NS . '\\Dropbox\\' . $classFileName;
 						}
 					} elseif (
 						$this->checkSupplement(
@@ -302,7 +299,9 @@ class Api
 			&& isset($this->http->req->rParser)
 			&& isset($this->http->req->rParser->routeHook)
 			&& $this->http->req->rParser->routeHook !== null
-			&& is_array($this->http->req->rParser->routeHook)
+			&& is_array(
+				value: $this->http->req->rParser->routeHook
+			)
 		) {
 			$postRouteHookArr = [];
 			foreach ($this->http->req->rParser->routeHook as $element => &$hookArr) {
@@ -349,7 +348,9 @@ class Api
 		}
 
 		if (
-			is_array($return)
+			is_array(
+				value: $return
+			)
 			&& count(
 				value: $return
 			) === 3

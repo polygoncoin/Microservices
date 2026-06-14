@@ -136,7 +136,9 @@ class Microservices
 					$this->startData();
 					$return = $api->process();
 					if (
-						is_array($return)
+						is_array(
+							value: $return
+						)
 						&& count(
 							value: $return
 						) === 3
@@ -149,7 +151,7 @@ class Microservices
 				}
 			}
 		} catch (\Exception $e) {
-			$this->log(
+			$this->manageException(
 				e: $e
 			);
 		}
@@ -363,7 +365,7 @@ class Microservices
 	 * @return never
 	 * @throws \Exception
 	 */
-	private function log(
+	private function manageException(
 		$e
 	): never {
 		throw new \Exception(

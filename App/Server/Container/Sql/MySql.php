@@ -145,7 +145,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -169,7 +169,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 				$this->rollBack();
@@ -191,7 +191,7 @@ class MySql implements SqlInterface
 			$this->mysqlServerObj->beginTransaction();
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -212,7 +212,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -233,7 +233,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -256,7 +256,7 @@ class MySql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -280,7 +280,7 @@ class MySql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -320,7 +320,9 @@ class MySql implements SqlInterface
 			);
 			if ($this->stmt) {
 				if (
-					is_array($paramArr)
+					is_array(
+						value: $paramArr
+					)
 					&& count(
 						value: $paramArr
 					) > 0
@@ -337,7 +339,7 @@ class MySql implements SqlInterface
 				$this->rollBack();
 			}
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -359,7 +361,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -382,7 +384,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -416,7 +418,7 @@ class MySql implements SqlInterface
 			}
 		} catch (\PDOException $e) {
 			if ((int)$this->mysqlServerObj->errorCode()) {
-				$this->log(
+				$this->manageException(
 					e: $e
 				);
 			}
@@ -431,7 +433,7 @@ class MySql implements SqlInterface
 	 * @return never
 	 * @throws \Exception
 	 */
-	private function log(
+	private function manageException(
 		$e
 	): never {
 		throw new \Exception(

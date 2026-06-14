@@ -747,21 +747,27 @@ class HttpRequest
 	): void {
 		if (
 			isset($arrayFromXml['Rows'])
-			&& is_array($arrayFromXml['Rows'])
+			&& is_array(
+				value: $arrayFromXml['Rows']
+			)
 		) {
 			$arrayFromXml = &$arrayFromXml['Rows'];
 		}
 
 		if (
 			isset($arrayFromXml['Row'])
-			&& is_array($arrayFromXml['Row'])
+			&& is_array(
+				value: $arrayFromXml['Row']
+			)
 		) {
 			$arrayFromXml = &$arrayFromXml['Row'];
 		}
 
 		if (
 			isset($arrayFromXml[0])
-			&& is_array($arrayFromXml[0])
+			&& is_array(
+				value: $arrayFromXml[0]
+			)
 			&& count(
 				value: $arrayFromXml
 			) === 1
@@ -772,7 +778,11 @@ class HttpRequest
 			}
 		}
 
-		if (!is_array($arrayFromXml)) {
+		if (
+			!is_array(
+				value: $arrayFromXml
+			)
+		) {
 			return;
 		}
 
@@ -784,7 +794,11 @@ class HttpRequest
 				}
 				continue;
 			}
-			if (is_array($columnValue)) {
+			if (
+				is_array(
+					value: $columnValue
+				)
+			) {
 				$result[$column] = [];
 				$this->formatXmlArray(
 					arrayFromXml: $columnValue,
@@ -806,9 +820,17 @@ class HttpRequest
 	public function urlDecode(
 		&$value
 	): void {
-		if (is_array($value)) {
+		if (
+			is_array(
+				value: $value
+			)
+		) {
 			foreach ($value as &$v) {
-				if (is_array($v)) {
+				if (
+					is_array(
+						value: $v
+					)
+				) {
 					$this->urlDecode(
 						value: $v
 					);

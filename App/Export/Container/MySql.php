@@ -254,11 +254,19 @@ class MySql implements ExportDatabaseServerInterface
 		//Generate bind params
 		$bindParamArr = [];
 		foreach ($paramArr as $parameterisedColumn => $valueArr) {
-			if (is_array($valueArr)) {
+			if (
+				is_array(
+					value: $valueArr
+				)
+			) {
 				$tmpParamArr = [];
 				$count = 1;
 				foreach ($valueArr as $value) {
-					if (is_array($value)) {
+					if (
+						is_array(
+							value: $value
+						)
+					) {
 						throw new \Exception(
 							message: "Invalid param key '{$parameterisedColumn}'"
 						);

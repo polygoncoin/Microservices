@@ -46,6 +46,9 @@ class Constant
 	public static $WWW = null;
 	public static $FILE_DIR = null;
 
+	public static $SUPPLEMENT_DIR = null;
+	public static $SUPPLEMENT_NS = null;
+
 	public static $DROPBOX_DIR = null;
 	public static $DROPBOX_PRIVATE_DIR = null;
 	public static $DROPBOX_PUBLIC_DIR = null;
@@ -88,8 +91,10 @@ class Constant
 			path: __DIR__ . '..' . DIRECTORY_SEPARATOR
 		);
 		self::$WWW = self::$ROOT . DIRECTORY_SEPARATOR . 'www';
-
 		self::$FILE_DIR = self::$WWW . DIRECTORY_SEPARATOR . 'File';
+
+		self::$SUPPLEMENT_DIR = self::$WWW . DIRECTORY_SEPARATOR . 'Supplement';
+		self::$SUPPLEMENT_NS = 'Microservices\\www\\Supplement';
 
 		self::$DROPBOX_DIR = self::$FILE_DIR . DIRECTORY_SEPARATOR . 'Dropbox';
 		self::$DROPBOX_PRIVATE_DIR = self::$DROPBOX_DIR . DIRECTORY_SEPARATOR . 'Private';
