@@ -1069,6 +1069,7 @@ trait AppTrait
 					'idempotentWindow' => $idempotentWindow,
 					'IP' => $this->http->httpReqData['server']['httpRequestIP'],
 					'customerId' => $this->http->req->customerId,
+					'customerUserId' => $this->http->req->customerUserId,
 					'httpMethod' => $this->http->httpReqData['server']['httpMethod'],
 					'Route' => $this->http->httpReqData['get'][ROUTE_URL_PARAM],
 					'payload' => $this->http->req->dataDecode->get(
