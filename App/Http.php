@@ -38,14 +38,14 @@ class Http
 	 *
 	 * @var null|HttpRequest
 	 */
-	public $req = null;
+	public $requestObj = null;
 
 	/**
 	 * Microservices HTTP response
 	 *
 	 * @var null|HttpResponse
 	 */
-	public $res = null;
+	public $responseObj = null;
 
 	/**
 	 * HTTP request data
@@ -72,27 +72,27 @@ class Http
 	 */
 	public function init(): bool
 	{
-		$this->req = new HttpRequest(
-			http: $this
+		$this->requestObj = new HttpRequest(
+			httpObj: $this
 		);
-		$this->res = new HttpResponse(
-			http: $this
+		$this->responseObj = new HttpResponse(
+			httpObj: $this
 		);
 
-		if ($this->req->isPrivateRequest) {
-			$this->req->ROUTES_DIR = Constant::$ROUTES_PRIVATE_DIR;
-			$this->req->QUERIES_DIR = Constant::$QUERIES_PRIVATE_DIR;
+		if ($this->requestObj->isPrivateRequest) {
+			$this->requestObj->ROUTES_DIR = Constant::$ROUTES_PRIVATE_DIR;
+			$this->requestObj->QUERIES_DIR = Constant::$QUERIES_PRIVATE_DIR;
 
-			$this->res->HTML_DIR = Constant::$HTML_PRIVATE_DIR;
-			$this->res->PHP_DIR = Constant::$PHP_PRIVATE_DIR;
-			$this->res->XSLT_DIR = Constant::$XSLT_PRIVATE_DIR;
+			$this->responseObj->HTML_DIR = Constant::$HTML_PRIVATE_DIR;
+			$this->responseObj->PHP_DIR = Constant::$PHP_PRIVATE_DIR;
+			$this->responseObj->XSLT_DIR = Constant::$XSLT_PRIVATE_DIR;
 		} else {
-			$this->req->ROUTES_DIR = Constant::$ROUTES_PUBLIC_DIR;
-			$this->req->QUERIES_DIR = Constant::$QUERIES_PUBLIC_DIR;
+			$this->requestObj->ROUTES_DIR = Constant::$ROUTES_PUBLIC_DIR;
+			$this->requestObj->QUERIES_DIR = Constant::$QUERIES_PUBLIC_DIR;
 
-			$this->res->HTML_DIR = Constant::$HTML_PUBLIC_DIR;
-			$this->res->PHP_DIR = Constant::$PHP_PUBLIC_DIR;
-			$this->res->XSLT_DIR = Constant::$XSLT_PUBLIC_DIR;
+			$this->responseObj->HTML_DIR = Constant::$HTML_PUBLIC_DIR;
+			$this->responseObj->PHP_DIR = Constant::$PHP_PUBLIC_DIR;
+			$this->responseObj->XSLT_DIR = Constant::$XSLT_PUBLIC_DIR;
 		}
 
 		return true;
@@ -105,7 +105,7 @@ class Http
 	 */
 	public function initRequest(): void
 	{
-		$this->req->init();
+		$this->requestObj->init();
 	}
 
 	/**
@@ -115,6 +115,6 @@ class Http
 	 */
 	public function initResponse(): void
 	{
-		$this->res->init();
+		$this->responseObj->init();
 	}
 }

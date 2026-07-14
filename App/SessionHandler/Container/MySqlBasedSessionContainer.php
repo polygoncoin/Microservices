@@ -79,15 +79,15 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		];
 		if (
 			(
-				$row = $this->getSql(
+				$record = $this->getSql(
 					sql: $sql,
 					paramArr: $paramArr
 				)
 			)
-			&& isset($row['sessionData'])
+			&& isset($record['sessionData'])
 		) {
 			return $this->decryptData(
-				cipherText: $row['sessionData']
+				cipherText: $record['sessionData']
 			);
 		}
 		return false;
@@ -279,7 +279,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sql,
 		$paramArr = []
 	): mixed {
-		$row = [];
+		$record = [];
 		try {
 			$stmt = $this->mySqlServerObj->prepare(
 				query: $sql,
@@ -290,13 +290,13 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 			);
 			switch ($stmt->rowCount()) {
 				case 0:
-					$row = [];
+					$record = [];
 					break;
 				case 1:
-					$row = $stmt->fetch();
+					$record = $stmt->fetch();
 					break;
 				default:
-					$row = false;
+					$record = false;
 					break;
 			}
 			$stmt->closeCursor();
@@ -305,7 +305,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 				e: $e
 			);
 		}
-		return $row;
+		return $record;
 	}
 
 	/**

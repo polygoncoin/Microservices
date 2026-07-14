@@ -41,19 +41,19 @@ class Category implements CustomInterface
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
-		$this->http->req->customerDbObj = DbCommonFunction::connectCustomerDb(
-			customerData: $this->http->req->s['customerData'],
+		$this->httpObj = &$httpObj;
+		$this->httpObj->requestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
+			customerData: $this->httpObj->requestObj->session['customerData'],
 			fetchFrom: 'Slave'
 		);
 	}
@@ -84,13 +84,13 @@ class Category implements CustomInterface
 			':is_deleted' => 'No',
 			':parent_id' => 0,
 		];
-		$this->http->req->customerDbObj->execQuery(
+		$this->httpObj->requestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$rowArr = $this->http->req->customerDbObj->fetchAll();
-		$this->http->req->customerDbObj->closeCursor();
-		$this->http->res->dataEncode->addKeyData(
+		$rowArr = $this->httpObj->requestObj->customerDbObj->fetchAll();
+		$this->httpObj->requestObj->customerDbObj->closeCursor();
+		$this->httpObj->responseObj->dataEncodeObj->addKeyData(
 			objectKey: 'Results',
 			data: $rowArr
 		);

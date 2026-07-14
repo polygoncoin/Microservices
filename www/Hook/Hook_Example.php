@@ -40,17 +40,17 @@ class Hook_Example implements HookInterface
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -84,6 +84,6 @@ class Hook_Example implements HookInterface
 	private function execHook(): void
 	{
 		// Change payload.
-		$this->http->req->s['payload']['hook'] = 'Yes';
+		$this->httpObj->requestObj->session['payload']['hook'] = 'Yes';
 	}
 }

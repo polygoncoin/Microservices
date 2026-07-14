@@ -241,11 +241,11 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Affected row count
+	 * Affected record count
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRowCount(): bool|int
+	public function affectedRecordCount(): bool|int
 	{
 		try {
 			if ($this->stmt) {
@@ -347,7 +347,7 @@ class MySql implements SqlInterface
 	}
 
 	/**
-	 * Fetch row
+	 * Fetch record
 	 *
 	 * @return mixed
 	 */

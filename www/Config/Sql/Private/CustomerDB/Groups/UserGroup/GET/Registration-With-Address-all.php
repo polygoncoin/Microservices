@@ -14,8 +14,8 @@
  */
 
 return [
-	'countQuery' => "SELECT count(1) as `count` FROM `{$this->http->req->s['customerData']['customer_user_table']}` WHERE __WHERE__",
-	'__QUERY__' => "SELECT * FROM `{$this->http->req->s['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'countQuery' => "SELECT count(1) as `count` FROM `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'customer_user_is_deleted',
@@ -23,7 +23,7 @@ return [
 			'fetchFromData' => 'No'
 		]
 	],
-	'__MODE__' => 'multipleRowFormat',
+	'__MODE__' => 'multipleRecordFormat',
 	'__SUB-QUERY__' => [
 		'address' => [
 			'__QUERY__' => 'SELECT * FROM `address` WHERE __WHERE__',
@@ -39,7 +39,7 @@ return [
 					'fetchFromData' => 'return:id'
 				],
 			],
-			'__MODE__' => 'multipleRowFormat',
+			'__MODE__' => 'multipleRecordFormat',
 		]
 	],
 	'useResultSet' => true

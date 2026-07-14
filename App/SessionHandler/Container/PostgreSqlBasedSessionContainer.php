@@ -78,13 +78,13 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			(Env::$timestamp - $this->sessionMaxLifetime)
 		];
 
-		$row = $this->getSql(
+		$record = $this->getSql(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		if (isset($row['session_data'])) {
+		if (isset($record['session_data'])) {
 			return $this->decryptData(
-				cipherText: $row['session_data']
+				cipherText: $record['session_data']
 			);
 		}
 		return false;
@@ -287,19 +287,19 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 				$paramArr
 			);
 			if ($result) {
-				$row = [];
+				$record = [];
 				$rowsCount = pg_num_rows(
 					$result
 				);
 				if ($rowsCount === 1) {
-					$row = pg_fetch_assoc(
+					$record = pg_fetch_assoc(
 						$result
 					);
 				}
 				pg_free_result(
 					$result
 				);
-				return $row;
+				return $record;
 			}
 		} catch (\Exception $e) {
 			$this->manageException(

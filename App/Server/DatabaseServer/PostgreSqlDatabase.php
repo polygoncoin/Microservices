@@ -176,14 +176,14 @@ class PostgreSqlDatabase implements DatabaseServerInterface
 	}
 
 	/**
-	 * Affected row count
+	 * Affected record count
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRowCount(): bool|int
+	public function affectedRecordCount(): bool|int
 	{
 		try {
-			return $this->sqlServerObj->affectedRowCount();
+			return $this->sqlServerObj->affectedRecordCount();
 		} catch (\Exception $e) {
 			if ($this->beganTransaction) {
 				$this->rollBack();
@@ -240,7 +240,7 @@ class PostgreSqlDatabase implements DatabaseServerInterface
 	}
 
 	/**
-	 * Fetch row
+	 * Fetch record
 	 *
 	 * @return mixed
 	 */

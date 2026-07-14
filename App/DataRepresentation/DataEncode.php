@@ -47,14 +47,14 @@ class DataEncode
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Temporary Stream
 	 *
 	 * @var null|Object
 	 */
-	private $dataEncoder = null;
+	private $dataEncoderObj = null;
 
 	/**
 	 * XSLT file
@@ -80,12 +80,12 @@ class DataEncode
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -98,8 +98,8 @@ class DataEncode
 	public function init(
 		$header = true
 	): void {
-		if ($this->http->httpReqData['server']['httpMethod'] === Constant::$GET) {
-			if ($this->http->res->oRepresentation === 'PHP') {
+		if ($this->httpObj->httpReqData['server']['httpMethod'] === Constant::$GET) {
+			if ($this->httpObj->responseObj->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
 				$this->tempStream = fopen(
@@ -108,7 +108,7 @@ class DataEncode
 				);
 			}
 		} else {
-			if ($this->http->res->oRepresentation === 'PHP') {
+			if ($this->httpObj->responseObj->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
 				$this->tempStream = fopen(
@@ -117,15 +117,15 @@ class DataEncode
 				);
 			}
 		}
-		switch ($this->http->res->oRepresentation) {
+		switch ($this->httpObj->responseObj->outputRepresentation) {
 			case 'JSON':
-				$this->dataEncoder = new JsonEncode(
+				$this->dataEncoderObj = new JsonEncode(
 					tempStream: $this->tempStream,
 					header: $header
 				);
 				break;
 			case 'PHP':
-				$this->dataEncoder = new PhpEncode(
+				$this->dataEncoderObj = new PhpEncode(
 					tempStream: $this->tempStream,
 					header: $header
 				);
@@ -133,7 +133,7 @@ class DataEncode
 			case 'XML':
 			case 'XSLT':
 			case 'HTML':
-				$this->dataEncoder = new XmlEncode(
+				$this->dataEncoderObj = new XmlEncode(
 					tempStream: $this->tempStream,
 					header: $header
 				);
@@ -153,7 +153,7 @@ class DataEncode
 	public function startArray(
 		$objectKey = null
 	): void {
-		$this->dataEncoder->startArray(
+		$this->dataEncoderObj->startArray(
 			objectKey: $objectKey
 		);
 	}
@@ -169,7 +169,7 @@ class DataEncode
 	public function addArrayData(
 		$data
 	): void {
-		$this->dataEncoder->addArrayData(
+		$this->dataEncoderObj->addArrayData(
 			data: $data
 		);
 	}
@@ -181,7 +181,7 @@ class DataEncode
 	 */
 	public function endArray(): void
 	{
-		$this->dataEncoder->endArray();
+		$this->dataEncoderObj->endArray();
 	}
 
 	/**
@@ -195,7 +195,7 @@ class DataEncode
 	public function startObject(
 		$objectKey = null
 	): void {
-		$this->dataEncoder->startObject(
+		$this->dataEncoderObj->startObject(
 			objectKey: $objectKey
 		);
 	}
@@ -213,7 +213,7 @@ class DataEncode
 		$objectKey,
 		$data
 	): void {
-		$this->dataEncoder->addKeyData(
+		$this->dataEncoderObj->addKeyData(
 			objectKey: $objectKey,
 			data: $data
 		);
@@ -226,7 +226,7 @@ class DataEncode
 	 */
 	public function endObject(): void
 	{
-		$this->dataEncoder->endObject();
+		$this->dataEncoderObj->endObject();
 	}
 
 	/**
@@ -239,7 +239,7 @@ class DataEncode
 	public function encode(
 		$data
 	): void {
-		$this->dataEncoder->encode(
+		$this->dataEncoderObj->encode(
 			data: $data
 		);
 	}
@@ -253,7 +253,7 @@ class DataEncode
 	 */
 	public function appendData(&$data): void
 	{
-		$this->dataEncoder->appendData(
+		$this->dataEncoderObj->appendData(
 			data: $data
 		);
 	}
@@ -270,7 +270,7 @@ class DataEncode
 		$objectKey,
 		&$data
 	): void {
-		$this->dataEncoder->appendKeyData(
+		$this->dataEncoderObj->appendKeyData(
 			objectKey: $objectKey,
 			data: $data
 		);
@@ -283,7 +283,7 @@ class DataEncode
 	 */
 	public function end(): void
 	{
-		$this->dataEncoder->end();
+		$this->dataEncoderObj->end();
 	}
 
 	/**
@@ -297,7 +297,7 @@ class DataEncode
 
 		switch (true) {
 			case (
-					$this->http->res->oRepresentation === 'XSLT'
+					$this->httpObj->responseObj->outputRepresentation === 'XSLT'
 					&& $this->xsltFile !== null
 					&& file_exists(
 						filename: $this->xsltFile
@@ -311,7 +311,7 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->http->res->oRepresentation === 'HTML'
+					$this->httpObj->responseObj->outputRepresentation === 'HTML'
 					&& $this->htmlFile !== null
 					&& file_exists(
 						filename: $this->htmlFile
@@ -325,7 +325,7 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->http->res->oRepresentation === 'PHP'
+					$this->httpObj->responseObj->outputRepresentation === 'PHP'
 					&& $this->phpFile !== null
 					&& file_exists(
 						filename: $this->phpFile
@@ -368,7 +368,7 @@ class DataEncode
 
 		switch (true) {
 			case (
-					$this->http->res->oRepresentation === 'XSLT'
+					$this->httpObj->responseObj->outputRepresentation === 'XSLT'
 					&& $this->xsltFile !== null
 					&& file_exists(
 						filename: $this->xsltFile
@@ -382,7 +382,7 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->http->res->oRepresentation === 'HTML'
+					$this->httpObj->responseObj->outputRepresentation === 'HTML'
 					&& $this->htmlFile !== null
 					&& file_exists(
 						filename: $this->htmlFile
@@ -396,13 +396,13 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->http->res->oRepresentation === 'PHP'
+					$this->httpObj->responseObj->outputRepresentation === 'PHP'
 					&& $this->phpFile !== null
 					&& file_exists(
 						filename: $this->phpFile
 					)
 				):
-				$finalArray = &$this->dataEncoder->finalArray;
+				$finalArray = &$this->dataEncoderObj->finalArray;
 				@ob_clean();
 				include_once $this->phpFile;
 				$streamContent = ob_get_clean();

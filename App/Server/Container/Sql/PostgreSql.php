@@ -227,11 +227,11 @@ class PostgreSql implements SqlInterface
 	}
 
 	/**
-	 * Affected row count
+	 * Affected record count
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRowCount(): bool|int
+	public function affectedRecordCount(): bool|int
 	{
 		try {
 			if ($this->stmt) {
@@ -322,7 +322,7 @@ class PostgreSql implements SqlInterface
 	}
 
 	/**
-	 * Fetch row
+	 * Fetch record
 	 *
 	 * @return mixed
 	 */

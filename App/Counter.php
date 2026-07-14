@@ -51,7 +51,7 @@ class Counter
 			case 'Cache':
 				$cacheKey = Env::$gCounter;
 				DbCommonFunction::connectGlobalCache();
-				$id = (int)DbCommonFunction::$gCacheServer->cacheIncrement(
+				$id = (int)DbCommonFunction::$globalCacheServerObj->cacheIncrement(
 					cacheKey: $cacheKey
 				);
 				break;

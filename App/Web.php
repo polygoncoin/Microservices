@@ -329,7 +329,7 @@ class Web
 			explode(
 				separator: "\n",
 				string: $rawHeaderArr
-			) as $i => $h
+			) as $index => $h
 		) {
 			$h = explode(
 				separator: ':',
@@ -425,12 +425,12 @@ class Web
 		}
 
 		if (!$isObject) {
-			$payload .= '<Rows>';
+			$payload .= '<Records>';
 			$rowTagStartFlag = true;
 		}
 
 		if ($rowTagStartFlag) {
-			$payload .= '<Row>';
+			$payload .= '<Record>';
 		}
 		foreach ($xmlParamArr as $column => &$value) {
 			if ($isObject) {
@@ -457,10 +457,10 @@ class Web
 			}
 		}
 		if ($rowTagStartFlag) {
-			$payload .= '</Row>';
+			$payload .= '</Record>';
 		}
 		if (!$isObject) {
-			$payload .= '</Rows>';
+			$payload .= '</Records>';
 		}
 	}
 }

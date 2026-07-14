@@ -42,7 +42,7 @@ class Cdn implements DropboxInterface
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * File Location
@@ -77,11 +77,11 @@ class Cdn implements DropboxInterface
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
-	public function __construct(&$http = null)
+	public function __construct(&$httpObj = null)
 	{
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function init(): bool
 	{
-		if ($this->http->req->isPrivateRequest) {
+		if ($this->httpObj->requestObj->isPrivateRequest) {
 			$this->DROPBOX_DIR = Constant::$DROPBOX_PRIVATE_DIR;
 		} else {
 			$this->DROPBOX_DIR = Constant::$DROPBOX_PUBLIC_DIR;
@@ -100,7 +100,7 @@ class Cdn implements DropboxInterface
 		$configuredRoute = str_replace(
 			'/dropbox/cdn',
 			'',
-			$this->http->req->rParser->configuredRoute
+			$this->httpObj->requestObj->routeParserObj->configuredRoute
 		);
 
 		$filePath = DIRECTORY_SEPARATOR . trim(
@@ -115,11 +115,11 @@ class Cdn implements DropboxInterface
 		);
 
 		if (
-			$this->http !== null
-			&& $this->http->req !== null
-			&& $this->http->req->isPrivateRequest
+			$this->httpObj !== null
+			&& $this->httpObj->requestObj !== null
+			&& $this->httpObj->requestObj->isPrivateRequest
 		) {
-			$this->DROPBOX_DIR .= DIRECTORY_SEPARATOR . $this->http->req->customerId;
+			$this->DROPBOX_DIR .= DIRECTORY_SEPARATOR . $this->httpObj->requestObj->customerId;
 			$this->validateFileRequest();
 		}
 		$this->fileLocation = $this->DROPBOX_DIR . $filePath;
@@ -141,7 +141,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function validateFileRequest(): void
 	{
-		// check logic for user is allowed to access the file as per $this->http->req->s
+		// check logic for user is allowed to access the file as per $this->httpObj->requestObj->session
 		// $this->fileLocation;
 	}
 
@@ -167,7 +167,7 @@ class Cdn implements DropboxInterface
 			):
 				// Serve Video
 				$videoStream = new StreamVideo(
-					httpReqData: $this->http->httpReqData
+					httpReqData: $this->httpObj->httpReqData
 				);
 				if (
 					(
@@ -206,15 +206,15 @@ class Cdn implements DropboxInterface
 		$eTag = "{$modifiedTime}";
 
 		if (
-			(isset($this->http->httpReqData['header']['HTTP_IF_NONE_MATCH'])
+			(isset($this->httpObj->httpReqData['header']['HTTP_IF_NONE_MATCH'])
 				&& strpos(
-					haystack: $this->http->httpReqData['header']['HTTP_IF_NONE_MATCH'],
+					haystack: $this->httpObj->httpReqData['header']['HTTP_IF_NONE_MATCH'],
 					needle: $eTag
 				) !== false
 			)
-			|| (isset($this->http->httpReqData['header']['HTTP_IF_MODIFIED_SINCE'])
+			|| (isset($this->httpObj->httpReqData['header']['HTTP_IF_MODIFIED_SINCE'])
 				&& @strtotime(
-					datetime: $this->http->httpReqData['header']['HTTP_IF_MODIFIED_SINCE']
+					datetime: $this->httpObj->httpReqData['header']['HTTP_IF_MODIFIED_SINCE']
 				) == $modifiedTime
 			)
 		) {

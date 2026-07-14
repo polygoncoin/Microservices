@@ -45,14 +45,14 @@ class JsonEncode implements DataEncodeInterface
 	 *
 	 * @var JsonEncoderObject[]
 	 */
-	private $objectArr = [];
+	private $jsonEncoderObjectObjArr = [];
 
 	/**
 	 * Current JsonEncoderObject object
 	 *
 	 * @var null|JsonEncoderObject
 	 */
-	private $currentObject = null;
+	private $jsonEncoderObjectObj = null;
 
 	/**
 	 * Characters that are escaped while creating JSON
@@ -123,9 +123,9 @@ class JsonEncode implements DataEncodeInterface
 	public function encode(
 		$data
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonEncoderObjectObj) {
 			$this->write(
-				data: $this->currentObject->comma
+				data: $this->jsonEncoderObjectObj->comma
 			);
 		}
 		if (
@@ -145,8 +145,8 @@ class JsonEncode implements DataEncodeInterface
 				)
 			);
 		}
-		if ($this->currentObject) {
-			$this->currentObject->comma = ', ';
+		if ($this->jsonEncoderObjectObj) {
+			$this->jsonEncoderObjectObj->comma = ', ';
 		}
 	}
 
@@ -181,14 +181,14 @@ class JsonEncode implements DataEncodeInterface
 	public function appendData(
 		&$data
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonEncoderObjectObj) {
 			$this->write(
-				data: $this->currentObject->comma
+				data: $this->jsonEncoderObjectObj->comma
 			);
 			$this->write(
 				data: $data
 			);
-			$this->currentObject->comma = ', ';
+			$this->jsonEncoderObjectObj->comma = ', ';
 		}
 	}
 
@@ -205,18 +205,18 @@ class JsonEncode implements DataEncodeInterface
 		&$data
 	): void {
 		if (
-			$this->currentObject
-			&& $this->currentObject->mode === 'Object'
+			$this->jsonEncoderObjectObj
+			&& $this->jsonEncoderObjectObj->mode === 'Object'
 		) {
 			$this->write(
-				data: $this->currentObject->comma
+				data: $this->jsonEncoderObjectObj->comma
 			);
 			$this->write(
 				data: $this->escape(
 					data: $objectKey
 				) . ':' . $data
 			);
-			$this->currentObject->comma = ', ';
+			$this->jsonEncoderObjectObj->comma = ', ';
 		}
 	}
 
@@ -231,7 +231,7 @@ class JsonEncode implements DataEncodeInterface
 	public function addArrayData(
 		$data
 	): void {
-		if ($this->currentObject->mode !== 'Array') {
+		if ($this->jsonEncoderObjectObj->mode !== 'Array') {
 			throw new \Exception(
 				message: 'Mode should be Array',
 				code: HttpStatus::$InternalServerError
@@ -255,21 +255,21 @@ class JsonEncode implements DataEncodeInterface
 		$objectKey,
 		$data
 	): void {
-		if ($this->currentObject->mode !== 'Object') {
+		if ($this->jsonEncoderObjectObj->mode !== 'Object') {
 			throw new \Exception(
 				message: 'Mode should be Object',
 				code: HttpStatus::$InternalServerError
 			);
 		}
 		$this->write(
-			data: $this->currentObject->comma
+			data: $this->jsonEncoderObjectObj->comma
 		);
 		$this->write(
 			data: $this->escape(
 				data: $objectKey
 			) . ':'
 		);
-		$this->currentObject->comma = '';
+		$this->jsonEncoderObjectObj->comma = '';
 		$this->encode(
 			data: $data
 		);
@@ -285,16 +285,16 @@ class JsonEncode implements DataEncodeInterface
 	public function startArray(
 		$objectKey = null
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonEncoderObjectObj) {
 			$this->write(
-				data: $this->currentObject->comma
+				data: $this->jsonEncoderObjectObj->comma
 			);
 			array_push(
-				$this->objectArr,
-				$this->currentObject
+				$this->jsonEncoderObjectObjArr,
+				$this->jsonEncoderObjectObj
 			);
 		}
-		$this->currentObject = new JsonEncoderObject(
+		$this->jsonEncoderObjectObj = new JsonEncoderObject(
 			mode: 'Array'
 		);
 		if ($objectKey !== null) {
@@ -319,16 +319,16 @@ class JsonEncode implements DataEncodeInterface
 		$this->write(
 			data: ']'
 		);
-		$this->currentObject = null;
+		$this->jsonEncoderObjectObj = null;
 		if (
 			count(
-				value: $this->objectArr
+				value: $this->jsonEncoderObjectObjArr
 			) > 0
 		) {
-			$this->currentObject = array_pop(
-				array: $this->objectArr
+			$this->jsonEncoderObjectObj = array_pop(
+				array: $this->jsonEncoderObjectObjArr
 			);
-			$this->currentObject->comma = ', ';
+			$this->jsonEncoderObjectObj->comma = ', ';
 		}
 	}
 
@@ -343,9 +343,9 @@ class JsonEncode implements DataEncodeInterface
 	public function startObject(
 		$objectKey = null
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonEncoderObjectObj) {
 			if (
-				$this->currentObject->mode === 'Object'
+				$this->jsonEncoderObjectObj->mode === 'Object'
 				&& ($objectKey === null)
 			) {
 				throw new \Exception(
@@ -354,14 +354,14 @@ class JsonEncode implements DataEncodeInterface
 				);
 			}
 			$this->write(
-				data: $this->currentObject->comma
+				data: $this->jsonEncoderObjectObj->comma
 			);
 			array_push(
-				$this->objectArr,
-				$this->currentObject
+				$this->jsonEncoderObjectObjArr,
+				$this->jsonEncoderObjectObj
 			);
 		}
-		$this->currentObject = new JsonEncoderObject(
+		$this->jsonEncoderObjectObj = new JsonEncoderObject(
 			mode: 'Object'
 		);
 		if ($objectKey !== null) {
@@ -386,16 +386,16 @@ class JsonEncode implements DataEncodeInterface
 		$this->write(
 			data: '}'
 		);
-		$this->currentObject = null;
+		$this->jsonEncoderObjectObj = null;
 		if (
 			count(
-				value: $this->objectArr
+				value: $this->jsonEncoderObjectObjArr
 			) > 0
 		) {
-			$this->currentObject = array_pop(
-				array: $this->objectArr
+			$this->jsonEncoderObjectObj = array_pop(
+				array: $this->jsonEncoderObjectObjArr
 			);
-			$this->currentObject->comma = ', ';
+			$this->jsonEncoderObjectObj->comma = ', ';
 		}
 	}
 
@@ -407,10 +407,10 @@ class JsonEncode implements DataEncodeInterface
 	public function end(): void
 	{
 		while (
-			$this->currentObject
-			&& $this->currentObject->mode
+			$this->jsonEncoderObjectObj
+			&& $this->jsonEncoderObjectObj->mode
 		) {
-			switch ($this->currentObject->mode) {
+			switch ($this->jsonEncoderObjectObj->mode) {
 				case 'Array':
 					$this->endArray();
 					break;

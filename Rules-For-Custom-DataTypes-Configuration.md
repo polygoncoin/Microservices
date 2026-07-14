@@ -100,7 +100,7 @@ public static $Varchar50 = [
 
 ## Usage
 
-When these data types are configured for a param in route or SQL config payload; there is a validation performed on the received data to fit the configured criteria of respective data type.
+When these data types are configured for a param in route or Sql config payload; there is a validation performed on the received data to fit the configured criteria of respective data type.
 
 ## Contributing
 

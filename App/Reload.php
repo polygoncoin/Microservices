@@ -93,7 +93,7 @@ class Reload
 				$privateTokenDomainCacheKey = CacheServerKey::privateTokenDomain(
 					domainName: $customerData['customer_private_token_domain']
 				);
-				DbCommonFunction::$gCacheServer->cacheSet(
+				DbCommonFunction::$globalCacheServerObj->cacheSet(
 					cacheKey: $privateTokenDomainCacheKey,
 					cacheValue: $customerData
 				);
@@ -103,7 +103,7 @@ class Reload
 				$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(
 					domainName: $customerData['customer_private_session_domain']
 				);
-				DbCommonFunction::$gCacheServer->cacheSet(
+				DbCommonFunction::$globalCacheServerObj->cacheSet(
 					cacheKey: $privateSessionDomainCacheKey,
 					cacheValue: $customerData
 				);
@@ -113,7 +113,7 @@ class Reload
 				$publicDomainCacheKey = CacheServerKey::publicDomain(
 					domainName: $customerData['customer_public_domain']
 				);
-				DbCommonFunction::$gCacheServer->cacheSet(
+				DbCommonFunction::$globalCacheServerObj->cacheSet(
 					cacheKey: $publicDomainCacheKey,
 					cacheValue: $customerData
 				);
@@ -131,7 +131,7 @@ class Reload
 					$customerCidrCacheKey = CacheServerKey::customerCidr(
 						customerId: $customerData['customer_id']
 					);
-					DbCommonFunction::$gCacheServer->cacheSet(
+					DbCommonFunction::$globalCacheServerObj->cacheSet(
 						cacheKey: $customerCidrCacheKey,
 						cacheValue: $customerCidrIpNumberRangeArr
 					);

@@ -75,8 +75,8 @@ return [
 	// Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
 	'__INSERT-IDs__' => '<keyName>:id',
 
-	// Indicator to generate JSON in Single(Object) row / Multiple(Array) rows format.
-	'__MODE__' => 'singleRowFormat/multipleRowFormat',
+	// Indicator to generate JSON in Single(Object) record / Multiple(Array) rows format.
+	'__MODE__' => 'singleRecordFormat/multipleRecordFormat',
 
 	// subQuery is a keyword to perform recursive operations
 	/** Supported configuration for recursive operations are :
@@ -264,11 +264,11 @@ return [
 	],
 
 	// Enable referrer lag for current route
-	// To be configured in source route SQL config
+	// To be configured in source route Sql config
 	'enableReferrerLag' => 'Yes',
 
 	// Minimum Lag time between current request and referrer/previous request
-	// To be configured in target route SQL config
+	// To be configured in target route Sql config
 	'referrerLagWindow' => [
 		[
 			'referrer' => '/referrer-route-1',
@@ -292,7 +292,7 @@ return [
 	],
 
 	// Data Representation
-	'oRepresentation' => 'XML', // JSON/XML/XSLT/HTML/PHP - Defaults to JSON
+	'outputRepresentation' => 'XML', // JSON/XML/XSLT/HTML/PHP - Defaults to JSON
 
 	// Respective Data Representation File (XSLT/HTML/PHP)
 	'phpFile' => 'file-path',
@@ -527,11 +527,11 @@ return [
 	],
 
 	// Enable referrer lag for current route
-	// To be configured in source route SQL config
+	// To be configured in source route Sql config
 	'enableReferrerLag' => 'Yes',
 
 	// Minimum Lag time between current request and referrer/previous request
-	// To be configured in target route SQL config
+	// To be configured in target route Sql config
 	'referrerLagWindow' => [
 		[
 			'referrer' => '/referrer-route-1',
@@ -555,7 +555,7 @@ return [
 	],
 
 	// Data Representation
-	'oRepresentation' => 'XML', // JSON/XML/XSLT/HTML/PHP - Defaults to JSON
+	'outputRepresentation' => 'XML', // JSON/XML/XSLT/HTML/PHP - Defaults to JSON
 
 	// Respective Data Representation File (XSLT/HTML/PHP)
 	'phpFile' => 'file-path',
@@ -577,7 +577,7 @@ return [
 
 ## fetchFrom
 
-- **fetchFrom** is a SQL config feature where one can force the fetch from Master (Since usually it is Slave)
+- **fetchFrom** is a Sql config feature where one can force the fetch from Master (Since usually it is Slave)
 
 ## Defining Custom DataTypes
 

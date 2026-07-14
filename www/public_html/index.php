@@ -55,7 +55,7 @@ if (
 	die('Invalid request');
 }
 
-$httpReqData['server']['httpRequestIP'] = getHttpRequestIp();
+$httpReqData['server']['httpRequestIp'] = getHttpRequestIp();
 
 $httpReqData['header'] = getallheaders();
 if (isset($_SERVER['Range'])) {
@@ -132,7 +132,7 @@ if (
 
 	if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix) {
 		Reload::process(
-			httpRequestIp: $httpReqData['server']['httpRequestIP']
+			httpRequestIp: $httpReqData['server']['httpRequestIp']
 		);
 		return false;
 	} else {

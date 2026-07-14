@@ -15,13 +15,13 @@
 
 return [
 	'group' => [
-		'__FILE__' => $this->http->req->QUERIES_DIR
+		'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
 			. DIRECTORY_SEPARATOR . 'GlobalDB'
 			. DIRECTORY_SEPARATOR . 'POST'
 			. DIRECTORY_SEPARATOR . 'groups.php',
 	],
 	'customer' => [
-		'__FILE__' => $this->http->req->QUERIES_DIR
+		'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
 			. DIRECTORY_SEPARATOR . 'GlobalDB'
 			. DIRECTORY_SEPARATOR . 'POST'
 			. DIRECTORY_SEPARATOR . 'customer.php',

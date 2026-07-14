@@ -27,5 +27,5 @@ return [
 			'fetchFromData' => 'id'
 		]
 	],
-	'__MODE__' => 'singleRowFormat'
+	'__MODE__' => 'singleRecordFormat'
 ];

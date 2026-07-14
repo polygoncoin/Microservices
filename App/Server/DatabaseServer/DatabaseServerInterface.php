@@ -65,11 +65,11 @@ interface DatabaseServerInterface
 	public function rollBack(): void;
 
 	/**
-	 * Affected Rows by PDO
+	 * Affected Records by PDO
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRowCount(): bool|int;
+	public function affectedRecordCount(): bool|int;
 
 	/**
 	 * Last Insert id by PDO
@@ -94,7 +94,7 @@ interface DatabaseServerInterface
 	): void;
 
 	/**
-	 * Fetch single row from statement
+	 * Fetch single record from statement
 	 *
 	 * @return mixed
 	 */

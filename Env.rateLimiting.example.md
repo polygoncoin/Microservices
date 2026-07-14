@@ -9,7 +9,7 @@ To learn more about Rate Limiting one can [Check Google](https://www.google.com/
 
 ```ini
 ; Rate limit open traffic (not limited by allowed IPs/CIDR and allowed Rate Limit to user)
-rateLimitIPPrefix='IPRL:'
+rateLimitHttpRequestIpPrefix='IPRL:'
 ; Customer based Rate Limitng (GRL) Key prefix used in Redis
 rateLimitCustomerPrefix='CRL:'
 ; Group based Rate Limitng (GRL) Key prefix used in Redis
@@ -19,7 +19,7 @@ rateLimitUserPrefix='URL:'
 ; Route based Rate Limiting (RRL) Key prefix used in Redis
 rateLimitRoutePrefix='RRL:'
 ; User Per IP based Rate Limiting (UIRL) Key prefix used in Redis
-rateLimitUserPerIpPrefix='UIRL:'
+rateLimitUserAsPerHttpRequestIpPrefix='UIRL:'
 ; User Per IP based Rate Limiting (UIRL) Key prefix used in Redis
 rateLimitUserRequestPrefix='URRL:'
 ```
@@ -55,7 +55,7 @@ rateLimitUserRequestPrefix='URRL:'
 
 ## Rate Limiting at route level
 
-If **customer_enabled_rate_limiting_for_route** is **enabled** the Rate Limiting settings indicates settings are present in SQL config file of the route. Each route can have different limits and windows or may also ignore (not compulsary for every route).
+If **customer_enabled_rate_limiting_for_route** is **enabled** the Rate Limiting settings indicates settings are present in Sql config file of the route. Each route can have different limits and windows or may also ignore (not compulsary for every route).
 
 ## Rate Limiting Key
 

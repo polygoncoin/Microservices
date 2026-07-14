@@ -39,7 +39,7 @@ class Hook
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Hook object
@@ -51,12 +51,12 @@ class Hook
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -74,11 +74,11 @@ class Hook
 				value: $hookArr
 			)
 		) {
-			$iCount = count(
+			$indexCount = count(
 				value: $hookArr
 			);
-			for ($i = 0; $i < $iCount; $i++) {
-				$hookName = $hookArr[$i];
+			for ($index = 0; $index < $indexCount; $index++) {
+				$hookName = $hookArr[$index];
 
 				$hookFile = Constant::$WWW
 					. DIRECTORY_SEPARATOR . 'Hook'
@@ -91,14 +91,14 @@ class Hook
 				) {
 					$hookClass = 'Microservices\\www\\Hook\\' . $hookName;
 					$this->hookObj = new $hookClass(
-						http: $this->http
+						httpObj: $this->httpObj
 					);
 					if ($this->hookObj->init()) {
 						$this->hookObj->process();
 					}
 				} else {
 					throw new \Exception(
-						message: "Hook '{$hook}' missing",
+						message: "Hook '{$hookObj}' missing",
 						code: HttpStatus::$InternalServerError
 					);
 				}

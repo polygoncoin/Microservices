@@ -34,14 +34,14 @@ class JsonDecodeObject
 	 *
 	 * @var null|int
 	 */
-	public $sIndex = null;
+	public $startIndex = null;
 
 	/**
 	 * JSON file end position
 	 *
 	 * @var null|int
 	 */
-	public $eIndex = null;
+	public $endIndex = null;
 
 	/**
 	 * Object / Array

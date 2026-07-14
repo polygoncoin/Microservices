@@ -19,6 +19,7 @@ use Microservices\App\Web;
 
 if (!defined('PRIVATE_GET')) {
 	define('PRIVATE_GET', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'GET');
+	define('PRIVATE_QUERY', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'QUERY');
 	define('PRIVATE_POST', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'POST');
 	define('PRIVATE_PUT', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'PUT');
 	define('PRIVATE_PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'PATCH');
@@ -27,6 +28,7 @@ if (!defined('PRIVATE_GET')) {
 
 if (!defined('PUBLIC_GET')) {
 	define('PUBLIC_GET', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'GET');
+	define('PUBLIC_QUERY', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'QUERY');
 	define('PUBLIC_POST', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'POST');
 	define('PUBLIC_PUT', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'PUT');
 	define('PUBLIC_PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'PATCH');
@@ -76,7 +78,7 @@ $response[] = Web::trigger(
 	homeURL: $homeURL,
 	method: 'POST',
 	route: '/registration-with-address'
-		. '&iRepresentation=XML&oRepresentation=XML',
+		. '&inputRepresentation=XML&outputRepresentation=XML',
 	header: $defaultHeaderArr,
 	payload: $payload
 );

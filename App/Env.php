@@ -46,8 +46,8 @@ class Env
 	public static $maxConcurrentLogin = null;
 	public static $concurrentAccessInterval = null;
 
-	public static $iRepresentation = null;
-	public static $oRepresentation = null;
+	public static $inputRepresentation = null;
+	public static $outputRepresentation = null;
 	public static $payloadKeyInResponse = null;
 
 	public static $gCacheServerType = null;
@@ -89,12 +89,12 @@ class Env
 	public static $thirdPartyRequestRoutePrefix = null;
 	public static $uploadRequestRoutePrefix = null;
 
-	public static $rateLimitIPPrefix = null;
+	public static $rateLimitHttpRequestIpPrefix = null;
 	public static $rateLimitCustomerPrefix = null;
 	public static $rateLimitGroupPrefix = null;
 	public static $rateLimitUserPrefix = null;
 	public static $rateLimitRoutePrefix = null;
-	public static $rateLimitUserPerIpPrefix = null;
+	public static $rateLimitUserAsPerHttpRequestIpPrefix = null;
 	public static $rateLimitUserLoginPrefix = null;
 	public static $rateLimitUserRequestPrefix = null;
 
@@ -135,8 +135,8 @@ class Env
 		self::$maxConcurrentLogin = getenv(name: 'maxConcurrentLogin');
 		self::$concurrentAccessInterval = getenv(name: 'concurrentAccessInterval');
 
-		self::$iRepresentation = getenv(name: 'iRepresentation');
-		self::$oRepresentation = getenv(name: 'oRepresentation');
+		self::$inputRepresentation = getenv(name: 'inputRepresentation');
+		self::$outputRepresentation = getenv(name: 'outputRepresentation');
 		self::$payloadKeyInResponse = getenv(name: 'payloadKeyInResponse');
 
 		self::$gCacheServerType = getenv(name: 'gCacheServerType');
@@ -178,12 +178,12 @@ class Env
 		self::$thirdPartyRequestRoutePrefix = getenv(name: 'thirdPartyRequestRoutePrefix');
 		self::$uploadRequestRoutePrefix = getenv(name: 'uploadRequestRoutePrefix');
 
-		self::$rateLimitIPPrefix = getenv(name: 'rateLimitIPPrefix');
+		self::$rateLimitHttpRequestIpPrefix = getenv(name: 'rateLimitHttpRequestIpPrefix');
 		self::$rateLimitCustomerPrefix = getenv(name: 'rateLimitCustomerPrefix');
 		self::$rateLimitGroupPrefix = getenv(name: 'rateLimitGroupPrefix');
 		self::$rateLimitUserPrefix = getenv(name: 'rateLimitUserPrefix');
 		self::$rateLimitRoutePrefix = getenv(name: 'rateLimitRoutePrefix');
-		self::$rateLimitUserPerIpPrefix = getenv(name: 'rateLimitUserPerIpPrefix');
+		self::$rateLimitUserAsPerHttpRequestIpPrefix = getenv(name: 'rateLimitUserAsPerHttpRequestIpPrefix');
 		self::$rateLimitUserLoginPrefix = getenv(name: 'rateLimitUserLoginPrefix');
 		self::$rateLimitUserRequestPrefix = getenv(name: 'rateLimitUserRequestPrefix');
 

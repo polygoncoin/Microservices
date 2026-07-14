@@ -37,17 +37,17 @@ class Log
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -84,11 +84,11 @@ class Log
 		$exceptionJson = json_encode(
 			value: $logData
 		);
-		if (isset($this->http->req)) {
+		if (isset($this->httpObj->requestObj)) {
 			$exceptionJson = json_encode(
 				value: $logData
 			);
-			return $this->http->req->logErrorData(
+			return $this->httpObj->requestObj->logErrorData(
 				exceptionJson: $exceptionJson
 			);
 		} else {

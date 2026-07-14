@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->http->req->s['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
@@ -96,7 +96,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->http->req->s['customerData']['customer_user_table']],
+				'table' => ['custom', $this->httpObj->requestObj->session['customerData']['customer_user_table']],
 				'primary' => ['custom', 'customer_user_id'],
 				'id' => ['routeParamArr', 'id']
 			],

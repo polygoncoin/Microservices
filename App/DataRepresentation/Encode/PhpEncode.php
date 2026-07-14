@@ -45,14 +45,14 @@ class PhpEncode implements DataEncodeInterface
 	 *
 	 * @var PhpEncoderObject[]
 	 */
-	private $objectArr = [];
+	private $jsonEncoderObjectObjArr = [];
 
 	/**
 	 * Current PhpEncoderObject object
 	 *
 	 * @var null|PhpEncoderObject
 	 */
-	private $currentObject = null;
+	private $jsonEncoderObjectObj = null;
 
 	/**
 	 * Constructor
@@ -88,15 +88,15 @@ class PhpEncode implements DataEncodeInterface
 	private function write(
 		$data
 	): void {
-		if ($this->currentObject) {
-			if ($this->currentObject->mode === 'Object') {
+		if ($this->jsonEncoderObjectObj) {
+			if ($this->jsonEncoderObjectObj->mode === 'Object') {
 				if (
 					is_array(
 						value: $data
 					)
 				) {
 					foreach ($data as $k => $v) {
-						$this->currentObject->returnArray[$k] = $this->escape(
+						$this->jsonEncoderObjectObj->returnArray[$k] = $this->escape(
 							data: $v
 						);
 					}
@@ -108,12 +108,12 @@ class PhpEncode implements DataEncodeInterface
 					)
 				) {
 					foreach ($data as $v) {
-						$this->currentObject->returnArray[] = $this->escape(
+						$this->jsonEncoderObjectObj->returnArray[] = $this->escape(
 							data: $v
 						);
 					}
 				} else {
-					$this->currentObject->returnArray[] = $this->escape(
+					$this->jsonEncoderObjectObj->returnArray[] = $this->escape(
 						data: $data
 					);
 				}
@@ -195,8 +195,8 @@ class PhpEncode implements DataEncodeInterface
 		&$data
 	): void {
 		if (
-			$this->currentObject
-			&& $this->currentObject->mode === 'Object'
+			$this->jsonEncoderObjectObj
+			&& $this->jsonEncoderObjectObj->mode === 'Object'
 		) {
 			$this->write(
 				data: [$objectKey => $data]
@@ -215,7 +215,7 @@ class PhpEncode implements DataEncodeInterface
 	public function addArrayData(
 		$data
 	): void {
-		if ($this->currentObject->mode !== 'Array') {
+		if ($this->jsonEncoderObjectObj->mode !== 'Array') {
 			throw new \Exception(
 				message: 'Mode should be Array',
 				code: HttpStatus::$InternalServerError
@@ -239,7 +239,7 @@ class PhpEncode implements DataEncodeInterface
 		$objectKey,
 		$data
 	): void {
-		if ($this->currentObject->mode !== 'Object') {
+		if ($this->jsonEncoderObjectObj->mode !== 'Object') {
 			throw new \Exception(
 				message: 'Mode should be Object',
 				code: HttpStatus::$InternalServerError
@@ -260,17 +260,17 @@ class PhpEncode implements DataEncodeInterface
 	public function startArray(
 		$objectKey = null
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonEncoderObjectObj) {
 			array_push(
-				$this->objectArr,
-				$this->currentObject
+				$this->jsonEncoderObjectObjArr,
+				$this->jsonEncoderObjectObj
 			);
 		}
-		$this->currentObject = new PhpEncoderObject(
+		$this->jsonEncoderObjectObj = new PhpEncoderObject(
 			mode: 'Array'
 		);
 		if ($objectKey !== null) {
-			$this->currentObject->objectKey = $objectKey;
+			$this->jsonEncoderObjectObj->objectKey = $objectKey;
 		}
 	}
 
@@ -281,21 +281,21 @@ class PhpEncode implements DataEncodeInterface
 	 */
 	public function endArray(): void
 	{
-		$objectKey = $this->currentObject->objectKey;
-		$returnArray = &$this->currentObject->returnArray;
-		$this->currentObject = null;
+		$objectKey = $this->jsonEncoderObjectObj->objectKey;
+		$returnArray = &$this->jsonEncoderObjectObj->returnArray;
+		$this->jsonEncoderObjectObj = null;
 		if (
 			count(
-				value: $this->objectArr
+				value: $this->jsonEncoderObjectObjArr
 			) > 0
 		) {
-			$this->currentObject = array_pop(
-				array: $this->objectArr
+			$this->jsonEncoderObjectObj = array_pop(
+				array: $this->jsonEncoderObjectObjArr
 			);
 			if ($objectKey !== '') {
-				$this->currentObject->returnArray[$objectKey] = &$returnArray;
+				$this->jsonEncoderObjectObj->returnArray[$objectKey] = &$returnArray;
 			} else {
-				$this->currentObject->returnArray[] = &$returnArray;
+				$this->jsonEncoderObjectObj->returnArray[] = &$returnArray;
 			}
 		} else {
 			$this->finalArray = &$returnArray;
@@ -313,9 +313,9 @@ class PhpEncode implements DataEncodeInterface
 	public function startObject(
 		$objectKey = null
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonEncoderObjectObj) {
 			if (
-				$this->currentObject->mode === 'Object'
+				$this->jsonEncoderObjectObj->mode === 'Object'
 				&& ($objectKey === null)
 			) {
 				throw new \Exception(
@@ -324,15 +324,15 @@ class PhpEncode implements DataEncodeInterface
 				);
 			}
 			array_push(
-				$this->objectArr,
-				$this->currentObject
+				$this->jsonEncoderObjectObjArr,
+				$this->jsonEncoderObjectObj
 			);
 		}
-		$this->currentObject = new PhpEncoderObject(
+		$this->jsonEncoderObjectObj = new PhpEncoderObject(
 			mode: 'Object'
 		);
 		if ($objectKey !== null) {
-			$this->currentObject->objectKey = $objectKey;
+			$this->jsonEncoderObjectObj->objectKey = $objectKey;
 		}
 	}
 
@@ -343,21 +343,21 @@ class PhpEncode implements DataEncodeInterface
 	 */
 	public function endObject(): void
 	{
-		$objectKey = $this->currentObject->objectKey;
-		$returnArray = &$this->currentObject->returnArray;
-		$this->currentObject = null;
+		$objectKey = $this->jsonEncoderObjectObj->objectKey;
+		$returnArray = &$this->jsonEncoderObjectObj->returnArray;
+		$this->jsonEncoderObjectObj = null;
 		if (
 			count(
-				value: $this->objectArr
+				value: $this->jsonEncoderObjectObjArr
 			) > 0
 		) {
-			$this->currentObject = array_pop(
-				array: $this->objectArr
+			$this->jsonEncoderObjectObj = array_pop(
+				array: $this->jsonEncoderObjectObjArr
 			);
 			if ($objectKey !== '') {
-				$this->currentObject->returnArray[$objectKey] = &$returnArray;
+				$this->jsonEncoderObjectObj->returnArray[$objectKey] = &$returnArray;
 			} else {
-				$this->currentObject->returnArray[] = &$returnArray;
+				$this->jsonEncoderObjectObj->returnArray[] = &$returnArray;
 			}
 		} else {
 			$this->finalArray = &$returnArray;
@@ -372,10 +372,10 @@ class PhpEncode implements DataEncodeInterface
 	public function end(): void
 	{
 		while (
-			$this->currentObject
-			&& $this->currentObject->mode
+			$this->jsonEncoderObjectObj
+			&& $this->jsonEncoderObjectObj->mode
 		) {
-			switch ($this->currentObject->mode) {
+			switch ($this->jsonEncoderObjectObj->mode) {
 				case 'Array':
 					$this->endArray();
 					break;

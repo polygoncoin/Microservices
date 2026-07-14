@@ -202,14 +202,14 @@ class DatabaseServer
 	}
 
 	/**
-	 * Affected row count
+	 * Affected record count
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRowCount(): bool|int
+	public function affectedRecordCount(): bool|int
 	{
 		try {
-			return $this->dbServerObj->affectedRowCount();
+			return $this->dbServerObj->affectedRecordCount();
 		} catch (\Exception $e) {
 			if ($this->beganTransaction) {
 				$this->rollBack();
@@ -266,7 +266,7 @@ class DatabaseServer
 	}
 
 	/**
-	 * Fetch row
+	 * Fetch record
 	 *
 	 * @return mixed
 	 */

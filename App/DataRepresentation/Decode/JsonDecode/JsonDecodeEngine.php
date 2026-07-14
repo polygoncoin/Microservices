@@ -50,14 +50,14 @@ class JsonDecodeEngine
 	 *
 	 * @var JsonDecodeObject[]
 	 */
-	private $objectArr = [];
+	private $jsonDecodeObjectObjArr = [];
 
 	/**
 	 * Current JsonDecodeObject object
 	 *
 	 * @var JsonDecodeObject
 	 */
-	private $currentObject = null;
+	private $jsonDecodeObjectObj = null;
 
 	/**
 	 * Characters that are escaped while creating JSON
@@ -82,18 +82,18 @@ class JsonDecodeEngine
 	 *
 	 * @var null|int
 	 */
-	public $sIndex = null;
+	public $startIndex = null;
 
 	/**
 	 * JSON file end position
 	 *
 	 * @var null|int
 	 */
-	public $eIndex = null;
+	public $endIndex = null;
 
 	/**
 	 * JSON char counter
-	 * Starts from $sIndex till $eIndex
+	 * Starts from $startIndex till $endIndex
 	 *
 	 * @var null|int
 	 */
@@ -136,7 +136,7 @@ class JsonDecodeEngine
 		$strToEscape  = '';
 		$prevIsEscape = false;
 
-		$this->charCounter = $this->sIndex !== null ? $this->sIndex : 0;
+		$this->charCounter = $this->startIndex !== null ? $this->startIndex : 0;
 		fseek(
 			stream: $this->jsonFileHandle,
 			offset: $this->charCounter,
@@ -152,10 +152,10 @@ class JsonDecodeEngine
 					)
 				) !== false
 				&& (
-					($this->eIndex === null)
+					($this->endIndex === null)
 					|| (
-						($this->eIndex !== null)
-						&& $this->charCounter <= $this->eIndex
+						($this->endIndex !== null)
+						&& $this->charCounter <= $this->endIndex
 					)
 				)
 			);
@@ -202,13 +202,13 @@ class JsonDecodeEngine
 							$nullStr = $this->checkNullStr(
 								nullStr: $nullStr
 							);
-							switch ($this->currentObject->mode) {
+							switch ($this->jsonDecodeObjectObj->mode) {
 								case 'Array':
-									$this->currentObject->arrayValueArr[] = $nullStr;
+									$this->jsonDecodeObjectObj->arrayValueArr[] = $nullStr;
 									break;
 								case 'Object':
 									if (!empty($keyValue)) {
-										$this->currentObject->objectValueArr[$keyValue] = $nullStr;
+										$this->jsonDecodeObjectObj->objectValueArr[$keyValue] = $nullStr;
 									}
 									break;
 							}
@@ -298,10 +298,10 @@ class JsonDecodeEngine
 
 								// Closing qoute of Value
 								case $varMode === 'valueValue':
-									if (!isset($this->currentObject)) {
+									if (!isset($this->jsonDecodeObjectObj)) {
 										$this->startObject();
 									}
-									$this->currentObject->objectValueArr[$keyValue] = $valueValue;
+									$this->jsonDecodeObjectObj->objectValueArr[$keyValue] = $valueValue;
 									$keyValue = $valueValue = '';
 									$varMode = 'keyValue';
 									break;
@@ -315,8 +315,8 @@ class JsonDecodeEngine
 					break;
 			}
 		}
-		$this->objectArr = [];
-		$this->currentObject = null;
+		$this->jsonDecodeObjectObjArr = [];
+		$this->jsonDecodeObjectObj = null;
 	}
 
 	/**
@@ -327,8 +327,8 @@ class JsonDecodeEngine
 	public function getJsonString(): bool|string
 	{
 		if (
-			($this->sIndex === null)
-			&& ($this->eIndex === null)
+			($this->startIndex === null)
+			&& ($this->endIndex === null)
 		) {
 			rewind(
 				stream: $this->jsonFileHandle
@@ -337,8 +337,8 @@ class JsonDecodeEngine
 				stream: $this->jsonFileHandle
 			);
 		} else {
-			$offset = $this->sIndex !== null ? $this->sIndex : 0;
-			$length = $this->eIndex - $offset + 1;
+			$offset = $this->startIndex !== null ? $this->startIndex : 0;
+			$length = $this->endIndex - $offset + 1;
 			return stream_get_contents(
 				stream: $this->jsonFileHandle,
 				length: $length,
@@ -391,30 +391,30 @@ class JsonDecodeEngine
 				break;
 			case ']':
 				if (!empty($keyValue)) {
-					$this->currentObject->arrayValueArr[] = $keyValue;
-					if ($this->currentObject->arrayKey === null) {
-						$this->currentObject->arrayKey = 0;
+					$this->jsonDecodeObjectObj->arrayValueArr[] = $keyValue;
+					if ($this->jsonDecodeObjectObj->arrayKey === null) {
+						$this->jsonDecodeObjectObj->arrayKey = 0;
 					} else {
-						$this->currentObject->arrayKey++;
+						$this->jsonDecodeObjectObj->arrayKey++;
 					}
 				}
 				if ($index) {
 					$arr = [
 						'key' => $this->getKey(),
 						'value' => [
-							'sIndex' => $this->currentObject->sIndex,
-							'eIndex' => $this->charCounter
+							'startIndex' => $this->jsonDecodeObjectObj->startIndex,
+							'endIndex' => $this->charCounter
 						]
 					];
 				} else {
-					if (!empty($this->currentObject->arrayValueArr)) {
+					if (!empty($this->jsonDecodeObjectObj->arrayValueArr)) {
 						$arr = [
 							'key' => $this->getKey(),
-							'value' => $this->currentObject->arrayValueArr
+							'value' => $this->jsonDecodeObjectObj->arrayValueArr
 						];
 					}
 				}
-				$this->currentObject = null;
+				$this->jsonDecodeObjectObj = null;
 				$this->popPreviousObject();
 				break;
 			case '}':
@@ -425,25 +425,25 @@ class JsonDecodeEngine
 					$nullStr = $this->checkNullStr(
 						nullStr: $nullStr
 					);
-					$this->currentObject->objectValueArr[$keyValue] = $nullStr;
+					$this->jsonDecodeObjectObj->objectValueArr[$keyValue] = $nullStr;
 				}
 				if ($index) {
 					$arr = [
 						'key' => $this->getKey(),
 						'value' => [
-							'sIndex' => $this->currentObject->sIndex,
-							'eIndex' => $this->charCounter
+							'startIndex' => $this->jsonDecodeObjectObj->startIndex,
+							'endIndex' => $this->charCounter
 						]
 					];
 				} else {
-					if (!empty($this->currentObject->objectValueArr)) {
+					if (!empty($this->jsonDecodeObjectObj->objectValueArr)) {
 						$arr = [
 							'key' => $this->getKey(),
-							'value' => $this->currentObject->objectValueArr
+							'value' => $this->jsonDecodeObjectObj->objectValueArr
 						];
 					}
 				}
-				$this->currentObject = null;
+				$this->jsonDecodeObjectObj = null;
 				$this->popPreviousObject();
 				break;
 		}
@@ -502,11 +502,11 @@ class JsonDecodeEngine
 		$this->pushCurrentObject(
 			objectKey: $objectKey
 		);
-		$this->currentObject = new JsonDecodeObject(
+		$this->jsonDecodeObjectObj = new JsonDecodeObject(
 			mode: 'Array',
 			objectKey: $objectKey
 		);
-		$this->currentObject->sIndex = $this->charCounter;
+		$this->jsonDecodeObjectObj->startIndex = $this->charCounter;
 	}
 
 	/**
@@ -522,11 +522,11 @@ class JsonDecodeEngine
 		$this->pushCurrentObject(
 			objectKey: $objectKey
 		);
-		$this->currentObject = new JsonDecodeObject(
+		$this->jsonDecodeObjectObj = new JsonDecodeObject(
 			mode: 'Object',
 			objectKey: $objectKey
 		);
-		$this->currentObject->sIndex = $this->charCounter;
+		$this->jsonDecodeObjectObj->startIndex = $this->charCounter;
 	}
 
 	/**
@@ -539,9 +539,9 @@ class JsonDecodeEngine
 	private function pushCurrentObject(
 		$objectKey
 	): void {
-		if ($this->currentObject) {
+		if ($this->jsonDecodeObjectObj) {
 			if (
-				$this->currentObject->mode === 'Object'
+				$this->jsonDecodeObjectObj->mode === 'Object'
 				&& (
 					($objectKey === null)
 					|| empty(
@@ -556,7 +556,7 @@ class JsonDecodeEngine
 				);
 			}
 			if (
-				$this->currentObject->mode === 'Array'
+				$this->jsonDecodeObjectObj->mode === 'Array'
 				&& (
 					($objectKey === null)
 					|| empty(
@@ -571,8 +571,8 @@ class JsonDecodeEngine
 				);
 			}
 			array_push(
-				$this->objectArr,
-				$this->currentObject
+				$this->jsonDecodeObjectObjArr,
+				$this->jsonDecodeObjectObj
 			);
 		}
 	}
@@ -586,12 +586,12 @@ class JsonDecodeEngine
 	{
 		if (
 			count(
-				value: $this->objectArr
+				value: $this->jsonDecodeObjectObjArr
 			) > 0
 		) {
-			$this->currentObject = array_pop($this->objectArr);
+			$this->jsonDecodeObjectObj = array_pop($this->jsonDecodeObjectObjArr);
 		} else {
-			$this->currentObject = null;
+			$this->jsonDecodeObjectObj = null;
 		}
 	}
 
@@ -603,13 +603,13 @@ class JsonDecodeEngine
 	private function increment(): void
 	{
 		if (
-			($this->currentObject !== null)
-			&& $this->currentObject->mode === 'Array'
+			($this->jsonDecodeObjectObj !== null)
+			&& $this->jsonDecodeObjectObj->mode === 'Array'
 		) {
-			if ($this->currentObject->arrayKey === null) {
-				$this->currentObject->arrayKey = 0;
+			if ($this->jsonDecodeObjectObj->arrayKey === null) {
+				$this->jsonDecodeObjectObj->arrayKey = 0;
 			} else {
-				$this->currentObject->arrayKey++;
+				$this->jsonDecodeObjectObj->arrayKey++;
 			}
 		}
 	}
@@ -623,14 +623,14 @@ class JsonDecodeEngine
 	{
 		$arr = false;
 		if (
-			$this->currentObject !== null
-			&& $this->currentObject->mode === 'Object'
+			$this->jsonDecodeObjectObj !== null
+			&& $this->jsonDecodeObjectObj->mode === 'Object'
 			&& count(
-				value: $this->currentObject->objectValueArr
+				value: $this->jsonDecodeObjectObj->objectValueArr
 			) > 0
 		) {
-			$arr = $this->currentObject->objectValueArr;
-			$this->currentObject->objectValueArr = [];
+			$arr = $this->jsonDecodeObjectObj->objectValueArr;
+			$this->jsonDecodeObjectObj->objectValueArr = [];
 		}
 		return $arr;
 	}
@@ -666,37 +666,37 @@ class JsonDecodeEngine
 		$keyArr = [];
 		$return = &$keyArr;
 		$objCount = count(
-			value: $this->objectArr
+			value: $this->jsonDecodeObjectObjArr
 		);
 		if ($objCount > 0) {
-			for ($i = 0; $i < $objCount; $i++) {
-				switch ($this->objectArr[$i]->mode) {
+			for ($index = 0; $index < $objCount; $index++) {
+				switch ($this->jsonDecodeObjectObjArr[$index]->mode) {
 					case 'Object':
-						if ($this->objectArr[$i]->objectKey !== null) {
-							$keyArr[] = $this->objectArr[$i]->objectKey;
+						if ($this->jsonDecodeObjectObjArr[$index]->objectKey !== null) {
+							$keyArr[] = $this->jsonDecodeObjectObjArr[$index]->objectKey;
 						}
 						break;
 					case 'Array':
-						if ($this->objectArr[$i]->objectKey !== null) {
-							$keyArr[] = $this->objectArr[$i]->objectKey;
+						if ($this->jsonDecodeObjectObjArr[$index]->objectKey !== null) {
+							$keyArr[] = $this->jsonDecodeObjectObjArr[$index]->objectKey;
 						}
-						if ($this->objectArr[$i]->arrayKey !== null) {
-							$keyArr[] = $this->objectArr[$i]->arrayKey;
+						if ($this->jsonDecodeObjectObjArr[$index]->arrayKey !== null) {
+							$keyArr[] = $this->jsonDecodeObjectObjArr[$index]->arrayKey;
 						}
 						break;
 				}
 			}
 		}
-		if ($this->currentObject) {
-			switch ($this->currentObject->mode) {
+		if ($this->jsonDecodeObjectObj) {
+			switch ($this->jsonDecodeObjectObj->mode) {
 				case 'Object':
-					if ($this->currentObject->objectKey !== null) {
-						$keyArr[] = $this->currentObject->objectKey;
+					if ($this->jsonDecodeObjectObj->objectKey !== null) {
+						$keyArr[] = $this->jsonDecodeObjectObj->objectKey;
 					}
 					break;
 				case 'Array':
-					if ($this->currentObject->objectKey !== null) {
-						$keyArr[] = $this->currentObject->objectKey;
+					if ($this->jsonDecodeObjectObj->objectKey !== null) {
+						$keyArr[] = $this->jsonDecodeObjectObj->objectKey;
 					}
 					break;
 			}

@@ -40,14 +40,14 @@ class Microservices
 	 *
 	 * @var null|int
 	 */
-	private $tsStart = null;
+	private $startMicroTimestamp = null;
 
 	/**
 	 * End micro timestamp;
 	 *
 	 * @var null|int
 	 */
-	private $tsEnd = null;
+	private $endMicroTimestamp = null;
 
 	/**
 	 * HTTP request data
@@ -61,7 +61,7 @@ class Microservices
 	 *
 	 * @var null|Http
 	 */
-	public $http = null;
+	public $httpObj = null;
 
 	/**
 	 * Constructor
@@ -73,7 +73,7 @@ class Microservices
 		&$httpReqData
 	) {
 		$this->httpReqData = &$httpReqData;
-		$this->http = new Http(
+		$this->httpObj = new Http(
 			$this->httpReqData
 		);
 	}
@@ -86,10 +86,10 @@ class Microservices
 	public function init(): bool
 	{
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
-			$this->tsStart = microtime(as_float: true);
+			$this->startMicroTimestamp = microtime(as_float: true);
 		}
 
-		return $this->http->init();
+		return $this->httpObj->init();
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Microservices
 	 */
 	public function process(): mixed
 	{
-		$this->http->initRequest();
+		$this->httpObj->initRequest();
 
 		$class = null;
 
@@ -117,7 +117,7 @@ class Microservices
 			// Requires auth token
 			default:
 				$gateway = new Gateway(
-					http: $this->http
+					httpObj: $this->httpObj
 				);
 				$gateway->init();
 				$gateway = null;
@@ -130,7 +130,7 @@ class Microservices
 		try {
 			if ($class !== null) {
 				$api = new $class(
-					http: $this->http
+					httpObj: $this->httpObj
 				);
 				if ($api->init()) {
 					$this->startData();
@@ -166,10 +166,10 @@ class Microservices
 	 */
 	public function startData(): void
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return;
 		}
-		$this->http->res->dataEncode->startObject();
+		$this->httpObj->responseObj->dataEncodeObj->startObject();
 	}
 
 	/**
@@ -179,12 +179,12 @@ class Microservices
 	 */
 	public function addStatus(): void
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return;
 		}
-		$this->http->res->dataEncode->addKeyData(
+		$this->httpObj->responseObj->dataEncodeObj->addKeyData(
 			objectKey: 'Status',
-			data: $this->http->res->httpStatus
+			data: $this->httpObj->responseObj->httpStatus
 		);
 	}
 
@@ -195,38 +195,38 @@ class Microservices
 	 */
 	public function addPerformance(): void
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return;
 		}
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
-			$this->tsEnd = microtime(as_float: true);
+			$this->endMicroTimestamp = microtime(as_float: true);
 			$time = ceil(
-				num: ($this->tsEnd - $this->tsStart) * 1000
+				num: ($this->endMicroTimestamp - $this->startMicroTimestamp) * 1000
 			);
 			$memory = ceil(
 				num: memory_get_peak_usage() / 1000
 			);
 
-			$this->http->res->dataEncode->startObject(
+			$this->httpObj->responseObj->dataEncodeObj->startObject(
 				objectKey: 'Stats'
 			);
-			$this->http->res->dataEncode->startObject(
+			$this->httpObj->responseObj->dataEncodeObj->startObject(
 				objectKey: 'Performance'
 			);
-			$this->http->res->dataEncode->addKeyData(
+			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
 				objectKey: 'total-time-taken',
 				data: "{$time} ms"
 			);
-			$this->http->res->dataEncode->addKeyData(
+			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
 				objectKey: 'peak-memory-usage',
 				data: "{$memory} KB"
 			);
-			$this->http->res->dataEncode->endObject();
-			$this->http->res->dataEncode->addKeyData(
+			$this->httpObj->responseObj->dataEncodeObj->endObject();
+			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
 				objectKey: 'getrusage',
 				data: getrusage()
 			);
-			$this->http->res->dataEncode->endObject();
+			$this->httpObj->responseObj->dataEncodeObj->endObject();
 		}
 	}
 
@@ -237,14 +237,14 @@ class Microservices
 	 */
 	public function returnPerformance(): array
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return [];
 		}
 		$returnPerformance = [];
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
-			$this->tsEnd = microtime(as_float: true);
+			$this->endMicroTimestamp = microtime(as_float: true);
 			$time = ceil(
-				num: ($this->tsEnd - $this->tsStart) * 1000
+				num: ($this->endMicroTimestamp - $this->startMicroTimestamp) * 1000
 			);
 			$memory = ceil(
 				num: memory_get_peak_usage() / 1000
@@ -271,11 +271,11 @@ class Microservices
 	 */
 	public function endData(): void
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return;
 		}
-		$this->http->res->dataEncode->endObject();
-		$this->http->res->dataEncode->end();
+		$this->httpObj->responseObj->dataEncodeObj->endObject();
+		$this->httpObj->responseObj->dataEncodeObj->end();
 	}
 
 	/**
@@ -285,11 +285,11 @@ class Microservices
 	 */
 	public function outputResults(): void
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return;
 		}
-		http_response_code(response_code: $this->http->res->httpStatus);
-		$this->http->res->dataEncode->streamData();
+		http_response_code(response_code: $this->httpObj->responseObj->httpStatus);
+		$this->httpObj->responseObj->dataEncodeObj->streamData();
 	}
 
 	/**
@@ -299,10 +299,10 @@ class Microservices
 	 */
 	public function returnResults(): bool|string
 	{
-		if ($this->http->res === null) {
+		if ($this->httpObj->responseObj === null) {
 			return false;
 		}
-		return $this->http->res->dataEncode->getData();
+		return $this->httpObj->responseObj->dataEncodeObj->getData();
 	}
 
 	/**
@@ -328,15 +328,15 @@ class Microservices
 		// Access-Control header are received during OPTIONS request
 		if ($this->httpReqData['server']['httpMethod'] === Constant::$OPTIONS) {
 			// may also be using PUT, PATCH, HEAD etc
-			$methods = 'GET, POST, PUT, PATCH, DELETE, OPTIONS';
+			$methods = 'GET, QUERY, POST, PUT, PATCH, DELETE, OPTIONS';
 			$headerArr['Access-Control-Allow-Methods'] = $methods;
 		} else {
-			if ($this->http->res === null) {
-				$oRepresentation = Env::$oRepresentation;
+			if ($this->httpObj->responseObj === null) {
+				$outputRepresentation = Env::$outputRepresentation;
 			} else {
-				$oRepresentation = $this->http->res->oRepresentation;
+				$outputRepresentation = $this->httpObj->responseObj->outputRepresentation;
 			}
-			switch ($oRepresentation) {
+			switch ($outputRepresentation) {
 				case 'XML':
 				case 'XSLT':
 					$headerArr['Content-Type'] = 'text/xml; charset=utf-8';

@@ -37,24 +37,24 @@ class QueryCache
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Query Cache Connection Object
 	 *
 	 * @var null|QueryCacheServer
 	 */
-	private $customerQueryCacheServer = null;
+	private $queryCacheServerObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
     }
 
     /**
@@ -64,14 +64,14 @@ class QueryCache
 	 */
 	public function connectCustomerQueryCache(): void
 	{
-        if ($this->customerQueryCacheServer !== null) {
+        if ($this->queryCacheServerObj !== null) {
             return;
         }
 
 		$customerQueryCacheServerCred = DbCommonFunction::customerQueryCacheServerCred(
-			customerData: $this->http->req->s['customerData']
+			customerData: $this->httpObj->requestObj->session['customerData']
 		);
-		$this->customerQueryCacheServer = new QueryCacheServer(
+		$this->queryCacheServerObj = new QueryCacheServer(
 			queryCacheServerType: $customerQueryCacheServerCred['cacheServerType'],
 			queryCacheServerHostname: $customerQueryCacheServerCred['cacheServerHostname'],
 			queryCacheServerPort: $customerQueryCacheServerCred['cacheServerPort'],
@@ -131,11 +131,11 @@ class QueryCache
 
 		$json = null;
 		if (
-			$this->customerQueryCacheServer->queryCacheExist(
+			$this->queryCacheServerObj->queryCacheExist(
 				queryCacheKey: $queryCacheKey
 			)
 		) {
-			$json = $this->customerQueryCacheServer->queryCacheGet(
+			$json = $this->queryCacheServerObj->queryCacheGet(
 				queryCacheKey: $queryCacheKey
 			);
 		}
@@ -167,7 +167,7 @@ class QueryCache
 			queryCacheKey: $queryCacheKey
 		);
 
-		return $this->customerQueryCacheServer->queryCacheIncrement(
+		return $this->queryCacheServerObj->queryCacheIncrement(
 			queryCacheKey: $queryCacheKey
 		);
 	}
@@ -204,10 +204,10 @@ class QueryCache
 			queryCacheKey: $delQueryCacheKey
 		);
 
-		$this->customerQueryCacheServer->queryCacheDelete(
+		$this->queryCacheServerObj->queryCacheDelete(
 			queryCacheKey: $delQueryCacheKey
 		);
-		return $this->customerQueryCacheServer->queryCacheSet(
+		return $this->queryCacheServerObj->queryCacheSet(
 			queryCacheKey: $queryCacheKey,
 			queryCacheValue: $queryCacheValue
 		);
@@ -236,7 +236,7 @@ class QueryCache
 			queryCacheKey: $queryCacheKey
 		);
 
-		return $this->customerQueryCacheServer->queryCacheDelete(
+		return $this->queryCacheServerObj->queryCacheDelete(
 			queryCacheKey: $queryCacheKey
 		);
 	}

@@ -105,12 +105,12 @@ xmlhttp . send( JSON.stringify(payload) );
 - XML request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address&iRepresentation=XML&oRepresentation=XML";
+var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address&inputRepresentation=XML&outputRepresentation=XML";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Payload>' +
-'	<Rows>' +
-'		<Row>' +
+'	<Records>' +
+'		<Record>' +
 '			<firstname>Ramesh-1</firstname>' +
 '			<lastname>Jangid</lastname>' +
 '			<email>ramesh@test.com</email>' +
@@ -119,8 +119,8 @@ var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '			<address>' +
 '				<address>A-203</address>' +
 '			</address>' +
-'		</Row>' +
-'		<Row>' +
+'		</Record>' +
+'		<Record>' +
 '			<firstname>Ramesh-2</firstname>' +
 '			<lastname>Jangid</lastname>' +
 '			<email>ramesh@test.com</email>' +
@@ -129,8 +129,8 @@ var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '			<address>' +
 '				<address>A-203</address>' +
 '			</address>' +
-'		</Row>' +
-'	</Rows>' +
+'		</Record>' +
+'	</Records>' +
 '</Payload>';
 
 var xmlhttp = new XMLHttpRequest();

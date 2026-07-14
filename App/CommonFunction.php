@@ -36,27 +36,27 @@ use Microservices\App\Server\CacheServer\CacheServerInterface;
 class CommonFunction
 {
 	/**
-	 * Validate remote IP
+	 * Check Feature is Enabled (Yes/No)
 	 *
-	 * @param Http   $http
+	 * @param Http   $httpObj
 	 * @param string $feature
 	 *
 	 * @return bool
 	 */
 	public static function isEnabled(
-		&$http,
+		&$httpObj,
 		$feature
 	): bool {
-		if (!isset($http->req->s['customerData'][$feature])) {
+		if (!isset($httpObj->requestObj->session['customerData'][$feature])) {
 			throw new \Exception(
 				message: "Provided feature '{$feature}' not found",
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		if (empty($http->req->s['customerData'][$feature])) {
+		if (empty($httpObj->requestObj->session['customerData'][$feature])) {
 			return false;
 		} else {
-			return ($http->req->s['customerData'][$feature] === 'Yes') ? true : false;
+			return ($httpObj->requestObj->session['customerData'][$feature] === 'Yes') ? true : false;
 		}
 	}
 
@@ -354,16 +354,16 @@ class CommonFunction
 	/**
 	 * Validate remote IP
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 *
 	 * @return void
 	 */
 	public static function checkPrivateRequestCidr(
-		&$http
+		&$httpObj
 	): void {
 		if (
 			!self::isEnabled(
-				http: $http,
+				httpObj: $httpObj,
 				feature: 'customer_enabled_cidr_check'
 			)
 		) {
@@ -371,29 +371,29 @@ class CommonFunction
 		}
 
 		self::checkCacheCidr(
-			cacheObj: DbCommonFunction::$gCacheServer,
-			ip: $http->httpReqData['server']['httpRequestIP'],
+			cacheObj: DbCommonFunction::$globalCacheServerObj,
+			ip: $httpObj->httpReqData['server']['httpRequestIp'],
 			cidrCacheKey: CacheServerKey::customerCidr(
-				customerId: $http->req->customerId
+				customerId: $httpObj->requestObj->customerId
 			)
 		);
 
-		if ($http !== null) {
+		if ($httpObj !== null) {
 			self::checkCacheCidr(
-				cacheObj: $http->req->customerCacheObj,
-				ip: $http->httpReqData['server']['httpRequestIP'],
+				cacheObj: $httpObj->requestObj->customerCacheObj,
+				ip: $httpObj->httpReqData['server']['httpRequestIp'],
 				cidrCacheKey: CacheServerKey::customerGroupCidr(
-					customerId: $http->req->customerId,
-					customerUserGroupId: $http->req->customerUserGroupId
+					customerId: $httpObj->requestObj->customerId,
+					customerUserGroupId: $httpObj->requestObj->customerUserGroupId
 				)
 			);
 
 			self::checkCacheCidr(
-				cacheObj: $http->req->customerCacheObj,
-				ip: $http->httpReqData['server']['httpRequestIP'],
+				cacheObj: $httpObj->requestObj->customerCacheObj,
+				ip: $httpObj->httpReqData['server']['httpRequestIp'],
 				cidrCacheKey: CacheServerKey::customerUserCidr(
-					customerId: $http->req->customerId,
-					customerUserId: $http->req->customerUserId
+					customerId: $httpObj->requestObj->customerId,
+					customerUserId: $httpObj->requestObj->customerUserId
 				)
 			);
 		}

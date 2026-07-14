@@ -22,5 +22,5 @@ return [
 			'fetchFromData' => 'name'
 		]
 	],
-	'__MODE__' => 'multipleRowFormat',
+	'__MODE__' => 'multipleRecordFormat',
 ];

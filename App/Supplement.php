@@ -46,12 +46,12 @@ class Supplement
 	 *
 	 * @var null|Hook
 	 */
-	private $hook = null;
+	private $hookObj = null;
 
 	/**
 	 * Operate DML As Transactions
 	 *
-	 * @var null|Web
+	 * @var null|bool
 	 */
 	private $operateAsTransaction = null;
 
@@ -60,7 +60,7 @@ class Supplement
 	 *
 	 * @var null|DataEncode
 	 */
-	public $dataEncode = null;
+	public $dataEncodeObj = null;
 
 	/**
 	 * Supplement Class object
@@ -74,18 +74,18 @@ class Supplement
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
-		$this->dataEncode = &$this->http->res->dataEncode;
+		$this->httpObj = &$httpObj;
+		$this->dataEncodeObj = &$this->httpObj->responseObj->dataEncodeObj;
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Supplement
 		&$supplementClass
 	): bool {
 		$this->supplementObj = new $supplementClass(
-			$this->http
+			$this->httpObj
 		);
 		return $this->supplementObj->init();
 	}
@@ -111,114 +111,45 @@ class Supplement
 	 */
 	public function process(): mixed
 	{
-		// Load Sql
-		$sSqlConfig = &$this->http->req->rParser->sqlConfig;
-
-		// Rate Limiting request if configured for Route Sql.
-		$this->rateLimitRoute(
-			sqlConfig: $sSqlConfig
+		$return = $this->processWriteBasics(
+			$sqlConfig,
+			$useHierarchy
 		);
 
-		// Check for configured referrer Lags
-		$this->checkReferrerLag(
-			sqlConfig: $sSqlConfig
-		);
-
-		// Use results in where clause of sub queries recursively
-		$useHierarchy = $this->getUseHierarchy(
-			sqlConfig: $sSqlConfig,
-			keyword: 'useHierarchy'
-		);
-
-		if (
-			$this->http->req->rParser->routeEndingWithReservedKeywordFlag
-			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
-			&& CommonFunction::isEnabled(
-				http: $this->http,
-				feature: 'customer_enabled_explain_request'
-			)
-		) {
-			return $this->explainSupplement(
-				sSqlConfig: $sSqlConfig,
-				useHierarchy: $useHierarchy
-			);
+		if ($return !== false) {
+			return $return;
 		}
-
-		if (
-			$this->http->req->rParser->routeEndingWithReservedKeywordFlag
-			&& $this->http->req->rParser->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword
-		) {
-			return $this->generateImportSampleCsv(
-				writeSqlConfig: $sSqlConfig,
-				useHierarchy: $useHierarchy
-			);
-		}
-
-		// Lag response
-		$this->lagResponse(
-			sqlConfig: $sSqlConfig
-		);
 
 		// Operate as Transaction (BEGIN COMMIT else ROLLBACK on error)
-		$this->operateAsTransaction = isset($sSqlConfig['isTransaction'])
-			? $sSqlConfig['isTransaction'] : false;
+		$this->operateAsTransaction = isset($sqlConfig['isTransaction'])
+			? $sqlConfig['isTransaction'] : false;
 
-		$fetchFrom = $sSqlConfig['fetchFrom'] ?? 'Master';
+		$fetchFrom = $sqlConfig['fetchFrom'] ?? 'Master';
+
 		// Set Server mode to execute query on - Read / Write Server
-		if ($this->http->req->customerDbObj === null) {
-			$this->http->req->customerDbObj = DbCommonFunction::connectCustomerDb(
-				customerData: $this->http->req->s['customerData'],
+		if ($this->httpObj->requestObj->customerDbObj === null) {
+			$this->httpObj->requestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
+				customerData: $this->httpObj->requestObj->session['customerData'],
 				fetchFrom: $fetchFrom
 			);
 		}
 
-		$this->processSupplement(
-			sSqlConfig: $sSqlConfig,
-			useHierarchy: $useHierarchy
+		$this->supplement(
+			supplementSqlConfig: $sqlConfig,
+			supplementUseHierarchy: $useHierarchy
 		);
-		if (isset($sSqlConfig['affectedQueryCacheKeyArr'])) {
-			$iCount = count(
-				value: $sSqlConfig['affectedQueryCacheKeyArr']
+
+		if (isset($sqlConfig['affectedQueryCacheKeyArr'])) {
+			$indexCount = count(
+				value: $sqlConfig['affectedQueryCacheKeyArr']
 			);
-			for ($i = 0; $i < $iCount; $i++) {
-				$this->http->req->customerQueryCacheObj->queryCacheDelete(
-					customerId: $this->http->req->customerId,
-					queryCacheKey: $sSqlConfig['affectedQueryCacheKeyArr'][$i]
+			for ($index = 0; $index < $indexCount; $index++) {
+				$this->httpObj->requestObj->customerQueryCacheObj->queryCacheDelete(
+					customerId: $this->httpObj->requestObj->customerId,
+					queryCacheKey: $sqlConfig['affectedQueryCacheKeyArr'][$index]
 				);
 			}
 		}
-
-		return true;
-	}
-
-	/**
-	 * Explain supplement configuration
-	 *
-	 * @param array $sSqlConfig   SQL config
-	 * @param bool  $useHierarchy Use results in where clause of sub queries
-	 *
-	 * @return bool
-	 */
-	private function explainSupplement(
-		&$sSqlConfig,
-		$useHierarchy
-	): bool {
-		$this->dataEncode->startObject(
-			objectKey: 'Config'
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'Route',
-			data: $this->http->req->rParser->configuredRoute
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'Payload',
-			data: $this->getExplainParam(
-				sqlConfig: $sSqlConfig,
-				isFirstCall: true,
-				flag: $useHierarchy
-			)
-		);
-		$this->dataEncode->endObject();
 
 		return true;
 	}
@@ -226,302 +157,293 @@ class Supplement
 	/**
 	 * Process Function to insert/update
 	 *
-	 * @param array $sSqlConfig   SQL config
-	 * @param bool  $useHierarchy Use results in where clause of sub queries
+	 * @param array $supplementSqlConfig    Sql config
+	 * @param bool  $supplementUseHierarchy If true - Uses parent payload/results in child
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function processSupplement(
-		&$sSqlConfig,
-		$useHierarchy
+	private function supplement(
+		&$supplementSqlConfig,
+		$supplementUseHierarchy
 	): void {
 		// Check for payloadType
-		if (isset($sSqlConfig['__PAYLOAD-TYPE__'])) {
-			$payloadType = $this->http->req->s['payloadType'];
-			if ($payloadType !== $sSqlConfig['__PAYLOAD-TYPE__']) {
+		if (isset($supplementSqlConfig['__PAYLOAD-TYPE__'])) {
+			$supplementPayloadType = $this->httpObj->requestObj->session['payloadType'];
+			if ($supplementPayloadType !== $supplementSqlConfig['__PAYLOAD-TYPE__']) {
 				throw new \Exception(
 					message: 'Invalid payload type',
 					code: HttpStatus::$BadRequest
 				);
 			}
+
 			// Check for maximum object's supported when payloadType is Array
 			if (
-				$sSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
-				&& isset($sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
-				&& ($objCount = $this->http->req->dataDecode->count())
-				&& ($objCount > $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
+				$supplementSqlConfig['__PAYLOAD-TYPE__'] === 'Array'
+				&& isset($supplementSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
+				&& ($objCount = $this->httpObj->requestObj->dataDecodeObj->count())
+				&& ($objCount > $supplementSqlConfig['__MAX-PAYLOAD-OBJECTS__'])
 			) {
 				throw new \Exception(
 					message: 'Maximum supported payload count is '
-						. $sSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
+						. $supplementSqlConfig['__MAX-PAYLOAD-OBJECTS__'],
 					code: HttpStatus::$BadRequest
 				);
 			}
 		}
 
 		// Set required fields
-		$this->http->req->s['requiredFieldArrCollection'] = $this->getRequired(
-			sqlConfig: $sSqlConfig,
-			isFirstCall: true,
-			flag: $useHierarchy
+		$this->httpObj->requestObj->session['requiredFieldArrCollection'] = $this->getRequired(
+			sqlConfig: $supplementSqlConfig,
+			flag: $supplementUseHierarchy,
+			isFirstCall: true
 		);
 
-		$this->dataEncode->startObject(
+		$this->dataEncodeObj->startObject(
 			objectKey: 'Results'
 		);
 		if (
-			isset($this->http->req->s['payloadType'])
-			&& $this->http->req->s['payloadType'] === 'Array'
+			isset($this->httpObj->requestObj->session['payloadType'])
+			&& $this->httpObj->requestObj->session['payloadType'] === 'Array'
 		) {
 			if (
 				in_array(
-					needle: $this->http->res->oRepresentation,
+					needle: $this->httpObj->responseObj->outputRepresentation,
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: true
 				)
 			) {
-				$this->dataEncode->startArray(
-					objectKey: 'Rows'
+				$this->dataEncodeObj->startArray(
+					objectKey: 'Records'
 				);
 			}
 		}
 
 		// Perform action
-		$iCount = $this->http->req->s['payloadType'] === 'Array'
-			? $this->http->req->dataDecode->count() : 1;
+		$indexCount = $this->httpObj->requestObj->session['payloadType'] === 'Array'
+			? $this->httpObj->requestObj->dataDecodeObj->count() : 1;
 
-		for ($i = 0; $i < $iCount; $i++) {
-			$configKeyArr = [];
-			$payloadIndexArr = [];
-			if ($i === 0) {
-				if ($this->http->req->s['payloadType'] === 'Array') {
-					$payloadIndexArr[] = "{$i}";
+		$writePayloadKeyArr = [];
+		for ($index = 0; $index < $indexCount; $index++) {
+			$supplementCurrentPayloadKeyArr = $writePayloadKeyArr;
+			if ($index === 0) {
+				if ($this->httpObj->requestObj->session['payloadType'] === 'Array') {
+					$supplementCurrentPayloadKeyArr[] = "{$index}";
 				} else {
-					$payloadIndexArr[] = '';
+					$supplementCurrentPayloadKeyArr[] = '';
 				}
 			} else {
-				$payloadIndexArr[] = "{$i}";
+				$supplementCurrentPayloadKeyArr[] = "{$index}";
 			}
 
-			$hashJson = null;
 			// Check for Idempotent Window
-			if ($this->http->req->isPrivateRequest) {
-				[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
-					sqlConfig: $sSqlConfig,
-					payloadIndexArr: $payloadIndexArr
-				);
-			}
+			[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
+				sqlConfig: $supplementSqlConfig,
+				payloadArr: $supplementCurrentPayloadKeyArr
+			);
 
 			// Begin DML operation
 			if ($hashJson === null) {
 				if ($this->operateAsTransaction) {
-					$this->http->req->customerDbObj->begin();
+					$this->httpObj->requestObj->customerDbObj->begin();
 				}
+
+				$output = [];
+				$output['Status'] = HttpStatus::$Ok;
+				if (
+					CommonFunction::isEnabled(
+						httpObj: $this->httpObj,
+						feature: 'customer_enabled_payload_in_response'
+					)
+				) {
+					$output[Env::$payloadKeyInResponse] = $this->httpObj->requestObj->dataDecodeObj->getCompleteArray(
+						keyString: implode(
+							separator: ':',
+							array: $supplementCurrentPayloadKeyArr
+						)
+					);
+				}
+
 				$response = [];
-				$this->execSupplement(
-					sSqlConfig: $sSqlConfig,
-					payloadIndexArr: $payloadIndexArr,
-					configKeyArr: $configKeyArr,
-					useHierarchy: $useHierarchy,
-					response: $response,
-					requiredFieldArr: $this->http->req->s['requiredFieldArrCollection']
+				$this->supplementParent(
+					supplementParentSqlConfig: $supplementSqlConfig,
+					supplementParentPayloadKeyArr: $supplementCurrentPayloadKeyArr,
+					supplementParentRequiredFieldArr: $this->httpObj->requestObj->session['requiredFieldArrCollection'],
+					supplementParentResponse: $supplementResponse,
+					supplementParentModule: '',
+					supplementParentUseHierarchy: $supplementUseHierarchy
 				);
 
-				if ($this->http->res->httpStatus === HttpStatus::$Ok) {
+				if ($this->httpObj->responseObj->httpStatus === HttpStatus::$Ok) {
 					if (
 						$this->operateAsTransaction
-						&& ($this->http->req->customerDbObj->beganTransaction === true)
+						&& ($this->httpObj->requestObj->customerDbObj->beganTransaction === true)
 					) {
-						$this->http->req->customerDbObj->commit();
+						$this->httpObj->requestObj->customerDbObj->commit();
 					}
-
-					$arr = [];
-					$arr['Status'] = HttpStatus::$Ok;
-					if (
-						CommonFunction::isEnabled(
-							http: $this->http,
-							feature: 'customer_enabled_payload_in_response'
-						)
-					) {
-						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-							keyString: implode(
-								separator: ':',
-								array: $payloadIndexArr
-							)
-						);
-					}
-					$arr['PayloadResponse'] = $response;
+					$output['PayloadResponse'] = $response;
 
 					if ($idempotentWindow) {
-						$this->http->req->customerCacheObj->cacheSet(
+						$this->httpObj->requestObj->customerCacheObj->cacheSet(
 							cacheKey: $hashKey,
-							cacheValue: $arr,
+							cacheValue: $output,
 							cacheExpire: $idempotentWindow
 						);
 					}
 				} else { // Failure
-					$arr = [];
-					$arr['Status'] = $this->http->res->httpStatus;
-					if (
-						CommonFunction::isEnabled(
-							http: $this->http,
-							feature: 'customer_enabled_payload_in_response'
-						)
-					) {
-						$arr[Env::$payloadKeyInResponse] = $this->http->req->dataDecode->getCompleteArray(
-							keyString: implode(
-								separator: ':',
-								array: $payloadIndexArr
-							)
-						);
-					}
-					$arr['Error'] = $response;
+					$output['Status'] = $this->httpObj->responseObj->httpStatus;
+					$output['Error'] = $response;
 				}
 			} else {
-				$arr = CommonFunction::jsonDecode(
+				$output = CommonFunction::jsonDecode(
 					value: $hashJson
 				);
 			}
 
-			if ($payloadIndexArr[0] === '') {
-				foreach ($arr as $k => $v) {
-					$this->dataEncode->addKeyData(
-						objectKey: $k,
-						data: $v
+			if ($supplementCurrentPayloadKeyArr[0] === '') {
+				foreach ($output as $outputKey => &$outputKeyValue) {
+					$this->dataEncodeObj->addKeyData(
+						objectKey: $outputKey,
+						data: $outputKeyValue
 					);
 				}
 			} else {
 				if (
 					in_array(
-						needle: $this->http->res->oRepresentation,
+						needle: $this->httpObj->responseObj->outputRepresentation,
 						haystack: ['XML', 'XSLT', 'HTML'],
 						strict: true
 					)
 				) {
-					$this->dataEncode->startObject(
-						objectKey: 'Row'
+					$this->dataEncodeObj->startObject(
+						objectKey: 'Record'
 					);
-					foreach ($arr as $k => $v) {
-						$this->dataEncode->addKeyData(
-							objectKey: $k,
-							data: $v
+					foreach ($output as $outputKey => &$outputKeyValue) {
+						$this->dataEncodeObj->addKeyData(
+							objectKey: $outputKey,
+							data: $outputKeyValue
 						);
 					}
-					$this->dataEncode->endObject();
+					$this->dataEncodeObj->endObject();
 				} else {
-					$this->dataEncode->addKeyData(
-						objectKey: $i,
-						data: $arr
+					$this->dataEncodeObj->addKeyData(
+						objectKey: $index,
+						data: $output
 					);
 				}
 			}
 		}
 
-		if ($this->http->req->s['payloadType'] === 'Array') {
+		if ($this->httpObj->requestObj->session['payloadType'] === 'Array') {
 			if (
 				in_array(
-					needle: $this->http->res->oRepresentation,
+					needle: $this->httpObj->responseObj->outputRepresentation,
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: true
 				)
 			) {
-				$this->dataEncode->endArray();
+				$this->dataEncodeObj->endArray();
 			}
 		}
-		$this->dataEncode->endObject();
+		$this->dataEncodeObj->endObject();
 	}
 
 	/**
-	 * Function to execute supplement recursively
+	 * Supplement Parent Function
 	 *
-	 * @param array $sSqlConfig       SQL config
-	 * @param array $payloadIndexArr  Payload Indexes
-	 * @param array $configKeyArr     Config key's
-	 * @param bool  $useHierarchy     Use results in where clause of sub queries
-	 * @param array $response         Response by reference
-	 * @param array $requiredFieldArr Required fields
+	 * @param array  $supplementParentSqlConfig        Sql config
+	 * @param array  $supplementParentPayloadKeyArr       Payload Indexes
+	 * @param array  $supplementParentRequiredFieldArr Required fields
+	 * @param array  $supplementParentResponse         Response by reference
+	 * @param string $supplementParentModule           Parent Module
+	 * @param bool   $supplementParentUseHierarchy     If true - Uses parent payload/results in child
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function execSupplement(
-		&$sSqlConfig,
-		$payloadIndexArr,
-		$configKeyArr,
-		$useHierarchy,
-		&$response,
-		&$requiredFieldArr,
-		$module = ''
+	private function supplementParent(
+		&$supplementParentSqlConfig,
+		&$supplementParentPayloadKeyArr,
+		&$supplementParentRequiredFieldArr,
+		&$supplementParentResponse,
+		$supplementParentModule,
+		$supplementParentUseHierarchy
 	): void {
-		$payloadIndex = is_array(
-			value: $payloadIndexArr
+		$supplementParentPayloadKey = is_array(
+			value: $supplementParentPayloadKeyArr
 		) ? trim(
 			string: implode(
 				separator: ':',
-				array: $payloadIndexArr
+				array: $supplementParentPayloadKeyArr
 			),
 			characters: ':'
 		) : null;
 
 		$isObject = null;
-		if ($payloadIndex !== null) {
-			$isObject = $this->http->req->dataDecode->dataType(
-				keyString: $payloadIndex
+		if ($supplementParentPayloadKey !== null) {
+			$isObject = $this->httpObj->requestObj->dataDecodeObj->dataType(
+				keyString: $supplementParentPayloadKey
 			) === 'Object';
 		}
 
-		$iCount = ($isObject || $isObject === null)
-			? 1 : $this->http->req->dataDecode->count(
-				keyString: $payloadIndex
+		$indexCount = ($isObject || $isObject === null)
+			? 1 : $this->httpObj->requestObj->dataDecodeObj->count(
+				keyString: $supplementParentPayloadKey
 			);
 
-		for ($i = 0; $i < $iCount; $i++) {
+		for ($index = 0; $index < $indexCount; $index++) {
 			if (
 				$isObject
-				|| $isObject === null
+				&& $index > 0
 			) {
-				$_response = &$response;
-			} else {
-				$response[$i] = [];
-				$_response = &$response[$i];
-			}
-
-			$payloadIndexArr = $payloadIndexArr;
-			if (
-				$this->operateAsTransaction
-				&& !$this->http->req->customerDbObj->beganTransaction
-			) {
-				$_response['Error'] = 'Transaction rolled back';
 				return;
 			}
 
 			if (
-				$isObject === false
-				&& !$useHierarchy
+				$this->operateAsTransaction
+				&& !$this->httpObj->requestObj->customerDbObj->beganTransaction
+			) {
+				$currentResponse['Error'] = 'Transaction rolled back';
+				return;
+			}
+
+			if (
+				$isObject
+				|| $isObject === null
+			) {
+				$supplementParentCurrentResponse = &$supplementParentResponse;
+			} else {
+				$supplementParentResponse[$index] = [];
+				$supplementParentCurrentResponse = &$supplementParentResponse[$index];
+			}
+
+			$supplementParentCurrentPayloadKeyArr = $supplementParentPayloadKeyArr;
+
+			if (
+				!$isObject
+				&& !$supplementParentUseHierarchy
 			) {
 				array_push(
-					$payloadIndexArr,
-					$i
+					$supplementParentCurrentPayloadKeyArr,
+					$index
 				);
 			}
 
-			$payloadIndex = is_array(
-				value: $payloadIndexArr
+			$supplementParentCurrentPayloadKey = is_array(
+				value: $supplementParentCurrentPayloadKeyArr
 			) ? implode(
 				separator: ':',
-				array: $payloadIndexArr
+				array: $supplementParentCurrentPayloadKeyArr
 			) : '';
 
 			if (
-				$isObject !== null
-				&& !$this->http->req->dataDecode->isset(
-					keyString: $payloadIndex
+				!$this->httpObj->requestObj->dataDecodeObj->isset(
+					keyString: $supplementParentCurrentPayloadKey
 				)
 			) {
-				if ($useHierarchy) {
+				if ($supplementParentUseHierarchy) {
 					throw new \Exception(
-						message: "Payload key '{$payloadIndex}' not set",
+						message: "Payload key '{$supplementParentCurrentPayloadKey}' not set",
 						code: HttpStatus::$NotFound
 					);
 				} else {
@@ -529,220 +451,315 @@ class Supplement
 				}
 			}
 
-			if ($isObject !== null) {
-				$this->http->req->s['payload'] = $this->http->req->dataDecode->get(
-					keyString: $payloadIndex
-				);
+			// Load Payload
+			switch ($this->httpObj->httpReqData['server']['httpMethod']) {
+				case Constant::$GET:
+					$this->httpObj->requestObj->session['payload'] = $this->httpObj->httpReqData['get'];
+					break;
+				case Constant::$QUERY:
+				case Constant::$POST:
+				case Constant::$PUT:
+				case Constant::$PATCH:
+				case Constant::$DELETE:
+					$this->httpObj->requestObj->session['payload'] = $this->httpObj->requestObj->dataDecodeObj->get(
+						keyString: $supplementParentCurrentPayloadKey
+					);
+					break;
 			}
 
-			if (
-				count(
-					value: $requiredFieldArr
-				)
-			) {
-				$this->http->req->s['requiredFieldArr'] = $requiredFieldArr;
+			if (count(value: $supplementParentRequiredFieldArr)) {
+				$this->httpObj->requestObj->session['requiredFieldArr'] = $supplementParentRequiredFieldArr;
 			} else {
-				$this->http->req->s['requiredFieldArr'] = [];
+				$this->httpObj->requestObj->session['requiredFieldArr'] = [];
 			}
 
 			// Validation
 			if (
-				!$this->isValidPayload(
-					sSqlConfig: $sSqlConfig,
-					response: $_response
+				isset($supplementParentSqlConfig['__VALIDATE__'])
+				&& !$this->isValidPayload(
+					sqlConfig: $supplementParentSqlConfig,
+					response: $supplementParentCurrentResponse
 				)
 			) {
 				continue;
 			}
 
-			// Execute Pre SQL Hook
-			if (isset($sSqlConfig['__PRE-SQL-HOOKS__'])) {
-				if ($this->hook === null) {
-					$this->hook = new Hook(
-						http: $this->http
+			// Execute - Pre Hook
+			if (isset($supplementParentSqlConfig['__PRE-SQL-HOOKS__'])) {
+				if ($this->hookObj === null) {
+					$this->hookObj = new Hook(
+						httpObj: $this->httpObj
 					);
 				}
-				$this->hook->triggerHook(
-					hookArr: $sSqlConfig['__PRE-SQL-HOOKS__']
+				$this->hookObj->triggerHook(
+					hookArr: $supplementParentSqlConfig['__PRE-SQL-HOOKS__']
 				);
 			}
 
-			// Execute function
+			// Set Function
 			if ($module === '') {
 				$processFunction  = 'process';
 			} else {
 				$processFunction  = "{$module}Process";
 			}
-			$_response = $this->supplementObj->$processFunction();
 
+			// Execute
+			$supplementParentCurrentResponse = $this->supplementObj->$processFunction();
 			if (
 				$this->operateAsTransaction
-				&& !$this->http->req->customerDbObj->beganTransaction
+				&& !$this->httpObj->requestObj->customerDbObj->beganTransaction
 			) {
-				$_response['Error'] = 'Something went wrong';
+				$supplementParentCurrentResponse['Error'] = 'Something went wrong';
 				return;
+			} else {
+				
 			}
 
-			// triggers
-			if (isset($sSqlConfig['__TRIGGERS__'])) {
-				$this->dataEncode->addKeyData(
+			// Triggers
+			if (isset($supplementParentSqlConfig['__TRIGGERS__'])) {
+				$this->dataEncodeObj->addKeyData(
 					objectKey: '__TRIGGERS__',
 					data: $this->getTriggerData(
-						triggerConfig: $sSqlConfig['__TRIGGERS__']
+						triggerConfig: $supplementParentSqlConfig['__TRIGGERS__']
 					)
 				);
 			}
 
-			// Execute Post SQL Hook
-			if (isset($sSqlConfig['__POST-SQL-HOOKS__'])) {
-				if ($this->hook === null) {
-					$this->hook = new Hook(
-						http: $this->http
+			// Execute - Post Hook
+			if (isset($supplementParentSqlConfig['__POST-SQL-HOOKS__'])) {
+				if ($this->hookObj === null) {
+					$this->hookObj = new Hook(
+						httpObj: $this->httpObj
 					);
 				}
-				$this->hook->triggerHook(
-					hookArr: $sSqlConfig['__POST-SQL-HOOKS__']
+				$this->hookObj->triggerHook(
+					hookArr: $supplementParentSqlConfig['__POST-SQL-HOOKS__']
 				);
 			}
 
-			// subQuery for payload
-			if (isset($sSqlConfig['__SUB-PAYLOAD__'])) {
-				$this->callExecSupplement(
-					sSqlConfig: $sSqlConfig,
-					payloadIndexArr: $payloadIndexArr,
-					configKeyArr: $configKeyArr,
-					useHierarchy: $useHierarchy,
-					response: $_response,
-					requiredFieldArr: $requiredFieldArr
+			// Call Child
+			if (isset($supplementParentSqlConfig['__SUB-QUERY__'])) {
+				$this->supplementChild(
+					supplementChildSqlConfig: $supplementParentSqlConfig,
+					supplementChildPayloadKeyArr: $supplementParentCurrentPayloadKeyArr,
+					supplementChildRequiredFieldArr: $supplementParentRequiredFieldArr,
+					supplementChildResponse: $supplementParentCurrentResponse,
+					supplementChildUseHierarchy: $supplementParentUseHierarchy
 				);
 			}
 		}
 	}
 
 	/**
-	 * Function execSupplement recursive helper
+	 * Write Child Function
 	 *
-	 * @param array $sSqlConfig       SQL config
-	 * @param array $payloadIndexArr  Payload Indexes
-	 * @param array $configKeyArr     Config key's
-	 * @param bool  $useHierarchy     Use results in where clause of sub queries
-	 * @param array $response         Response by reference
-	 * @param array $requiredFieldArr Required fields
+	 * @param array $supplementChildSqlConfig        Sql config
+	 * @param array $supplementChildPayloadKeyArr       Payload Indexes
+	 * @param array $supplementChildRequiredFieldArr Required fields
+	 * @param array $supplementChildResponse         Response by reference
+	 * @param bool  $supplementChildUseHierarchy     If true - Uses parent payload/results in child
 	 *
 	 * @return void
 	 */
-	private function callExecSupplement(
-		&$sSqlConfig,
-		$payloadIndexArr,
-		$configKeyArr,
-		$useHierarchy,
-		&$response,
-		&$requiredFieldArr
+	private function supplementChild(
+		&$supplementChildSqlConfig,
+		&$supplementChildPayloadKeyArr,
+		&$supplementChildRequiredFieldArr,
+		&$supplementChildResponse,
+		$supplementChildUseHierarchy
 	): void {
-		if ($useHierarchy) {
-			$row = $this->http->req->s['payload'];
+		if ($supplementChildUseHierarchy) {
+			$record = $this->httpObj->requestObj->session['payload'];
 			$this->resetFetchData(
 				fetchFrom: 'sqlPayload',
-				moduleKeyArr: $configKeyArr,
-				row: $row
+				moduleKeyArr: $supplementChildPayloadKeyArr,
+				record: $record
 			);
 		}
 
 		if (
-			isset($payloadIndexArr[0])
-			&& $payloadIndexArr[0] === ''
+			isset($supplementChildPayloadKeyArr[0])
+			&& $supplementChildPayloadKeyArr[0] === ''
 		) {
-			$payloadIndexArr = array_shift(
-				$payloadIndexArr
+			$supplementChildPayloadKeyArr = array_shift(
+				$supplementChildPayloadKeyArr
 			);
 		}
-		if (
-			!is_array(
-				value: $payloadIndexArr
-			)
-		) {
-			$payloadIndexArr = [];
+		if (!is_array(value: $supplementChildPayloadKeyArr)) {
+			$supplementChildPayloadKeyArr = [];
 		}
 
 		if (
-			isset($sSqlConfig['__SUB-PAYLOAD__'])
-			&& $this->isObject(
-				arr: $sSqlConfig['__SUB-PAYLOAD__']
+			!(
+				isset($supplementChildSqlConfig['__SUB-QUERY__'])
+				&& !$this->isObject(
+					arr: $supplementChildSqlConfig['__SUB-QUERY__']
+				)
 			)
 		) {
-			foreach ($sSqlConfig['__SUB-PAYLOAD__'] as $module => &$_sSqlConfig) {
-				$dataExist = false;
-				$_payloadIndexArr = $payloadIndexArr;
-				$_configKeyArr = $configKeyArr;
-				array_push(
-					$_payloadIndexArr,
-					$module
-				);
-				array_push(
-					$_configKeyArr,
-					$module
-				);
-				$modulePayloadKey = is_array(
-					value: $_payloadIndexArr
-				) ? implode(
-					separator: ':',
-					array: $_payloadIndexArr
-				) : '';
+			return;
+		}
 
-				$dataExist = $this->http->req->dataDecode->isset(
-					keyString: $modulePayloadKey
+		foreach ($supplementChildSqlConfig['__SUB-PAYLOAD__'] as $supplementModule => &$supplementChildModuleSqlConfig) {
+			$dataExist = false;
+
+			$supplementChildResponse[$supplementModule] = [];
+			$supplementChildModuleResponse = &$supplementChildResponse[$supplementModule];
+
+			$supplementChildModulePayloadKeyArr = $supplementChildPayloadKeyArr;
+			array_push(
+				$supplementChildModulePayloadKeyArr,
+				$supplementModule
+			);
+
+			$supplementChildModulePayloadKey = is_array(
+				value: $supplementChildModulePayloadKeyArr
+			) ? implode(
+				separator: ':',
+				array: $supplementChildModulePayloadKeyArr
+			) : null;
+
+			$dataExist = $this->httpObj->requestObj->dataDecodeObj->isset(
+				keyString: $supplementChildModulePayloadKey
+			);
+			if (
+				$supplementChildUseHierarchy
+				&& !$dataExist
+			) { // use parent data of a payload
+				throw new \Exception(
+					message: "Invalid payload: Module '{$supplementModule}' missing",
+					code: HttpStatus::$NotFound
 				);
+			}
+			if ($dataExist) {
+				return;
+			}
+
+			$isObject = null;
+			if ($supplementChildModulePayloadKey !== null) {
+				$isObject = $this->httpObj->requestObj->dataDecodeObj->dataType(
+					keyString: $supplementChildModulePayloadKey
+				) === 'Object';
+			}
+
+			$indexCount = ($isObject || $isObject === null)
+				? 1 : $this->httpObj->requestObj->dataDecodeObj->count(
+					keyString: $supplementChildModulePayloadKey
+				);
+
+			if (isset($supplementChildRequiredFieldArr[$supplementModule])) {
+				$supplementChildModuleRequiredFieldArr = &$supplementChildRequiredFieldArr[$supplementModule];
+			} else {
+				$supplementChildModuleRequiredFieldArr = &$supplementChildRequiredFieldArr;
+			}
+
+			$supplementChildModuleUseHierarchy = $supplementChildUseHierarchy ?? $this->getUseHierarchy(
+				sqlConfig: $supplementChildModuleSqlConfig,
+				keyword: 'useHierarchy'
+			);
+
+			for ($index = 0; $index < $indexCount; $index++) {
+				$supplementChildModuleCurrentPayloadKeyArr = $supplementChildModulePayloadKeyArr;
+				array_push(
+					$supplementChildModuleCurrentPayloadKeyArr,
+					$module
+				);
+
+				$supplementChildModuleCurrentResponse = &$supplementChildModuleResponse;
+				$supplementChildModuleCurrentResponse[$index] = [];
+				$supplementChildModuleCurrentResponse = &$supplementChildCurrentResponse[$index];
+
 				if (
-					$useHierarchy
+					$isObject
+					|| $isObject === null
+				) {
+					$supplementChildModuleCurrentPayloadKey = $supplementChildModulePayloadKey;
+				} else {
+					$supplementChildModuleCurrentPayloadKey = "{$supplementChildModulePayloadKey}:{$index}";
+				}
+
+				$dataExist = $this->httpObj->requestObj->dataDecodeObj->isset(
+					keyString: $supplementChildModuleCurrentPayloadKey
+				);
+
+				if (
+					$supplementChildModuleUseHierarchy
 					&& !$dataExist
 				) { // use parent data of a payload
 					throw new \Exception(
-						message: "Invalid payload: Module '{$module}' missing",
+						message: "Invalid payload: Module '{$supplementModule}' missing",
 						code: HttpStatus::$NotFound
 					);
 				}
-				if ($dataExist) {
-					$_requiredFieldArr = $requiredFieldArr[$module] ?? $requiredFieldArr;
-					$useHierarchy = $useHierarchy ?? $this->getUseHierarchy(
-						sqlConfig: $_sSqlConfig,
-						keyword: 'useHierarchy'
-					);
-					$response[$module] = [];
-					$response = &$response[$module];
-					$this->execSupplement(
-						sSqlConfig: $_sSqlConfig,
-						payloadIndexArr: $_payloadIndexArr,
-						configKeyArr: $_configKeyArr,
-						useHierarchy: $useHierarchy,
-						response: $response,
-						requiredFieldArr: $_requiredFieldArr,
-						module: $module
-					);
+
+				if (!$dataExist) {
+					continue;
 				}
+
+				$this->supplementParent(
+					supplementParentSqlConfig: $supplementChildModuleSqlConfig,
+					supplementParentPayloadKeyArr: $supplementChildModuleCurrentPayloadKeyArr,
+					supplementParentRequiredFieldArr: $supplementChildModuleRequiredFieldArr,
+					supplementParentResponse: $supplementChildModuleCurrentResponse,
+					supplementParentModule: $supplementModule,
+					supplementParentUseHierarchy: $supplementChildModuleUseHierarchy
+				);
 			}
 		}
+	}
+
+	/**
+	 * Explain supplement configuration
+	 *
+	 * @param array $sqlConfig    Sql config
+	 * @param bool  $useHierarchy If true - Uses parent payload/results in child
+	 *
+	 * @return bool
+	 */
+	private function explain(
+		&$sqlConfig,
+		$useHierarchy
+	): bool {
+		$this->dataEncodeObj->startObject(
+			objectKey: 'Config'
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'Route',
+			data: $this->httpObj->requestObj->routeParserObj->configuredRoute
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'Payload',
+			data: $this->getExplainParam(
+				sqlConfig: $sqlConfig,
+				flag: $useHierarchy,
+				isFirstCall: true
+			)
+		);
+		$this->dataEncodeObj->endObject();
+
+		return true;
 	}
 
 	/**
 	 * Checks if the payload is valid
 	 *
-	 * @param array $sSqlConfig SQL config
+	 * @param array $sqlConfig  Sql config
 	 * @param array $response   Response by reference
 	 *
 	 * @return bool
 	 */
 	private function isValidPayload(
-		$sSqlConfig,
+		$sqlConfig,
 		$response
 	): bool {
 		$return = true;
 		$isValidData = true;
-		if (isset($sSqlConfig['__VALIDATE__'])) {
+		if (isset($sqlConfig['__VALIDATE__'])) {
 			[$isValidData, $errorArr] = $this->validate(
-				validationConfig: $sSqlConfig['__VALIDATE__']
+				validationConfig: $sqlConfig['__VALIDATE__']
 			);
 			if ($isValidData !== true) {
-				$this->http->res->httpStatus = HttpStatus::$BadRequest;
+				$this->httpObj->responseObj->httpStatus = HttpStatus::$BadRequest;
 				$response['Error'] = $errorArr;
 				$return = false;
 			}

@@ -65,11 +65,11 @@ interface SqlInterface
 	public function rollBack(): void;
 
 	/**
-	 * Affected row count
+	 * Affected record count
 	 *
 	 * @return bool|int
 	 */
-	public function affectedRowCount(): bool|int;
+	public function affectedRecordCount(): bool|int;
 
 	/**
 	 * Last insert id
@@ -94,7 +94,7 @@ interface SqlInterface
 	): void;
 
 	/**
-	 * Fetch row
+	 * Fetch record
 	 *
 	 * @return mixed
 	 */

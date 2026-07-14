@@ -78,7 +78,7 @@ return [
 		],
 
 		// Input Data Representation
-		'iRepresentation' => 'XML' // JSON/XML - Defaults to JSON
+		'inputRepresentation' => 'XML' // JSON/XML - Defaults to JSON
 	]
 ];
 ```

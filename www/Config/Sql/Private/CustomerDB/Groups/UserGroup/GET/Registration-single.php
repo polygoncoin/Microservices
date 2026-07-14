@@ -14,7 +14,7 @@
  */
 
 return [
-	'__QUERY__' => "SELECT * FROM `{$this->http->req->s['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
@@ -27,5 +27,5 @@ return [
 			'fetchFromData' => 'id'
 		]
 	],
-	'__MODE__' => 'singleRowFormat'
+	'__MODE__' => 'singleRecordFormat'
 ];

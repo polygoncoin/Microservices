@@ -40,31 +40,31 @@ class Validator
 	 *
 	 * @var null|ValidatorInterface
 	 */
-	private $v = null;
+	private $validatorObj = null;
 
 	/**
 	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
-		if ($this->http->req->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
-			$this->v = new GlobalValidator(
-				http: $this->http
+		$this->httpObj = &$httpObj;
+		if ($this->httpObj->requestObj->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
+			$this->validatorObj = new GlobalValidator(
+				httpObj: $this->httpObj
 			);
 		} else {
-			$this->v = new CustomerValidator(
-				http: $this->http
+			$this->validatorObj = new CustomerValidator(
+				httpObj: $this->httpObj
 			);
 		}
 	}
@@ -80,9 +80,9 @@ class Validator
 		&$validationConfig
 	): array {
 		if (
-			isset(($this->http->req->s['requiredFieldArr']))
+			isset(($this->httpObj->requestObj->session['requiredFieldArr']))
 			&& count(
-				value: $this->http->req->s['requiredFieldArr']
+				value: $this->httpObj->requestObj->session['requiredFieldArr']
 			) > 0
 		) {
 			if (
@@ -93,7 +93,7 @@ class Validator
 			}
 		}
 
-		return $this->v->validate(
+		return $this->validatorObj->validate(
 			validationConfig: $validationConfig
 		);
 	}
@@ -108,12 +108,12 @@ class Validator
 		$isValidData = true;
 		$errorArr = [];
 		// Required fields payload validation
-		if (!empty($this->http->req->s['requiredFieldArr']['payload'])) {
-			foreach ($this->http->req->s['requiredFieldArr']['payload'] as $fetchFromData) {
+		if (!empty($this->httpObj->requestObj->session['requiredFieldArr']['payload'])) {
+			foreach ($this->httpObj->requestObj->session['requiredFieldArr']['payload'] as $fetchFromData) {
 				if (
 					!in_array(
 						needle: $fetchFromData,
-						haystack: $this->http->req->s['payload'],
+						haystack: $this->httpObj->requestObj->session['payload'],
 						strict: true
 					)
 				) {

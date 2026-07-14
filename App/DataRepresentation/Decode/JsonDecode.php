@@ -62,7 +62,7 @@ class JsonDecode implements DataDecodeInterface
 	 *
 	 * @var null|JsonDecodeEngine
 	 */
-	private $jsonDecodeEngine = null;
+	private $jsonDecodeEngineObj = null;
 
 	/**
 	 * Constructor
@@ -103,7 +103,7 @@ class JsonDecode implements DataDecodeInterface
 	public function init(): bool
 	{
 		// Init JSON Decode Engine
-		$this->jsonDecodeEngine = new JsonDecodeEngine(
+		$this->jsonDecodeEngineObj = new JsonDecodeEngine(
 			jsonFileHandle: $this->jsonFileHandle
 		);
 
@@ -117,7 +117,7 @@ class JsonDecode implements DataDecodeInterface
 	 */
 	public function validate(): void
 	{
-		foreach ($this->jsonDecodeEngine->process() as $keyArr => $valueArr) {
+		foreach ($this->jsonDecodeEngineObj->process() as $keyArr => $valueArr) {
 			;
 		}
 	}
@@ -131,41 +131,41 @@ class JsonDecode implements DataDecodeInterface
 	{
 		$this->jsonFileIndex = null;
 		foreach (
-			$this->jsonDecodeEngine->process(
+			$this->jsonDecodeEngineObj->process(
 				index: true
 			) as $keyArr => $val
 		) {
 			if (
-				isset($val['sIndex'])
-				&& isset($val['eIndex'])
+				isset($val['startIndex'])
+				&& isset($val['endIndex'])
 			) {
 				$jsonFileIndex = &$this->jsonFileIndex;
-				$iCount = count(
+				$indexCount = count(
 					value: $keyArr
 				);
-				for ($i = 0; $i < $iCount; $i++) {
+				for ($index = 0; $index < $indexCount; $index++) {
 					if (
 						is_numeric(
-							value: $keyArr[$i]
+							value: $keyArr[$index]
 						)
-						&& !isset($jsonFileIndex[$keyArr[$i]])
+						&& !isset($jsonFileIndex[$keyArr[$index]])
 					) {
-						$jsonFileIndex[$keyArr[$i]] = [];
+						$jsonFileIndex[$keyArr[$index]] = [];
 						if (!isset($jsonFileIndex['_c_'])) {
 							$jsonFileIndex['_c_'] = 0;
 						}
 						if (
 							is_numeric(
-								value: $keyArr[$i]
+								value: $keyArr[$index]
 							)
 						) {
 							$jsonFileIndex['_c_']++;
 						}
 					}
-					$jsonFileIndex = &$jsonFileIndex[$keyArr[$i]];
+					$jsonFileIndex = &$jsonFileIndex[$keyArr[$index]];
 				}
-				$jsonFileIndex['sIndex'] = $val['sIndex'];
-				$jsonFileIndex['eIndex'] = $val['eIndex'];
+				$jsonFileIndex['startIndex'] = $val['startIndex'];
+				$jsonFileIndex['endIndex'] = $val['endIndex'];
 			}
 		}
 	}
@@ -281,8 +281,8 @@ class JsonDecode implements DataDecodeInterface
 
 		$count = 0;
 		if (
-			isset($jsonFileIndex['sIndex'])
-			&& isset($jsonFileIndex['eIndex'])
+			isset($jsonFileIndex['startIndex'])
+			&& isset($jsonFileIndex['endIndex'])
 		) {
 			$count = 1;
 		}
@@ -313,7 +313,7 @@ class JsonDecode implements DataDecodeInterface
 		$this->load(
 			keyString: $keyString
 		);
-		foreach ($this->jsonDecodeEngine->process() as $valueArr) {
+		foreach ($this->jsonDecodeEngineObj->process() as $valueArr) {
 			break;
 		}
 		return $valueArr;
@@ -340,7 +340,7 @@ class JsonDecode implements DataDecodeInterface
 			keyString: $keyString
 		);
 		return CommonFunction::jsonDecode(
-			value: $this->jsonDecodeEngine->getJsonString()
+			value: $this->jsonDecodeEngineObj->getJsonString()
 		);
 	}
 
@@ -364,8 +364,8 @@ class JsonDecode implements DataDecodeInterface
 				strict: true
 			)
 		) {
-			$this->jsonDecodeEngine->sIndex = null;
-			$this->jsonDecodeEngine->eIndex = null;
+			$this->jsonDecodeEngineObj->startIndex = null;
+			$this->jsonDecodeEngineObj->endIndex = null;
 			return;
 		}
 		$jsonFileIndex = &$this->jsonFileIndex;
@@ -392,11 +392,11 @@ class JsonDecode implements DataDecodeInterface
 			}
 		}
 		if (
-			isset($jsonFileIndex['sIndex'])
-			&& isset($jsonFileIndex['eIndex'])
+			isset($jsonFileIndex['startIndex'])
+			&& isset($jsonFileIndex['endIndex'])
 		) {
-			$this->jsonDecodeEngine->sIndex = (int)$jsonFileIndex['sIndex'];
-			$this->jsonDecodeEngine->eIndex = (int)$jsonFileIndex['eIndex'];
+			$this->jsonDecodeEngineObj->startIndex = (int)$jsonFileIndex['startIndex'];
+			$this->jsonDecodeEngineObj->endIndex = (int)$jsonFileIndex['endIndex'];
 		} else {
 			throw new \Exception(
 				message: "Invalid key's '{$keyString}'",

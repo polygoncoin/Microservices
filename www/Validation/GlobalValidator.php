@@ -40,17 +40,17 @@ class GlobalValidator implements ValidatorInterface
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -71,7 +71,7 @@ class GlobalValidator implements ValidatorInterface
 				if ($fetchFrom === 'custom') {
 					$argArr[$argName] = $fetchFromData;
 				} else {
-					$argArr[$argName] = $this->http->req->s[$fetchFrom][$fetchFromData];
+					$argArr[$argName] = $this->httpObj->requestObj->session[$fetchFrom][$fetchFromData];
 				}
 			}
 			$function = $v['function'];
@@ -98,13 +98,13 @@ class GlobalValidator implements ValidatorInterface
 		);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
-		$this->http->req->customerDbObj->execQuery(
+		$this->httpObj->requestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$row = $this->http->req->customerDbObj->fetch();
-		$this->http->req->customerDbObj->closeCursor();
-		return (int)((isset($row['count']) && $row['count'] === 0) ? false : true);
+		$record = $this->httpObj->requestObj->customerDbObj->fetch();
+		$this->httpObj->requestObj->customerDbObj->closeCursor();
+		return (int)((isset($record['count']) && $record['count'] === 0) ? false : true);
 	}
 
 	/**
@@ -129,12 +129,12 @@ class GlobalValidator implements ValidatorInterface
 			$columnValue,
 			$id
 		];
-		$this->http->req->customerDbObj->execQuery(
+		$this->httpObj->requestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$row = $this->http->req->customerDbObj->fetch();
-		$this->http->req->customerDbObj->closeCursor();
-		return ($row['count'] === 0) ? false : true;
+		$record = $this->httpObj->requestObj->customerDbObj->fetch();
+		$this->httpObj->requestObj->customerDbObj->closeCursor();
+		return ($record['count'] === 0) ? false : true;
 	}
 }

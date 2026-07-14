@@ -30,6 +30,7 @@ namespace Microservices\App;
 class Constant
 {
 	public static $GET       = 'GET';
+	public static $QUERY     = 'QUERY';
 	public static $POST      = 'POST';
 	public static $PUT       = 'PUT';
 	public static $PATCH     = 'PATCH';

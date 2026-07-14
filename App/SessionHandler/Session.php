@@ -435,12 +435,12 @@ class Session
 	public function deleteSessions(
 		$sessionIds
 	): void {
-		$iCount = count(
+		$indexCount = count(
 			value: $sessionIds
 		);
-		for ($i = 0; $i < $iCount; $i++) {
+		for ($index = 0; $index < $indexCount; $index++) {
 			$this->deleteSession(
-				$sessionIds[$i]
+				$sessionIds[$index]
 			);
 		}
 	}

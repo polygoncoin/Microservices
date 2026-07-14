@@ -14,21 +14,21 @@
  */
 
 return array_merge(
-	require $this->http->req->ROUTES_DIR
+	require $this->httpObj->requestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'POSTroutes.php',
-	require $this->http->req->ROUTES_DIR
+	require $this->httpObj->requestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'Custom'
 		. DIRECTORY_SEPARATOR . 'POSTroutes.php',
-	require $this->http->req->ROUTES_DIR
+	require $this->httpObj->requestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'ThirdParty'
 		. DIRECTORY_SEPARATOR . 'POSTroutes.php',
-	require $this->http->req->ROUTES_DIR
+	require $this->httpObj->requestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'Upload'

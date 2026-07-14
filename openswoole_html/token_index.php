@@ -93,12 +93,12 @@ $server->on(
 		}
 
 		if (isset($request->server['remote_addr'])) {
-			$httpReqData['server']['httpRequestIP'] = $request->server['remote_addr'];
+			$httpReqData['server']['httpRequestIp'] = $request->server['remote_addr'];
 		} else {// check proxy headers
 			if (isset($request->header['x-forwarded-for'])) {
-				$httpReqData['server']['httpRequestIP'] = $request->header['x-forwarded-for'];
+				$httpReqData['server']['httpRequestIp'] = $request->header['x-forwarded-for'];
 			} elseif (isset($request->header['x-real-ip'])) {
-				$httpReqData['server']['httpRequestIP'] = $request->header['x-real-ip'];
+				$httpReqData['server']['httpRequestIp'] = $request->header['x-real-ip'];
 			}
 		}
 
@@ -164,7 +164,7 @@ $server->on(
 		} else {
 			if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix) {
 				Reload::process(
-					httpRequestIp: $httpReqData['server']['httpRequestIP']
+					httpRequestIp: $httpReqData['server']['httpRequestIp']
 				);
 				$response->end();
 			} else {

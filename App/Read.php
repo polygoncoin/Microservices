@@ -46,38 +46,38 @@ class Read
 	 *
 	 * @var null|Hook
 	 */
-	private $hook = null;
+	private $hookObj = null;
 
 	/**
 	 * Data Encode object
 	 *
 	 * @var null|DataEncode
 	 */
-	public $dataEncode = null;
+	public $dataEncodeObj = null;
 
 	/**
-	 * Fetch mode
+	 * Fetch mode placeholder Function
 	 *
 	 * @var null|string
 	 */
-	public $modeColumn = null;
+	public $fetchModePlaceholderFunction = null;
 
 	/**
 	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -97,23 +97,14 @@ class Read
 	 */
 	public function process(): mixed
 	{
-		// Load Sql
-		$readSqlConfig = &$this->http->req->rParser->sqlConfig;
-
-		// Rate Limiting request if configured for Route Sql.
-		$this->rateLimitRoute(
-			sqlConfig: $readSqlConfig
+		$return = $this->processReadBasics(
+			$readSqlConfig,
+			$readUseResultSet
 		);
 
-		// Check for configured referrer Lags
-		$this->checkReferrerLag(
-			sqlConfig: $readSqlConfig
-		);
-
-		// Lag response
-		$this->lagResponse(
-			sqlConfig: $readSqlConfig
-		);
+		if ($return !== false) {
+			return $return;
+		}
 
 		if (isset($readSqlConfig['__DOWNLOAD__'])) {
 			return $this->download(
@@ -122,125 +113,54 @@ class Read
 		}
 
 		// Check for cache
-		$toBeCached = false;
-		if (
-			CommonFunction::isEnabled(
-				http: $this->http,
-				feature: 'customer_enabled_response_caching'
-			)
-			&& isset($readSqlConfig['queryCacheKey'])
-			&& !isset($this->http->req->s['queryParamArr']['orderBy'])
-		) {
-			$cacheReqCount = 0;
-			$queryCacheReqFlag = false;
-			for ($i = 0;$i < 5; $i++) {
-				$json = $this->http->req->customerQueryCacheObj->queryCacheGet(
-					customerId: $this->http->req->customerId,
-					queryCacheKey: $readSqlConfig['queryCacheKey']
-				);
-				if ($json !== null) {
-					$cacheHit = 'true';
-					$this->http->res->dataEncode->appendKeyData(
-						objectKey: 'cacheHit',
-						data: $cacheHit
-					);
-					$this->http->res->dataEncode->appendData(
-						data: $json
-					);
-					return true;
-				} else {
-					if (!$queryCacheReqFlag) {
-						$cacheReqCount = $this->http->req->customerQueryCacheObj->queryCacheIncrement(
-							customerId: $this->http->req->customerId,
-							queryCacheKey: $readSqlConfig['queryCacheKey']
-						);
-						if ($cacheReqCount === 1) {
-							$toBeCached = true;
-							break;
-						} else {
-							$queryCacheReqFlag = true;
-						}
-					}
-					if ($queryCacheReqFlag) {
-						sleep(1);
-					}
-				}
-			}
-			if (
-				$queryCacheReqFlag
-				&& $cacheReqCount > 1
-			) {
-				throw new \Exception(
-					message: 'Invalid query cache request flag',
-					code: HttpStatus::$InternalServerError
-				);
-			}
-		}
+		$toBeCached = $this->getToBeCached(
+			sqlConfig: $readSqlConfig
+		);
 
 		if (
 			CommonFunction::isEnabled(
-				http: $this->http,
+				httpObj: $this->httpObj,
 				feature: 'customer_enabled_response_caching'
 			)
 			&& $toBeCached
 		) {
-			$this->dataEncode = new DataEncode(
-				http: $this->http
+			$this->dataEncodeObj = new DataEncode(
+				httpObj: $this->httpObj
 			);
-			$this->dataEncode->init(
+			$this->dataEncodeObj->init(
 				header: false
 			);
 		} else {
-			$this->dataEncode = &$this->http->res->dataEncode;
+			$this->dataEncodeObj = &$this->httpObj->responseObj->dataEncodeObj;
 		}
 
 		// Set Server mode to execute query on - Read / Write Server
 		$fetchFrom = $readSqlConfig['fetchFrom'] ?? 'Slave';
-		$this->modeColumn = 'customer_' . strtolower($fetchFrom) . '_db_server_query_placeholder';
-		$this->http->req->customerDbObj = DbCommonFunction::connectCustomerDb(
-			customerData: $this->http->req->s['customerData'],
+		$this->fetchModePlaceholderFunction = 'customer_' . strtolower($fetchFrom) . '_db_server_query_placeholder';
+		$this->httpObj->requestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
+			customerData: $this->httpObj->requestObj->session['customerData'],
 			fetchFrom: $fetchFrom
 		);
 
-		// Use result set recursively flag
-		$useResultSet = $this->getUseHierarchy(
-			sqlConfig: $readSqlConfig,
-			keyword: 'useResultSet'
+		$this->read(
+			readSqlConfig: $readSqlConfig,
+			readUseResultSet: $readUseResultSet
 		);
 
 		if (
 			CommonFunction::isEnabled(
-				http: $this->http,
-				feature: 'customer_enabled_explain_request'
-			)
-			&& $this->http->req->rParser->routeEndingWithReservedKeywordFlag
-			&& ($this->http->req->rParser->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword)
-		) {
-			return $this->explainRead(
-				readSqlConfig: $readSqlConfig,
-				useResultSet: $useResultSet
-			);
-		} else {
-			$this->processRead(
-				readSqlConfig: $readSqlConfig,
-				useResultSet: $useResultSet
-			);
-		}
-
-		if (
-			CommonFunction::isEnabled(
-				http: $this->http,
+				httpObj: $this->httpObj,
 				feature: 'customer_enabled_response_caching'
 			)
 			&& $toBeCached
 		) {
-			$json = $this->dataEncode->getData();
-			$this->http->req->customerQueryCacheObj->queryCacheSet(
-				customerId: $this->http->req->customerId,
+			$json = $this->dataEncodeObj->getData();
+			$this->httpObj->requestObj->customerQueryCacheObj->queryCacheSet(
+				customerId: $this->httpObj->requestObj->customerId,
 				queryCacheKey: $readSqlConfig['queryCacheKey'],
 				queryCacheValue: $json
 			);
-			$this->http->res->dataEncode->appendData(
+			$this->httpObj->responseObj->dataEncodeObj->appendData(
 				data: $json
 			);
 		}
@@ -249,211 +169,497 @@ class Read
 	}
 
 	/**
-	 * Explain read configuration
+	 * Perform read operation
 	 *
-	 * @param array $readSqlConfig Read SQL config
-	 * @param bool  $useResultSet  Use result set recursively flag
-	 *
-	 * @return bool
-	 */
-	private function explainRead(
-		&$readSqlConfig,
-		$useResultSet
-	): bool {
-		$this->dataEncode->startObject(
-			objectKey: 'Config'
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'Route',
-			data: $this->http->req->rParser->configuredRoute
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'Payload',
-			data: $this->getExplainParam(
-				sqlConfig: $readSqlConfig,
-				isFirstCall: true,
-				flag: $useResultSet
-			)
-		);
-		$this->dataEncode->endObject();
-
-		return true;
-	}
-
-	/**
-	 * Process read operation
-	 *
-	 * @param array $readSqlConfig Read SQL config
-	 * @param bool  $useResultSet  Use result set recursively flag
+	 * @param array $readSqlConfig    Sql config
+	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
 	 *
 	 * @return void
 	 */
-	private function processRead(
+	private function read(
 		&$readSqlConfig,
-		$useResultSet
+		$readUseResultSet
 	): void {
-		$this->http->req->s['requiredFieldArrCollection'] = $this->getRequired(
+		$this->httpObj->requestObj->session['requiredFieldArrCollection'] = $this->getRequired(
 			sqlConfig: $readSqlConfig,
-			isFirstCall: true,
-			flag: $useResultSet
+			flag: $readUseResultSet,
+			isFirstCall: true
 		);
 
-		if (isset($this->http->req->s['requiredFieldArrCollection'])) {
-			$this->http->req->s['requiredFieldArr'] = $this->http->req->s['requiredFieldArrCollection'];
+		if (isset($this->httpObj->requestObj->session['requiredFieldArrCollection'])) {
+			$this->httpObj->requestObj->session['requiredFieldArr'] = $this->httpObj->requestObj->session['requiredFieldArrCollection'];
 		} else {
-			$this->http->req->s['requiredFieldArr'] = [];
+			$this->httpObj->requestObj->session['requiredFieldArr'] = [];
 		}
 
 		// Start Read operation
-		$configKeyArr = [];
-		$this->readDb(
-			readSqlConfig: $readSqlConfig,
-			isFirstCall: true,
-			configKeyArr: $configKeyArr,
-			useResultSet: $useResultSet
-		);
+		for ($index = 0; $index < $indexCount; $index++) {
+			$readPayloadKeyArr = [];
+			if ($index === 0) {
+				if ($this->httpObj->requestObj->session['payloadType'] === 'Array') {
+					$readPayloadKeyArr[] = "{$index}";
+				} else {
+					$readPayloadKeyArr[] = '';
+				}
+			} else {
+				$readPayloadKeyArr[] = "{$index}";
+			}
+
+			$arr = [];
+			$arr['Status'] = HttpStatus::$Ok;
+			if (
+				CommonFunction::isEnabled(
+					httpObj: $this->httpObj,
+					feature: 'customer_enabled_payload_in_response'
+				)
+			) {
+				$arr[Env::$payloadKeyInResponse] = $this->httpObj->requestObj->dataDecodeObj->getCompleteArray(
+					keyString: implode(
+						separator: ':',
+						array: $readPayloadKeyArr
+					)
+				);
+			}
+
+			$this->readParent(
+				readParentSqlConfig: $readSqlConfig,
+				readParentPayloadKeyArr: $readPayloadKeyArr,
+				readParentRequiredFieldArr: $this->httpObj->requestObj->session['requiredFieldArrCollection'],
+				readParentUseResultSet: $readUseResultSet,
+				readParentIsFirstCall: true
+			);
+
+			if ($this->httpObj->responseObj->httpStatus === HttpStatus::$Ok) {
+				$arr['PayloadResponse'] = $response;
+			} else { // Failure
+				$arr['Error'] = $response;
+			}
+		}
 	}
 
 	/**
-	 * Process $readSqlConfig recursively
+	 * Process Read Parent Config Function
 	 *
-	 * @param array $readSqlConfig Read SQL config
-	 * @param bool  $isFirstCall   true to represent the first call in recursion
-	 * @param array $configKeyArr  Config key's in recursion
-	 * @param bool  $useResultSet  Use result set recursively flag
+	 * @param array $readParentSqlConfig    Sql config
+	 * @param bool  $readIsFirstCall  true to represent the first call in recursion
+	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
 	 *
 	 * @return void
 	 */
-	private function readDb(
-		&$readSqlConfig,
-		$isFirstCall,
-		&$configKeyArr,
-		$useResultSet
+	private function readParent(
+		&$readParentSqlConfig,
+		&$readParentPayloadKeyArr,
+		&$readParentRequiredFieldArr,
+		$readParentUseResultSet,
+		$readParentIsFirstCall
 	): void {
-		$isObject = $this->isObject(
-			arr: $readSqlConfig
-		);
+		$readParentPayloadKey = is_array(
+			value: $readParentPayloadKeyArr
+		) ? trim(
+			string: implode(
+				separator: ':',
+				array: $readParentPayloadKeyArr
+			),
+			characters: ':'
+		) : null;
 
-		// Execute Pre SQL Hook
-		if (isset($readSqlConfig['__PRE-SQL-HOOKS__'])) {
-			if ($this->hook === null) {
-				$this->hook = new Hook(
-					http: $this->http
-				);
-			}
-			$this->hook->triggerHook(
-				hookArr: $readSqlConfig['__PRE-SQL-HOOKS__']
-			);
+		$isObject = null;
+		if ($readParentPayloadKey !== null) {
+			$isObject = $this->httpObj->requestObj->dataDecodeObj->dataType(
+				keyString: $readParentPayloadKey
+			) === 'Object';
 		}
 
-		if ($isObject) {
-			switch ($readSqlConfig['__MODE__']) {
-				// Query will return single row
-				case 'singleRowFormat':
-					if ($isFirstCall) {
-						$this->dataEncode->startObject(
+		$indexCount = ($isObject || $isObject === null)
+			? 1 : $this->httpObj->requestObj->dataDecodeObj->count(
+				keyString: $readParentPayloadKey
+			);
+
+		$mode = getenv(name: $this->httpObj->requestObj->session['customerData']['customer_master_db_server_query_placeholder']);
+		$function = "getSqlAndParam{$mode}Mode";
+
+		for ($index = 0; $index < $indexCount; $index++) {
+			if (
+				$isObject
+				&& $index > 0
+			) {
+				return;
+			}
+
+			if (
+				$this->operateAsTransaction
+				&& !$this->httpObj->requestObj->customerDbObj->beganTransaction
+			) {
+				$currentResponse['Error'] = 'Transaction rolled back';
+				return;
+			}
+
+			if (
+				$isObject
+				|| $isObject === null
+			) {
+				$readParentCurrentResponse = &$readParentResponse;
+			} else {
+				$readParentResponse[$index] = [];
+				$readParentCurrentResponse = &$readParentResponse[$index];
+			}
+			$readParentCurrentPayloadKeyArr = $readParentPayloadKeyArr;
+
+			if (
+				!$isObject
+				&& !$readParentUseHierarchy
+			) {
+				array_push(
+					$readParentCurrentPayloadKeyArr,
+					$index
+				);
+			}
+
+			$readParentCurrentPayloadKey = is_array(
+				value: $readParentCurrentPayloadKeyArr
+			) ? implode(
+				separator: ':',
+				array: $readParentCurrentPayloadKeyArr
+			) : '';
+
+			if (
+				!$this->httpObj->requestObj->dataDecodeObj->isset(
+					keyString: $readParentCurrentPayloadKey
+				)
+			) {
+				if ($readParentUseHierarchy) {
+					throw new \Exception(
+						message: "Payload key '{$readParentCurrentPayloadKey}' not set",
+						code: HttpStatus::$NotFound
+					);
+				} else {
+					continue;
+				}
+			}
+
+			// Load Payload
+			$this->httpObj->requestObj->session['payload'] = $this->httpObj->requestObj->dataDecodeObj->get(
+				keyString: $readParentCurrentPayloadKey
+			);
+
+			if (count(value: $readParentRequiredFieldArr)) {
+				$this->httpObj->requestObj->session['requiredFieldArr'] = $readParentRequiredFieldArr;
+			} else {
+				$this->httpObj->requestObj->session['requiredFieldArr'] = [];
+			}
+
+			if (
+				Env::$enableGlobalCounter
+				&& isset($readParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
+			) {
+				$readParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
+			}
+
+			// Validation
+			if (
+				isset($readParentSqlConfig['__VALIDATE__'])
+				&& !$this->isValidPayload(
+					sqlConfig: $readParentSqlConfig,
+					response: $readParentCurrentResponse
+				)
+			) {
+				continue;
+			}
+
+			// Execute - Pre Hook
+			if (isset($readParentSqlConfig['__PRE-SQL-HOOKS__'])) {
+				if ($this->hookObj === null) {
+					$this->hookObj = new Hook(
+						httpObj: $this->httpObj
+					);
+				}
+				$this->hookObj->triggerHook(
+					hookArr: $readParentSqlConfig['__PRE-SQL-HOOKS__']
+				);
+			}
+
+			// Execute
+			switch ($readParentSqlConfig['__MODE__']) {
+				// Query will return single dbFetchedRecord
+				case 'singleRecordFormat':
+					if ($readParentIsFirstCall) {
+						$this->dataEncodeObj->startObject(
 							objectKey: 'Results'
 						);
 					} else {
-						$this->dataEncode->startObject();
+						$this->dataEncodeObj->startObject();
 					}
-					$this->fetchSingleRow(
-						readSqlConfig: $readSqlConfig,
-						isFirstCall: $isFirstCall,
-						configKeyArr: $configKeyArr,
-						useResultSet: $useResultSet
+					$this->fetchSingleRecord(
+						readSqlConfig: $readParentSqlConfig,
+						readPayloadKeyArr: $readParentPayloadKeyArr,
+						readUseResultSet: $readParentUseResultSet,
+						readIsFirstCall: $readParentIsFirstCall
 					);
-					$this->dataEncode->endObject();
+					$this->dataEncodeObj->endObject();
 					break;
 				// Query will return multiple rows
-				case 'multipleRowFormat':
-					if ($isFirstCall) {
-						if (isset($readSqlConfig['countQuery'])) {
-							$this->dataEncode->startObject(
+				case 'multipleRecordFormat':
+					if ($readParentIsFirstCall) {
+						if (isset($readParentSqlConfig['countQuery'])) {
+							$this->dataEncodeObj->startObject(
 								objectKey: 'Results'
 							);
-							$this->fetchRowsCount(
-								readSqlConfig: $readSqlConfig
+							$this->fetchRecordCount(
+								readSqlConfig: $readParentSqlConfig
 							);
-							$this->dataEncode->startArray(
+							$this->dataEncodeObj->startArray(
 								objectKey: 'Data'
 							);
 						} else {
-							$this->dataEncode->startArray(
+							$this->dataEncodeObj->startArray(
 								objectKey: 'Results'
 							);
 						}
 					} else {
-						$this->dataEncode->startArray(
-							objectKey: $configKeyArr[
+						$this->dataEncodeObj->startArray(
+							objectKey: $readParentPayloadKeyArr[
 								count(
-									value: $configKeyArr
+									value: $readParentPayloadKeyArr
 								) - 1
 							]
 						);
 					}
-					$this->fetchMultipleRows(
-						readSqlConfig: $readSqlConfig,
-						isFirstCall: $isFirstCall,
-						configKeyArr: $configKeyArr,
-						useResultSet: $useResultSet
+					$this->fetchMultipleRecords(
+						readSqlConfig: $readParentSqlConfig,
+						readPayloadKeyArr: $readParentPayloadKeyArr,
+						readUseResultSet: $readParentUseResultSet,
+						readIsFirstCall: $readParentIsFirstCall
 					);
-					$this->dataEncode->endArray();
+					$this->dataEncodeObj->endArray();
 					if (
-						$isFirstCall
-						&& isset($readSqlConfig['countQuery'])
+						$readParentIsFirstCall
+						&& isset($readParentSqlConfig['countQuery'])
 					) {
-						$this->dataEncode->endObject();
+						$this->dataEncodeObj->endObject();
 					}
 					break;
 			}
-		}
 
-		// triggers
-		if (isset($readSqlConfig['__TRIGGERS__'])) {
-			$this->dataEncode->addKeyData(
-				objectKey: '__TRIGGERS__',
-				data: $this->getTriggerData(
-					triggerConfig: $readSqlConfig['__TRIGGERS__']
-				)
-			);
-		}
-
-		// Execute Post SQL Hook
-		if (isset($readSqlConfig['__POST-SQL-HOOKS__'])) {
-			if ($this->hook === null) {
-				$this->hook = new Hook(
-					http: $this->http
+			// Triggers
+			if (isset($readParentSqlConfig['__TRIGGERS__'])) {
+				$this->dataEncodeObj->addKeyData(
+					objectKey: '__TRIGGERS__',
+					data: $this->getTriggerData(
+						triggerConfig: $readParentSqlConfig['__TRIGGERS__']
+					)
 				);
 			}
-			$this->hook->triggerHook(
-				hookArr: $readSqlConfig['__POST-SQL-HOOKS__']
-			);
+
+			// Execute - Post Hook
+			if (isset($readParentSqlConfig['__POST-SQL-HOOKS__'])) {
+				if ($this->hookObj === null) {
+					$this->hookObj = new Hook(
+						httpObj: $this->httpObj
+					);
+				}
+				$this->hookObj->triggerHook(
+					hookArr: $readParentSqlConfig['__POST-SQL-HOOKS__']
+				);
+			}
 		}
 	}
 
 	/**
-	 * Fetch single record
+	 * Process Read Child Config Function
 	 *
-	 * @param array $readSqlConfig Read SQL config
-	 * @param bool  $isFirstCall   true to represent the first call in recursion
-	 * @param array $configKeyArr  Config key's
-	 * @param bool  $useResultSet  Use result set recursively flag
+	 * @param array $readSqlConfig    Sql config
+	 * @param array $readPayloadKeyArr
+	 * @param array $dbFetchedRecord          Record data fetched from DB
+	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
+	 *
+	 * @return void
+	 */
+	private function readChild(
+		&$readChildSqlConfig,
+		&$readChildPayloadKeyArr,
+		$dbFetchedRecord,
+		$readChildUseResultSet
+	): void {
+		if ($readChildUseHierarchy) {
+			// $record = $this->httpObj->requestObj->session['payload'];
+			$this->resetFetchData(
+				fetchFrom: 'sqlPayload',
+				moduleKeyArr: $readChildPayloadKeyArr,
+				record: $dbFetchedRecord
+			);
+		}
+
+		if (
+			isset($readChildPayloadKeyArr[0])
+			&& $readChildPayloadKeyArr[0] === ''
+		) {
+			$readChildPayloadKeyArr = array_shift(
+				$readChildPayloadKeyArr
+			);
+		}
+		if (!is_array(value: $readChildPayloadKeyArr)) {
+			$readChildPayloadKeyArr = [];
+		}
+
+		if (
+			!(
+				isset($readChildSqlConfig['__SUB-QUERY__'])
+				&& !$this->isObject(
+					arr: $readChildSqlConfig['__SUB-QUERY__']
+				)
+			)
+		) {
+			return;
+		}
+
+		foreach ($readChildSqlConfig['__SUB-QUERY__'] as $readModule => &$readChildModuleSqlConfig) {
+			$dataExist = false;
+
+			$readChildResponse[$readModule] = [];
+			$readChildModuleResponse = &$readChildResponse[$readModule];
+			
+			$readChildModulePayloadKeyArr = $readChildPayloadKeyArr;
+			array_push(
+				$readChildModulePayloadKeyArr,
+				$readModule
+			);
+
+			$readChildModulePayloadKey = is_array(
+				value: $readChildModulePayloadKeyArr
+			) ? implode(
+				separator: ':',
+				array: $readChildModulePayloadKeyArr
+			) : null;
+
+			$dataExist = $this->httpObj->requestObj->dataDecodeObj->isset(
+				keyString: $readChildModulePayloadKey
+			);
+			if (
+				$readChildUseHierarchy
+				&& !$dataExist
+			) { // use parent data of a payload
+				throw new \Exception(
+					message: "Invalid payload: Module '{$readModule}' missing",
+					code: HttpStatus::$NotFound
+				);
+			}
+			if ($dataExist) {
+				return;
+			}
+
+			$isObject = null;
+			if ($readChildModulePayloadKey !== null) {
+				$isObject = $this->httpObj->requestObj->dataDecodeObj->dataType(
+					keyString: $readChildModulePayloadKey
+				) === 'Object';
+			}
+
+			$indexCount = ($isObject || $isObject === null)
+				? 1 : $this->httpObj->requestObj->dataDecodeObj->count(
+					keyString: $readChildModulePayloadKey
+				);
+
+			if (isset($readChildRequiredFieldArr[$readModule])) {
+				$readChildModuleRequiredFieldArr = &$readChildRequiredFieldArr[$readModule];
+			} else {
+				$readChildModuleRequiredFieldArr = &$readChildRequiredFieldArr;
+			}
+
+			$readChildModuleUseHierarchy = $readChildUseHierarchy ?? $this->getUseHierarchy(
+				sqlConfig: $readChildModuleSqlConfig,
+				keyword: 'useHierarchy'
+			);
+
+			for ($index = 0; $index < $indexCount; $index++) {
+				$readChildModuleCurrentPayloadKeyArr = $readChildModulePayloadKeyArr;
+				array_push(
+					$readChildModuleCurrentPayloadKeyArr,
+					$readModule
+				);
+
+				$readChildModuleCurrentResponse = &$readChildModuleResponse;
+				$readChildModuleCurrentResponse[$index] = [];
+				$readChildModuleCurrentResponse = &$readChildCurrentResponse[$index];
+
+				if (
+					$isObject
+					|| $isObject === null
+				) {
+					$readChildModuleCurrentPayloadKey = $readChildModulePayloadKey;
+				} else {
+					$readChildModuleCurrentPayloadKey = "{$readChildModulePayloadKey}:{$index}";
+				}
+
+				$dataExist = $this->httpObj->requestObj->dataDecodeObj->isset(
+					keyString: $readChildModuleCurrentPayloadKey
+				);
+
+				if (
+					$readChildModuleUseHierarchy
+					&& !$dataExist
+				) { // use parent data of a payload
+					throw new \Exception(
+						message: "Invalid payload: Module '{$readModule}' missing",
+						code: HttpStatus::$NotFound
+					);
+				}
+
+				if (!$dataExist) {
+					continue;
+				}
+
+				$this->readParent(
+					readParentSqlConfig: $readChildModuleSqlConfig,
+					readParentPayloadKeyArr: $readChildModulePayloadKeyArr,
+					readParentRequiredFieldArr: $readChildModuleCurrentPayloadKeyArr,
+					readParentUseResultSet: $readChildModuleUseResultSet,
+					readParentIsFirstCall: false
+				);
+			}
+		}
+	}
+
+	/**
+	 * Fetch dbFetchedRecord count
+	 *
+	 * @param array $readSqlConfig Sql config
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function fetchSingleRow(
-		&$readSqlConfig,
-		$isFirstCall,
-		&$configKeyArr,
-		$useResultSet
+	private function fetchRecordCount(
+		$readSqlConfig
 	): void {
-		$mode = getenv(name: $this->http->req->s['customerData'][$this->modeColumn]);
+		if (!isset($readSqlConfig['countQuery'])) {
+			return;
+		}
+		$readSqlConfig['__QUERY__'] = $readSqlConfig['countQuery'];
+		if (isset($readSqlConfig['__COUNT-SQL-COMMENT__'])) {
+			$readSqlConfig['__SQL-COMMENT__'] = $readSqlConfig['__COUNT-SQL-COMMENT__'];
+		}
+		unset($readSqlConfig['__COUNT-SQL-COMMENT__']);
+		unset($readSqlConfig['countQuery']);
+
+		$this->httpObj->requestObj->session['queryParamArr']['page']  = $this->httpObj->httpReqData['get']['page'] ?? 1;
+		$this->httpObj->requestObj->session['queryParamArr']['perPage']  = $this->httpObj->httpReqData['get']['perPage'] ??
+			Env::$defaultPerPage;
+
+		if ($this->httpObj->requestObj->session['queryParamArr']['perPage'] > Env::$maxResultsPerPage) {
+			throw new \Exception(
+				message: 'perPage exceeds max perPage value of ' . Env::$maxResultsPerPage,
+				code: HttpStatus::$Forbidden
+			);
+		}
+
+		$this->httpObj->requestObj->session['queryParamArr']['start'] = (
+			($this->httpObj->requestObj->session['queryParamArr']['page'] - 1) *
+			$this->httpObj->requestObj->session['queryParamArr']['perPage']
+		);
+
+		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
 		$function = "getSqlAndParam{$mode}Mode";
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
-			sqlConfig: $readSqlConfig,
-			configKeyArr: $configKeyArr
+			sqlConfig: $readSqlConfig
 		);
 
 		if (!empty($errorArr)) {
@@ -467,15 +673,80 @@ class Read
 			return;
 		}
 
-		$this->http->req->customerDbObj->execQuery(
+		$this->httpObj->requestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		if ($row = $this->http->req->customerDbObj->fetch()) {
-			foreach ($row as $objectKey => $value) {
-				$this->dataEncode->addKeyData(
+		$dbFetchedRecord = $this->httpObj->requestObj->customerDbObj->fetch();
+		$this->httpObj->requestObj->customerDbObj->closeCursor();
+
+		$totalRecordsCount = isset($dbFetchedRecord['count']) ? $dbFetchedRecord['count'] : 0;
+		$totalPages = ceil(
+			num: $totalRecordsCount / $this->httpObj->requestObj->session['queryParamArr']['perPage']
+		);
+
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'page',
+			data: $this->httpObj->requestObj->session['queryParamArr']['page']
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'perPage',
+			data: $this->httpObj->requestObj->session['queryParamArr']['perPage']
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'totalPages',
+			data: $totalPages
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'totalRecords',
+			data: $totalRecordsCount
+		);
+	}
+
+	/**
+	 * Fetch single record
+	 *
+	 * @param array $readSqlConfig     Sql config
+	 * @param array $readPayloadKeyArr
+	 * @param bool  $readUseResultSet  If true - Uses parent payload/results in child
+	 * @param bool  $readIsFirstCall   true to represent the first call in recursion
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	private function fetchSingleRecord(
+		&$readSqlConfig,
+		&$readPayloadKeyArr,
+		$readUseResultSet,
+		$readIsFirstCall
+	): void {
+		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
+		$function = "getSqlAndParam{$mode}Mode";
+		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
+			sqlConfig: $readSqlConfig,
+			payloadKeyArr: $readPayloadKeyArr
+		);
+
+		if (!empty($errorArr)) {
+			throw new \Exception(
+				message: $errorArr,
+				code: HttpStatus::$InternalServerError
+			);
+		}
+
+		if ($missExecution) {
+			return;
+		}
+
+		$this->httpObj->requestObj->customerDbObj->execQuery(
+			sql: $sql,
+			paramArr: $paramArr
+		);
+		if ($dbFetchedRecord = $this->httpObj->requestObj->customerDbObj->fetch()) {
+			foreach ($dbFetchedRecord as $objectKey => &$objectKeyValue) {
+				$this->dataEncodeObj->addKeyData(
 					objectKey: $objectKey,
-					data: $value
+					data: $objectKeyValue
 				);
 			}
 			// check if selected column-name mismatches or conflicts with
@@ -484,7 +755,7 @@ class Read
 				$subQueryKeyArr = array_keys(
 					array: $readSqlConfig['__SUB-QUERY__']
 				);
-				foreach ($row as $objectKey => $value) {
+				foreach ($dbFetchedRecord as $objectKey => &$objectKeyValue) {
 					if (
 						in_array(
 							needle: $objectKey,
@@ -500,129 +771,45 @@ class Read
 				}
 			}
 		} else {
-			if ($isFirstCall) {
-				$this->http->res->httpStatus = HttpStatus::$NotFound;
+			if ($readIsFirstCall) {
+				$this->httpObj->responseObj->httpStatus = HttpStatus::$NotFound;
 				return;
 			}
 		}
-		$this->http->req->customerDbObj->closeCursor();
+		$this->httpObj->requestObj->customerDbObj->closeCursor();
 
 		if (isset($readSqlConfig['__SUB-QUERY__'])) {
-			$this->callReadDb(
+			$this->readChild(
 				readSqlConfig: $readSqlConfig,
-				configKeyArr: $configKeyArr,
-				row: $row,
-				useResultSet: $useResultSet
+				readPayloadKeyArr: $readPayloadKeyArr,
+				dbFetchedRecord: $dbFetchedRecord,
+				readUseResultSet: $readUseResultSet
 			);
 		}
-	}
-
-	/**
-	 * Fetch row count
-	 *
-	 * @param array $readSqlConfig Read SQL config
-	 *
-	 * @return void
-	 * @throws \Exception
-	 */
-	private function fetchRowsCount(
-		$readSqlConfig
-	): void {
-		if (!isset($readSqlConfig['countQuery'])) {
-			return;
-		}
-		$readSqlConfig['__QUERY__'] = $readSqlConfig['countQuery'];
-		if (isset($readSqlConfig['__COUNT-SQL-COMMENT__'])) {
-			$readSqlConfig['__SQL-COMMENT__'] = $readSqlConfig['__COUNT-SQL-COMMENT__'];
-		}
-		unset($readSqlConfig['__COUNT-SQL-COMMENT__']);
-		unset($readSqlConfig['countQuery']);
-
-		$this->http->req->s['queryParamArr']['page']  = $this->http->httpReqData['get']['page'] ?? 1;
-		$this->http->req->s['queryParamArr']['perPage']  = $this->http->httpReqData['get']['perPage'] ??
-			Env::$defaultPerPage;
-
-		if ($this->http->req->s['queryParamArr']['perPage'] > Env::$maxResultsPerPage) {
-			throw new \Exception(
-				message: 'perPage exceeds max perPage value of ' . Env::$maxResultsPerPage,
-				code: HttpStatus::$Forbidden
-			);
-		}
-
-		$this->http->req->s['queryParamArr']['start'] = (
-			($this->http->req->s['queryParamArr']['page'] - 1) *
-			$this->http->req->s['queryParamArr']['perPage']
-		);
-
-		$mode = getenv(name: $this->http->req->s['customerData'][$this->modeColumn]);
-		$function = "getSqlAndParam{$mode}Mode";
-		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
-			sqlConfig: $readSqlConfig
-		);
-
-		if (!empty($errorArr)) {
-			throw new \Exception(
-				message: $errorArr,
-				code: HttpStatus::$InternalServerError
-			);
-		}
-
-		if ($missExecution) {
-			return;
-		}
-
-		$this->http->req->customerDbObj->execQuery(
-			sql: $sql,
-			paramArr: $paramArr
-		);
-		$row = $this->http->req->customerDbObj->fetch();
-		$this->http->req->customerDbObj->closeCursor();
-
-		$totalRowsCount = isset($row['count']) ? $row['count'] : 0;
-		$totalPages = ceil(
-			num: $totalRowsCount / $this->http->req->s['queryParamArr']['perPage']
-		);
-
-		$this->dataEncode->addKeyData(
-			objectKey: 'page',
-			data: $this->http->req->s['queryParamArr']['page']
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'perPage',
-			data: $this->http->req->s['queryParamArr']['perPage']
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'totalPages',
-			data: $totalPages
-		);
-		$this->dataEncode->addKeyData(
-			objectKey: 'totalRecords',
-			data: $totalRowsCount
-		);
 	}
 
 	/**
 	 * Fetch multiple record
 	 *
-	 * @param array $readSqlConfig Read SQL config
-	 * @param bool  $isFirstCall   true to represent the first call in recursion
-	 * @param array $configKeyArr  Config key's
-	 * @param bool  $useResultSet  Use result set recursively flag
+	 * @param array $readSqlConfig    Sql config
+	 * @param array $readPayloadKeyArr
+	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
+	 * @param bool  $readIsFirstCall  true to represent first call in recursion
 	 *
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function fetchMultipleRows(
+	private function fetchMultipleRecords(
 		&$readSqlConfig,
-		$isFirstCall,
-		&$configKeyArr,
-		$useResultSet
+		&$readPayloadKeyArr,
+		$readUseResultSet,
+		$readIsFirstCall
 	): void {
-		$mode = getenv(name: $this->http->req->s['customerData'][$this->modeColumn]);
+		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
 		$function = "getSqlAndParam{$mode}Mode";
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig,
-			configKeyArr: $configKeyArr
+			payloadKeyArr: $readPayloadKeyArr
 		);
 
 		if (!empty($errorArr)) {
@@ -636,29 +823,29 @@ class Read
 			return;
 		}
 
-		if ($isFirstCall) {
-			if (isset($this->http->req->s['queryParamArr']['orderBy'])) {
+		if ($readIsFirstCall) {
+			if (isset($this->httpObj->requestObj->session['queryParamArr']['orderBy'])) {
 				$orderByStrArr = [];
 				$orderByArr = CommonFunction::jsonDecode(
-					value: $this->http->req->s['queryParamArr']['orderBy']
+					value: $this->httpObj->requestObj->session['queryParamArr']['orderBy']
 				);
-				foreach ($orderByArr as $k => $v) {
-					$k = str_replace(
+				foreach ($orderByArr as $orderByKey => &$orderByKeyValue) {
+					$orderByKey = str_replace(
 						search: ['`', ' '],
 						replace: '',
-						subject: $k
+						subject: $orderByKey
 					);
-					$v = strtoupper(
-						string: $v
+					$orderByKeyValue = strtoupper(
+						string: $orderByKeyValue
 					);
 					if (
 						in_array(
-							needle: $v,
+							needle: $orderByKeyValue,
 							haystack: ['ASC', 'DESC'],
 							strict: true
 						)
 					) {
-						$orderByStrArr[] = "`{$k}` {$v}";
+						$orderByStrArr[] = "`{$orderByKey}` {$orderByKeyValue}";
 					}
 				}
 				if (
@@ -675,120 +862,101 @@ class Read
 		}
 
 		if (isset($readSqlConfig['countQuery'])) {
-			$start = $this->http->req->s['queryParamArr']['start'];
-			$offset = $this->http->req->s['queryParamArr']['perPage'];
+			$start = $this->httpObj->requestObj->session['queryParamArr']['start'];
+			$offset = $this->httpObj->requestObj->session['queryParamArr']['perPage'];
 			$sql .= " LIMIT {$start}, {$offset}";
 		}
 
-		$singleColumn = false;
-		$pushPop = true;
-		$this->http->req->customerDbObj->execQuery(
+		$this->httpObj->requestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr,
 			pushPop: $pushPop
 		);
-		for ($i = 0; $row = $this->http->req->customerDbObj->fetch();) {
-			if ($i === 0) {
+
+		$pushPop = true;
+		$singleColumn = false;
+		for ($index = 0; $dbFetchedRecord = $this->httpObj->requestObj->customerDbObj->fetch(); $index++) {
+			if ($index === 0) {
 				if (
 					count(
-						value: $row
+						value: $dbFetchedRecord
 					) === 1
 				) {
 					$singleColumn = true;
 				}
 				$singleColumn = $singleColumn
 					&& !isset($readSqlConfig['__SUB-QUERY__']);
-				$i++;
 			}
 			if ($singleColumn) {
-				$this->dataEncode->encode(
-					data: $row[
+				$this->dataEncodeObj->encode(
+					data: $dbFetchedRecord[
 						key(
-							array: $row
+							array: $dbFetchedRecord
 						)
 					]
 				);
 			} elseif (isset($readSqlConfig['__SUB-QUERY__'])) {
-				$this->dataEncode->startObject();
-				foreach ($row as $objectKey => $value) {
-					$this->dataEncode->addKeyData(
-						objectKey: $objectKey,
-						data: $value
+				$this->dataEncodeObj->startObject();
+				foreach ($dbFetchedRecord as $rowKey => &$rowKeyValue) {
+					$this->dataEncodeObj->addKeyData(
+						objectKey: $rowKey,
+						data: $rowKeyValue
 					);
 				}
-				$this->callReadDb(
+				$this->readChild(
 					readSqlConfig: $readSqlConfig,
-					configKeyArr: $configKeyArr,
-					row: $row,
-					useResultSet: $useResultSet
+					readPayloadKeyArr: $readPayloadKeyArr,
+					dbFetchedRecord: $dbFetchedRecord,
+					readUseResultSet: $readUseResultSet
 				);
-				$this->dataEncode->endObject();
+				$this->dataEncodeObj->endObject();
 			} else {
-				$this->dataEncode->encode(
-					data: $row
+				$this->dataEncodeObj->encode(
+					data: $dbFetchedRecord
 				);
 			}
 		}
-		$this->http->req->customerDbObj->closeCursor(
+		$this->httpObj->requestObj->customerDbObj->closeCursor(
 			pushPop: $pushPop
 		);
 	}
 
 	/**
-	 * Function readDb recursive helper
+	 * Explain read configuration
 	 *
-	 * @param array $readSqlConfig Read SQL config
-	 * @param array $configKeyArr  Config key's
-	 * @param array $row           Row data fetched from DB
-	 * @param bool  $useResultSet  Use result set recursively flag
+	 * @param array $readSqlConfig    Sql config
+	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
 	 *
-	 * @return void
+	 * @return bool
 	 */
-	private function callReadDb(
+	private function explain(
 		&$readSqlConfig,
-		&$configKeyArr,
-		$row,
-		$useResultSet
-	): void {
-		if (
-			$useResultSet
-			&& !empty($row)
-		) {
-			$this->resetFetchData(
-				fetchFrom: 'sqlResults',
-				moduleKeyArr: $configKeyArr,
-				row: $row
-			);
-		}
-
-		if (
-			isset($readSqlConfig['__SUB-QUERY__'])
-			&& $this->isObject(
-				arr: $readSqlConfig['__SUB-QUERY__']
+		$readUseResultSet
+	): bool {
+		$this->dataEncodeObj->startObject(
+			objectKey: 'Config'
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'Route',
+			data: $this->httpObj->requestObj->routeParserObj->configuredRoute
+		);
+		$this->dataEncodeObj->addKeyData(
+			objectKey: 'Payload',
+			data: $this->getExplainParam(
+				sqlConfig: $readSqlConfig,
+				flag: $readUseResultSet,
+				isFirstCall: true
 			)
-		) {
-			foreach ($readSqlConfig['__SUB-QUERY__'] as $module => &$readSqlConfig) {
-				$moduleConfigKeyArr = $configKeyArr;
-				$moduleConfigKeyArr[] = $module;
-				$useResultSet = $useResultSet ??
-					$this->getUseHierarchy(
-						sqlConfig: $readSqlConfig,
-						keyword: 'useResultSet'
-					);
-				$this->readDb(
-					readSqlConfig: $readSqlConfig,
-					isFirstCall: false,
-					configKeyArr: $moduleConfigKeyArr,
-					useResultSet: $useResultSet
-				);
-			}
-		}
+		);
+		$this->dataEncodeObj->endObject();
+
+		return true;
 	}
 
 	/**
 	 * Download data
 	 *
-	 * @param array $readSqlConfig Read SQL config
+	 * @param array $readSqlConfig Sql config
 	 *
 	 * @return array
 	 */
@@ -799,14 +967,14 @@ class Read
 
 		if (
 			!CommonFunction::isEnabled(
-				http: $this->http,
+				httpObj: $this->httpObj,
 				feature: 'customer_enabled_download_request'
 			)
 		) {
 			return [[], '', HttpStatus::$NotFound];
 		}
 
-		$mode = getenv(name: $this->http->req->s['customerData'][$this->modeColumn]);
+		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
 		$function = "getSqlAndParam{$mode}Mode";
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig
@@ -817,19 +985,19 @@ class Read
 		switch ($serverMode) {
 			case 'Master':
 				$exportDbData = DbCommonFunction::customerMasterDatabaseServerCred(
-					customerData: $this->http->req->s['customerData']
+					customerData: $this->httpObj->requestObj->session['customerData']
 				);
 				break;
 			case 'Slave':
 				$exportDbData = DbCommonFunction::customerSlaveDatabaseServerCred(
-					customerData: $this->http->req->s['customerData']
+					customerData: $this->httpObj->requestObj->session['customerData']
 				);
 				break;
 		}
 
 		// Export
 		$export = new Export(
-			http: $this->http,
+			httpObj: $this->httpObj,
 			dbServerType: $exportDbData['dbServerType']
 		);
 		$export->init(

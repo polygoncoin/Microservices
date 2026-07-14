@@ -39,7 +39,7 @@ class HttpResponse
 	 *
 	 * @var null|string
 	 */
-	public $oRepresentation = null;
+	public $outputRepresentation = null;
 
 	/**
 	 * Directory for HTML output format
@@ -74,28 +74,28 @@ class HttpResponse
 	 *
 	 * @var null|DataEncode
 	 */
-	public $dataEncode = null;
+	public $dataEncodeObj = null;
 
 	/**
 	 * HTTP object
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 		$this->httpStatus = HttpStatus::$Ok;
-		$this->oRepresentation = Env::$oRepresentation;
-		$this->dataEncode = new DataEncode(
-			http: $this->http
+		$this->outputRepresentation = Env::$outputRepresentation;
+		$this->dataEncodeObj = new DataEncode(
+			httpObj: $this->httpObj
 		);
 	}
 
@@ -106,7 +106,7 @@ class HttpResponse
 	 */
 	public function init(): bool
 	{
-		$this->dataEncode->init();
+		$this->dataEncodeObj->init();
 
 		return true;
 	}

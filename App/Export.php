@@ -74,21 +74,21 @@ class Export
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http   $http
+	 * @param Http   $httpObj
 	 * @param string $dbServerType Database Type (eg. MySql)
 	 *
 	 * @throws \Exception
 	 */
 	public function __construct(
-		&$http,
+		&$httpObj,
 		$dbServerType
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 		$this->dbServerType = $dbServerType;
 		$this->exportDbServerObj = new ExportDatabaseServer(
 			dbServerType: $this->dbServerType

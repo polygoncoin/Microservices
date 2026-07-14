@@ -23,5 +23,5 @@ return [
 			'fetchFromData' => 'No'
 		]
 	],
-	'__MODE__' => 'multipleRowFormat'
+	'__MODE__' => 'multipleRecordFormat'
 ];

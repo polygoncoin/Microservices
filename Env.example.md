@@ -18,8 +18,8 @@ concurrentAccessInterval=60 ; Concurrent Access Interval in Seconds
 
 ```ini
 ; Data Representation: JSON/XML/XSLT/HTML/PHP
-iRepresentation='JSON'                  ; JSON/XML - Input Data Representation
-oRepresentation='JSON'                  ; JSON/XML/XSLT/HTML/PHP - Output Data Representation
+inputRepresentation='JSON'                  ; JSON/XML - Input Data Representation
+outputRepresentation='JSON'                  ; JSON/XML/XSLT/HTML/PHP - Output Data Representation
 payloadKeyInResponse='Payload'
 ```
 

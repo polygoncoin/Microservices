@@ -68,17 +68,17 @@ class Route
 	 *
 	 * @var null|Http
 	 */
-	private $http = null;
+	private $httpObj = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Http $http
+	 * @param Http $httpObj
 	 */
 	public function __construct(
-		Http &$http
+		Http &$httpObj
 	) {
-		$this->http = &$http;
+		$this->httpObj = &$httpObj;
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Route
 	{
 		if (
 			CommonFunction::isEnabled(
-				http: $this->http,
+				httpObj: $this->httpObj,
 				feature: 'customer_enabled_routes_request'
 			)
 		) {
@@ -111,7 +111,7 @@ class Route
 		$Env = __NAMESPACE__ . '\Env';
 
 		$httpRouteArr = [];
-		if ($this->http->req->isPublicRequest) {
+		if ($this->httpObj->requestObj->isPublicRequest) {
 			$userRoutesFolder = Constant::$WWW . $this->routesFolder
 				. DIRECTORY_SEPARATOR . 'Public';
 		} else {
@@ -119,7 +119,7 @@ class Route
 				. DIRECTORY_SEPARATOR . 'Private'
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . $this->http->req->s['groupData']['customer_user_group_name'];
+				. DIRECTORY_SEPARATOR . $this->httpObj->requestObj->session['groupData']['customer_user_group_name'];
 		}
 
 		foreach ($this->httpMethodArr as $method) {
@@ -147,7 +147,7 @@ class Route
 				httpRouteArr: $httpRouteArr[$method]
 			);
 		}
-		$this->http->res->dataEncode->addKeyData(
+		$this->httpObj->responseObj->dataEncodeObj->addKeyData(
 			objectKey: 'Results',
 			data: $httpRouteArr
 		);

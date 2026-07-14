@@ -109,12 +109,12 @@ class Start
 
 				$data = $Microservices->returnResults();
 				if (
-					$Microservices->http === null
-					|| $Microservices->http->res === null
+					$Microservices->httpObj === null
+					|| $Microservices->httpObj->responseObj === null
 				) {
 					$status = HttpStatus::$Ok;
 				} else {
-					$status = $Microservices->http->res->httpStatus;
+					$status = $Microservices->httpObj->responseObj->httpStatus;
 				}
 
 				return [$headerArr, $data, $status];
@@ -143,13 +143,13 @@ class Start
 				$logData = [
 					'LogType' => 'ERROR',
 					'DateTime' => $dateTime,
-					'httpReqData' => $Microservices->http->httpReqData,
+					'httpReqData' => $Microservices->httpObj->httpReqData,
 					'HttpCode' => $e->getCode(),
 					'HttpMessage' => $e->getMessage(),
 				];
 
 				$logObj = new Log(
-					http: $Microservices->http
+					httpObj: $Microservices->httpObj
 				);
 				$logId = $logObj->log(
 					logData: $logData
@@ -177,17 +177,17 @@ class Start
 				];
 			}
 
-			// $dataEncode = new DataEncode(
+			// $dataEncodeObj = new DataEncode(
 			// httpReqData: $httpReqData
 			// );
-			// $dataEncode->init();
-			// $dataEncode->startObject();
-			// $dataEncode->addKeyData(
+			// $dataEncodeObj->init();
+			// $dataEncodeObj->startObject();
+			// $dataEncodeObj->addKeyData(
 			// objectKey: 'Error',
 			// data: $arr
 			// );
 
-			// $data = $dataEncode->getData();
+			// $data = $dataEncodeObj->getData();
 
 			if (Env::$OUTPUT_PERFORMANCE_STATS) {
 				$performanceData = $Microservices->returnPerformance();
