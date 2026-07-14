@@ -415,28 +415,36 @@ class HttpRequest
 		);
 		$this->session['queryParamArr'] = &$this->httpObj->httpReqData['get'];
 
+		$this->payloadStream = fopen(
+			filename: "php://memory",
+			mode: "rw+b"
+		);
 		switch ($this->httpObj->httpReqData['server']['httpMethod']) {
+			case Constant::$GET:
+				$payloadJson = json_encode($this->httpObj->httpReqData['get']);
+				break;
+
 			case Constant::$QUERY:
 			case Constant::$POST:
 			case Constant::$PUT:
 			case Constant::$PATCH:
 			case Constant::$DELETE:
 				$payloadJson = $this->setPayloadStream();
-				rewind(
-					stream: $this->payloadStream
-				);
-
-				$this->dataDecodeObj = new DataDecode(
-					inputRepresentation: $this->inputRepresentation,
-					dataFileHandle: $this->payloadStream
-				);
-
-				$this->dataDecodeObj->init();
-				$this->dataDecodeObj->indexData();
-
-				$this->session['payloadType'] = $this->dataDecodeObj->dataType();
 				break;
 		}
+		rewind(
+			stream: $this->payloadStream
+		);
+
+		$this->dataDecodeObj = new DataDecode(
+			inputRepresentation: $this->inputRepresentation,
+			dataFileHandle: $this->payloadStream
+		);
+
+		$this->dataDecodeObj->init();
+		$this->dataDecodeObj->indexData();
+
+		$this->session['payloadType'] = $this->dataDecodeObj->dataType();
 
 		$this->requestId = $this->getRequestId(
 			customerId: $this->customerId,
@@ -515,11 +523,6 @@ class HttpRequest
 			default:
 				$payloadJson = $this->httpObj->httpReqData['post'];
 		}
-
-		$this->payloadStream = fopen(
-			filename: "php://memory",
-			mode: "rw+b"
-		);
 		fwrite(
 			stream: $this->payloadStream,
 			data: $payloadJson

@@ -111,7 +111,7 @@ class Supplement
 	 */
 	public function process(): mixed
 	{
-		$return = $this->processWriteBasics(
+		$return = $this->writeBasics(
 			$sqlConfig,
 			$useHierarchy
 		);
@@ -264,7 +264,7 @@ class Supplement
 					);
 				}
 
-				$response = [];
+				$supplementResponse = [];
 				$this->supplementParent(
 					supplementParentSqlConfig: $supplementSqlConfig,
 					supplementParentPayloadKeyArr: $supplementCurrentPayloadKeyArr,
@@ -281,7 +281,7 @@ class Supplement
 					) {
 						$this->httpObj->requestObj->customerDbObj->commit();
 					}
-					$output['PayloadResponse'] = $response;
+					$output['PayloadResponse'] = $supplementResponse;
 
 					if ($idempotentWindow) {
 						$this->httpObj->requestObj->customerCacheObj->cacheSet(
@@ -292,7 +292,7 @@ class Supplement
 					}
 				} else { // Failure
 					$output['Status'] = $this->httpObj->responseObj->httpStatus;
-					$output['Error'] = $response;
+					$output['Error'] = $writeResponse;
 				}
 			} else {
 				$output = CommonFunction::jsonDecode(
@@ -452,20 +452,9 @@ class Supplement
 			}
 
 			// Load Payload
-			switch ($this->httpObj->httpReqData['server']['httpMethod']) {
-				case Constant::$GET:
-					$this->httpObj->requestObj->session['payload'] = $this->httpObj->httpReqData['get'];
-					break;
-				case Constant::$QUERY:
-				case Constant::$POST:
-				case Constant::$PUT:
-				case Constant::$PATCH:
-				case Constant::$DELETE:
-					$this->httpObj->requestObj->session['payload'] = $this->httpObj->requestObj->dataDecodeObj->get(
-						keyString: $supplementParentCurrentPayloadKey
-					);
-					break;
-			}
+			$this->httpObj->requestObj->session['payload'] = $this->httpObj->requestObj->dataDecodeObj->get(
+				keyString: $supplementParentCurrentPayloadKey
+			);
 
 			if (count(value: $supplementParentRequiredFieldArr)) {
 				$this->httpObj->requestObj->session['requiredFieldArr'] = $supplementParentRequiredFieldArr;
@@ -572,7 +561,7 @@ class Supplement
 			$record = $this->httpObj->requestObj->session['payload'];
 			$this->resetFetchData(
 				fetchFrom: 'sqlPayload',
-				moduleKeyArr: $supplementChildPayloadKeyArr,
+				payloadKeyArr: $supplementChildPayloadKeyArr,
 				record: $record
 			);
 		}

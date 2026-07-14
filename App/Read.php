@@ -56,11 +56,11 @@ class Read
 	public $dataEncodeObj = null;
 
 	/**
-	 * Fetch mode placeholder Function
+	 * Placeholder Mode
 	 *
 	 * @var null|string
 	 */
-	public $fetchModePlaceholderFunction = null;
+	public $placeholderMode = null;
 
 	/**
 	 * HTTP object
@@ -97,24 +97,24 @@ class Read
 	 */
 	public function process(): mixed
 	{
-		$return = $this->processReadBasics(
-			$readSqlConfig,
-			$readUseResultSet
+		$return = $this->readBasics(
+			$sqlConfig,
+			$useResultSet
 		);
 
 		if ($return !== false) {
 			return $return;
 		}
 
-		if (isset($readSqlConfig['__DOWNLOAD__'])) {
+		if (isset($sqlConfig['__DOWNLOAD__'])) {
 			return $this->download(
-				readSqlConfig: $readSqlConfig
+				readSqlConfig: $sqlConfig
 			);
 		}
 
 		// Check for cache
 		$toBeCached = $this->getToBeCached(
-			sqlConfig: $readSqlConfig
+			sqlConfig: $sqlConfig
 		);
 
 		if (
@@ -135,16 +135,17 @@ class Read
 		}
 
 		// Set Server mode to execute query on - Read / Write Server
-		$fetchFrom = $readSqlConfig['fetchFrom'] ?? 'Slave';
-		$this->fetchModePlaceholderFunction = 'customer_' . strtolower($fetchFrom) . '_db_server_query_placeholder';
+		$fetchFrom = $sqlConfig['fetchFrom'] ?? 'Slave';
+		$placeholderModeKey = 'customer_' . strtolower($fetchFrom) . '_db_server_query_placeholder';
+		$this->placeholderMode = getenv(name: $this->httpObj->requestObj->session['customerData'][$placeholderModeKey]);
 		$this->httpObj->requestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
 			customerData: $this->httpObj->requestObj->session['customerData'],
 			fetchFrom: $fetchFrom
 		);
 
 		$this->read(
-			readSqlConfig: $readSqlConfig,
-			readUseResultSet: $readUseResultSet
+			readSqlConfig: $sqlConfig,
+			readUseResultSet: $useResultSet
 		);
 
 		if (
@@ -157,7 +158,7 @@ class Read
 			$json = $this->dataEncodeObj->getData();
 			$this->httpObj->requestObj->customerQueryCacheObj->queryCacheSet(
 				customerId: $this->httpObj->requestObj->customerId,
-				queryCacheKey: $readSqlConfig['queryCacheKey'],
+				queryCacheKey: $sqlConfig['queryCacheKey'],
 				queryCacheValue: $json
 			);
 			$this->httpObj->responseObj->dataEncodeObj->appendData(
@@ -192,48 +193,31 @@ class Read
 			$this->httpObj->requestObj->session['requiredFieldArr'] = [];
 		}
 
+		$indexCount = $this->httpObj->requestObj->session['payloadType'] === 'Array'
+			? $this->httpObj->requestObj->dataDecodeObj->count() : 1;
+		
 		// Start Read operation
+		$readPayloadKeyArr = [];
 		for ($index = 0; $index < $indexCount; $index++) {
-			$readPayloadKeyArr = [];
+			$readCurrentPayloadKeyArr = $readPayloadKeyArr;
+
 			if ($index === 0) {
 				if ($this->httpObj->requestObj->session['payloadType'] === 'Array') {
-					$readPayloadKeyArr[] = "{$index}";
+					$readCurrentPayloadKeyArr[] = "{$index}";
 				} else {
-					$readPayloadKeyArr[] = '';
+					$readCurrentPayloadKeyArr[] = '';
 				}
 			} else {
-				$readPayloadKeyArr[] = "{$index}";
-			}
-
-			$arr = [];
-			$arr['Status'] = HttpStatus::$Ok;
-			if (
-				CommonFunction::isEnabled(
-					httpObj: $this->httpObj,
-					feature: 'customer_enabled_payload_in_response'
-				)
-			) {
-				$arr[Env::$payloadKeyInResponse] = $this->httpObj->requestObj->dataDecodeObj->getCompleteArray(
-					keyString: implode(
-						separator: ':',
-						array: $readPayloadKeyArr
-					)
-				);
+				$readCurrentPayloadKeyArr[] = "{$index}";
 			}
 
 			$this->readParent(
 				readParentSqlConfig: $readSqlConfig,
-				readParentPayloadKeyArr: $readPayloadKeyArr,
+				readParentPayloadKeyArr: $readCurrentPayloadKeyArr,
 				readParentRequiredFieldArr: $this->httpObj->requestObj->session['requiredFieldArrCollection'],
 				readParentUseResultSet: $readUseResultSet,
 				readParentIsFirstCall: true
 			);
-
-			if ($this->httpObj->responseObj->httpStatus === HttpStatus::$Ok) {
-				$arr['PayloadResponse'] = $response;
-			} else { // Failure
-				$arr['Error'] = $response;
-			}
 		}
 	}
 
@@ -241,8 +225,10 @@ class Read
 	 * Process Read Parent Config Function
 	 *
 	 * @param array $readParentSqlConfig    Sql config
-	 * @param bool  $readIsFirstCall  true to represent the first call in recursion
+	 * @param array $readParentPayloadKeyArr
+	 * @param array $readParentRequiredFieldArr
 	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
+	 * @param bool  $readIsFirstCall  true to represent the first call in recursion
 	 *
 	 * @return void
 	 */
@@ -286,23 +272,6 @@ class Read
 				return;
 			}
 
-			if (
-				$this->operateAsTransaction
-				&& !$this->httpObj->requestObj->customerDbObj->beganTransaction
-			) {
-				$currentResponse['Error'] = 'Transaction rolled back';
-				return;
-			}
-
-			if (
-				$isObject
-				|| $isObject === null
-			) {
-				$readParentCurrentResponse = &$readParentResponse;
-			} else {
-				$readParentResponse[$index] = [];
-				$readParentCurrentResponse = &$readParentResponse[$index];
-			}
 			$readParentCurrentPayloadKeyArr = $readParentPayloadKeyArr;
 
 			if (
@@ -355,17 +324,6 @@ class Read
 				$readParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
 			}
 
-			// Validation
-			if (
-				isset($readParentSqlConfig['__VALIDATE__'])
-				&& !$this->isValidPayload(
-					sqlConfig: $readParentSqlConfig,
-					response: $readParentCurrentResponse
-				)
-			) {
-				continue;
-			}
-
 			// Execute - Pre Hook
 			if (isset($readParentSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hookObj === null) {
@@ -389,6 +347,21 @@ class Read
 					} else {
 						$this->dataEncodeObj->startObject();
 					}
+			// $arr = [];
+			// $arr['Status'] = HttpStatus::$Ok;
+			// if (
+			// 	CommonFunction::isEnabled(
+			// 		httpObj: $this->httpObj,
+			// 		feature: 'customer_enabled_payload_in_response'
+			// 	)
+			// ) {
+			// 	$arr[Env::$payloadKeyInResponse] = $this->httpObj->requestObj->dataDecodeObj->getCompleteArray(
+			// 		keyString: implode(
+			// 			separator: ':',
+			// 			array: $readCurrentPayloadKeyArr
+			// 		)
+			// 	);
+			// }
 					$this->fetchSingleRecord(
 						readSqlConfig: $readParentSqlConfig,
 						readPayloadKeyArr: $readParentPayloadKeyArr,
@@ -404,15 +377,32 @@ class Read
 							$this->dataEncodeObj->startObject(
 								objectKey: 'Results'
 							);
+						} else {
+							$this->dataEncodeObj->startArray(
+								objectKey: 'Results'
+							);
+						}
+			// $arr = [];
+			// $arr['Status'] = HttpStatus::$Ok;
+			// if (
+			// 	CommonFunction::isEnabled(
+			// 		httpObj: $this->httpObj,
+			// 		feature: 'customer_enabled_payload_in_response'
+			// 	)
+			// ) {
+			// 	$arr[Env::$payloadKeyInResponse] = $this->httpObj->requestObj->dataDecodeObj->getCompleteArray(
+			// 		keyString: implode(
+			// 			separator: ':',
+			// 			array: $readCurrentPayloadKeyArr
+			// 		)
+			// 	);
+			// }
+						if (isset($readParentSqlConfig['countQuery'])) {
 							$this->fetchRecordCount(
 								readSqlConfig: $readParentSqlConfig
 							);
 							$this->dataEncodeObj->startArray(
 								objectKey: 'Data'
-							);
-						} else {
-							$this->dataEncodeObj->startArray(
-								objectKey: 'Results'
 							);
 						}
 					} else {
@@ -477,14 +467,14 @@ class Read
 	private function readChild(
 		&$readChildSqlConfig,
 		&$readChildPayloadKeyArr,
-		$dbFetchedRecord,
+		&$dbFetchedRecord,
 		$readChildUseResultSet
 	): void {
 		if ($readChildUseHierarchy) {
 			// $record = $this->httpObj->requestObj->session['payload'];
 			$this->resetFetchData(
 				fetchFrom: 'sqlPayload',
-				moduleKeyArr: $readChildPayloadKeyArr,
+				payloadKeyArr: $readChildPayloadKeyArr,
 				record: $dbFetchedRecord
 			);
 		}
@@ -515,9 +505,6 @@ class Read
 		foreach ($readChildSqlConfig['__SUB-QUERY__'] as $readModule => &$readChildModuleSqlConfig) {
 			$dataExist = false;
 
-			$readChildResponse[$readModule] = [];
-			$readChildModuleResponse = &$readChildResponse[$readModule];
-			
 			$readChildModulePayloadKeyArr = $readChildPayloadKeyArr;
 			array_push(
 				$readChildModulePayloadKeyArr,
@@ -576,10 +563,6 @@ class Read
 					$readChildModuleCurrentPayloadKeyArr,
 					$readModule
 				);
-
-				$readChildModuleCurrentResponse = &$readChildModuleResponse;
-				$readChildModuleCurrentResponse[$index] = [];
-				$readChildModuleCurrentResponse = &$readChildCurrentResponse[$index];
 
 				if (
 					$isObject
@@ -640,8 +623,8 @@ class Read
 		unset($readSqlConfig['__COUNT-SQL-COMMENT__']);
 		unset($readSqlConfig['countQuery']);
 
-		$this->httpObj->requestObj->session['queryParamArr']['page']  = $this->httpObj->httpReqData['get']['page'] ?? 1;
-		$this->httpObj->requestObj->session['queryParamArr']['perPage']  = $this->httpObj->httpReqData['get']['perPage'] ??
+		$this->httpObj->requestObj->session['queryParamArr']['page']  = $this->httpObj->requestObj->session['payload']['page'] ?? 1;
+		$this->httpObj->requestObj->session['queryParamArr']['perPage']  = $this->httpObj->requestObj->session['payload']['perPage'] ??
 			Env::$defaultPerPage;
 
 		if ($this->httpObj->requestObj->session['queryParamArr']['perPage'] > Env::$maxResultsPerPage) {
@@ -656,8 +639,7 @@ class Read
 			$this->httpObj->requestObj->session['queryParamArr']['perPage']
 		);
 
-		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
-		$function = "getSqlAndParam{$mode}Mode";
+		$function = "getSqlAndParam{$this->placeholderMode}Mode";
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig
 		);
@@ -720,8 +702,7 @@ class Read
 		$readUseResultSet,
 		$readIsFirstCall
 	): void {
-		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
-		$function = "getSqlAndParam{$mode}Mode";
+		$function = "getSqlAndParam{$this->placeholderMode}Mode";
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payloadKeyArr: $readPayloadKeyArr
@@ -780,10 +761,10 @@ class Read
 
 		if (isset($readSqlConfig['__SUB-QUERY__'])) {
 			$this->readChild(
-				readSqlConfig: $readSqlConfig,
-				readPayloadKeyArr: $readPayloadKeyArr,
+				readChildSqlConfig: $readSqlConfig,
+				readChildPayloadKeyArr: $readPayloadKeyArr,
 				dbFetchedRecord: $dbFetchedRecord,
-				readUseResultSet: $readUseResultSet
+				readChildUseResultSet: $readUseResultSet
 			);
 		}
 	}
@@ -805,8 +786,8 @@ class Read
 		$readUseResultSet,
 		$readIsFirstCall
 	): void {
-		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
-		$function = "getSqlAndParam{$mode}Mode";
+		$function = "getSqlAndParam{$this->placeholderMode}Mode";
+
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payloadKeyArr: $readPayloadKeyArr
@@ -867,13 +848,13 @@ class Read
 			$sql .= " LIMIT {$start}, {$offset}";
 		}
 
+		$pushPop = true;
 		$this->httpObj->requestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr,
 			pushPop: $pushPop
 		);
 
-		$pushPop = true;
 		$singleColumn = false;
 		for ($index = 0; $dbFetchedRecord = $this->httpObj->requestObj->customerDbObj->fetch(); $index++) {
 			if ($index === 0) {
@@ -904,10 +885,10 @@ class Read
 					);
 				}
 				$this->readChild(
-					readSqlConfig: $readSqlConfig,
-					readPayloadKeyArr: $readPayloadKeyArr,
+					readChildSqlConfig: $readSqlConfig,
+					readChildPayloadKeyArr: $readPayloadKeyArr,
 					dbFetchedRecord: $dbFetchedRecord,
-					readUseResultSet: $readUseResultSet
+					readChildUseResultSet: $readUseResultSet
 				);
 				$this->dataEncodeObj->endObject();
 			} else {
@@ -974,8 +955,7 @@ class Read
 			return [[], '', HttpStatus::$NotFound];
 		}
 
-		$mode = getenv(name: $this->httpObj->requestObj->session['customerData'][$this->fetchModePlaceholderFunction]);
-		$function = "getSqlAndParam{$mode}Mode";
+		$function = "getSqlAndParam{$this->placeholderMode}Mode";
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig
 		);

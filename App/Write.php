@@ -99,10 +99,11 @@ class Write
 	public function process(): mixed
 	{
 		$return = $this->writeBasics(
-			$sqlConfig,
-			$useHierarchy
+			sqlConfig: $sqlConfig,
+			useHierarchy: $useHierarchy
 		);
 
+		
 		if ($return !== false) {
 			return $return;
 		}
@@ -206,10 +207,10 @@ class Write
 			}
 		}
 
-		// Perform action
 		$indexCount = $this->httpObj->requestObj->session['payloadType'] === 'Array'
 			? $this->httpObj->requestObj->dataDecodeObj->count() : 1;
 
+		// Start Write operation
 		$writePayloadKeyArr = [];
 		for ($index = 0; $index < $indexCount; $index++) {
 			$writeCurrentPayloadKeyArr = $writePayloadKeyArr;
@@ -240,7 +241,7 @@ class Write
 				if (
 					CommonFunction::isEnabled(
 						httpObj: $this->httpObj,
-						feature: 'customer_enabled_payload_incurrentResponse'
+						feature: 'customer_enabled_payload_in_response'
 					)
 				) {
 					$output[Env::$payloadKeyInResponse] = $this->httpObj->requestObj->dataDecodeObj->getCompleteArray(
@@ -251,7 +252,7 @@ class Write
 					);
 				}
 
-				$response = [];
+				$writeResponse = [];
 				$this->writeParent(
 					writeParentSqlConfig: $writeSqlConfig,
 					writeParentPayloadKeyArr: $writeCurrentPayloadKeyArr,
@@ -267,7 +268,7 @@ class Write
 					) {
 						$this->httpObj->requestObj->customerDbObj->commit();
 					}
-					$output['PayloadResponse'] = $response;
+					$output['PayloadResponse'] = $writeResponse;
 
 					if ($idempotentWindow) {
 						$this->httpObj->requestObj->customerCacheObj->cacheSet(
@@ -278,7 +279,7 @@ class Write
 					}
 				} else { // Failure
 					$output['Status'] = $this->httpObj->responseObj->httpStatus;
-					$output['Error'] = $response;
+					$output['Error'] = $writeResponse;
 				}
 			} else {
 				$output = CommonFunction::jsonDecode(
@@ -734,7 +735,7 @@ class Write
 		if (
 			CommonFunction::isEnabled(
 				httpObj: $this->httpObj,
-				feature: 'customer_enabled_payload_incurrentResponse'
+				feature: 'customer_enabled_payload_in_response'
 			)
 		) {
 			$this->dataEncodeObj->addKeyData(

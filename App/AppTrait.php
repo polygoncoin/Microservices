@@ -238,14 +238,14 @@ trait AppTrait
 	/**
 	 * Generate SQL query and its param's in Named format
 	 *
-	 * @param array      $sqlConfig    Sql config
-	 * @param array|null $configKeyArr Config key's
+	 * @param array      $sqlConfig     Sql config
+	 * @param array|null $payloadKeyArr Payload key's
 	 *
 	 * @return array
 	 */
 	private function getSqlAndParamNamedMode(
 		&$sqlConfig,
-		$configKeyArr = null
+		$payloadKeyArr = null
 	): array {
 		$id = null;
 		$sql = '';
@@ -384,7 +384,7 @@ trait AppTrait
 		if (!empty($record)) {
 			$this->resetFetchData(
 				fetchFrom: 'sqlParamArr',
-				moduleKeyArr: $configKeyArr,
+				payloadKeyArr: $payloadKeyArr,
 				record: $record
 			);
 		}
@@ -395,14 +395,14 @@ trait AppTrait
 	/**
 	 * Generate SQL query and its param's in Unnamed format
 	 *
-	 * @param array      $sqlConfig    Sql config
-	 * @param array|null $configKeyArr Config key's
+	 * @param array      $sqlConfig     Sql config
+	 * @param array|null $payloadKeyArr Payload key's
 	 *
 	 * @return array
 	 */
 	private function getSqlAndParamUnnamedMode(
 		&$sqlConfig,
-		$configKeyArr = null
+		$payloadKeyArr = null
 	): array {
 		$id = null;
 		$sql = '';
@@ -532,7 +532,7 @@ trait AppTrait
 		if (!empty($record)) {
 			$this->resetFetchData(
 				fetchFrom: 'sqlParamArr',
-				moduleKeyArr: $configKeyArr,
+				payloadKeyArr: $payloadKeyArr,
 				record: $record
 			);
 		}
@@ -858,28 +858,28 @@ trait AppTrait
 	 * Function to reset data for module key wise
 	 *
 	 * @param string $fetchFrom    sqlResults / sqlParamArr / sqlPayload
-	 * @param array  $moduleKeyArr Module key's in recursion
+	 * @param array  $payloadKeyArr Module key's in recursion
 	 * @param array  $record          Record data fetched from DB
 	 *
 	 * @return void
 	 */
 	private function resetFetchData(
 		$fetchFrom,
-		$moduleKeyArr,
+		$payloadKeyArr,
 		$record
 	): void {
 		if (
-			empty($moduleKeyArr)
+			empty($payloadKeyArr)
 			|| count(
-				value: $moduleKeyArr
+				value: $payloadKeyArr
 			) === 0
 		) {
 			$this->httpObj->requestObj->session[$fetchFrom] = [];
 			$this->httpObj->requestObj->session[$fetchFrom]['return'] = [];
 		}
 		$httpReq = &$this->httpObj->requestObj->session[$fetchFrom]['return'];
-		if (!empty($moduleKeyArr)) {
-			foreach ($moduleKeyArr as $moduleKey) {
+		if (!empty($payloadKeyArr)) {
+			foreach ($payloadKeyArr as $moduleKey) {
 				if (!isset($httpReq[$moduleKey])) {
 					$httpReq[$moduleKey] = [];
 				}
@@ -1491,12 +1491,12 @@ trait AppTrait
 	 *
 	 * @return array
 	 */
-	private function processReadBasics(
+	private function readBasics(
 		&$sqlConfig,
 		&$useResultSet
 	) {
 		// Load Sql
-		$sqlConfig = &$this->httpObj->requestObj->routeParserObj->sqlConfig;
+		$sqlConfig = $this->httpObj->requestObj->routeParserObj->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
 		$this->rateLimitRoute(
@@ -1527,22 +1527,24 @@ trait AppTrait
 				useResultSet: $useResultSet
 			);
 		}
+
+		return false;
 	}
 
 	/**
-	 * Basic Write Processes for process Function (Supplement is considered Write)
+	 * Basic Write Processes for process Function (Supplement is considered as Write)
 	 *
 	 * @param array $sqlConfig    Sql config
 	 * @param bool  $useHierarchy If true - Uses parent payload/results in child
 	 * 
-	 * @return mixed
+	 * @return bool
 	 */
-	private function processWriteBasics(
+	private function writeBasics(
 		&$sqlConfig,
 		&$useHierarchy
-	): mixed {
+	): bool {
 		// Load Sql
-		$sqlConfig = &$this->httpObj->requestObj->routeParserObj->sqlConfig;
+		$sqlConfig = $this->httpObj->requestObj->routeParserObj->sqlConfig;
 
 		// Lag response
 		$this->lagResponse(
