@@ -3,7 +3,7 @@
 /**
  * HTTP response
  * php version 8.3
- *
+ * 
  * @category  HTTP response
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -23,7 +23,7 @@ use Microservices\App\HttpStatus;
 /**
  * HTTP response
  * php version 8.3
- *
+ * 
  * @category  HTTP response
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -36,56 +36,56 @@ class HttpResponse
 {
 	/**
 	 * Output Representation
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $outputRepresentation = null;
 
 	/**
 	 * Directory for HTML output format
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $HTML_DIR = null;
 
 	/**
 	 * Directory for PHP output format
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $PHP_DIR = null;
 
 	/**
 	 * Directory for XML output format
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $XSLT_DIR = null;
 
 	/**
 	 * HTTP Status
-	 *
+	 * 
 	 * @var int
 	 */
 	public $httpStatus;
 
 	/**
 	 * Data Encode object
-	 *
+	 * 
 	 * @var null|DataEncode
 	 */
 	public $dataEncodeObj = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -101,7 +101,7 @@ class HttpResponse
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool

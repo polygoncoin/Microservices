@@ -3,7 +3,7 @@
 /**
  * Web
  * php version 8.3
- *
+ * 
  * @category  Web
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -21,7 +21,7 @@ use Microservices\App\Constant;
 /**
  * Web class
  * php version 8.3
- *
+ * 
  * @category  Web
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -34,14 +34,14 @@ class Web
 {
 	/**
 	 * Return cURL Config
-	 *
+	 * 
 	 * @param string $homeURL     Site URL
 	 * @param string $method      HTTP method
 	 * @param string $route       Route
 	 * @param string $queryString Query String
 	 * @param array  $header      Header
 	 * @param string $payload     Payload
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function getCurlConfig(
@@ -89,14 +89,14 @@ class Web
 
 	/**
 	 * Trigger cURL
-	 *
+	 * 
 	 * @param string $homeURL Site URL
 	 * @param string $method  HTTP method
 	 * @param string $route   Route
 	 * @param array  $header  Header
 	 * @param string $payload Payload
 	 * @param string $fileLocation    File path
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public static function trigger(
@@ -199,7 +199,7 @@ class Web
 				haystack: $payload,
 				needle: '<'
 			);
-	
+
 			if ($isArray || $isObject) {
 				$requestPayload = CommonFunction::jsonDecode(
 					value: $payload
@@ -313,9 +313,9 @@ class Web
 
 	/**
 	 * Generates raw header into array
-	 *
+	 * 
 	 * @param string $rawHeaderArr Raw header from cURL response
-	 *
+	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -390,11 +390,11 @@ class Web
 
 	/**
 	 * Generates XML Payload
-	 *
+	 * 
 	 * @param array $xmlParamArr     Xml param's
 	 * @param array $payload         Payload
 	 * @param bool  $rowTagStartFlag Flag
-	 *
+	 * 
 	 * @return array
 	 * @throws \Exception
 	 */

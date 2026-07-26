@@ -3,7 +3,7 @@
 /**
  * CronAPI
  * php version 8.3
- *
+ * 
  * @category  CronAPI_Trait
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices\www\Supplement\Cron;
 /**
  * CronAPI Trait
  * php version 8.3
- *
+ * 
  * @category  CronAPI_Trait
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>

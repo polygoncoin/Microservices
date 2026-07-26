@@ -3,7 +3,7 @@
 /**
  * ThirdPartyAPI
  * php version 8.3
- *
+ * 
  * @category  ThirdPartyAPI_Interface
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -24,7 +24,7 @@ use Microservices\www\Supplement\ThirdParty\ThirdPartyTrait;
 /**
  * ThirdPartyAPI Example
  * php version 8.3
- *
+ * 
  * @category  ThirdPartyAPI_Example
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -40,14 +40,14 @@ class Google implements ThirdPartyInterface
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -58,7 +58,7 @@ class Google implements ThirdPartyInterface
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -68,7 +68,7 @@ class Google implements ThirdPartyInterface
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
@@ -115,9 +115,9 @@ class Google implements ThirdPartyInterface
 
 	/**
 	 * Function to end process which outputs the results
-	 *
+	 * 
 	 * @param string $output Output
-	 *
+	 * 
 	 * @return void
 	 */
 	private function endProcess(

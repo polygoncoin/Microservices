@@ -3,7 +3,7 @@
 /**
  * Session Index
  * php version 8.3
- *
+ * 
  * @category  Start
  * @package   Openswoole-Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -197,9 +197,9 @@ $server->start();
 
 /**
  * Unique HTTP request hash
- *
+ * 
  * @param array $hashArray Hash array
- *
+ * 
  * @return string
  */
 function httpRequestHash(

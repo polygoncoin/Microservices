@@ -3,7 +3,7 @@
 /**
  * Initiating API
  * php version 8.3
- *
+ * 
  * @category  API
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -26,7 +26,7 @@ use Microservices\App\Supplement;
 /**
  * Class to initialize api HTTP request
  * php version 8.3
- *
+ * 
  * @category  API
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -39,21 +39,21 @@ class Api
 {
 	/**
 	 * Hook object
-	 *
+	 * 
 	 * @var null|Hook
 	 */
 	private $hookObj = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -64,7 +64,7 @@ class Api
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -74,7 +74,7 @@ class Api
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
@@ -315,7 +315,7 @@ class Api
 					) {
 						continue;
 					}
-					
+
 					$indexCount = count(
 						value: $postRouteHookConfig
 					);
@@ -364,9 +364,9 @@ class Api
 
 	/**
 	 * Process before collecting Payload
-	 *
+	 * 
 	 * @param string $supplementMode
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function checkSupplement(
@@ -380,7 +380,7 @@ class Api
 
 	/**
 	 * Execute once done with api process function
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function processAfterPayload(): bool

@@ -3,7 +3,7 @@
 /**
  * Hook
  * php version 8.3
- *
+ * 
  * @category  Hook
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices\www\Hook;
 /**
  * Hook Interface
  * php version 8.3
- *
+ * 
  * @category  Hook_Interface
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -31,14 +31,14 @@ interface HookInterface
 {
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool;
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed;

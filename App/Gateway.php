@@ -3,7 +3,7 @@
 /**
  * Gateway
  * php version 8.3
- *
+ * 
  * @category  Gateway
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -22,7 +22,7 @@ use Microservices\App\Http;
 /**
  * Gateway - contains checks like IP and Rate Limiting functions
  * php version 8.3
- *
+ * 
  * @category  Gateway
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -35,14 +35,14 @@ class Gateway
 {
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -53,7 +53,7 @@ class Gateway
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -72,7 +72,7 @@ class Gateway
 
 	/**
 	 * Rate Limit request
-	 *
+	 * 
 	 * @return void
 	 */
 	private function rateLimitRequest(): void
@@ -97,7 +97,7 @@ class Gateway
 
 	/**
 	 * Rate Limit Customer
-	 *
+	 * 
 	 * @return void
 	 */
 	private function rateLimitCustomer(): void
@@ -130,7 +130,7 @@ class Gateway
 
 	/**
 	 * Rate Limit Customer Group
-	 *
+	 * 
 	 * @return void
 	 */
 	private function rateLimitGroup(): void
@@ -165,7 +165,7 @@ class Gateway
 
 	/**
 	 * Rate Limit Customer Group User
-	 *
+	 * 
 	 * @return void
 	 */
 	private function rateLimitUser(): void
@@ -199,7 +199,7 @@ class Gateway
 
 	/**
 	 * Rate Limit Customer Group User request Delay
-	 *
+	 * 
 	 * @return void
 	 */
 	private function rateLimitUserRequest(): void
@@ -231,7 +231,7 @@ class Gateway
 
 	/**
 	 * Rate Limit request from source IP
-	 *
+	 * 
 	 * @return void
 	 */
 	private function rateLimitIp(): void

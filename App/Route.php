@@ -3,7 +3,7 @@
 /**
  * Route - Available routeArr
  * php version 8.3
- *
+ * 
  * @category  Route
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -24,7 +24,7 @@ use Microservices\App\HttpStatus;
 /**
  * Route - Available routeArr
  * php version 8.3
- *
+ * 
  * @category  Route
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -37,7 +37,7 @@ class Route
 {
 	/**
 	 * Supported HTTP methods of routeArr
-	 *
+	 * 
 	 * @var array
 	 */
 	private $httpMethodArr = [
@@ -50,7 +50,7 @@ class Route
 
 	/**
 	 * Route folder
-	 *
+	 * 
 	 * @var string
 	 */
 	private $routesFolder = DIRECTORY_SEPARATOR . 'Config'
@@ -58,21 +58,21 @@ class Route
 
 	/**
 	 * Route config ignore key's
-	 *
+	 * 
 	 * @var array
 	 */
 	private $reservedKeyArr = ['dataType'];
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -83,7 +83,7 @@ class Route
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -102,14 +102,11 @@ class Route
 
 	/**
 	 * Make allowed routeArr list of a logged-in user
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
 	{
-		$Constant = __NAMESPACE__ . '\Constant';
-		$Env = __NAMESPACE__ . '\Env';
-
 		$httpRouteArr = [];
 		if ($this->httpObj->httpRequestObj->isPublicRequest) {
 			$userRoutesFolder = Constant::$WWW . $this->routesFolder
@@ -139,6 +136,9 @@ class Route
 				);
 				continue;
 			}
+			$Constant = __NAMESPACE__ . '\Constant';
+			$Env = __NAMESPACE__ . '\Env';
+
 			$routeArr = include $routeFileLocation;
 			$route = '';
 			$this->getRoutes(
@@ -157,11 +157,11 @@ class Route
 
 	/**
 	 * Create Route list
-	 *
+	 * 
 	 * @param array  $routeArr     Route
 	 * @param string $route        Current Route
 	 * @param array  $httpRouteArr All HTTP Route
-	 *
+	 * 
 	 * @return void
 	 */
 	private function getRoutes(

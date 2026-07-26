@@ -3,7 +3,7 @@
 /**
  * Custom Session Handler
  * php version 7
- *
+ * 
  * @category  SessionHandler
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -22,7 +22,7 @@ use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 /**
  * Custom Session Handler Config
  * php version 7
- *
+ * 
  * @category  CustomSessionHandler_Config
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -35,7 +35,7 @@ class Session
 {
 	/**
 	 * Domain Name
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sessionDomain = null;
@@ -43,11 +43,11 @@ class Session
 	/**
 	 * SET THESE TO ENABLE ENCRYPTION
 	 * ENCRYPTION PASS PHRASE
-	 *
+	 * 
 	 * Value = base64_encode(openssl_random_pseudo_bytes(32))
 	 * Example: public $ENCRYPTION_PASS_PHRASE =
 	 * 'H7OO2m3qe9pHyAHFiERlYJKnlTMtCJs9ZbGphX9NO/c=';
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $ENCRYPTION_PASS_PHRASE = null;
@@ -55,31 +55,31 @@ class Session
 	/**
 	 * SET THESE TO ENABLE ENCRYPTION
 	 * ENCRYPTION IV
-	 *
+	 * 
 	 * Value = base64_encode(openssl_random_pseudo_bytes(16))
 	 * Example: public $ENCRYPTION_IV = 'HnPG5az9Xaxam9G9tMuRaw==';
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $ENCRYPTION_IV = null;
 
 	/**
 	 * Session id Cookie name
-	 *
+	 * 
 	 * @var string
 	 */
 	public $sessionName = 'PHPSESSID'; // Default
 
 	/**
 	 * Session Data Cookie name; For cookie as container
-	 *
+	 * 
 	 * @var string
 	 */
 	public $sessionDataName = 'PHPSESSDATA';
 
 	/**
 	 * Session Life
-	 *
+	 * 
 	 * @var integer
 	 */
 	public $sessionMaxLifetime = null;
@@ -87,42 +87,42 @@ class Session
 	/**
 	 * File Session optionArr
 	 * Example: public $sessionSavePath = '/tmp';
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sessionSavePath = null;
 
 	/**
 	 * Session mode
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sessionMode = null;
 
 	/**
 	 * Customer Data
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $customerData = null;
 
 	/**
 	 * Session Start function argument
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $optionArr = null;
 
 	/**
 	 * Session handler Container
-	 *
+	 * 
 	 * @var null|SessionContainerInterface
 	 */
 	public $sessionContainer = null;
 
 	/**
 	 * Session initProcess function initialized
-	 *
+	 * 
 	 * @var bool
 	 */
 	public $initProcessInitialized = false;
@@ -137,7 +137,7 @@ class Session
 
 	/**
 	 * Initialize container
-	 *
+	 * 
 	 * @return void
 	 */
 	private function initContainer(): void
@@ -217,7 +217,7 @@ class Session
 
 	/**
 	 * Initialize session_set_save_handler process
-	 *
+	 * 
 	 * @return void
 	 */
 	private function initProcess(): void
@@ -248,9 +248,9 @@ class Session
 
 	/**
 	 * Generates session optionArr argument
-	 *
+	 * 
 	 * @param array $optionArr Options
-	 *
+	 * 
 	 * @return void
 	 */
 	private function setOptions(
@@ -308,10 +308,10 @@ class Session
 
 	/**
 	 * Initialize session handler
-	 *
+	 * 
 	 * @param array $customerData
 	 * @param array $options      Options
-	 *
+	 * 
 	 * @return void
 	 */
 	public function initSessionHandler(
@@ -355,7 +355,7 @@ class Session
 
 	/**
 	 * Close if Session is Active in write mode
-	 *
+	 * 
 	 * @return void
 	 */
 	public function sessionStartCheck(): void
@@ -372,7 +372,7 @@ class Session
 
 	/**
 	 * Start session in read only mode
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function sessionStartReadonly(): bool
@@ -394,7 +394,7 @@ class Session
 
 	/**
 	 * Start session in read/write mode
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function sessionStartReadWrite(): bool
@@ -412,9 +412,9 @@ class Session
 
 	/**
 	 * For Custom Session Handler - Destroy a session
-	 *
+	 * 
 	 * @param string $sessionId Session id
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function deleteSession(
@@ -427,9 +427,9 @@ class Session
 
 	/**
 	 * For Custom Session Handler - Destroy a session
-	 *
+	 * 
 	 * @param array $sessionIds Session IDs
-	 *
+	 * 
 	 * @return void
 	 */
 	public function deleteSessions(

@@ -3,7 +3,7 @@
 /**
  * Hook
  * php version 8.3
- *
+ * 
  * @category  Hook
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -23,7 +23,7 @@ use Microservices\www\Hook\HookInterface;
 /**
  * Executes configured hooks
  * php version 8.3
- *
+ * 
  * @category  Hook
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -36,21 +36,21 @@ class Hook
 {
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Hook object
-	 *
+	 * 
 	 * @var null|HookInterface
 	 */
 	private $hookObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -61,9 +61,9 @@ class Hook
 
 	/**
 	 * Trigger Hook
-	 *
+	 * 
 	 * @param array $hookArr Hook configuration
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function triggerHook(

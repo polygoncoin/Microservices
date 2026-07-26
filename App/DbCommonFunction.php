@@ -3,7 +3,7 @@
 /**
  * Database Common Function
  * php version 8.3
- *
+ * 
  * @category  Database Common Function
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -25,7 +25,7 @@ use Microservices\App\Server\QueryCacheServer;
 /**
  * Database Common Function
  * php version 8.3
- *
+ * 
  * @category  Database Common Function
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -39,7 +39,7 @@ class DbCommonFunction
 	/** Database Connection */
 	/**
 	 * Global
-	 *
+	 * 
 	 * @var null|DatabaseServer
 	 */
 	public static $gDbServer = null;
@@ -47,14 +47,14 @@ class DbCommonFunction
 	/** Cache Connection */
 	/**
 	 * Global
-	 *
+	 * 
 	 * @var null|CacheServer
 	 */
 	public static $globalCacheServerObj = null;
 
 	/**
 	 * Connect Cache
-	 *
+	 * 
 	 * @param string      $cacheServerType     Cache Server Type
 	 * @param string      $cacheServerHostname Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
@@ -62,7 +62,7 @@ class DbCommonFunction
 	 * @param string      $cacheServerPassword Cache Server Password
 	 * @param null|string $cacheServerDatabase Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
-	 *
+	 * 
 	 * @return CacheServer
 	 */
 	public static function connectCache(
@@ -89,7 +89,7 @@ class DbCommonFunction
 
 	/**
 	 * Connect global Cache
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function connectGlobalCache(): void
@@ -110,9 +110,9 @@ class DbCommonFunction
 
 	/**
 	 * Connect customer Cache based on $fetchFrom
-	 *
+	 * 
 	 * @param array $customerData Customer Data
-	 *
+	 * 
 	 * @return CacheServer
 	 * @throws \Exception
 	 */
@@ -135,9 +135,9 @@ class DbCommonFunction
 
 	/**
 	 * Connect query Cache
-	 *
+	 * 
 	 * @param string $fetchFrom Master/Slave
-	 *
+	 * 
 	 * @return QueryCacheServer
 	 */
 	public static function connectCustomerQueryCache(): QueryCacheServer
@@ -158,14 +158,14 @@ class DbCommonFunction
 
 	/**
 	 * Connect Database
-	 *
+	 * 
 	 * @param string      $dbServerType     Database Server Type
 	 * @param string      $dbServerHostname Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
 	 * @param string      $dbServerUsername Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
 	 * @param null|string $dbServerDatabase Database Server Database
-	 *
+	 * 
 	 * @return DatabaseServer
 	 */
 	public static function connectDb(
@@ -190,7 +190,7 @@ class DbCommonFunction
 
 	/**
 	 * Connect global Database
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function connectGlobalDb(): void
@@ -210,10 +210,10 @@ class DbCommonFunction
 
 	/**
 	 * Connect customer Database based on $fetchFrom
-	 *
+	 * 
 	 * @param array  $customerData Customer Data
 	 * @param string $fetchFrom Master/Slave
-	 *
+	 * 
 	 * @return DatabaseServer
 	 * @throws \Exception
 	 */
@@ -259,9 +259,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Cache Master Server detail
-	 *
+	 * 
 	 * @param array $customerData Customer Data
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function customerCacheServerCred(
@@ -280,9 +280,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Query Cache Server detail
-	 *
+	 * 
 	 * @param array $customerData Customer Data
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function customerQueryCacheServerCred(
@@ -301,9 +301,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Database Master Server detail
-	 *
+	 * 
 	 * @param array $customerData Customer Data
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function customerMasterDatabaseServerCred(
@@ -321,9 +321,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Database Slave Server detail
-	 *
+	 * 
 	 * @param array $customerData Customer Data
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function customerSlaveDatabaseServerCred(

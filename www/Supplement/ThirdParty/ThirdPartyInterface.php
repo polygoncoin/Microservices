@@ -3,7 +3,7 @@
 /**
  * ThirdPartyAPI
  * php version 8.3
- *
+ * 
  * @category  ThirdPartyAPI_Interface
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices\www\Supplement\ThirdParty;
 /**
  * ThirdPartyAPI Interface
  * php version 8.3
- *
+ * 
  * @category  ThirdPartyAPI_Interface
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -31,14 +31,14 @@ interface ThirdPartyInterface
 {
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool;
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed;

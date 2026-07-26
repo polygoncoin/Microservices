@@ -3,7 +3,7 @@
 /**
  * Hook
  * php version 8.3
- *
+ * 
  * @category  Hook
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -23,7 +23,7 @@ use Microservices\www\Hook\HookTrait;
 /**
  * Hook Example class
  * php version 8.3
- *
+ * 
  * @category  Hook_Example
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -38,14 +38,14 @@ class Hook_Example implements HookInterface
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -56,7 +56,7 @@ class Hook_Example implements HookInterface
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -66,7 +66,7 @@ class Hook_Example implements HookInterface
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
@@ -78,7 +78,7 @@ class Hook_Example implements HookInterface
 
 	/**
 	 * Exec Hook
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */

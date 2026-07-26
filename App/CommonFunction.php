@@ -3,7 +3,7 @@
 /**
  * Common Function File
  * php version 8.3
- *
+ * 
  * @category  Common Function
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -25,7 +25,7 @@ use Microservices\App\Server\CacheServer\CacheServerInterface;
 /**
  * Common Function File
  * php version 8.3
- *
+ * 
  * @category  Common Function
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -38,10 +38,10 @@ class CommonFunction
 {
 	/**
 	 * Check Feature is Enabled (Yes/No)
-	 *
+	 * 
 	 * @param Http   $httpObj
 	 * @param string $feature
-	 *
+	 * 
 	 * @return bool
 	 */
 	public static function isEnabled(
@@ -63,9 +63,9 @@ class CommonFunction
 
 	/**
 	 * Check Errors related to File Upload
-	 *
+	 * 
 	 * @param array $httpFileArr $httpReqData['files']
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -141,9 +141,9 @@ class CommonFunction
 
 	/**
 	 * Returns start and end IP number for a given CIDR
-	 *
+	 * 
 	 * @param string $cidrString IP address range in CIDR notation for check
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function cidrStringIpNumberRange(
@@ -235,11 +235,11 @@ class CommonFunction
 
 	/**
 	 * Check IP with CIDR based on cache key containing start and end IP number
-	 *
+	 * 
 	 * @param CacheServerInterface $cacheObj     Cache Server object
 	 * @param string               $ip           Request Ip
 	 * @param string               $cidrCacheKey Cache Key(s)
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -273,10 +273,10 @@ class CommonFunction
 
 	/**
 	 * Check IP with CIDR
-	 *
+	 * 
 	 * @param string $ip         Request Ip
 	 * @param string $cidrString CIDRs
-	 *
+	 * 
 	 * @return null|bool
 	 * @throws \Exception
 	 */
@@ -310,10 +310,10 @@ class CommonFunction
 
 	/**
 	 * Belongs to Cidr IP number range
-	 *
+	 * 
 	 * @param string $ip                   IP
 	 * @param array  $cidrIpNumberRangeArr Cidr IP number ranges
-	 *
+	 * 
 	 * @return bool
 	 */
 	public static function belongsToCidrIpNumberRange(
@@ -354,9 +354,9 @@ class CommonFunction
 
 	/**
 	 * Validate remote IP
-	 *
+	 * 
 	 * @param Http $httpObj
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function checkPrivateRequestCidr(
@@ -402,9 +402,9 @@ class CommonFunction
 
 	/**
 	 * JSON Decode
-	 *
+	 * 
 	 * @param mixed $value
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public static function jsonDecode(

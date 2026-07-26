@@ -3,7 +3,7 @@
 /**
  * Read APIs
  * php version 8.3
- *
+ * 
  * @category  ReadAPI
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -29,7 +29,7 @@ use Microservices\App\HttpStatus;
 /**
  * Read APIs
  * php version 8.3
- *
+ * 
  * @category  ReadAPIs
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -44,35 +44,35 @@ class Read
 
 	/**
 	 * Hook object
-	 *
+	 * 
 	 * @var null|Hook
 	 */
 	private $hookObj = null;
 
 	/**
 	 * Data Encode object
-	 *
+	 * 
 	 * @var null|DataEncode
 	 */
 	public $dataEncodeObj = null;
 
 	/**
 	 * Placeholder Mode
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $placeholderMode = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -83,7 +83,7 @@ class Read
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -93,7 +93,7 @@ class Read
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
@@ -172,10 +172,10 @@ class Read
 
 	/**
 	 * Perform read operation
-	 *
+	 * 
 	 * @param array $readSqlConfig    Sql config
 	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return void
 	 */
 	private function read(
@@ -196,7 +196,7 @@ class Read
 
 		$indexCount = $this->httpObj->httpRequestObj->session['payloadType'] === 'Array'
 			? $this->httpObj->httpRequestObj->dataDecodeObj->count() : 1;
-		
+
 		// Start Read operation
 		$readPayloadKeyArr = [];
 		for ($index = 0; $index < $indexCount; $index++) {
@@ -224,13 +224,13 @@ class Read
 
 	/**
 	 * Process Read Parent Config Function
-	 *
+	 * 
 	 * @param array $readParentSqlConfig    Sql config
 	 * @param array $readParentPayloadKeyArr
 	 * @param array $readParentRequiredFieldArr
 	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
 	 * @param bool  $readIsFirstCall  true to represent the first call in recursion
-	 *
+	 * 
 	 * @return void
 	 */
 	private function readParent(
@@ -457,12 +457,12 @@ class Read
 
 	/**
 	 * Process Read Child Config Function
-	 *
+	 * 
 	 * @param array $readSqlConfig    Sql config
 	 * @param array $readPayloadKeyArr
 	 * @param array $dbFetchedRecord          Record data fetched from DB
 	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return void
 	 */
 	private function readChild(
@@ -605,9 +605,9 @@ class Read
 
 	/**
 	 * Fetch dbFetchedRecord count
-	 *
+	 * 
 	 * @param array $readSqlConfig Sql config
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -636,7 +636,7 @@ class Read
 		}
 
 		$this->httpObj->httpRequestObj->session['queryParamArr']['start'] = (
-			($this->httpObj->httpRequestObj->session['queryParamArr']['page'] - 1) *
+			($this->httpObj->httpRequestObj->session['queryParamArr']['page'] - 1) * 
 			$this->httpObj->httpRequestObj->session['queryParamArr']['perPage']
 		);
 
@@ -688,12 +688,12 @@ class Read
 
 	/**
 	 * Fetch single record
-	 *
+	 * 
 	 * @param array $readSqlConfig     Sql config
 	 * @param array $readPayloadKeyArr
 	 * @param bool  $readUseResultSet  If true - Uses parent payload/results in child
 	 * @param bool  $readIsFirstCall   true to represent the first call in recursion
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -772,12 +772,12 @@ class Read
 
 	/**
 	 * Fetch multiple record
-	 *
+	 * 
 	 * @param array $readSqlConfig    Sql config
 	 * @param array $readPayloadKeyArr
 	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
 	 * @param bool  $readIsFirstCall  true to represent first call in recursion
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -905,9 +905,9 @@ class Read
 
 	/**
 	 * Download data
-	 *
+	 * 
 	 * @param array $readSqlConfig Sql config
-	 *
+	 * 
 	 * @return array
 	 */
 	private function download(

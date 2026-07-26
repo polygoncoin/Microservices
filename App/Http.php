@@ -3,7 +3,7 @@
 /**
  * HTTP Class
  * php version 8.3
- *
+ * 
  * @category  Http
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -22,7 +22,7 @@ use Microservices\App\HttpResponse;
 /**
  * HTTP Class
  * php version 8.3
- *
+ * 
  * @category  Http
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -35,28 +35,28 @@ class Http
 {
 	/**
 	 * Microservices HTTP request
-	 *
+	 * 
 	 * @var null|HttpRequest
 	 */
 	public $httpRequestObj = null;
 
 	/**
 	 * Microservices HTTP response
-	 *
+	 * 
 	 * @var null|HttpResponse
 	 */
 	public $httpResponseObj = null;
 
 	/**
 	 * HTTP request data
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $httpReqData = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param array $httpReqData
 	 */
 	public function __construct(
@@ -67,7 +67,7 @@ class Http
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -100,7 +100,7 @@ class Http
 
 	/**
 	 * Initialize request
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function initRequest(): void
@@ -110,7 +110,7 @@ class Http
 
 	/**
 	 * Initialize response
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function initResponse(): void

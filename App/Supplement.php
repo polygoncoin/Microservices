@@ -3,7 +3,7 @@
 /**
  * Supplement APIs
  * php version 8.3
- *
+ * 
  * @category  Supplement
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -29,7 +29,7 @@ use Microservices\App\Web;
 /**
  * Supplement APIs
  * php version 8.3
- *
+ * 
  * @category  Supplement
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -44,42 +44,42 @@ class Supplement
 
 	/**
 	 * Hook object
-	 *
+	 * 
 	 * @var null|Hook
 	 */
 	private $hookObj = null;
 
 	/**
 	 * Operate DML As Transactions
-	 *
+	 * 
 	 * @var null|bool
 	 */
 	private $operateAsTransaction = null;
 
 	/**
 	 * Data Encode object
-	 *
+	 * 
 	 * @var null|DataEncode
 	 */
 	public $dataEncodeObj = null;
 
 	/**
 	 * Supplement Class object
-	 *
+	 * 
 	 * @var null|object
 	 */
 	public $supplementObj = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -91,9 +91,9 @@ class Supplement
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @param string $supplementClass Supplement class
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(
@@ -107,7 +107,7 @@ class Supplement
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
@@ -157,10 +157,10 @@ class Supplement
 
 	/**
 	 * Process Function to insert/update
-	 *
+	 * 
 	 * @param array $supplementSqlConfig    Sql config
 	 * @param bool  $supplementUseHierarchy If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -351,14 +351,14 @@ class Supplement
 
 	/**
 	 * Supplement Parent Function
-	 *
+	 * 
 	 * @param array  $supplementParentSqlConfig        Sql config
 	 * @param array  $supplementParentPayloadKeyArr       Payload Indexes
 	 * @param array  $supplementParentRequiredFieldArr Required fields
 	 * @param array  $supplementParentResponse         Response by reference
 	 * @param string $supplementParentModule           Parent Module
 	 * @param bool   $supplementParentUseHierarchy     If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -502,7 +502,7 @@ class Supplement
 				$supplementParentCurrentResponse['Error'] = 'Something went wrong';
 				return;
 			} else {
-				
+
 			}
 
 			// Triggers
@@ -542,13 +542,13 @@ class Supplement
 
 	/**
 	 * Write Child Function
-	 *
+	 * 
 	 * @param array $supplementChildSqlConfig        Sql config
 	 * @param array $supplementChildPayloadKeyArr       Payload Indexes
 	 * @param array $supplementChildRequiredFieldArr Required fields
 	 * @param array $supplementChildResponse         Response by reference
 	 * @param bool  $supplementChildUseHierarchy     If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return void
 	 */
 	private function supplementChild(
@@ -700,10 +700,10 @@ class Supplement
 
 	/**
 	 * Checks if the payload is valid
-	 *
+	 * 
 	 * @param array $sqlConfig  Sql config
 	 * @param array $response   Response by reference
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function isValidPayload(

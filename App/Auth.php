@@ -3,7 +3,7 @@
 /**
  * Middleware
  * php version 8.3
- *
+ * 
  * @category  Middleware
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -24,7 +24,7 @@ use Microservices\App\HttpStatus;
 /**
  * Class handling detail for Auth middleware
  * php version 8.3
- *
+ * 
  * @category  Auth_Middleware
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -37,14 +37,14 @@ class Auth
 {
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -55,7 +55,7 @@ class Auth
 
 	/**
 	 * Load User Data
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -131,7 +131,7 @@ class Auth
 
 	/**
 	 * Load Group Data
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */

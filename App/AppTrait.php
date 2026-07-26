@@ -3,7 +3,7 @@
 /**
  * Read / Write Trait
  * php version 8.3
- *
+ * 
  * @category  API
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -28,7 +28,7 @@ use Microservices\App\Validator;
 /**
  * Trait for API
  * php version 8.3
- *
+ * 
  * @category  API_Trait
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -41,16 +41,16 @@ trait AppTrait
 {
 	/**
 	 * Validator class object
-	 *
+	 * 
 	 * @var null|Validator
 	 */
 	public $validatorObj = null;
 
 	/**
 	 * Function to help execute PHP functions enclosed with double quotes
-	 *
+	 * 
 	 * @param mixed $param Returned values by PHP inbuilt functions
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function execPhpFunc(
@@ -61,11 +61,11 @@ trait AppTrait
 
 	/**
 	 * Get required payload
-	 *
+	 * 
 	 * @param array $sqlConfig   Sql config
 	 * @param bool  $flag        useHierarchy / useResultSet flag
 	 * @param bool  $isFirstCall true to represent the first call in recursion
-	 *
+	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -217,9 +217,9 @@ trait AppTrait
 
 	/**
 	 * Validate payload
-	 *
+	 * 
 	 * @param array $validationConfig Validation config from Config file
-	 *
+	 * 
 	 * @return array
 	 */
 	public function validate(&$validationConfig): array
@@ -237,10 +237,10 @@ trait AppTrait
 
 	/**
 	 * Generate SQL query and its param's in Named format
-	 *
+	 * 
 	 * @param array      $sqlConfig     Sql config
 	 * @param array|null $payloadKeyArr Payload key's
-	 *
+	 * 
 	 * @return array
 	 */
 	private function getSqlAndParamNamedMode(
@@ -394,10 +394,10 @@ trait AppTrait
 
 	/**
 	 * Generate SQL query and its param's in Unnamed format
-	 *
+	 * 
 	 * @param array      $sqlConfig     Sql config
 	 * @param array|null $payloadKeyArr Payload key's
-	 *
+	 * 
 	 * @return array
 	 */
 	private function getSqlAndParamUnnamedMode(
@@ -542,10 +542,10 @@ trait AppTrait
 
 	/**
 	 * Generates ParamArr for statement to execute
-	 *
+	 * 
 	 * @param array $sqlConfig          Sql config
 	 * @param array $payloadVariableArr Payload Variables
-	 *
+	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -666,9 +666,9 @@ trait AppTrait
 
 	/**
 	 * Function to find array is associative/simple array
-	 *
+	 * 
 	 * @param array $arr Array to search for associative/simple array
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function isObject($arr): bool
@@ -688,10 +688,10 @@ trait AppTrait
 
 	/**
 	 * Use results in where clause of sub queries recursively
-	 *
+	 * 
 	 * @param array  $sqlConfig Sql config
 	 * @param string $keyword   useHierarchy/useResultSet
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function getUseHierarchy(
@@ -721,11 +721,11 @@ trait AppTrait
 
 	/**
 	 * Return explain params recursively
-	 *
+	 * 
 	 * @param array $sqlConfig   Sql config
 	 * @param bool  $flag        useHierarchy/useResultSet flag
 	 * @param bool  $isFirstCall Flag to check if this is first request
-	 *
+	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -856,11 +856,11 @@ trait AppTrait
 
 	/**
 	 * Function to reset data for module key wise
-	 *
+	 * 
 	 * @param string $fetchFrom    sqlResults / sqlParamArr / sqlPayload
 	 * @param array  $payloadKeyArr Module key's in recursion
 	 * @param array  $record          Record data fetched from DB
-	 *
+	 * 
 	 * @return void
 	 */
 	private function resetFetchData(
@@ -891,9 +891,9 @@ trait AppTrait
 
 	/**
 	 * Rate Limiting request on basis of Sql config
-	 *
+	 * 
 	 * @param array $sqlConfig Sql config
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -941,9 +941,9 @@ trait AppTrait
 
 	/**
 	 * Check Referrer Lag
-	 *
+	 * 
 	 * @param array $sqlConfig Sql config
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -1042,10 +1042,10 @@ trait AppTrait
 
 	/**
 	 * Check for Idempotent Window
-	 *
+	 * 
 	 * @param array $sqlConfig       Sql config
 	 * @param array $payloadArr Payload Indexes
-	 *
+	 * 
 	 * @return array
 	 */
 	private function checkIdempotent(
@@ -1115,9 +1115,9 @@ trait AppTrait
 
 	/**
 	 * Lag response
-	 *
+	 * 
 	 * @param array $sqlConfig Sql config
-	 *
+	 * 
 	 * @return void
 	 */
 	private function lagResponse($sqlConfig): void
@@ -1190,9 +1190,9 @@ trait AppTrait
 
 	/**
 	 * Get Trigger data
-	 *
+	 * 
 	 * @param array $triggerConfig Trigger Config
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function getTriggerData($triggerConfig): mixed
@@ -1247,9 +1247,9 @@ trait AppTrait
 
 	/**
 	 * Get Trigger detail
-	 *
+	 * 
 	 * @param array $triggerConfig Trigger Config
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function getTriggerHttp($triggerConfig)
@@ -1305,10 +1305,10 @@ trait AppTrait
 
 	/**
 	 * Get Trigger param's
-	 *
+	 * 
 	 * @param array $payloadConfig      API Payload configuration
 	 * @param array $payloadVariableArr Payload Variables
-	 *
+	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
@@ -1385,10 +1385,10 @@ trait AppTrait
 
 	/**
 	 * Process import function of configuration
-	 *
+	 * 
 	 * @param array $sqlConfig    Sql config
 	 * @param bool  $useHierarchy If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return string
 	 */
 	private function generateImportSampleCsv(
@@ -1453,10 +1453,10 @@ trait AppTrait
 
 	/**
 	 * Generate sample CSV helper
-	 *
+	 * 
 	 * @param string $module
 	 * @param array  $explainParamArr
-	 *
+	 * 
 	 * @return array
 	 */
 	private function genCsvHelper(
@@ -1485,10 +1485,10 @@ trait AppTrait
 
 	/**
 	 * Basic Read Processes for process Function
-	 *
+	 * 
 	 * @param array $sqlConfig    Sql config
 	 * @param bool  $useResultSet If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return array
 	 */
 	private function readBasics(
@@ -1533,7 +1533,7 @@ trait AppTrait
 
 	/**
 	 * Basic Write Processes for process Function (Supplement is considered as Write)
-	 *
+	 * 
 	 * @param array $sqlConfig    Sql config
 	 * @param bool  $useHierarchy If true - Uses parent payload/results in child
 	 * 
@@ -1596,7 +1596,7 @@ trait AppTrait
 
 	/**
 	 * Get results to be cached flag
-	 *
+	 * 
 	 * @param array $sqlConfig Sql config
 	 * 
 	 * @return bool
@@ -1665,10 +1665,10 @@ trait AppTrait
 
 	/**
 	 * Explain configuration
-	 *
+	 * 
 	 * @param array $sqlConfig Sql config
 	 * @param bool  $flag      If true - Uses parent payload/results in child
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function explain(

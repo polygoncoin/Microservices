@@ -3,7 +3,7 @@
 /**
  * Creates Data Representation Input
  * php version 8.3
- *
+ * 
  * @category  DataDecode
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -21,7 +21,7 @@ use Microservices\App\DataRepresentation\Decode\XmlDecode;
 /**
  * Creates Data Representation Output
  * php version 8.3
- *
+ * 
  * @category  DataDecoder
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -34,21 +34,21 @@ class DataDecode
 {
 	/**
 	 * JSON File Handle
-	 *
+	 * 
 	 * @var null|resource
 	 */
 	private $dataFileHandle = null;
 
 	/**
 	 * Temporary Stream
-	 *
+	 * 
 	 * @var null|Object
 	 */
 	private $dataDecoderObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param string   $inputRepresentation Input Representation
 	 * @param resource $dataFileHandle  File handle
 	 */
@@ -71,7 +71,7 @@ class DataDecode
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -81,7 +81,7 @@ class DataDecode
 
 	/**
 	 * Validates data
-	 *
+	 * 
 	 * @return void
 	 */
 	public function validate(): void
@@ -91,7 +91,7 @@ class DataDecode
 
 	/**
 	 * Index data
-	 *
+	 * 
 	 * @return void
 	 */
 	public function indexData(): void
@@ -101,9 +101,9 @@ class DataDecode
 
 	/**
 	 * Result exist as per $keyString
-	 *
+	 * 
 	 * @param null|string $keyString Key's exist (values separated by colon)
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function isset(
@@ -116,9 +116,9 @@ class DataDecode
 
 	/**
 	 * Datatype of result as per $keyString
-	 *
+	 * 
 	 * @param null|string $keyString Key's exist (values separated by colon)
-	 *
+	 * 
 	 * @return string Object/Array
 	 */
 	public function dataType(
@@ -131,9 +131,9 @@ class DataDecode
 
 	/**
 	 * Count of result as per $keyString
-	 *
+	 * 
 	 * @param null|string $keyString Key values separated by colon
-	 *
+	 * 
 	 * @return int
 	 */
 	public function count(
@@ -146,9 +146,9 @@ class DataDecode
 
 	/**
 	 * Get result as per $keyString
-	 *
+	 * 
 	 * @param string $keyString Key values separated by colon
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function get(
@@ -161,9 +161,9 @@ class DataDecode
 
 	/**
 	 * Get complete result as per $keyString
-	 *
+	 * 
 	 * @param string $keyString Key values separated by colon
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function getCompleteArray(
@@ -178,9 +178,9 @@ class DataDecode
 	 * Load result as per $keyString
 	 * Start processing the JSON string for a key's
 	 * Perform search inside key's of JSON like $json['data'][0]['data1']
-	 *
+	 * 
 	 * @param string $keyString Key values separated by colon
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */

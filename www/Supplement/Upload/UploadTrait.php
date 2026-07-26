@@ -3,7 +3,7 @@
 /**
  * UploadAPI
  * php version 8.3
- *
+ * 
  * @category  UploadAPI
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices\www\Supplement\Upload;
 /**
  * UploadAPI Trait
  * php version 8.3
- *
+ * 
  * @category  UploadAPI_Trait
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -31,9 +31,9 @@ trait UploadTrait
 {
 	/**
 	 * Saves file as stream
-	 *
+	 * 
 	 * @param string $absFilePath Absolute file path
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function saveFile(

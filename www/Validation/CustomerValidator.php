@@ -3,7 +3,7 @@
 /**
  * Validator
  * php version 8.3
- *
+ * 
  * @category  Validator
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -23,7 +23,7 @@ use Microservices\www\Validation\ValidatorTrait;
 /**
  * Customer Validator
  * php version 8.3
- *
+ * 
  * @category  Validator_Customer
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -38,14 +38,14 @@ class CustomerValidator implements ValidatorInterface
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -56,9 +56,9 @@ class CustomerValidator implements ValidatorInterface
 
 	/**
 	 * Validate payload
-	 *
+	 * 
 	 * @param array $validationConfig Validation configuration
-	 *
+	 * 
 	 * @return array
 	 */
 	public function validate(
@@ -87,11 +87,11 @@ class CustomerValidator implements ValidatorInterface
 
 	/**
 	 * Get primary key count
-	 *
+	 * 
 	 * @param string $table   Table Name
 	 * @param string $primary Primary Key
 	 * @param int    $id      Primary id
-	 *
+	 * 
 	 * @return int 0/1
 	 */
 	private function getPrimaryCount(
@@ -115,9 +115,9 @@ class CustomerValidator implements ValidatorInterface
 
 	/**
 	 * Check primary key exist
-	 *
+	 * 
 	 * @param array $argArr Arguments
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function primaryKeyExist(

@@ -3,7 +3,7 @@
 /**
  * Rate Limiter
  * php version 8.3
- *
+ * 
  * @category  RateLimiter
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -23,7 +23,7 @@ use Microservices\App\HttpStatus;
 /**
  * Rate Limiter
  * php version 8.3
- *
+ * 
  * @category  RateLimiter
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -36,14 +36,14 @@ class RateLimiter
 {
 	/**
 	 * Cache object
-	 *
+	 * 
 	 * @var null|object
 	 */
 	private $cacheObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param object $cacheObj
 	 */
 	public function __construct(
@@ -54,12 +54,12 @@ class RateLimiter
 
 	/**
 	 * Check rate limit is valid
-	 *
+	 * 
 	 * @param string $rateLimitPrefix           Prefix
 	 * @param int    $rateLimitMaxRequest       Max request
 	 * @param int    $rateLimitMaxRequestWindow Window in seconds
 	 * @param string $rateLimitKey              Rate Limit Key
-	 *
+	 * 
 	 * @return array
 	 */
 	public function check(
@@ -135,12 +135,12 @@ class RateLimiter
 
 	/**
 	 * Check Rate limit
-	 *
+	 * 
 	 * @param string $rateLimitPrefix           Prefix
 	 * @param int    $rateLimitMaxRequest       Max request
 	 * @param int    $rateLimitMaxRequestWindow Window in seconds
 	 * @param string $rateLimitKey              Rate limit key
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */

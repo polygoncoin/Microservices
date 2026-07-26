@@ -3,7 +3,7 @@
 /**
  * Login
  * php version 8.3
- *
+ * 
  * @category  Login
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -26,7 +26,7 @@ use Microservices\App\SessionHandler\Session;
 /**
  * Login
  * php version 8.3
- *
+ * 
  * @category  Login
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -39,35 +39,35 @@ class Login
 {
 	/**
 	 * Username for login
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $customer_user_username = null;
 
 	/**
 	 * Password for login
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $customer_user_password = null;
 
 	/**
 	 * Payload
-	 *
+	 * 
 	 * @var array
 	 */
 	private $payload = [];
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -78,7 +78,7 @@ class Login
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -92,7 +92,7 @@ class Login
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 * @throws \Exception
 	 */
@@ -145,7 +145,7 @@ class Login
 
 	/**
 	 * Load payload
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -167,7 +167,7 @@ class Login
 			'username' => 'customer_user_username',
 			'password' => 'customer_user_password'
 		];
-		
+
 		foreach ($requiredParamData as $param => $value) {
 			if (
 				!isset($this->payload[$param])
@@ -185,7 +185,7 @@ class Login
 
 	/**
 	 * Load User Data from cache
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -227,7 +227,7 @@ class Login
 
 	/**
 	 * Validates password from its hash present in cache
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -261,7 +261,7 @@ class Login
 
 	/**
 	 * Generates token
-	 *
+	 * 
 	 * @return array
 	 */
 	private function generateToken(): array
@@ -315,7 +315,7 @@ class Login
 
 	/**
 	 * Generates session
-	 *
+	 * 
 	 * @return array
 	 */
 	private function generateSession(): array
@@ -347,7 +347,7 @@ class Login
 
 	/**
 	 * Outputs active/newly generated token detail
-	 *
+	 * 
 	 * @return void
 	 */
 	private function outputTokenData(): void
@@ -514,9 +514,9 @@ class Login
 
 	/**
 	 * Output detail
-	 *
+	 * 
 	 * @param array $output
-	 *
+	 * 
 	 * @return void
 	 */
 	private function outputDetail(&$output): void
@@ -531,7 +531,7 @@ class Login
 
 	/**
 	 * Outputs active/newly generated session detail
-	 *
+	 * 
 	 * @return void
 	 */
 	private function startSession(): void
@@ -694,9 +694,9 @@ class Login
 
 	/**
 	 * Global cache key exist
-	 *
+	 * 
 	 * @param string $cacheKey Cache key
-	 *
+	 * 
 	 * @return mixed
 	 */
 	private function cacheExist(
@@ -709,9 +709,9 @@ class Login
 
 	/**
 	 * Get global cache key
-	 *
+	 * 
 	 * @param string $cacheKey Cache key
-	 *
+	 * 
 	 * @return mixed
 	 */
 	private function cacheGet(
@@ -724,11 +724,11 @@ class Login
 
 	/**
 	 * Set global cache key
-	 *
+	 * 
 	 * @param string $cacheKey    Cache key
 	 * @param mixed  $cacheValue  Cache value
 	 * @param int    $cacheExpire Seconds to expire. Default 0 - doesn't expire
-	 *
+	 * 
 	 * @return mixed
 	 */
 	private function cacheSet(
@@ -745,9 +745,9 @@ class Login
 
 	/**
 	 * Delete global cache key
-	 *
+	 * 
 	 * @param string $cacheKey Cache key
-	 *
+	 * 
 	 * @return mixed
 	 */
 	private function cacheDelete(

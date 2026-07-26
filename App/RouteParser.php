@@ -3,7 +3,7 @@
 /**
  * RouteParser
  * php version 8.3
- *
+ * 
  * @category  RouteParser
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -25,7 +25,7 @@ use Microservices\App\HttpStatus;
 /**
  * RouteParser
  * php version 8.3
- *
+ * 
  * @category  RouteParser
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -38,98 +38,98 @@ class RouteParser
 {
 	/**
 	 * Array containing detail of received route elements
-	 *
+	 * 
 	 * @var string[]
 	 */
 	public $routeElementArr = [];
 
 	/**
 	 * Route file location
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $routeFileLocation = null;
 
 	/**
 	 * Pre / Post hooks defined in respective Route file
-	 *
+	 * 
 	 * @var string
 	 */
 	public $routeHook = null;
 
 	/**
 	 * Is Starting With Reserved Route Keyword Flag
-	 *
+	 * 
 	 * @var bool
 	 */
 	public $routeStartingWithReservedKeywordFlag = false;
 
 	/**
 	 * Route Starting Reserved Keyword
-	 *
+	 * 
 	 * @var string
 	 */
 	public $routeStartingReservedKeyword = '';
 
 	/**
 	 * Is Ending With Reserved Route Keyword Flag
-	 *
+	 * 
 	 * @var bool
 	 */
 	public $routeEndingWithReservedKeywordFlag = false;
 
 	/**
 	 * Route Ending Reserved Keyword
-	 *
+	 * 
 	 * @var string
 	 */
 	public $routeEndingReservedKeyword = '';
 
 	/**
 	 * Raw route / Configured Path
-	 *
+	 * 
 	 * @var string
 	 */
 	public $configuredRoute = '';
 
 	/**
 	 * Sql config file
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sqlConfigFile = null;
 
 	/**
 	 * Sql config
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sqlConfig = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	public $httpObj = null;
 
 	/**
 	 * Reserved Routes Prefix
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $reservedRoutesPrefix = null;
 
 	/**
 	 * Reserved Routes CIDR
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $reservedRoutesCidrString = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -140,18 +140,15 @@ class RouteParser
 
 	/**
 	 * Parse route as per method
-	 *
+	 * 
 	 * @param string $routeFileLocation Route file
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
 	public function parseRoute(
 		$routeFileLocation = null
 	): void {
-		$Constant = __NAMESPACE__ . '\Constant';
-		$Env = __NAMESPACE__ . '\Env';
-
 		$this->routeElementArr = explode(
 			separator: '/',
 			string: trim(
@@ -246,6 +243,9 @@ class RouteParser
 				filename: $routeFileLocation
 			)
 		) {
+			$Constant = __NAMESPACE__ . '\Constant';
+			$Env = __NAMESPACE__ . '\Env';
+
 			$this->routeFileLocation = $routeFileLocation;
 			$routeConfig = include $routeFileLocation;
 		} else {
@@ -383,9 +383,9 @@ class RouteParser
 
 	/**
 	 * Process Route Starting Keyword
-	 *
+	 * 
 	 * @param string $routeStartingKeyword Route Starting Keyword
-	 *
+	 * 
 	 * @return bool
 	 * @throws \Exception
 	 */
@@ -422,9 +422,9 @@ class RouteParser
 
 	/**
 	 * Process Route Ending Keyword
-	 *
+	 * 
 	 * @param string $routeEndingKeyword Route Ending Keyword
-	 *
+	 * 
 	 * @return bool
 	 */
 	private function isEndingWithReservedRouteKeyword(
@@ -469,14 +469,14 @@ class RouteParser
 
 	/**
 	 * Process Route Element
-	 *
+	 * 
 	 * @param string $routeElement         Configured route element
 	 * @param string $element              Element
 	 * @param string $foundIntRoute        Found as int route element
 	 * @param string $foundIntParamName    Found as int param name
 	 * @param string $foundStringRoute     Found as String route element
 	 * @param string $foundStringParamName Found as String param name
-	 *
+	 * 
 	 * @return bool
 	 * @throws \Exception
 	 */
@@ -548,9 +548,9 @@ class RouteParser
 
 	/**
 	 * Validate Sql config file
-	 *
+	 * 
 	 * @param array $routeConfig Route config
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -590,10 +590,10 @@ class RouteParser
 				filename: $routeConfig['__FILE__']
 			)
 		) {
+			$this->sqlConfigFile = $routeConfig['__FILE__'];
+
 			$Constant = __NAMESPACE__ . '\Constant';
 			$Env = __NAMESPACE__ . '\Env';
-
-			$this->sqlConfigFile = $routeConfig['__FILE__'];
 
 			// Output data representation over rides global
 			// Output data representation set in Query config file
@@ -679,9 +679,9 @@ class RouteParser
 
 	/**
 	 * Check presence of Dynamic String in URL same as configured in Route file.
-	 *
+	 * 
 	 * @param string $element Route element
-	 *
+	 * 
 	 * @return void
 	 */
 	private function checkPresenceOfDynamicString(
@@ -707,10 +707,10 @@ class RouteParser
 
 	/**
 	 * Find Ruute and Param Name from Dynamic String configured in Route file.
-	 *
+	 * 
 	 * @param array  $routeConfig Route config
 	 * @param string $element      Route element
-	 *
+	 * 
 	 * @return array
 	 */
 	private function findRouteAndParamName(
@@ -766,7 +766,7 @@ class RouteParser
 
 	/**
 	 * Set Reserved Route
-	 *
+	 * 
 	 * @return void
 	 */
 	private function setReservedRouteArray(): void

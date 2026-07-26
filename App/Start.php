@@ -3,7 +3,7 @@
 /**
  * Start
  * php version 8.3
- *
+ * 
  * @category  Start
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -25,7 +25,7 @@ use Microservices\App\Log;
 /**
  * Start
  * php version 8.3
- *
+ * 
  * @category  Start
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -38,9 +38,9 @@ class Start
 {
 	/**
 	 * Process HTTP request data
-	 *
+	 * 
 	 * @param array $httpReqData HTTP request data
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function http(

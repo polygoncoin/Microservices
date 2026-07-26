@@ -3,7 +3,7 @@
 /**
  * Autoload
  * php version 8.3
- *
+ * 
  * @category  Autoload
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices;
 /**
  * Autoload
  * php version 8.3
- *
+ * 
  * @category  Autoload
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -31,9 +31,9 @@ class Autoload
 {
 	/**
 	 * Autoload Register function
-	 *
+	 * 
 	 * @param string $className Class name
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function register(

@@ -3,7 +3,7 @@
 /**
  * Service
  * php version 8.3
- *
+ * 
  * @category  Microservices
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -24,7 +24,7 @@ use Microservices\App\Http;
 /**
  * Service
  * php version 8.3
- *
+ * 
  * @category  Microservices
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -37,35 +37,35 @@ class Microservices
 {
 	/**
 	 * Start micro timestamp;
-	 *
+	 * 
 	 * @var null|int
 	 */
 	private $startMicroTimestamp = null;
 
 	/**
 	 * End micro timestamp;
-	 *
+	 * 
 	 * @var null|int
 	 */
 	private $endMicroTimestamp = null;
 
 	/**
 	 * HTTP request data
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $httpReqData = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	public $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param array $httpReqData HTTP request data
 	 * @throws \Exception
 	 */
@@ -80,7 +80,7 @@ class Microservices
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -94,7 +94,7 @@ class Microservices
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 * @throws \Exception
 	 */
@@ -161,7 +161,7 @@ class Microservices
 
 	/**
 	 * Start Data Output
-	 *
+	 * 
 	 * @return void
 	 */
 	public function startData(): void
@@ -174,7 +174,7 @@ class Microservices
 
 	/**
 	 * Add HTTP status in response
-	 *
+	 * 
 	 * @return void
 	 */
 	public function addStatus(): void
@@ -190,7 +190,7 @@ class Microservices
 
 	/**
 	 * Add Performance detail in response
-	 *
+	 * 
 	 * @return void
 	 */
 	public function addPerformance(): void
@@ -232,7 +232,7 @@ class Microservices
 
 	/**
 	 * Add Performance detail in response
-	 *
+	 * 
 	 * @return array
 	 */
 	public function returnPerformance(): array
@@ -266,7 +266,7 @@ class Microservices
 
 	/**
 	 * End response
-	 *
+	 * 
 	 * @return void
 	 */
 	public function endData(): void
@@ -280,7 +280,7 @@ class Microservices
 
 	/**
 	 * Output response
-	 *
+	 * 
 	 * @return void
 	 */
 	public function outputResults(): void
@@ -294,7 +294,7 @@ class Microservices
 
 	/**
 	 * Return encoded result
-	 *
+	 * 
 	 * @return bool|string
 	 */
 	public function returnResults(): bool|string
@@ -307,7 +307,7 @@ class Microservices
 
 	/**
 	 * Headers / CORS
-	 *
+	 * 
 	 * @return array
 	 */
 	public function getHeaders(): array
@@ -359,9 +359,9 @@ class Microservices
 
 	/**
 	 * Log error
-	 *
+	 * 
 	 * @param \Exception $e Exception
-	 *
+	 * 
 	 * @return never
 	 * @throws \Exception
 	 */

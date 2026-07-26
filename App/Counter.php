@@ -3,7 +3,7 @@
 /**
  * Write APIs
  * php version 8.3
- *
+ * 
  * @category  Counter
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -22,7 +22,7 @@ use Microservices\App\HttpStatus;
 /**
  * Write APIs
  * php version 8.3
- *
+ * 
  * @category  Counter
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -35,7 +35,7 @@ class Counter
 {
 	/**
 	 * Get Global counter
-	 *
+	 * 
 	 * @return int
 	 */
 	public static function getGlobalCounter(): int

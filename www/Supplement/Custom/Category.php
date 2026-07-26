@@ -3,7 +3,7 @@
 /**
  * CustomAPI
  * php version 8.3
- *
+ * 
  * @category  CustomAPI
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -24,7 +24,7 @@ use Microservices\www\Supplement\Custom\CustomTrait;
 /**
  * CustomAPI Category
  * php version 8.3
- *
+ * 
  * @category  CustomAPI_Category
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -39,14 +39,14 @@ class Category implements CustomInterface
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObj = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http $httpObj
 	 */
 	public function __construct(
@@ -61,7 +61,7 @@ class Category implements CustomInterface
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function init(): bool
@@ -71,13 +71,13 @@ class Category implements CustomInterface
 
 	/**
 	 * Process
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function process(): mixed
 	{
 		$sql = '
-			SELECT *
+			SELECT * 
 			FROM category
 			WHERE is_deleted = :is_deleted AND parent_id = :parent_id
 		';

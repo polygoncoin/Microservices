@@ -3,7 +3,7 @@
 /**
  * Validator
  * php version 8.3
- *
+ * 
  * @category  Validator
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices\www\Validation;
 /**
  * Validator Interface
  * php version 8.3
- *
+ * 
  * @category  Validator_Interface
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -31,9 +31,9 @@ interface ValidatorInterface
 {
 	/**
 	 * Validate payload
-	 *
+	 * 
 	 * @param array $validationConfig Validation configuration
-	 *
+	 * 
 	 * @return array
 	 */
 	public function validate(

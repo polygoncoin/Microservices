@@ -157,9 +157,9 @@ if (
 
 /**
  * Unique HTTP request hash
- *
+ * 
  * @param array $hashArray Hash array
- *
+ * 
  * @return string
  */
 function httpRequestHash($hashArray): string
@@ -173,7 +173,7 @@ function httpRequestHash($hashArray): string
 
 /**
  * Get request IP
- *
+ * 
  * @return string
  */
 function getHttpRequestIp() {
