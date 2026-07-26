@@ -91,7 +91,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function init(): bool
 	{
-		if ($this->httpObj->requestObj->isPrivateRequest) {
+		if ($this->httpObj->httpRequestObj->isPrivateRequest) {
 			$this->DROPBOX_DIR = Constant::$DROPBOX_PRIVATE_DIR;
 		} else {
 			$this->DROPBOX_DIR = Constant::$DROPBOX_PUBLIC_DIR;
@@ -100,7 +100,7 @@ class Cdn implements DropboxInterface
 		$configuredRoute = str_replace(
 			'/dropbox/cdn',
 			'',
-			$this->httpObj->requestObj->routeParserObj->configuredRoute
+			$this->httpObj->httpRequestObj->routeParserObj->configuredRoute
 		);
 
 		$filePath = DIRECTORY_SEPARATOR . trim(
@@ -115,11 +115,11 @@ class Cdn implements DropboxInterface
 		);
 
 		if (
-			$this->httpObj !== null
-			&& $this->httpObj->requestObj !== null
-			&& $this->httpObj->requestObj->isPrivateRequest
+			$this->httpObj !== Constant::$NULL
+			&& $this->httpObj->httpRequestObj !== Constant::$NULL
+			&& $this->httpObj->httpRequestObj->isPrivateRequest
 		) {
-			$this->DROPBOX_DIR .= DIRECTORY_SEPARATOR . $this->httpObj->requestObj->customerId;
+			$this->DROPBOX_DIR .= DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->customerId;
 			$this->validateFileRequest();
 		}
 		$this->fileLocation = $this->DROPBOX_DIR . $filePath;
@@ -141,7 +141,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function validateFileRequest(): void
 	{
-		// check logic for user is allowed to access the file as per $this->httpObj->requestObj->session
+		// check logic for user is allowed to access the file as per $this->httpObj->httpRequestObj->session
 		// $this->fileLocation;
 	}
 
@@ -163,7 +163,7 @@ class Cdn implements DropboxInterface
 			case in_array(
 				needle: $this->mimeType,
 				haystack: $this->supportedVideoMimeArr,
-				strict: true
+				strict: Constant::$TRUE
 			):
 				// Serve Video
 				$videoStream = new StreamVideo(
@@ -210,7 +210,7 @@ class Cdn implements DropboxInterface
 				&& strpos(
 					haystack: $this->httpObj->httpReqData['header']['HTTP_IF_NONE_MATCH'],
 					needle: $eTag
-				) !== false
+				) !== Constant::$FALSE
 			)
 			|| (isset($this->httpObj->httpReqData['header']['HTTP_IF_MODIFIED_SINCE'])
 				&& @strtotime(

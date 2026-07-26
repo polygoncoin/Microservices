@@ -16,6 +16,7 @@
 namespace Microservices\App\Server\Container\NoSql;
 
 use Microservices\App\CommonFunction;
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\NoSql\NoSqlInterface;
 
@@ -108,7 +109,7 @@ class Redis implements NoSqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->cacheServerObj !== null) {
+		if ($this->cacheServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -223,7 +224,7 @@ class Redis implements NoSqlInterface
 			value: $value
 		);
 
-		if ($expire === null) {
+		if ($expire === Constant::$NULL) {
 			return $this->cacheServerObj->set(
 				$key,
 				$value

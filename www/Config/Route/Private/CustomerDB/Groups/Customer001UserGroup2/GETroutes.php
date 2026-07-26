@@ -14,16 +14,16 @@
  */
 
 return array_merge(
-	require $this->httpObj->requestObj->ROUTES_DIR
+	require $this->httpObj->httpRequestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'GETroutes.php',
-	require $this->httpObj->requestObj->ROUTES_DIR
+	require $this->httpObj->httpRequestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'Custom'
 		. DIRECTORY_SEPARATOR . 'GETroutes.php',
-	require $this->httpObj->requestObj->ROUTES_DIR
+	require $this->httpObj->httpRequestObj->ROUTES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'ThirdParty'

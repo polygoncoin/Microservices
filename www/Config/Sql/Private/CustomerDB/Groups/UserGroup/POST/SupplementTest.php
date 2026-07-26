@@ -47,5 +47,5 @@ return [
 		'Hook_Example',
 	],
 
-	'useHierarchy' => true
+	'useHierarchy' => $Constant::$TRUE
 ];

@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
@@ -250,8 +251,8 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 		try {
 			$UP = '';
 			if (
-				$this->pgSqlServerUsername !== null
-				&& $this->pgSqlServerPassword !== null
+				$this->pgSqlServerUsername !== Constant::$NULL
+				&& $this->pgSqlServerPassword !== Constant::$NULL
 			) {
 				$UP = "user={$this->pgSqlServerUsername} password={$this->pgSqlServerPassword}";
 			}

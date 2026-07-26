@@ -21,7 +21,7 @@ return [
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'Yes'
+			'fetchFromData' => $Constant::$YES
 		],
 		[
 			'column' => 'updated_by',
@@ -38,12 +38,12 @@ return [
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
@@ -67,7 +67,7 @@ return [
 			'functionArgs' => [
 				'table' => ['custom', $Env::$customerTable],
 				'column' => ['custom', 'is_deleted'],
-				'columnValue' => ['custom', 'No'],
+				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
@@ -78,7 +78,7 @@ return [
 			'functionArgs' => [
 				'table' => ['custom', $Env::$customerTable],
 				'column' => ['custom', 'is_disabled'],
-				'columnValue' => ['custom', 'No'],
+				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],

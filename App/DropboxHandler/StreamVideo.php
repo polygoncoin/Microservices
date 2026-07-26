@@ -15,6 +15,7 @@
 
 namespace Microservices\App\DropboxHandler;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 
@@ -98,7 +99,7 @@ class StreamVideo
 			&& strpos(
 				haystack: $this->httpReqData['header']['range'],
 				needle: 'bytes='
-			) !== false
+			) !== Constant::$FALSE
 		) {
 			return HttpStatus::$BadRequest;
 		}
@@ -181,7 +182,7 @@ class StreamVideo
 			&& in_array(
 				needle: $this->streamTill,
 				haystack: ['', '1'],
-				strict: true
+				strict: Constant::$TRUE
 			)
 		) {
 			// Mac Safari does not support HTTP/1.1 206 response for first
@@ -231,7 +232,7 @@ class StreamVideo
 		$totalBytes = $this->streamTill - $this->streamFrom + 1;
 		$data = file_get_contents(
 			filename: $this->fileLocation,
-			use_include_path: false,
+			use_include_path: Constant::$FALSE,
 			context: null,
 			offset: $this->streamFrom,
 			length: $totalBytes

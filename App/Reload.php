@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\CacheServerKey;
+use Microservices\App\Constant;
 use Microservices\App\CommonFunction;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Env;
@@ -119,7 +120,7 @@ class Reload
 				);
 			}
 
-			if ($customerData['customer_allowed_cidr'] !== null) {
+			if ($customerData['customer_allowed_cidr'] !== Constant::$NULL) {
 				$customerCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $customerData['customer_allowed_cidr']
 				);
@@ -215,7 +216,7 @@ class Reload
 				cacheKey: $g_key,
 				cacheValue: $groupData
 			);
-			if ($groupData['customer_user_group_allowed_cidr'] !== null) {
+			if ($groupData['customer_user_group_allowed_cidr'] !== Constant::$NULL) {
 				$groupCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $groupData['customer_user_group_allowed_cidr']
 				);
@@ -294,7 +295,7 @@ class Reload
 		$userDataArr = $customerDbObj->fetchAll();
 		$customerDbObj->closeCursor();
 		foreach ($userDataArr as $userData) {
-			if ($userData['customer_user_allowed_cidr'] !== null) {
+			if ($userData['customer_user_allowed_cidr'] !== Constant::$NULL) {
 				$userCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $userData['customer_user_allowed_cidr']
 				);

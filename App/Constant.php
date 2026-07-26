@@ -40,6 +40,14 @@ class Constant
 	public static $PRODUCTION = 1;
 	public static $DEVELOPMENT = 0;
 
+	public static $NULL = null;
+
+	public static $TRUE = true;
+	public static $FALSE = false;
+
+	public static $YES = 'Yes';
+	public static $NO = 'No';
+
 	public static $TOKEN_EXPIRY_TIME = 25 * 24 * 3600;
 	public static $REQUIRED = true;
 
@@ -136,7 +144,7 @@ class Constant
 			mkdir(
 				directory: self::$WEB_COOKIES_DIR,
 				permissions: 0755,
-				recursive: true
+				recursive: self::$TRUE
 			);
 		}
 
@@ -149,7 +157,7 @@ class Constant
 			mkdir(
 				directory: self::$LOG_DIR,
 				permissions: 0755,
-				recursive: true
+				recursive: self::$TRUE
 			);
 		}
 

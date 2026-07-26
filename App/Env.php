@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 
 /**
@@ -217,7 +218,7 @@ class Env
 					in_array(
 						needle: $dataRepresentation,
 						haystack: self::$iAllowedRepresentation,
-						strict: true
+						strict: Constant::$TRUE
 					)
 				) {
 					return true;
@@ -233,7 +234,7 @@ class Env
 					in_array(
 						needle: $dataRepresentation,
 						haystack: self::$oAllowedRepresentation,
-						strict: true
+						strict: Constant::$TRUE
 					)
 				) {
 					return true;

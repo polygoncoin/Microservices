@@ -20,7 +20,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
@@ -36,7 +36,7 @@ return [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromData' => 'No'
+					'fetchFromData' => $Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
@@ -52,7 +52,7 @@ return [
 						[
 							'column' => 'is_deleted',
 							'fetchFrom' => 'custom',
-							'fetchFromData' => 'No'
+							'fetchFromData' => $Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
@@ -68,7 +68,7 @@ return [
 								[
 									'column' => 'is_deleted',
 									'fetchFrom' => 'custom',
-									'fetchFromData' => 'No'
+									'fetchFromData' => $Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
@@ -83,9 +83,9 @@ return [
 			],
 		]
 	],
-	'useResultSet' => true,
+	'useResultSet' => $Constant::$TRUE,
 	'fetchFrom' => 'Master',
-	// 'queryCacheKey' => $this->httpObj->requestObj->session['customerData']['customer_id'] . ':category',
+	// 'queryCacheKey' => $this->httpObj->httpRequestObj->session['customerData']['customer_id'] . ':category',
 	'outputRepresentation' => 'PHP',
-	'phpFile' => $this->httpObj->responseObj->PHP_DIR . DIRECTORY_SEPARATOR . 'index.php'
+	'phpFile' => $this->httpObj->httpResponseObj->PHP_DIR . DIRECTORY_SEPARATOR . 'index.php'
 ];

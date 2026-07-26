@@ -19,7 +19,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
@@ -40,7 +40,7 @@ return [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromData' => 'No'
+					'fetchFromData' => $Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
@@ -56,7 +56,7 @@ return [
 						[
 							'column' => 'is_deleted',
 							'fetchFrom' => 'custom',
-							'fetchFromData' => 'No'
+							'fetchFromData' => $Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
@@ -72,7 +72,7 @@ return [
 								[
 									'column' => 'is_deleted',
 									'fetchFrom' => 'custom',
-									'fetchFromData' => 'No'
+									'fetchFromData' => $Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
@@ -87,5 +87,5 @@ return [
 			],
 		]
 	],
-	'useResultSet' => true,
+	'useResultSet' => $Constant::$TRUE,
 ];

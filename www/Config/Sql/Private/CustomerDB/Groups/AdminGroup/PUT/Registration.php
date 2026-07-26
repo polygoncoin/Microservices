@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return array_merge(
-	require $this->httpObj->requestObj->QUERIES_DIR
+	require $this->httpObj->httpRequestObj->QUERIES_DIR
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'Registration.php',
@@ -62,7 +62,7 @@ return array_merge(
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'No'
+				'fetchFromData' => $Constant::$NO
 			],
 			[
 				'column' => 'id',

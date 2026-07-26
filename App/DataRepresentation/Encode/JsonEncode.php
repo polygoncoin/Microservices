@@ -15,6 +15,7 @@
 
 namespace Microservices\App\DataRepresentation\Encode;
 
+use Microservices\App\Constant;
 use Microservices\App\DataRepresentation\Encode\DataEncodeInterface;
 use Microservices\App\DataRepresentation\Encode\JsonEncoder\JsonEncoderObject;
 use Microservices\App\HttpStatus;
@@ -160,7 +161,7 @@ class JsonEncode implements DataEncodeInterface
 	private function escape(
 		$data
 	): string {
-		if ($data === null) {
+		if ($data === Constant::$NULL) {
 			return 'null';
 		}
 		$data = str_replace(
@@ -297,7 +298,7 @@ class JsonEncode implements DataEncodeInterface
 		$this->jsonEncoderObjectObj = new JsonEncoderObject(
 			mode: 'Array'
 		);
-		if ($objectKey !== null) {
+		if ($objectKey !== Constant::$NULL) {
 			$this->write(
 				data: $this->escape(
 					data: $objectKey
@@ -346,7 +347,7 @@ class JsonEncode implements DataEncodeInterface
 		if ($this->jsonEncoderObjectObj) {
 			if (
 				$this->jsonEncoderObjectObj->mode === 'Object'
-				&& ($objectKey === null)
+				&& ($objectKey === Constant::$NULL)
 			) {
 				throw new \Exception(
 					message: 'Object inside an Object should be supported with key',
@@ -364,7 +365,7 @@ class JsonEncode implements DataEncodeInterface
 		$this->jsonEncoderObjectObj = new JsonEncoderObject(
 			mode: 'Object'
 		);
-		if ($objectKey !== null) {
+		if ($objectKey !== Constant::$NULL) {
 			$this->write(
 				data: $this->escape(
 					data: $objectKey

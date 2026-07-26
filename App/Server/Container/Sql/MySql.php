@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\Container\Sql;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\Sql\SqlInterface;
 
@@ -125,7 +126,7 @@ class MySql implements SqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->mysqlServerObj !== null) {
+		if ($this->mysqlServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -135,12 +136,12 @@ class MySql implements SqlInterface
 				username: $this->dbServerUsername,
 				password: $this->dbServerPassword,
 				options: [
-					\PDO::ATTR_EMULATE_PREPARES => false,
-					// \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false
+					\PDO::ATTR_EMULATE_PREPARES => Constant::$FALSE,
+					// \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => Constant::$FALSE
 				]
 			);
 
-			if ($this->dbServerDatabase !== null) {
+			if ($this->dbServerDatabase !== Constant::$NULL) {
 				$this->useDatabase();
 			}
 		} catch (\PDOException $e) {
@@ -162,7 +163,7 @@ class MySql implements SqlInterface
 		$this->connect();
 
 		try {
-			if ($this->dbServerDatabase !== null) {
+			if ($this->dbServerDatabase !== Constant::$NULL) {
 				$this->mysqlServerObj->exec(
 					statement: "USE `{$this->dbServerDatabase}`"
 				);
@@ -272,7 +273,7 @@ class MySql implements SqlInterface
 	public function lastInsertId(): bool|int
 	{
 		try {
-			if (($lastInsertId = $this->mysqlServerObj->lastInsertId()) !== false) {
+			if (($lastInsertId = $this->mysqlServerObj->lastInsertId()) !== Constant::$FALSE) {
 				return $lastInsertId;
 			}
 		} catch (\PDOException $e) {

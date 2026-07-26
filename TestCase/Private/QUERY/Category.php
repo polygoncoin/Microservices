@@ -15,22 +15,23 @@
 
 namespace Microservices\TestCase;
 
-use Microservices\App\Web;
+use Microservices\App\Constant;
 use Microservices\App\Env;
+use Microservices\App\Web;
 
 $headerArr = $defaultHeaderArr;
 $proceed = false;
 
 if (
 	isset($token)
-	&& $token !== null
+	&& $token !== Constant::$NULL
 ) {
 	$headerArr[] = "Authorization: Bearer {$token}";
 	$proceed = true;
 }
 if (
 	isset($sessionCookie)
-	&& $sessionCookie !== null
+	&& $sessionCookie !== Constant::$NULL
 ) {
 	$headerArr[] = "Cookie: {$sessionCookie}";
 	$proceed = true;

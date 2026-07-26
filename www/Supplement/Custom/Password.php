@@ -16,6 +16,7 @@
 namespace Microservices\www\Supplement\Custom;
 
 use Microservices\App\CacheServerKey;
+use Microservices\App\Constant;
 use Microservices\App\Http;
 use Microservices\App\Reload;
 use Microservices\www\Supplement\Custom\CustomInterface;
@@ -62,7 +63,7 @@ class Password implements CustomInterface
 	 */
 	public function init(): bool
 	{
-		$this->httpObj->requestObj->loadPayload();
+		$this->httpObj->httpRequestObj->loadPayload();
 
 		return true;
 	}
@@ -74,18 +75,18 @@ class Password implements CustomInterface
 	 */
 	public function process(): mixed
 	{
-		switch ($this->httpObj->requestObj->session['payloadType']) {
+		switch ($this->httpObj->httpRequestObj->session['payloadType']) {
 			case 'Array':
-				$payload = $this->httpObj->requestObj->dataDecodeObj->get('0');
+				$payload = $this->httpObj->httpRequestObj->dataDecodeObj->get('0');
 				break;
 			case 'Object':
-				$payload = $this->httpObj->requestObj->dataDecodeObj->get();
+				$payload = $this->httpObj->httpRequestObj->dataDecodeObj->get();
 				break;
 		}
-		$this->httpObj->requestObj->session['payload'] = $payload;
+		$this->httpObj->httpRequestObj->session['payload'] = $payload;
 
-		$oldPassword = $this->httpObj->requestObj->session['payload']['old_password'];
-		$oldPasswordHash = $this->httpObj->requestObj->session['userData']['password_hash'];
+		$oldPassword = $this->httpObj->httpRequestObj->session['payload']['old_password'];
+		$oldPasswordHash = $this->httpObj->httpRequestObj->session['userData']['password_hash'];
 
 		if (
 			password_verify(
@@ -93,47 +94,47 @@ class Password implements CustomInterface
 				hash: $oldPasswordHash
 			)
 		) {
-			$userName = $this->httpObj->requestObj->session['userData']['username'];
-			$newPassword = $this->httpObj->requestObj->session['payload']['new_password'];
+			$userName = $this->httpObj->httpRequestObj->session['userData']['username'];
+			$newPassword = $this->httpObj->httpRequestObj->session['payload']['new_password'];
 			$newPasswordHash = password_hash(
 				password: $newPassword,
 				algo: PASSWORD_DEFAULT
 			);
 
 			$sql = "
-				UPDATE `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}`
+				UPDATE `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";
 			$paramArr = [
 				':password_hash' => $newPasswordHash,
 				':username' => $userName,
-				':is_deleted' => 'No',
+				':is_deleted' => Constant::$NO,
 			];
 
-			$this->httpObj->requestObj->customerDbObj->execQuery(
+			$this->httpObj->httpRequestObj->customerDbObj->execQuery(
 				sql: $sql,
 				paramArr: $paramArr
 			);
-			$this->httpObj->requestObj->customerDbObj->closeCursor();
+			$this->httpObj->httpRequestObj->customerDbObj->closeCursor();
 
-			$customerId = $this->httpObj->requestObj->customerId;
+			$customerId = $this->httpObj->httpRequestObj->customerId;
 			$cacheKey = CacheServerKey::customerUsername(
 				customerId: $customerId,
 				username: $userName
 			);
 			Reload::processUser(
 				httpRequestIp: $this->httpObj->httpReqData['server']['httpRequestIp'],
-				customerData: $this->httpObj->requestObj->session['customerData'],
-				customerUserId: $this->httpObj->requestObj->customerUserId
+				customerData: $this->httpObj->httpRequestObj->session['customerData'],
+				customerUserId: $this->httpObj->httpRequestObj->customerUserId
 			);
-			$this->httpObj->requestObj->customerCacheObj->cacheDelete(
+			$this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
 				cacheKey: CacheServerKey::token(
-					token: $this->httpObj->requestObj->session['authId']
+					token: $this->httpObj->httpRequestObj->session['authId']
 				)
 			);
 
-			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 				objectKey: 'Results',
 				data: 'Password changed successfully. Please login'
 			);

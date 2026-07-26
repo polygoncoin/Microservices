@@ -14,13 +14,13 @@
  */
 
 return [
-	'countQuery' => "SELECT count(1) as `count` FROM `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
-	'__QUERY__' => "SELECT * FROM `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'countQuery' => "SELECT count(1) as `count` FROM `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'customer_user_is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		]
 	],
 	'__MODE__' => 'multipleRecordFormat'

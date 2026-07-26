@@ -109,12 +109,12 @@ class Start
 
 				$data = $Microservices->returnResults();
 				if (
-					$Microservices->httpObj === null
-					|| $Microservices->httpObj->responseObj === null
+					$Microservices->httpObj === Constant::$NULL
+					|| $Microservices->httpObj->httpResponseObj === Constant::$NULL
 				) {
 					$status = HttpStatus::$Ok;
 				} else {
-					$status = $Microservices->httpObj->responseObj->httpStatus;
+					$status = $Microservices->httpObj->httpResponseObj->httpStatus;
 				}
 
 				return [$headerArr, $data, $status];
@@ -124,7 +124,7 @@ class Start
 				!in_array(
 					needle: $e->getCode(),
 					haystack: [HttpStatus::$BadRequest, HttpStatus::$TooManyRequest],
-					strict: true
+					strict: Constant::$TRUE
 				)
 			) {
 				list($usec, $sec) = explode(

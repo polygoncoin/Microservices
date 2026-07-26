@@ -15,6 +15,8 @@
 
 namespace Microservices\App\DataRepresentation\Decode\JsonDecode;
 
+use Microservices\App\Constant;
+
 /**
  * JSON Decode Object
  * php version 8.3
@@ -90,7 +92,7 @@ class JsonDecodeObject
 	) {
 		$this->mode = $mode;
 
-		$objectKey = $objectKey !== null ? trim(
+		$objectKey = $objectKey !== Constant::$NULL ? trim(
 			string: $objectKey
 		) : $objectKey;
 		$this->objectKey = !empty($objectKey) ? $objectKey : null;

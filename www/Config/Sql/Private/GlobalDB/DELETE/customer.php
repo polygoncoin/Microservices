@@ -33,7 +33,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_id',
@@ -57,7 +57,7 @@ return [
 			'functionArgs' => [
 				'table' => ['custom', $Env::$customerTable],
 				'column' => ['custom', 'is_deleted'],
-				'columnValue' => ['custom', 'No'],
+				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],

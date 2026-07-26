@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Http;
 use Microservices\www\Validation\CustomerValidator;
@@ -58,7 +59,7 @@ class Validator
 		Http &$httpObj
 	) {
 		$this->httpObj = &$httpObj;
-		if ($this->httpObj->requestObj->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
+		if ($this->httpObj->httpRequestObj->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
 			$this->validatorObj = new GlobalValidator(
 				httpObj: $this->httpObj
 			);
@@ -80,9 +81,9 @@ class Validator
 		&$validationConfig
 	): array {
 		if (
-			isset(($this->httpObj->requestObj->session['requiredFieldArr']))
+			isset(($this->httpObj->httpRequestObj->session['requiredFieldArr']))
 			&& count(
-				value: $this->httpObj->requestObj->session['requiredFieldArr']
+				value: $this->httpObj->httpRequestObj->session['requiredFieldArr']
 			) > 0
 		) {
 			if (
@@ -108,13 +109,13 @@ class Validator
 		$isValidData = true;
 		$errorArr = [];
 		// Required fields payload validation
-		if (!empty($this->httpObj->requestObj->session['requiredFieldArr']['payload'])) {
-			foreach ($this->httpObj->requestObj->session['requiredFieldArr']['payload'] as $fetchFromData) {
+		if (!empty($this->httpObj->httpRequestObj->session['requiredFieldArr']['payload'])) {
+			foreach ($this->httpObj->httpRequestObj->session['requiredFieldArr']['payload'] as $fetchFromData) {
 				if (
 					!in_array(
 						needle: $fetchFromData,
-						haystack: $this->httpObj->requestObj->session['payload'],
-						strict: true
+						haystack: $this->httpObj->httpRequestObj->session['payload'],
+						strict: Constant::$TRUE
 					)
 				) {
 					$errorArr[] = 'Missing required payload: ' . $fetchFromData;

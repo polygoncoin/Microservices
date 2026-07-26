@@ -16,6 +16,7 @@
 namespace Microservices\App\Server\Container\NoSql;
 
 use Microservices\App\CommonFunction;
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\NoSql\NoSqlInterface;
 
@@ -84,7 +85,7 @@ class Memcached implements NoSqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->cacheServerObj !== null) {
+		if ($this->cacheServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -131,7 +132,7 @@ class Memcached implements NoSqlInterface
 
 		return $this->get(
 			$key
-		) !== false;
+		) !== Constant::$FALSE;
 	}
 
 	/**
@@ -183,7 +184,7 @@ class Memcached implements NoSqlInterface
 			value: $value
 		);
 
-		if ($expire === null) {
+		if ($expire === Constant::$NULL) {
 			return $this->cacheServerObj->set(
 				$key,
 				$value

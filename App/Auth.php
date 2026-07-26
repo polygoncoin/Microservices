@@ -61,7 +61,7 @@ class Auth
 	 */
 	public function loadUserData(): void
 	{
-		if (isset($this->httpObj->requestObj->session['userData'])) {
+		if (isset($this->httpObj->httpRequestObj->session['userData'])) {
 			return;
 		}
 
@@ -69,11 +69,11 @@ class Auth
 			isset($_SESSION)
 			&& isset($_SESSION['customer_user_id'])
 		) {
-			$this->httpObj->requestObj->session['userData'] = $_SESSION;
-			$this->httpObj->requestObj->session['authId'] = session_id();
+			$this->httpObj->httpRequestObj->session['userData'] = $_SESSION;
+			$this->httpObj->httpRequestObj->session['authId'] = session_id();
 		} elseif (
 			isset($this->httpObj->httpReqData['header']['tokenHeader'])
-			&& $this->httpObj->httpReqData['header']['tokenHeader'] !== null
+			&& $this->httpObj->httpReqData['header']['tokenHeader'] !== Constant::$NULL
 		) {
 			if (
 				!preg_match(
@@ -87,12 +87,12 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObj->requestObj->session['authId'] = $matches[1];
+			$this->httpObj->httpRequestObj->session['authId'] = $matches[1];
 			$tokenKey = CacheServerKey::token(
-				token: $this->httpObj->requestObj->session['authId']
+				token: $this->httpObj->httpRequestObj->session['authId']
 			);
 			if (
-				!$this->httpObj->requestObj->customerCacheObj->cacheExist(
+				!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
 					cacheKey: $tokenKey
 				)
 			) {
@@ -101,7 +101,7 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObj->requestObj->session['userData'] = $this->httpObj->requestObj->customerCacheObj->cacheGet(
+			$this->httpObj->httpRequestObj->session['userData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
 				cacheKey: $tokenKey
 			);
 		} else {
@@ -111,22 +111,22 @@ class Auth
 			);
 		}
 
-		if (($this->httpObj->requestObj->session['userData']['authTimestamp'] + Constant::$TOKEN_EXPIRY_TIME) <= Env::$timestamp) {
+		if (($this->httpObj->httpRequestObj->session['userData']['authTimestamp'] + Constant::$TOKEN_EXPIRY_TIME) <= Env::$timestamp) {
 			throw new \Exception(
 				message: 'Login has timed out. Please login',
 				code: HttpStatus::$BadRequest
 			);
 		}
 
-		if ($this->httpObj->requestObj->session['userData']['httpRequestHash'] !== $this->httpObj->httpReqData['httpRequestHash']) {
+		if ($this->httpObj->httpRequestObj->session['userData']['httpRequestHash'] !== $this->httpObj->httpReqData['httpRequestHash']) {
 			throw new \Exception(
 				message: 'Current Browser or the Device location not matching with Browser or the Device location during Login',
 				code: HttpStatus::$PreconditionFailed
 			);
 		}
 
-		$this->httpObj->requestObj->customerUserId = $this->httpObj->requestObj->session['userData']['customer_user_id'];
-		$this->httpObj->requestObj->customerUserGroupId = $this->httpObj->requestObj->session['userData']['customer_user_group_id'];
+		$this->httpObj->httpRequestObj->customerUserId = $this->httpObj->httpRequestObj->session['userData']['customer_user_id'];
+		$this->httpObj->httpRequestObj->customerUserGroupId = $this->httpObj->httpRequestObj->session['userData']['customer_user_group_id'];
 	}
 
 	/**
@@ -137,17 +137,17 @@ class Auth
 	 */
 	public function loadGroupData(): void
 	{
-		if (isset($this->httpObj->requestObj->session['groupData'])) {
+		if (isset($this->httpObj->httpRequestObj->session['groupData'])) {
 			return;
 		}
 
 		// Load groupData
 		$groupCacheKey = CacheServerKey::customerGroup(
-			customerId: $this->httpObj->requestObj->customerId,
-			customerUserGroupId: $this->httpObj->requestObj->customerUserGroupId
+			customerId: $this->httpObj->httpRequestObj->customerId,
+			customerUserGroupId: $this->httpObj->httpRequestObj->customerUserGroupId
 		);
 		if (
-			!$this->httpObj->requestObj->customerCacheObj->cacheExist(
+			!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
 				cacheKey: $groupCacheKey
 			)
 		) {
@@ -157,7 +157,7 @@ class Auth
 			);
 		}
 
-		$this->httpObj->requestObj->session['groupData'] = $this->httpObj->requestObj->customerCacheObj->cacheGet(
+		$this->httpObj->httpRequestObj->session['groupData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
 			cacheKey: $groupCacheKey
 		);
 	}

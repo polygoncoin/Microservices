@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
@@ -58,7 +59,7 @@ class FileBasedSessionContainer extends SessionContainerHelper implements
 			mkdir(
 				directory: $sessionSavePath,
 				permissions: 0755,
-				recursive: true
+				recursive: Constant::$TRUE
 			);
 		}
 		$this->sessionSavePath = $sessionSavePath;

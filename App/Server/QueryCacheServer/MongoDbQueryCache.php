@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\Container\NoSql;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer\MongoDbCache as QueryCache_MongoDb;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
@@ -127,7 +128,7 @@ class MongoDbQueryCache implements QueryCacheServerInterface
 	 */
 	public function connectQueryCache(): void
 	{
-		if ($this->queryCacheServerObj !== null) {
+		if ($this->queryCacheServerObj !== Constant::$NULL) {
 			return;
 		}
 

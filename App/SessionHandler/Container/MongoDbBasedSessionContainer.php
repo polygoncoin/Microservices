@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
@@ -253,11 +254,11 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	private function connect(): void
 	{
 		try {
-			if ($this->mongoDbServerUri === null) {
+			if ($this->mongoDbServerUri === Constant::$NULL) {
 				$UP = '';
 				if (
-					$this->mongoDbServerUsername !== null
-					&& $this->mongoDbServerPassword !== null
+					$this->mongoDbServerUsername !== Constant::$NULL
+					&& $this->mongoDbServerPassword !== Constant::$NULL
 				) {
 					$UP = "{$this->mongoDbServerUsername}:{$this->mongoDbServerPassword}@";
 				}

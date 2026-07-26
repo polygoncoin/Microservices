@@ -62,7 +62,7 @@ class Web
 				break;
 			case 'POST':
 				$curlConfig[\CURLOPT_POST] = true;
-				if ($fileLocation === null) {
+				if ($fileLocation === Constant::$NULL) {
 					$curlConfig[\CURLOPT_POSTFIELDS] = $payload;
 				}
 				break;
@@ -70,7 +70,7 @@ class Web
 			case 'PATCH':
 			case 'DELETE':
 				$curlConfig[\CURLOPT_CUSTOMREQUEST] = $method;
-				if ($fileLocation === null) {
+				if ($fileLocation === Constant::$NULL) {
 					$curlConfig[\CURLOPT_POSTFIELDS] = $payload;
 				}
 				break;
@@ -118,7 +118,7 @@ class Web
 			payload: $payload,
 			fileLocation: $fileLocation
 		);
-		if ($fileLocation !== null) {
+		if ($fileLocation !== Constant::$NULL) {
 			switch ($method) {
 				case 'POST':
 					// // Create a CURLFile object
@@ -227,7 +227,7 @@ class Web
 			'ResponseBody' => $responseBody
 		];
 
-		if ($curlResponse === false) {
+		if ($curlResponse === Constant::$FALSE) {
 			$errorCode = curl_errno(
 				handle: $curl
 			);
@@ -254,7 +254,7 @@ class Web
 				strpos(
 					haystack: $responseContentType,
 					needle: 'application/json;'
-				) !== false
+				) !== Constant::$FALSE
 				&& (
 					strpos(
 						haystack: $responseBody,
@@ -409,7 +409,7 @@ class Web
 
 		$rowTagStartFlag = false;
 
-		$isObject = (isset($xmlParamArr[0])) ? false : true;
+		$isObject = (isset($xmlParamArr[0])) ? Constant::$FALSE : Constant::$TRUE;
 
 		if (
 			!$isObject

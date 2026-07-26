@@ -131,25 +131,25 @@ $server->on(
 					'/open-test-xml',
 					'/supp-test'
 				],
-				strict: true
+				strict: Constant::$TRUE
 			)
 		) {
 			$testObj = new Test($httpReqData);
 			switch ($httpReqData['get'][ROUTE_URL_PARAM]) {
 				case '/all-test':
-					$response->end('<pre>'.print_r(value: $testObj->processAllTest(), return: true));
+					$response->end('<pre>'.print_r(value: $testObj->processAllTest(), return: Constant::$TRUE));
 					break;
 				case '/auth-test':
-					$response->end('<pre>'.print_r(value: $testObj->processPrivate(), return: true));
+					$response->end('<pre>'.print_r(value: $testObj->processPrivate(), return: Constant::$TRUE));
 					break;
 				case '/open-test':
-					$response->end('<pre>'.print_r(value: $testObj->processPublic(), return: true));
+					$response->end('<pre>'.print_r(value: $testObj->processPublic(), return: Constant::$TRUE));
 					break;
 				case '/open-test-xml':
-					$response->end('<pre>'.print_r(value: $testObj->processPublicXml(), return: true));
+					$response->end('<pre>'.print_r(value: $testObj->processPublicXml(), return: Constant::$TRUE));
 					break;
 				case '/supp-test':
-					$response->end('<pre>'.print_r(value: $testObj->processPrivateSupplement(), return: true));
+					$response->end('<pre>'.print_r(value: $testObj->processPrivateSupplement(), return: Constant::$TRUE));
 					break;
 			}
 		} else {
@@ -189,7 +189,7 @@ $server->on(
 $server->set(
 	[
 		// Disable Coroutines for Traditional PHP Sessions
-		'enable_coroutine' => false,
+		'enable_coroutine' => Constant::$FALSE,
 	]
 );
 

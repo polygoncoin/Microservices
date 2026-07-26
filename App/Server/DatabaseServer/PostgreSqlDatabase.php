@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\DatabaseServer;
 
+use Microservices\App\Constant;
 use Microservices\App\Server\DatabaseServer\DatabaseServerInterface;
 use Microservices\App\Server\Container\Sql\PostgreSql as DB_PostgreSql;
 
@@ -111,7 +112,7 @@ class PostgreSqlDatabase implements DatabaseServerInterface
 	 */
 	public function connectDb(): void
 	{
-		if ($this->sqlServerObj !== null) {
+		if ($this->sqlServerObj !== Constant::$NULL) {
 			return;
 		}
 

@@ -17,14 +17,14 @@ use Microservices\App\DatabaseServerDataType;
 
 return [
 	'category' => [
-		'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 			. DIRECTORY_SEPARATOR . 'CustomerDB'
 			. DIRECTORY_SEPARATOR . 'Groups'
 			. DIRECTORY_SEPARATOR . 'UserGroup'
 			. DIRECTORY_SEPARATOR . 'GET'
 			. DIRECTORY_SEPARATOR . 'Category-all.php',
 		'search' => [
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . 'UserGroup'
@@ -33,7 +33,7 @@ return [
 		],
 		'{id:int}' => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . 'UserGroup'
@@ -44,7 +44,7 @@ return [
 	'registration' => [
 		'{id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . 'UserGroup'
@@ -55,7 +55,7 @@ return [
 	'address' => [
 		'{id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . 'UserGroup'
@@ -66,7 +66,7 @@ return [
 	'registration-with-address' => [
 		'{id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . 'UserGroup'
@@ -75,10 +75,10 @@ return [
 		],
 	],
 	$Env::$routesRequestRoute => [
-		'__FILE__' => false,
+		'__FILE__' => $Constant::$FALSE,
 		'{method:string}' => [
 			'dataType' => DatabaseServerDataType::$HttpMethod,
-			'__FILE__' => false
+			'__FILE__' => $Constant::$FALSE
 		]
 	]
 ];

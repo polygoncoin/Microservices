@@ -16,12 +16,12 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->requestObj->session['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'updated_by',
@@ -38,12 +38,12 @@ return [
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'Yes'
+			'fetchFromData' => $Constant::$YES
 		],
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
@@ -56,7 +56,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->requestObj->session['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
@@ -65,9 +65,9 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->requestObj->session['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_deleted'],
-				'columnValue' => ['custom', 'No'],
+				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
@@ -76,9 +76,9 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->requestObj->session['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_disabled'],
-				'columnValue' => ['custom', 'Yes'],
+				'columnValue' => ['custom', $Constant::$YES],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],

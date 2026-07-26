@@ -16,7 +16,7 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->requestObj->session['userData']['customer_user_group_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'name',
@@ -58,17 +58,17 @@ return [
 		[
 			'column' => 'is_approved',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		]
 	],
 	'__INSERT-IDs__' => 'group:id',

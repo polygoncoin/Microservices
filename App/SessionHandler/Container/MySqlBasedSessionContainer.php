@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
@@ -257,7 +258,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 				username: $this->mySqlServerUsername,
 				password: $this->mySqlServerPassword,
 				options: [
-					\PDO::ATTR_EMULATE_PREPARES => false,
+					\PDO::ATTR_EMULATE_PREPARES => Constant::$FALSE,
 				]
 			);
 		} catch (\Exception $e) {

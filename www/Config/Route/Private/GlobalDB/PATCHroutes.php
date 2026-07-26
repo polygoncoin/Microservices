@@ -19,26 +19,26 @@ return [
 	'group' => [
 		'{customer_user_group_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
 				. DIRECTORY_SEPARATOR . 'PATCH'
 				. DIRECTORY_SEPARATOR . 'groups.php',
 			'approve'  => [
-				'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+				'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 					. DIRECTORY_SEPARATOR . 'GlobalDB'
 					. DIRECTORY_SEPARATOR . 'PATCH'
 					. DIRECTORY_SEPARATOR . 'approve'
 					. DIRECTORY_SEPARATOR . 'groups.php',
 			],
 			'disable'  => [
-				'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+				'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 					. DIRECTORY_SEPARATOR . 'GlobalDB'
 					. DIRECTORY_SEPARATOR . 'PATCH'
 					. DIRECTORY_SEPARATOR . 'disable'
 					. DIRECTORY_SEPARATOR . 'groups.php',
 			],
 			'enable'  => [
-				'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+				'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 					. DIRECTORY_SEPARATOR . 'GlobalDB'
 					. DIRECTORY_SEPARATOR . 'PATCH'
 					. DIRECTORY_SEPARATOR . 'enable'
@@ -49,26 +49,26 @@ return [
 	'customer' => [
 		'{customer_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
 				. DIRECTORY_SEPARATOR . 'PATCH'
 				. DIRECTORY_SEPARATOR . 'customer.php',
 			'approve'  => [
-				'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+				'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 					. DIRECTORY_SEPARATOR . 'GlobalDB'
 					. DIRECTORY_SEPARATOR . 'PATCH'
 					. DIRECTORY_SEPARATOR . 'approve'
 					. DIRECTORY_SEPARATOR . 'customer.php',
 			],
 			'disable'  => [
-				'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+				'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 					. DIRECTORY_SEPARATOR . 'GlobalDB'
 					. DIRECTORY_SEPARATOR . 'PATCH'
 					. DIRECTORY_SEPARATOR . 'disable'
 					. DIRECTORY_SEPARATOR . 'customer.php',
 			],
 			'enable'  => [
-				'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+				'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 					. DIRECTORY_SEPARATOR . 'GlobalDB'
 					. DIRECTORY_SEPARATOR . 'PATCH'
 					. DIRECTORY_SEPARATOR . 'enable'

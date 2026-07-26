@@ -21,17 +21,17 @@ return [
 			[
 				'column' => 'is_approved',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'Yes'
+				'fetchFromData' => $Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'No'
+				'fetchFromData' => $Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'No'
+				'fetchFromData' => $Constant::$NO
 			]
 		],
 		'__MODE__' => 'multipleRecordFormat'
@@ -42,17 +42,17 @@ return [
 			[
 				'column' => 'is_approved',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'Yes'
+				'fetchFromData' => $Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'No'
+				'fetchFromData' => $Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
 				'fetchFrom' => 'custom',
-				'fetchFromData' => 'No'
+				'fetchFromData' => $Constant::$NO
 			],
 			[
 				'column' => 'id',
@@ -62,4 +62,4 @@ return [
 		],
 		'__MODE__' => 'singleRecordFormat'
 	],
-][isset($this->httpObj->requestObj->session['routeParamArr']['id'])?'single':'all'];
+][isset($this->httpObj->httpRequestObj->session['routeParamArr']['id'])?'single':'all'];

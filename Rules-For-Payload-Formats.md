@@ -102,7 +102,7 @@ return [
 			'__INSERT-IDs__' => 'sub:id',
 		]
 	],
-	'useHierarchy' => true
+	'useHierarchy' => Constant::$TRUE
 ];
 ```
 

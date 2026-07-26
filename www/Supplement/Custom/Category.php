@@ -15,6 +15,7 @@
 
 namespace Microservices\www\Supplement\Custom;
 
+use Microservices\App\Constant;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Http;
 use Microservices\www\Supplement\Custom\CustomInterface;
@@ -52,8 +53,8 @@ class Category implements CustomInterface
 		Http &$httpObj
 	) {
 		$this->httpObj = &$httpObj;
-		$this->httpObj->requestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
-			customerData: $this->httpObj->requestObj->session['customerData'],
+		$this->httpObj->httpRequestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
+			customerData: $this->httpObj->httpRequestObj->session['customerData'],
 			fetchFrom: 'Slave'
 		);
 	}
@@ -81,16 +82,16 @@ class Category implements CustomInterface
 			WHERE is_deleted = :is_deleted AND parent_id = :parent_id
 		';
 		$paramArr = [
-			':is_deleted' => 'No',
+			':is_deleted' => Constant::$NO,
 			':parent_id' => 0,
 		];
-		$this->httpObj->requestObj->customerDbObj->execQuery(
+		$this->httpObj->httpRequestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$rowArr = $this->httpObj->requestObj->customerDbObj->fetchAll();
-		$this->httpObj->requestObj->customerDbObj->closeCursor();
-		$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+		$rowArr = $this->httpObj->httpRequestObj->customerDbObj->fetchAll();
+		$this->httpObj->httpRequestObj->customerDbObj->closeCursor();
+		$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 			objectKey: 'Results',
 			data: $rowArr
 		);

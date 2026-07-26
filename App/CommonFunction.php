@@ -16,6 +16,7 @@
 namespace Microservices\App;
 
 use Microservices\App\CacheServerKey;
+use Microservices\App\Constant;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
@@ -47,16 +48,16 @@ class CommonFunction
 		&$httpObj,
 		$feature
 	): bool {
-		if (!isset($httpObj->requestObj->session['customerData'][$feature])) {
+		if (!isset($httpObj->httpRequestObj->session['customerData'][$feature])) {
 			throw new \Exception(
 				message: "Provided feature '{$feature}' not found",
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		if (empty($httpObj->requestObj->session['customerData'][$feature])) {
+		if (empty($httpObj->httpRequestObj->session['customerData'][$feature])) {
 			return false;
 		} else {
-			return ($httpObj->requestObj->session['customerData'][$feature] === 'Yes') ? true : false;
+			return ($httpObj->httpRequestObj->session['customerData'][$feature] === Constant::$YES) ? Constant::$TRUE : Constant::$FALSE;
 		}
 	}
 
@@ -374,26 +375,26 @@ class CommonFunction
 			cacheObj: DbCommonFunction::$globalCacheServerObj,
 			ip: $httpObj->httpReqData['server']['httpRequestIp'],
 			cidrCacheKey: CacheServerKey::customerCidr(
-				customerId: $httpObj->requestObj->customerId
+				customerId: $httpObj->httpRequestObj->customerId
 			)
 		);
 
-		if ($httpObj !== null) {
+		if ($httpObj !== Constant::$NULL) {
 			self::checkCacheCidr(
-				cacheObj: $httpObj->requestObj->customerCacheObj,
+				cacheObj: $httpObj->httpRequestObj->customerCacheObj,
 				ip: $httpObj->httpReqData['server']['httpRequestIp'],
 				cidrCacheKey: CacheServerKey::customerGroupCidr(
-					customerId: $httpObj->requestObj->customerId,
-					customerUserGroupId: $httpObj->requestObj->customerUserGroupId
+					customerId: $httpObj->httpRequestObj->customerId,
+					customerUserGroupId: $httpObj->httpRequestObj->customerUserGroupId
 				)
 			);
 
 			self::checkCacheCidr(
-				cacheObj: $httpObj->requestObj->customerCacheObj,
+				cacheObj: $httpObj->httpRequestObj->customerCacheObj,
 				ip: $httpObj->httpReqData['server']['httpRequestIp'],
 				cidrCacheKey: CacheServerKey::customerUserCidr(
-					customerId: $httpObj->requestObj->customerId,
-					customerUserId: $httpObj->requestObj->customerUserId
+					customerId: $httpObj->httpRequestObj->customerId,
+					customerUserId: $httpObj->httpRequestObj->customerUserId
 				)
 			);
 		}
@@ -421,7 +422,7 @@ class CommonFunction
 		if ($isArray || $isObject) {
 			$value = json_decode(
 				json: $value,
-				associative: true
+				associative: Constant::$TRUE
 			);
 		}
 

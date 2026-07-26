@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\QueryCacheServer;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer\RedisCache as QueryCache_Redis;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
@@ -116,7 +117,7 @@ class RedisQueryCache implements QueryCacheServerInterface
 	 */
 	public function connectQueryCache(): void
 	{
-		if ($this->queryCacheServerObj !== null) {
+		if ($this->queryCacheServerObj !== Constant::$NULL) {
 			return;
 		}
 

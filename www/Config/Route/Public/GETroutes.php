@@ -19,31 +19,31 @@ return [
 	$Env::$cronRequestRoutePrefix => [
 		'{cron:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
-			'__FILE__' => false,
+			'__FILE__' => $Constant::$FALSE,
 		]
 	],
 	'login' => [
-		'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 			. DIRECTORY_SEPARATOR . 'GET'
 			. DIRECTORY_SEPARATOR . 'Login.php',
 	],
 	'category' => [
-		'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 			. DIRECTORY_SEPARATOR . 'GET'
 			. DIRECTORY_SEPARATOR . 'Category-all.php',
 		'search' => [
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GET'
 				. DIRECTORY_SEPARATOR . 'Category-search.php',
 		],
 		'{id:int}' => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GET'
 				. DIRECTORY_SEPARATOR . 'Category-Single.php',
 		],
 		'download' => [
-			'__FILE__' => $this->httpObj->requestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
 				. DIRECTORY_SEPARATOR . 'GET'
 				. DIRECTORY_SEPARATOR . 'Download.php',
 		]

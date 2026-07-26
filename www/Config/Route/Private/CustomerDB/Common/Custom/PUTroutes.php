@@ -18,13 +18,13 @@ use Microservices\App\DatabaseServerDataType;
 return [
 	$Env::$customRequestRoutePrefix => [
 		'password' => [
-			'__FILE__' => false
+			'__FILE__' => $Constant::$FALSE
 		],
 		'{custom:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
 			'{id:int}'  => [
 				'dataType' => DatabaseServerDataType::$PrimaryKey,
-				'__FILE__' => false
+				'__FILE__' => $Constant::$FALSE
 			]
 		]
 	]

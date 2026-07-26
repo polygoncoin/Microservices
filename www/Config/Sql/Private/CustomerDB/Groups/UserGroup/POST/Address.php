@@ -70,5 +70,5 @@ return [
 	//         ]
 	//     ]
 	// ],
-	'isTransaction' => false
+	'isTransaction' => $Constant::$FALSE
 ];

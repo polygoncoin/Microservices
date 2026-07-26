@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
@@ -79,7 +80,7 @@ class RateLimiter
 			);
 		}
 
-		if ($this->cacheObj === null) {
+		if ($this->cacheObj === Constant::$NULL) {
 			throw new \Exception(
 				message: 'Invalid Rate Limiter Cache object',
 				code: HttpStatus::$InternalServerError

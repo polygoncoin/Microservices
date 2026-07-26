@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Export\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Export\ExportDatabaseServerInterface;
 
@@ -276,7 +277,7 @@ class MySql implements ExportDatabaseServerInterface
 						in_array(
 							needle: $newParameterisedColumn,
 							haystack: $tmpParamArr,
-							strict: true
+							strict: Constant::$TRUE
 						)
 					) {
 						throw new \Exception(

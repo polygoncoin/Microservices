@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 
 /* String Data Types */
@@ -346,22 +347,22 @@ class DatabaseServerDataType
 	 *
 	 *     // Optional params
 	 *        // Value can be null
-	 *        'canBeNull' => false,
+	 *        'canBeNull' => Constant::$FALSE,
 	 *        // Minimum value (int)
 	 *        'minValue' => 1,
 	 *        // Maximum value (int)
-	 *        'maxValue' => false,
+	 *        'maxValue' => Constant::$FALSE,
 	 *        // Minimum length (string)
-	 *        'minLength' => false,
+	 *        'minLength' => Constant::$FALSE,
 	 *        // Maximum length (string)
-	 *        'maxLength' => false,
+	 *        'maxLength' => Constant::$FALSE,
 	 *        // Any one value from the Array
-	 *        'enumValues' => false,
+	 *        'enumValues' => Constant::$FALSE,
 	 *        // Values belonging to this Array
-	 *        'setValues' => false,
+	 *        'setValues' => Constant::$FALSE,
 	 *
 	 *        // Values should pass this regex before use
-	 *        'regex' => false
+	 *        'regex' => Constant::$FALSE
 	 *  ];
 	 */
 
@@ -443,8 +444,8 @@ class DatabaseServerDataType
 		if (
 			$returnFlag
 			&& isset($dataType['canBeNull'])
-			&& $dataType['canBeNull'] === true
-			&& $data === null
+			&& $dataType['canBeNull'] === Constant::$TRUE
+			&& $data === Constant::$NULL
 		) {
 			return true;
 		}
@@ -486,7 +487,7 @@ class DatabaseServerDataType
 			&& in_array(
 				needle: $data,
 				haystack: $dataType['enumValues'],
-				strict: true
+				strict: Constant::$TRUE
 			)
 		) {
 			$returnFlag = false;

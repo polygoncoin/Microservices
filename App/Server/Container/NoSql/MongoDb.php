@@ -16,6 +16,7 @@
 namespace Microservices\App\Server\Container\NoSql;
 
 use Microservices\App\CommonFunction;
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\NoSql\NoSqlInterface;
@@ -135,16 +136,16 @@ class MongoDb implements NoSqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->cacheServerObj !== null) {
+		if ($this->cacheServerObj !== Constant::$NULL) {
 			return;
 		}
 
 		try {
-			if ($this->uri === null) {
+			if ($this->uri === Constant::$NULL) {
 				$UP = '';
 				if (
-					$this->cacheServerUsername !== null
-					&& $this->cacheServerPassword !== null
+					$this->cacheServerUsername !== Constant::$NULL
+					&& $this->cacheServerPassword !== Constant::$NULL
 				) {
 					$UP = "{$this->cacheServerUsername}:{$this->cacheServerPassword}@";
 				}
@@ -263,7 +264,7 @@ class MongoDb implements NoSqlInterface
 			'value' => $value
 		];
 
-		if ($expire === null) {
+		if ($expire === Constant::$NULL) {
 			if ($this->collectionObj->insertOne($document)) {
 				return true;
 			}

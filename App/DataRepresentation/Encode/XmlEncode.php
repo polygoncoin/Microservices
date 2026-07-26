@@ -15,6 +15,7 @@
 
 namespace Microservices\App\DataRepresentation\Encode;
 
+use Microservices\App\Constant;
 use Microservices\App\DataRepresentation\Encode\DataEncodeInterface;
 use Microservices\App\DataRepresentation\Encode\XmlEncoder\XmlEncoderObject;
 use Microservices\App\HttpStatus;
@@ -116,7 +117,7 @@ class XmlEncode implements DataEncodeInterface
 				value: $data
 			)
 		) {
-			$isObject = (isset($data[0])) ? false : true;
+			$isObject = (isset($data[0])) ? Constant::$FALSE : Constant::$TRUE;
 			if (!$isObject) {
 				$this->write(
 					data: "<{$this->jsonEncoderObjectObj->objectKey}>"
@@ -165,7 +166,7 @@ class XmlEncode implements DataEncodeInterface
 	private function escape(
 		$data
 	): string {
-		if ($data === null) {
+		if ($data === Constant::$NULL) {
 			return 'null';
 		}
 		return htmlspecialchars(
@@ -269,7 +270,7 @@ class XmlEncode implements DataEncodeInterface
 	public function startArray(
 		$objectKey = null
 	): void {
-		if ($objectKey === null) {
+		if ($objectKey === Constant::$NULL) {
 			$objectKey = 'Records';
 		}
 		if ($this->jsonEncoderObjectObj) {
@@ -320,13 +321,13 @@ class XmlEncode implements DataEncodeInterface
 	public function startObject(
 		$objectKey = null
 	): void {
-		if ($objectKey === null) {
-			$objectKey = ($this->jsonEncoderObjectObj === null) ? 'Resultset' : 'Record';
+		if ($objectKey === Constant::$NULL) {
+			$objectKey = ($this->jsonEncoderObjectObj === Constant::$NULL) ? 'Resultset' : 'Record';
 		}
 		if ($this->jsonEncoderObjectObj) {
 			if (
 				$this->jsonEncoderObjectObj->mode === 'Object'
-				&& ($objectKey === null)
+				&& ($objectKey === Constant::$NULL)
 			) {
 				throw new \Exception(
 					message: 'Object inside an Object should be supported with Key',

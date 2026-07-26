@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler;
 
+use Microservices\App\Constant;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 
 /**
@@ -196,7 +197,7 @@ class CustomSessionHandler implements
 		} while (
 			$this->validateId(
 				sessionId: $sessionId
-			) === true
+			) === Constant::$TRUE
 		);
 
 		$this->creatingSessionId = null;
@@ -359,7 +360,7 @@ class CustomSessionHandler implements
 		// Updating timestamp for readonly mode (read_and_close option)
 		if (
 			!$this->isTimestampUpdated
-			&& $this->foundSession === true
+			&& $this->foundSession === Constant::$TRUE
 		) {
 			$this->container->touchSession(
 				sessionId: $this->sessionId,
@@ -431,8 +432,8 @@ class CustomSessionHandler implements
 		// Removed Session Cookie if read_and_close is enabled
 		if (
 			isset($this->container->sessionOptionArr['read_and_close'])
-			&& $this->container->sessionOptionArr['read_and_close'] === true
-			&& $this->creatingSessionId === true
+			&& $this->container->sessionOptionArr['read_and_close'] === Constant::$TRUE
+			&& $this->creatingSessionId === Constant::$TRUE
 		) {
 			// Remove Session Set-Cookie header
 			$headerArr = headers_list();
@@ -442,7 +443,7 @@ class CustomSessionHandler implements
 					strpos(
 						haystack: $header,
 						needle: $this->sessionName
-					) !== false
+					) !== Constant::$FALSE
 				) {
 					unset($headerArr[$index]);
 					$headerFound = true;

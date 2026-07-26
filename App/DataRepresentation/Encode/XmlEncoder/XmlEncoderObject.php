@@ -15,6 +15,8 @@
 
 namespace Microservices\App\DataRepresentation\Encode\XmlEncoder;
 
+use Microservices\App\Constant;
+
 /**
  * XML Encopder Object
  *
@@ -45,7 +47,7 @@ class XmlEncoderObject
 		$objectKey
 	) {
 		$this->mode = $mode;
-		if ($objectKey !== null) {
+		if ($objectKey !== Constant::$NULL) {
 			$this->objectKey = str_replace(
 				search: ':',
 				replace: '-',

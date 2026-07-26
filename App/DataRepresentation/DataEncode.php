@@ -99,7 +99,7 @@ class DataEncode
 		$header = true
 	): void {
 		if ($this->httpObj->httpReqData['server']['httpMethod'] === Constant::$GET) {
-			if ($this->httpObj->responseObj->outputRepresentation === 'PHP') {
+			if ($this->httpObj->httpResponseObj->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
 				$this->tempStream = fopen(
@@ -108,7 +108,7 @@ class DataEncode
 				);
 			}
 		} else {
-			if ($this->httpObj->responseObj->outputRepresentation === 'PHP') {
+			if ($this->httpObj->httpResponseObj->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
 				$this->tempStream = fopen(
@@ -117,7 +117,7 @@ class DataEncode
 				);
 			}
 		}
-		switch ($this->httpObj->responseObj->outputRepresentation) {
+		switch ($this->httpObj->httpResponseObj->outputRepresentation) {
 			case 'JSON':
 				$this->dataEncoderObj = new JsonEncode(
 					tempStream: $this->tempStream,
@@ -297,8 +297,8 @@ class DataEncode
 
 		switch (true) {
 			case (
-					$this->httpObj->responseObj->outputRepresentation === 'XSLT'
-					&& $this->xsltFile !== null
+					$this->httpObj->httpResponseObj->outputRepresentation === 'XSLT'
+					&& $this->xsltFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->xsltFile
 					)
@@ -311,8 +311,8 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->responseObj->outputRepresentation === 'HTML'
-					&& $this->htmlFile !== null
+					$this->httpObj->httpResponseObj->outputRepresentation === 'HTML'
+					&& $this->htmlFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->htmlFile
 					)
@@ -325,8 +325,8 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->responseObj->outputRepresentation === 'PHP'
-					&& $this->phpFile !== null
+					$this->httpObj->httpResponseObj->outputRepresentation === 'PHP'
+					&& $this->phpFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->phpFile
 					)
@@ -368,8 +368,8 @@ class DataEncode
 
 		switch (true) {
 			case (
-					$this->httpObj->responseObj->outputRepresentation === 'XSLT'
-					&& $this->xsltFile !== null
+					$this->httpObj->httpResponseObj->outputRepresentation === 'XSLT'
+					&& $this->xsltFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->xsltFile
 					)
@@ -382,8 +382,8 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->responseObj->outputRepresentation === 'HTML'
-					&& $this->htmlFile !== null
+					$this->httpObj->httpResponseObj->outputRepresentation === 'HTML'
+					&& $this->htmlFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->htmlFile
 					)
@@ -396,8 +396,8 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->responseObj->outputRepresentation === 'PHP'
-					&& $this->phpFile !== null
+					$this->httpObj->httpResponseObj->outputRepresentation === 'PHP'
+					&& $this->phpFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->phpFile
 					)

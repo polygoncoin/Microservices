@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
@@ -130,7 +131,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 				'path' => $this->sessionOptionArr['cookie_path'],
 				'domain' => '',
 				'secure' => $this->sessionOptionArr['cookie_secure'],
-				'httponly' => true,
+				'httponly' => Constant::$TRUE,
 				'samesite' => 'Strict'
 			]
 		);
@@ -199,7 +200,7 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 				'path' => $this->sessionOptionArr['cookie_path'],
 				'domain' => '',
 				'secure' => $this->sessionOptionArr['cookie_secure'],
-				'httponly' => true,
+				'httponly' => Constant::$TRUE,
 				'samesite' => 'Strict'
 			]
 		);

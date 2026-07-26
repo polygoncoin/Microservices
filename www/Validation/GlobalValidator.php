@@ -15,6 +15,7 @@
 
 namespace Microservices\www\Validation;
 
+use Microservices\App\Constant;
 use Microservices\App\Http;
 use Microservices\www\Validation\ValidatorInterface;
 use Microservices\www\Validation\ValidatorTrait;
@@ -71,7 +72,7 @@ class GlobalValidator implements ValidatorInterface
 				if ($fetchFrom === 'custom') {
 					$argArr[$argName] = $fetchFromData;
 				} else {
-					$argArr[$argName] = $this->httpObj->requestObj->session[$fetchFrom][$fetchFromData];
+					$argArr[$argName] = $this->httpObj->httpRequestObj->session[$fetchFrom][$fetchFromData];
 				}
 			}
 			$function = $v['function'];
@@ -98,13 +99,13 @@ class GlobalValidator implements ValidatorInterface
 		);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
-		$this->httpObj->requestObj->customerDbObj->execQuery(
+		$this->httpObj->httpRequestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$record = $this->httpObj->requestObj->customerDbObj->fetch();
-		$this->httpObj->requestObj->customerDbObj->closeCursor();
-		return (int)((isset($record['count']) && $record['count'] === 0) ? false : true);
+		$record = $this->httpObj->httpRequestObj->customerDbObj->fetch();
+		$this->httpObj->httpRequestObj->customerDbObj->closeCursor();
+		return (int)((isset($record['count']) && $record['count'] === 0) ? Constant::$FALSE : Constant::$TRUE);
 	}
 
 	/**
@@ -129,12 +130,12 @@ class GlobalValidator implements ValidatorInterface
 			$columnValue,
 			$id
 		];
-		$this->httpObj->requestObj->customerDbObj->execQuery(
+		$this->httpObj->httpRequestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$record = $this->httpObj->requestObj->customerDbObj->fetch();
-		$this->httpObj->requestObj->customerDbObj->closeCursor();
-		return ($record['count'] === 0) ? false : true;
+		$record = $this->httpObj->httpRequestObj->customerDbObj->fetch();
+		$this->httpObj->httpRequestObj->customerDbObj->closeCursor();
+		return ($record['count'] === 0) ? Constant::$FALSE : Constant::$TRUE;
 	}
 }

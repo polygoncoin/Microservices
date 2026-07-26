@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\QueryCacheServer;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer\MemcachedCache as QueryCache_Memcached;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
@@ -116,7 +117,7 @@ class MemcachedQueryCache implements QueryCacheServerInterface
 	 */
 	public function connectQueryCache(): void
 	{
-		if ($this->queryCacheServerObj !== null) {
+		if ($this->queryCacheServerObj !== Constant::$NULL) {
 			return;
 		}
 

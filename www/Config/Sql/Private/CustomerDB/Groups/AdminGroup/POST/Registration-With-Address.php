@@ -14,7 +14,7 @@
  */
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
@@ -86,6 +86,6 @@ return [
 			'__INSERT-IDs__' => 'address:id',
 		]
 	],
-	'useHierarchy' => true,
+	'useHierarchy' => $Constant::$TRUE,
 	'idempotentWindow' => 10
 ];

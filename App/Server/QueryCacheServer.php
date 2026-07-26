@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\QueryCacheServer\QueryCacheServerInterface;
 
@@ -124,7 +125,7 @@ class QueryCacheServer
 	 */
 	public function connectQueryCache(): void
 	{
-		if ($this->queryCacheServerObj !== null) {
+		if ($this->queryCacheServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -136,7 +137,7 @@ class QueryCacheServer
                     'Memcached',
                     'MongoDb'
                 ],
-				strict: true
+				strict: Constant::$TRUE
             )
         ) {
 			throw new \Exception(

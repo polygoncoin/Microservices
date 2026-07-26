@@ -14,12 +14,12 @@
  */
 
 return [
-	'__QUERY__' => "SELECT * FROM `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'id',

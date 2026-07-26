@@ -86,7 +86,7 @@ class Microservices
 	public function init(): bool
 	{
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
-			$this->startMicroTimestamp = microtime(as_float: true);
+			$this->startMicroTimestamp = microtime(as_float: Constant::$TRUE);
 		}
 
 		return $this->httpObj->init();
@@ -128,7 +128,7 @@ class Microservices
 
 		// Class found
 		try {
-			if ($class !== null) {
+			if ($class !== Constant::$NULL) {
 				$api = new $class(
 					httpObj: $this->httpObj
 				);
@@ -166,10 +166,10 @@ class Microservices
 	 */
 	public function startData(): void
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return;
 		}
-		$this->httpObj->responseObj->dataEncodeObj->startObject();
+		$this->httpObj->httpResponseObj->dataEncodeObj->startObject();
 	}
 
 	/**
@@ -179,12 +179,12 @@ class Microservices
 	 */
 	public function addStatus(): void
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return;
 		}
-		$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+		$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 			objectKey: 'Status',
-			data: $this->httpObj->responseObj->httpStatus
+			data: $this->httpObj->httpResponseObj->httpStatus
 		);
 	}
 
@@ -195,11 +195,11 @@ class Microservices
 	 */
 	public function addPerformance(): void
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return;
 		}
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
-			$this->endMicroTimestamp = microtime(as_float: true);
+			$this->endMicroTimestamp = microtime(as_float: Constant::$TRUE);
 			$time = ceil(
 				num: ($this->endMicroTimestamp - $this->startMicroTimestamp) * 1000
 			);
@@ -207,26 +207,26 @@ class Microservices
 				num: memory_get_peak_usage() / 1000
 			);
 
-			$this->httpObj->responseObj->dataEncodeObj->startObject(
+			$this->httpObj->httpResponseObj->dataEncodeObj->startObject(
 				objectKey: 'Stats'
 			);
-			$this->httpObj->responseObj->dataEncodeObj->startObject(
+			$this->httpObj->httpResponseObj->dataEncodeObj->startObject(
 				objectKey: 'Performance'
 			);
-			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 				objectKey: 'total-time-taken',
 				data: "{$time} ms"
 			);
-			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 				objectKey: 'peak-memory-usage',
 				data: "{$memory} KB"
 			);
-			$this->httpObj->responseObj->dataEncodeObj->endObject();
-			$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+			$this->httpObj->httpResponseObj->dataEncodeObj->endObject();
+			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 				objectKey: 'getrusage',
 				data: getrusage()
 			);
-			$this->httpObj->responseObj->dataEncodeObj->endObject();
+			$this->httpObj->httpResponseObj->dataEncodeObj->endObject();
 		}
 	}
 
@@ -237,12 +237,12 @@ class Microservices
 	 */
 	public function returnPerformance(): array
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return [];
 		}
 		$returnPerformance = [];
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
-			$this->endMicroTimestamp = microtime(as_float: true);
+			$this->endMicroTimestamp = microtime(as_float: Constant::$TRUE);
 			$time = ceil(
 				num: ($this->endMicroTimestamp - $this->startMicroTimestamp) * 1000
 			);
@@ -271,11 +271,11 @@ class Microservices
 	 */
 	public function endData(): void
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return;
 		}
-		$this->httpObj->responseObj->dataEncodeObj->endObject();
-		$this->httpObj->responseObj->dataEncodeObj->end();
+		$this->httpObj->httpResponseObj->dataEncodeObj->endObject();
+		$this->httpObj->httpResponseObj->dataEncodeObj->end();
 	}
 
 	/**
@@ -285,11 +285,11 @@ class Microservices
 	 */
 	public function outputResults(): void
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return;
 		}
-		http_response_code(response_code: $this->httpObj->responseObj->httpStatus);
-		$this->httpObj->responseObj->dataEncodeObj->streamData();
+		http_response_code(response_code: $this->httpObj->httpResponseObj->httpStatus);
+		$this->httpObj->httpResponseObj->dataEncodeObj->streamData();
 	}
 
 	/**
@@ -299,10 +299,10 @@ class Microservices
 	 */
 	public function returnResults(): bool|string
 	{
-		if ($this->httpObj->responseObj === null) {
+		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 			return false;
 		}
-		return $this->httpObj->responseObj->dataEncodeObj->getData();
+		return $this->httpObj->httpResponseObj->dataEncodeObj->getData();
 	}
 
 	/**
@@ -331,10 +331,10 @@ class Microservices
 			$methods = 'GET, QUERY, POST, PUT, PATCH, DELETE, OPTIONS';
 			$headerArr['Access-Control-Allow-Methods'] = $methods;
 		} else {
-			if ($this->httpObj->responseObj === null) {
+			if ($this->httpObj->httpResponseObj === Constant::$NULL) {
 				$outputRepresentation = Env::$outputRepresentation;
 			} else {
-				$outputRepresentation = $this->httpObj->responseObj->outputRepresentation;
+				$outputRepresentation = $this->httpObj->httpResponseObj->outputRepresentation;
 			}
 			switch ($outputRepresentation) {
 				case 'XML':

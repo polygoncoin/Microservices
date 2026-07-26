@@ -15,6 +15,7 @@
 
 namespace Microservices\App\SessionHandler\Container;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
@@ -234,8 +235,8 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 			];
 
 			if (
-				$this->redisServerUsername !== null
-				&& $this->redisServerPassword !== null
+				$this->redisServerUsername !== Constant::$NULL
+				&& $this->redisServerPassword !== Constant::$NULL
 			) {
 				$connParamArr['auth'] = [
 					$this->redisServerUsername,

@@ -20,7 +20,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		]
 	],
 	'__MODE__' => 'multipleRecordFormat'

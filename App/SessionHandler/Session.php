@@ -267,10 +267,10 @@ class Session
 		}
 
 		$this->optionArr = [ // always required.
-			'use_strict_mode' => true,
+			'use_strict_mode' => Constant::$TRUE,
 			'name' => $this->sessionName,
 			'serialize_handler' => 'php_serialize',
-			'lazy_write' => true,
+			'lazy_write' => Constant::$TRUE,
 			'gc_maxlifetime' => (int)$this->sessionMaxLifetime,
 			'cookie_lifetime' => 0,
 			'cookie_path' => '/',
@@ -279,9 +279,9 @@ class Session
 				strpos(
 					haystack: $this->sessionDomain,
 					needle: 'localhost'
-				) !== false
-			) ? true : false,
-			'cookie_httponly' => true,
+				) !== Constant::$FALSE
+			) ? Constant::$TRUE : Constant::$FALSE,
+			'cookie_httponly' => Constant::$TRUE,
 			'cookie_samesite' => 'Strict'
 		];
 
@@ -295,7 +295,7 @@ class Session
 					in_array(
 						needle: $option,
 						haystack: ['name', 'serialize_handler', 'gc_maxlifetime'],
-						strict: true
+						strict: Constant::$TRUE
 					)
 				) {
 					// Skip option
@@ -363,7 +363,7 @@ class Session
 		if (isset($_SESSION)) {
 			if (
 				!isset($this->optionArr['read_and_close'])
-				|| $this->optionArr['read_and_close'] !== true
+				|| $this->optionArr['read_and_close'] !== Constant::$TRUE
 			) {
 				session_write_close();
 			}

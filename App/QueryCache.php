@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\DbCommonFunction;
 use Microservices\App\Server\QueryCacheServer;
 
@@ -64,12 +65,12 @@ class QueryCache
 	 */
 	public function connectCustomerQueryCache(): void
 	{
-        if ($this->queryCacheServerObj !== null) {
+        if ($this->queryCacheServerObj !== Constant::$NULL) {
             return;
         }
 
 		$customerQueryCacheServerCred = DbCommonFunction::customerQueryCacheServerCred(
-			customerData: $this->httpObj->requestObj->session['customerData']
+			customerData: $this->httpObj->httpRequestObj->session['customerData']
 		);
 		$this->queryCacheServerObj = new QueryCacheServer(
 			queryCacheServerType: $customerQueryCacheServerCred['cacheServerType'],

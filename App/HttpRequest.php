@@ -389,7 +389,7 @@ class HttpRequest
 			);
 			$this->routeParserObj->parseRoute();
 
-			if ($this->httpObj->responseObj !== null) {
+			if ($this->httpObj->httpResponseObj !== Constant::$NULL) {
 				$this->httpObj->initResponse();
 			}
 		}
@@ -419,23 +419,7 @@ class HttpRequest
 			filename: "php://memory",
 			mode: "rw+b"
 		);
-		switch ($this->httpObj->httpReqData['server']['httpMethod']) {
-			case Constant::$GET:
-				$payloadJson = json_encode($this->httpObj->httpReqData['get']);
-				break;
-
-			case Constant::$QUERY:
-			case Constant::$POST:
-			case Constant::$PUT:
-			case Constant::$PATCH:
-			case Constant::$DELETE:
-				$payloadJson = $this->setPayloadStream();
-				break;
-		}
-		rewind(
-			stream: $this->payloadStream
-		);
-
+		$this->setPayloadStream();
 		$this->dataDecodeObj = new DataDecode(
 			inputRepresentation: $this->inputRepresentation,
 			dataFileHandle: $this->payloadStream
@@ -446,15 +430,6 @@ class HttpRequest
 
 		$this->session['payloadType'] = $this->dataDecodeObj->dataType();
 
-		$this->requestId = $this->getRequestId(
-			customerId: $this->customerId,
-			customerUserGroupId: $this->customerUserGroupId,
-			customerUserId: $this->customerUserId,
-			route: $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
-			httpMethod: $this->httpObj->httpReqData['server']['httpMethod'],
-			httpRequestIp: $this->httpObj->httpReqData['server']['httpRequestIp'],
-			payloadJson: $payloadJson
-		);
 	}
 
 	/**
@@ -465,67 +440,91 @@ class HttpRequest
 	private function setPayloadStream(): string
 	{
 		$payloadJson = '{}';
-		switch (true) {
-			case (
-				$this->httpObj->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-				&& $this->routeParserObj->routeEndingWithReservedKeywordFlag
-				&& ($this->routeParserObj->routeEndingReservedKeyword === Env::$importRequestRouteKeyword)
-				&& isset($this->httpObj->httpReqData['files']['file']['tmp_name'])
-			):
-				$uploadedFileName = $this->httpObj->httpReqData['files']['file']['tmp_name'];
-				$uploadedFileMd5 = md5_file(
-					$this->httpObj->httpReqData['files']['file']['tmp_name']
-				);
+		switch ($this->httpObj->httpReqData['server']['httpMethod']) {
+			case Constant::$GET:
+				$payloadJson = json_encode($this->httpObj->httpReqData['get']);
+				break;
+			case Constant::$QUERY:
+			case Constant::$POST:
+			case Constant::$PUT:
+			case Constant::$PATCH:
+			case Constant::$DELETE:
+				switch (true) {
+					case (
+						$this->httpObj->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
+						&& $this->routeParserObj->routeEndingWithReservedKeywordFlag
+						&& ($this->routeParserObj->routeEndingReservedKeyword === Env::$importRequestRouteKeyword)
+						&& isset($this->httpObj->httpReqData['files']['file']['tmp_name'])
+					):
+						$uploadedFileName = $this->httpObj->httpReqData['files']['file']['tmp_name'];
+						$uploadedFileMd5 = md5_file(
+							$this->httpObj->httpReqData['files']['file']['tmp_name']
+						);
 
-				$this->customerDbObj = DbCommonFunction::connectCustomerDb(
-					customerData: $this->httpObj->requestObj->session['customerData'],
-					fetchFrom: 'Master'
-				);
-				$uploadedFileMd5Data = $this->getUploadedFileMd5Data(uploadedFileMd5: $uploadedFileMd5);
+						$this->customerDbObj = DbCommonFunction::connectCustomerDb(
+							customerData: $this->httpObj->httpRequestObj->session['customerData'],
+							fetchFrom: 'Master'
+						);
+						$uploadedFileMd5Data = $this->getUploadedFileMd5Data(uploadedFileMd5: $uploadedFileMd5);
 
-				if ($uploadedFileMd5Data !== false) {
-					throw new \Exception(
-						message: "Same file was already uploaded on '{$uploadedFileMd5Data['uploaded_on']}'",
-						code: HttpStatus::$BadRequest
-					);
+						if ($uploadedFileMd5Data !== Constant::$FALSE) {
+							throw new \Exception(
+								message: "Same file was already uploaded on '{$uploadedFileMd5Data['uploaded_on']}'",
+								code: HttpStatus::$BadRequest
+							);
+						}
+
+						$sql = 'INSERT INTO `import_file_detail` SET
+							customer_id = :customer_id,
+							customer_user_group_id = :customer_user_group_id,
+							customer_user_id = :customer_user_id,
+							uploaded_file_name = :uploaded_file_name,
+							uploaded_file_md5 = :uploaded_file_md5,
+							request_ip = :request_ip
+						';
+						$paramArr[':customer_id'] = $this->customerId;
+						$paramArr[':customer_user_group_id'] = $this->customerUserGroupId;
+						$paramArr[':customer_user_id'] = $this->customerUserId;
+						$paramArr[':uploaded_file_name'] = $uploadedFileName;
+						$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
+						$paramArr[':request_ip'] = $this->httpObj->httpReqData['server']['httpRequestIp'];
+
+						$this->customerDbObj->execQuery(
+							sql: $sql,
+							paramArr: $paramArr
+						);
+						$importFileMd5Id = $this->customerDbObj->lastInsertId();
+
+						$payloadJson = $this->formatCsvPayload(
+							csvFile: $this->httpObj->httpReqData['files']['file']['tmp_name']
+						);
+						break;
+					case $this->inputRepresentation === 'XML':
+						$payloadJson = $this->convertXmlToJson(
+							xmlString: $this->httpObj->httpReqData['post']
+						);
+						break;
+					default:
+						$payloadJson = $this->httpObj->httpReqData['post'];
 				}
-
-				$sql = 'INSERT INTO `import_file_detail` SET
-					customer_id = :customer_id,
-					customer_user_group_id = :customer_user_group_id,
-					customer_user_id = :customer_user_id,
-					uploaded_file_name = :uploaded_file_name,
-					uploaded_file_md5 = :uploaded_file_md5,
-					request_ip = :request_ip
-				';
-				$paramArr[':customer_id'] = $this->customerId;
-				$paramArr[':customer_user_group_id'] = $this->customerUserGroupId;
-				$paramArr[':customer_user_id'] = $this->customerUserId;
-				$paramArr[':uploaded_file_name'] = $uploadedFileName;
-				$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
-				$paramArr[':request_ip'] = $this->httpObj->httpReqData['server']['httpRequestIp'];
-
-				$this->customerDbObj->execQuery(
-					sql: $sql,
-					paramArr: $paramArr
-				);
-				$importFileMd5Id = $this->customerDbObj->lastInsertId();
-
-				$payloadJson = $this->formatCsvPayload(
-					csvFile: $this->httpObj->httpReqData['files']['file']['tmp_name']
-				);
 				break;
-			case $this->inputRepresentation === 'XML':
-				$payloadJson = $this->convertXmlToJson(
-					xmlString: $this->httpObj->httpReqData['post']
-				);
-				break;
-			default:
-				$payloadJson = $this->httpObj->httpReqData['post'];
 		}
 		fwrite(
 			stream: $this->payloadStream,
 			data: $payloadJson
+		);
+		rewind(
+			stream: $this->payloadStream
+		);
+
+		$this->requestId = $this->getRequestId(
+			customerId: $this->customerId,
+			customerUserGroupId: $this->customerUserGroupId,
+			customerUserId: $this->customerUserId,
+			route: $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
+			httpMethod: $this->httpObj->httpReqData['server']['httpMethod'],
+			httpRequestIp: $this->httpObj->httpReqData['server']['httpRequestIp'],
+			payloadJson: $payloadJson
 		);
 
 		return $payloadJson;
@@ -549,8 +548,8 @@ class HttpRequest
 				`import_file_detail`
 			WHERE
 				`uploaded_file_md5` = :uploaded_file_md5
-				AND `is_disabled` = 'No'
-				AND `is_deleted` = 'No'
+				AND `is_disabled` = Constant::$NO
+				AND `is_deleted` = Constant::$NO
 		";
 		$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
 
@@ -888,7 +887,7 @@ class HttpRequest
 			httpObj: $this->httpObj
 		);
 		$dataEncodeObj->init(
-			header: false
+			header: Constant::$FALSE
 		);
 		$dataEncodeObj->startObject();
 
@@ -897,7 +896,7 @@ class HttpRequest
 		$currentModeArr = [];
 
 		$fp = fopen($csvFile, "r");
-		while (($csvString = fgets($fp)) !== false) {
+		while (($csvString = fgets($fp)) !== Constant::$FALSE) {
 			if (empty($csvString)) {
 				continue;
 			}
@@ -910,7 +909,7 @@ class HttpRequest
 			if (empty($csvRecordArr)) {
 				continue;
 			}
-			if ($csvHeaderData === false) {
+			if ($csvHeaderData === Constant::$FALSE) {
 				$csvHeaderData = [];
 				foreach ($csvRecordArr as $columnPosition => $value) {
 					$values = explode(

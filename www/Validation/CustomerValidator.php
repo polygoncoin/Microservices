@@ -15,6 +15,7 @@
 
 namespace Microservices\www\Validation;
 
+use Microservices\App\Constant;
 use Microservices\App\Http;
 use Microservices\www\Validation\ValidatorInterface;
 use Microservices\www\Validation\ValidatorTrait;
@@ -71,7 +72,7 @@ class CustomerValidator implements ValidatorInterface
 				if ($fetchFrom === 'custom') {
 					$argArr[$argName] = $fetchFromData;
 				} else {
-					$argArr[$argName] = $this->httpObj->requestObj->session[$fetchFrom][$fetchFromData];
+					$argArr[$argName] = $this->httpObj->httpRequestObj->session[$fetchFrom][$fetchFromData];
 				}
 			}
 			$function = $v['function'];
@@ -98,18 +99,18 @@ class CustomerValidator implements ValidatorInterface
 		$primary,
 		&$id
 	): int {
-		$dbServerDatabase = $this->httpObj->requestObj->customerDbObj->dbServerDatabase;
+		$dbServerDatabase = $this->httpObj->httpRequestObj->customerDbObj->dbServerDatabase;
 		$sql = "
 			SELECT count(1) as `count`
 			FROM `{$dbServerDatabase}`.`{$table}`
 			WHERE `{$primary}` = ?
 		";
 		$paramArr = [$id];
-		$this->httpObj->requestObj->customerDbObj->execQuery(
+		$this->httpObj->httpRequestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		return (int)($this->httpObj->requestObj->customerDbObj->fetch())['count'];
+		return (int)($this->httpObj->httpRequestObj->customerDbObj->fetch())['count'];
 	}
 
 	/**
@@ -127,12 +128,12 @@ class CustomerValidator implements ValidatorInterface
 		);
 		$sql = "SELECT count(1) as `count` FROM `{$table}` WHERE `{$primary}` = ?";
 		$paramArr = [$id];
-		$this->httpObj->requestObj->customerDbObj->execQuery(
+		$this->httpObj->httpRequestObj->customerDbObj->execQuery(
 			sql: $sql,
 			paramArr: $paramArr
 		);
-		$record = $this->httpObj->requestObj->customerDbObj->fetch();
-		$this->httpObj->requestObj->customerDbObj->closeCursor();
-		return (isset($record['count']) && $record['count'] === 0) ? false : true;
+		$record = $this->httpObj->httpRequestObj->customerDbObj->fetch();
+		$this->httpObj->httpRequestObj->customerDbObj->closeCursor();
+		return (isset($record['count']) && $record['count'] === 0) ? Constant::$FALSE : Constant::$TRUE;
 	}
 }

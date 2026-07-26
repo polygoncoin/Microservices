@@ -16,19 +16,19 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'Yes'
+			'fetchFromData' => $Constant::$YES
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'customer_user_is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_user_id',
@@ -44,14 +44,14 @@ return [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromData' => 'Yes'
+					'fetchFromData' => $Constant::$YES
 				]
 			],
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
 					'fetchFrom' => 'custom',
-					'fetchFromData' => 'No'
+					'fetchFromData' => $Constant::$NO
 				],
 				[
 					'column' => 'id',
@@ -79,6 +79,6 @@ return [
 			'errorMessage' => 'Invalid registration id'
 		],
 	],
-	'useHierarchy' => true,
+	'useHierarchy' => $Constant::$TRUE,
 	'idempotentWindow' => 10
 ];

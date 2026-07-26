@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\Container\Sql;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\Container\Sql\SqlInterface;
 
@@ -125,7 +126,7 @@ class PostgreSql implements SqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->pgsqlServerObj !== null) {
+		if ($this->pgsqlServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -258,7 +259,7 @@ class PostgreSql implements SqlInterface
 	public function lastInsertId(): bool|int
 	{
 		try {
-			if ($this->stmt !== false) {
+			if ($this->stmt !== Constant::$FALSE) {
 				return $this->stmt->fetchColumn();
 			}
 		} catch (\PDOException $e) {

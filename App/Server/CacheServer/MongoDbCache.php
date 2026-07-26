@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server\CacheServer;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer\CacheServerInterface;
 use Microservices\App\Server\Container\NoSql\MongoDb as Cache_MongoDb;
@@ -116,7 +117,7 @@ class MongoDbCache implements CacheServerInterface
 	 */
 	public function connectCache(): void
 	{
-		if ($this->noSqlServerObj !== null) {
+		if ($this->noSqlServerObj !== Constant::$NULL) {
 			return;
 		}
 

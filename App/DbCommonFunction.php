@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer;
@@ -93,7 +94,7 @@ class DbCommonFunction
 	 */
 	public static function connectGlobalCache(): void
 	{
-		if (self::$globalCacheServerObj !== null) {
+		if (self::$globalCacheServerObj !== Constant::$NULL) {
 			return;
 		}
 		self::$globalCacheServerObj = self::connectCache(
@@ -194,7 +195,7 @@ class DbCommonFunction
 	 */
 	public static function connectGlobalDb(): void
 	{
-		if (self::$gDbServer !== null) {
+		if (self::$gDbServer !== Constant::$NULL) {
 			return;
 		}
 		self::$gDbServer = self::connectDb(

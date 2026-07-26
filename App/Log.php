@@ -84,11 +84,11 @@ class Log
 		$exceptionJson = json_encode(
 			value: $logData
 		);
-		if (isset($this->httpObj->requestObj)) {
+		if (isset($this->httpObj->httpRequestObj)) {
 			$exceptionJson = json_encode(
 				value: $logData
 			);
-			return $this->httpObj->requestObj->logErrorData(
+			return $this->httpObj->httpRequestObj->logErrorData(
 				exceptionJson: $exceptionJson
 			);
 		} else {

@@ -17,6 +17,7 @@ namespace Microservices\App\DataRepresentation\Decode;
 
 use Generator;
 use Microservices\App\CommonFunction;
+use Microservices\App\Constant;
 use Microservices\App\DataRepresentation\Decode\DataDecodeInterface;
 use Microservices\App\DataRepresentation\Decode\JsonDecode\JsonDecodeEngine;
 use Microservices\App\HttpStatus;
@@ -132,7 +133,7 @@ class JsonDecode implements DataDecodeInterface
 		$this->jsonFileIndex = null;
 		foreach (
 			$this->jsonDecodeEngineObj->process(
-				index: true
+				index: Constant::$TRUE
 			) as $keyArr => $val
 		) {
 			if (
@@ -181,7 +182,7 @@ class JsonDecode implements DataDecodeInterface
 	{
 		$return = true;
 		if (
-			($keyString !== null)
+			($keyString !== Constant::$NULL)
 			&& strlen(
 				string: $keyString
 			) !== 0
@@ -216,7 +217,7 @@ class JsonDecode implements DataDecodeInterface
 	): string {
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
-			($keyString !== null)
+			($keyString !== Constant::$NULL)
 			&& strlen(
 				string: $keyString
 			) > 0
@@ -257,7 +258,7 @@ class JsonDecode implements DataDecodeInterface
 	): int {
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
-			($keyString !== null)
+			($keyString !== Constant::$NULL)
 			&& strlen(
 				string: $keyString
 			) !== 0
@@ -361,7 +362,7 @@ class JsonDecode implements DataDecodeInterface
 			in_array(
 				needle: $keyString,
 				haystack: [null, ''],
-				strict: true
+				strict: Constant::$TRUE
 			)
 		) {
 			$this->jsonDecodeEngineObj->startIndex = null;
@@ -370,7 +371,7 @@ class JsonDecode implements DataDecodeInterface
 		}
 		$jsonFileIndex = &$this->jsonFileIndex;
 		if (
-			($keyString !== null)
+			($keyString !== Constant::$NULL)
 			&& strlen(
 				string: $keyString
 			) !== 0

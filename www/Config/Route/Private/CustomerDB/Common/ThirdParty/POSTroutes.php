@@ -19,7 +19,7 @@ return [
 	$Env::$thirdPartyRequestRoutePrefix => [
 		'{thirdParty:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
-			'__FILE__' => false
+			'__FILE__' => $Constant::$FALSE
 		]
 	]
 ];

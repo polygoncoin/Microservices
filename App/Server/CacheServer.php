@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\CacheServer\CacheServerInterface;
 
@@ -124,7 +125,7 @@ class CacheServer
 	 */
 	public function connectCache(): void
 	{
-		if ($this->cacheServerObj !== null) {
+		if ($this->cacheServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -136,7 +137,7 @@ class CacheServer
                     'Memcached',
                     'MongoDb'
                 ],
-				strict: true
+				strict: Constant::$TRUE
             )
         ) {
 			throw new \Exception(

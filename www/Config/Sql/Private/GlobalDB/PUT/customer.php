@@ -43,17 +43,17 @@ return [
 		[
 			'column' => 'is_approved',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'Yes'
+			'fetchFromData' => $Constant::$YES
 		],
 		[
 			'column' => 'is_disabled',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',
-			'fetchFromData' => 'No'
+			'fetchFromData' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_id',

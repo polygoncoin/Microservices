@@ -64,9 +64,9 @@ return [
 			]
 		]
 	],
-	'useHierarchy' => true,
+	'useHierarchy' => $Constant::$TRUE,
 	'affectedQueryCacheKeyArr' => [
-		$this->httpObj->requestObj->session['customerData']['customer_id'] . ':category',
-		$this->httpObj->requestObj->session['customerData']['customer_id'] . ':category1'
+		$this->httpObj->httpRequestObj->session['customerData']['customer_id'] . ':category',
+		$this->httpObj->httpRequestObj->session['customerData']['customer_id'] . ':category1'
 	]
 ];

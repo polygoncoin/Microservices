@@ -15,6 +15,7 @@
 
 namespace Microservices\App\DataRepresentation\Encode;
 
+use Microservices\App\Constant;
 use Microservices\App\DataRepresentation\Encode\DataEncodeInterface;
 use Microservices\App\DataRepresentation\Encode\PhpEncoder\PhpEncoderObject;
 use Microservices\App\HttpStatus;
@@ -146,7 +147,7 @@ class PhpEncode implements DataEncodeInterface
 	private function escape(
 		&$data
 	): mixed {
-		if ($data !== null) {
+		if ($data !== Constant::$NULL) {
 			if (
 				is_array(
 					value: $data
@@ -269,7 +270,7 @@ class PhpEncode implements DataEncodeInterface
 		$this->jsonEncoderObjectObj = new PhpEncoderObject(
 			mode: 'Array'
 		);
-		if ($objectKey !== null) {
+		if ($objectKey !== Constant::$NULL) {
 			$this->jsonEncoderObjectObj->objectKey = $objectKey;
 		}
 	}
@@ -316,7 +317,7 @@ class PhpEncode implements DataEncodeInterface
 		if ($this->jsonEncoderObjectObj) {
 			if (
 				$this->jsonEncoderObjectObj->mode === 'Object'
-				&& ($objectKey === null)
+				&& ($objectKey === Constant::$NULL)
 			) {
 				throw new \Exception(
 					message: 'Object inside an Object should be supported with key',
@@ -331,7 +332,7 @@ class PhpEncode implements DataEncodeInterface
 		$this->jsonEncoderObjectObj = new PhpEncoderObject(
 			mode: 'Object'
 		);
-		if ($objectKey !== null) {
+		if ($objectKey !== Constant::$NULL) {
 			$this->jsonEncoderObjectObj->objectKey = $objectKey;
 		}
 	}

@@ -8,9 +8,6 @@ use Microservices\App\Reload;
 use Microservices\App\Start;
 use Microservices\TestCase\Test;
 
-ini_set(option: 'display_errors', value: true);
-error_reporting(error_level: E_ALL);
-
 define('ROOT', realpath(path: __DIR__ . '/../../'));
 define('ROUTE_URL_PARAM', 'route');
 
@@ -18,6 +15,9 @@ require_once ROOT . DIRECTORY_SEPARATOR . 'Autoload.php';
 spl_autoload_register(
 	callback:  'Microservices\Autoload::register'
 );
+
+ini_set(option: 'display_errors', value: Constant::$TRUE);
+error_reporting(error_level: E_ALL);
 
 // Load .env(s)
 foreach ([
@@ -106,26 +106,26 @@ if (
 			'/open-test-xml',
 			'/supp-test'
 		],
-		strict: true
+		strict: Constant::$TRUE
 	)
 	&& $httpReqData['server']['domainName'] === 'localhost'
 ) {
 	$testObj = new Test($httpReqData);
 	switch ($httpReqData['get'][ROUTE_URL_PARAM]) {
 		case '/all-test':
-			echo '<pre>'.print_r(value: $testObj->processAllTest(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processAllTest(), return: Constant::$TRUE);
 			break;
 		case '/auth-test':
-			echo '<pre>'.print_r(value: $testObj->processPrivate(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPrivate(), return: Constant::$TRUE);
 			break;
 		case '/open-test':
-			echo '<pre>'.print_r(value: $testObj->processPublic(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPublic(), return: Constant::$TRUE);
 			break;
 		case '/open-test-xml':
-			echo '<pre>'.print_r(value: $testObj->processPublicXml(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPublicXml(), return: Constant::$TRUE);
 			break;
 		case '/supp-test':
-			echo '<pre>'.print_r(value: $testObj->processPrivateSupplement(), return: true);
+			echo '<pre>'.print_r(value: $testObj->processPrivateSupplement(), return: Constant::$TRUE);
 			break;
 	}
 } else {

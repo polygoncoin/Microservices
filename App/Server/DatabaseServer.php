@@ -15,6 +15,7 @@
 
 namespace Microservices\App\Server;
 
+use Microservices\App\Constant;
 use Microservices\App\HttpStatus;
 use Microservices\App\Server\DatabaseServer\DatabaseServerInterface;
 
@@ -121,7 +122,7 @@ class DatabaseServer
 	 */
 	public function connectDb(): void
 	{
-		if ($this->dbServerObj !== null) {
+		if ($this->dbServerObj !== Constant::$NULL) {
 			return;
 		}
 
@@ -129,7 +130,7 @@ class DatabaseServer
 			!in_array(
 				needle: $this->dbServerType,
 				haystack: ['MySql', 'PostgreSql'],
-				strict: true
+				strict: Constant::$TRUE
 			)
 		) {
 			throw new \Exception(

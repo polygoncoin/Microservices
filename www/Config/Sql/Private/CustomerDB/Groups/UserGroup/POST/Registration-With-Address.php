@@ -14,7 +14,7 @@
  */
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->requestObj->session['customerData']['customer_user_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
@@ -88,7 +88,7 @@ return [
 			'__MAX-PAYLOAD-OBJECTS__' => 2
 		]
 	],
-	'useHierarchy' => true,
+	'useHierarchy' => $Constant::$TRUE,
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10
 ];

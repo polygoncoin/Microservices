@@ -21,7 +21,7 @@ return [
 			'dataType' => DatabaseServerDataType::$Default,
 			'{id:int}'  => [
 				'dataType' => DatabaseServerDataType::$PrimaryKey,
-				'__FILE__' => false
+				'__FILE__' => $Constant::$FALSE
 			]
 		]
 	]

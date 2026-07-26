@@ -111,7 +111,7 @@ class Route
 		$Env = __NAMESPACE__ . '\Env';
 
 		$httpRouteArr = [];
-		if ($this->httpObj->requestObj->isPublicRequest) {
+		if ($this->httpObj->httpRequestObj->isPublicRequest) {
 			$userRoutesFolder = Constant::$WWW . $this->routesFolder
 				. DIRECTORY_SEPARATOR . 'Public';
 		} else {
@@ -119,7 +119,7 @@ class Route
 				. DIRECTORY_SEPARATOR . 'Private'
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . $this->httpObj->requestObj->session['groupData']['customer_user_group_name'];
+				. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->session['groupData']['customer_user_group_name'];
 		}
 
 		foreach ($this->httpMethodArr as $method) {
@@ -147,7 +147,7 @@ class Route
 				httpRouteArr: $httpRouteArr[$method]
 			);
 		}
-		$this->httpObj->responseObj->dataEncodeObj->addKeyData(
+		$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
 			objectKey: 'Results',
 			data: $httpRouteArr
 		);
@@ -174,7 +174,7 @@ class Route
 				in_array(
 					needle: $routeElement,
 					haystack: $this->reservedKeyArr,
-					strict: true
+					strict: Constant::$TRUE
 				)
 			) {
 				continue;

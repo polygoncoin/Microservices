@@ -15,6 +15,7 @@
 
 namespace Microservices\www\Hook;
 
+use Microservices\App\Constant;
 use Microservices\App\Http;
 use Microservices\www\Hook\HookInterface;
 use Microservices\www\Hook\HookTrait;
@@ -84,6 +85,6 @@ class Hook_Example implements HookInterface
 	private function execHook(): void
 	{
 		// Change payload.
-		$this->httpObj->requestObj->session['payload']['hook'] = 'Yes';
+		$this->httpObj->httpRequestObj->session['payload']['hook'] = Constant::$YES;
 	}
 }

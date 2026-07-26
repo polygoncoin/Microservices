@@ -49,7 +49,7 @@ return [
 			// Fetch value of last insert IDs
 			'column' => 'is_deleted',
 			'fetchFrom' => 'custom',                        // custom
-			'fetchFromData' => 'No'                        // Static values
+			'fetchFromData' => Constant::$NO                        // Static values
 		]
 	],
 
@@ -247,10 +247,10 @@ return [
 	'__PAYLOAD-TYPE__' => 'Object', // Allow single 'Object' / 'Array' of Object (if not set will accept both)
 	'__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
 
-	'isTransaction' => false, // Flag to follow transaction Begin, Commit and rollback on error
+	'isTransaction' => Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
 
-	'useHierarchy' => true, // For DML
-	'useResultSet' => true, // For DQL
+	'useHierarchy' => Constant::$TRUE, // For DML
+	'useResultSet' => Constant::$TRUE, // For DQL
 
 	// Rate Limiting Route access
 	'rateLimitMaxRequest' => 1, // Allowed number of request in defined seconds window
@@ -265,7 +265,7 @@ return [
 
 	// Enable referrer lag for current route
 	// To be configured in source route Sql config
-	'enableReferrerLag' => 'Yes',
+	'enableReferrerLag' => Constant::$YES,
 
 	// Minimum Lag time between current request and referrer/previous request
 	// To be configured in target route Sql config
@@ -307,7 +307,7 @@ return [
 ];
 ```
 
-- **Note**: 'useHierarchy' => true also includes 'useResultSet' => true feature.
+- **Note**: 'useHierarchy' => Constant::$TRUE also includes 'useResultSet' => Constant::$TRUE feature.
 
 - If there are repeated modules or configurations; one can reuse them by palcing them in a separate file and including as below.
 
@@ -511,9 +511,9 @@ return [
 	'__PAYLOAD-TYPE__' => 'Object', // Allow single 'Object' / 'Array' of Object (if not set will accept both)
 	'__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
 
-	'isTransaction' => false, // Flag to follow transaction Begin, Commit and rollback on error
+	'isTransaction' => Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
 
-	'useHierarchy' => true, // For DML
+	'useHierarchy' => Constant::$TRUE, // For DML
 
 	// Rate Limiting Route access
 	'rateLimitMaxRequest' => 1, // Allowed number of request in defined seconds window
@@ -528,7 +528,7 @@ return [
 
 	// Enable referrer lag for current route
 	// To be configured in source route Sql config
-	'enableReferrerLag' => 'Yes',
+	'enableReferrerLag' => Constant::$YES,
 
 	// Minimum Lag time between current request and referrer/previous request
 	// To be configured in target route Sql config
@@ -590,22 +590,22 @@ public static $PrimaryKey = [
 
 // Optional params
 	// Value can be null
-	'canBeNull' => false,
+	'canBeNull' => Constant::$FALSE,
 	// Minimum value (int)
 	'minValue' => 1,
 	// Maximum value (int)
-	'maxValue' => false,
+	'maxValue' => Constant::$FALSE,
 	// Minimum length (string)
-	'minLength' => false,
+	'minLength' => Constant::$FALSE,
 	// Maximum length (string)
-	'maxLength' => false,
+	'maxLength' => Constant::$FALSE,
 	// Any one value from the Array
-	'enumValues' => false,
+	'enumValues' => Constant::$FALSE,
 	// Values belonging to this Array
-	'setValues' => false,
+	'setValues' => Constant::$FALSE,
 
 	// Values should pass this regex before use
-	'regex' => false
+	'regex' => Constant::$FALSE
 ];
 ```
 

@@ -15,13 +15,14 @@
 
 namespace Microservices\TestCase;
 
-use Microservices\App\Web;
+use Microservices\App\Constant;
 use Microservices\App\Env;
+use Microservices\App\Web;
 
 $headerArr = $defaultHeaderArr;
 $headerArr[] = $contentType;
 
-$response = Web::trigger(
+$webResponse = Web::trigger(
 	homeURL: $homeURL,
 	method: 'POST',
 	route: '/login',
@@ -32,19 +33,19 @@ $response = Web::trigger(
 $token = null;
 $sessionCookie = null;
 
-if (isset($response['HttpResponse']['Headers']['Set-Cookie'])) {
+if (isset($webResponse['HttpResponse']['Headers']['Set-Cookie'])) {
 	$sessionCookie = substr(
-		string: $response['HttpResponse']['Headers']['Set-Cookie'],
+		string: $webResponse['HttpResponse']['Headers']['Set-Cookie'],
 		offset: 0,
 		length: strpos(
-			haystack: $response['HttpResponse']['Headers']['Set-Cookie'],
+			haystack: $webResponse['HttpResponse']['Headers']['Set-Cookie'],
 			needle: '; '
 		)
 	);
-} elseif (isset($response['HttpResponse']['ResponseBody']['Results']['Token'])) {
-	$token = $response['HttpResponse']['ResponseBody']['Results']['Token'];
-} elseif (isset($response['HttpResponse']['ResponseBody']['Results']['SessionId'])) {
-	$sessionCookie = "PHPSESSID={$response['HttpResponse']['ResponseBody']['Results']['SessionId']}";
+} elseif (isset($webResponse['HttpResponse']['ResponseBody']['Results']['Token'])) {
+	$token = $webResponse['HttpResponse']['ResponseBody']['Results']['Token'];
+} elseif (isset($webResponse['HttpResponse']['ResponseBody']['Results']['SessionId'])) {
+	$sessionCookie = "PHPSESSID={$webResponse['HttpResponse']['ResponseBody']['Results']['SessionId']}";
 }
 
-return $response;
+return $webResponse;
