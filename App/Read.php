@@ -471,8 +471,7 @@ class Read
 		&$dbFetchedRecord,
 		$readChildUseResultSet
 	): void {
-		if ($readChildUseHierarchy) {
-			// $record = $this->httpObj->httpRequestObj->session['payload'];
+		if ($readChildUseResultSet) {
 			$this->resetFetchData(
 				fetchFrom: 'sqlPayload',
 				payloadKeyArr: $readChildPayloadKeyArr,

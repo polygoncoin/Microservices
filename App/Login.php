@@ -702,9 +702,13 @@ class Login
 	private function cacheExist(
 		$cacheKey
 	): mixed {
-		return $this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
-			cacheKey: $cacheKey
-		);
+		if ($this->httpObj->httpRequestObj->customerCacheObj) {
+			return $this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+				cacheKey: $cacheKey
+			);
+		}
+
+		return false;
 	}
 
 	/**
@@ -717,9 +721,13 @@ class Login
 	private function cacheGet(
 		$cacheKey
 	): mixed {
-		return $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
-			cacheKey: $cacheKey
-		);
+		if ($this->httpObj->httpRequestObj->customerCacheObj) {
+			return $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+				cacheKey: $cacheKey
+			);
+		}
+
+		return false;
 	}
 
 	/**
@@ -736,11 +744,15 @@ class Login
 		$cacheValue,
 		$cacheExpire = 0
 	): mixed {
-		return $this->httpObj->httpRequestObj->customerCacheObj->cacheSet(
-			cacheKey: $cacheKey,
-			cacheValue: $cacheValue,
-			cacheExpire: $cacheExpire
-		);
+		if ($this->httpObj->httpRequestObj->customerCacheObj) {
+			return $this->httpObj->httpRequestObj->customerCacheObj->cacheSet(
+				cacheKey: $cacheKey,
+				cacheValue: $cacheValue,
+				cacheExpire: $cacheExpire
+			);
+		}
+
+		return false;
 	}
 
 	/**
@@ -753,8 +765,12 @@ class Login
 	private function cacheDelete(
 		$cacheKey
 	): mixed {
-		return $this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
-			cacheKey: $cacheKey
-		);
+		if ($this->httpObj->httpRequestObj->customerCacheObj) {
+			return $this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
+				cacheKey: $cacheKey
+			);
+		}
+
+		return false;
 	}
 }

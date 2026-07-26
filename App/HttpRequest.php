@@ -548,8 +548,8 @@ class HttpRequest
 				`import_file_detail`
 			WHERE
 				`uploaded_file_md5` = :uploaded_file_md5
-				AND `is_disabled` = Constant::$NO
-				AND `is_deleted` = Constant::$NO
+				AND `is_disabled` = 'No'
+				AND `is_deleted` = 'No'
 		";
 		$paramArr[':uploaded_file_md5'] = $uploadedFileMd5;
 

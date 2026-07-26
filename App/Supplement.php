@@ -487,10 +487,10 @@ class Supplement
 			}
 
 			// Set Function
-			if ($module === '') {
+			if ($supplementParentModule === '') {
 				$processFunction  = 'process';
 			} else {
-				$processFunction  = "{$module}Process";
+				$processFunction  = "{$supplementParentModule}Process";
 			}
 
 			// Execute
