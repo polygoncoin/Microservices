@@ -18,13 +18,13 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'activeRequestCollectionKey' => 'routeParamArr',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKeySubKey' => 'id'
 		]
 	],
 	'__MODE__' => 'singleRecordFormat'

@@ -79,27 +79,27 @@ trait AppTrait
 		foreach (['__PAYLOAD__', '__SET__', '__WHERE__'] as $option) {
 			if (isset($sqlConfig[$option])) {
 				foreach ($sqlConfig[$option] as $sqlParamConfig) {
-					$activeRequestCollectionKey = $sqlParamConfig['activeRequestCollectionKey'];
-					if ($activeRequestCollectionKey === 'function') {
+					$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
+					if ($activeRequestDataKey === 'function') {
 						continue;
 					}
 					$isRequired = isset($sqlParamConfig['isRequired'])
 						? $sqlParamConfig['isRequired'] : Constant::$FALSE;
 
 					if ($isRequired) {
-						$activeRequestCollectionKeySubKey = $sqlParamConfig['activeRequestCollectionKeySubKey'];
+						$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 
-						if (!isset($requiredFieldArr[$activeRequestCollectionKey])) {
-							$requiredFieldArr[$activeRequestCollectionKey] = [];
+						if (!isset($requiredFieldArr[$activeRequestDataKey])) {
+							$requiredFieldArr[$activeRequestDataKey] = [];
 						}
 						if (
 							!in_array(
-								needle: $activeRequestCollectionKeySubKey,
-								haystack: $requiredFieldArr[$activeRequestCollectionKey],
+								needle: $activeRequestDataKeySubKey,
+								haystack: $requiredFieldArr[$activeRequestDataKey],
 								strict: Constant::$TRUE
 							)
 						) {
-							$requiredFieldArr[$activeRequestCollectionKey][] = $activeRequestCollectionKeySubKey;
+							$requiredFieldArr[$activeRequestDataKey][] = $activeRequestDataKeySubKey;
 						}
 					}
 				}
@@ -110,25 +110,25 @@ trait AppTrait
 		$foundHierarchy = false;
 		if (isset($sqlConfig['__WHERE__'])) {
 			foreach ($sqlConfig['__WHERE__'] as $sqlParamConfig) {
-				$activeRequestCollectionKey = $sqlParamConfig['activeRequestCollectionKey'];
-				$activeRequestCollectionKeySubKey = $sqlParamConfig['activeRequestCollectionKeySubKey'];
+				$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
+				$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 
 				if (
 					$isFirstCall
 					&& in_array(
-						needle: $activeRequestCollectionKey,
+						needle: $activeRequestDataKey,
 						haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
 					throw new \Exception(
-						message: "First query can not have {$activeRequestCollectionKey} config",
+						message: "First query can not have {$activeRequestDataKey} config",
 						code: HttpStatus::$InternalServerError
 					);
 				}
 				if (
 					in_array(
-						needle: $activeRequestCollectionKey,
+						needle: $activeRequestDataKey,
 						haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
 						strict: Constant::$TRUE
 					)
@@ -143,7 +143,7 @@ trait AppTrait
 			// 	&& !$foundHierarchy
 			// ) {
 			//     throw new \Exception(
-			//          message: 'Invalid config: missing ' . $activeRequestCollectionKey,
+			//          message: 'Invalid config: missing ' . $activeRequestDataKey,
 			//          code: HttpStatus::$InternalServerError
 			//      );
 			// }
@@ -190,19 +190,19 @@ trait AppTrait
 						if ($flag) {
 							$requiredFieldArr[$module] = $moduleRequiredFieldArr;
 						} else {
-							foreach ($moduleRequiredFieldArr as $activeRequestCollectionKey => &$activeRequestCollectionKeySubKeyArr) {
-								if (!isset($requiredFieldArr[$activeRequestCollectionKey])) {
-									$requiredFieldArr[$activeRequestCollectionKey] = [];
+							foreach ($moduleRequiredFieldArr as $activeRequestDataKey => &$activeRequestDataKeySubKeyArr) {
+								if (!isset($requiredFieldArr[$activeRequestDataKey])) {
+									$requiredFieldArr[$activeRequestDataKey] = [];
 								}
-								foreach ($activeRequestCollectionKeySubKeyArr as $activeRequestCollectionKeySubKey) {
+								foreach ($activeRequestDataKeySubKeyArr as $activeRequestDataKeySubKey) {
 									if (
 										!in_array(
-											needle: $activeRequestCollectionKeySubKey,
-											haystack: $requiredFieldArr[$activeRequestCollectionKey],
+											needle: $activeRequestDataKeySubKey,
+											haystack: $requiredFieldArr[$activeRequestDataKey],
 											strict: Constant::$TRUE
 										)
 									) {
-										$requiredFieldArr[$activeRequestCollectionKey][] = $activeRequestCollectionKeySubKey;
+										$requiredFieldArr[$activeRequestDataKey][] = $activeRequestDataKeySubKey;
 									}
 								}
 							}
@@ -383,7 +383,7 @@ trait AppTrait
 
 		if (!empty($record)) {
 			$this->resetFetchData(
-				activeRequestCollectionKey: 'sqlParamArr',
+				activeRequestDataKey: 'sqlParamArr',
 				payloadKeyArr: $payloadKeyArr,
 				record: $record
 			);
@@ -531,7 +531,7 @@ trait AppTrait
 
 		if (!empty($record)) {
 			$this->resetFetchData(
-				activeRequestCollectionKey: 'sqlParamArr',
+				activeRequestDataKey: 'sqlParamArr',
 				payloadKeyArr: $payloadKeyArr,
 				record: $record
 			);
@@ -560,103 +560,103 @@ trait AppTrait
 		// Collect param values as per config respectively
 		foreach ($sqlConfig as $sqlParamConfig) {
 			$column = $sqlParamConfig['column'];
-			$activeRequestCollectionKey = $sqlParamConfig['activeRequestCollectionKey'];
-			$activeRequestCollectionKeySubKey = $sqlParamConfig['activeRequestCollectionKeySubKey'];
-			if ($activeRequestCollectionKey === 'function') {
-				$function = $activeRequestCollectionKeySubKey;
-				$value = $function($this->httpObj->httpRequestObj->activeRequestCollection);
+			$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
+			$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
+			if ($activeRequestDataKey === 'function') {
+				$function = $activeRequestDataKeySubKey;
+				$value = $function($this->httpObj->httpRequestObj->activeRequestData);
 				$paramArr[$column] = $value;
 				continue;
 			} elseif (
 				in_array(
-					needle: $activeRequestCollectionKey,
+					needle: $activeRequestDataKey,
 					haystack: ['sqlParamArr', 'sqlPayload'],
 					strict: Constant::$TRUE
 				)
 			) {
-				if (!isset($this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey])) {
-					$errorArr[] = "Missing key '{$activeRequestCollectionKeySubKey}' in '{$activeRequestCollectionKey}'";
+				if (!isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey])) {
+					$errorArr[] = "Missing key '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
 					continue;
 				}
-				$activeRequestCollectionKeySubKeyArr = explode(
+				$activeRequestDataKeySubKeyArr = explode(
 					separator: ':',
-					string: $activeRequestCollectionKeySubKey
+					string: $activeRequestDataKeySubKey
 				);
-				$value = $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey];
-				foreach ($activeRequestCollectionKeySubKeyArr as $_activeRequestCollectionKeySubKey) {
-					if (!isset($value[$_activeRequestCollectionKeySubKey])) {
-						$errorArr[] = "Missing hierarchy key '{$_activeRequestCollectionKeySubKey}' of '{$activeRequestCollectionKeySubKey}' in '{$activeRequestCollectionKey}'";
+				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey];
+				foreach ($activeRequestDataKeySubKeyArr as $_activeRequestDataKeySubKey) {
+					if (!isset($value[$_activeRequestDataKeySubKey])) {
+						$errorArr[] = "Missing hierarchy key '{$_activeRequestDataKeySubKey}' of '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
 						continue;
 					}
-					$value = &$value[$_activeRequestCollectionKeySubKey];
+					$value = &$value[$_activeRequestDataKeySubKey];
 				}
 				$paramArr[$column] = $value;
 				continue;
-			} elseif ($activeRequestCollectionKey === 'sqlResults') {
-				if (!isset($this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey])) {
+			} elseif ($activeRequestDataKey === 'sqlResults') {
+				if (!isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey])) {
 					$missExecution = true;
 					continue;
 				}
-				$activeRequestCollectionKeySubKeyArr = explode(
+				$activeRequestDataKeySubKeyArr = explode(
 					separator: ':',
-					string: $activeRequestCollectionKeySubKey
+					string: $activeRequestDataKeySubKey
 				);
-				$value = $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey];
-				foreach ($activeRequestCollectionKeySubKeyArr as $_activeRequestCollectionKeySubKey) {
-					if (!isset($value[$_activeRequestCollectionKeySubKey])) {
+				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey];
+				foreach ($activeRequestDataKeySubKeyArr as $_activeRequestDataKeySubKey) {
+					if (!isset($value[$_activeRequestDataKeySubKey])) {
 						$missExecution = true;
 						continue;
 					}
-					$value = &$value[$_activeRequestCollectionKeySubKey];
+					$value = &$value[$_activeRequestDataKeySubKey];
 				}
 				$paramArr[$column] = $value;
 				continue;
-			} elseif ($activeRequestCollectionKey === 'custom') {
-				$value = $activeRequestCollectionKeySubKey;
+			} elseif ($activeRequestDataKey === 'custom') {
+				$value = $activeRequestDataKeySubKey;
 				$paramArr[$column] = $value;
 				continue;
-			} elseif ($activeRequestCollectionKey === 'variables') {
-				if (isset($payloadVariableArr[$activeRequestCollectionKeySubKey])) {
-					$paramArr[$column] = $payloadVariableArr[$activeRequestCollectionKeySubKey];
+			} elseif ($activeRequestDataKey === 'variables') {
+				if (isset($payloadVariableArr[$activeRequestDataKeySubKey])) {
+					$paramArr[$column] = $payloadVariableArr[$activeRequestDataKeySubKey];
 				} else {
-					$errorArr[] = "Missing '{$activeRequestCollectionKey}' for '{$activeRequestCollectionKeySubKey}'";
+					$errorArr[] = "Missing '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				}
 				continue;
-			} elseif (isset($this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey][$activeRequestCollectionKeySubKey])) {
+			} elseif (isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey])) {
 				if (
-					isset($this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'][$activeRequestCollectionKey])
+					isset($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey])
 					&& in_array(
-						needle: $activeRequestCollectionKeySubKey,
-						haystack: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'][$activeRequestCollectionKey],
+						needle: $activeRequestDataKeySubKey,
+						haystack: $this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey],
 						strict: Constant::$TRUE
 					)
 				) {
 					if (isset($sqlParamConfig['dataType'])) {
 						if (
 							!DatabaseServerDataType::validateDataType(
-								data: $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey][$activeRequestCollectionKeySubKey],
+								data: $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey],
 								dataType: $sqlParamConfig['dataType']
 							)
 						) {
-							$errorArr[] = "Invalid required field data-type of '{$activeRequestCollectionKey}' for '{$activeRequestCollectionKeySubKey}'";
+							$errorArr[] = "Invalid required field data-type of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 							continue;
 						}
 					}
 				}
-				$paramArr[$column] = $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey][$activeRequestCollectionKeySubKey];
+				$paramArr[$column] = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey];
 				continue;
 			} elseif (
-				isset($this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'][$activeRequestCollectionKey])
+				isset($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey])
 				&& in_array(
-					needle: $activeRequestCollectionKeySubKey,
-					haystack: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'][$activeRequestCollectionKey],
+					needle: $activeRequestDataKeySubKey,
+					haystack: $this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey],
 					strict: Constant::$TRUE
 				)
 			) {
-				$errorArr[] = "Missing required field '{$activeRequestCollectionKey}' for '{$activeRequestCollectionKeySubKey}'";
+				$errorArr[] = "Missing required field '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				continue;
 			} else {
-				$errorArr[] = "Invalid configuration of '{$activeRequestCollectionKey}' for '{$activeRequestCollectionKeySubKey}'";
+				$errorArr[] = "Invalid configuration of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				continue;
 			}
 		}
@@ -739,58 +739,58 @@ trait AppTrait
 		if (isset($sqlConfig['countQuery'])) {
 			$sqlConfig['__CONFIG__'][] = [
 				'column' => 'page',
-				'activeRequestCollectionKey' => 'queryParamArr',
-				'activeRequestCollectionKeySubKey' => 'page',
+				'activeRequestDataKey' => 'queryParamArr',
+				'activeRequestDataKeySubKey' => 'page',
 				'dataType' => DatabaseServerDataType::$INT,
 				'isRequired' => Constant::$REQUIRED
 			];
 			$sqlConfig['__CONFIG__'][] = [
 				'column' => 'perPage',
-				'activeRequestCollectionKey' => 'queryParamArr',
-				'activeRequestCollectionKeySubKey' => 'perPage',
+				'activeRequestDataKey' => 'queryParamArr',
+				'activeRequestDataKeySubKey' => 'perPage',
 				'dataType' => DatabaseServerDataType::$INT
 			];
 
 			foreach ($sqlConfig['__CONFIG__'] as $sqlParamConfig) {
-				$activeRequestCollectionKey = $sqlParamConfig['activeRequestCollectionKey'];
-				$activeRequestCollectionKeySubKey = $sqlParamConfig['activeRequestCollectionKeySubKey'];
+				$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
+				$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 				$dataType = isset($sqlParamConfig['dataType'])
 					? $sqlParamConfig['dataType'] : DatabaseServerDataType::$Default;
 				$isRequired = isset($sqlParamConfig['isRequired'])
 					? $sqlParamConfig['isRequired'] : Constant::$FALSE;
 
 				if (
-					isset($explainParamArr[$activeRequestCollectionKeySubKey])
-					&& $explainParamArr[$activeRequestCollectionKeySubKey]['isRequired'] === Constant::$TRUE
+					isset($explainParamArr[$activeRequestDataKeySubKey])
+					&& $explainParamArr[$activeRequestDataKeySubKey]['isRequired'] === Constant::$TRUE
 				) {
 					continue;
 				}
 				$dataType['isRequired'] = $isRequired ? Constant::$TRUE : Constant::$FALSE;
-				$explainParamArr[$activeRequestCollectionKeySubKey] = $dataType;
+				$explainParamArr[$activeRequestDataKeySubKey] = $dataType;
 			}
 		}
 
 		foreach (['__PAYLOAD__', '__SET__', '__WHERE__'] as $option) {
 			if (isset($sqlConfig[$option])) {
 				foreach ($sqlConfig[$option] as $sqlParamConfig) {
-					$activeRequestCollectionKey = $sqlParamConfig['activeRequestCollectionKey'];
-					$activeRequestCollectionKeySubKey = $sqlParamConfig['activeRequestCollectionKeySubKey'];
+					$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
+					$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 					$dataType = isset($sqlParamConfig['dataType'])
 						? $sqlParamConfig['dataType'] : DatabaseServerDataType::$Default;
 					$isRequired = isset($sqlParamConfig['isRequired'])
 						? $sqlParamConfig['isRequired'] : Constant::$FALSE;
 
-					if ($activeRequestCollectionKey !== 'payload') {
+					if ($activeRequestDataKey !== 'payload') {
 						continue;
 					}
 					if (
-						isset($explainParamArr[$activeRequestCollectionKeySubKey])
-						&& $explainParamArr[$activeRequestCollectionKeySubKey]['isRequired'] === Constant::$TRUE
+						isset($explainParamArr[$activeRequestDataKeySubKey])
+						&& $explainParamArr[$activeRequestDataKeySubKey]['isRequired'] === Constant::$TRUE
 					) {
 						continue;
 					}
 					$dataType['isRequired'] = $isRequired ? Constant::$TRUE : Constant::$FALSE;
-					$explainParamArr[$activeRequestCollectionKeySubKey] = $dataType;
+					$explainParamArr[$activeRequestDataKeySubKey] = $dataType;
 				}
 			}
 		}
@@ -799,11 +799,11 @@ trait AppTrait
 		$foundHierarchy = false;
 		if (isset($sqlConfig['__WHERE__'])) {
 			foreach ($sqlConfig['__WHERE__'] as $sqlParamConfig) {
-				$activeRequestCollectionKey = $sqlParamConfig['activeRequestCollectionKey'];
-				$activeRequestCollectionKeySubKey = $sqlParamConfig['activeRequestCollectionKeySubKey'];
+				$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
+				$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 				if (
 					in_array(
-						needle: $activeRequestCollectionKey,
+						needle: $activeRequestDataKey,
 						haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
 						strict: Constant::$TRUE
 					)
@@ -818,7 +818,7 @@ trait AppTrait
 				&& !$foundHierarchy
 			) {
 				throw new \Exception(
-					message: 'Invalid config: missing ' . $activeRequestCollectionKey,
+					message: 'Invalid config: missing ' . $activeRequestDataKey,
 					code: HttpStatus::$InternalServerError
 				);
 			}
@@ -841,9 +841,9 @@ trait AppTrait
 							$explainParamArr[$module] = $moduleExplainParamArr;
 						}
 					} else {
-						foreach ($moduleExplainParamArr as $activeRequestCollectionKeySubKey => $field) {
-							if (!isset($explainParamArr[$activeRequestCollectionKeySubKey])) {
-								$explainParamArr[$activeRequestCollectionKeySubKey] = $field;
+						foreach ($moduleExplainParamArr as $activeRequestDataKeySubKey => $field) {
+							if (!isset($explainParamArr[$activeRequestDataKeySubKey])) {
+								$explainParamArr[$activeRequestDataKeySubKey] = $field;
 							}
 						}
 					}
@@ -857,14 +857,14 @@ trait AppTrait
 	/**
 	 * Function to reset data for module key wise
 	 * 
-	 * @param string $activeRequestCollectionKey sqlResults / sqlParamArr / sqlPayload
+	 * @param string $activeRequestDataKey sqlResults / sqlParamArr / sqlPayload
 	 * @param array  $payloadKeyArr              Module key's in recursion
 	 * @param array  $record                     Record data fetched from DB
 	 * 
 	 * @return void
 	 */
 	private function resetFetchData(
-		$activeRequestCollectionKey,
+		$activeRequestDataKey,
 		$payloadKeyArr,
 		$record
 	): void {
@@ -874,10 +874,10 @@ trait AppTrait
 				value: $payloadKeyArr
 			) === 0
 		) {
-			$this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey] = [];
-			$this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey]['return'] = [];
+			$this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey] = [];
+			$this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey]['return'] = [];
 		}
-		$httpReq = &$this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey]['return'];
+		$httpReq = &$this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey]['return'];
 		if (!empty($payloadKeyArr)) {
 			foreach ($payloadKeyArr as $moduleKey) {
 				if (!isset($httpReq[$moduleKey])) {
@@ -917,9 +917,9 @@ trait AppTrait
 			'httpMethod' => $this->httpObj->httpReqData['server']['httpMethod'],
 			'Route' => $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
 		];
-		if (isset($this->httpObj->httpRequestObj->activeRequestCollection['userData'])) {
-			$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'] !== Constant::$NULL
-				? $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'] : 0);
+		if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
+			$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
+				? $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] : 0);
 			$payloadSignature['customerUserId'] = ($this->httpObj->httpRequestObj->customerUserId !== Constant::$NULL
 				? $this->httpObj->httpRequestObj->customerUserId : 0);
 		}
@@ -1078,9 +1078,9 @@ trait AppTrait
 						)
 					)
 				];
-				if (isset($this->httpObj->httpRequestObj->activeRequestCollection['userData'])) {
-					$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'] !== Constant::$NULL
-						? $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'] : 0);
+				if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
+					$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
+						? $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] : 0);
 					$payloadSignature['customerUserId'] = ($this->httpObj->httpRequestObj->customerUserId !== Constant::$NULL
 						? $this->httpObj->httpRequestObj->customerUserId : 0);
 				}
@@ -1135,9 +1135,9 @@ trait AppTrait
 			'httpMethod' => $this->httpObj->httpReqData['server']['httpMethod'],
 			'Route' => $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
 		];
-		if (isset($this->httpObj->httpRequestObj->activeRequestCollection['userData'])) {
-			$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'] !== Constant::$NULL
-				? $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'] : 0);
+		if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
+			$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
+				? $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] : 0);
 			$payloadSignature['customerUserId'] = ($this->httpObj->httpRequestObj->customerUserId !== Constant::$NULL
 				? $this->httpObj->httpRequestObj->customerUserId : 0);
 		}
@@ -1197,7 +1197,7 @@ trait AppTrait
 	 */
 	public function getTriggerData($triggerConfig): mixed
 	{
-		if (!isset($this->httpObj->httpRequestObj->activeRequestCollection['authId'])) {
+		if (!isset($this->httpObj->httpRequestObj->activeRequestData['authId'])) {
 			throw new \Exception(
 				message: 'Missing token',
 				code: HttpStatus::$InternalServerError
@@ -1321,11 +1321,11 @@ trait AppTrait
 		foreach ($payloadConfig as &$payloadParamConfig) {
 			$column = $payloadParamConfig['column'] ?? null;
 
-			$activeRequestCollectionKey = $payloadParamConfig['activeRequestCollectionKey'];
-			$activeRequestCollectionKeySubKey = $payloadParamConfig['activeRequestCollectionKeySubKey'];
-			if ($activeRequestCollectionKey === 'function') {
-				$function = $activeRequestCollectionKeySubKey;
-				$value = $function($this->httpObj->httpRequestObj->activeRequestCollection);
+			$activeRequestDataKey = $payloadParamConfig['activeRequestDataKey'];
+			$activeRequestDataKeySubKey = $payloadParamConfig['activeRequestDataKeySubKey'];
+			if ($activeRequestDataKey === 'function') {
+				$function = $activeRequestDataKeySubKey;
+				$value = $function($this->httpObj->httpRequestObj->activeRequestData);
 				if ($column === Constant::$NULL) {
 					$paramArr[] = $value;
 				} else {
@@ -1334,23 +1334,23 @@ trait AppTrait
 				continue;
 			} elseif (
 				in_array(
-					needle: $activeRequestCollectionKey,
+					needle: $activeRequestDataKey,
 					haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
 					strict: Constant::$TRUE
 				)
 			) {
-				$activeRequestCollectionKeySubKeyArr = explode(
-					separator: ':', string: $activeRequestCollectionKeySubKey
+				$activeRequestDataKeySubKeyArr = explode(
+					separator: ':', string: $activeRequestDataKeySubKey
 				);
-				$value = $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey];
-				foreach ($activeRequestCollectionKeySubKeyArr as $_activeRequestCollectionKeySubKey) {
-					if (!isset($value[$_activeRequestCollectionKeySubKey])) {
+				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey];
+				foreach ($activeRequestDataKeySubKeyArr as $_activeRequestDataKeySubKey) {
+					if (!isset($value[$_activeRequestDataKeySubKey])) {
 						throw new \Exception(
 							message: 'Invalid hierarchy:  Missing hierarchy data',
 							code: HttpStatus::$InternalServerError
 						);
 					}
-					$value = $value[$_activeRequestCollectionKeySubKey];
+					$value = $value[$_activeRequestDataKeySubKey];
 				}
 				if ($column === Constant::$NULL) {
 					$paramArr[] = $value;
@@ -1358,16 +1358,16 @@ trait AppTrait
 					$paramArr[$column] = $value;
 				}
 				continue;
-			} elseif ($activeRequestCollectionKey === 'custom') {
-				$value = $activeRequestCollectionKeySubKey;
+			} elseif ($activeRequestDataKey === 'custom') {
+				$value = $activeRequestDataKeySubKey;
 				if ($column === Constant::$NULL) {
 					$paramArr[] = $value;
 				} else {
 					$paramArr[$column] = $value;
 				}
 				continue;
-			} elseif (isset($this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey][$activeRequestCollectionKeySubKey])) {
-				$value = $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey][$activeRequestCollectionKeySubKey];
+			} elseif (isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey])) {
+				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey];
 				if ($column === Constant::$NULL) {
 					$paramArr[] = $value;
 				} else {
@@ -1375,7 +1375,7 @@ trait AppTrait
 				}
 				continue;
 			} else {
-				$errorArr[] = "Invalid configuration of '{$activeRequestCollectionKey}' for '{$activeRequestCollectionKeySubKey}'";
+				$errorArr[] = "Invalid configuration of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				continue;
 			}
 		}
@@ -1611,7 +1611,7 @@ trait AppTrait
 				feature: 'customer_enabled_response_caching'
 			)
 			&& isset($sqlConfig['queryCacheKey'])
-			&& !isset($this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['orderBy'])
+			&& !isset($this->httpObj->httpRequestObj->activeRequestData['queryParamArr']['orderBy'])
 		) {
 			$cacheReqCount = 0;
 			$queryCacheReqFlag = false;

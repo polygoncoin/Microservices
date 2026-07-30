@@ -24,34 +24,34 @@ return array_merge(
 		'__SET__' => [
 			[
 				'column' => 'firstname',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'firstname'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'firstname'
 			],
 			[
 				'column' => 'lastname',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'lastname'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'lastname'
 			],
 			[
 				'column' => 'email',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'email'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'email'
 			],
 			[
 				'column' => 'username',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'username'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'username'
 			],
 			[
 				'column' => 'password_hash',
-				'activeRequestCollectionKey' => 'function',
-				'activeRequestCollectionKeySubKey' => function($activeRequestCollection) {
+				'activeRequestDataKey' => 'function',
+				'activeRequestDataKeySubKey' => function($activeRequestData) {
 					if (
-						isset($activeRequestCollection['payload'])
-						&& isset($activeRequestCollection['payload']['password'])
+						isset($activeRequestData['payload'])
+						&& isset($activeRequestData['payload']['password'])
 					) {
 						return password_hash(
-							password: $activeRequestCollection['payload']['password'],
+							password: $activeRequestData['payload']['password'],
 							algo: PASSWORD_DEFAULT
 						);
 					}
@@ -61,13 +61,13 @@ return array_merge(
 		'__WHERE__' => [
 			[
 				'column' => 'is_deleted',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$NO
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'activeRequestCollectionKey' => 'routeParamArr',
-				'activeRequestCollectionKeySubKey' => 'id',
+				'activeRequestDataKey' => 'routeParamArr',
+				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]
 		],

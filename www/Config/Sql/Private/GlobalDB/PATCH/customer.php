@@ -20,40 +20,40 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'name',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'name'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'name'
 		],
 		[
 			'column' => 'updated_by',
-			'activeRequestCollectionKey' => 'userData',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKeySubKey' => 'id'
 		],
 		[
 			'column' => 'updated_on',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_approved',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$YES
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$YES
 		],
 		[
 			'column' => 'is_disabled',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_id',
-			'activeRequestCollectionKey' => 'routeParamArr',
-			'activeRequestCollectionKeySubKey' => 'id',
+			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],

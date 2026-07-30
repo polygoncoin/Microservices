@@ -16,66 +16,66 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'name',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'name'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'name'
 		],
 		[
 			'column' => 'customer_id',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'customer_id',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'customer_id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'connection_id',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'connection_id',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'connection_id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'customer_allowed_cidr',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'allowed_cidr'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'allowed_cidr'
 		],
 		[
 			'column' => 'comments',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'comments'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'comments'
 		],
 		[
 			'column' => 'updated_by',
-			'activeRequestCollectionKey' => 'userData',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKeySubKey' => 'id'
 		],
 		[
 			'column' => 'updated_on',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_approved',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$YES
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$YES
 		],
 		[
 			'column' => 'is_disabled',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'activeRequestCollectionKey' => 'routeParamArr',
-			'activeRequestCollectionKeySubKey' => 'id',
+			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],
@@ -83,7 +83,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],

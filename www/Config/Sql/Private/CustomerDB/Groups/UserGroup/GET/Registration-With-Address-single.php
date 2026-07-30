@@ -14,17 +14,17 @@
  */
 
 return [
-	'__QUERY__' => "SELECT * FROM `{$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'activeRequestCollectionKey' => 'routeParamArr',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKeySubKey' => 'id'
 		]
 	],
 	'__MODE__' => 'singleRecordFormat',
@@ -34,13 +34,13 @@ return [
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
-					'activeRequestCollectionKey' => 'custom',
-					'activeRequestCollectionKeySubKey' => $Constant::$NO
+					'activeRequestDataKey' => 'custom',
+					'activeRequestDataKeySubKey' => $Constant::$NO
 				],
 				[
 					'column' => 'customer_id',
-					'activeRequestCollectionKey' => 'sqlResults',
-					'activeRequestCollectionKeySubKey' => 'return:id'
+					'activeRequestDataKey' => 'sqlResults',
+					'activeRequestDataKeySubKey' => 'return:id'
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',

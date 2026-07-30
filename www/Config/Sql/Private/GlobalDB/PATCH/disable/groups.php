@@ -16,39 +16,39 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'is_disabled',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$YES
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$YES
 		],
 		[
 			'column' => 'updated_by',
-			'activeRequestCollectionKey' => 'userData',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKeySubKey' => 'id'
 		],
 		[
 			'column' => 'updated_on',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_disabled',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'id',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],
@@ -56,7 +56,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
@@ -65,7 +65,7 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'id'],
@@ -76,7 +76,7 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_disabled'],
 				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'id'],

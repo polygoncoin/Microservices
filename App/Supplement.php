@@ -130,7 +130,7 @@ class Supplement
 		// Set Server mode to execute query on - Read / Write Server
 		if ($this->httpObj->httpRequestObj->customerDbObj === Constant::$NULL) {
 			$this->httpObj->httpRequestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
-				customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
+				customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
 				fetchDbMode: $fetchDbMode
 			);
 		}
@@ -170,7 +170,7 @@ class Supplement
 	): void {
 		// Check for payloadType
 		if (isset($supplementSqlConfig['__PAYLOAD-TYPE__'])) {
-			$supplementPayloadType = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'];
+			$supplementPayloadType = $this->httpObj->httpRequestObj->activeRequestData['payloadType'];
 			if ($supplementPayloadType !== $supplementSqlConfig['__PAYLOAD-TYPE__']) {
 				throw new \Exception(
 					message: 'Invalid payload type',
@@ -194,7 +194,7 @@ class Supplement
 		}
 
 		// Set required fields
-		$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'] = $this->getRequired(
+		$this->httpObj->httpRequestObj->activeRequestData['requiredFieldArrCollection'] = $this->getRequired(
 			sqlConfig: $supplementSqlConfig,
 			flag: $supplementUseHierarchy,
 			isFirstCall: Constant::$TRUE
@@ -204,8 +204,8 @@ class Supplement
 			objectKey: 'Results'
 		);
 		if (
-			isset($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'])
-			&& $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
+			isset($this->httpObj->httpRequestObj->activeRequestData['payloadType'])
+			&& $this->httpObj->httpRequestObj->activeRequestData['payloadType'] === 'Array'
 		) {
 			if (
 				in_array(
@@ -221,14 +221,14 @@ class Supplement
 		}
 
 		// Perform action
-		$indexCount = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
+		$indexCount = $this->httpObj->httpRequestObj->activeRequestData['payloadType'] === 'Array'
 			? $this->httpObj->httpRequestObj->dataDecodeObj->count() : 1;
 
 		$writePayloadKeyArr = [];
 		for ($index = 0; $index < $indexCount; $index++) {
 			$supplementCurrentPayloadKeyArr = $writePayloadKeyArr;
 			if ($index === 0) {
-				if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
+				if ($this->httpObj->httpRequestObj->activeRequestData['payloadType'] === 'Array') {
 					$supplementCurrentPayloadKeyArr[] = "{$index}";
 				} else {
 					$supplementCurrentPayloadKeyArr[] = '';
@@ -269,7 +269,7 @@ class Supplement
 				$this->supplementParent(
 					supplementParentSqlConfig: $supplementSqlConfig,
 					supplementParentPayloadKeyArr: $supplementCurrentPayloadKeyArr,
-					supplementParentRequiredFieldArr: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'],
+					supplementParentRequiredFieldArr: $this->httpObj->httpRequestObj->activeRequestData['requiredFieldArrCollection'],
 					supplementParentResponse: $supplementResponse,
 					supplementParentModule: '',
 					supplementParentUseHierarchy: $supplementUseHierarchy
@@ -335,7 +335,7 @@ class Supplement
 			}
 		}
 
-		if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
+		if ($this->httpObj->httpRequestObj->activeRequestData['payloadType'] === 'Array') {
 			if (
 				in_array(
 					needle: $this->httpObj->httpResponseObj->outputRepresentation,
@@ -453,14 +453,14 @@ class Supplement
 			}
 
 			// Load Payload
-			$this->httpObj->httpRequestObj->activeRequestCollection['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
+			$this->httpObj->httpRequestObj->activeRequestData['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
 				keyString: $supplementParentCurrentPayloadKey
 			);
 
 			if (count(value: $supplementParentRequiredFieldArr)) {
-				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = $supplementParentRequiredFieldArr;
+				$this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'] = $supplementParentRequiredFieldArr;
 			} else {
-				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = [];
+				$this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'] = [];
 			}
 
 			// Validation
@@ -559,9 +559,9 @@ class Supplement
 		$supplementChildUseHierarchy
 	): void {
 		if ($supplementChildUseHierarchy) {
-			$record = $this->httpObj->httpRequestObj->activeRequestCollection['payload'];
+			$record = $this->httpObj->httpRequestObj->activeRequestData['payload'];
 			$this->resetFetchData(
-				activeRequestCollectionKey: 'sqlPayload',
+				activeRequestDataKey: 'sqlPayload',
 				payloadKeyArr: $supplementChildPayloadKeyArr,
 				record: $record
 			);

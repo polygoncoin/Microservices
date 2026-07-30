@@ -18,18 +18,18 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => 0
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => 0
 		],
 		[
 			'column' => 'id',
-			'activeRequestCollectionKey' => 'routeParamArr',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKeySubKey' => 'id'
 		]
 	],
 	'__MODE__' => 'multipleRecordFormat',
@@ -39,13 +39,13 @@ return [
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
-					'activeRequestCollectionKey' => 'custom',
-					'activeRequestCollectionKeySubKey' => $Constant::$NO
+					'activeRequestDataKey' => 'custom',
+					'activeRequestDataKeySubKey' => $Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
-					'activeRequestCollectionKey' => 'sqlResults',
-					'activeRequestCollectionKeySubKey' => 'return:id'
+					'activeRequestDataKey' => 'sqlResults',
+					'activeRequestDataKeySubKey' => 'return:id'
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
@@ -55,13 +55,13 @@ return [
 					'__WHERE__' => [
 						[
 							'column' => 'is_deleted',
-							'activeRequestCollectionKey' => 'custom',
-							'activeRequestCollectionKeySubKey' => $Constant::$NO
+							'activeRequestDataKey' => 'custom',
+							'activeRequestDataKeySubKey' => $Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
-							'activeRequestCollectionKey' => 'sqlResults',
-							'activeRequestCollectionKeySubKey' => 'return:sub:id'
+							'activeRequestDataKey' => 'sqlResults',
+							'activeRequestDataKeySubKey' => 'return:sub:id'
 						],
 					],
 					'__MODE__' => 'multipleRecordFormat',
@@ -71,13 +71,13 @@ return [
 							'__WHERE__' => [
 								[
 									'column' => 'is_deleted',
-									'activeRequestCollectionKey' => 'custom',
-									'activeRequestCollectionKeySubKey' => $Constant::$NO
+									'activeRequestDataKey' => 'custom',
+									'activeRequestDataKeySubKey' => $Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
-									'activeRequestCollectionKey' => 'sqlResults',
-									'activeRequestCollectionKeySubKey' => 'return:sub:subsub:id'
+									'activeRequestDataKey' => 'sqlResults',
+									'activeRequestDataKeySubKey' => 'return:sub:subsub:id'
 								],
 							],
 							'__MODE__' => 'multipleRecordFormat',

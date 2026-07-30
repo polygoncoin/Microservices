@@ -18,13 +18,13 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'name',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'name'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'name'
 		],
 		[
 			'column' => 'parent_id',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => 0
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => 0
 		],
 	],
 	'__INSERT-IDs__' => 'category:id',
@@ -34,13 +34,13 @@ return [
 			'__SET__' => [
 				[
 					'column' => 'name',
-					'activeRequestCollectionKey' => 'payload',
-					'activeRequestCollectionKeySubKey' => 'subname'
+					'activeRequestDataKey' => 'payload',
+					'activeRequestDataKeySubKey' => 'subname'
 				],
 				[
 					'column' => 'parent_id',
-					'activeRequestCollectionKey' => '__INSERT-IDs__',
-					'activeRequestCollectionKeySubKey' => 'category:id'
+					'activeRequestDataKey' => '__INSERT-IDs__',
+					'activeRequestDataKeySubKey' => 'category:id'
 				],
 			],
 			'__INSERT-IDs__' => 'sub:id',
@@ -50,13 +50,13 @@ return [
 					'__SET__' => [
 						[
 							'column' => 'name',
-							'activeRequestCollectionKey' => 'payload',
-							'activeRequestCollectionKeySubKey' => 'subsubname'
+							'activeRequestDataKey' => 'payload',
+							'activeRequestDataKeySubKey' => 'subsubname'
 						],
 						[
 							'column' => 'parent_id',
-							'activeRequestCollectionKey' => '__INSERT-IDs__',
-							'activeRequestCollectionKeySubKey' => 'sub:id'
+							'activeRequestDataKey' => '__INSERT-IDs__',
+							'activeRequestDataKeySubKey' => 'sub:id'
 						],
 					],
 					'__INSERT-IDs__' => 'subsub:id',
@@ -66,7 +66,7 @@ return [
 	],
 	'useHierarchy' => $Constant::$TRUE,
 	'affectedQueryCacheKeyArr' => [
-		$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_id'] . ':category',
-		$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_id'] . ':category1'
+		$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_id'] . ':category',
+		$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_id'] . ':category1'
 	]
 ];

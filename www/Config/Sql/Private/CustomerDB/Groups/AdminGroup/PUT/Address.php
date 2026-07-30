@@ -24,20 +24,20 @@ return array_merge(
 		'__SET__' => [
 			[
 				'column' => 'address',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'address'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'address'
 			]
 		],
 		'__WHERE__' => [
 			[
 				'column' => 'is_deleted',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$NO
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'activeRequestCollectionKey' => 'routeParamArr',
-				'activeRequestCollectionKeySubKey' => 'id',
+				'activeRequestDataKey' => 'routeParamArr',
+				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]
 		],

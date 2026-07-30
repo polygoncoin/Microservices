@@ -20,18 +20,18 @@ return [
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$YES
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$NO
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$NO
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$NO
 			]
 		],
 		'__MODE__' => 'multipleRecordFormat'
@@ -41,25 +41,25 @@ return [
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$YES
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$NO
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
-				'activeRequestCollectionKey' => 'custom',
-				'activeRequestCollectionKeySubKey' => $Constant::$NO
+				'activeRequestDataKey' => 'custom',
+				'activeRequestDataKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'activeRequestCollectionKey' => 'routeParamArr',
-				'activeRequestCollectionKeySubKey' => 'id'
+				'activeRequestDataKey' => 'routeParamArr',
+				'activeRequestDataKeySubKey' => 'id'
 			]
 		],
 		'__MODE__' => 'singleRecordFormat'
 	],
-][isset($this->httpObj->httpRequestObj->activeRequestCollection['routeParamArr']['id'])?'single':'all'];
+][isset($this->httpObj->httpRequestObj->activeRequestData['routeParamArr']['id'])?'single':'all'];

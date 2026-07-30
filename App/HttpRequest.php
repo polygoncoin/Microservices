@@ -129,7 +129,7 @@ class HttpRequest
 	 * 
 	 * @var null|array
 	 */
-	public $activeRequestCollection = null;
+	public $activeRequestData = null;
 
 	/**
 	 * Public domain cache key exist flag
@@ -297,16 +297,16 @@ class HttpRequest
 			);
 		}
 
-		$this->activeRequestCollection['customerData'] = DbCommonFunction::$globalCacheServerObj->cacheGet(
+		$this->activeRequestData['customerData'] = DbCommonFunction::$globalCacheServerObj->cacheGet(
 			cacheKey: $this->domainCacheKey
 		);
-		$this->customerId = $this->activeRequestCollection['customerData']['customer_id'];
+		$this->customerId = $this->activeRequestData['customerData']['customer_id'];
 
 		if ($this->isPrivateSessionDomain) {
 			$this->sessionObj = new Session();
 			$this->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
 			$this->sessionObj->initSessionHandler(
-				customerData: $this->activeRequestCollection['customerData'],
+				customerData: $this->activeRequestData['customerData'],
 				options: []
 			);
 			$this->sessionObj->sessionStartReadonly();
@@ -361,7 +361,7 @@ class HttpRequest
 
 		if ($this->isPrivateRequest) {
 			$this->customerCacheObj = DbCommonFunction::connectCustomerCache(
-				customerData: $this->activeRequestCollection['customerData']
+				customerData: $this->activeRequestData['customerData']
 			);
 			if (
 				CommonFunction::isEnabled(
@@ -404,7 +404,7 @@ class HttpRequest
 	 */
 	public function loadPayload(): void
 	{
-		if (isset($this->activeRequestCollection['payloadType'])) {
+		if (isset($this->activeRequestData['payloadType'])) {
 			return;
 		}
 
@@ -413,7 +413,7 @@ class HttpRequest
 		$this->urlDecode(
 			values: $this->httpObj->httpReqData['get']
 		);
-		$this->activeRequestCollection['queryParamArr'] = &$this->httpObj->httpReqData['get'];
+		$this->activeRequestData['queryParamArr'] = &$this->httpObj->httpReqData['get'];
 
 		$this->payloadStream = fopen(
 			filename: "php://memory",
@@ -428,7 +428,7 @@ class HttpRequest
 		$this->dataDecodeObj->init();
 		$this->dataDecodeObj->indexData();
 
-		$this->activeRequestCollection['payloadType'] = $this->dataDecodeObj->dataType();
+		$this->activeRequestData['payloadType'] = $this->dataDecodeObj->dataType();
 
 	}
 
@@ -462,7 +462,7 @@ class HttpRequest
 						);
 
 						$this->customerDbObj = DbCommonFunction::connectCustomerDb(
-							customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
+							customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
 							fetchDbMode: 'Master'
 						);
 						$uploadedFileMd5Data = $this->getUploadedFileMd5Data(uploadedFileMd5: $uploadedFileMd5);
@@ -652,14 +652,14 @@ class HttpRequest
 			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->httpObj->httpReqData['server']['httpMethod'];
-			$paramArr[':request_payload_json'] = isset($this->activeRequestCollection['payload']) ? json_encode(
-				value: $this->activeRequestCollection['payload']
+			$paramArr[':request_payload_json'] = isset($this->activeRequestData['payload']) ? json_encode(
+				value: $this->activeRequestData['payload']
 			) : '{}';
 			$paramArr[':request_config_json'] = isset($this->routeParserObj->sqlConfig) ? json_encode(
 				value: $this->routeParserObj->sqlConfig
 			) : '{}';
-			$paramArr[':request_session_json'] = isset($this->activeRequestCollection) ? json_encode(
-				value: $this->activeRequestCollection
+			$paramArr[':request_session_json'] = isset($this->activeRequestData) ? json_encode(
+				value: $this->activeRequestData
 			) : '{}';
 			$paramArr[':request_debug_json'] = $debugJson;
 			$paramArr[':request_ip'] = $this->httpObj->httpReqData['server']['httpRequestIp'];
@@ -706,14 +706,14 @@ class HttpRequest
 			$paramArr[':customer_user_id'] = $this->customerUserId;
 			$paramArr[':request_route'] = $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArr[':request_method'] = $this->httpObj->httpReqData['server']['httpMethod'];
-			$paramArr[':request_payload_json'] = isset($this->activeRequestCollection['payload']) ? json_encode(
-				value: $this->activeRequestCollection['payload']
+			$paramArr[':request_payload_json'] = isset($this->activeRequestData['payload']) ? json_encode(
+				value: $this->activeRequestData['payload']
 			) : '{}';
 			$paramArr[':request_config_json'] = isset($this->routeParserObj->sqlConfig) ? json_encode(
 				value: $this->routeParserObj->sqlConfig
 			) : '{}';
-			$paramArr[':request_session_json'] = isset($this->activeRequestCollection) ? json_encode(
-				value: $this->activeRequestCollection
+			$paramArr[':request_session_json'] = isset($this->activeRequestData) ? json_encode(
+				value: $this->activeRequestData
 			) : '{}';
 			$paramArr[':request_exception_json'] = $exceptionJson;
 			$paramArr[':request_ip'] = $this->httpObj->httpReqData['server']['httpRequestIp'];

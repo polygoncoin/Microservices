@@ -19,8 +19,8 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		]
 	],
 	'__MODE__' => 'multipleRecordFormat'

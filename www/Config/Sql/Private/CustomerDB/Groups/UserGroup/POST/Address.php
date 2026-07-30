@@ -20,19 +20,19 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'customer_id',
-			'activeRequestCollectionKey' => 'customerData',
-			'activeRequestCollectionKeySubKey' => 'customer_id'
+			'activeRequestDataKey' => 'customerData',
+			'activeRequestDataKeySubKey' => 'customer_id'
 		],
 		[
 			'column' => 'user_id',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'id',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'address',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'address'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'address'
 		],
 	],
 	'__INSERT-IDs__' => 'address:id',
@@ -40,32 +40,32 @@ return [
 	//     [
 	//         '__ROUTE__' => [
 	//             [
-	//                 'activeRequestCollectionKey' => 'custom',
-	//                 'activeRequestCollectionKeySubKey' => 'address'
+	//                 'activeRequestDataKey' => 'custom',
+	//                 'activeRequestDataKeySubKey' => 'address'
 	//             ],
 	//             [
-	//                 'activeRequestCollectionKey' => '__INSERT-IDs__',
-	//                 'activeRequestCollectionKeySubKey' => 'address:id'
+	//                 'activeRequestDataKey' => '__INSERT-IDs__',
+	//                 'activeRequestDataKeySubKey' => 'address:id'
 	//             ]
 	//         ],
 	//         '__QUERY-STRING__' => [
 	//             [
 	//                 'column' => 'param-1',
-	//                 'activeRequestCollectionKey' => 'custom',
-	//                 'activeRequestCollectionKeySubKey' => 'address'
+	//                 'activeRequestDataKey' => 'custom',
+	//                 'activeRequestDataKeySubKey' => 'address'
 	//             ],
 	//             [
 	//                 'column' => 'param-2',
-	//                 'activeRequestCollectionKey' => '__INSERT-IDs__',
-	//                 'activeRequestCollectionKeySubKey' => 'address:id'
+	//                 'activeRequestDataKey' => '__INSERT-IDs__',
+	//                 'activeRequestDataKeySubKey' => 'address:id'
 	//             ]
 	//         ],
 	//         '__METHOD__' => 'PATCH',
 	//         '__PAYLOAD__' => [
 	//             [
 	//                 'column' => 'address',
-	//                 'activeRequestCollectionKey' => 'custom',
-	//                 'activeRequestCollectionKeySubKey' => 'updated-address'
+	//                 'activeRequestDataKey' => 'custom',
+	//                 'activeRequestDataKeySubKey' => 'updated-address'
 	//             ]
 	//         ]
 	//     ]

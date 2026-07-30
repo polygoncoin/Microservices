@@ -109,7 +109,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Connect customer Cache based on $activeRequestCollectionKey
+	 * Connect customer Cache based on $activeRequestDataKey
 	 * 
 	 * @param array $customerData Customer Data
 	 * 
@@ -207,7 +207,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Connect customer Database based on $activeRequestCollectionKey
+	 * Connect customer Database based on $activeRequestDataKey
 	 * 
 	 * @param array  $customerData Customer Data
 	 * @param string $fetchDbMode  Master/Slave
@@ -249,7 +249,7 @@ class DbCommonFunction
 				break;
 			default:
 				throw new \Exception(
-					message: "Invalid activeRequestCollectionKey value '{$activeRequestCollectionKey}'",
+					message: "Invalid activeRequestDataKey value '{$activeRequestDataKey}'",
 					code: HttpStatus::$InternalServerError
 				);
 		}

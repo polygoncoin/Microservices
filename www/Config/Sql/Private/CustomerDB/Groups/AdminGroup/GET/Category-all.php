@@ -19,13 +19,13 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => 0
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => 0
 		],
 	],
 	'__MODE__' => 'multipleRecordFormat',
@@ -35,13 +35,13 @@ return [
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
-					'activeRequestCollectionKey' => 'custom',
-					'activeRequestCollectionKeySubKey' => $Constant::$NO
+					'activeRequestDataKey' => 'custom',
+					'activeRequestDataKeySubKey' => $Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
-					'activeRequestCollectionKey' => 'sqlResults',
-					'activeRequestCollectionKeySubKey' => 'return:id'
+					'activeRequestDataKey' => 'sqlResults',
+					'activeRequestDataKeySubKey' => 'return:id'
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
@@ -51,13 +51,13 @@ return [
 					'__WHERE__' => [
 						[
 							'column' => 'is_deleted',
-							'activeRequestCollectionKey' => 'custom',
-							'activeRequestCollectionKeySubKey' => $Constant::$NO
+							'activeRequestDataKey' => 'custom',
+							'activeRequestDataKeySubKey' => $Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
-							'activeRequestCollectionKey' => 'sqlResults',
-							'activeRequestCollectionKeySubKey' => 'return:sub:id'
+							'activeRequestDataKey' => 'sqlResults',
+							'activeRequestDataKeySubKey' => 'return:sub:id'
 						],
 					],
 					'__MODE__' => 'multipleRecordFormat',
@@ -67,13 +67,13 @@ return [
 							'__WHERE__' => [
 								[
 									'column' => 'is_deleted',
-									'activeRequestCollectionKey' => 'custom',
-									'activeRequestCollectionKeySubKey' => $Constant::$NO
+									'activeRequestDataKey' => 'custom',
+									'activeRequestDataKeySubKey' => $Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
-									'activeRequestCollectionKey' => 'sqlResults',
-									'activeRequestCollectionKeySubKey' => 'return:sub:subsub:id'
+									'activeRequestDataKey' => 'sqlResults',
+									'activeRequestDataKeySubKey' => 'return:sub:subsub:id'
 								],
 							],
 							'__MODE__' => 'multipleRecordFormat',
@@ -85,5 +85,5 @@ return [
 	],
 	'useResultSet' => $Constant::$TRUE,
 	'fetchDbMode' => 'Master',
-	'queryCacheKey' => $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_id'] . ':category'
+	'queryCacheKey' => $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_id'] . ':category'
 ];

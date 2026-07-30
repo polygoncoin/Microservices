@@ -18,38 +18,38 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'name',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'name'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'name'
 		],
 		[
 			'column' => 'comments',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'comments'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'comments'
 		],
 		[
 			'column' => 'created_by',
-			'activeRequestCollectionKey' => 'userData',
-			'activeRequestCollectionKeySubKey' => 'id'
+			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKeySubKey' => 'id'
 		],
 		[
 			'column' => 'created_on',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => date(format: 'Y-m-d H:i:s')
 		],
 		[
 			'column' => 'is_approved',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		]
 	],
 	'__INSERT-IDs__' => 'customer:id',

@@ -16,24 +16,24 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$YES
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$YES
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'customer_user_is_deleted',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => $Constant::$NO
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_user_id',
-			'activeRequestCollectionKey' => 'routeParamArr',
-			'activeRequestCollectionKeySubKey' => 'id',
+			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
 		]
 	],
@@ -43,26 +43,26 @@ return [
 			'__SET__' => [
 				[
 					'column' => 'is_deleted',
-					'activeRequestCollectionKey' => 'custom',
-					'activeRequestCollectionKeySubKey' => $Constant::$YES
+					'activeRequestDataKey' => 'custom',
+					'activeRequestDataKeySubKey' => $Constant::$YES
 				]
 			],
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
-					'activeRequestCollectionKey' => 'custom',
-					'activeRequestCollectionKeySubKey' => $Constant::$NO
+					'activeRequestDataKey' => 'custom',
+					'activeRequestDataKeySubKey' => $Constant::$NO
 				],
 				[
 					'column' => 'id',
-					'activeRequestCollectionKey' => 'payload',
-					'activeRequestCollectionKeySubKey' => 'id',
+					'activeRequestDataKey' => 'payload',
+					'activeRequestDataKeySubKey' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 				[
 					'column' => 'customer_id',
-					'activeRequestCollectionKey' => 'routeParamArr',
-					'activeRequestCollectionKeySubKey' => 'id',
+					'activeRequestDataKey' => 'routeParamArr',
+					'activeRequestDataKeySubKey' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 			],
@@ -72,7 +72,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_user_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']],
 				'primary' => ['custom', 'customer_user_id'],
 				'id' => ['routeParamArr', 'id']
 			],

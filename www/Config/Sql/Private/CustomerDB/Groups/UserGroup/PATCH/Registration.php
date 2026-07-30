@@ -24,25 +24,25 @@ return array_merge(
 		'__SET__' => [
 			[
 				'column' => 'firstname',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'firstname'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'firstname'
 			],
 			[
 				'column' => 'lastname',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'lastname'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'lastname'
 			],
 			[
 				'column' => 'email',
-				'activeRequestCollectionKey' => 'payload',
-				'activeRequestCollectionKeySubKey' => 'email'
+				'activeRequestDataKey' => 'payload',
+				'activeRequestDataKeySubKey' => 'email'
 			],
 		],
 		'__WHERE__' => [
 			[
 				'column' => 'id',
-				'activeRequestCollectionKey' => 'routeParamArr',
-				'activeRequestCollectionKeySubKey' => 'id',
+				'activeRequestDataKey' => 'routeParamArr',
+				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]
 		],

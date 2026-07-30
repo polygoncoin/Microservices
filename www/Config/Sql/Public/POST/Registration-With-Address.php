@@ -14,38 +14,38 @@
  */
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_user_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'firstname'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'firstname'
 		],
 		[
 			'column' => 'customer_user_contact_person',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'lastname'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'lastname'
 		],
 		[
 			'column' => 'customer_user_contact_email_address',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'email'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'email'
 		],
 		[
 			'column' => 'customer_user_username',
-			'activeRequestCollectionKey' => 'payload',
-			'activeRequestCollectionKeySubKey' => 'username'
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'username'
 		],
 		[
 			'column' => 'customer_user_password_hash',
-			'activeRequestCollectionKey' => 'function',
-			'activeRequestCollectionKeySubKey' => function($activeRequestCollection) {
+			'activeRequestDataKey' => 'function',
+			'activeRequestDataKeySubKey' => function($activeRequestData) {
 				if (
-					isset($activeRequestCollection['payload'])
-					&& isset($activeRequestCollection['payload']['password'])
+					isset($activeRequestData['payload'])
+					&& isset($activeRequestData['payload']['password'])
 				) {
 					return password_hash(
-						password: $activeRequestCollection['payload']['password'],
+						password: $activeRequestData['payload']['password'],
 						algo: PASSWORD_DEFAULT
 					);
 				}
@@ -53,13 +53,13 @@ return [
 		],
 		[
 			'column' => 'customer_user_allowed_cidr',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => '0.0.0.0/0'
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => '0.0.0.0/0'
 		],
 		[
 			'column' => 'customer_user_group_id',
-			'activeRequestCollectionKey' => 'custom',
-			'activeRequestCollectionKeySubKey' => '1'
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
@@ -69,18 +69,18 @@ return [
 			'__SET__' => [
 				[
 					'column' => 'customer_id',
-					'activeRequestCollectionKey' => 'customerData',
-					'activeRequestCollectionKeySubKey' => 'customer_id'
+					'activeRequestDataKey' => 'customerData',
+					'activeRequestDataKeySubKey' => 'customer_id'
 				],
 				[
 					'column' => 'user_id',
-					'activeRequestCollectionKey' => '__INSERT-IDs__',
-					'activeRequestCollectionKeySubKey' => 'registration:id'
+					'activeRequestDataKey' => '__INSERT-IDs__',
+					'activeRequestDataKeySubKey' => 'registration:id'
 				],
 				[
 					'column' => 'address',
-					'activeRequestCollectionKey' => 'payload',
-					'activeRequestCollectionKeySubKey' => 'address'
+					'activeRequestDataKey' => 'payload',
+					'activeRequestDataKeySubKey' => 'address'
 				],
 			],
 			'__INSERT-IDs__' => 'address:id',
