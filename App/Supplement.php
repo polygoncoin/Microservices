@@ -125,13 +125,13 @@ class Supplement
 		$this->operateAsTransaction = isset($sqlConfig['isTransaction'])
 			? $sqlConfig['isTransaction'] : Constant::$FALSE;
 
-		$fetchFrom = $sqlConfig['fetchFrom'] ?? 'Master';
+		$fetchDbMode = $sqlConfig['fetchDbMode'] ?? 'Master';
 
 		// Set Server mode to execute query on - Read / Write Server
 		if ($this->httpObj->httpRequestObj->customerDbObj === Constant::$NULL) {
 			$this->httpObj->httpRequestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
-				customerData: $this->httpObj->httpRequestObj->session['customerData'],
-				fetchFrom: $fetchFrom
+				customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
+				fetchDbMode: $fetchDbMode
 			);
 		}
 
@@ -170,7 +170,7 @@ class Supplement
 	): void {
 		// Check for payloadType
 		if (isset($supplementSqlConfig['__PAYLOAD-TYPE__'])) {
-			$supplementPayloadType = $this->httpObj->httpRequestObj->session['payloadType'];
+			$supplementPayloadType = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'];
 			if ($supplementPayloadType !== $supplementSqlConfig['__PAYLOAD-TYPE__']) {
 				throw new \Exception(
 					message: 'Invalid payload type',
@@ -194,7 +194,7 @@ class Supplement
 		}
 
 		// Set required fields
-		$this->httpObj->httpRequestObj->session['requiredFieldArrCollection'] = $this->getRequired(
+		$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'] = $this->getRequired(
 			sqlConfig: $supplementSqlConfig,
 			flag: $supplementUseHierarchy,
 			isFirstCall: Constant::$TRUE
@@ -204,8 +204,8 @@ class Supplement
 			objectKey: 'Results'
 		);
 		if (
-			isset($this->httpObj->httpRequestObj->session['payloadType'])
-			&& $this->httpObj->httpRequestObj->session['payloadType'] === 'Array'
+			isset($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'])
+			&& $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
 		) {
 			if (
 				in_array(
@@ -221,14 +221,14 @@ class Supplement
 		}
 
 		// Perform action
-		$indexCount = $this->httpObj->httpRequestObj->session['payloadType'] === 'Array'
+		$indexCount = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
 			? $this->httpObj->httpRequestObj->dataDecodeObj->count() : 1;
 
 		$writePayloadKeyArr = [];
 		for ($index = 0; $index < $indexCount; $index++) {
 			$supplementCurrentPayloadKeyArr = $writePayloadKeyArr;
 			if ($index === 0) {
-				if ($this->httpObj->httpRequestObj->session['payloadType'] === 'Array') {
+				if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
 					$supplementCurrentPayloadKeyArr[] = "{$index}";
 				} else {
 					$supplementCurrentPayloadKeyArr[] = '';
@@ -269,7 +269,7 @@ class Supplement
 				$this->supplementParent(
 					supplementParentSqlConfig: $supplementSqlConfig,
 					supplementParentPayloadKeyArr: $supplementCurrentPayloadKeyArr,
-					supplementParentRequiredFieldArr: $this->httpObj->httpRequestObj->session['requiredFieldArrCollection'],
+					supplementParentRequiredFieldArr: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'],
 					supplementParentResponse: $supplementResponse,
 					supplementParentModule: '',
 					supplementParentUseHierarchy: $supplementUseHierarchy
@@ -335,7 +335,7 @@ class Supplement
 			}
 		}
 
-		if ($this->httpObj->httpRequestObj->session['payloadType'] === 'Array') {
+		if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
 			if (
 				in_array(
 					needle: $this->httpObj->httpResponseObj->outputRepresentation,
@@ -453,14 +453,14 @@ class Supplement
 			}
 
 			// Load Payload
-			$this->httpObj->httpRequestObj->session['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
+			$this->httpObj->httpRequestObj->activeRequestCollection['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
 				keyString: $supplementParentCurrentPayloadKey
 			);
 
 			if (count(value: $supplementParentRequiredFieldArr)) {
-				$this->httpObj->httpRequestObj->session['requiredFieldArr'] = $supplementParentRequiredFieldArr;
+				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = $supplementParentRequiredFieldArr;
 			} else {
-				$this->httpObj->httpRequestObj->session['requiredFieldArr'] = [];
+				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = [];
 			}
 
 			// Validation
@@ -559,9 +559,9 @@ class Supplement
 		$supplementChildUseHierarchy
 	): void {
 		if ($supplementChildUseHierarchy) {
-			$record = $this->httpObj->httpRequestObj->session['payload'];
+			$record = $this->httpObj->httpRequestObj->activeRequestCollection['payload'];
 			$this->resetFetchData(
-				fetchFrom: 'sqlPayload',
+				activeRequestCollectionKey: 'sqlPayload',
 				payloadKeyArr: $supplementChildPayloadKeyArr,
 				record: $record
 			);

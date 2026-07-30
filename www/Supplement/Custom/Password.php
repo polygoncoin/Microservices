@@ -75,7 +75,7 @@ class Password implements CustomInterface
 	 */
 	public function process(): mixed
 	{
-		switch ($this->httpObj->httpRequestObj->session['payloadType']) {
+		switch ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType']) {
 			case 'Array':
 				$payload = $this->httpObj->httpRequestObj->dataDecodeObj->get('0');
 				break;
@@ -83,10 +83,10 @@ class Password implements CustomInterface
 				$payload = $this->httpObj->httpRequestObj->dataDecodeObj->get();
 				break;
 		}
-		$this->httpObj->httpRequestObj->session['payload'] = $payload;
+		$this->httpObj->httpRequestObj->activeRequestCollection['payload'] = $payload;
 
-		$oldPassword = $this->httpObj->httpRequestObj->session['payload']['old_password'];
-		$oldPasswordHash = $this->httpObj->httpRequestObj->session['userData']['password_hash'];
+		$oldPassword = $this->httpObj->httpRequestObj->activeRequestCollection['payload']['old_password'];
+		$oldPasswordHash = $this->httpObj->httpRequestObj->activeRequestCollection['userData']['password_hash'];
 
 		if (
 			password_verify(
@@ -94,15 +94,15 @@ class Password implements CustomInterface
 				hash: $oldPasswordHash
 			)
 		) {
-			$userName = $this->httpObj->httpRequestObj->session['userData']['username'];
-			$newPassword = $this->httpObj->httpRequestObj->session['payload']['new_password'];
+			$userName = $this->httpObj->httpRequestObj->activeRequestCollection['userData']['username'];
+			$newPassword = $this->httpObj->httpRequestObj->activeRequestCollection['payload']['new_password'];
 			$newPasswordHash = password_hash(
 				password: $newPassword,
 				algo: PASSWORD_DEFAULT
 			);
 
 			$sql = "
-				UPDATE `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}`
+				UPDATE `{$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_user_table']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";
@@ -125,12 +125,12 @@ class Password implements CustomInterface
 			);
 			Reload::processUser(
 				httpRequestIp: $this->httpObj->httpReqData['server']['httpRequestIp'],
-				customerData: $this->httpObj->httpRequestObj->session['customerData'],
+				customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
 				customerUserId: $this->httpObj->httpRequestObj->customerUserId
 			);
 			$this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
 				cacheKey: CacheServerKey::token(
-					token: $this->httpObj->httpRequestObj->session['authId']
+					token: $this->httpObj->httpRequestObj->activeRequestCollection['authId']
 				)
 			);
 

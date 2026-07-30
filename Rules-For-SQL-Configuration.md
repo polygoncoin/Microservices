@@ -25,31 +25,31 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-			// 'fetchFrom' => 'payload', // Fetch value from payload
-			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-			// 'fetchFrom' => 'userData', // Fetch value from User Data session
-			// 'fetchFrom' => 'custom', // Static values
-			// 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ key's
-			'fetchFromData' => 'id',                       // key (id)
+			'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+			// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+			// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+			// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+			// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+			// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+			// 'activeRequestCollectionKey' => 'custom', // Static values
+			// 'activeRequestCollectionKey' => 'variables', // to fetch values as per __VARIABLES__ key's
+			'activeRequestCollectionKeySubKey' => 'id',          // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
 		[
 			// Fetch value from function
 			'column' => 'password',
-			'fetchFrom' => 'function',                       // function
-			'fetchFromData' => function($session) {        // execute a function and return value
+			'activeRequestCollectionKey' => 'function',                       // function
+			'activeRequestCollectionKeySubKey' => function($activeRequestCollection) {        // execute a function and return value
 				return 'value';
 			}
 		],
 		[
 			// Fetch value of last insert IDs
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',                        // custom
-			'fetchFromData' => Constant::$NO                        // Static values
+			'activeRequestCollectionKey' => 'custom',                        // custom
+			'activeRequestCollectionKeySubKey' => Constant::$NO                        // Static values
 		]
 	],
 
@@ -57,22 +57,22 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-			// 'fetchFrom' => 'payload', // Fetch value from payload
-			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-			// 'fetchFrom' => 'userData', // Fetch value from User Data session
-			// 'fetchFrom' => 'custom', // Static values
-			// 'fetchFrom' => 'variables', // to fetch values as per __VARIABLES__ key's
-			'fetchFromData' => 'id',                       // key (id)
+			'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+			// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+			// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+			// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+			// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+			// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+			// 'activeRequestCollectionKey' => 'custom', // Static values
+			// 'activeRequestCollectionKey' => 'variables', // to fetch values as per __VARIABLES__ key's
+			'activeRequestCollectionKeySubKey' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
 		[...]
 	],
 
-	// Last insert id to be made available as $session['__INSERT-IDs__'][uniqueParamString];
+	// Last insert id to be made available as $activeRequestCollection['__INSERT-IDs__'][uniqueParamString];
 	'__INSERT-IDs__' => '<keyName>:id',
 
 	// Indicator to generate JSON in Single(Object) record / Multiple(Array) rows format.
@@ -108,15 +108,15 @@ return [
 			'__SET__/__WHERE__' => [
 				[
 					'column' => 'id',
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => 'variables', // to fetch values as per current module/<sub-key> __VARIABLES__ key's
-					'fetchFromData' => 'id',                       // key (id)
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					// 'activeRequestCollectionKey' => 'variables', // to fetch values as per current module/<sub-key> __VARIABLES__ key's
+					'activeRequestCollectionKeySubKey' => 'id',                       // key (id)
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 					'isRequired' => Constant::$REQUIRED              // Represents required field
 				],
@@ -125,31 +125,31 @@ return [
 				[
 					// Fetch value of last insert IDs
 					'column' => 'id',
-					'fetchFrom' => '__INSERT-IDs__',                // userData from session
-					'fetchFromData' => '<saved-id-key>'            // previous Insert IDs
+					'activeRequestCollectionKey' => '__INSERT-IDs__',                // userData from session
+					'activeRequestCollectionKeySubKey' => '<saved-id-key>'            // previous Insert IDs
 				],
 				[
 					// Fetch values of params from previous queries
 					'column' => 'id',
-					'fetchFrom' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
-					'fetchFromData' => '<return:keys-separated-by-colon>'
+					'activeRequestCollectionKey' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
+					'activeRequestCollectionKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
 					// Fetch values of SQL results from previous queries
 					'column' => 'id',
-					'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
-					'fetchFromData' => '<return:keys-separated-by-colon>'
+					'activeRequestCollectionKey' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
+					'activeRequestCollectionKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
 					// Fetch values of SQL payload for previous queries
 					'column' => 'id',
-					'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
-					'fetchFromData' => '<return:keys-separated-by-colon>'
+					'activeRequestCollectionKey' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
+					'activeRequestCollectionKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
 					'column' => 'any-table- column',
-					'fetchFrom' => 'variables',      // custom
-					'fetchFromData' => 'sub-var1'   // returns static sub-var1 value set in __VARIABLES__ of current module/<sub-key>
+					'activeRequestCollectionKey' => 'variables',      // custom
+					'activeRequestCollectionKeySubKey' => 'sub-var1'   // returns static sub-var1 value set in __VARIABLES__ of current module/<sub-key>
 				]
 			],
 			'__TRIGGERS__' => [...],
@@ -171,34 +171,34 @@ return [
 		[
 			'__ROUTE__' => [
 				[
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // SQL Insert IDs
-					'fetchFromData' => 'address'
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					// 'activeRequestCollectionKey' => '__INSERT-IDs__', // SQL Insert IDs
+					'activeRequestCollectionKeySubKey' => 'address'
 				],
 				[
 					// SQL Insert IDs
-					'fetchFrom' => '__INSERT-IDs__',
-					'fetchFromData' => 'address:id'
+					'activeRequestCollectionKey' => '__INSERT-IDs__',
+					'activeRequestCollectionKeySubKey' => 'address:id'
 				]
 			],
 			'__QUERY-STRING__' => [
 				[
 					'column' => 'param-1',
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // SQL Insert IDs
-					'fetchFromData' => 'address'
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					// 'activeRequestCollectionKey' => '__INSERT-IDs__', // SQL Insert IDs
+					'activeRequestCollectionKeySubKey' => 'address'
 				],
 				[...]
 			],
@@ -206,15 +206,15 @@ return [
 			'__PAYLOAD__' => [
 				[
 					'column' => 'param-1',
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					// 'fetchFrom' => '__INSERT-IDs__', // SQL Insert IDs
-					'fetchFromData' => 'address'
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					// 'activeRequestCollectionKey' => '__INSERT-IDs__', // SQL Insert IDs
+					'activeRequestCollectionKeySubKey' => 'address'
 				],
 				[...]
 			]
@@ -303,7 +303,7 @@ return [
 	'idempotentWindow' => 3, // Idempotent Window for DML operation (seconds)
 
 	// Optional custom configuration to connect to master / slave Database
-	'fetchFrom' => 'Slave' // values - Master / Slave
+	'fetchDbMode' => 'Slave' // values - Master / Slave
 ];
 ```
 
@@ -331,14 +331,14 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-			// 'fetchFrom' => 'payload', // Fetch value from payload
-			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-			// 'fetchFrom' => 'userData', // Fetch value from User Data session
-			// 'fetchFrom' => 'custom', // Static values
-			'fetchFromData' => 'id',                       // key (id)
+			'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+			// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+			// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+			// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+			// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+			// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+			// 'activeRequestCollectionKey' => 'custom', // Static values
+			'activeRequestCollectionKeySubKey' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
@@ -346,7 +346,7 @@ return [
 	],
 
 	// Optional custom configuration to connect to master / slave Database
-	'fetchFrom' => 'Slave' // values - Master / Slave
+	'fetchDbMode' => 'Slave' // values - Master / Slave
 ];
 ```
 
@@ -361,14 +361,14 @@ return [
 	'__PAYLOAD__' => [
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-			// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-			// 'fetchFrom' => 'payload', // Fetch value from payload
-			// 'fetchFrom' => 'function', // Fetch value from function
-			// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-			// 'fetchFrom' => 'userData', // Fetch value from User Data session
-			// 'fetchFrom' => 'custom', // Static values
-			'fetchFromData' => 'id',                       // key (id)
+			'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+			// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+			// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+			// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+			// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+			// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+			// 'activeRequestCollectionKey' => 'custom', // Static values
+			'activeRequestCollectionKeySubKey' => 'id',                       // key (id)
 			'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 			'isRequired' => Constant::$REQUIRED              // Represents required field
 		],
@@ -392,14 +392,14 @@ return [
 			'__PAYLOAD__' => [
 				[
 					'column' => 'id',
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromData' => 'id',                       // key (id)
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					'activeRequestCollectionKeySubKey' => 'id',                       // key (id)
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 					'isRequired' => Constant::$REQUIRED              // Represents required field
 				],
@@ -407,20 +407,20 @@ return [
 				// to validate each data set before procedding forward
 				[	// Fetch values of params from previous queries
 					'column' => 'id',
-					'fetchFrom' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
-					'fetchFromData' => '<return:keys-separated-by-colon>'
+					'activeRequestCollectionKey' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
+					'activeRequestCollectionKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
 					// Fetch values of SQL results from previous queries
 					'column' => 'id',
-					'fetchFrom' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
-					'fetchFromData' => '<return:keys-separated-by-colon>'
+					'activeRequestCollectionKey' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
+					'activeRequestCollectionKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
 					// Fetch values of SQL payload for previous queries
 					'column' => 'id',
-					'fetchFrom' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
-					'fetchFromData' => '<return:keys-separated-by-colon>'
+					'activeRequestCollectionKey' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
+					'activeRequestCollectionKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 			],
 			'__TRIGGERS__' => [...],
@@ -442,28 +442,28 @@ return [
 		[
 			'__ROUTE__' => [
 				[
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromData' => 'address'
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					'activeRequestCollectionKeySubKey' => 'address'
 				],
 				[...]
 			],
 			'__QUERY-STRING__' => [
 				[
 					'column' => 'param-1',
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromData' => 'address'
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					'activeRequestCollectionKeySubKey' => 'address'
 				],
 				[...]
 			],
@@ -471,14 +471,14 @@ return [
 			'__PAYLOAD__' => [
 				[
 					'column' => 'param-1',
-					'fetchFrom' => 'routeParamArr', // Fetch value from parsed route
-					// 'fetchFrom' => 'queryParamArr', // Fetch value from query string
-					// 'fetchFrom' => 'payload', // Fetch value from payload
-					// 'fetchFrom' => 'function', // Fetch value from function
-					// 'fetchFrom' => 'customerData', // Fetch value from Customer Data
-					// 'fetchFrom' => 'userData', // Fetch value from User Data session
-					// 'fetchFrom' => 'custom', // Static values
-					'fetchFromData' => 'address'
+					'activeRequestCollectionKey' => 'routeParamArr', // Fetch value from parsed route
+					// 'activeRequestCollectionKey' => 'queryParamArr', // Fetch value from query string
+					// 'activeRequestCollectionKey' => 'payload', // Fetch value from payload
+					// 'activeRequestCollectionKey' => 'function', // Fetch value from function
+					// 'activeRequestCollectionKey' => 'customerData', // Fetch value from Customer Data
+					// 'activeRequestCollectionKey' => 'userData', // Fetch value from User Data session
+					// 'activeRequestCollectionKey' => 'custom', // Static values
+					'activeRequestCollectionKeySubKey' => 'address'
 				],
 				[...]
 			]
@@ -566,7 +566,7 @@ return [
 	'idempotentWindow' => 3, // Idempotent Window for DML operation (seconds)
 
 	// Optional custom configuration to connect to master / slave Database
-	'fetchFrom' => 'Slave' // values - Master / Slave
+	'fetchDbMode' => 'Slave' // values - Master / Slave
 ];
 ```
 
@@ -575,9 +575,9 @@ return [
 - Dedicated database for respective customer can be configured
 - This can also handle Master / Slave implementaion respectively
 
-## fetchFrom
+## activeRequestCollectionKey
 
-- **fetchFrom** is a Sql config feature where one can force the fetch from Master (Since usually it is Slave)
+- **activeRequestCollectionKey** is a Sql config feature where one can force the fetch from Master (Since usually it is Slave)
 
 ## Defining Custom DataTypes
 

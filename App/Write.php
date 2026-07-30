@@ -113,13 +113,13 @@ class Write
 		$this->operateAsTransaction = isset($sqlConfig['isTransaction'])
 			? $sqlConfig['isTransaction'] : Constant::$FALSE;
 
-		$fetchFrom = 'Master';
+		$fetchDbMode = 'Master';
 
 		// Set Server mode to execute query on - Read / Write Server
 		if ($this->httpObj->httpRequestObj->customerDbObj === Constant::$NULL) {
 			$this->httpObj->httpRequestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
-				customerData: $this->httpObj->httpRequestObj->session['customerData'],
-				fetchFrom: $fetchFrom
+				customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
+				fetchDbMode: $fetchDbMode
 			);
 		}
 
@@ -158,7 +158,7 @@ class Write
 	): void {
 		// Check for payloadType
 		if (isset($writeSqlConfig['__PAYLOAD-TYPE__'])) {
-			$writePayloadType = $this->httpObj->httpRequestObj->session['payloadType'];
+			$writePayloadType = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'];
 			if ($writePayloadType !== $writeSqlConfig['__PAYLOAD-TYPE__']) {
 				throw new \Exception(
 					message: 'Invalid payload type',
@@ -182,7 +182,7 @@ class Write
 		}
 
 		// Set required fields
-		$this->httpObj->httpRequestObj->session['requiredFieldArrCollection'] = $this->getRequired(
+		$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'] = $this->getRequired(
 			sqlConfig: $writeSqlConfig,
 			flag: $writeUseHierarchy,
 			isFirstCall: Constant::$TRUE
@@ -192,8 +192,8 @@ class Write
 			objectKey: 'Results'
 		);
 		if (
-			isset($this->httpObj->httpRequestObj->session['payloadType'])
-			&& $this->httpObj->httpRequestObj->session['payloadType'] === 'Array'
+			isset($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'])
+			&& $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
 		) {
 			if (
 				in_array(
@@ -208,7 +208,7 @@ class Write
 			}
 		}
 
-		$indexCount = $this->httpObj->httpRequestObj->session['payloadType'] === 'Array'
+		$indexCount = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
 			? $this->httpObj->httpRequestObj->dataDecodeObj->count() : 1;
 
 		// Start Write operation
@@ -216,7 +216,7 @@ class Write
 		for ($index = 0; $index < $indexCount; $index++) {
 			$writeCurrentPayloadKeyArr = $writePayloadKeyArr;
 			if ($index === 0) {
-				if ($this->httpObj->httpRequestObj->session['payloadType'] === 'Array') {
+				if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
 					$writeCurrentPayloadKeyArr[] = "{$index}";
 				} else {
 					$writeCurrentPayloadKeyArr[] = '';
@@ -257,7 +257,7 @@ class Write
 				$this->writeParent(
 					writeParentSqlConfig: $writeSqlConfig,
 					writeParentPayloadKeyArr: $writeCurrentPayloadKeyArr,
-					writeParentRequiredFieldArr: $this->httpObj->httpRequestObj->session['requiredFieldArrCollection'],
+					writeParentRequiredFieldArr: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'],
 					writeParentResponse: $writeResponse,
 					writeParentUseHierarchy: $writeUseHierarchy
 				);
@@ -325,7 +325,7 @@ class Write
 			}
 		}
 
-		if ($this->httpObj->httpRequestObj->session['payloadType'] === 'Array') {
+		if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
 			if (
 				in_array(
 					needle: $this->httpObj->httpResponseObj->outputRepresentation,
@@ -380,7 +380,7 @@ class Write
 				keyString: $writeParentPayloadKey
 			);
 
-		$mode = getenv(name: $this->httpObj->httpRequestObj->session['customerData']['customer_master_db_server_query_placeholder']);
+		$mode = getenv(name: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_master_db_server_query_placeholder']);
 		$function = "getSqlAndParam{$mode}Mode";
 
 		for ($index = 0; $index < $indexCount; $index++) {
@@ -443,14 +443,14 @@ class Write
 			}
 
 			// Load Payload
-			$this->httpObj->httpRequestObj->session['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
+			$this->httpObj->httpRequestObj->activeRequestCollection['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
 				keyString: $writeParentCurrentPayloadKey
 			);
 
 			if (count(value: $writeParentRequiredFieldArr)) {
-				$this->httpObj->httpRequestObj->session['requiredFieldArr'] = $writeParentRequiredFieldArr;
+				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = $writeParentRequiredFieldArr;
 			} else {
-				$this->httpObj->httpRequestObj->session['requiredFieldArr'] = [];
+				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = [];
 			}
 
 			if (
@@ -518,7 +518,7 @@ class Write
 					$id = $this->httpObj->httpRequestObj->customerDbObj->lastInsertId();
 				}
 				$writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']] = $id;
-				$this->httpObj->httpRequestObj->session['__INSERT-IDs__'][$writeParentSqlConfig['__INSERT-IDs__']] = $id;
+				$this->httpObj->httpRequestObj->activeRequestCollection['__INSERT-IDs__'][$writeParentSqlConfig['__INSERT-IDs__']] = $id;
 			} else {
 				$affectedRecordCount = $this->httpObj->httpRequestObj->customerDbObj->affectedRecordCount();
 				$writeParentCurrentResponse['affectedRecordCount'] = $affectedRecordCount;
@@ -579,9 +579,9 @@ class Write
 		$writeChildUseHierarchy
 	): void {
 		if ($writeChildUseHierarchy) {
-			$record = $this->httpObj->httpRequestObj->session['payload'];
+			$record = $this->httpObj->httpRequestObj->activeRequestCollection['payload'];
 			$this->resetFetchData(
-				fetchFrom: 'sqlPayload',
+				activeRequestCollectionKey: 'sqlPayload',
 				payloadKeyArr: $writeChildPayloadKeyArr,
 				record: $record
 			);

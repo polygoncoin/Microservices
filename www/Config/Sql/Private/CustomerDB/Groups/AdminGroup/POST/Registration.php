@@ -14,34 +14,34 @@
  */
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->session['customerData']['customer_user_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'firstname'],
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'firstname'],
 		[
 			'column' => 'customer_user_contact_person',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'lastname'],
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'lastname'],
 		[
 			'column' => 'customer_user_contact_email_address',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'email'],
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'email'],
 		[
 			'column' => 'customer_user_username',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'username'],
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'username'],
 		[
 			'column' => 'customer_user_password_hash',
-			'fetchFrom' => 'function',
-			'fetchFromData' => function($session) {
+			'activeRequestCollectionKey' => 'function',
+			'activeRequestCollectionKeySubKey' => function($activeRequestCollection) {
 				if (
-					isset($session['payload'])
-					&& isset($session['payload']['password'])
+					isset($activeRequestCollection['payload'])
+					&& isset($activeRequestCollection['payload']['password'])
 				) {
 					return password_hash(
-						password: $session['payload']['password'],
+						password: $activeRequestCollection['payload']['password'],
 						algo: PASSWORD_DEFAULT
 					);
 				}
@@ -49,12 +49,12 @@ return [
 		],
 		[
 			'column' => 'customer_user_allowed_cidr',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => '0.0.0.0/0'],
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => '0.0.0.0/0'],
 		[
 			'column' => 'customer_user_group_id',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => '1'
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',

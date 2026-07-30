@@ -20,25 +20,25 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'updated_by',
-			'fetchFrom' => 'userData',
-			'fetchFromData' => 'id'
+			'activeRequestCollectionKey' => 'userData',
+			'activeRequestCollectionKeySubKey' => 'id'
 		],
 		[
 			'column' => 'updated_on',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => date('Y-m-d H:i:s')
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => date('Y-m-d H:i:s')
 		],
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_id',
-			'fetchFrom' => 'routeParamArr',
-			'fetchFromData' => 'id',
+			'activeRequestCollectionKey' => 'routeParamArr',
+			'activeRequestCollectionKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],

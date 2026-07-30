@@ -70,7 +70,7 @@ class QueryCache
         }
 
 		$customerQueryCacheServerCred = DbCommonFunction::customerQueryCacheServerCred(
-			customerData: $this->httpObj->httpRequestObj->session['customerData']
+			customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']
 		);
 		$this->queryCacheServerObj = new QueryCacheServer(
 			queryCacheServerType: $customerQueryCacheServerCred['cacheServerType'],

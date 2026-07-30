@@ -68,11 +68,11 @@ class GlobalValidator implements ValidatorInterface
 		$errorArr = [];
 		foreach ($validationConfig as &$v) {
 			$argArr = [];
-			foreach ($v['functionArgs'] as $argName => [$fetchFrom, $fetchFromData]) {
-				if ($fetchFrom === 'custom') {
-					$argArr[$argName] = $fetchFromData;
+			foreach ($v['functionArgs'] as $argName => [$activeRequestCollectionKey, $activeRequestCollectionKeySubKey]) {
+				if ($activeRequestCollectionKey === 'custom') {
+					$argArr[$argName] = $activeRequestCollectionKeySubKey;
 				} else {
-					$argArr[$argName] = $this->httpObj->httpRequestObj->session[$fetchFrom][$fetchFromData];
+					$argArr[$argName] = $this->httpObj->httpRequestObj->activeRequestCollection[$activeRequestCollectionKey][$activeRequestCollectionKeySubKey];
 				}
 			}
 			$function = $v['function'];

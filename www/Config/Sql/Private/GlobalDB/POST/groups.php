@@ -16,59 +16,59 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'name',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'name'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'name'
 		],
 		[
 			'column' => 'customer_id',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'customer_id',
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'customer_id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'connection_id',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'connection_id',
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'connection_id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'customer_allowed_cidr',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'allowed_cidr'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'allowed_cidr'
 		],
 		[
 			'column' => 'comments',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'comments'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'comments'
 		],
 		[
 			'column' => 'created_by',
-			'fetchFrom' => 'userData',
-			'fetchFromData' => 'id'
+			'activeRequestCollectionKey' => 'userData',
+			'activeRequestCollectionKeySubKey' => 'id'
 		],
 		[
 			'column' => 'created_on',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => date(format: 'Y-m-d H:i:s')
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
 		],
 		[
 			'column' => 'is_approved',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		]
 	],
 	'__INSERT-IDs__' => 'group:id',

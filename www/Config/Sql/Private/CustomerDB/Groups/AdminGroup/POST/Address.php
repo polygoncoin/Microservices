@@ -20,19 +20,19 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'customer_id',
-			'fetchFrom' => 'customerData',
-			'fetchFromData' => 'customer_id'
+			'activeRequestCollectionKey' => 'customerData',
+			'activeRequestCollectionKeySubKey' => 'customer_id'
 		],
 		[
 			'column' => 'user_id',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'id',
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		],
 		[
 			'column' => 'address',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'address'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'address'
 		],
 	],
 	'__INSERT-IDs__' => 'address:id'

@@ -18,8 +18,8 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'name',
-			'fetchFrom' => 'queryParamArr',
-			'fetchFromData' => 'name'
+			'activeRequestCollectionKey' => 'queryParamArr',
+			'activeRequestCollectionKeySubKey' => 'name'
 		]
 	],
 	'__MODE__' => 'multipleRecordFormat',

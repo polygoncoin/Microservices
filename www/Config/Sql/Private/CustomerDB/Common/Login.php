@@ -17,13 +17,13 @@ return [
 	'__PAYLOAD__' => [
 		[
 			'column' => 'username',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'username'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'username'
 		],
 		[
 			'column' => 'password',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'password'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'password'
 		],
 	],
 	// '__VALIDATE__' => [

@@ -48,16 +48,16 @@ class CommonFunction
 		&$httpObj,
 		$feature
 	): bool {
-		if (!isset($httpObj->httpRequestObj->session['customerData'][$feature])) {
+		if (!isset($httpObj->httpRequestObj->activeRequestCollection['customerData'][$feature])) {
 			throw new \Exception(
 				message: "Provided feature '{$feature}' not found",
 				code: HttpStatus::$InternalServerError
 			);
 		}
-		if (empty($httpObj->httpRequestObj->session['customerData'][$feature])) {
+		if (empty($httpObj->httpRequestObj->activeRequestCollection['customerData'][$feature])) {
 			return false;
 		} else {
-			return ($httpObj->httpRequestObj->session['customerData'][$feature] === Constant::$YES) ? Constant::$TRUE : Constant::$FALSE;
+			return ($httpObj->httpRequestObj->activeRequestCollection['customerData'][$feature] === Constant::$YES) ? Constant::$TRUE : Constant::$FALSE;
 		}
 	}
 

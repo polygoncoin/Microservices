@@ -54,8 +54,8 @@ class Category implements CustomInterface
 	) {
 		$this->httpObj = &$httpObj;
 		$this->httpObj->httpRequestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
-			customerData: $this->httpObj->httpRequestObj->session['customerData'],
-			fetchFrom: 'Slave'
+			customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
+			fetchDbMode: 'Slave'
 		);
 	}
 

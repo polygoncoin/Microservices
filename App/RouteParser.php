@@ -175,7 +175,7 @@ class RouteParser
 				}
 				CommonFunction::checkCidr(
 					ip: $this->httpObj->httpReqData['server']['httpRequestIp'],
-					cidrString: $this->httpObj->httpRequestObj->session['customerData']['customer_dropbox_request_restricted_cidr']
+					cidrString: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_dropbox_request_restricted_cidr']
 				);
 			}
 			$this->routeStartingWithReservedKeywordFlag = true;
@@ -202,7 +202,7 @@ class RouteParser
 			}
 			CommonFunction::checkCidr(
 				ip: $this->httpObj->httpReqData['server']['httpRequestIp'],
-				cidrString: $this->httpObj->httpRequestObj->session['customerData']['customer_routes_request_restricted_cidr']
+				cidrString: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_routes_request_restricted_cidr']
 			);
 
 			$this->routeStartingWithReservedKeywordFlag = true;
@@ -230,7 +230,7 @@ class RouteParser
 				$routeFileLocation = $this->httpObj->httpRequestObj->ROUTES_DIR
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'
-					. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->session['groupData']['customer_user_group_name']
+					. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->activeRequestCollection['groupData']['customer_user_group_name']
 					. DIRECTORY_SEPARATOR . $this->httpObj->httpReqData['server']['httpMethod'] . 'routes.php';
 			} else {
 				$routeFileLocation = $this->httpObj->httpRequestObj->ROUTES_DIR
@@ -316,11 +316,11 @@ class RouteParser
 					);
 					if ($foundIntRoute) {
 						$configuredRoute[] = $foundIntRoute;
-						$this->httpObj->httpRequestObj->session['routeParamArr'][$foundIntParamName] =
+						$this->httpObj->httpRequestObj->activeRequestCollection['routeParamArr'][$foundIntParamName] =
 							(int)$element;
 					} elseif ($foundStringRoute) {
 						$configuredRoute[] = $foundStringRoute;
-						$this->httpObj->httpRequestObj->session['routeParamArr'][$foundStringParamName] =
+						$this->httpObj->httpRequestObj->activeRequestCollection['routeParamArr'][$foundStringParamName] =
 							urldecode(
 								string: $element
 							);
@@ -701,7 +701,7 @@ class RouteParser
 					needle: ':'
 				) - 1
 			);
-			$this->httpObj->httpRequestObj->session['routeParamArr'][$param] = $element;
+			$this->httpObj->httpRequestObj->activeRequestCollection['routeParamArr'][$param] = $element;
 		}
 	}
 
@@ -778,9 +778,9 @@ class RouteParser
 		];
 
 		$this->reservedRoutesCidrString = [
-			Env::$cronRequestRoutePrefix => $this->httpObj->httpRequestObj->session['customerData']['customer_cron_request_restricted_cidr'],
+			Env::$cronRequestRoutePrefix => $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_cron_request_restricted_cidr'],
 			Env::$reloadRequestRoutePrefix => Env::$reloadRestrictedCidr,
-			Env::$routesRequestRoute => $this->httpObj->httpRequestObj->session['customerData']['customer_routes_request_restricted_cidr']
+			Env::$routesRequestRoute => $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_routes_request_restricted_cidr']
 		];
 
 		if (
@@ -790,7 +790,7 @@ class RouteParser
 			)
 		) {
 			$this->reservedRoutesPrefix[] = Env::$customRequestRoutePrefix;
-			$this->reservedRoutesCidrString[Env::$customRequestRoutePrefix] = $this->httpObj->httpRequestObj->session['customerData']['customer_custom_request_restricted_cidr'];
+			$this->reservedRoutesCidrString[Env::$customRequestRoutePrefix] = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_custom_request_restricted_cidr'];
 		}
 		if (
 			CommonFunction::isEnabled(
@@ -799,7 +799,7 @@ class RouteParser
 			)
 		) {
 			$this->reservedRoutesPrefix[] = Env::$thirdPartyRequestRoutePrefix;
-			$this->reservedRoutesCidrString[Env::$thirdPartyRequestRoutePrefix] = $this->httpObj->httpRequestObj->session['customerData']['customer_thirdparty_request_restricted_cidr'];
+			$this->reservedRoutesCidrString[Env::$thirdPartyRequestRoutePrefix] = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_thirdparty_request_restricted_cidr'];
 		}
 		if (
 			CommonFunction::isEnabled(
@@ -808,7 +808,7 @@ class RouteParser
 			)
 		) {
 			$this->reservedRoutesPrefix[] = Env::$uploadRequestRoutePrefix;
-			$this->reservedRoutesCidrString[Env::$uploadRequestRoutePrefix] = $this->httpObj->httpRequestObj->session['customerData']['customer_upload_request_restricted_cidr'];
+			$this->reservedRoutesCidrString[Env::$uploadRequestRoutePrefix] = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_upload_request_restricted_cidr'];
 		}
 	}
 }

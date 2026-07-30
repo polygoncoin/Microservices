@@ -18,11 +18,11 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		]
 	],
-	'fetchFrom' => 'Master',
+	'fetchDbMode' => 'Master',
 	'downloadFile' => 'Test.csv',
 	'exportFile' => ''
 ];

@@ -116,7 +116,7 @@ class Route
 				. DIRECTORY_SEPARATOR . 'Private'
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->session['groupData']['customer_user_group_name'];
+				. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->activeRequestCollection['groupData']['customer_user_group_name'];
 		}
 
 		foreach ($this->httpMethodArr as $method) {

@@ -24,34 +24,34 @@ return array_merge(
 		'__SET__' => [
 			[
 				'column' => 'firstname',
-				'fetchFrom' => 'payload',
-				'fetchFromData' => 'firstname'
+				'activeRequestCollectionKey' => 'payload',
+				'activeRequestCollectionKeySubKey' => 'firstname'
 			],
 			[
 				'column' => 'lastname',
-				'fetchFrom' => 'payload',
-				'fetchFromData' => 'lastname'
+				'activeRequestCollectionKey' => 'payload',
+				'activeRequestCollectionKeySubKey' => 'lastname'
 			],
 			[
 				'column' => 'email',
-				'fetchFrom' => 'payload',
-				'fetchFromData' => 'email'
+				'activeRequestCollectionKey' => 'payload',
+				'activeRequestCollectionKeySubKey' => 'email'
 			],
 			[
 				'column' => 'username',
-				'fetchFrom' => 'payload',
-				'fetchFromData' => 'username'
+				'activeRequestCollectionKey' => 'payload',
+				'activeRequestCollectionKeySubKey' => 'username'
 			],
 			[
 				'column' => 'password_hash',
-				'fetchFrom' => 'function',
-				'fetchFromData' => function($session) {
+				'activeRequestCollectionKey' => 'function',
+				'activeRequestCollectionKeySubKey' => function($activeRequestCollection) {
 					if (
-						isset($session['payload'])
-						&& isset($session['payload']['password'])
+						isset($activeRequestCollection['payload'])
+						&& isset($activeRequestCollection['payload']['password'])
 					) {
 						return password_hash(
-							password: $session['payload']['password'],
+							password: $activeRequestCollection['payload']['password'],
 							algo: PASSWORD_DEFAULT
 						);
 					}
@@ -61,13 +61,13 @@ return array_merge(
 		'__WHERE__' => [
 			[
 				'column' => 'is_deleted',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$NO
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'fetchFrom' => 'routeParamArr',
-				'fetchFromData' => 'id',
+				'activeRequestCollectionKey' => 'routeParamArr',
+				'activeRequestCollectionKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]
 		],

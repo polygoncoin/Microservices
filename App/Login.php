@@ -118,13 +118,13 @@ class Login
 				httpObj: $this->httpObj,
 				feature: 'customer_enabled_rate_limiting_for_user_per_ip'
 			)
-			&& !empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_per_ip'])
-			&& !empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_per_ip_window'])
+			&& !empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_per_ip'])
+			&& !empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_per_ip_window'])
 		) {
 			$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserAsPerHttpRequestIpPrefix,
-				rateLimitMaxRequest: $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_per_ip'],
-				rateLimitMaxRequestWindow: $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_per_ip_window'],
+				rateLimitMaxRequest: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_per_ip'],
+				rateLimitMaxRequestWindow: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_per_ip_window'],
 				rateLimitKey: $this->httpObj->httpReqData['server']['httpRequestIp']
 			);
 		}
@@ -220,7 +220,7 @@ class Login
 				code: HttpStatus::$Unauthorized
 			);
 		}
-		$this->httpObj->httpRequestObj->session['userData'] = $userData;
+		$this->httpObj->httpRequestObj->activeRequestCollection['userData'] = $userData;
 		$this->httpObj->httpRequestObj->customerUserId = $userData['customer_user_id'];
 		$this->httpObj->httpRequestObj->customerUserGroupId = $userData['customer_user_group_id'];
 	}
@@ -234,13 +234,13 @@ class Login
 	private function validatePassword(): void
 	{
 		if (
-			!empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_login_request'])
-			&& !empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_login_request_window'])
+			!empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_login_request'])
+			&& !empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_login_request_window'])
 		) {
 			$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserLoginPrefix,
-				rateLimitMaxRequest: $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_login_request'],
-				rateLimitMaxRequestWindow: $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_user_login_request_window'],
+				rateLimitMaxRequest: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_login_request'],
+				rateLimitMaxRequestWindow: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_user_login_request_window'],
 				rateLimitKey: $this->httpObj->httpReqData['server']['httpRequestIp'] . ':' . $this->customer_user_username
 			);
 		}
@@ -249,7 +249,7 @@ class Login
 		if (
 			!password_verify(
 				password: $this->customer_user_password,
-				hash: $this->httpObj->httpRequestObj->session['userData']['customer_user_password_hash']
+				hash: $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_password_hash']
 			)
 		) {
 			throw new \Exception(
@@ -298,7 +298,7 @@ class Login
 			}
 		}
 
-		foreach ($this->httpObj->httpRequestObj->session['userData'] as $userDataKey => &$userDataKeyValue) {
+		foreach ($this->httpObj->httpRequestObj->activeRequestCollection['userData'] as $userDataKey => &$userDataKeyValue) {
 			$userTokenData[$userDataKey] = $userDataKeyValue;
 		}
 
@@ -324,7 +324,7 @@ class Login
 			$this->httpObj->httpRequestObj->sessionObj = new Session();
 			$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
 			$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-				customerData: $this->httpObj->httpRequestObj->session['customerData'],
+				customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
 				options: []
 			);
 		}
@@ -336,7 +336,7 @@ class Login
 			'httpRequestHash' => $this->httpObj->httpReqData['httpRequestHash']
 		];
 
-		foreach ($this->httpObj->httpRequestObj->session['userData'] as $userDataKey => &$userDataKeyValue) {
+		foreach ($this->httpObj->httpRequestObj->activeRequestCollection['userData'] as $userDataKey => &$userDataKeyValue) {
 			$userSessionData[$userDataKey] = $userDataKeyValue;
 		}
 
@@ -398,7 +398,7 @@ class Login
 					$this->httpObj->httpRequestObj->sessionObj = new Session();
 					$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
 					$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-						customerData: $this->httpObj->httpRequestObj->session['customerData'],
+						customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
 						options: []
 					);
 				}
@@ -582,7 +582,7 @@ class Login
 					$this->httpObj->httpRequestObj->sessionObj = new Session();
 					$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
 					$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-						customerData: $this->httpObj->httpRequestObj->session['customerData'],
+						customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
 						options: []
 					);
 				}
@@ -627,7 +627,7 @@ class Login
 				$this->httpObj->httpRequestObj->sessionObj = new Session();
 				$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
 				$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-					customerData: $this->httpObj->httpRequestObj->session['customerData'],
+					customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
 					options: []
 				);
 			}

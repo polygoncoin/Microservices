@@ -20,40 +20,40 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'is_approved',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$YES
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$YES
 		],
 		[
 			'column' => 'updated_by',
-			'fetchFrom' => 'userData',
-			'fetchFromData' => 'id'
+			'activeRequestCollectionKey' => 'userData',
+			'activeRequestCollectionKeySubKey' => 'id'
 		],
 		[
 			'column' => 'updated_on',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => date(format: 'Y-m-d H:i:s')
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_approved',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'customer_id',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'id',
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],

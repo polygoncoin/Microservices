@@ -107,17 +107,17 @@ class Gateway
 				httpObj: $this->httpObj,
 				feature: 'customer_enabled_rate_limiting_for_customer'
 			)
-			|| empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_request'])
-			|| empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_request_window'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_request'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_request_window'])
 		) {
 			return;
 		}
 
 		$rateLimitCustomerPrefix = Env::$rateLimitCustomerPrefix;
 		$rateLimitMaxRequest =
-				$this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_request'];
+				$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_request'];
 		$rateLimitMaxRequestWindow =
-				$this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_max_request_window'];
+				$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_max_request_window'];
 		$rateLimitKey = $this->httpObj->httpRequestObj->customerId;
 
 		$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(
@@ -140,8 +140,8 @@ class Gateway
 				httpObj: $this->httpObj,
 				feature: 'customer_enabled_rate_limiting_for_customer_user_group'
 			)
-			|| empty($this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request'])
-			|| empty($this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request_window'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request_window'])
 		) {
 			return;
 		}
@@ -149,9 +149,9 @@ class Gateway
 		$rateLimitGroupPrefix =
 			Env::$rateLimitGroupPrefix;
 		$rateLimitMaxRequest =
-			$this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request'];
+			$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request'];
 		$rateLimitMaxRequestWindow =
-			$this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request_window'];
+			$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request_window'];
 		$rateLimitKey = $this->httpObj->httpRequestObj->customerId . ':'
 			. $this->httpObj->httpRequestObj->customerUserId;
 
@@ -175,17 +175,17 @@ class Gateway
 				httpObj: $this->httpObj,
 				feature: 'customer_enabled_rate_limiting_for_user'
 			)
-			|| empty($this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request'])
-			|| empty($this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request_window'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request_window'])
 		) {
 			return;
 		}
 
 		$rateLimitUserPrefix = Env::$rateLimitUserPrefix;
 		$rateLimitMaxRequest =
-			$this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request'];
+			$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request'];
 		$rateLimitMaxRequestWindow =
-			$this->httpObj->httpRequestObj->session['userData']['customer_user_rate_limit_max_request_window'];
+			$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_rate_limit_max_request_window'];
 		$rateLimitKey = $this->httpObj->httpRequestObj->customerId . ':'
 			. $this->httpObj->httpRequestObj->customerUserId;
 
@@ -209,15 +209,15 @@ class Gateway
 				httpObj: $this->httpObj,
 				feature: 'customer_enabled_rate_limiting_for_user_request'
 			)
-			|| empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_user_max_request'])
-			|| empty($this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_user_max_request_window'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_user_max_request'])
+			|| empty($this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_user_max_request_window'])
 		) {
 			return;
 		}
 
 		$rateLimitUserPrefix = Env::$rateLimitUserRequestPrefix;
-		$rateLimitMaxRequest = $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_user_max_request'];
-		$rateLimitMaxRequestWindow = $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_user_max_request_window'];
+		$rateLimitMaxRequest = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_user_max_request'];
+		$rateLimitMaxRequestWindow = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_user_max_request_window'];
 		$rateLimitKey = $this->httpObj->httpRequestObj->customerId . ':'
 			. $this->httpObj->httpRequestObj->customerUserId;
 
@@ -246,8 +246,8 @@ class Gateway
 		}
 
 		$rateLimitHttpRequestIpPrefix = Env::$rateLimitHttpRequestIpPrefix;
-		$customer_rate_limit_ip_max_request = $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_ip_max_request'];
-		$customer_rate_limit_ip_max_request_window = $this->httpObj->httpRequestObj->session['customerData']['customer_rate_limit_ip_max_request_window'];
+		$customer_rate_limit_ip_max_request = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_ip_max_request'];
+		$customer_rate_limit_ip_max_request_window = $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_rate_limit_ip_max_request_window'];
 		$rateLimitKey = $this->httpObj->httpRequestObj->customerId . ':' . $this->httpObj->httpReqData['server']['httpRequestIp'];
 
 		$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(

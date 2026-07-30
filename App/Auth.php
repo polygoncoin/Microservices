@@ -61,7 +61,7 @@ class Auth
 	 */
 	public function loadUserData(): void
 	{
-		if (isset($this->httpObj->httpRequestObj->session['userData'])) {
+		if (isset($this->httpObj->httpRequestObj->activeRequestCollection['userData'])) {
 			return;
 		}
 
@@ -69,8 +69,8 @@ class Auth
 			isset($_SESSION)
 			&& isset($_SESSION['customer_user_id'])
 		) {
-			$this->httpObj->httpRequestObj->session['userData'] = $_SESSION;
-			$this->httpObj->httpRequestObj->session['authId'] = session_id();
+			$this->httpObj->httpRequestObj->activeRequestCollection['userData'] = $_SESSION;
+			$this->httpObj->httpRequestObj->activeRequestCollection['authId'] = session_id();
 		} elseif (
 			isset($this->httpObj->httpReqData['header']['tokenHeader'])
 			&& $this->httpObj->httpReqData['header']['tokenHeader'] !== Constant::$NULL
@@ -87,9 +87,9 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObj->httpRequestObj->session['authId'] = $matches[1];
+			$this->httpObj->httpRequestObj->activeRequestCollection['authId'] = $matches[1];
 			$tokenKey = CacheServerKey::token(
-				token: $this->httpObj->httpRequestObj->session['authId']
+				token: $this->httpObj->httpRequestObj->activeRequestCollection['authId']
 			);
 			if (
 				!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
@@ -101,7 +101,7 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObj->httpRequestObj->session['userData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+			$this->httpObj->httpRequestObj->activeRequestCollection['userData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
 				cacheKey: $tokenKey
 			);
 		} else {
@@ -111,22 +111,22 @@ class Auth
 			);
 		}
 
-		if (($this->httpObj->httpRequestObj->session['userData']['authTimestamp'] + Constant::$TOKEN_EXPIRY_TIME) <= Env::$timestamp) {
+		if (($this->httpObj->httpRequestObj->activeRequestCollection['userData']['authTimestamp'] + Constant::$TOKEN_EXPIRY_TIME) <= Env::$timestamp) {
 			throw new \Exception(
 				message: 'Login has timed out. Please login',
 				code: HttpStatus::$BadRequest
 			);
 		}
 
-		if ($this->httpObj->httpRequestObj->session['userData']['httpRequestHash'] !== $this->httpObj->httpReqData['httpRequestHash']) {
+		if ($this->httpObj->httpRequestObj->activeRequestCollection['userData']['httpRequestHash'] !== $this->httpObj->httpReqData['httpRequestHash']) {
 			throw new \Exception(
 				message: 'Current Browser or the Device location not matching with Browser or the Device location during Login',
 				code: HttpStatus::$PreconditionFailed
 			);
 		}
 
-		$this->httpObj->httpRequestObj->customerUserId = $this->httpObj->httpRequestObj->session['userData']['customer_user_id'];
-		$this->httpObj->httpRequestObj->customerUserGroupId = $this->httpObj->httpRequestObj->session['userData']['customer_user_group_id'];
+		$this->httpObj->httpRequestObj->customerUserId = $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_id'];
+		$this->httpObj->httpRequestObj->customerUserGroupId = $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_id'];
 	}
 
 	/**
@@ -137,7 +137,7 @@ class Auth
 	 */
 	public function loadGroupData(): void
 	{
-		if (isset($this->httpObj->httpRequestObj->session['groupData'])) {
+		if (isset($this->httpObj->httpRequestObj->activeRequestCollection['groupData'])) {
 			return;
 		}
 
@@ -157,7 +157,7 @@ class Auth
 			);
 		}
 
-		$this->httpObj->httpRequestObj->session['groupData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+		$this->httpObj->httpRequestObj->activeRequestCollection['groupData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
 			cacheKey: $groupCacheKey
 		);
 	}

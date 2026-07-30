@@ -70,7 +70,7 @@ class SupplementTest implements CustomInterface
 	 */
 	public function process(): mixed
 	{
-		return $this->httpObj->httpRequestObj->session['payload'];
+		return $this->httpObj->httpRequestObj->activeRequestCollection['payload'];
 	}
 
 	/**
@@ -80,6 +80,6 @@ class SupplementTest implements CustomInterface
 	 */
 	public function subProcess(): mixed
 	{
-		return $this->httpObj->httpRequestObj->session['payload'];
+		return $this->httpObj->httpRequestObj->activeRequestCollection['payload'];
 	}
 }

@@ -16,34 +16,34 @@
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$YES
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$YES
 		],
 		[
 			'column' => 'updated_by',
-			'fetchFrom' => 'userData',
-			'fetchFromData' => 'id'
+			'activeRequestCollectionKey' => 'userData',
+			'activeRequestCollectionKeySubKey' => 'id'
 		],
 		[
 			'column' => 'updated_on',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => date(format: 'Y-m-d H:i:s')
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => date(format: 'Y-m-d H:i:s')
 		]
 	],
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParamArr',
-			'fetchFromData' => 'id',
+			'activeRequestCollectionKey' => 'routeParamArr',
+			'activeRequestCollectionKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
 	],
@@ -51,7 +51,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
@@ -60,7 +60,7 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->session['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestCollection['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', $Constant::$NO],
 				'primary' => ['custom', 'id'],

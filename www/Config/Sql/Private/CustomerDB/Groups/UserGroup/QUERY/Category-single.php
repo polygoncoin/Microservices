@@ -18,18 +18,18 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => $Constant::$NO
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => $Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => 0
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => 0
 		],
 		[
 			'column' => 'id',
-			'fetchFrom' => 'routeParamArr',
-			'fetchFromData' => 'id'
+			'activeRequestCollectionKey' => 'routeParamArr',
+			'activeRequestCollectionKeySubKey' => 'id'
 		]
 	],
 	'__MODE__' => 'singleRecordFormat',
@@ -39,13 +39,13 @@ return [
 			'__WHERE__' => [
 				[
 					'column' => 'is_deleted',
-					'fetchFrom' => 'custom',
-					'fetchFromData' => $Constant::$NO
+					'activeRequestCollectionKey' => 'custom',
+					'activeRequestCollectionKeySubKey' => $Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
-					'fetchFrom' => 'sqlResults',
-					'fetchFromData' => 'return:id'
+					'activeRequestCollectionKey' => 'sqlResults',
+					'activeRequestCollectionKeySubKey' => 'return:id'
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
@@ -55,13 +55,13 @@ return [
 					'__WHERE__' => [
 						[
 							'column' => 'is_deleted',
-							'fetchFrom' => 'custom',
-							'fetchFromData' => $Constant::$NO
+							'activeRequestCollectionKey' => 'custom',
+							'activeRequestCollectionKeySubKey' => $Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
-							'fetchFrom' => 'sqlResults',
-							'fetchFromData' => 'return:sub:id'
+							'activeRequestCollectionKey' => 'sqlResults',
+							'activeRequestCollectionKeySubKey' => 'return:sub:id'
 						],
 					],
 					'__MODE__' => 'multipleRecordFormat',
@@ -71,13 +71,13 @@ return [
 							'__WHERE__' => [
 								[
 									'column' => 'is_deleted',
-									'fetchFrom' => 'custom',
-									'fetchFromData' => $Constant::$NO
+									'activeRequestCollectionKey' => 'custom',
+									'activeRequestCollectionKeySubKey' => $Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
-									'fetchFrom' => 'sqlResults',
-									'fetchFromData' => 'return:sub:subsub:id'
+									'activeRequestCollectionKey' => 'sqlResults',
+									'activeRequestCollectionKeySubKey' => 'return:sub:subsub:id'
 								],
 							],
 							'__MODE__' => 'multipleRecordFormat',

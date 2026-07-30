@@ -20,18 +20,18 @@ return [
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$YES
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$NO
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$NO
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$NO
 			]
 		],
 		'__MODE__' => 'multipleRecordFormat'
@@ -41,25 +41,25 @@ return [
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$YES
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$NO
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
-				'fetchFrom' => 'custom',
-				'fetchFromData' => $Constant::$NO
+				'activeRequestCollectionKey' => 'custom',
+				'activeRequestCollectionKeySubKey' => $Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'fetchFrom' => 'routeParamArr',
-				'fetchFromData' => 'id'
+				'activeRequestCollectionKey' => 'routeParamArr',
+				'activeRequestCollectionKeySubKey' => 'id'
 			]
 		],
 		'__MODE__' => 'singleRecordFormat'
 	],
-][isset($this->httpObj->httpRequestObj->session['routeParamArr']['id'])?'single':'all'];
+][isset($this->httpObj->httpRequestObj->activeRequestCollection['routeParamArr']['id'])?'single':'all'];

@@ -55,6 +55,7 @@ class Test
 	public function processAllTest(): array
 	{
 		$response = [];
+
 		$response[] = $this->processPrivate();
 		$response[] = $this->processPublic();
 		$response[] = $this->processPublicXml();

@@ -81,9 +81,9 @@ class Validator
 		&$validationConfig
 	): array {
 		if (
-			isset(($this->httpObj->httpRequestObj->session['requiredFieldArr']))
+			isset(($this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr']))
 			&& count(
-				value: $this->httpObj->httpRequestObj->session['requiredFieldArr']
+				value: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr']
 			) > 0
 		) {
 			if (
@@ -109,16 +109,16 @@ class Validator
 		$isValidData = true;
 		$errorArr = [];
 		// Required fields payload validation
-		if (!empty($this->httpObj->httpRequestObj->session['requiredFieldArr']['payload'])) {
-			foreach ($this->httpObj->httpRequestObj->session['requiredFieldArr']['payload'] as $fetchFromData) {
+		if (!empty($this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr']['payload'])) {
+			foreach ($this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr']['payload'] as $activeRequestCollectionKeySubKey) {
 				if (
 					!in_array(
-						needle: $fetchFromData,
-						haystack: $this->httpObj->httpRequestObj->session['payload'],
+						needle: $activeRequestCollectionKeySubKey,
+						haystack: $this->httpObj->httpRequestObj->activeRequestCollection['payload'],
 						strict: Constant::$TRUE
 					)
 				) {
-					$errorArr[] = 'Missing required payload: ' . $fetchFromData;
+					$errorArr[] = 'Missing required payload: ' . $activeRequestCollectionKeySubKey;
 					$isValidData = false;
 				}
 			}

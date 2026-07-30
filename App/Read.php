@@ -136,12 +136,12 @@ class Read
 		}
 
 		// Set Server mode to execute query on - Read / Write Server
-		$fetchFrom = $sqlConfig['fetchFrom'] ?? 'Slave';
-		$placeholderModeKey = 'customer_' . strtolower($fetchFrom) . '_db_server_query_placeholder';
-		$this->placeholderMode = getenv(name: $this->httpObj->httpRequestObj->session['customerData'][$placeholderModeKey]);
+		$fetchDbMode = $sqlConfig['fetchDbMode'] ?? 'Slave';
+		$placeholderModeKey = 'customer_' . strtolower($fetchDbMode) . '_db_server_query_placeholder';
+		$this->placeholderMode = getenv(name: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'][$placeholderModeKey]);
 		$this->httpObj->httpRequestObj->customerDbObj = DbCommonFunction::connectCustomerDb(
-			customerData: $this->httpObj->httpRequestObj->session['customerData'],
-			fetchFrom: $fetchFrom
+			customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData'],
+			fetchDbMode: $fetchDbMode
 		);
 
 		$this->read(
@@ -182,19 +182,19 @@ class Read
 		&$readSqlConfig,
 		$readUseResultSet
 	): void {
-		$this->httpObj->httpRequestObj->session['requiredFieldArrCollection'] = $this->getRequired(
+		$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'] = $this->getRequired(
 			sqlConfig: $readSqlConfig,
 			flag: $readUseResultSet,
 			isFirstCall: Constant::$TRUE
 		);
 
-		if (isset($this->httpObj->httpRequestObj->session['requiredFieldArrCollection'])) {
-			$this->httpObj->httpRequestObj->session['requiredFieldArr'] = $this->httpObj->httpRequestObj->session['requiredFieldArrCollection'];
+		if (isset($this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'])) {
+			$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'];
 		} else {
-			$this->httpObj->httpRequestObj->session['requiredFieldArr'] = [];
+			$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = [];
 		}
 
-		$indexCount = $this->httpObj->httpRequestObj->session['payloadType'] === 'Array'
+		$indexCount = $this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array'
 			? $this->httpObj->httpRequestObj->dataDecodeObj->count() : 1;
 
 		// Start Read operation
@@ -203,7 +203,7 @@ class Read
 			$readCurrentPayloadKeyArr = $readPayloadKeyArr;
 
 			if ($index === 0) {
-				if ($this->httpObj->httpRequestObj->session['payloadType'] === 'Array') {
+				if ($this->httpObj->httpRequestObj->activeRequestCollection['payloadType'] === 'Array') {
 					$readCurrentPayloadKeyArr[] = "{$index}";
 				} else {
 					$readCurrentPayloadKeyArr[] = '';
@@ -215,7 +215,7 @@ class Read
 			$this->readParent(
 				readParentSqlConfig: $readSqlConfig,
 				readParentPayloadKeyArr: $readCurrentPayloadKeyArr,
-				readParentRequiredFieldArr: $this->httpObj->httpRequestObj->session['requiredFieldArrCollection'],
+				readParentRequiredFieldArr: $this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArrCollection'],
 				readParentUseResultSet: $readUseResultSet,
 				readParentIsFirstCall: Constant::$TRUE
 			);
@@ -262,7 +262,7 @@ class Read
 				keyString: $readParentPayloadKey
 			);
 
-		$mode = getenv(name: $this->httpObj->httpRequestObj->session['customerData']['customer_master_db_server_query_placeholder']);
+		$mode = getenv(name: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_master_db_server_query_placeholder']);
 		$function = "getSqlAndParam{$mode}Mode";
 
 		for ($index = 0; $index < $indexCount; $index++) {
@@ -308,14 +308,14 @@ class Read
 			}
 
 			// Load Payload
-			$this->httpObj->httpRequestObj->session['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
+			$this->httpObj->httpRequestObj->activeRequestCollection['payload'] = $this->httpObj->httpRequestObj->dataDecodeObj->get(
 				keyString: $readParentCurrentPayloadKey
 			);
 
 			if (count(value: $readParentRequiredFieldArr)) {
-				$this->httpObj->httpRequestObj->session['requiredFieldArr'] = $readParentRequiredFieldArr;
+				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = $readParentRequiredFieldArr;
 			} else {
-				$this->httpObj->httpRequestObj->session['requiredFieldArr'] = [];
+				$this->httpObj->httpRequestObj->activeRequestCollection['requiredFieldArr'] = [];
 			}
 
 			if (
@@ -473,7 +473,7 @@ class Read
 	): void {
 		if ($readChildUseResultSet) {
 			$this->resetFetchData(
-				fetchFrom: 'sqlPayload',
+				activeRequestCollectionKey: 'sqlPayload',
 				payloadKeyArr: $readChildPayloadKeyArr,
 				record: $dbFetchedRecord
 			);
@@ -623,20 +623,20 @@ class Read
 		unset($readSqlConfig['__COUNT-SQL-COMMENT__']);
 		unset($readSqlConfig['countQuery']);
 
-		$this->httpObj->httpRequestObj->session['queryParamArr']['page']  = $this->httpObj->httpRequestObj->session['payload']['page'] ?? 1;
-		$this->httpObj->httpRequestObj->session['queryParamArr']['perPage']  = $this->httpObj->httpRequestObj->session['payload']['perPage'] ??
+		$this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['page']  = $this->httpObj->httpRequestObj->activeRequestCollection['payload']['page'] ?? 1;
+		$this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['perPage']  = $this->httpObj->httpRequestObj->activeRequestCollection['payload']['perPage'] ??
 			Env::$defaultPerPage;
 
-		if ($this->httpObj->httpRequestObj->session['queryParamArr']['perPage'] > Env::$maxResultsPerPage) {
+		if ($this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['perPage'] > Env::$maxResultsPerPage) {
 			throw new \Exception(
 				message: 'perPage exceeds max perPage value of ' . Env::$maxResultsPerPage,
 				code: HttpStatus::$Forbidden
 			);
 		}
 
-		$this->httpObj->httpRequestObj->session['queryParamArr']['start'] = (
-			($this->httpObj->httpRequestObj->session['queryParamArr']['page'] - 1) * 
-			$this->httpObj->httpRequestObj->session['queryParamArr']['perPage']
+		$this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['start'] = (
+			($this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['page'] - 1) * 
+			$this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['perPage']
 		);
 
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
@@ -664,16 +664,16 @@ class Read
 
 		$totalRecordsCount = isset($dbFetchedRecord['count']) ? $dbFetchedRecord['count'] : 0;
 		$totalPages = ceil(
-			num: $totalRecordsCount / $this->httpObj->httpRequestObj->session['queryParamArr']['perPage']
+			num: $totalRecordsCount / $this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['perPage']
 		);
 
 		$this->dataEncodeObj->addKeyData(
 			objectKey: 'page',
-			data: $this->httpObj->httpRequestObj->session['queryParamArr']['page']
+			data: $this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['page']
 		);
 		$this->dataEncodeObj->addKeyData(
 			objectKey: 'perPage',
-			data: $this->httpObj->httpRequestObj->session['queryParamArr']['perPage']
+			data: $this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['perPage']
 		);
 		$this->dataEncodeObj->addKeyData(
 			objectKey: 'totalPages',
@@ -805,10 +805,10 @@ class Read
 		}
 
 		if ($readIsFirstCall) {
-			if (isset($this->httpObj->httpRequestObj->session['queryParamArr']['orderBy'])) {
+			if (isset($this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['orderBy'])) {
 				$orderByStrArr = [];
 				$orderByArr = CommonFunction::jsonDecode(
-					value: $this->httpObj->httpRequestObj->session['queryParamArr']['orderBy']
+					value: $this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['orderBy']
 				);
 				foreach ($orderByArr as $orderByKey => &$orderByKeyValue) {
 					$orderByKey = str_replace(
@@ -843,8 +843,8 @@ class Read
 		}
 
 		if (isset($readSqlConfig['countQuery'])) {
-			$start = $this->httpObj->httpRequestObj->session['queryParamArr']['start'];
-			$offset = $this->httpObj->httpRequestObj->session['queryParamArr']['perPage'];
+			$start = $this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['start'];
+			$offset = $this->httpObj->httpRequestObj->activeRequestCollection['queryParamArr']['perPage'];
 			$sql .= " LIMIT {$start}, {$offset}";
 		}
 
@@ -927,18 +927,18 @@ class Read
 		[$id, $sql, $paramArr, $errorArr, $missExecution] = $this->$function(
 			sqlConfig: $readSqlConfig
 		);
-		$serverMode = $readSqlConfig['fetchFrom'] ?? 'Slave';
+		$fetchDbMode = $readSqlConfig['fetchDbMode'] ?? 'Slave';
 
 		$exportDbData = [];
-		switch ($serverMode) {
+		switch ($fetchDbMode) {
 			case 'Master':
 				$exportDbData = DbCommonFunction::customerMasterDatabaseServerCred(
-					customerData: $this->httpObj->httpRequestObj->session['customerData']
+					customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']
 				);
 				break;
 			case 'Slave':
 				$exportDbData = DbCommonFunction::customerSlaveDatabaseServerCred(
-					customerData: $this->httpObj->httpRequestObj->session['customerData']
+					customerData: $this->httpObj->httpRequestObj->activeRequestCollection['customerData']
 				);
 				break;
 		}

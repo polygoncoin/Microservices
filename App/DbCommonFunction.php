@@ -109,7 +109,7 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Connect customer Cache based on $fetchFrom
+	 * Connect customer Cache based on $activeRequestCollectionKey
 	 * 
 	 * @param array $customerData Customer Data
 	 * 
@@ -135,8 +135,6 @@ class DbCommonFunction
 
 	/**
 	 * Connect query Cache
-	 * 
-	 * @param string $fetchFrom Master/Slave
 	 * 
 	 * @return QueryCacheServer
 	 */
@@ -209,20 +207,20 @@ class DbCommonFunction
 	}
 
 	/**
-	 * Connect customer Database based on $fetchFrom
+	 * Connect customer Database based on $activeRequestCollectionKey
 	 * 
 	 * @param array  $customerData Customer Data
-	 * @param string $fetchFrom Master/Slave
+	 * @param string $fetchDbMode  Master/Slave
 	 * 
 	 * @return DatabaseServer
 	 * @throws \Exception
 	 */
 	public static function connectCustomerDb(
 		&$customerData,
-		$fetchFrom
+		$fetchDbMode
 	): DatabaseServer {
 		// Set Database credentials
-		switch ($fetchFrom) {
+		switch ($fetchDbMode) {
 			case 'Master':
 				$customerMasterDatabaseServerCred = self::customerMasterDatabaseServerCred(
 					customerData: $customerData
@@ -251,7 +249,7 @@ class DbCommonFunction
 				break;
 			default:
 				throw new \Exception(
-					message: "Invalid fetchFrom value '{$fetchFrom}'",
+					message: "Invalid activeRequestCollectionKey value '{$activeRequestCollectionKey}'",
 					code: HttpStatus::$InternalServerError
 				);
 		}

@@ -141,7 +141,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function validateFileRequest(): void
 	{
-		// check logic for user is allowed to access the file as per $this->httpObj->httpRequestObj->session
+		// check logic for user is allowed to access the file as per $this->httpObj->httpRequestObj->activeRequestCollection
 		// $this->fileLocation;
 	}
 

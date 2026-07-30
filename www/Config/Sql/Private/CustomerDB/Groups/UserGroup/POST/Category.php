@@ -18,13 +18,13 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'name',
-			'fetchFrom' => 'payload',
-			'fetchFromData' => 'name'
+			'activeRequestCollectionKey' => 'payload',
+			'activeRequestCollectionKeySubKey' => 'name'
 		],
 		[
 			'column' => 'parent_id',
-			'fetchFrom' => 'custom',
-			'fetchFromData' => 0
+			'activeRequestCollectionKey' => 'custom',
+			'activeRequestCollectionKeySubKey' => 0
 		],
 	],
 	'__INSERT-IDs__' => 'category:id',
@@ -34,13 +34,13 @@ return [
 			'__SET__' => [
 				[
 					'column' => 'name',
-					'fetchFrom' => 'payload',
-					'fetchFromData' => 'subname'
+					'activeRequestCollectionKey' => 'payload',
+					'activeRequestCollectionKeySubKey' => 'subname'
 				],
 				[
 					'column' => 'parent_id',
-					'fetchFrom' => '__INSERT-IDs__',
-					'fetchFromData' => 'category:id'
+					'activeRequestCollectionKey' => '__INSERT-IDs__',
+					'activeRequestCollectionKeySubKey' => 'category:id'
 				],
 			],
 			'__INSERT-IDs__' => 'sub:id',
@@ -50,13 +50,13 @@ return [
 					'__SET__' => [
 						[
 							'column' => 'name',
-							'fetchFrom' => 'payload',
-							'fetchFromData' => 'subsubname'
+							'activeRequestCollectionKey' => 'payload',
+							'activeRequestCollectionKeySubKey' => 'subsubname'
 						],
 						[
 							'column' => 'parent_id',
-							'fetchFrom' => '__INSERT-IDs__',
-							'fetchFromData' => 'sub:id'
+							'activeRequestCollectionKey' => '__INSERT-IDs__',
+							'activeRequestCollectionKeySubKey' => 'sub:id'
 						],
 					],
 					'__INSERT-IDs__' => 'subsub:id',
@@ -66,7 +66,7 @@ return [
 	],
 	'useHierarchy' => $Constant::$TRUE,
 	'affectedQueryCacheKeyArr' => [
-		$this->httpObj->httpRequestObj->session['customerData']['customer_id'] . ':category',
-		$this->httpObj->httpRequestObj->session['customerData']['customer_id'] . ':category1'
+		$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_id'] . ':category',
+		$this->httpObj->httpRequestObj->activeRequestCollection['customerData']['customer_id'] . ':category1'
 	]
 ];
