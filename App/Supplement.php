@@ -295,7 +295,7 @@ class Supplement
 				);
 			}
 
-			if ($supplementPayloadKeyArray[0] === '') {
+			if ($supplementPayloadKeyArray === Constant::$NULL) {
 				foreach ($output as $outputKey => &$outputKeyValue) {
 					$this->dataEncodeObject->addKeyData(
 						objectKey: $outputKey,
@@ -364,18 +364,17 @@ class Supplement
 		$supplementParentModule,
 		$supplementParentUseHierarchy
 	): void {
+		if ($supplementParentPayloadKeyArray === Constant::$NULL) {
+			$supplementParentPayloadKeyArray = [];
+		}
+
 		$supplementParentPayloadKey = $this->getPayloadKey(
 			payloadKeyArray: $supplementParentPayloadKeyArray
 		);
 
-		$isObject = null;
-		if ($supplementParentPayloadKey !== Constant::$NULL) {
-			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-				keyString: $supplementParentPayloadKey
-			) === 'Object';
-		} else {
-			$supplementParentPayloadKeyArray = [];
-		}
+		$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+			keyString: $supplementParentPayloadKey
+		) === 'Object';
 
 		$indexCount = ($isObject || $isObject === Constant::$NULL)
 			? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(

@@ -1695,7 +1695,7 @@ trait AppTrait
 	}
 
 	/**
-	 * Explain configuration
+	 * Get Payload Key
 	 * 
 	 * @param array $payloadKeyArray Payload Key Array
 	 * 
@@ -1704,8 +1704,13 @@ trait AppTrait
 	private function getPayloadKey(
 		$payloadKeyArray
 	): null|string {
-		return is_array(
-			value: $payloadKeyArray
+		return (
+			is_array(
+				value: $payloadKeyArray
+			)
+			&& count(
+				value: $payloadKeyArray
+			) > 0
 		) ? trim(
 			string: implode(
 				separator: ':',

@@ -286,7 +286,7 @@ class Write
 				);
 			}
 
-			if ($writePayloadKeyArray[0] === '') {
+			if ($writePayloadKeyArray === Constant::$NULL) {
 				foreach ($output as $outputKey => &$outputKeyValue) {
 					$this->dataEncodeObject->addKeyData(
 						objectKey: $outputKey,
@@ -337,11 +337,11 @@ class Write
 	/**
 	 * Write Parent Function
 	 * 
-	 * @param array $writeParentSqlConfig        Sql config
-	 * @param array $writeParentPayloadKeyArray       Payload Indexes
+	 * @param array $writeParentSqlConfig          Sql config
+	 * @param array $writeParentPayloadKeyArray    Payload Indexes
 	 * @param array $writeParentRequiredFieldArray Required fields
-	 * @param array $writeParentResponse         Response by reference
-	 * @param bool  $writeParentUseHierarchy     If true - Uses parent payload/results in child
+	 * @param array $writeParentResponse           Response by reference
+	 * @param bool  $writeParentUseHierarchy       If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -353,18 +353,17 @@ class Write
 		&$writeParentResponse,
 		$writeParentUseHierarchy
 	): void {
+		if ($writeParentPayloadKeyArray === Constant::$NULL) {
+			$writeParentPayloadKeyArray = [];
+		}
+
 		$writeParentPayloadKey = $this->getPayloadKey(
 			payloadKeyArray: $writeParentPayloadKeyArray
 		);
 
-		$isObject = null;
-		if ($writeParentPayloadKey !== Constant::$NULL) {
-			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-				keyString: $writeParentPayloadKey
-			) === 'Object';
-		} else {
-			$writeParentPayloadKeyArray = [];
-		}
+		$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+			keyString: $writeParentPayloadKey
+		) === 'Object';
 
 		$indexCount = ($isObject || $isObject === Constant::$NULL)
 			? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
@@ -466,6 +465,7 @@ class Write
 			[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
 				sqlConfig: $writeParentSqlConfig
 			);
+
 			if (!empty($errorArray)) {
 				$writeParentCurrentResponse['Error'] = $errorArray;
 				$this->httpObject->httpRequestObject->customerDbObject->rollBack();

@@ -702,7 +702,7 @@ class Login
 	private function cacheExist(
 		$cacheKey
 	): mixed {
-		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
 			return $this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 				cacheKey: $cacheKey
 			);
@@ -721,7 +721,7 @@ class Login
 	private function cacheGet(
 		$cacheKey
 	): mixed {
-		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
 			return $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 				cacheKey: $cacheKey
 			);
@@ -744,7 +744,7 @@ class Login
 		$cacheValue,
 		$cacheExpire = 0
 	): mixed {
-		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
 			return $this->httpObject->httpRequestObject->customerCacheObject->cacheSet(
 				cacheKey: $cacheKey,
 				cacheValue: $cacheValue,
@@ -765,7 +765,7 @@ class Login
 	private function cacheDelete(
 		$cacheKey
 	): mixed {
-		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
 			return $this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
 				cacheKey: $cacheKey
 			);

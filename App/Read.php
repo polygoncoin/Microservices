@@ -313,18 +313,17 @@ class Read
 		$readParentUseResultSet,
 		$readParentIsFirstCall
 	): void {
+		if ($readParentPayloadKeyArray === Constant::$NULL) {
+			$readParentPayloadKeyArray = [];
+		}
+
 		$readParentPayloadKey = $this->getPayloadKey(
 			payloadKeyArray: $readParentPayloadKeyArray
 		);
 
-		$isObject = null;
-		if ($readParentPayloadKey !== Constant::$NULL) {
-			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-				keyString: $readParentPayloadKey
-			) === 'Object';
-		} else {
-			$readParentPayloadKeyArray = [];
-		}
+		$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+			keyString: $readParentPayloadKey
+		) === 'Object';
 
 		$indexCount = ($isObject || $isObject === Constant::$NULL)
 			? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
