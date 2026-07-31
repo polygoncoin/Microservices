@@ -13,9 +13,9 @@ $contentType = 'Content-Type: text/plain; charset=utf-8';
 
 $curlFile = __DIR__ . '/category.csv';
 
-$defaultHeaderArr = [];
-// $defaultHeaderArr[] = $apiVersion;
-$defaultHeaderArr[] = $cacheControl;
+$defaultHeaderArray = [];
+// $defaultHeaderArray[] = $apiVersion;
+$defaultHeaderArray[] = $cacheControl;
 
 $response = [];
 
@@ -64,7 +64,7 @@ Depending on HTTP method create a file &lt;get-route-file&gt;.php / &lt;dml-rout
 - Sample of code a file may contain is as below
 
 ```PHP
-$header = $defaultHeaderArr;
+$header = $defaultHeaderArray;
 return Web::trigger(
 	homeURL: $homeURL,
 	method: 'GET',
@@ -77,7 +77,7 @@ return Web::trigger(
 If the code requires token; this can be done as below
 
 ```PHP
-$header = $defaultHeaderArr;
+$header = $defaultHeaderArray;
 if (isset($token)) {
 	$header[] = "Authorization: Bearer {$token}";
 

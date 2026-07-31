@@ -51,30 +51,30 @@ class JsonDecodeEngine
 	 * 
 	 * @var JsonDecodeObject[]
 	 */
-	private $jsonDecodeObjectObjArr = [];
+	private $jsonDecodeObjectObjectArray = [];
 
 	/**
 	 * Current JsonDecodeObject object
 	 * 
 	 * @var JsonDecodeObject
 	 */
-	private $jsonDecodeObjectObj = null;
+	private $jsonDecodeObjectObject = null;
 
 	/**
 	 * Characters that are escaped while creating JSON
 	 * 
 	 * @var string[]
 	 */
-	private $escapeArr = [
+	private $escapeArray = [
 		"\\", "\"", "\n", "\r", "\t", "\x08", "\x0c", ' '
 	];
 
 	/**
-	 * Characters that are escaped with for $escapeArr while creating JSON
+	 * Characters that are escaped with for $escapeArray while creating JSON
 	 * 
 	 * @var string[]
 	 */
-	private $replaceArr = [
+	private $replaceArray = [
 		"\\\\", "\\\"", "\\n", "\\r", "\\t", "\\f", "\\b", ' '
 	];
 
@@ -203,13 +203,13 @@ class JsonDecodeEngine
 							$nullStr = $this->checkNullStr(
 								nullStr: $nullStr
 							);
-							switch ($this->jsonDecodeObjectObj->mode) {
+							switch ($this->jsonDecodeObjectObject->mode) {
 								case 'Array':
-									$this->jsonDecodeObjectObj->arrayValueArr[] = $nullStr;
+									$this->jsonDecodeObjectObject->arrayValueArray[] = $nullStr;
 									break;
 								case 'Object':
 									if (!empty($keyValue)) {
-										$this->jsonDecodeObjectObj->objectValueArr[$keyValue] = $nullStr;
+										$this->jsonDecodeObjectObject->objectValueArray[$keyValue] = $nullStr;
 									}
 									break;
 							}
@@ -221,7 +221,7 @@ class JsonDecodeEngine
 						//Switch mode to value collection after colon
 						case in_array(
 							needle: $char,
-							haystack: $this->escapeArr,
+							haystack: $this->escapeArray,
 							strict: Constant::$TRUE
 						):
 							break;
@@ -229,7 +229,7 @@ class JsonDecodeEngine
 						// Append char to null string
 						case !in_array(
 							needle: $char,
-							haystack: $this->escapeArr,
+							haystack: $this->escapeArray,
 							strict: Constant::$TRUE
 						):
 							$nullStr .= $char;
@@ -245,7 +245,7 @@ class JsonDecodeEngine
 								|| ($prevIsEscape
 									&& in_array(
 										needle: $strToEscape . $char,
-										haystack: $this->replaceArr,
+										haystack: $this->replaceArray,
 										strict: Constant::$TRUE
 									)
 								)
@@ -259,12 +259,12 @@ class JsonDecodeEngine
 							&& $prevIsEscape === Constant::$TRUE
 							&& in_array(
 								needle: $strToEscape . $char,
-								haystack: $this->replaceArr,
+								haystack: $this->replaceArray,
 								strict: Constant::$TRUE
 							):
 							$$varMode .= str_replace(
-								search: $this->replaceArr,
-								replace: $this->escapeArr,
+								search: $this->replaceArray,
+								replace: $this->escapeArray,
 								subject: $strToEscape . $char
 							);
 							$strToEscape = '';
@@ -276,12 +276,12 @@ class JsonDecodeEngine
 							&& $prevIsEscape === Constant::$TRUE
 							&& in_array(
 								needle: $strToEscape,
-								haystack: $this->replaceArr,
+								haystack: $this->replaceArray,
 								strict: Constant::$TRUE
 							):
 							$$varMode .= str_replace(
-								search: $this->replaceArr,
-								replace: $this->escapeArr,
+								search: $this->replaceArray,
+								replace: $this->escapeArray,
 								subject: $strToEscape . $char
 							);
 							$strToEscape = '';
@@ -299,10 +299,10 @@ class JsonDecodeEngine
 
 								// Closing qoute of Value
 								case $varMode === 'valueValue':
-									if (!isset($this->jsonDecodeObjectObj)) {
+									if (!isset($this->jsonDecodeObjectObject)) {
 										$this->startObject();
 									}
-									$this->jsonDecodeObjectObj->objectValueArr[$keyValue] = $valueValue;
+									$this->jsonDecodeObjectObject->objectValueArray[$keyValue] = $valueValue;
 									$keyValue = $valueValue = '';
 									$varMode = 'keyValue';
 									break;
@@ -316,8 +316,8 @@ class JsonDecodeEngine
 					break;
 			}
 		}
-		$this->jsonDecodeObjectObjArr = [];
-		$this->jsonDecodeObjectObj = null;
+		$this->jsonDecodeObjectObjectArray = [];
+		$this->jsonDecodeObjectObject = null;
 	}
 
 	/**
@@ -392,30 +392,30 @@ class JsonDecodeEngine
 				break;
 			case ']':
 				if (!empty($keyValue)) {
-					$this->jsonDecodeObjectObj->arrayValueArr[] = $keyValue;
-					if ($this->jsonDecodeObjectObj->arrayKey === Constant::$NULL) {
-						$this->jsonDecodeObjectObj->arrayKey = 0;
+					$this->jsonDecodeObjectObject->arrayValueArray[] = $keyValue;
+					if ($this->jsonDecodeObjectObject->arrayKey === Constant::$NULL) {
+						$this->jsonDecodeObjectObject->arrayKey = 0;
 					} else {
-						$this->jsonDecodeObjectObj->arrayKey++;
+						$this->jsonDecodeObjectObject->arrayKey++;
 					}
 				}
 				if ($index) {
 					$arr = [
 						'key' => $this->getKey(),
 						'value' => [
-							'startIndex' => $this->jsonDecodeObjectObj->startIndex,
+							'startIndex' => $this->jsonDecodeObjectObject->startIndex,
 							'endIndex' => $this->charCounter
 						]
 					];
 				} else {
-					if (!empty($this->jsonDecodeObjectObj->arrayValueArr)) {
+					if (!empty($this->jsonDecodeObjectObject->arrayValueArray)) {
 						$arr = [
 							'key' => $this->getKey(),
-							'value' => $this->jsonDecodeObjectObj->arrayValueArr
+							'value' => $this->jsonDecodeObjectObject->arrayValueArray
 						];
 					}
 				}
-				$this->jsonDecodeObjectObj = null;
+				$this->jsonDecodeObjectObject = null;
 				$this->popPreviousObject();
 				break;
 			case '}':
@@ -426,25 +426,25 @@ class JsonDecodeEngine
 					$nullStr = $this->checkNullStr(
 						nullStr: $nullStr
 					);
-					$this->jsonDecodeObjectObj->objectValueArr[$keyValue] = $nullStr;
+					$this->jsonDecodeObjectObject->objectValueArray[$keyValue] = $nullStr;
 				}
 				if ($index) {
 					$arr = [
 						'key' => $this->getKey(),
 						'value' => [
-							'startIndex' => $this->jsonDecodeObjectObj->startIndex,
+							'startIndex' => $this->jsonDecodeObjectObject->startIndex,
 							'endIndex' => $this->charCounter
 						]
 					];
 				} else {
-					if (!empty($this->jsonDecodeObjectObj->objectValueArr)) {
+					if (!empty($this->jsonDecodeObjectObject->objectValueArray)) {
 						$arr = [
 							'key' => $this->getKey(),
-							'value' => $this->jsonDecodeObjectObj->objectValueArr
+							'value' => $this->jsonDecodeObjectObject->objectValueArray
 						];
 					}
 				}
-				$this->jsonDecodeObjectObj = null;
+				$this->jsonDecodeObjectObject = null;
 				$this->popPreviousObject();
 				break;
 		}
@@ -503,11 +503,11 @@ class JsonDecodeEngine
 		$this->pushCurrentObject(
 			objectKey: $objectKey
 		);
-		$this->jsonDecodeObjectObj = new JsonDecodeObject(
+		$this->jsonDecodeObjectObject = new JsonDecodeObject(
 			mode: 'Array',
 			objectKey: $objectKey
 		);
-		$this->jsonDecodeObjectObj->startIndex = $this->charCounter;
+		$this->jsonDecodeObjectObject->startIndex = $this->charCounter;
 	}
 
 	/**
@@ -523,11 +523,11 @@ class JsonDecodeEngine
 		$this->pushCurrentObject(
 			objectKey: $objectKey
 		);
-		$this->jsonDecodeObjectObj = new JsonDecodeObject(
+		$this->jsonDecodeObjectObject = new JsonDecodeObject(
 			mode: 'Object',
 			objectKey: $objectKey
 		);
-		$this->jsonDecodeObjectObj->startIndex = $this->charCounter;
+		$this->jsonDecodeObjectObject->startIndex = $this->charCounter;
 	}
 
 	/**
@@ -540,9 +540,9 @@ class JsonDecodeEngine
 	private function pushCurrentObject(
 		$objectKey
 	): void {
-		if ($this->jsonDecodeObjectObj) {
+		if ($this->jsonDecodeObjectObject) {
 			if (
-				$this->jsonDecodeObjectObj->mode === 'Object'
+				$this->jsonDecodeObjectObject->mode === 'Object'
 				&& (
 					($objectKey === Constant::$NULL)
 					|| empty(
@@ -557,7 +557,7 @@ class JsonDecodeEngine
 				);
 			}
 			if (
-				$this->jsonDecodeObjectObj->mode === 'Array'
+				$this->jsonDecodeObjectObject->mode === 'Array'
 				&& (
 					($objectKey === Constant::$NULL)
 					|| empty(
@@ -572,8 +572,8 @@ class JsonDecodeEngine
 				);
 			}
 			array_push(
-				$this->jsonDecodeObjectObjArr,
-				$this->jsonDecodeObjectObj
+				$this->jsonDecodeObjectObjectArray,
+				$this->jsonDecodeObjectObject
 			);
 		}
 	}
@@ -587,12 +587,12 @@ class JsonDecodeEngine
 	{
 		if (
 			count(
-				value: $this->jsonDecodeObjectObjArr
+				value: $this->jsonDecodeObjectObjectArray
 			) > 0
 		) {
-			$this->jsonDecodeObjectObj = array_pop($this->jsonDecodeObjectObjArr);
+			$this->jsonDecodeObjectObject = array_pop($this->jsonDecodeObjectObjectArray);
 		} else {
-			$this->jsonDecodeObjectObj = null;
+			$this->jsonDecodeObjectObject = null;
 		}
 	}
 
@@ -604,13 +604,13 @@ class JsonDecodeEngine
 	private function increment(): void
 	{
 		if (
-			($this->jsonDecodeObjectObj !== Constant::$NULL)
-			&& $this->jsonDecodeObjectObj->mode === 'Array'
+			($this->jsonDecodeObjectObject !== Constant::$NULL)
+			&& $this->jsonDecodeObjectObject->mode === 'Array'
 		) {
-			if ($this->jsonDecodeObjectObj->arrayKey === Constant::$NULL) {
-				$this->jsonDecodeObjectObj->arrayKey = 0;
+			if ($this->jsonDecodeObjectObject->arrayKey === Constant::$NULL) {
+				$this->jsonDecodeObjectObject->arrayKey = 0;
 			} else {
-				$this->jsonDecodeObjectObj->arrayKey++;
+				$this->jsonDecodeObjectObject->arrayKey++;
 			}
 		}
 	}
@@ -624,14 +624,14 @@ class JsonDecodeEngine
 	{
 		$arr = false;
 		if (
-			$this->jsonDecodeObjectObj !== Constant::$NULL
-			&& $this->jsonDecodeObjectObj->mode === 'Object'
+			$this->jsonDecodeObjectObject !== Constant::$NULL
+			&& $this->jsonDecodeObjectObject->mode === 'Object'
 			&& count(
-				value: $this->jsonDecodeObjectObj->objectValueArr
+				value: $this->jsonDecodeObjectObject->objectValueArray
 			) > 0
 		) {
-			$arr = $this->jsonDecodeObjectObj->objectValueArr;
-			$this->jsonDecodeObjectObj->objectValueArr = [];
+			$arr = $this->jsonDecodeObjectObject->objectValueArray;
+			$this->jsonDecodeObjectObject->objectValueArray = [];
 		}
 		return $arr;
 	}
@@ -664,40 +664,40 @@ class JsonDecodeEngine
 	 */
 	private function getKey(): array
 	{
-		$keyArr = [];
-		$return = &$keyArr;
+		$keyArray = [];
+		$return = &$keyArray;
 		$objCount = count(
-			value: $this->jsonDecodeObjectObjArr
+			value: $this->jsonDecodeObjectObjectArray
 		);
 		if ($objCount > 0) {
 			for ($index = 0; $index < $objCount; $index++) {
-				switch ($this->jsonDecodeObjectObjArr[$index]->mode) {
+				switch ($this->jsonDecodeObjectObjectArray[$index]->mode) {
 					case 'Object':
-						if ($this->jsonDecodeObjectObjArr[$index]->objectKey !== Constant::$NULL) {
-							$keyArr[] = $this->jsonDecodeObjectObjArr[$index]->objectKey;
+						if ($this->jsonDecodeObjectObjectArray[$index]->objectKey !== Constant::$NULL) {
+							$keyArray[] = $this->jsonDecodeObjectObjectArray[$index]->objectKey;
 						}
 						break;
 					case 'Array':
-						if ($this->jsonDecodeObjectObjArr[$index]->objectKey !== Constant::$NULL) {
-							$keyArr[] = $this->jsonDecodeObjectObjArr[$index]->objectKey;
+						if ($this->jsonDecodeObjectObjectArray[$index]->objectKey !== Constant::$NULL) {
+							$keyArray[] = $this->jsonDecodeObjectObjectArray[$index]->objectKey;
 						}
-						if ($this->jsonDecodeObjectObjArr[$index]->arrayKey !== Constant::$NULL) {
-							$keyArr[] = $this->jsonDecodeObjectObjArr[$index]->arrayKey;
+						if ($this->jsonDecodeObjectObjectArray[$index]->arrayKey !== Constant::$NULL) {
+							$keyArray[] = $this->jsonDecodeObjectObjectArray[$index]->arrayKey;
 						}
 						break;
 				}
 			}
 		}
-		if ($this->jsonDecodeObjectObj) {
-			switch ($this->jsonDecodeObjectObj->mode) {
+		if ($this->jsonDecodeObjectObject) {
+			switch ($this->jsonDecodeObjectObject->mode) {
 				case 'Object':
-					if ($this->jsonDecodeObjectObj->objectKey !== Constant::$NULL) {
-						$keyArr[] = $this->jsonDecodeObjectObj->objectKey;
+					if ($this->jsonDecodeObjectObject->objectKey !== Constant::$NULL) {
+						$keyArray[] = $this->jsonDecodeObjectObject->objectKey;
 					}
 					break;
 				case 'Array':
-					if ($this->jsonDecodeObjectObj->objectKey !== Constant::$NULL) {
-						$keyArr[] = $this->jsonDecodeObjectObj->objectKey;
+					if ($this->jsonDecodeObjectObject->objectKey !== Constant::$NULL) {
+						$keyArray[] = $this->jsonDecodeObjectObject->objectKey;
 					}
 					break;
 			}

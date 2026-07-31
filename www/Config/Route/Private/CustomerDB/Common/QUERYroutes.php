@@ -13,72 +13,14 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
 
 return [
 	'category' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'CustomerDB'
-			. DIRECTORY_SEPARATOR . 'Groups'
-			. DIRECTORY_SEPARATOR . 'UserGroup'
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Category-all.php',
-		'search' => [
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'UserGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'SearchCategory.php',
-		],
-		'{id:int}' => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'UserGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Category-single.php',
-		]
-	],
-	'registration' => [
-		'{id:int}'  => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'UserGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Registration-single.php',
-		],
-	],
-	'address' => [
-		'{id:int}'  => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'UserGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Address-single.php',
-		],
-	],
-	'registration-with-address' => [
-		'{id:int}'  => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'UserGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Registration-With-Address-single.php',
-		],
-	],
-	$Env::$routesRequestRoute => [
-		'__FILE__' => $Constant::$FALSE,
-		'{method:string}' => [
-			'dataType' => DatabaseServerDataType::$HttpMethod,
-			'__FILE__' => $Constant::$FALSE
-		]
+		'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
+			. DIRECTORY_SEPARATOR . Constant::$QUERY
+			. DIRECTORY_SEPARATOR . 'Category.php',
 	]
 ];

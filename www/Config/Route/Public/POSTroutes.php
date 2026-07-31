@@ -13,15 +13,17 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'registration' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'POST'
+		'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
+			. DIRECTORY_SEPARATOR . Constant::$POST
 			. DIRECTORY_SEPARATOR . 'Registration.php',
 	],
 	'registration-with-address' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'POST'
+		'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
+			. DIRECTORY_SEPARATOR . Constant::$POST
 			. DIRECTORY_SEPARATOR . 'Registration-With-Address.php',
 	],
 ];

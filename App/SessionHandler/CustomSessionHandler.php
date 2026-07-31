@@ -404,7 +404,7 @@ class CustomSessionHandler implements
 				name: $this->sessionName,
 				value: '',
 				expires_or_options: 1,
-				path: $this->container->sessionOptionArr['cookie_path']
+				path: $this->container->sessionOptionArray['cookie_path']
 			);
 		}
 		if (!empty($this->sessionDataName)) {
@@ -412,7 +412,7 @@ class CustomSessionHandler implements
 				name: $this->sessionDataName,
 				value: '',
 				expires_or_options: 1,
-				path: $this->container->sessionOptionArr['cookie_path']
+				path: $this->container->sessionOptionArray['cookie_path']
 			);
 		}
 	}
@@ -431,28 +431,28 @@ class CustomSessionHandler implements
 
 		// Removed Session Cookie if read_and_close is enabled
 		if (
-			isset($this->container->sessionOptionArr['read_and_close'])
-			&& $this->container->sessionOptionArr['read_and_close'] === Constant::$TRUE
+			isset($this->container->sessionOptionArray['read_and_close'])
+			&& $this->container->sessionOptionArray['read_and_close'] === Constant::$TRUE
 			&& $this->creatingSessionId === Constant::$TRUE
 		) {
 			// Remove Session Set-Cookie header
-			$headerArr = headers_list();
+			$headerArray = headers_list();
 			$headerFound = false;
-			foreach ($headerArr as $index => $header) {
+			foreach ($headerArray as $index => $header) {
 				if (
 					strpos(
 						haystack: $header,
 						needle: $this->sessionName
 					) !== Constant::$FALSE
 				) {
-					unset($headerArr[$index]);
+					unset($headerArray[$index]);
 					$headerFound = true;
 					break;
 				}
 			}
 			if ($headerFound) {
 				header_remove();
-				foreach ($headerArr as &$header) {
+				foreach ($headerArray as &$header) {
 					header(
 						header: $header
 					);

@@ -13,7 +13,9 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
 
 return [
 	'__QUERY__' => "UPDATE `{$Env::$customerTable}` SET __SET__ WHERE __WHERE__",
@@ -38,21 +40,21 @@ return [
 		[
 			'column' => 'is_approved',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$YES
+			'activeRequestDataKeySubKey' => Constant::$YES
 		],
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'customer_id',
-			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
@@ -61,7 +63,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$customerTable],
+				'table' => ['custom', Env::$customerTable],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],

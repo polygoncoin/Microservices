@@ -46,14 +46,14 @@ class XmlEncode implements DataEncodeInterface
 	 * 
 	 * @var XmlEncoderObject[]
 	 */
-	private $jsonEncoderObjectObjArr = [];
+	private $jsonEncoderObjectObjectArray = [];
 
 	/**
 	 * Current XmlEncoderObject object
 	 * 
 	 * @var null|XmlEncoderObject
 	 */
-	private $jsonEncoderObjectObj = null;
+	private $jsonEncoderObjectObject = null;
 
 	/**
 	 * Constructor
@@ -120,7 +120,7 @@ class XmlEncode implements DataEncodeInterface
 			$isObject = (isset($data[0])) ? Constant::$FALSE : Constant::$TRUE;
 			if (!$isObject) {
 				$this->write(
-					data: "<{$this->jsonEncoderObjectObj->objectKey}>"
+					data: "<{$this->jsonEncoderObjectObject->objectKey}>"
 				);
 			}
 			foreach ($data as $dataKey => &$dataKeyValue) {
@@ -144,7 +144,7 @@ class XmlEncode implements DataEncodeInterface
 			}
 			if (!$isObject) {
 				$this->write(
-					data: "</{$this->jsonEncoderObjectObj->objectKey}>"
+					data: "</{$this->jsonEncoderObjectObject->objectKey}>"
 				);
 			}
 		} else {
@@ -184,7 +184,7 @@ class XmlEncode implements DataEncodeInterface
 	public function appendData(
 		&$data
 	): void {
-		if ($this->jsonEncoderObjectObj) {
+		if ($this->jsonEncoderObjectObject) {
 			$this->write(
 				data: $data
 			);
@@ -204,8 +204,8 @@ class XmlEncode implements DataEncodeInterface
 		&$data
 	): void {
 		if (
-			$this->jsonEncoderObjectObj
-			&& $this->jsonEncoderObjectObj->mode === 'Object'
+			$this->jsonEncoderObjectObject
+			&& $this->jsonEncoderObjectObject->mode === 'Object'
 		) {
 			$objectKey = $this->escapeTag(
 				objectKey: $objectKey
@@ -227,7 +227,7 @@ class XmlEncode implements DataEncodeInterface
 	public function addArrayData(
 		$data
 	): void {
-		if ($this->jsonEncoderObjectObj->mode !== 'Array') {
+		if ($this->jsonEncoderObjectObject->mode !== 'Array') {
 			throw new \Exception(
 				message: 'Mode should be Array',
 				code: HttpStatus::$InternalServerError
@@ -273,18 +273,18 @@ class XmlEncode implements DataEncodeInterface
 		if ($objectKey === Constant::$NULL) {
 			$objectKey = 'Records';
 		}
-		if ($this->jsonEncoderObjectObj) {
+		if ($this->jsonEncoderObjectObject) {
 			array_push(
-				$this->jsonEncoderObjectObjArr,
-				$this->jsonEncoderObjectObj
+				$this->jsonEncoderObjectObjectArray,
+				$this->jsonEncoderObjectObject
 			);
 		}
-		$this->jsonEncoderObjectObj = new XmlEncoderObject(
+		$this->jsonEncoderObjectObject = new XmlEncoderObject(
 			mode: 'Array',
 			objectKey: $objectKey
 		);
 		$this->write(
-			data: "<{$this->jsonEncoderObjectObj->objectKey}>"
+			data: "<{$this->jsonEncoderObjectObject->objectKey}>"
 		);
 	}
 
@@ -296,16 +296,16 @@ class XmlEncode implements DataEncodeInterface
 	public function endArray(): void
 	{
 		$this->write(
-			data: "</{$this->jsonEncoderObjectObj->objectKey}>"
+			data: "</{$this->jsonEncoderObjectObject->objectKey}>"
 		);
-		$this->jsonEncoderObjectObj = null;
+		$this->jsonEncoderObjectObject = null;
 		if (
 			count(
-				value: $this->jsonEncoderObjectObjArr
+				value: $this->jsonEncoderObjectObjectArray
 			) > 0
 		) {
-			$this->jsonEncoderObjectObj = array_pop(
-				$this->jsonEncoderObjectObjArr
+			$this->jsonEncoderObjectObject = array_pop(
+				$this->jsonEncoderObjectObjectArray
 			);
 		}
 	}
@@ -322,11 +322,11 @@ class XmlEncode implements DataEncodeInterface
 		$objectKey = null
 	): void {
 		if ($objectKey === Constant::$NULL) {
-			$objectKey = ($this->jsonEncoderObjectObj === Constant::$NULL) ? 'Resultset' : 'Record';
+			$objectKey = ($this->jsonEncoderObjectObject === Constant::$NULL) ? 'Resultset' : 'Record';
 		}
-		if ($this->jsonEncoderObjectObj) {
+		if ($this->jsonEncoderObjectObject) {
 			if (
-				$this->jsonEncoderObjectObj->mode === 'Object'
+				$this->jsonEncoderObjectObject->mode === 'Object'
 				&& ($objectKey === Constant::$NULL)
 			) {
 				throw new \Exception(
@@ -335,15 +335,15 @@ class XmlEncode implements DataEncodeInterface
 				);
 			}
 			array_push(
-				$this->jsonEncoderObjectObjArr,
-				$this->jsonEncoderObjectObj
+				$this->jsonEncoderObjectObjectArray,
+				$this->jsonEncoderObjectObject
 			);
 		}
-		$this->jsonEncoderObjectObj = new XmlEncoderObject(
+		$this->jsonEncoderObjectObject = new XmlEncoderObject(
 			mode: 'Object', objectKey: $objectKey
 		);
 		$this->write(
-			data: "<{$this->jsonEncoderObjectObj->objectKey}>"
+			data: "<{$this->jsonEncoderObjectObject->objectKey}>"
 		);
 	}
 
@@ -355,16 +355,16 @@ class XmlEncode implements DataEncodeInterface
 	public function endObject(): void
 	{
 		$this->write(
-			data: "</{$this->jsonEncoderObjectObj->objectKey}>"
+			data: "</{$this->jsonEncoderObjectObject->objectKey}>"
 		);
-		$this->jsonEncoderObjectObj = null;
+		$this->jsonEncoderObjectObject = null;
 		if (
 			count(
-				value: $this->jsonEncoderObjectObjArr
+				value: $this->jsonEncoderObjectObjectArray
 			) > 0
 		) {
-			$this->jsonEncoderObjectObj = array_pop(
-				$this->jsonEncoderObjectObjArr
+			$this->jsonEncoderObjectObject = array_pop(
+				$this->jsonEncoderObjectObjectArray
 			);
 		}
 	}
@@ -377,10 +377,10 @@ class XmlEncode implements DataEncodeInterface
 	public function end(): void
 	{
 		while (
-			$this->jsonEncoderObjectObj
-			&& $this->jsonEncoderObjectObj->mode
+			$this->jsonEncoderObjectObject
+			&& $this->jsonEncoderObjectObject->mode
 		) {
-			switch ($this->jsonEncoderObjectObj->mode) {
+			switch ($this->jsonEncoderObjectObject->mode) {
 				case 'Array':
 					$this->endArray();
 					break;

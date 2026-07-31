@@ -13,17 +13,19 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
 
 return [
-	$Env::$customRequestRoutePrefix => [
+	Env::$customRequestRoutePrefix => [
 		'{custom:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
 				. DIRECTORY_SEPARATOR . 'CustomerDB'
 				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . 'UserGroup'
-				. DIRECTORY_SEPARATOR . 'POST'
+				. DIRECTORY_SEPARATOR . Constant::$POST
 				. DIRECTORY_SEPARATOR . 'SupplementTest.php'
 		]
 	]

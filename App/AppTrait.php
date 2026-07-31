@@ -44,7 +44,7 @@ trait AppTrait
 	 * 
 	 * @var null|Validator
 	 */
-	public $validatorObj = null;
+	public $validatorObject = null;
 
 	/**
 	 * Function to help execute PHP functions enclosed with double quotes
@@ -74,7 +74,7 @@ trait AppTrait
 		$flag,
 		$isFirstCall
 	): array {
-		$requiredFieldArr = [];
+		$requiredFieldArray = [];
 
 		foreach (['__PAYLOAD__', '__SET__', '__WHERE__'] as $option) {
 			if (isset($sqlConfig[$option])) {
@@ -89,17 +89,17 @@ trait AppTrait
 					if ($isRequired) {
 						$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 
-						if (!isset($requiredFieldArr[$activeRequestDataKey])) {
-							$requiredFieldArr[$activeRequestDataKey] = [];
+						if (!isset($requiredFieldArray[$activeRequestDataKey])) {
+							$requiredFieldArray[$activeRequestDataKey] = [];
 						}
 						if (
 							!in_array(
 								needle: $activeRequestDataKeySubKey,
-								haystack: $requiredFieldArr[$activeRequestDataKey],
+								haystack: $requiredFieldArray[$activeRequestDataKey],
 								strict: Constant::$TRUE
 							)
 						) {
-							$requiredFieldArr[$activeRequestDataKey][] = $activeRequestDataKeySubKey;
+							$requiredFieldArray[$activeRequestDataKey][] = $activeRequestDataKeySubKey;
 						}
 					}
 				}
@@ -117,7 +117,7 @@ trait AppTrait
 					$isFirstCall
 					&& in_array(
 						needle: $activeRequestDataKey,
-						haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
+						haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
@@ -129,7 +129,7 @@ trait AppTrait
 				if (
 					in_array(
 						needle: $activeRequestDataKey,
-						haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
+						haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
@@ -182,27 +182,27 @@ trait AppTrait
 						$flag = ($flag) ?? $this->getUseHierarchy(
 							sqlConfig: $moduleSqlConfig
 						);
-						$moduleRequiredFieldArr = $this->getRequired(
+						$moduleRequiredFieldArray = $this->getRequired(
 							sqlConfig: $moduleSqlConfig,
 							flag: $flag,
 							isFirstCall: Constant::$FALSE
 						);
 						if ($flag) {
-							$requiredFieldArr[$module] = $moduleRequiredFieldArr;
+							$requiredFieldArray[$module] = $moduleRequiredFieldArray;
 						} else {
-							foreach ($moduleRequiredFieldArr as $activeRequestDataKey => &$activeRequestDataKeySubKeyArr) {
-								if (!isset($requiredFieldArr[$activeRequestDataKey])) {
-									$requiredFieldArr[$activeRequestDataKey] = [];
+							foreach ($moduleRequiredFieldArray as $activeRequestDataKey => &$activeRequestDataKeySubKeyArray) {
+								if (!isset($requiredFieldArray[$activeRequestDataKey])) {
+									$requiredFieldArray[$activeRequestDataKey] = [];
 								}
-								foreach ($activeRequestDataKeySubKeyArr as $activeRequestDataKeySubKey) {
+								foreach ($activeRequestDataKeySubKeyArray as $activeRequestDataKeySubKey) {
 									if (
 										!in_array(
 											needle: $activeRequestDataKeySubKey,
-											haystack: $requiredFieldArr[$activeRequestDataKey],
+											haystack: $requiredFieldArray[$activeRequestDataKey],
 											strict: Constant::$TRUE
 										)
 									) {
-										$requiredFieldArr[$activeRequestDataKey][] = $activeRequestDataKeySubKey;
+										$requiredFieldArray[$activeRequestDataKey][] = $activeRequestDataKeySubKey;
 									}
 								}
 							}
@@ -212,7 +212,7 @@ trait AppTrait
 			}
 		}
 
-		return $requiredFieldArr;
+		return $requiredFieldArray;
 	}
 
 	/**
@@ -224,13 +224,13 @@ trait AppTrait
 	 */
 	public function validate(&$validationConfig): array
 	{
-		if ($this->validatorObj === Constant::$NULL) {
-			$this->validatorObj = new Validator(
-				httpObj: $this->httpObj
+		if ($this->validatorObject === Constant::$NULL) {
+			$this->validatorObject = new Validator(
+				httpObject: $this->httpObject
 			);
 		}
 
-		return $this->validatorObj->validate(
+		return $this->validatorObject->validate(
 			validationConfig: $validationConfig
 		);
 	}
@@ -239,13 +239,13 @@ trait AppTrait
 	 * Generate SQL query and its param's in Named format
 	 * 
 	 * @param array      $sqlConfig     Sql config
-	 * @param array|null $payloadKeyArr Payload key's
+	 * @param array|null $payloadKeyArray Payload key's
 	 * 
 	 * @return array
 	 */
 	private function getSqlAndParamNamedMode(
 		&$sqlConfig,
-		$payloadKeyArr = null
+		$payloadKeyArray = null
 	): array {
 		$id = null;
 		$sql = '';
@@ -263,9 +263,9 @@ trait AppTrait
 				$sql .= $sqlConfig['__DOWNLOAD__'];
 				break;
 		}
-		$paramArr = [];
-		$paramKeyArr = [];
-		$errorArr = [];
+		$paramArray = [];
+		$paramKeyArray = [];
+		$errorArray = [];
 		$record = [];
 		$__SET__ = [];
 
@@ -277,32 +277,32 @@ trait AppTrait
 				value: $sqlConfig['__SET__']
 			) !== 0
 		) {
-			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$setParamArr, $errorArr, $missExecution] = $this->getSqlParam(
+			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
+			[$setParamArray, $errorArray, $missExecution] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
-				payloadVariableArr: $payloadVariableArr
+				payloadVariableArray: $payloadVariableArray
 			);
 			if (
-				empty($errorArr)
+				empty($errorArray)
 				&& !$missExecution
 			) {
-				if (!empty($setParamArr)) {
+				if (!empty($setParamArray)) {
 					// __SET__ not compulsory in query
 					$found = strpos(
 						haystack: $sql,
 						needle: '__SET__'
 					) !== Constant::$FALSE;
-					foreach ($setParamArr as $paramKey => &$paramKeyValue) {
+					foreach ($setParamArray as $paramKey => &$paramKeyValue) {
 						$paramKey = str_replace(
 							search: ['`', ' '],
 							replace: '',
 							subject: $paramKey
 						);
-						$paramKeyArr[] = $paramKey;
+						$paramKeyArray[] = $paramKey;
 						if ($found) {
 							$__SET__[] = "`{$paramKey}` = :{$paramKey}";
 						}
-						$paramArr[":{$paramKey}"] = $paramKeyValue;
+						$paramArray[":{$paramKey}"] = $paramKeyValue;
 						$record[$paramKey] = $paramKeyValue;
 					}
 				}
@@ -311,24 +311,24 @@ trait AppTrait
 
 		// Check __WHERE__
 		if (
-			empty($errorArr)
+			empty($errorArray)
 			&& !$missExecution
 			&& isset($sqlConfig['__WHERE__'])
 			&& count(
 				value: $sqlConfig['__WHERE__']
 			) !== 0
 		) {
-			$wErrorArr = [];
-			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$whereParamArr, $wErrorArr, $wMissExecution] = $this->getSqlParam(
+			$wErrorArray = [];
+			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
+			[$whereParamArray, $wErrorArray, $wMissExecution] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
-				payloadVariableArr: $payloadVariableArr
+				payloadVariableArray: $payloadVariableArray
 			);
 			if (
-				empty($wErrorArr)
+				empty($wErrorArray)
 				&& !$wMissExecution
 			) {
-				if (!empty($whereParamArr)) {
+				if (!empty($whereParamArray)) {
 					// __WHERE__ not compulsory in query
 					$whereFound = strpos(
 						haystack: $sql,
@@ -336,7 +336,7 @@ trait AppTrait
 					) !== Constant::$FALSE;
 					if ($whereFound) {
 						$__WHERE__ = [];
-						foreach ($whereParamArr as $whereParamKey => &$whereParamKeyValue) {
+						foreach ($whereParamArray as $whereParamKey => &$whereParamKeyValue) {
 							$whereParam = $whereParamKey = str_replace(
 								search: ['`', ' '],
 								replace: '',
@@ -346,16 +346,16 @@ trait AppTrait
 							while (
 								in_array(
 									needle: $whereParam,
-									haystack: $paramKeyArr,
+									haystack: $paramKeyArray,
 									strict: Constant::$TRUE
 								)
 							) {
 								$index++;
 								$whereParam = "{$whereParamKey}{$index}";
 							}
-							$paramKeyArr[] = $whereParam;
+							$paramKeyArray[] = $whereParam;
 							$__WHERE__[] = "`{$whereParamKey}` = :{$whereParam}";
-							$paramArr[":{$whereParam}"] = $whereParamKeyValue;
+							$paramArray[":{$whereParam}"] = $whereParamKeyValue;
 							$record[$whereParam] = $whereParamKeyValue;
 						}
 						$sql = str_replace(
@@ -368,7 +368,7 @@ trait AppTrait
 					}
 				}
 			} else {
-				$errorArr = array_merge($errorArr, $wErrorArr);
+				$errorArray = array_merge($errorArray, $wErrorArray);
 			}
 		}
 		if (!empty($__SET__)) {
@@ -383,26 +383,26 @@ trait AppTrait
 
 		if (!empty($record)) {
 			$this->resetFetchData(
-				activeRequestDataKey: 'sqlParamArr',
-				payloadKeyArr: $payloadKeyArr,
+				activeRequestDataKey: 'sqlParamArray',
+				payloadKeyArray: $payloadKeyArray,
 				record: $record
 			);
 		}
 
-		return [$id, $sql, $paramArr, $errorArr, ($missExecution || $wMissExecution)];
+		return [$id, $sql, $paramArray, $errorArray, ($missExecution || $wMissExecution)];
 	}
 
 	/**
 	 * Generate SQL query and its param's in Unnamed format
 	 * 
 	 * @param array      $sqlConfig     Sql config
-	 * @param array|null $payloadKeyArr Payload key's
+	 * @param array|null $payloadKeyArray Payload key's
 	 * 
 	 * @return array
 	 */
 	private function getSqlAndParamUnnamedMode(
 		&$sqlConfig,
-		$payloadKeyArr = null
+		$payloadKeyArray = null
 	): array {
 		$id = null;
 		$sql = '';
@@ -420,9 +420,9 @@ trait AppTrait
 				$sql .= $sqlConfig['__DOWNLOAD__'];
 				break;
 		}
-		$paramArr = [];
-		$paramKeyArr = [];
-		$errorArr = [];
+		$paramArray = [];
+		$paramKeyArray = [];
+		$errorArray = [];
 		$record = [];
 		$__SET__ = [];
 
@@ -434,27 +434,27 @@ trait AppTrait
 				value: $sqlConfig['__SET__']
 			) !== 0
 		) {
-			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$setParamArr, $errorArr, $missExecution] = $this->getSqlParam(
+			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
+			[$setParamArray, $errorArray, $missExecution] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
-				payloadVariableArr: $payloadVariableArr
+				payloadVariableArray: $payloadVariableArray
 			);
 			if (
-				empty($errorArr)
+				empty($errorArray)
 				&& !$missExecution
 			) {
-				if (!empty($setParamArr)) {
+				if (!empty($setParamArray)) {
 					// __SET__ not compulsory in query
 					$found = strpos(
 						haystack: $sql,
 						needle: '__SET__'
 					) !== Constant::$FALSE;
-					foreach ($setParamArr as $paramKey => &$paramKeyValue) {
-						$paramKeyArr[] = $paramKey;
+					foreach ($setParamArray as $paramKey => &$paramKeyValue) {
+						$paramKeyArray[] = $paramKey;
 						if ($found) {
 							$__SET__[] = "{$paramKey} = ?";
 						}
-						$paramArr[] = $paramKeyValue;
+						$paramArray[] = $paramKeyValue;
 						$record[$paramKey] = $paramKeyValue;
 					}
 				}
@@ -463,24 +463,24 @@ trait AppTrait
 
 		// Check __WHERE__
 		if (
-			empty($errorArr)
+			empty($errorArray)
 			&& !$missExecution
 			&& isset($sqlConfig['__WHERE__'])
 			&& count(
 				value: $sqlConfig['__WHERE__']
 			) !== 0
 		) {
-			$wErrorArr = [];
-			$payloadVariableArr = $sqlConfig['__VARIABLES__'] ?? [];
-			[$whereParamArr, $wErrorArr, $wMissExecution] = $this->getSqlParam(
+			$wErrorArray = [];
+			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
+			[$whereParamArray, $wErrorArray, $wMissExecution] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
-				payloadVariableArr: $payloadVariableArr
+				payloadVariableArray: $payloadVariableArray
 			);
 			if (
-				empty($wErrorArr)
+				empty($wErrorArray)
 				&& !$wMissExecution
 			) {
-				if (!empty($whereParamArr)) {
+				if (!empty($whereParamArray)) {
 					// __WHERE__ not compulsory in query
 					$whereFound = strpos(
 						haystack: $sql,
@@ -488,22 +488,22 @@ trait AppTrait
 					) !== Constant::$FALSE;
 					if ($whereFound) {
 						$__WHERE__ = [];
-						foreach ($whereParamArr as $whereParamKey => &$whereParamKeyValue) {
+						foreach ($whereParamArray as $whereParamKey => &$whereParamKeyValue) {
 							$whereParam = $whereParamKey;
 							$index = 0;
 							while (
 								in_array(
 									needle: $whereParam,
-									haystack: $paramKeyArr,
+									haystack: $paramKeyArray,
 									strict: Constant::$TRUE
 								)
 							) {
 								$index++;
 								$whereParam = "{$whereParamKey}{$index}";
 							}
-							$paramKeyArr[] = $whereParam;
+							$paramKeyArray[] = $whereParam;
 							$__WHERE__[] = "{$whereParamKey} = ?";
-							$paramArr[] = $whereParamKeyValue;
+							$paramArray[] = $whereParamKeyValue;
 							$record[$whereParam] = $whereParamKeyValue;
 						}
 						$sql = str_replace(
@@ -516,7 +516,7 @@ trait AppTrait
 					}
 				}
 			} else {
-				$errorArr = array_merge($errorArr, $wErrorArr);
+				$errorArray = array_merge($errorArray, $wErrorArray);
 			}
 		}
 		if (!empty($__SET__)) {
@@ -531,31 +531,31 @@ trait AppTrait
 
 		if (!empty($record)) {
 			$this->resetFetchData(
-				activeRequestDataKey: 'sqlParamArr',
-				payloadKeyArr: $payloadKeyArr,
+				activeRequestDataKey: 'sqlParamArray',
+				payloadKeyArray: $payloadKeyArray,
 				record: $record
 			);
 		}
 
-		return [$id, $sql, $paramArr, $errorArr, ($missExecution || $wMissExecution)];
+		return [$id, $sql, $paramArray, $errorArray, ($missExecution || $wMissExecution)];
 	}
 
 	/**
-	 * Generates ParamArr for statement to execute
+	 * Generates ParamArray for statement to execute
 	 * 
 	 * @param array $sqlConfig          Sql config
-	 * @param array $payloadVariableArr Payload Variables
+	 * @param array $payloadVariableArray Payload Variables
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private function getSqlParam(
 		&$sqlConfig,
-		&$payloadVariableArr
+		&$payloadVariableArray
 	): array {
 		$missExecution = false;
-		$paramArr = [];
-		$errorArr = [];
+		$paramArray = [];
+		$errorArray = [];
 
 		// Collect param values as per config respectively
 		foreach ($sqlConfig as $sqlParamConfig) {
@@ -564,104 +564,104 @@ trait AppTrait
 			$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 			if ($activeRequestDataKey === 'function') {
 				$function = $activeRequestDataKeySubKey;
-				$value = $function($this->httpObj->httpRequestObj->activeRequestData);
-				$paramArr[$column] = $value;
+				$value = $function($this->httpObject->httpRequestObject->activeRequestData);
+				$paramArray[$column] = $value;
 				continue;
 			} elseif (
 				in_array(
 					needle: $activeRequestDataKey,
-					haystack: ['sqlParamArr', 'sqlPayload'],
+					haystack: ['sqlParamArray', 'sqlPayload'],
 					strict: Constant::$TRUE
 				)
 			) {
-				if (!isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey])) {
-					$errorArr[] = "Missing key '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
+				if (!isset($this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey])) {
+					$errorArray[] = "Missing key '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
 					continue;
 				}
-				$activeRequestDataKeySubKeyArr = explode(
+				$activeRequestDataKeySubKeyArray = explode(
 					separator: ':',
 					string: $activeRequestDataKeySubKey
 				);
-				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey];
-				foreach ($activeRequestDataKeySubKeyArr as $_activeRequestDataKeySubKey) {
+				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey];
+				foreach ($activeRequestDataKeySubKeyArray as $_activeRequestDataKeySubKey) {
 					if (!isset($value[$_activeRequestDataKeySubKey])) {
-						$errorArr[] = "Missing hierarchy key '{$_activeRequestDataKeySubKey}' of '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
+						$errorArray[] = "Missing hierarchy key '{$_activeRequestDataKeySubKey}' of '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
 						continue;
 					}
 					$value = &$value[$_activeRequestDataKeySubKey];
 				}
-				$paramArr[$column] = $value;
+				$paramArray[$column] = $value;
 				continue;
 			} elseif ($activeRequestDataKey === 'sqlResults') {
-				if (!isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey])) {
+				if (!isset($this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey])) {
 					$missExecution = true;
 					continue;
 				}
-				$activeRequestDataKeySubKeyArr = explode(
+				$activeRequestDataKeySubKeyArray = explode(
 					separator: ':',
 					string: $activeRequestDataKeySubKey
 				);
-				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey];
-				foreach ($activeRequestDataKeySubKeyArr as $_activeRequestDataKeySubKey) {
+				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey];
+				foreach ($activeRequestDataKeySubKeyArray as $_activeRequestDataKeySubKey) {
 					if (!isset($value[$_activeRequestDataKeySubKey])) {
 						$missExecution = true;
 						continue;
 					}
 					$value = &$value[$_activeRequestDataKeySubKey];
 				}
-				$paramArr[$column] = $value;
+				$paramArray[$column] = $value;
 				continue;
 			} elseif ($activeRequestDataKey === 'custom') {
 				$value = $activeRequestDataKeySubKey;
-				$paramArr[$column] = $value;
+				$paramArray[$column] = $value;
 				continue;
 			} elseif ($activeRequestDataKey === 'variables') {
-				if (isset($payloadVariableArr[$activeRequestDataKeySubKey])) {
-					$paramArr[$column] = $payloadVariableArr[$activeRequestDataKeySubKey];
+				if (isset($payloadVariableArray[$activeRequestDataKeySubKey])) {
+					$paramArray[$column] = $payloadVariableArray[$activeRequestDataKeySubKey];
 				} else {
-					$errorArr[] = "Missing '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
+					$errorArray[] = "Missing '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				}
 				continue;
-			} elseif (isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey])) {
+			} elseif (isset($this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey])) {
 				if (
-					isset($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey])
+					isset($this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'][$activeRequestDataKey])
 					&& in_array(
 						needle: $activeRequestDataKeySubKey,
-						haystack: $this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey],
+						haystack: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'][$activeRequestDataKey],
 						strict: Constant::$TRUE
 					)
 				) {
 					if (isset($sqlParamConfig['dataType'])) {
 						if (
 							!DatabaseServerDataType::validateDataType(
-								data: $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey],
+								data: $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey],
 								dataType: $sqlParamConfig['dataType']
 							)
 						) {
-							$errorArr[] = "Invalid required field data-type of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
+							$errorArray[] = "Invalid required field data-type of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 							continue;
 						}
 					}
 				}
-				$paramArr[$column] = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey];
+				$paramArray[$column] = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey];
 				continue;
 			} elseif (
-				isset($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey])
+				isset($this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'][$activeRequestDataKey])
 				&& in_array(
 					needle: $activeRequestDataKeySubKey,
-					haystack: $this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr'][$activeRequestDataKey],
+					haystack: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'][$activeRequestDataKey],
 					strict: Constant::$TRUE
 				)
 			) {
-				$errorArr[] = "Missing required field '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
+				$errorArray[] = "Missing required field '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				continue;
 			} else {
-				$errorArr[] = "Invalid configuration of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
+				$errorArray[] = "Invalid configuration of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				continue;
 			}
 		}
 
-		return [$paramArr, $errorArr, $missExecution];
+		return [$paramArray, $errorArray, $missExecution];
 	}
 
 	/**
@@ -734,19 +734,19 @@ trait AppTrait
 		$flag,
 		$isFirstCall
 	): array {
-		$explainParamArr = [];
+		$explainParamArray = [];
 
 		if (isset($sqlConfig['countQuery'])) {
 			$sqlConfig['__CONFIG__'][] = [
 				'column' => 'page',
-				'activeRequestDataKey' => 'queryParamArr',
+				'activeRequestDataKey' => 'queryParamArray',
 				'activeRequestDataKeySubKey' => 'page',
 				'dataType' => DatabaseServerDataType::$INT,
 				'isRequired' => Constant::$REQUIRED
 			];
 			$sqlConfig['__CONFIG__'][] = [
 				'column' => 'perPage',
-				'activeRequestDataKey' => 'queryParamArr',
+				'activeRequestDataKey' => 'queryParamArray',
 				'activeRequestDataKeySubKey' => 'perPage',
 				'dataType' => DatabaseServerDataType::$INT
 			];
@@ -760,13 +760,13 @@ trait AppTrait
 					? $sqlParamConfig['isRequired'] : Constant::$FALSE;
 
 				if (
-					isset($explainParamArr[$activeRequestDataKeySubKey])
-					&& $explainParamArr[$activeRequestDataKeySubKey]['isRequired'] === Constant::$TRUE
+					isset($explainParamArray[$activeRequestDataKeySubKey])
+					&& $explainParamArray[$activeRequestDataKeySubKey]['isRequired'] === Constant::$TRUE
 				) {
 					continue;
 				}
 				$dataType['isRequired'] = $isRequired ? Constant::$TRUE : Constant::$FALSE;
-				$explainParamArr[$activeRequestDataKeySubKey] = $dataType;
+				$explainParamArray[$activeRequestDataKeySubKey] = $dataType;
 			}
 		}
 
@@ -784,13 +784,13 @@ trait AppTrait
 						continue;
 					}
 					if (
-						isset($explainParamArr[$activeRequestDataKeySubKey])
-						&& $explainParamArr[$activeRequestDataKeySubKey]['isRequired'] === Constant::$TRUE
+						isset($explainParamArray[$activeRequestDataKeySubKey])
+						&& $explainParamArray[$activeRequestDataKeySubKey]['isRequired'] === Constant::$TRUE
 					) {
 						continue;
 					}
 					$dataType['isRequired'] = $isRequired ? Constant::$TRUE : Constant::$FALSE;
-					$explainParamArr[$activeRequestDataKeySubKey] = $dataType;
+					$explainParamArray[$activeRequestDataKeySubKey] = $dataType;
 				}
 			}
 		}
@@ -804,7 +804,7 @@ trait AppTrait
 				if (
 					in_array(
 						needle: $activeRequestDataKey,
-						haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
+						haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
@@ -831,19 +831,19 @@ trait AppTrait
 					$flag = ($flag) ?? $this->getUseHierarchy(
 						sqlConfig: $moduleSqlConfig
 					);
-					$moduleExplainParamArr = $this->getExplainParam(
+					$moduleExplainParamArray = $this->getExplainParam(
 						sqlConfig: $moduleSqlConfig,
 						flag: $flag,
 						isFirstCall: Constant::$FALSE
 					);
 					if ($flag) {
-						if (!empty($moduleExplainParamArr)) {
-							$explainParamArr[$module] = $moduleExplainParamArr;
+						if (!empty($moduleExplainParamArray)) {
+							$explainParamArray[$module] = $moduleExplainParamArray;
 						}
 					} else {
-						foreach ($moduleExplainParamArr as $activeRequestDataKeySubKey => $field) {
-							if (!isset($explainParamArr[$activeRequestDataKeySubKey])) {
-								$explainParamArr[$activeRequestDataKeySubKey] = $field;
+						foreach ($moduleExplainParamArray as $activeRequestDataKeySubKey => $field) {
+							if (!isset($explainParamArray[$activeRequestDataKeySubKey])) {
+								$explainParamArray[$activeRequestDataKeySubKey] = $field;
 							}
 						}
 					}
@@ -851,35 +851,35 @@ trait AppTrait
 			}
 		}
 
-		return $explainParamArr;
+		return $explainParamArray;
 	}
 
 	/**
 	 * Function to reset data for module key wise
 	 * 
-	 * @param string $activeRequestDataKey sqlResults / sqlParamArr / sqlPayload
-	 * @param array  $payloadKeyArr              Module key's in recursion
+	 * @param string $activeRequestDataKey sqlResults / sqlParamArray / sqlPayload
+	 * @param array  $payloadKeyArray              Module key's in recursion
 	 * @param array  $record                     Record data fetched from DB
 	 * 
 	 * @return void
 	 */
 	private function resetFetchData(
 		$activeRequestDataKey,
-		$payloadKeyArr,
+		$payloadKeyArray,
 		$record
 	): void {
 		if (
-			empty($payloadKeyArr)
+			empty($payloadKeyArray)
 			|| count(
-				value: $payloadKeyArr
+				value: $payloadKeyArray
 			) === 0
 		) {
-			$this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey] = [];
-			$this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey]['return'] = [];
+			$this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey] = [];
+			$this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey]['return'] = [];
 		}
-		$httpReq = &$this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey]['return'];
-		if (!empty($payloadKeyArr)) {
-			foreach ($payloadKeyArr as $moduleKey) {
+		$httpReq = &$this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey]['return'];
+		if (!empty($payloadKeyArray)) {
+			foreach ($payloadKeyArray as $moduleKey) {
 				if (!isset($httpReq[$moduleKey])) {
 					$httpReq[$moduleKey] = [];
 				}
@@ -900,9 +900,9 @@ trait AppTrait
 	private function rateLimitRoute(&$sqlConfig): void
 	{
 		if (
-			$this->httpObj->httpRequestObj->isPublicRequest
+			$this->httpObject->httpRequestObject->isPublicRequest
 			|| !CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_rate_limiting_for_route'
 			)
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
@@ -912,16 +912,16 @@ trait AppTrait
 		}
 
 		$payloadSignature = [
-			'httpRequestIp' => $this->httpObj->httpReqData['server']['httpRequestIp'],
-			'customerId' => $this->httpObj->httpRequestObj->customerId,
-			'httpMethod' => $this->httpObj->httpReqData['server']['httpMethod'],
-			'Route' => $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
+			'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
+			'customerId' => $this->httpObject->httpRequestObject->customerId,
+			'httpMethod' => $this->httpObject->httpReqData['server']['httpMethod'],
+			'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
 		];
-		if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
-			$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
-				? $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] : 0);
-			$payloadSignature['customerUserId'] = ($this->httpObj->httpRequestObj->customerUserId !== Constant::$NULL
-				? $this->httpObj->httpRequestObj->customerUserId : 0);
+		if (isset($this->httpObject->httpRequestObject->activeRequestData['userData'])) {
+			$payloadSignature['customerUserGroupId'] = ($this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
+				? $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'] : 0);
+			$payloadSignature['customerUserId'] = ($this->httpObject->httpRequestObject->customerUserId !== Constant::$NULL
+				? $this->httpObject->httpRequestObject->customerUserId : 0);
 		}
 		$hash = json_encode(
 			value: $payloadSignature
@@ -931,7 +931,7 @@ trait AppTrait
 		);
 
 		// @throws \Exception
-		$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(
+		$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
 			rateLimitPrefix: Env::$rateLimitRoutePrefix,
 			rateLimitMaxRequest: $sqlConfig['rateLimitMaxRequest'],
 			rateLimitMaxRequestWindow: $sqlConfig['rateLimitMaxRequestWindow'],
@@ -950,11 +950,11 @@ trait AppTrait
 	private function checkReferrerLag(&$sqlConfig): void
 	{
 		$customerUserId = 0;
-		if (isset($this->httpObj->httpRequestObj->customerUserId)) {
-			$customerUserId = $this->httpObj->httpRequestObj->customerUserId;
+		if (isset($this->httpObject->httpRequestObject->customerUserId)) {
+			$customerUserId = $this->httpObject->httpRequestObject->customerUserId;
 		}
 		$customerUserReferrerLagKey = CacheServerKey::customerUserReferrerLag(
-			customerId: $this->httpObj->httpRequestObj->customerId,
+			customerId: $this->httpObject->httpRequestObject->customerId,
 			customerUserId: $customerUserId
 		);
 		if (
@@ -964,7 +964,7 @@ trait AppTrait
 			) > 0
 		) {
 			if (
-				!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+				!$this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 					cacheKey: $customerUserReferrerLagKey
 				)
 			) {
@@ -973,7 +973,7 @@ trait AppTrait
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$referrerLagData = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+			$referrerLagData = $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 				cacheKey: $customerUserReferrerLagKey
 			);
 			if (
@@ -992,7 +992,7 @@ trait AppTrait
 								if ($tsDiff <= $referrerSqlConfig['maximumReferrerLagWindow']) {
 									$found = true;
 								} else {
-									$this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
+									$this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
 										cacheKey: $customerUserReferrerLagKey
 									);
 								}
@@ -1000,7 +1000,7 @@ trait AppTrait
 								$found = true;
 							}
 						} else {
-							$this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
+							$this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
 								cacheKey: $customerUserReferrerLagKey
 							);
 						}
@@ -1020,14 +1020,14 @@ trait AppTrait
 			&& $sqlConfig['enableReferrerLag'] === Constant::$YES
 		) {
 			if (
-				!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+				!$this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 					cacheKey: $customerUserReferrerLagKey
 				)
 			) {
-				$this->httpObj->httpRequestObj->customerCacheObj->cacheSet(
+				$this->httpObject->httpRequestObject->customerCacheObject->cacheSet(
 					cacheKey: $customerUserReferrerLagKey,
 					cacheValue: [
-						'initRoute' => $this->httpObj->httpRequestObj->routeParserObj->configuredRoute,
+						'initRoute' => $this->httpObject->httpRequestObject->routeParserObject->configuredRoute,
 						'timestamp' => Env::$timestamp
 					]
 				);
@@ -1043,14 +1043,14 @@ trait AppTrait
 	/**
 	 * Check for Idempotent Window
 	 * 
-	 * @param array $sqlConfig       Sql config
-	 * @param array $payloadArr Payload Indexes
+	 * @param array $sqlConfig     Sql config
+	 * @param array $payloadKeyArray Payload Indexes
 	 * 
 	 * @return array
 	 */
 	private function checkIdempotent(
 		&$sqlConfig,
-		$payloadArr
+		$payloadKeyArray
 	): array {
 		$idempotentWindow = 0;
 		$hashKey = null;
@@ -1067,22 +1067,22 @@ trait AppTrait
 				$payloadSignature = [
 					'idempotentSecret' => Env::$idempotentSecret,
 					'idempotentWindow' => $idempotentWindow,
-					'httpRequestIp' => $this->httpObj->httpReqData['server']['httpRequestIp'],
-					'customerId' => $this->httpObj->httpRequestObj->customerId,
-					'customerUserId' => $this->httpObj->httpRequestObj->customerUserId,
-					'httpMethod' => $this->httpObj->httpReqData['server']['httpMethod'],
-					'Route' => $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
-					'payload' => $this->httpObj->httpRequestObj->dataDecodeObj->get(
-						keyString: implode(
-							separator: ':', array: $payloadArr
+					'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
+					'customerId' => $this->httpObject->httpRequestObject->customerId,
+					'customerUserId' => $this->httpObject->httpRequestObject->customerUserId,
+					'httpMethod' => $this->httpObject->httpReqData['server']['httpMethod'],
+					'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
+					'payload' => $this->httpObject->httpRequestObject->dataDecodeObject->get(
+						keyString: $this->getPayloadKey(
+							payloadKeyArray: $payloadKeyArray
 						)
 					)
 				];
-				if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
-					$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
-						? $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] : 0);
-					$payloadSignature['customerUserId'] = ($this->httpObj->httpRequestObj->customerUserId !== Constant::$NULL
-						? $this->httpObj->httpRequestObj->customerUserId : 0);
+				if (isset($this->httpObject->httpRequestObject->activeRequestData['userData'])) {
+					$payloadSignature['customerUserGroupId'] = ($this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
+						? $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'] : 0);
+					$payloadSignature['customerUserId'] = ($this->httpObject->httpRequestObject->customerUserId !== Constant::$NULL
+						? $this->httpObject->httpRequestObject->customerUserId : 0);
 				}
 
 				$hash = json_encode(
@@ -1092,15 +1092,15 @@ trait AppTrait
 					string: $hash
 				);
 				if (
-					$this->httpObj->httpRequestObj->isPrivateRequest
-					&& $this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+					$this->httpObject->httpRequestObject->isPrivateRequest
+					&& $this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 						cacheKey: $hashKey
 					)
 				) {
 					$hashJson = str_replace(
 						search: 'JSON',
 						replace: json_encode(
-							value: $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+							value: $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 								cacheKey: $hashKey
 							)
 						),
@@ -1123,23 +1123,23 @@ trait AppTrait
 	private function lagResponse($sqlConfig): void
 	{
 		if (
-			$this->httpObj->httpRequestObj->isPublicRequest
+			$this->httpObject->httpRequestObject->isPublicRequest
 			|| !isset($sqlConfig['responseLag'])
 		) {
 			return;
 		}
 
 		$payloadSignature = [
-			'httpRequestIp' => $this->httpObj->httpReqData['server']['httpRequestIp'],
-			'customerId' => $this->httpObj->httpRequestObj->customerId,
-			'httpMethod' => $this->httpObj->httpReqData['server']['httpMethod'],
-			'Route' => $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
+			'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
+			'customerId' => $this->httpObject->httpRequestObject->customerId,
+			'httpMethod' => $this->httpObject->httpReqData['server']['httpMethod'],
+			'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
 		];
-		if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
-			$payloadSignature['customerUserGroupId'] = ($this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
-				? $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'] : 0);
-			$payloadSignature['customerUserId'] = ($this->httpObj->httpRequestObj->customerUserId !== Constant::$NULL
-				? $this->httpObj->httpRequestObj->customerUserId : 0);
+		if (isset($this->httpObject->httpRequestObject->activeRequestData['userData'])) {
+			$payloadSignature['customerUserGroupId'] = ($this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'] !== Constant::$NULL
+				? $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'] : 0);
+			$payloadSignature['customerUserId'] = ($this->httpObject->httpRequestObject->customerUserId !== Constant::$NULL
+				? $this->httpObject->httpRequestObject->customerUserId : 0);
 		}
 
 		$hash = json_encode(
@@ -1150,18 +1150,18 @@ trait AppTrait
 		);
 
 		if (
-			$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+			$this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 				cacheKey: $hashKey
 			)
 		) {
-			$noOfRequest = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+			$noOfRequest = $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 				cacheKey: $hashKey
 			);
 		} else {
 			$noOfRequest = 0;
 		}
 
-		$this->httpObj->httpRequestObj->customerCacheObj->cacheSet(
+		$this->httpObject->httpRequestObject->customerCacheObject->cacheSet(
 			cacheKey: $hashKey,
 			cacheValue: ++$noOfRequest,
 			cacheExpire: 3600
@@ -1197,7 +1197,7 @@ trait AppTrait
 	 */
 	public function getTriggerData($triggerConfig): mixed
 	{
-		if (!isset($this->httpObj->httpRequestObj->activeRequestData['authId'])) {
+		if (!isset($this->httpObject->httpRequestObject->activeRequestData['authId'])) {
 			throw new \Exception(
 				message: 'Missing token',
 				code: HttpStatus::$InternalServerError
@@ -1223,7 +1223,7 @@ trait AppTrait
 			$httpReqData = $this->getTriggerHttp(
 				triggerConfig: $triggerConfig
 			);
-			[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+			[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
 				httpReqData: $httpReqData
 			);
 			$triggerOutput = &$responseContent;
@@ -1235,7 +1235,7 @@ trait AppTrait
 				$httpReqData = $this->getTriggerHttp(
 					triggerConfig: $triggerConfig[$iTrigger]
 				);
-				[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+				[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
 					httpReqData: $httpReqData
 				);
 				$triggerOutput[] = &$responseContent;
@@ -1255,48 +1255,48 @@ trait AppTrait
 	public function getTriggerHttp($triggerConfig)
 	{
 		$method = $triggerConfig['__METHOD__'];
-		[$routeElementArrArr, $errorArr] = $this->getTriggerParam(
+		[$routeElementArrayArray, $errorArray] = $this->getTriggerParam(
 			payloadConfig: $triggerConfig['__ROUTE__']
 		);
 
-		if ($errorArr) {
-			return $errorArr;
+		if ($errorArray) {
+			return $errorArray;
 		}
 
 		$route = '/' . implode(
-			separator: '/', array: $routeElementArrArr
+			separator: '/', array: $routeElementArrayArray
 		);
 
-		$queryStringArr = [];
-		$payloadArr = [];
+		$queryStringArray = [];
+		$payload = [];
 
 		if (isset($triggerConfig['__QUERY-STRING__'])) {
-			[$queryStringArr, $errorArr] = $this->getTriggerParam(
+			[$queryStringArray, $errorArray] = $this->getTriggerParam(
 				payloadConfig: $triggerConfig['__QUERY-STRING__']
 			);
 
-			if ($errorArr) {
-				return $errorArr;
+			if ($errorArray) {
+				return $errorArray;
 			}
 		}
 		if (isset($triggerConfig['__PAYLOAD__'])) {
-			[$payloadArr, $errorArr] = $this->getTriggerParam(
+			[$payloadArray, $errorArray] = $this->getTriggerParam(
 				payloadConfig: $triggerConfig['__PAYLOAD__']
 			);
-			if ($errorArr) {
-				return $errorArr;
+			if ($errorArray) {
+				return $errorArray;
 			}
 		}
 
 		$httpReqData['streamData'] = false;
-		$httpReqData['server']['domainName'] = $this->httpObj->httpReqData['server']['domainName'];
+		$httpReqData['server']['domainName'] = $this->httpObject->httpReqData['server']['domainName'];
 		$httpReqData['server']['httpMethod'] = $method;
-		$httpReqData['server']['httpRequestIp'] = $this->httpObj->httpReqData['server']['httpRequestIp'];
-		$httpReqData['header'] = $this->httpObj->httpReqData['header'];
+		$httpReqData['server']['httpRequestIp'] = $this->httpObject->httpReqData['server']['httpRequestIp'];
+		$httpReqData['header'] = $this->httpObject->httpReqData['header'];
 		$httpReqData['post'] = json_encode(
-			value: $payloadArr
+			value: $payloadArray
 		);
-		$httpReqData['get'] = $queryStringArr;
+		$httpReqData['get'] = $queryStringArray;
 		$httpReqData['get'][ROUTE_URL_PARAM] = $route;
 		$httpReqData['isWebRequest'] = false;
 
@@ -1306,16 +1306,16 @@ trait AppTrait
 	/**
 	 * Get Trigger param's
 	 * 
-	 * @param array $payloadConfig      API Payload configuration
-	 * @param array $payloadVariableArr Payload Variables
+	 * @param array $payloadConfig API Payload configuration
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function getTriggerParam(&$payloadConfig): array
-	{
-		$paramArr = [];
-		$errorArr = [];
+	private function getTriggerParam(
+		&$payloadConfig
+	): array {
+		$triggerParamArray = [];
+		$triggerErrorArray = [];
 
 		// Collect param values as per config respectively
 		foreach ($payloadConfig as &$payloadParamConfig) {
@@ -1325,25 +1325,25 @@ trait AppTrait
 			$activeRequestDataKeySubKey = $payloadParamConfig['activeRequestDataKeySubKey'];
 			if ($activeRequestDataKey === 'function') {
 				$function = $activeRequestDataKeySubKey;
-				$value = $function($this->httpObj->httpRequestObj->activeRequestData);
+				$value = $function($this->httpObject->httpRequestObject->activeRequestData);
 				if ($column === Constant::$NULL) {
-					$paramArr[] = $value;
+					$triggerParamArray[] = $value;
 				} else {
-					$paramArr[$column] = $value;
+					$triggerParamArray[$column] = $value;
 				}
 				continue;
 			} elseif (
 				in_array(
 					needle: $activeRequestDataKey,
-					haystack: ['sqlResults', 'sqlParamArr', 'sqlPayload'],
+					haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
 					strict: Constant::$TRUE
 				)
 			) {
-				$activeRequestDataKeySubKeyArr = explode(
+				$activeRequestDataKeySubKeyArray = explode(
 					separator: ':', string: $activeRequestDataKeySubKey
 				);
-				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey];
-				foreach ($activeRequestDataKeySubKeyArr as $_activeRequestDataKeySubKey) {
+				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey];
+				foreach ($activeRequestDataKeySubKeyArray as $_activeRequestDataKeySubKey) {
 					if (!isset($value[$_activeRequestDataKeySubKey])) {
 						throw new \Exception(
 							message: 'Invalid hierarchy:  Missing hierarchy data',
@@ -1353,34 +1353,34 @@ trait AppTrait
 					$value = $value[$_activeRequestDataKeySubKey];
 				}
 				if ($column === Constant::$NULL) {
-					$paramArr[] = $value;
+					$triggerParamArray[] = $value;
 				} else {
-					$paramArr[$column] = $value;
+					$triggerParamArray[$column] = $value;
 				}
 				continue;
 			} elseif ($activeRequestDataKey === 'custom') {
 				$value = $activeRequestDataKeySubKey;
 				if ($column === Constant::$NULL) {
-					$paramArr[] = $value;
+					$triggerParamArray[] = $value;
 				} else {
-					$paramArr[$column] = $value;
+					$triggerParamArray[$column] = $value;
 				}
 				continue;
-			} elseif (isset($this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey])) {
-				$value = $this->httpObj->httpRequestObj->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey];
+			} elseif (isset($this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey])) {
+				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey][$activeRequestDataKeySubKey];
 				if ($column === Constant::$NULL) {
-					$paramArr[] = $value;
+					$triggerParamArray[] = $value;
 				} else {
-					$paramArr[$column] = $value;
+					$triggerParamArray[$column] = $value;
 				}
 				continue;
 			} else {
-				$errorArr[] = "Invalid configuration of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
+				$triggerErrorArray[] = "Invalid configuration of '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				continue;
 			}
 		}
 
-		return [$paramArr, $errorArr];
+		return [$triggerParamArray, $triggerErrorArray];
 	}
 
 	/**
@@ -1395,19 +1395,19 @@ trait AppTrait
 		&$sqlConfig,
 		$useHierarchy
 	): string {
-		$explainParamArr = $this->getExplainParam(
+		$explainParamArray = $this->getExplainParam(
 			sqlConfig: $sqlConfig,
 			flag: $useHierarchy,
 			isFirstCall: Constant::$TRUE
 		);
-		$paramArr = $this->genCsvHelper(
+		$paramArray = $this->genCsvHelper(
 			headerCsv: 'CSV',
-			explainParamArr: $explainParamArr
+			explainParamArray: $explainParamArray
 		);
 
 		$header = [];
 		$header[] = '__mode__';
-		foreach ($paramArr as $r => $p) {
+		foreach ($paramArray as $r => $p) {
 			if (
 				is_array(
 					value: $p
@@ -1428,7 +1428,7 @@ trait AppTrait
 			array: $header
 		) . '"' . PHP_EOL;
 		$blankStr = '';
-		foreach ($paramArr as $r => $p) {
+		foreach ($paramArray as $r => $p) {
 			if ($r === 'CSV') {
 				$indexCount = count(
 					value: $header
@@ -1441,46 +1441,46 @@ trait AppTrait
 		}
 
 		$filename = date('Ymd-His') . '-import-sample.csv';
-		$headerArr = [];
+		$headerArray = [];
 		// Export header
-		$headerArr['Content-type'] = 'text/csv';
-		$headerArr['Content-Disposition'] = "attachment; filename={$filename}";
-		$headerArr['Pragma'] = 'no-cache';
-		$headerArr['Expires'] = '0';
+		$headerArray['Content-type'] = 'text/csv';
+		$headerArray['Content-Disposition'] = "attachment; filename={$filename}";
+		$headerArray['Pragma'] = 'no-cache';
+		$headerArray['Expires'] = '0';
 
-		return [$headerArr, $csv, HttpStatus::$Ok];
+		return [$headerArray, $csv, HttpStatus::$Ok];
 	}
 
 	/**
 	 * Generate sample CSV helper
 	 * 
 	 * @param string $module
-	 * @param array  $explainParamArr
+	 * @param array  $explainParamArray
 	 * 
 	 * @return array
 	 */
 	private function genCsvHelper(
 		$module,
-		$explainParamArr
+		$explainParamArray
 	): array {
-		$headerCsvArr = [];
-		foreach ($explainParamArr as $explainParamKey => &$explainParamKeyValue) {
+		$headerCsvArray = [];
+		foreach ($explainParamArray as $explainParamKey => &$explainParamKeyValue) {
 			if (isset($explainParamKeyValue['dataType'])) {
 				$columnHeader = "{$module}:{$explainParamKey}";
-				$headerCsvArr[$module][] = $columnHeader;
+				$headerCsvArray[$module][] = $columnHeader;
 			} else {
 				$_module = "{$module}:{$explainParamKey}";
-				$headerArr = $this->genCsvHelper(
+				$headerArray = $this->genCsvHelper(
 					module: $_module,
-					explainParamArr: $explainParamKeyValue
+					explainParamArray: $explainParamKeyValue
 				);
-				foreach ($headerArr as $headerKey => &$headerKeyValue) {
-					$headerCsvArr[$headerKey] = $headerKeyValue;
+				foreach ($headerArray as $headerKey => &$headerKeyValue) {
+					$headerCsvArray[$headerKey] = $headerKeyValue;
 				}
 			}
 		}
 
-		return $headerCsvArr;
+		return $headerCsvArray;
 	}
 
 	/**
@@ -1496,7 +1496,7 @@ trait AppTrait
 		&$useResultSet
 	) {
 		// Load Sql
-		$sqlConfig = $this->httpObj->httpRequestObj->routeParserObj->sqlConfig;
+		$sqlConfig = $this->httpObject->httpRequestObject->routeParserObject->sqlConfig;
 
 		// Rate Limiting request if configured for Route Sql.
 		$this->rateLimitRoute(
@@ -1515,10 +1515,10 @@ trait AppTrait
 		);
 
 		if (
-			$this->httpObj->httpRequestObj->routeParserObj->routeEndingWithReservedKeywordFlag
-			&& $this->httpObj->httpRequestObj->routeParserObj->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
+			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
 			&& CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_explain_request'
 			)
 		) {
@@ -1544,7 +1544,7 @@ trait AppTrait
 		&$useHierarchy
 	): bool {
 		// Load Sql
-		$sqlConfig = $this->httpObj->httpRequestObj->routeParserObj->sqlConfig;
+		$sqlConfig = $this->httpObject->httpRequestObject->routeParserObject->sqlConfig;
 
 		// Lag response
 		$this->lagResponse(
@@ -1568,10 +1568,10 @@ trait AppTrait
 		);
 
 		if (
-			$this->httpObj->httpRequestObj->routeParserObj->routeEndingWithReservedKeywordFlag
-			&& $this->httpObj->httpRequestObj->routeParserObj->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
+			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$explainRequestRouteKeyword
 			&& CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_explain_request'
 			)
 		) {
@@ -1582,8 +1582,8 @@ trait AppTrait
 		}
 
 		if (
-			$this->httpObj->httpRequestObj->routeParserObj->routeEndingWithReservedKeywordFlag
-			&& $this->httpObj->httpRequestObj->routeParserObj->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword
+			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$importSampleRequestRouteKeyword
 		) {
 			return $this->generateImportSampleCsv(
 				sqlConfig: $sqlConfig,
@@ -1607,33 +1607,33 @@ trait AppTrait
 		$toBeCached = false;
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_response_caching'
 			)
 			&& isset($sqlConfig['queryCacheKey'])
-			&& !isset($this->httpObj->httpRequestObj->activeRequestData['queryParamArr']['orderBy'])
+			&& !isset($this->httpObject->httpRequestObject->activeRequestData['queryParamArray']['orderBy'])
 		) {
 			$cacheReqCount = 0;
 			$queryCacheReqFlag = false;
 			for ($index = 0;$index < 5; $index++) {
-				$json = $this->httpObj->httpRequestObj->customerQueryCacheObj->queryCacheGet(
-					customerId: $this->httpObj->httpRequestObj->customerId,
+				$json = $this->httpObject->httpRequestObject->customerQueryCacheObject->queryCacheGet(
+					customerId: $this->httpObject->httpRequestObject->customerId,
 					queryCacheKey: $sqlConfig['queryCacheKey']
 				);
 				if ($json !== Constant::$NULL) {
 					$cacheHit = 'true';
-					$this->httpObj->httpResponseObj->dataEncodeObj->appendKeyData(
+					$this->httpObject->httpResponseObject->dataEncodeObject->appendKeyData(
 						objectKey: 'cacheHit',
 						data: $cacheHit
 					);
-					$this->httpObj->httpResponseObj->dataEncodeObj->appendData(
+					$this->httpObject->httpResponseObject->dataEncodeObject->appendData(
 						data: $json
 					);
 					return true;
 				} else {
 					if (!$queryCacheReqFlag) {
-						$cacheReqCount = $this->httpObj->httpRequestObj->customerQueryCacheObj->queryCacheIncrement(
-							customerId: $this->httpObj->httpRequestObj->customerId,
+						$cacheReqCount = $this->httpObject->httpRequestObject->customerQueryCacheObject->queryCacheIncrement(
+							customerId: $this->httpObject->httpRequestObject->customerId,
 							queryCacheKey: $sqlConfig['queryCacheKey']
 						);
 						if ($cacheReqCount === 1) {
@@ -1662,7 +1662,6 @@ trait AppTrait
 		return $toBeCached;
 	}
 
-
 	/**
 	 * Explain configuration
 	 * 
@@ -1675,14 +1674,14 @@ trait AppTrait
 		&$sqlConfig,
 		$flag
 	): bool {
-		$this->dataEncodeObj->startObject(
+		$this->dataEncodeObject->startObject(
 			objectKey: 'Config'
 		);
-		$this->dataEncodeObj->addKeyData(
+		$this->dataEncodeObject->addKeyData(
 			objectKey: 'Route',
-			data: $this->httpObj->httpRequestObj->routeParserObj->configuredRoute
+			data: $this->httpObject->httpRequestObject->routeParserObject->configuredRoute
 		);
-		$this->dataEncodeObj->addKeyData(
+		$this->dataEncodeObject->addKeyData(
 			objectKey: 'Payload',
 			data: $this->getExplainParam(
 				sqlConfig: $sqlConfig,
@@ -1690,8 +1689,29 @@ trait AppTrait
 				isFirstCall: Constant::$TRUE
 			)
 		);
-		$this->dataEncodeObj->endObject();
+		$this->dataEncodeObject->endObject();
 
 		return true;
+	}
+
+	/**
+	 * Explain configuration
+	 * 
+	 * @param array $payloadKeyArray Payload Key Array
+	 * 
+	 * @return null|string
+	 */
+	private function getPayloadKey(
+		$payloadKeyArray
+	): null|string {
+		return is_array(
+			value: $payloadKeyArray
+		) ? trim(
+			string: implode(
+				separator: ':',
+				array: $payloadKeyArray
+			),
+			characters: ':'
+		) : null;
 	}
 }

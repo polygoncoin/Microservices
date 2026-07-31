@@ -14,7 +14,7 @@
  */
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',

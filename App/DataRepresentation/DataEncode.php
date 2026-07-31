@@ -47,14 +47,14 @@ class DataEncode
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Temporary Stream
 	 * 
 	 * @var null|Object
 	 */
-	private $dataEncoderObj = null;
+	private $dataEncoderObject = null;
 
 	/**
 	 * XSLT file
@@ -80,12 +80,12 @@ class DataEncode
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -98,8 +98,8 @@ class DataEncode
 	public function init(
 		$header = true
 	): void {
-		if ($this->httpObj->httpReqData['server']['httpMethod'] === Constant::$GET) {
-			if ($this->httpObj->httpResponseObj->outputRepresentation === 'PHP') {
+		if ($this->httpObject->httpReqData['server']['httpMethod'] === Constant::$GET) {
+			if ($this->httpObject->httpResponseObject->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
 				$this->tempStream = fopen(
@@ -108,7 +108,7 @@ class DataEncode
 				);
 			}
 		} else {
-			if ($this->httpObj->httpResponseObj->outputRepresentation === 'PHP') {
+			if ($this->httpObject->httpResponseObject->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {
 				$this->tempStream = fopen(
@@ -117,15 +117,15 @@ class DataEncode
 				);
 			}
 		}
-		switch ($this->httpObj->httpResponseObj->outputRepresentation) {
+		switch ($this->httpObject->httpResponseObject->outputRepresentation) {
 			case 'JSON':
-				$this->dataEncoderObj = new JsonEncode(
+				$this->dataEncoderObject = new JsonEncode(
 					tempStream: $this->tempStream,
 					header: $header
 				);
 				break;
 			case 'PHP':
-				$this->dataEncoderObj = new PhpEncode(
+				$this->dataEncoderObject = new PhpEncode(
 					tempStream: $this->tempStream,
 					header: $header
 				);
@@ -133,7 +133,7 @@ class DataEncode
 			case 'XML':
 			case 'XSLT':
 			case 'HTML':
-				$this->dataEncoderObj = new XmlEncode(
+				$this->dataEncoderObject = new XmlEncode(
 					tempStream: $this->tempStream,
 					header: $header
 				);
@@ -153,7 +153,7 @@ class DataEncode
 	public function startArray(
 		$objectKey = null
 	): void {
-		$this->dataEncoderObj->startArray(
+		$this->dataEncoderObject->startArray(
 			objectKey: $objectKey
 		);
 	}
@@ -169,7 +169,7 @@ class DataEncode
 	public function addArrayData(
 		$data
 	): void {
-		$this->dataEncoderObj->addArrayData(
+		$this->dataEncoderObject->addArrayData(
 			data: $data
 		);
 	}
@@ -181,7 +181,7 @@ class DataEncode
 	 */
 	public function endArray(): void
 	{
-		$this->dataEncoderObj->endArray();
+		$this->dataEncoderObject->endArray();
 	}
 
 	/**
@@ -195,7 +195,7 @@ class DataEncode
 	public function startObject(
 		$objectKey = null
 	): void {
-		$this->dataEncoderObj->startObject(
+		$this->dataEncoderObject->startObject(
 			objectKey: $objectKey
 		);
 	}
@@ -213,7 +213,7 @@ class DataEncode
 		$objectKey,
 		$data
 	): void {
-		$this->dataEncoderObj->addKeyData(
+		$this->dataEncoderObject->addKeyData(
 			objectKey: $objectKey,
 			data: $data
 		);
@@ -226,7 +226,7 @@ class DataEncode
 	 */
 	public function endObject(): void
 	{
-		$this->dataEncoderObj->endObject();
+		$this->dataEncoderObject->endObject();
 	}
 
 	/**
@@ -239,7 +239,7 @@ class DataEncode
 	public function encode(
 		$data
 	): void {
-		$this->dataEncoderObj->encode(
+		$this->dataEncoderObject->encode(
 			data: $data
 		);
 	}
@@ -253,7 +253,7 @@ class DataEncode
 	 */
 	public function appendData(&$data): void
 	{
-		$this->dataEncoderObj->appendData(
+		$this->dataEncoderObject->appendData(
 			data: $data
 		);
 	}
@@ -270,7 +270,7 @@ class DataEncode
 		$objectKey,
 		&$data
 	): void {
-		$this->dataEncoderObj->appendKeyData(
+		$this->dataEncoderObject->appendKeyData(
 			objectKey: $objectKey,
 			data: $data
 		);
@@ -283,7 +283,7 @@ class DataEncode
 	 */
 	public function end(): void
 	{
-		$this->dataEncoderObj->end();
+		$this->dataEncoderObject->end();
 	}
 
 	/**
@@ -297,7 +297,7 @@ class DataEncode
 
 		switch (true) {
 			case (
-					$this->httpObj->httpResponseObj->outputRepresentation === 'XSLT'
+					$this->httpObject->httpResponseObject->outputRepresentation === 'XSLT'
 					&& $this->xsltFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->xsltFile
@@ -311,7 +311,7 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->httpResponseObj->outputRepresentation === 'HTML'
+					$this->httpObject->httpResponseObject->outputRepresentation === 'HTML'
 					&& $this->htmlFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->htmlFile
@@ -325,7 +325,7 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->httpResponseObj->outputRepresentation === 'PHP'
+					$this->httpObject->httpResponseObject->outputRepresentation === 'PHP'
 					&& $this->phpFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->phpFile
@@ -368,7 +368,7 @@ class DataEncode
 
 		switch (true) {
 			case (
-					$this->httpObj->httpResponseObj->outputRepresentation === 'XSLT'
+					$this->httpObject->httpResponseObject->outputRepresentation === 'XSLT'
 					&& $this->xsltFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->xsltFile
@@ -382,7 +382,7 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->httpResponseObj->outputRepresentation === 'HTML'
+					$this->httpObject->httpResponseObject->outputRepresentation === 'HTML'
 					&& $this->htmlFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->htmlFile
@@ -396,13 +396,13 @@ class DataEncode
 				);
 				break;
 			case (
-					$this->httpObj->httpResponseObj->outputRepresentation === 'PHP'
+					$this->httpObject->httpResponseObject->outputRepresentation === 'PHP'
 					&& $this->phpFile !== Constant::$NULL
 					&& file_exists(
 						filename: $this->phpFile
 					)
 				):
-				$finalArray = &$this->dataEncoderObj->finalArray;
+				$finalArray = &$this->dataEncoderObject->finalArray;
 				@ob_clean();
 				include_once $this->phpFile;
 				$streamContent = ob_get_clean();

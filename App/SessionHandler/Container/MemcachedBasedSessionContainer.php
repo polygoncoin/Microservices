@@ -37,7 +37,7 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	public $memcachedServerHostname = null;
 	public $memcachedServerPort = null;
 
-	private $memcachedServerObj = null;
+	private $memcachedServerObject = null;
 
 	/**
 	 * Initialize
@@ -65,7 +65,7 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool|string {
 		try {
-			if ($data = $this->memcachedServerObj->get($sessionId)) {
+			if ($data = $this->memcachedServerObject->get($sessionId)) {
 				return $this->decryptData(
 					cipherText: $data
 				);
@@ -92,7 +92,7 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	): bool|int {
 		try {
 			if (
-				$this->memcachedServerObj->set(
+				$this->memcachedServerObject->set(
 					$sessionId,
 					$this->encryptData(
 						plainText: $sessionData
@@ -142,7 +142,7 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	): bool {
 		try {
 			if (
-				$this->memcachedServerObj->touch(
+				$this->memcachedServerObject->touch(
 					$sessionId,
 					$this->sessionMaxLifetime
 				)
@@ -181,7 +181,7 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool {
 		try {
-			if ($this->memcachedServerObj->delete($sessionId)) {
+			if ($this->memcachedServerObject->delete($sessionId)) {
 				return true;
 			}
 		} catch (\Exception $e) {
@@ -199,7 +199,7 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 	 */
 	public function closeSession(): void
 	{
-		$this->memcachedServerObj = null;
+		$this->memcachedServerObject = null;
 	}
 
 	/**
@@ -221,8 +221,8 @@ class MemcachedBasedSessionContainer extends SessionContainerHelper implements
 				);
 			}
 
-			$this->memcachedServerObj = new \Memcached(); // phpcs:ignore
-			$this->memcachedServerObj->addServer(
+			$this->memcachedServerObject = new \Memcached(); // phpcs:ignore
+			$this->memcachedServerObject->addServer(
 				$this->memcachedServerHostname,
 				$this->memcachedServerPort
 			);

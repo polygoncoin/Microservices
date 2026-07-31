@@ -13,10 +13,11 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'name',
@@ -38,21 +39,21 @@ return [
 		[
 			'column' => 'is_approved',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$YES
+			'activeRequestDataKeySubKey' => Constant::$YES
 		],
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
 		]
@@ -61,7 +62,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],

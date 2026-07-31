@@ -13,6 +13,7 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
@@ -60,7 +61,7 @@ return [
 	//                 'activeRequestDataKeySubKey' => 'address:id'
 	//             ]
 	//         ],
-	//         '__METHOD__' => 'PATCH',
+	//         '__METHOD__' => Constant::$PATCH,
 	//         '__PAYLOAD__' => [
 	//             [
 	//                 'column' => 'address',
@@ -70,5 +71,5 @@ return [
 	//         ]
 	//     ]
 	// ],
-	'isTransaction' => $Constant::$FALSE
+	'isTransaction' => Constant::$FALSE
 ];

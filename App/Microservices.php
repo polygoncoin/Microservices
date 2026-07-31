@@ -61,7 +61,7 @@ class Microservices
 	 * 
 	 * @var null|Http
 	 */
-	public $httpObj = null;
+	public $httpObject = null;
 
 	/**
 	 * Constructor
@@ -73,7 +73,7 @@ class Microservices
 		&$httpReqData
 	) {
 		$this->httpReqData = &$httpReqData;
-		$this->httpObj = new Http(
+		$this->httpObject = new Http(
 			$this->httpReqData
 		);
 	}
@@ -89,7 +89,7 @@ class Microservices
 			$this->startMicroTimestamp = microtime(as_float: Constant::$TRUE);
 		}
 
-		return $this->httpObj->init();
+		return $this->httpObject->init();
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Microservices
 	 */
 	public function process(): mixed
 	{
-		$this->httpObj->initRequest();
+		$this->httpObject->initRequest();
 
 		$class = null;
 
@@ -117,7 +117,7 @@ class Microservices
 			// Requires auth token
 			default:
 				$gateway = new Gateway(
-					httpObj: $this->httpObj
+					httpObject: $this->httpObject
 				);
 				$gateway->init();
 				$gateway = null;
@@ -130,7 +130,7 @@ class Microservices
 		try {
 			if ($class !== Constant::$NULL) {
 				$api = new $class(
-					httpObj: $this->httpObj
+					httpObject: $this->httpObject
 				);
 				if ($api->init()) {
 					$this->startData();
@@ -166,10 +166,10 @@ class Microservices
 	 */
 	public function startData(): void
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return;
 		}
-		$this->httpObj->httpResponseObj->dataEncodeObj->startObject();
+		$this->httpObject->httpResponseObject->dataEncodeObject->startObject();
 	}
 
 	/**
@@ -179,12 +179,12 @@ class Microservices
 	 */
 	public function addStatus(): void
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return;
 		}
-		$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
+		$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
 			objectKey: 'Status',
-			data: $this->httpObj->httpResponseObj->httpStatus
+			data: $this->httpObject->httpResponseObject->httpStatus
 		);
 	}
 
@@ -195,7 +195,7 @@ class Microservices
 	 */
 	public function addPerformance(): void
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return;
 		}
 		if (Env::$OUTPUT_PERFORMANCE_STATS) {
@@ -207,26 +207,26 @@ class Microservices
 				num: memory_get_peak_usage() / 1000
 			);
 
-			$this->httpObj->httpResponseObj->dataEncodeObj->startObject(
+			$this->httpObject->httpResponseObject->dataEncodeObject->startObject(
 				objectKey: 'Stats'
 			);
-			$this->httpObj->httpResponseObj->dataEncodeObj->startObject(
+			$this->httpObject->httpResponseObject->dataEncodeObject->startObject(
 				objectKey: 'Performance'
 			);
-			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
+			$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
 				objectKey: 'total-time-taken',
 				data: "{$time} ms"
 			);
-			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
+			$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
 				objectKey: 'peak-memory-usage',
 				data: "{$memory} KB"
 			);
-			$this->httpObj->httpResponseObj->dataEncodeObj->endObject();
-			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
+			$this->httpObject->httpResponseObject->dataEncodeObject->endObject();
+			$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
 				objectKey: 'getrusage',
 				data: getrusage()
 			);
-			$this->httpObj->httpResponseObj->dataEncodeObj->endObject();
+			$this->httpObject->httpResponseObject->dataEncodeObject->endObject();
 		}
 	}
 
@@ -237,7 +237,7 @@ class Microservices
 	 */
 	public function returnPerformance(): array
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return [];
 		}
 		$returnPerformance = [];
@@ -271,11 +271,11 @@ class Microservices
 	 */
 	public function endData(): void
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return;
 		}
-		$this->httpObj->httpResponseObj->dataEncodeObj->endObject();
-		$this->httpObj->httpResponseObj->dataEncodeObj->end();
+		$this->httpObject->httpResponseObject->dataEncodeObject->endObject();
+		$this->httpObject->httpResponseObject->dataEncodeObject->end();
 	}
 
 	/**
@@ -285,11 +285,11 @@ class Microservices
 	 */
 	public function outputResults(): void
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return;
 		}
-		http_response_code(response_code: $this->httpObj->httpResponseObj->httpStatus);
-		$this->httpObj->httpResponseObj->dataEncodeObj->streamData();
+		http_response_code(response_code: $this->httpObject->httpResponseObject->httpStatus);
+		$this->httpObject->httpResponseObject->dataEncodeObject->streamData();
 	}
 
 	/**
@@ -299,10 +299,10 @@ class Microservices
 	 */
 	public function returnResults(): bool|string
 	{
-		if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 			return false;
 		}
-		return $this->httpObj->httpResponseObj->dataEncodeObj->getData();
+		return $this->httpObject->httpResponseObject->dataEncodeObject->getData();
 	}
 
 	/**
@@ -312,49 +312,49 @@ class Microservices
 	 */
 	public function getHeaders(): array
 	{
-		$headerArr = [];
+		$headerArray = [];
 
-		// $headerArr['Access-Control-Allow-Origin'] = $this->httpReqData['server']['domainName'];
-		$headerArr['Vary'] = 'Origin';
-		$headerArr['Access-Control-Allow-Headers'] = '*';
+		// $headerArray['Access-Control-Allow-Origin'] = $this->httpReqData['server']['domainName'];
+		$headerArray['Vary'] = 'Origin';
+		$headerArray['Access-Control-Allow-Headers'] = '*';
 
-		$headerArr['Referrer-Policy'] = 'origin';
-		$headerArr['X-Frame-Options'] = 'SAMEORIGIN';
-		$headerArr['X-Content-Type-Options'] = 'nosniff';
-		$headerArr['Cross-Origin-Resource-Policy'] = 'same-origin';
-		$headerArr['Cross-Origin-Embedder-Policy'] = 'unsafe-none';
-		$headerArr['Cross-Origin-Opener-Policy'] = 'unsafe-none';
+		$headerArray['Referrer-Policy'] = 'origin';
+		$headerArray['X-Frame-Options'] = 'SAMEORIGIN';
+		$headerArray['X-Content-Type-Options'] = 'nosniff';
+		$headerArray['Cross-Origin-Resource-Policy'] = 'same-origin';
+		$headerArray['Cross-Origin-Embedder-Policy'] = 'unsafe-none';
+		$headerArray['Cross-Origin-Opener-Policy'] = 'unsafe-none';
 
 		// Access-Control header are received during OPTIONS request
 		if ($this->httpReqData['server']['httpMethod'] === Constant::$OPTIONS) {
 			// may also be using PUT, PATCH, HEAD etc
 			$methods = 'GET, QUERY, POST, PUT, PATCH, DELETE, OPTIONS';
-			$headerArr['Access-Control-Allow-Methods'] = $methods;
+			$headerArray['Access-Control-Allow-Methods'] = $methods;
 		} else {
-			if ($this->httpObj->httpResponseObj === Constant::$NULL) {
+			if ($this->httpObject->httpResponseObject === Constant::$NULL) {
 				$outputRepresentation = Env::$outputRepresentation;
 			} else {
-				$outputRepresentation = $this->httpObj->httpResponseObj->outputRepresentation;
+				$outputRepresentation = $this->httpObject->httpResponseObject->outputRepresentation;
 			}
 			switch ($outputRepresentation) {
 				case 'XML':
 				case 'XSLT':
-					$headerArr['Content-Type'] = 'text/xml; charset=utf-8';
+					$headerArray['Content-Type'] = 'text/xml; charset=utf-8';
 					break;
 				case 'JSON':
-					$headerArr['Content-Type'] = 'application/json; charset=utf-8';
+					$headerArray['Content-Type'] = 'application/json; charset=utf-8';
 					break;
 				case 'HTML':
 				case 'PHP':
-					$headerArr['Content-Type'] = 'text/html; charset=utf-8';
+					$headerArray['Content-Type'] = 'text/html; charset=utf-8';
 					break;
 			}
 			$cacheControl = 'no-store, no-cache, must-revalidate, max-age=0';
-			$headerArr['Cache-Control'] = $cacheControl;
-			$headerArr['Pragma'] = 'no-cache';
+			$headerArray['Cache-Control'] = $cacheControl;
+			$headerArray['Pragma'] = 'no-cache';
 		}
 
-		return $headerArr;
+		return $headerArray;
 	}
 
 	/**

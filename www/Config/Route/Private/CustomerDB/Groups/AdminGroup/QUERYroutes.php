@@ -13,90 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
 
-return [
-	'category' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'CustomerDB'
-			. DIRECTORY_SEPARATOR . 'Groups'
-			. DIRECTORY_SEPARATOR . 'AdminGroup'
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Category-all.php',
-		'search' => [
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'AdminGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Category-search.php',
-		],
-		'{id:int}' => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'AdminGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Category-Single.php',
-		]
-	],
-	'registration' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'CustomerDB'
-			. DIRECTORY_SEPARATOR . 'Groups'
-			. DIRECTORY_SEPARATOR . 'AdminGroup'
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Registration-all.php',
-		'{id:int}'  => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'AdminGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Registration-single.php',
-		],
-	],
-	'address' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'CustomerDB'
-			. DIRECTORY_SEPARATOR . 'Groups'
-			. DIRECTORY_SEPARATOR . 'AdminGroup'
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Address-all.php',
-		'{id:int}'  => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'AdminGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Address-single.php',
-		],
-	],
-	'registration-with-address' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'CustomerDB'
-			. DIRECTORY_SEPARATOR . 'Groups'
-			. DIRECTORY_SEPARATOR . 'AdminGroup'
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Registration-With-Address-all.php',
-		'{id:int}'  => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
-				. DIRECTORY_SEPARATOR . 'AdminGroup'
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Registration-With-Address-single.php',
-		],
-	],
-	$Env::$routesRequestRoute => [
-		'__FILE__' => $Constant::$FALSE,
-		'{method:string}' => [
-			'dataType' => DatabaseServerDataType::$HttpMethod,
-			'__FILE__' => $Constant::$FALSE
-		]
-	]
-];
+return array_merge(
+	require $this->httpObject->httpRequestObject->routesDirectory
+		. DIRECTORY_SEPARATOR . 'CustomerDB'
+		. DIRECTORY_SEPARATOR . 'Common'
+		. DIRECTORY_SEPARATOR . 'QUERYroutes.php',
+);

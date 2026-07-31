@@ -15,14 +15,23 @@
 
 namespace Microservices\TestCase;
 
+use Microservices\App\Constant;
+use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
+$headerArray = $defaultHeaderArray;
+$headerArray[] = $contentType;
+
+$paramArray = [
+	['id' => 1],
+	['id' => 2]
+];
 
 return Web::trigger(
 	homeURL: $homeURL,
-	method: 'QUERY',
-	route: '/category&orderBy={"id":"DESC"}',
-	header: $headerArr,
-	payload: ''
+	method: Constant::$QUERY,
+	route: '/category',
+	header: $headerArray,
+	payload: json_encode(value: $paramArray)
 );
+

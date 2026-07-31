@@ -41,17 +41,17 @@ class Category implements CronInterface
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**

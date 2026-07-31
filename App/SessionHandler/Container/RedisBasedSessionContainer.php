@@ -41,7 +41,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	public $redisServerPassword = null;
 	public $redisServerDatabase = null;
 
-	private $redisServerObj = null;
+	private $redisServerObject = null;
 
 	/**
 	 * Initialize
@@ -70,8 +70,8 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	): bool|string {
 		try {
 			if (
-				$this->redisServerObj->exists($sessionId)
-				&& ($data = $this->redisServerObj->get($sessionId))
+				$this->redisServerObject->exists($sessionId)
+				&& ($data = $this->redisServerObject->get($sessionId))
 			) {
 				return $this->decryptData(
 					cipherText: $data
@@ -99,7 +99,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	): bool|int {
 		try {
 			if (
-				$this->redisServerObj->set(
+				$this->redisServerObject->set(
 					$sessionId,
 					$this->encryptData(
 						plainText: $sessionData
@@ -149,7 +149,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	): bool {
 		try {
 			if (
-				$this->redisServerObj->expire(
+				$this->redisServerObject->expire(
 					$sessionId,
 					$this->sessionMaxLifetime
 				)
@@ -188,7 +188,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool {
 		try {
-			if ($this->redisServerObj->del($sessionId)) {
+			if ($this->redisServerObject->del($sessionId)) {
 				return true;
 			}
 		} catch (\Exception $e) {
@@ -206,7 +206,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 	 */
 	public function closeSession(): void
 	{
-		$this->redisServerObj = null;
+		$this->redisServerObject = null;
 	}
 
 	/**
@@ -228,7 +228,7 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 				);
 			}
 
-			$connParamArr = [
+			$connParamArray = [
 				'host' => $this->redisServerHostname,
 				'port' => (int)$this->redisServerPort,
 				'connectTimeout' => 2.5
@@ -238,16 +238,16 @@ class RedisBasedSessionContainer extends SessionContainerHelper implements
 				$this->redisServerUsername !== Constant::$NULL
 				&& $this->redisServerPassword !== Constant::$NULL
 			) {
-				$connParamArr['auth'] = [
+				$connParamArray['auth'] = [
 					$this->redisServerUsername,
 					$this->redisServerPassword
 				];
 			}
 
-			$this->redisServerObj = new \Redis( // phpcs:ignore
-				$connParamArr
+			$this->redisServerObject = new \Redis( // phpcs:ignore
+				$connParamArray
 			);
-			$this->redisServerObj->select(
+			$this->redisServerObject->select(
 				$this->redisServerDatabase
 			);
 		} catch (\Exception $e) {

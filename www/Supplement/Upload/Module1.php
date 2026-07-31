@@ -41,17 +41,17 @@ class Module1 implements UploadInterface
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -86,8 +86,8 @@ class Module1 implements UploadInterface
 	 */
 	private function getLocation(): string
 	{
-		return Constant::$DROPBOX_PRIVATE_DIR
-			. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->customerId
+		return Constant::$DROPBOX_PRIVATE_DIRECTORY
+			. DIRECTORY_SEPARATOR . $this->httpObject->httpRequestObject->customerId
 			. DIRECTORY_SEPARATOR . 'test.png';
 	}
 }

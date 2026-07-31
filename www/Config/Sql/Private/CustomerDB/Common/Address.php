@@ -22,7 +22,7 @@ return [
 			'functionArgs' => [
 				'table' => ['custom', 'address'],
 				'primary' => ['custom', 'id'],
-				'id' => ['routeParamArr', 'id']
+				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid address id'
 		],

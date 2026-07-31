@@ -41,31 +41,31 @@ class Validator
 	 * 
 	 * @var null|ValidatorInterface
 	 */
-	private $validatorObj = null;
+	private $validatorObject = null;
 
 	/**
 	 * HTTP object
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
-		if ($this->httpObj->httpRequestObj->customerDbObj->dbServerDatabase === Env::$gDbServerDatabase) {
-			$this->validatorObj = new GlobalValidator(
-				httpObj: $this->httpObj
+		$this->httpObject = &$httpObject;
+		if ($this->httpObject->httpRequestObject->customerDbObject->dbServerDatabase === Env::$gDbServerDatabase) {
+			$this->validatorObject = new GlobalValidator(
+				httpObject: $this->httpObject
 			);
 		} else {
-			$this->validatorObj = new CustomerValidator(
-				httpObj: $this->httpObj
+			$this->validatorObject = new CustomerValidator(
+				httpObject: $this->httpObject
 			);
 		}
 	}
@@ -81,20 +81,20 @@ class Validator
 		&$validationConfig
 	): array {
 		if (
-			isset(($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr']))
+			isset(($this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray']))
 			&& count(
-				value: $this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr']
+				value: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray']
 			) > 0
 		) {
 			if (
-				([$isValidData, $errorArr] = $this->validateRequired())
+				([$isValidData, $errorArray] = $this->validateRequired())
 				&& !$isValidData
 			) {
-				return [$isValidData, $errorArr];
+				return [$isValidData, $errorArray];
 			}
 		}
 
-		return $this->validatorObj->validate(
+		return $this->validatorObject->validate(
 			validationConfig: $validationConfig
 		);
 	}
@@ -107,23 +107,23 @@ class Validator
 	private function validateRequired(): array
 	{
 		$isValidData = true;
-		$errorArr = [];
+		$errorArray = [];
 		// Required fields payload validation
-		if (!empty($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr']['payload'])) {
-			foreach ($this->httpObj->httpRequestObj->activeRequestData['requiredFieldArr']['payload'] as $activeRequestDataKeySubKey) {
+		if (!empty($this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray']['payload'])) {
+			foreach ($this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray']['payload'] as $activeRequestDataKeySubKey) {
 				if (
 					!in_array(
 						needle: $activeRequestDataKeySubKey,
-						haystack: $this->httpObj->httpRequestObj->activeRequestData['payload'],
+						haystack: $this->httpObject->httpRequestObject->activeRequestData['payload'],
 						strict: Constant::$TRUE
 					)
 				) {
-					$errorArr[] = 'Missing required payload: ' . $activeRequestDataKeySubKey;
+					$errorArray[] = 'Missing required payload: ' . $activeRequestDataKeySubKey;
 					$isValidData = false;
 				}
 			}
 		}
 
-		return [$isValidData, $errorArr];
+		return [$isValidData, $errorArray];
 	}
 }

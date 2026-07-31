@@ -58,17 +58,18 @@ class Web
 		$curlConfig[\CURLOPT_HEADER] = 1;
 
 		switch ($method) {
-			case 'GET':
+			case Constant::$GET:
 				break;
-			case 'POST':
+			case Constant::$POST:
 				$curlConfig[\CURLOPT_POST] = true;
 				if ($fileLocation === Constant::$NULL) {
 					$curlConfig[\CURLOPT_POSTFIELDS] = $payload;
 				}
 				break;
-			case 'PUT':
-			case 'PATCH':
-			case 'DELETE':
+			case Constant::$QUERY:
+			case Constant::$PUT:
+			case Constant::$PATCH:
+			case Constant::$DELETE:
 				$curlConfig[\CURLOPT_CUSTOMREQUEST] = $method;
 				if ($fileLocation === Constant::$NULL) {
 					$curlConfig[\CURLOPT_POSTFIELDS] = $payload;
@@ -80,7 +81,7 @@ class Web
 		$cookieFileName = '/' . md5(
 			$homeURL
 		) . '-cookies.txt';
-		$cookieFile = Constant::$WEB_COOKIES_DIR . $cookieFileName;
+		$cookieFile = Constant::$WEB_COOKIES_DIRECTORY . $cookieFileName;
 		$curlConfig[\CURLOPT_COOKIEJAR] = $cookieFile; // Store cookies
 		$curlConfig[\CURLOPT_COOKIEFILE] = $cookieFile; // Read cookies
 
@@ -120,7 +121,7 @@ class Web
 		);
 		if ($fileLocation !== Constant::$NULL) {
 			switch ($method) {
-				case 'POST':
+				case Constant::$POST:
 					// // Create a CURLFile object
 					// if (function_exists('curl_file_create')) {
 					//     $cFile = curl_file_create($fileLocation, mime_content_type($fileLocation), basename($fileLocation));
@@ -138,9 +139,10 @@ class Web
 						'file' => $curlFile
 					];
 					break;
-				case 'PUT':
-				case 'PATCH':
-				case 'DELETE':
+				case Constant::$QUERY:
+				case Constant::$PUT:
+				case Constant::$PATCH:
+				case Constant::$DELETE:
 					$fp = fopen($fileLocation, 'rb');
 					$curlConfig[\CURLOPT_INFILE] = $fp;
 					$curlConfig[\CURLOPT_INFILESIZE] = filesize($fileLocation);
@@ -171,8 +173,8 @@ class Web
 			option: \CURLINFO_HEADER_SIZE
 		);
 
-		$responseHeaderArr = self::httpParseHeaders(
-			rawHeaderArr: substr(
+		$responseHeaderArray = self::httpParseHeaders(
+			rawHeaderArray: substr(
 				string: $curlResponse,
 				offset: 0,
 				length: $headerSize
@@ -222,7 +224,7 @@ class Web
 
 		$return['HttpResponse'] = [
 			'HttpCode' => $responseHttpCode,
-			'Headers' => $responseHeaderArr,
+			'Headers' => $responseHeaderArray,
 			'ContentType' => $responseContentType,
 			'ResponseBody' => $responseBody
 		];
@@ -314,21 +316,21 @@ class Web
 	/**
 	 * Generates raw header into array
 	 * 
-	 * @param string $rawHeaderArr Raw header from cURL response
+	 * @param string $rawHeaderArray Raw header from cURL response
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private static function httpParseHeaders(
-		$rawHeaderArr
+		$rawHeaderArray
 	): array {
-		$headerArr = [];
+		$headerArray = [];
 		$headerName = '';
 
 		foreach (
 			explode(
 				separator: "\n",
-				string: $rawHeaderArr
+				string: $rawHeaderArray
 			) as $index => $h
 		) {
 			$h = explode(
@@ -338,17 +340,17 @@ class Web
 			);
 
 			if (isset($h[1])) {
-				if (!isset($headerArr[$h[0]])) {
-					$headerArr[$h[0]] = trim(
+				if (!isset($headerArray[$h[0]])) {
+					$headerArray[$h[0]] = trim(
 						string: $h[1]
 					);
 				} elseif (
-					isset($headerArr[$h[0]])
+					isset($headerArray[$h[0]])
 					&& is_array(
-						value: $headerArr[$h[0]]
+						value: $headerArray[$h[0]]
 					)
 				) {
-					$headerArr[$h[0]] = array_merge($headerArr[$h[0]],
+					$headerArray[$h[0]] = array_merge($headerArray[$h[0]],
 						[
 							trim(
 								string: $h[1]
@@ -356,7 +358,7 @@ class Web
 						]
 					);
 				} else {
-					$headerArr[$h[0]] = array_merge([$headerArr[$h[0]]],
+					$headerArray[$h[0]] = array_merge([$headerArray[$h[0]]],
 						[
 							trim(
 								string: $h[1]
@@ -374,24 +376,24 @@ class Web
 						length: 1
 					) == "\t"
 				) {
-					$headerArr[$headerName] .= "\r\n\t" . trim(
+					$headerArray[$headerName] .= "\r\n\t" . trim(
 						string: $h[0]
 					);
 				} elseif (!$headerName) {
-					$headerArr[0] = trim(
+					$headerArray[0] = trim(
 						string: $h[0]
 					);
 				}
 			}
 		}
 
-		return $headerArr;
+		return $headerArray;
 	}
 
 	/**
 	 * Generates XML Payload
 	 * 
-	 * @param array $xmlParamArr     Xml param's
+	 * @param array $xmlParamArray     Xml param's
 	 * @param array $payload         Payload
 	 * @param bool  $rowTagStartFlag Flag
 	 * 
@@ -399,26 +401,26 @@ class Web
 	 * @throws \Exception
 	 */
 	public static function genXmlPayload(
-		&$xmlParamArr,
+		&$xmlParamArray,
 		&$payload,
 		$rowTagStartFlag = false
 	): void {
-		if (empty($xmlParamArr)) {
+		if (empty($xmlParamArray)) {
 			return;
 		}
 
 		$rowTagStartFlag = false;
 
-		$isObject = (isset($xmlParamArr[0])) ? Constant::$FALSE : Constant::$TRUE;
+		$isObject = (isset($xmlParamArray[0])) ? Constant::$FALSE : Constant::$TRUE;
 
 		if (
 			!$isObject
 			&& count(
-				value: $xmlParamArr
+				value: $xmlParamArray
 			) === 1
 		) {
-			$xmlParamArr = $xmlParamArr[0];
-			if (empty($xmlParamArr)) {
+			$xmlParamArray = $xmlParamArray[0];
+			if (empty($xmlParamArray)) {
 				return;
 			}
 			$isObject = true;
@@ -432,7 +434,7 @@ class Web
 		if ($rowTagStartFlag) {
 			$payload .= '<Record>';
 		}
-		foreach ($xmlParamArr as $column => &$value) {
+		foreach ($xmlParamArray as $column => &$value) {
 			if ($isObject) {
 				$payload .= "<{$column}>";
 			}
@@ -441,9 +443,9 @@ class Web
 					value: $value
 				)
 			) {
-				$_xmlParamArr = $value;
+				$_xmlParamArray = $value;
 				self::genXmlPayload(
-					xmlParamArr: $_xmlParamArr,
+					xmlParamArray: $_xmlParamArray,
 					payload: $payload,
 					rowTagStartFlag: $rowTagStartFlag
 				);

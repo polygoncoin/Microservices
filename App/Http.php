@@ -38,14 +38,14 @@ class Http
 	 * 
 	 * @var null|HttpRequest
 	 */
-	public $httpRequestObj = null;
+	public $httpRequestObject = null;
 
 	/**
 	 * Microservices HTTP response
 	 * 
 	 * @var null|HttpResponse
 	 */
-	public $httpResponseObj = null;
+	public $httpResponseObject = null;
 
 	/**
 	 * HTTP request data
@@ -72,27 +72,27 @@ class Http
 	 */
 	public function init(): bool
 	{
-		$this->httpRequestObj = new HttpRequest(
-			httpObj: $this
+		$this->httpRequestObject = new HttpRequest(
+			httpObject: $this
 		);
-		$this->httpResponseObj = new HttpResponse(
-			httpObj: $this
+		$this->httpResponseObject = new HttpResponse(
+			httpObject: $this
 		);
 
-		if ($this->httpRequestObj->isPrivateRequest) {
-			$this->httpRequestObj->ROUTES_DIR = Constant::$ROUTES_PRIVATE_DIR;
-			$this->httpRequestObj->QUERIES_DIR = Constant::$QUERIES_PRIVATE_DIR;
+		if ($this->httpRequestObject->isPrivateRequest) {
+			$this->httpRequestObject->routesDirectory = Constant::$ROUTES_CONFIG_PRIVATE_DIRECTORY;
+			$this->httpRequestObject->sqlDirectory = Constant::$SQL_CONFIG_PRIVATE_DIRECTORY;
 
-			$this->httpResponseObj->HTML_DIR = Constant::$HTML_PRIVATE_DIR;
-			$this->httpResponseObj->PHP_DIR = Constant::$PHP_PRIVATE_DIR;
-			$this->httpResponseObj->XSLT_DIR = Constant::$XSLT_PRIVATE_DIR;
+			$this->httpResponseObject->htmlDirectory = Constant::$HTML_PRIVATE_DIRECTORY;
+			$this->httpResponseObject->phpDirectory = Constant::$PHP_PRIVATE_DIRECTORY;
+			$this->httpResponseObject->xsltDirectory = Constant::$XSLT_PRIVATE_DIRECTORY;
 		} else {
-			$this->httpRequestObj->ROUTES_DIR = Constant::$ROUTES_PUBLIC_DIR;
-			$this->httpRequestObj->QUERIES_DIR = Constant::$QUERIES_PUBLIC_DIR;
+			$this->httpRequestObject->routesDirectory = Constant::$ROUTES_CONFIG_PUBLIC_DIRECTORY;
+			$this->httpRequestObject->sqlDirectory = Constant::$SQL_CONFIG_PUBLIC_DIRECTORY;
 
-			$this->httpResponseObj->HTML_DIR = Constant::$HTML_PUBLIC_DIR;
-			$this->httpResponseObj->PHP_DIR = Constant::$PHP_PUBLIC_DIR;
-			$this->httpResponseObj->XSLT_DIR = Constant::$XSLT_PUBLIC_DIR;
+			$this->httpResponseObject->htmlDirectory = Constant::$HTML_PUBLIC_DIRECTORY;
+			$this->httpResponseObject->phpDirectory = Constant::$PHP_PUBLIC_DIRECTORY;
+			$this->httpResponseObject->xsltDirectory = Constant::$XSLT_PUBLIC_DIRECTORY;
 		}
 
 		return true;
@@ -105,7 +105,7 @@ class Http
 	 */
 	public function initRequest(): void
 	{
-		$this->httpRequestObj->init();
+		$this->httpRequestObject->init();
 	}
 
 	/**
@@ -115,6 +115,6 @@ class Http
 	 */
 	public function initResponse(): void
 	{
-		$this->httpResponseObj->init();
+		$this->httpResponseObject->init();
 	}
 }

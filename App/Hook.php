@@ -39,46 +39,46 @@ class Hook
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Hook object
 	 * 
 	 * @var null|HookInterface
 	 */
-	private $hookObj = null;
+	private $hookObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
 	 * Trigger Hook
 	 * 
-	 * @param array $hookArr Hook configuration
+	 * @param array $hookArray Hook configuration
 	 * 
 	 * @return bool
 	 */
 	public function triggerHook(
-		$hookArr
+		$hookArray
 	): bool {
 		if (
 			is_array(
-				value: $hookArr
+				value: $hookArray
 			)
 		) {
 			$indexCount = count(
-				value: $hookArr
+				value: $hookArray
 			);
 			for ($index = 0; $index < $indexCount; $index++) {
-				$hookName = $hookArr[$index];
+				$hookName = $hookArray[$index];
 
 				$hookFile = Constant::$WWW
 					. DIRECTORY_SEPARATOR . 'Hook'
@@ -90,15 +90,15 @@ class Hook
 					)
 				) {
 					$hookClass = 'Microservices\\www\\Hook\\' . $hookName;
-					$this->hookObj = new $hookClass(
-						httpObj: $this->httpObj
+					$this->hookObject = new $hookClass(
+						httpObject: $this->httpObject
 					);
-					if ($this->hookObj->init()) {
-						$this->hookObj->process();
+					if ($this->hookObject->init()) {
+						$this->hookObject->process();
 					}
 				} else {
 					throw new \Exception(
-						message: "Hook '{$hookObj}' missing",
+						message: "Hook '{$hookObject}' missing",
 						code: HttpStatus::$InternalServerError
 					);
 				}

@@ -13,6 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'countQuery' => 'SELECT count(1) as `count` FROM `category` WHERE __WHERE__',
 	'__QUERY__' => 'SELECT * FROM `category` WHERE __WHERE__',
@@ -20,7 +22,7 @@ return [
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
@@ -36,7 +38,7 @@ return [
 				[
 					'column' => 'is_deleted',
 					'activeRequestDataKey' => 'custom',
-					'activeRequestDataKeySubKey' => $Constant::$NO
+					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
@@ -52,7 +54,7 @@ return [
 						[
 							'column' => 'is_deleted',
 							'activeRequestDataKey' => 'custom',
-							'activeRequestDataKeySubKey' => $Constant::$NO
+							'activeRequestDataKeySubKey' => Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
@@ -68,7 +70,7 @@ return [
 								[
 									'column' => 'is_deleted',
 									'activeRequestDataKey' => 'custom',
-									'activeRequestDataKeySubKey' => $Constant::$NO
+									'activeRequestDataKeySubKey' => Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
@@ -83,7 +85,7 @@ return [
 			],
 		]
 	],
-	'useResultSet' => $Constant::$TRUE,
+	'useResultSet' => Constant::$TRUE,
 	'fetchDbMode' => 'Master',
-	'queryCacheKey' => $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_id'] . ':category'
+	'queryCacheKey' => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category'
 ];

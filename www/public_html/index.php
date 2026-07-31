@@ -27,10 +27,10 @@ foreach ([
 	'.env.rateLimiting',
 	'.env.route'
 ] as $envFilename) {
-	$envDataArr = parse_ini_file(
+	$envDataArray = parse_ini_file(
 		filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
 	);
-	foreach ($envDataArr as $envVarName => $envVarValue) {
+	foreach ($envDataArray as $envVarName => $envVarValue) {
 		putenv(
 			assignment: "{$envVarName}={$envVarValue}"
 		);
@@ -110,22 +110,22 @@ if (
 	)
 	&& $httpReqData['server']['domainName'] === 'localhost'
 ) {
-	$testObj = new Test($httpReqData);
+	$testObject = new Test($httpReqData);
 	switch ($httpReqData['get'][ROUTE_URL_PARAM]) {
 		case '/all-test':
-			echo '<pre>'.print_r(value: $testObj->processAllTest(), return: Constant::$TRUE);
+			echo '<pre>'.print_r(value: $testObject->processAllTest(), return: Constant::$TRUE);
 			break;
 		case '/auth-test':
-			echo '<pre>'.print_r(value: $testObj->processPrivate(), return: Constant::$TRUE);
+			echo '<pre>'.print_r(value: $testObject->processPrivate(), return: Constant::$TRUE);
 			break;
 		case '/open-test':
-			echo '<pre>'.print_r(value: $testObj->processPublic(), return: Constant::$TRUE);
+			echo '<pre>'.print_r(value: $testObject->processPublic(), return: Constant::$TRUE);
 			break;
 		case '/open-test-xml':
-			echo '<pre>'.print_r(value: $testObj->processPublicXml(), return: Constant::$TRUE);
+			echo '<pre>'.print_r(value: $testObject->processPublicXml(), return: Constant::$TRUE);
 			break;
 		case '/supp-test':
-			echo '<pre>'.print_r(value: $testObj->processPrivateSupplement(), return: Constant::$TRUE);
+			echo '<pre>'.print_r(value: $testObject->processPrivateSupplement(), return: Constant::$TRUE);
 			break;
 	}
 } else {
@@ -137,7 +137,7 @@ if (
 		return false;
 	} else {
 		ob_start();
-		[$responseHeaderArr, $responseContent, $responseCode] = Start::http(
+		[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
 			httpReqData: $httpReqData
 		);
 		@ob_clean();
@@ -145,7 +145,7 @@ if (
 		$responseCode = $responseCode ?? HttpStatus::$Ok;
 		http_response_code(response_code: $responseCode);
 
-		foreach ($responseHeaderArr as $headerName => $headerValue) {
+		foreach ($responseHeaderArray as $headerName => $headerValue) {
 			header(
 				header: "{$headerName}: {$headerValue}"
 			);

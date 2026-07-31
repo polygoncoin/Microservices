@@ -41,7 +41,7 @@ class RouteParser
 	 * 
 	 * @var string[]
 	 */
-	public $routeElementArr = [];
+	public $routeElementArray = [];
 
 	/**
 	 * Route file location
@@ -111,7 +111,7 @@ class RouteParser
 	 * 
 	 * @var null|Http
 	 */
-	public $httpObj = null;
+	public $httpObject = null;
 
 	/**
 	 * Reserved Routes Prefix
@@ -130,12 +130,12 @@ class RouteParser
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -149,22 +149,22 @@ class RouteParser
 	public function parseRoute(
 		$routeFileLocation = null
 	): void {
-		$this->routeElementArr = explode(
+		$this->routeElementArray = explode(
 			separator: '/',
 			string: trim(
-				string: $this->httpObj->httpReqData['get'][ROUTE_URL_PARAM],
+				string: $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
 				characters: '/'
 			)
 		);
 
 		if (
-			isset($this->routeElementArr[1])
-			&& $this->routeElementArr[1] === Env::$dropboxRequestRoutePrefix
+			isset($this->routeElementArray[1])
+			&& $this->routeElementArray[1] === Env::$dropboxRequestRoutePrefix
 		) {
-			if ($this->httpObj->httpRequestObj->isPrivateRequest) {
+			if ($this->httpObject->httpRequestObject->isPrivateRequest) {
 				if (
 					!CommonFunction::isEnabled(
-						httpObj: $this->httpObj,
+						httpObject: $this->httpObject,
 						feature: 'customer_enabled_dropbox_request'
 					)
 				) {
@@ -174,8 +174,8 @@ class RouteParser
 					);
 				}
 				CommonFunction::checkCidr(
-					ip: $this->httpObj->httpReqData['server']['httpRequestIp'],
-					cidrString: $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_dropbox_request_restricted_cidr']
+					ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+					cidrString: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_dropbox_request_restricted_cidr']
 				);
 			}
 			$this->routeStartingWithReservedKeywordFlag = true;
@@ -183,15 +183,15 @@ class RouteParser
 
 			$this->configuredRoute = '/' . implode(
 				separator: '/',
-				array: $this->routeElementArr
+				array: $this->routeElementArray
 			);
 
 			return;
 		}
-		if ($this->routeElementArr[0] === Env::$routesRequestRoute) {
+		if ($this->routeElementArray[0] === Env::$routesRequestRoute) {
 			if (
 				!CommonFunction::isEnabled(
-					httpObj: $this->httpObj,
+					httpObject: $this->httpObject,
 					feature: 'customer_enabled_routes_request'
 				)
 			) {
@@ -201,8 +201,8 @@ class RouteParser
 				);
 			}
 			CommonFunction::checkCidr(
-				ip: $this->httpObj->httpReqData['server']['httpRequestIp'],
-				cidrString: $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_routes_request_restricted_cidr']
+				ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+				cidrString: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_routes_request_restricted_cidr']
 			);
 
 			$this->routeStartingWithReservedKeywordFlag = true;
@@ -210,31 +210,31 @@ class RouteParser
 
 			$this->configuredRoute = '/' . implode(
 				separator: '/',
-				array: $this->routeElementArr
+				array: $this->routeElementArray
 			);
 
 			return;
 		}
 
 		$routeLastElementPos = count(
-			value: $this->routeElementArr
+			value: $this->routeElementArray
 		) - 1;
-		// if ($this->routeElementArr[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
-		//     if (isset($this->httpObj->httpReqData['server']['httpMethod'])) {
-		//         $this->httpObj->httpReqData['server']['httpMethod'] = $this->httpObj->httpReqData['server']['httpMethod'];
+		// if ($this->routeElementArray[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
+		//     if (isset($this->httpObject->httpReqData['server']['httpMethod'])) {
+		//         $this->httpObject->httpReqData['server']['httpMethod'] = $this->httpObject->httpReqData['server']['httpMethod'];
 		//     }
 		// }
 
 		if ($routeFileLocation === Constant::$NULL) {
-			if ($this->httpObj->httpRequestObj->isPrivateRequest) {
-				$routeFileLocation = $this->httpObj->httpRequestObj->ROUTES_DIR
+			if ($this->httpObject->httpRequestObject->isPrivateRequest) {
+				$routeFileLocation = $this->httpObject->httpRequestObject->routesDirectory
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'
-					. DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->activeRequestData['groupData']['customer_user_group_name']
-					. DIRECTORY_SEPARATOR . $this->httpObj->httpReqData['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->httpObject->httpRequestObject->activeRequestData['groupData']['customer_user_group_name']
+					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpMethod'] . 'routes.php';
 			} else {
-				$routeFileLocation = $this->httpObj->httpRequestObj->ROUTES_DIR
-					. DIRECTORY_SEPARATOR . $this->httpObj->httpReqData['server']['httpMethod'] . 'routes.php';
+				$routeFileLocation = $this->httpObject->httpRequestObject->routesDirectory
+					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpMethod'] . 'routes.php';
 			}
 		}
 
@@ -250,17 +250,17 @@ class RouteParser
 			$routeConfig = include $routeFileLocation;
 		} else {
 			throw new \Exception(
-				message: 'Route file missing: ' . $this->httpObj->httpReqData['server']['httpMethod'] . ' method',
+				message: 'Route file missing: ' . $this->httpObject->httpReqData['server']['httpMethod'] . ' method',
 				code: HttpStatus::$InternalServerError
 			);
 		}
 
 		$configuredRoute = [];
 		$indexCount = count(
-			value: $this->routeElementArr
+			value: $this->routeElementArray
 		);
 		for ($index = 0; $index < $indexCount; $index++) {
-			$element = $this->routeElementArr[$index];
+			$element = $this->routeElementArray[$index];
 			if ($element === '') {
 				continue;
 			}
@@ -316,11 +316,11 @@ class RouteParser
 					);
 					if ($foundIntRoute) {
 						$configuredRoute[] = $foundIntRoute;
-						$this->httpObj->httpRequestObj->activeRequestData['routeParamArr'][$foundIntParamName] =
+						$this->httpObject->httpRequestObject->activeRequestData['routeParamArray'][$foundIntParamName] =
 							(int)$element;
 					} elseif ($foundStringRoute) {
 						$configuredRoute[] = $foundStringRoute;
-						$this->httpObj->httpRequestObj->activeRequestData['routeParamArr'][$foundStringParamName] =
+						$this->httpObject->httpRequestObject->activeRequestData['routeParamArray'][$foundStringParamName] =
 							urldecode(
 								string: $element
 							);
@@ -351,7 +351,7 @@ class RouteParser
 						mode: 'input'
 					)
 				) {
-					$this->httpObj->httpRequestObj->inputRepresentation = $routeConfig['inputRepresentation'];
+					$this->httpObject->httpRequestObject->inputRepresentation = $routeConfig['inputRepresentation'];
 				}
 			}
 		}
@@ -360,16 +360,16 @@ class RouteParser
 		// Switch Input data representation if set in URL param
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_input_representation_in_query_string'
 			)
-			&& isset($this->httpObj->httpReqData['get']['inputRepresentation'])
+			&& isset($this->httpObject->httpReqData['get']['inputRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->httpObj->httpReqData['get']['inputRepresentation'],
+				dataRepresentation: $this->httpObject->httpReqData['get']['inputRepresentation'],
 				mode: 'input'
 			)
 		) {
-			$this->httpObj->httpRequestObj->inputRepresentation = $this->httpObj->httpReqData['get']['inputRepresentation'];
+			$this->httpObject->httpRequestObject->inputRepresentation = $this->httpObject->httpReqData['get']['inputRepresentation'];
 		}
 
 		$this->configuredRoute = '/' . implode(
@@ -404,13 +404,13 @@ class RouteParser
 			$this->routeStartingReservedKeyword = $routeStartingKeyword;
 			if (
 				CommonFunction::isEnabled(
-					httpObj: $this->httpObj,
+					httpObject: $this->httpObject,
 					feature: 'customer_enabled_cidr_check'
 				)
 			) {
 				if (isset($this->reservedRoutesCidrString[$routeStartingKeyword])) {
 					CommonFunction::checkCidr(
-						ip: $this->httpObj->httpReqData['server']['httpRequestIp'],
+						ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
 						cidrString: $this->reservedRoutesCidrString[$routeStartingKeyword]
 					);
 				}
@@ -434,7 +434,7 @@ class RouteParser
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_explain_request'
 			)
 			&& Env::$explainRequestRouteKeyword === $routeEndingKeyword
@@ -444,7 +444,7 @@ class RouteParser
 			$return = true;
 		} elseif (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_import_request'
 			)
 			&& Env::$importRequestRouteKeyword === $routeEndingKeyword
@@ -454,7 +454,7 @@ class RouteParser
 			$return = true;
 		} elseif (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_import_sample_request'
 			)
 			&& Env::$importSampleRequestRouteKeyword === $routeEndingKeyword
@@ -578,7 +578,7 @@ class RouteParser
 				)
 			) {
 				throw new \Exception(
-					message: 'Missing config for ' . $this->httpObj->httpReqData['server']['httpMethod'] . ' method',
+					message: 'Missing config for ' . $this->httpObject->httpReqData['server']['httpMethod'] . ' method',
 					code: HttpStatus::$InternalServerError
 				);
 			}
@@ -609,20 +609,20 @@ class RouteParser
 					$this->sqlConfig['outputRepresentation'] === 'HTML'
 					&& isset($this->sqlConfig['htmlFile'])
 				) {
-					$this->httpObj->httpResponseObj->outputRepresentation = $this->sqlConfig['outputRepresentation'];
-					$this->httpObj->httpResponseObj->dataEncodeObj->htmlFile = $this->sqlConfig['htmlFile'];
+					$this->httpObject->httpResponseObject->outputRepresentation = $this->sqlConfig['outputRepresentation'];
+					$this->httpObject->httpResponseObject->dataEncodeObject->htmlFile = $this->sqlConfig['htmlFile'];
 				} elseif (
 					$this->sqlConfig['outputRepresentation'] === 'PHP'
 					&& isset($this->sqlConfig['phpFile'])
 				) {
-					$this->httpObj->httpResponseObj->outputRepresentation = $this->sqlConfig['outputRepresentation'];
-					$this->httpObj->httpResponseObj->dataEncodeObj->phpFile = $this->sqlConfig['phpFile'];
+					$this->httpObject->httpResponseObject->outputRepresentation = $this->sqlConfig['outputRepresentation'];
+					$this->httpObject->httpResponseObject->dataEncodeObject->phpFile = $this->sqlConfig['phpFile'];
 				} elseif (
 					$this->sqlConfig['outputRepresentation'] === 'XSLT'
 					&& isset($this->sqlConfig['xsltFile'])
 				) {
-					$this->httpObj->httpResponseObj->outputRepresentation = $this->sqlConfig['outputRepresentation'];
-					$this->httpObj->httpResponseObj->dataEncodeObj->xsltFile = $this->sqlConfig['xsltFile'];
+					$this->httpObject->httpResponseObject->outputRepresentation = $this->sqlConfig['outputRepresentation'];
+					$this->httpObject->httpResponseObject->dataEncodeObject->xsltFile = $this->sqlConfig['xsltFile'];
 				} elseif (
 					!in_array(
 						needle: $this->sqlConfig['outputRepresentation'],
@@ -630,7 +630,7 @@ class RouteParser
 						strict: Constant::$TRUE
 					)
 				) {
-					$this->httpObj->httpResponseObj->outputRepresentation = $this->httpObj->httpReqData['get']['outputRepresentation'];
+					$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
 				}
 			}
 		}
@@ -638,41 +638,41 @@ class RouteParser
 		// Switch Output data representation if set in URL param
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_output_representation_in_query_string'
 			)
-			&& isset($this->httpObj->httpReqData['get']['outputRepresentation'])
+			&& isset($this->httpObject->httpReqData['get']['outputRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->httpObj->httpReqData['get']['outputRepresentation'],
+				dataRepresentation: $this->httpObject->httpReqData['get']['outputRepresentation'],
 				mode: 'output'
 			)
 		) {
 			if (
-				$this->httpObj->httpReqData['get']['outputRepresentation'] === 'HTML'
+				$this->httpObject->httpReqData['get']['outputRepresentation'] === 'HTML'
 				&& isset($this->sqlConfig['htmlFile'])
 			) {
-				$this->httpObj->httpResponseObj->outputRepresentation = $this->httpObj->httpReqData['get']['outputRepresentation'];
-				$this->httpObj->httpResponseObj->dataEncodeObj->htmlFile = $this->sqlConfig['htmlFile'];
+				$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
+				$this->httpObject->httpResponseObject->dataEncodeObject->htmlFile = $this->sqlConfig['htmlFile'];
 			} elseif (
-				$this->httpObj->httpReqData['get']['outputRepresentation'] === 'PHP'
+				$this->httpObject->httpReqData['get']['outputRepresentation'] === 'PHP'
 				&& isset($this->sqlConfig['phpFile'])
 			) {
-				$this->httpObj->httpResponseObj->outputRepresentation = $this->httpObj->httpReqData['get']['outputRepresentation'];
-				$this->httpObj->httpResponseObj->dataEncodeObj->phpFile = $this->sqlConfig['phpFile'];
+				$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
+				$this->httpObject->httpResponseObject->dataEncodeObject->phpFile = $this->sqlConfig['phpFile'];
 			} elseif (
-				$this->httpObj->httpReqData['get']['outputRepresentation'] === 'XSLT'
+				$this->httpObject->httpReqData['get']['outputRepresentation'] === 'XSLT'
 				&& isset($this->sqlConfig['xsltFile'])
 			) {
-				$this->httpObj->httpResponseObj->outputRepresentation = $this->httpObj->httpReqData['get']['outputRepresentation'];
-				$this->httpObj->httpResponseObj->dataEncodeObj->xsltFile = $this->sqlConfig['xsltFile'];
+				$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
+				$this->httpObject->httpResponseObject->dataEncodeObject->xsltFile = $this->sqlConfig['xsltFile'];
 			} elseif (
 				!in_array(
-					needle: $this->httpObj->httpReqData['get']['outputRepresentation'],
+					needle: $this->httpObject->httpReqData['get']['outputRepresentation'],
 					haystack: ['HTML', 'PHP', 'XSLT'],
 					strict: Constant::$TRUE
 				)
 			) {
-				$this->httpObj->httpResponseObj->outputRepresentation = $this->httpObj->httpReqData['get']['outputRepresentation'];
+				$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
 			}
 		}
 	}
@@ -701,7 +701,7 @@ class RouteParser
 					needle: ':'
 				) - 1
 			);
-			$this->httpObj->httpRequestObj->activeRequestData['routeParamArr'][$param] = $element;
+			$this->httpObject->httpRequestObject->activeRequestData['routeParamArray'][$param] = $element;
 		}
 	}
 
@@ -778,37 +778,37 @@ class RouteParser
 		];
 
 		$this->reservedRoutesCidrString = [
-			Env::$cronRequestRoutePrefix => $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_cron_request_restricted_cidr'],
+			Env::$cronRequestRoutePrefix => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_cron_request_restricted_cidr'],
 			Env::$reloadRequestRoutePrefix => Env::$reloadRestrictedCidr,
-			Env::$routesRequestRoute => $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_routes_request_restricted_cidr']
+			Env::$routesRequestRoute => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_routes_request_restricted_cidr']
 		];
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_custom_request'
 			)
 		) {
 			$this->reservedRoutesPrefix[] = Env::$customRequestRoutePrefix;
-			$this->reservedRoutesCidrString[Env::$customRequestRoutePrefix] = $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_custom_request_restricted_cidr'];
+			$this->reservedRoutesCidrString[Env::$customRequestRoutePrefix] = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_custom_request_restricted_cidr'];
 		}
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_thirdparty_request'
 			)
 		) {
 			$this->reservedRoutesPrefix[] = Env::$thirdPartyRequestRoutePrefix;
-			$this->reservedRoutesCidrString[Env::$thirdPartyRequestRoutePrefix] = $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_thirdparty_request_restricted_cidr'];
+			$this->reservedRoutesCidrString[Env::$thirdPartyRequestRoutePrefix] = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_thirdparty_request_restricted_cidr'];
 		}
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_upload_request'
 			)
 		) {
 			$this->reservedRoutesPrefix[] = Env::$uploadRequestRoutePrefix;
-			$this->reservedRoutesCidrString[Env::$uploadRequestRoutePrefix] = $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_upload_request_restricted_cidr'];
+			$this->reservedRoutesCidrString[Env::$uploadRequestRoutePrefix] = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_upload_request_restricted_cidr'];
 		}
 	}
 }

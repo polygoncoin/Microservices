@@ -40,17 +40,17 @@ class SupplementTest implements CustomInterface
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -70,7 +70,7 @@ class SupplementTest implements CustomInterface
 	 */
 	public function process(): mixed
 	{
-		return $this->httpObj->httpRequestObj->activeRequestData['payload'];
+		return $this->httpObject->httpRequestObject->activeRequestData['payload'];
 	}
 
 	/**
@@ -80,6 +80,6 @@ class SupplementTest implements CustomInterface
 	 */
 	public function subProcess(): mixed
 	{
-		return $this->httpObj->httpRequestObj->activeRequestData['payload'];
+		return $this->httpObject->httpRequestObject->activeRequestData['payload'];
 	}
 }

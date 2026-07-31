@@ -13,15 +13,16 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'is_approved',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$YES
+			'activeRequestDataKeySubKey' => Constant::$YES
 		],
 		[
 			'column' => 'updated_by',
@@ -38,17 +39,17 @@ return [
 		[
 			'column' => 'is_approved',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'id',
@@ -61,7 +62,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
@@ -70,9 +71,9 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_deleted'],
-				'columnValue' => ['custom', $Constant::$NO],
+				'columnValue' => ['custom', Constant::$NO],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
@@ -81,9 +82,9 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
 				'column' => ['custom', 'is_approved'],
-				'columnValue' => ['custom', $Constant::$NO],
+				'columnValue' => ['custom', Constant::$NO],
 				'primary' => ['custom', 'id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],

@@ -13,7 +13,9 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
 
 return [
 	'__QUERY__' => "UPDATE `{$Env::$customerTable}` SET __SET__ WHERE __WHERE__",
@@ -21,7 +23,7 @@ return [
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'updated_by',
@@ -38,12 +40,12 @@ return [
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$YES
+			'activeRequestDataKeySubKey' => Constant::$YES
 		],
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'id',
@@ -56,7 +58,7 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$customerTable],
+				'table' => ['custom', Env::$customerTable],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
@@ -65,9 +67,9 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$customerTable],
+				'table' => ['custom', Env::$customerTable],
 				'column' => ['custom', 'is_deleted'],
-				'columnValue' => ['custom', $Constant::$NO],
+				'columnValue' => ['custom', Constant::$NO],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
@@ -76,9 +78,9 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $Env::$customerTable],
+				'table' => ['custom', Env::$customerTable],
 				'column' => ['custom', 'is_disabled'],
-				'columnValue' => ['custom', $Constant::$YES],
+				'columnValue' => ['custom', Constant::$YES],
 				'primary' => ['custom', 'customer_id'],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],

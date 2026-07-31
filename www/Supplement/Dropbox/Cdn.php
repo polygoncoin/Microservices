@@ -42,7 +42,7 @@ class Cdn implements DropboxInterface
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * File Location
@@ -63,7 +63,7 @@ class Cdn implements DropboxInterface
 	 * 
 	 * @var array
 	 */
-	private $supportedVideoMimeArr = [
+	private $supportedVideoMimeArray = [
 		'video/quicktime'
 	];
 
@@ -72,16 +72,16 @@ class Cdn implements DropboxInterface
 	 * 
 	 * @var string
 	 */
-	private $DROPBOX_DIR = null;
+	private $DROPBOX_DIRECTORY = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
-	public function __construct(&$httpObj = null)
+	public function __construct(&$httpObject = null)
 	{
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -91,16 +91,16 @@ class Cdn implements DropboxInterface
 	 */
 	public function init(): bool
 	{
-		if ($this->httpObj->httpRequestObj->isPrivateRequest) {
-			$this->DROPBOX_DIR = Constant::$DROPBOX_PRIVATE_DIR;
+		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
+			$this->DROPBOX_DIRECTORY = Constant::$DROPBOX_PRIVATE_DIRECTORY;
 		} else {
-			$this->DROPBOX_DIR = Constant::$DROPBOX_PUBLIC_DIR;
+			$this->DROPBOX_DIRECTORY = Constant::$DROPBOX_PUBLIC_DIRECTORY;
 		}
 
 		$configuredRoute = str_replace(
 			'/dropbox/cdn',
 			'',
-			$this->httpObj->httpRequestObj->routeParserObj->configuredRoute
+			$this->httpObject->httpRequestObject->routeParserObject->configuredRoute
 		);
 
 		$filePath = DIRECTORY_SEPARATOR . trim(
@@ -115,14 +115,14 @@ class Cdn implements DropboxInterface
 		);
 
 		if (
-			$this->httpObj !== Constant::$NULL
-			&& $this->httpObj->httpRequestObj !== Constant::$NULL
-			&& $this->httpObj->httpRequestObj->isPrivateRequest
+			$this->httpObject !== Constant::$NULL
+			&& $this->httpObject->httpRequestObject !== Constant::$NULL
+			&& $this->httpObject->httpRequestObject->isPrivateRequest
 		) {
-			$this->DROPBOX_DIR .= DIRECTORY_SEPARATOR . $this->httpObj->httpRequestObj->customerId;
+			$this->DROPBOX_DIRECTORY .= DIRECTORY_SEPARATOR . $this->httpObject->httpRequestObject->customerId;
 			$this->validateFileRequest();
 		}
-		$this->fileLocation = $this->DROPBOX_DIR . $filePath;
+		$this->fileLocation = $this->DROPBOX_DIRECTORY . $filePath;
 
 		return (
 			is_file(
@@ -141,7 +141,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function validateFileRequest(): void
 	{
-		// check logic for user is allowed to access the file as per $this->httpObj->httpRequestObj->activeRequestData
+		// check logic for user is allowed to access the file as per $this->httpObject->httpRequestObject->activeRequestData
 		// $this->fileLocation;
 	}
 
@@ -152,7 +152,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function process(): mixed
 	{
-		$headerArr = [];
+		$headerArray = [];
 		$status = HttpStatus::$Ok;
 		$data = '';
 
@@ -162,12 +162,12 @@ class Cdn implements DropboxInterface
 		switch (true) {
 			case in_array(
 				needle: $this->mimeType,
-				haystack: $this->supportedVideoMimeArr,
+				haystack: $this->supportedVideoMimeArray,
 				strict: Constant::$TRUE
 			):
 				// Serve Video
 				$videoStream = new StreamVideo(
-					httpReqData: $this->httpObj->httpReqData
+					httpReqData: $this->httpObject->httpReqData
 				);
 				if (
 					(
@@ -176,7 +176,7 @@ class Cdn implements DropboxInterface
 						)
 					) !== HttpStatus::$Ok
 				) {
-					$return = [$headerArr, $data, $httpStatus];
+					$return = [$headerArray, $data, $httpStatus];
 				} else {
 					$return = $videoStream->serveContent();
 				}
@@ -195,7 +195,7 @@ class Cdn implements DropboxInterface
 	 */
 	public function serveDefault(): array
 	{
-		$headerArr = [];
+		$headerArray = [];
 		$status = HttpStatus::$Ok;
 		$data = '';
 
@@ -206,40 +206,40 @@ class Cdn implements DropboxInterface
 		$eTag = "{$modifiedTime}";
 
 		if (
-			(isset($this->httpObj->httpReqData['header']['HTTP_IF_NONE_MATCH'])
+			(isset($this->httpObject->httpReqData['header']['HTTP_IF_NONE_MATCH'])
 				&& strpos(
-					haystack: $this->httpObj->httpReqData['header']['HTTP_IF_NONE_MATCH'],
+					haystack: $this->httpObject->httpReqData['header']['HTTP_IF_NONE_MATCH'],
 					needle: $eTag
 				) !== Constant::$FALSE
 			)
-			|| (isset($this->httpObj->httpReqData['header']['HTTP_IF_MODIFIED_SINCE'])
+			|| (isset($this->httpObject->httpReqData['header']['HTTP_IF_MODIFIED_SINCE'])
 				&& @strtotime(
-					datetime: $this->httpObj->httpReqData['header']['HTTP_IF_MODIFIED_SINCE']
+					datetime: $this->httpObject->httpReqData['header']['HTTP_IF_MODIFIED_SINCE']
 				) == $modifiedTime
 			)
 		) {
 			$status = HttpStatus::$NotModified;
-			return [$headerArr, $data, $status];
+			return [$headerArray, $data, $status];
 		}
 
 		// Set header
 
 		// File name requested for download
 		// $fileName = basename(path: $this->fileLocation);
-		// $headerArr['Content-Disposition'] = "attachment;filename='$fileName';";
+		// $headerArray['Content-Disposition'] = "attachment;filename='$fileName';";
 
-		$headerArr['Cache-Control'] = 'max-age=0, must-revalidate';
-		$headerArr['Last-Modified'] = gmdate(
+		$headerArray['Cache-Control'] = 'max-age=0, must-revalidate';
+		$headerArray['Last-Modified'] = gmdate(
 			format: 'D, d M Y H:i:s',
 			timestamp: $modifiedTime
 		) . ' GMT';
-		$headerArr['Etag'] = "\"{$eTag}\"";
-		$headerArr['Expires'] = -1;
-		$headerArr['Content-Type'] = "{$this->mimeType}";
-		$headerArr['Content-Length'] = filesize(
+		$headerArray['Etag'] = "\"{$eTag}\"";
+		$headerArray['Expires'] = -1;
+		$headerArray['Content-Type'] = "{$this->mimeType}";
+		$headerArray['Content-Length'] = filesize(
 			filename: $this->fileLocation
 		);
 
-		return [$headerArr, file_get_contents($this->fileLocation), $status];
+		return [$headerArray, file_get_contents($this->fileLocation), $status];
 	}
 }

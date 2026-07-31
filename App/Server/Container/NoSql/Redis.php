@@ -74,7 +74,7 @@ class Redis implements NoSqlInterface
 	 * 
 	 * @var null|\Redis
 	 */
-	private $cacheServerObj = null;
+	private $cacheServerObject = null;
 
 	/**
 	 * Constructor
@@ -109,13 +109,13 @@ class Redis implements NoSqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->cacheServerObj !== Constant::$NULL) {
+		if ($this->cacheServerObject !== Constant::$NULL) {
 			return;
 		}
 
 		try {
 			// https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
-			$connParamArr = [
+			$connParamArray = [
 				'host' => $this->cacheServerHostname,
 				'port' => (int)$this->cacheServerPort,
 				'connectTimeout' => 2.5
@@ -125,22 +125,22 @@ class Redis implements NoSqlInterface
 				($this->cacheServerUsername !== '')
 				&& ($this->cacheServerPassword !== '')
 			) {
-				$connParamArr['auth'] = [
+				$connParamArray['auth'] = [
 					$this->cacheServerUsername,
 					$this->cacheServerPassword
 				];
 			}
-			$this->cacheServerObj = new \Redis(
-				$connParamArr
+			$this->cacheServerObject = new \Redis(
+				$connParamArray
 			);
 
 			if (!empty($this->cacheServerDatabase)) {
-				$this->cacheServerObj->select(
+				$this->cacheServerObject->select(
 					$this->cacheServerDatabase
 				);
 			}
 
-			if (!$this->cacheServerObj->ping()) {
+			if (!$this->cacheServerObject->ping()) {
 				throw new \Exception(
 					message: 'Unable to ping cache',
 					code: HttpStatus::$InternalServerError
@@ -170,7 +170,7 @@ class Redis implements NoSqlInterface
 			return false;
 		}
 
-		return $this->cacheServerObj->exists(
+		return $this->cacheServerObject->exists(
 			$key
 		);
 	}
@@ -192,7 +192,7 @@ class Redis implements NoSqlInterface
 		}
 
 		$return = CommonFunction::jsonDecode(
-			value: $this->cacheServerObj->get(
+			value: $this->cacheServerObject->get(
 				$key
 			)
 		);
@@ -225,12 +225,12 @@ class Redis implements NoSqlInterface
 		);
 
 		if ($expire === Constant::$NULL) {
-			return $this->cacheServerObj->set(
+			return $this->cacheServerObject->set(
 				$key,
 				$value
 			);
 		} else {
-			return $this->cacheServerObj->set(
+			return $this->cacheServerObject->set(
 				$key,
 				$value,
 				$expire
@@ -256,7 +256,7 @@ class Redis implements NoSqlInterface
 			return false;
 		}
 
-		return $this->cacheServerObj->incrBy(
+		return $this->cacheServerObject->incrBy(
 			$key,
 			$offset
 		);
@@ -278,7 +278,7 @@ class Redis implements NoSqlInterface
 			return false;
 		}
 
-		return $this->cacheServerObj->del(
+		return $this->cacheServerObject->del(
 			$key
 		);
 	}

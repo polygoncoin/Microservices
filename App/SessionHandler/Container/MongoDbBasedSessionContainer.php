@@ -46,9 +46,9 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	public $mongoDbServerDatabase = null;
 	public $mongoDbServerCollection = null;
 
-	private $mongoDbServerObj = null;
-	private $dbObj = null;
-	private $collectionObj = null;
+	private $mongoDbServerObject = null;
+	private $dbObject = null;
+	private $collectionObject = null;
 
 	/**
 	 * Initialize
@@ -78,7 +78,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		try {
 			$filter = ['sessionId' => $sessionId];
 
-			if ($document = $this->collectionObj->findOne($filter)) {
+			if ($document = $this->collectionObject->findOne($filter)) {
 				$lastAccessed = Env::$timestamp - $this->sessionMaxLifetime;
 				if ($document['lastAccessed'] > $lastAccessed) {
 					return $this->decryptData(
@@ -114,7 +114,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 					plainText: $sessionData
 				)
 			];
-			if ($this->collectionObj->insertOne($document)) {
+			if ($this->collectionObject->insertOne($document)) {
 				return true;
 			}
 		} catch (\Exception $e) {
@@ -148,7 +148,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				]
 			];
 			if (
-				$this->collectionObj->updateOne(
+				$this->collectionObject->updateOne(
 					$filter,
 					$update
 				)
@@ -184,7 +184,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			];
 
 			if (
-				$this->collectionObj->updateOne(
+				$this->collectionObject->updateOne(
 					$filter,
 					$update
 				)
@@ -225,7 +225,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		try {
 			$filter = ['sessionId' => $sessionId];
 
-			if ($this->collectionObj->deleteOne($filter)) {
+			if ($this->collectionObject->deleteOne($filter)) {
 				return true;
 			}
 		} catch (\Exception $e) {
@@ -243,7 +243,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	 */
 	public function closeSession(): void
 	{
-		$this->mongoDbServerObj = null;
+		$this->mongoDbServerObject = null;
 	}
 
 	/**
@@ -265,17 +265,17 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 				$this->mongoDbServerUri = 'mongodb://' . $UP
 					. $this->mongoDbServerHostname . ':' . $this->mongoDbServerPort;
 			}
-			$this->mongoDbServerObj = new \MongoDB\Customer(
+			$this->mongoDbServerObject = new \MongoDB\Customer(
 				$this->mongoDbServerUri
 			);
 
 			// Select a database
-			$this->dbObj = $this->mongoDbServerObj->selectDatabase(
+			$this->dbObject = $this->mongoDbServerObject->selectDatabase(
 				$this->mongoDbServerDatabase
 			);
 
 			// Select a collection
-			$this->collectionObj = $this->dbObj->selectCollection(
+			$this->collectionObject = $this->dbObject->selectCollection(
 				$this->mongoDbServerCollection
 			);
 		} catch (\Exception $e) {

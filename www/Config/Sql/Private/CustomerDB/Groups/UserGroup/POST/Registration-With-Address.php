@@ -13,8 +13,10 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
@@ -88,7 +90,7 @@ return [
 			'__MAX-PAYLOAD-OBJECTS__' => 2
 		]
 	],
-	'useHierarchy' => $Constant::$TRUE,
+	'useHierarchy' => Constant::$TRUE,
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10
 ];

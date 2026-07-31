@@ -158,22 +158,22 @@ class StreamVideo
 	 */
 	public function setHeaders(): array
 	{
-		$headerArr = [];
+		$headerArray = [];
 		$status = HttpStatus::$Ok;
 
 		$gmDate = gmdate(
 			format: 'D, d M Y H:i:s',
 			timestamp: Env::$timestamp + $this->cacheDuration
 		);
-		$headerArr['Content-Type'] = $this->mimeType;
-		$headerArr['Cache-Control'] = 'max-age=' . $this->cacheDuration . ', public';
-		$headerArr['Expires'] = "{$gmDate} GMT";
+		$headerArray['Content-Type'] = $this->mimeType;
+		$headerArray['Cache-Control'] = 'max-age=' . $this->cacheDuration . ', public';
+		$headerArray['Expires'] = "{$gmDate} GMT";
 		$gmDate = gmdate(
 			format: 'D, d M Y H:i:s',
 			timestamp: $this->modifiedTimeStamp
 		);
-		$headerArr['Last-Modified'] = "{$gmDate} GMT";
-		$headerArr['Accept-Ranges'] = '0-' . ($this->size - 1);
+		$headerArray['Last-Modified'] = "{$gmDate} GMT";
+		$headerArray['Accept-Ranges'] = '0-' . ($this->size - 1);
 		if ($this->streamFrom == 0) {
 			$this->chunkSize = $this->firstChunkSize;
 		}
@@ -196,8 +196,8 @@ class StreamVideo
 			);
 			if ($safariBrowser) {
 				$this->streamTill = $this->size - 1;
-				$headerArr['Content-Length'] = $this->size;
-				return [$headerArr, $status];
+				$headerArray['Content-Length'] = $this->size;
+				return [$headerArray, $status];
 			} else {
 				$chunkSize = $this->size > $this->chunkSize
 					? $this->chunkSize : $this->size;
@@ -213,11 +213,11 @@ class StreamVideo
 			$streamSize = $this->streamTill - $this->streamFrom + 1;
 		}
 		$status = HttpStatus::$PartialContent;
-		$headerArr['Content-Length'] = $streamSize;
-		$headerArr['Content-Range'] = 'bytes ' . $this->streamFrom . '-'
+		$headerArray['Content-Length'] = $streamSize;
+		$headerArray['Content-Range'] = 'bytes ' . $this->streamFrom . '-'
 			. $this->streamTill . '/' . $this->size;
 
-		return [$headerArr, $status];
+		return [$headerArray, $status];
 	}
 
 	/**
@@ -227,7 +227,7 @@ class StreamVideo
 	 */
 	public function serveContent(): array
 	{
-		[$headerArr, $status] = $this->setHeaders();
+		[$headerArray, $status] = $this->setHeaders();
 
 		$totalBytes = $this->streamTill - $this->streamFrom + 1;
 		$data = file_get_contents(
@@ -238,6 +238,6 @@ class StreamVideo
 			length: $totalBytes
 		);
 
-		return [$headerArr, $data, $status];
+		return [$headerArray, $data, $status];
 	}
 }

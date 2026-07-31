@@ -13,13 +13,15 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'__QUERY__' => 'SELECT * FROM `category` WHERE __WHERE__',
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'parent_id',
@@ -28,7 +30,7 @@ return [
 		],
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id'
 		]
 	],
@@ -40,7 +42,7 @@ return [
 				[
 					'column' => 'is_deleted',
 					'activeRequestDataKey' => 'custom',
-					'activeRequestDataKeySubKey' => $Constant::$NO
+					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
 					'column' => 'parent_id',
@@ -56,7 +58,7 @@ return [
 						[
 							'column' => 'is_deleted',
 							'activeRequestDataKey' => 'custom',
-							'activeRequestDataKeySubKey' => $Constant::$NO
+							'activeRequestDataKeySubKey' => Constant::$NO
 						],
 						[
 							'column' => 'parent_id',
@@ -72,7 +74,7 @@ return [
 								[
 									'column' => 'is_deleted',
 									'activeRequestDataKey' => 'custom',
-									'activeRequestDataKeySubKey' => $Constant::$NO
+									'activeRequestDataKeySubKey' => Constant::$NO
 								],
 								[
 									'column' => 'parent_id',
@@ -87,5 +89,5 @@ return [
 			],
 		]
 	],
-	'useResultSet' => $Constant::$TRUE,
+	'useResultSet' => Constant::$TRUE,
 ];

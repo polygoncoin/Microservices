@@ -13,6 +13,9 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+use Microservices\App\Env;
+
 return [
 	'all' => [
 		'countQuery' => "SELECT count(1) as `count` FROM `{$Env::$customerTable}` WHERE __WHERE__",
@@ -21,17 +24,17 @@ return [
 			[
 				'column' => 'is_approved',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$YES
+				'activeRequestDataKeySubKey' => Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$NO
+				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$NO
+				'activeRequestDataKeySubKey' => Constant::$NO
 			]
 		],
 		'__MODE__' => 'multipleRecordFormat'
@@ -42,24 +45,24 @@ return [
 			[
 				'column' => 'is_approved',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$YES
+				'activeRequestDataKeySubKey' => Constant::$YES
 			],
 			[
 				'column' => 'is_disabled',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$NO
+				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
 				'column' => 'is_deleted',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$NO
+				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'activeRequestDataKey' => 'routeParamArr',
+				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id'
 			]
 		],
 		'__MODE__' => 'singleRecordFormat'
 	],
-][isset($this->httpObj->httpRequestObj->activeRequestData['routeParamArr']['id'])?'single':'all'];
+][isset($this->httpObject->httpRequestObject->activeRequestData['routeParamArray']['id'])?'single':'all'];

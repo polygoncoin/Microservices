@@ -82,14 +82,14 @@ interface SqlInterface
 	 * Execute query
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * @param bool   $pushPop  Push Pop result set stmt
 	 * 
 	 * @return void
 	 */
 	public function execQuery(
 		$sql,
-		$paramArr = [],
+		$paramArray = [],
 		$pushPop = false
 	): void;
 

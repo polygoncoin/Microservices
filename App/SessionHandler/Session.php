@@ -85,7 +85,7 @@ class Session
 	public $sessionMaxLifetime = null;
 
 	/**
-	 * File Session optionArr
+	 * File Session optionArray
 	 * Example: public $sessionSavePath = '/tmp';
 	 * 
 	 * @var null|string
@@ -111,7 +111,7 @@ class Session
 	 * 
 	 * @var null|array
 	 */
-	public $optionArr = null;
+	public $optionArray = null;
 
 	/**
 	 * Session handler Container
@@ -148,7 +148,7 @@ class Session
 		$this->sessionContainer = new $containerClassName();
 
 		// Setting required common parameters
-		$this->sessionContainer->sessionOptionArr = $this->optionArr;
+		$this->sessionContainer->sessionOptionArray = $this->optionArray;
 		$this->sessionContainer->sessionName = $this->sessionName;
 		$this->sessionContainer->sessionMaxLifetime = (int)$this->sessionMaxLifetime;
 
@@ -247,26 +247,26 @@ class Session
 	}
 
 	/**
-	 * Generates session optionArr argument
+	 * Generates session optionArray argument
 	 * 
-	 * @param array $optionArr Options
+	 * @param array $optionArray Options
 	 * 
 	 * @return void
 	 */
 	private function setOptions(
-		$optionArr = []
+		$optionArray = []
 	): void {
-		if (isset($optionArr['name'])) {
-			$this->sessionName = $optionArr['name'];
+		if (isset($optionArray['name'])) {
+			$this->sessionName = $optionArray['name'];
 		}
 
-		if (isset($optionArr['gc_maxlifetime'])) {
-			$this->sessionMaxLifetime = (int)$optionArr['gc_maxlifetime'];
+		if (isset($optionArray['gc_maxlifetime'])) {
+			$this->sessionMaxLifetime = (int)$optionArray['gc_maxlifetime'];
 		} else {
 			$this->sessionMaxLifetime = (int)Constant::$TOKEN_EXPIRY_TIME;
 		}
 
-		$this->optionArr = [ // always required.
+		$this->optionArray = [ // always required.
 			'use_strict_mode' => Constant::$TRUE,
 			'name' => $this->sessionName,
 			'serialize_handler' => 'php_serialize',
@@ -286,11 +286,11 @@ class Session
 		];
 
 		if ($this->sessionMode === 'File') {
-			$this->optionArr['save_path'] = $this->sessionSavePath;
+			$this->optionArray['save_path'] = $this->sessionSavePath;
 		}
 
-		if (!empty($optionArr)) {
-			foreach ($optionArr as $option => $value) {
+		if (!empty($optionArray)) {
+			foreach ($optionArray as $option => $value) {
 				if (
 					in_array(
 						needle: $option,
@@ -301,7 +301,7 @@ class Session
 					// Skip option
 					continue;
 				}
-				$this->optionArr[$option] = $value;
+				$this->optionArray[$option] = $value;
 			}
 		}
 	}
@@ -319,10 +319,10 @@ class Session
 		$options = []
 	): void {
 		$envFilename = '.env.session';
-		$envDataArr = parse_ini_file(
+		$envDataArray = parse_ini_file(
 			filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
 		);
-		foreach ($envDataArr as $envVarName => $envVarValue) {
+		foreach ($envDataArray as $envVarName => $envVarValue) {
 			putenv(
 				assignment: "{$envVarName}={$envVarValue}"
 			);
@@ -331,7 +331,7 @@ class Session
 		$this->customerData = $customerData;
 		$this->sessionMode = getenv(name: $this->customerData['customer_session_server_type']);
 
-		// Set optoptionsionArr from php.ini if not set in this class
+		// Set optoptionsionArray from php.ini if not set in this class
 		if (empty($this->sessionName)) {
 			$this->sessionName = session_name();
 		}
@@ -348,7 +348,7 @@ class Session
 
 		// Initialize
 		$this->setOptions(
-			optionArr: $options
+			optionArray: $options
 		);
 		$this->initProcess();
 	}
@@ -362,8 +362,8 @@ class Session
 	{
 		if (isset($_SESSION)) {
 			if (
-				!isset($this->optionArr['read_and_close'])
-				|| $this->optionArr['read_and_close'] !== Constant::$TRUE
+				!isset($this->optionArray['read_and_close'])
+				|| $this->optionArray['read_and_close'] !== Constant::$TRUE
 			) {
 				session_write_close();
 			}
@@ -382,11 +382,11 @@ class Session
 			&& !empty($_COOKIE[$this->sessionName])
 		) {
 			$this->sessionStartCheck();
-			$this->optionArr['read_and_close'] = true;
+			$this->optionArray['read_and_close'] = true;
 
-			$this->sessionContainer->sessionOptionArr = $this->optionArr;
+			$this->sessionContainer->sessionOptionArray = $this->optionArray;
 			return session_start(
-				options: $this->optionArr
+				options: $this->optionArray
 			);
 		}
 		return false;
@@ -399,14 +399,14 @@ class Session
 	 */
 	public function sessionStartReadWrite(): bool
 	{
-		$this->sessionContainer->sessionOptionArr = $this->optionArr;
+		$this->sessionContainer->sessionOptionArray = $this->optionArray;
 		$this->sessionStartCheck();
-		if (isset($this->optionArr['read_and_close'])) {
-			unset($this->optionArr['read_and_close']);
+		if (isset($this->optionArray['read_and_close'])) {
+			unset($this->optionArray['read_and_close']);
 		}
 
 		return session_start(
-			options: $this->optionArr
+			options: $this->optionArray
 		);
 	}
 

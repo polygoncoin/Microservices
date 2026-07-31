@@ -13,10 +13,11 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'name',
@@ -58,17 +59,17 @@ return [
 		[
 			'column' => 'is_approved',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		]
 	],
 	'__INSERT-IDs__' => 'group:id',

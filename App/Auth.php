@@ -40,17 +40,17 @@ class Auth
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -61,7 +61,7 @@ class Auth
 	 */
 	public function loadUserData(): void
 	{
-		if (isset($this->httpObj->httpRequestObj->activeRequestData['userData'])) {
+		if (isset($this->httpObject->httpRequestObject->activeRequestData['userData'])) {
 			return;
 		}
 
@@ -69,16 +69,16 @@ class Auth
 			isset($_SESSION)
 			&& isset($_SESSION['customer_user_id'])
 		) {
-			$this->httpObj->httpRequestObj->activeRequestData['userData'] = $_SESSION;
-			$this->httpObj->httpRequestObj->activeRequestData['authId'] = session_id();
+			$this->httpObject->httpRequestObject->activeRequestData['userData'] = $_SESSION;
+			$this->httpObject->httpRequestObject->activeRequestData['authId'] = session_id();
 		} elseif (
-			isset($this->httpObj->httpReqData['header']['tokenHeader'])
-			&& $this->httpObj->httpReqData['header']['tokenHeader'] !== Constant::$NULL
+			isset($this->httpObject->httpReqData['header']['tokenHeader'])
+			&& $this->httpObject->httpReqData['header']['tokenHeader'] !== Constant::$NULL
 		) {
 			if (
 				!preg_match(
 					pattern: '/Bearer\s(\S+)/',
-					subject: $this->httpObj->httpReqData['header']['tokenHeader'],
+					subject: $this->httpObject->httpReqData['header']['tokenHeader'],
 					matches: $matches
 				)
 			) {
@@ -87,12 +87,12 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObj->httpRequestObj->activeRequestData['authId'] = $matches[1];
+			$this->httpObject->httpRequestObject->activeRequestData['authId'] = $matches[1];
 			$tokenKey = CacheServerKey::token(
-				token: $this->httpObj->httpRequestObj->activeRequestData['authId']
+				token: $this->httpObject->httpRequestObject->activeRequestData['authId']
 			);
 			if (
-				!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+				!$this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 					cacheKey: $tokenKey
 				)
 			) {
@@ -101,7 +101,7 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObj->httpRequestObj->activeRequestData['userData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+			$this->httpObject->httpRequestObject->activeRequestData['userData'] = $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 				cacheKey: $tokenKey
 			);
 		} else {
@@ -111,22 +111,22 @@ class Auth
 			);
 		}
 
-		if (($this->httpObj->httpRequestObj->activeRequestData['userData']['authTimestamp'] + Constant::$TOKEN_EXPIRY_TIME) <= Env::$timestamp) {
+		if (($this->httpObject->httpRequestObject->activeRequestData['userData']['authTimestamp'] + Constant::$TOKEN_EXPIRY_TIME) <= Env::$timestamp) {
 			throw new \Exception(
 				message: 'Login has timed out. Please login',
 				code: HttpStatus::$BadRequest
 			);
 		}
 
-		if ($this->httpObj->httpRequestObj->activeRequestData['userData']['httpRequestHash'] !== $this->httpObj->httpReqData['httpRequestHash']) {
+		if ($this->httpObject->httpRequestObject->activeRequestData['userData']['httpRequestHash'] !== $this->httpObject->httpReqData['httpRequestHash']) {
 			throw new \Exception(
 				message: 'Current Browser or the Device location not matching with Browser or the Device location during Login',
 				code: HttpStatus::$PreconditionFailed
 			);
 		}
 
-		$this->httpObj->httpRequestObj->customerUserId = $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_id'];
-		$this->httpObj->httpRequestObj->customerUserGroupId = $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_group_id'];
+		$this->httpObject->httpRequestObject->customerUserId = $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_id'];
+		$this->httpObject->httpRequestObject->customerUserGroupId = $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_id'];
 	}
 
 	/**
@@ -137,17 +137,17 @@ class Auth
 	 */
 	public function loadGroupData(): void
 	{
-		if (isset($this->httpObj->httpRequestObj->activeRequestData['groupData'])) {
+		if (isset($this->httpObject->httpRequestObject->activeRequestData['groupData'])) {
 			return;
 		}
 
 		// Load groupData
 		$groupCacheKey = CacheServerKey::customerGroup(
-			customerId: $this->httpObj->httpRequestObj->customerId,
-			customerUserGroupId: $this->httpObj->httpRequestObj->customerUserGroupId
+			customerId: $this->httpObject->httpRequestObject->customerId,
+			customerUserGroupId: $this->httpObject->httpRequestObject->customerUserGroupId
 		);
 		if (
-			!$this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+			!$this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 				cacheKey: $groupCacheKey
 			)
 		) {
@@ -157,7 +157,7 @@ class Auth
 			);
 		}
 
-		$this->httpObj->httpRequestObj->activeRequestData['groupData'] = $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+		$this->httpObject->httpRequestObject->activeRequestData['groupData'] = $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 			cacheKey: $groupCacheKey
 		);
 	}

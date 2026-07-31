@@ -72,12 +72,12 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 			$sessionData = $this->decryptData(
 				cipherText: $_COOKIE[$this->sessionDataName]
 			);
-			$sessionDataArr = unserialize(
+			$sessionDataArray = unserialize(
 				data: $sessionData
 			);
 			if (
-				isset($sessionDataArr['_TS_'])
-				&& ($time = $sessionDataArr['_TS_'] + $this->sessionMaxLifetime)
+				isset($sessionDataArray['_TS_'])
+				&& ($time = $sessionDataArray['_TS_'] + $this->sessionMaxLifetime)
 				&& $time > Env::$timestamp
 			) {
 				return $sessionData;
@@ -98,12 +98,12 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		$sessionDataArr = unserialize(
+		$sessionDataArray = unserialize(
 			data: $sessionData
 		);
-		$sessionDataArr['_TS_'] = Env::$timestamp;
+		$sessionDataArray['_TS_'] = Env::$timestamp;
 		$sessionData = serialize(
-			value: $sessionDataArr
+			value: $sessionDataArray
 		);
 
 		$cookieData = $this->encryptData(
@@ -128,9 +128,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 			value: $cookieData,
 			expires_or_options: [
 				'expires' => 0,
-				'path' => $this->sessionOptionArr['cookie_path'],
+				'path' => $this->sessionOptionArray['cookie_path'],
 				'domain' => '',
-				'secure' => $this->sessionOptionArr['cookie_secure'],
+				'secure' => $this->sessionOptionArray['cookie_secure'],
 				'httponly' => Constant::$TRUE,
 				'samesite' => 'Strict'
 			]
@@ -167,12 +167,12 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool {
-		$sessionDataArr = unserialize(
+		$sessionDataArray = unserialize(
 			data: $sessionData
 		);
-		$sessionDataArr['_TS_'] = Env::$timestamp;
+		$sessionDataArray['_TS_'] = Env::$timestamp;
 		$sessionData = serialize(
-			value: $sessionDataArr
+			value: $sessionDataArray
 		);
 
 		$cookieData = $this->encryptData(
@@ -197,9 +197,9 @@ class CookieBasedSessionContainer extends SessionContainerHelper implements
 			value: $cookieData,
 			expires_or_options: [
 				'expires' => 0,
-				'path' => $this->sessionOptionArr['cookie_path'],
+				'path' => $this->sessionOptionArray['cookie_path'],
 				'domain' => '',
-				'secure' => $this->sessionOptionArr['cookie_secure'],
+				'secure' => $this->sessionOptionArray['cookie_secure'],
 				'httponly' => Constant::$TRUE,
 				'samesite' => 'Strict'
 			]

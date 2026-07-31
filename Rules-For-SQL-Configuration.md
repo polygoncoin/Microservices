@@ -25,8 +25,8 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-			// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+			'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+			// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 			// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 			// 'activeRequestDataKey' => 'function', // Fetch value from function
 			// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -57,8 +57,8 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-			// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+			'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+			// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 			// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 			// 'activeRequestDataKey' => 'function', // Fetch value from function
 			// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -108,8 +108,8 @@ return [
 			'__SET__/__WHERE__' => [
 				[
 					'column' => 'id',
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -131,7 +131,7 @@ return [
 				[
 					// Fetch values of params from previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
+					'activeRequestDataKey' => 'sqlParamArray',                     // sqlParamArray (with useHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
@@ -171,8 +171,8 @@ return [
 		[
 			'__ROUTE__' => [
 				[
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -190,8 +190,8 @@ return [
 			'__QUERY-STRING__' => [
 				[
 					'column' => 'param-1',
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -206,8 +206,8 @@ return [
 			'__PAYLOAD__' => [
 				[
 					'column' => 'param-1',
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -247,7 +247,7 @@ return [
 	'__PAYLOAD-TYPE__' => 'Object', // Allow single 'Object' / 'Array' of Object (if not set will accept both)
 	'__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
 
-	'isTransaction' => $Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
+	'isTransaction' => Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
 
 	'useHierarchy' => Constant::$TRUE, // For DML
 	'useResultSet' => Constant::$TRUE, // For DQL
@@ -285,7 +285,7 @@ return [
 	// Any among below can be used for DML operations (These are Optional key's)
 	// Caching
 	'queryCacheKey' => '<unique-key-for-redis-to-cache-results>(e.g, key:1)', // Use cacheKey to cache and reuse results (Optional)
-	'affectedQueryCacheKeyArr' => [ // List down key's which effects configured cacheKey on DML operation
+	'affectedQueryCacheKeyArray' => [ // List down key's which effects configured cacheKey on DML operation
 		'<unique-key-for-redis-to-drop-cached-results>(key:1)',
 		'<unique-key-for-redis-to-drop-cached-results>(category etc.)',
 		'...'
@@ -314,7 +314,7 @@ return [
 ```PHP
 '__SUB-QUERY__' => [
 	//Here the module1 properties are reused for write operation.
-	'module1' => include $Constant::$ROOT . DIRECTORY_SEPARATOR . 'Config/Sql/CustomerDB/Common/reusefilename.php',
+	'module1' => include Constant::$ROOT . DIRECTORY_SEPARATOR . 'Config/Sql/CustomerDB/Common/reusefilename.php',
 ]
 ```
 
@@ -331,8 +331,8 @@ return [
 	'__WHERE__' => [
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-			// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+			'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+			// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 			// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 			// 'activeRequestDataKey' => 'function', // Fetch value from function
 			// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -361,8 +361,8 @@ return [
 	'__PAYLOAD__' => [
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-			// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+			'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+			// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 			// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 			// 'activeRequestDataKey' => 'function', // Fetch value from function
 			// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -392,8 +392,8 @@ return [
 			'__PAYLOAD__' => [
 				[
 					'column' => 'id',
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -407,7 +407,7 @@ return [
 				// to validate each data set before procedding forward
 				[	// Fetch values of params from previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlParamArr',                     // sqlParamArr (with useHierarchy)
+					'activeRequestDataKey' => 'sqlParamArray',                     // sqlParamArray (with useHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
@@ -442,8 +442,8 @@ return [
 		[
 			'__ROUTE__' => [
 				[
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -456,8 +456,8 @@ return [
 			'__QUERY-STRING__' => [
 				[
 					'column' => 'param-1',
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -471,8 +471,8 @@ return [
 			'__PAYLOAD__' => [
 				[
 					'column' => 'param-1',
-					'activeRequestDataKey' => 'routeParamArr', // Fetch value from parsed route
-					// 'activeRequestDataKey' => 'queryParamArr', // Fetch value from query string
+					'activeRequestDataKey' => 'routeParamArray', // Fetch value from parsed route
+					// 'activeRequestDataKey' => 'queryParamArray', // Fetch value from query string
 					// 'activeRequestDataKey' => 'payload', // Fetch value from payload
 					// 'activeRequestDataKey' => 'function', // Fetch value from function
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
@@ -511,7 +511,7 @@ return [
 	'__PAYLOAD-TYPE__' => 'Object', // Allow single 'Object' / 'Array' of Object (if not set will accept both)
 	'__MAX-PAYLOAD-OBJECTS__' => 2, // Max number of allowed Objects if __PAYLOAD-TYPE__ is 'Array'
 
-	'isTransaction' => $Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
+	'isTransaction' => Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
 
 	'useHierarchy' => Constant::$TRUE, // For DML
 
@@ -548,7 +548,7 @@ return [
 	// Any among below can be used for DML operations (These are Optional key's)
 	// Caching
 	'queryCacheKey' => '<unique-key-for-redis-to-cache-results>(e.g, key:1)', // Use cacheKey to cache and reuse results (Optional)
-	'affectedQueryCacheKeyArr' => [ // List down key's which effects configured cacheKey on DML operation
+	'affectedQueryCacheKeyArray' => [ // List down key's which effects configured cacheKey on DML operation
 		'<unique-key-for-redis-to-drop-cached-results>(key:1)',
 		'<unique-key-for-redis-to-drop-cached-results>(category etc.)',
 		'...'
@@ -590,22 +590,22 @@ public static $PrimaryKey = [
 
 // Optional params
 	// Value can be null
-	'canBeNull' => $Constant::$FALSE,
+	'canBeNull' => Constant::$FALSE,
 	// Minimum value (int)
 	'minValue' => 1,
 	// Maximum value (int)
-	'maxValue' => $Constant::$FALSE,
+	'maxValue' => Constant::$FALSE,
 	// Minimum length (string)
-	'minLength' => $Constant::$FALSE,
+	'minLength' => Constant::$FALSE,
 	// Maximum length (string)
-	'maxLength' => $Constant::$FALSE,
+	'maxLength' => Constant::$FALSE,
 	// Any one value from the Array
-	'enumValues' => $Constant::$FALSE,
+	'enumValues' => Constant::$FALSE,
 	// Values belonging to this Array
-	'setValues' => $Constant::$FALSE,
+	'setValues' => Constant::$FALSE,
 
 	// Values should pass this regex before use
-	'regex' => $Constant::$FALSE
+	'regex' => Constant::$FALSE
 ];
 ```
 

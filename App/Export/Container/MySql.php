@@ -135,14 +135,14 @@ class MySql implements ExportDatabaseServerInterface
 	 * Validate
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
 	private function validate(
 		$sql,
-		$paramArr
+		$paramArray
 	): void {
 		if (empty($sql)) {
 			throw new \Exception(
@@ -152,7 +152,7 @@ class MySql implements ExportDatabaseServerInterface
 
 		if (
 			count(
-				value: $paramArr
+				value: $paramArray
 			) === 0
 		) {
 			return;
@@ -164,7 +164,7 @@ class MySql implements ExportDatabaseServerInterface
 				haystack: $sql,
 				needle: ':'
 			) !== count(
-				value: $paramArr
+				value: $paramArray
 			)
 		) {
 			throw new \Exception(
@@ -175,7 +175,7 @@ class MySql implements ExportDatabaseServerInterface
 		$paramPos = [];
 		foreach (
 			array_keys(
-				array: $paramArr
+				array: $paramArray
 			) as $parameterisedColumn
 		) {
 			if (
@@ -215,19 +215,19 @@ class MySql implements ExportDatabaseServerInterface
 	 * Generate raw SQL query from parameterized query via PDO.
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * 
 	 * @return string
 	 * @throws \Exception
 	 */
 	private function generateRawSqlQuery(
 		$sql,
-		$paramArr
+		$paramArray
 	): string {
 		if (
-			empty($paramArr)
+			empty($paramArray)
 			|| count(
-				value: $paramArr
+				value: $paramArray
 			) === 0
 		) {
 			return $sql;
@@ -235,7 +235,7 @@ class MySql implements ExportDatabaseServerInterface
 
 		$this->validate(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 
 		//mysqli connection
@@ -253,16 +253,16 @@ class MySql implements ExportDatabaseServerInterface
 		}
 
 		//Generate bind params
-		$bindParamArr = [];
-		foreach ($paramArr as $parameterisedColumn => $valueArr) {
+		$bindParamArray = [];
+		foreach ($paramArray as $parameterisedColumn => $valueArray) {
 			if (
 				is_array(
-					value: $valueArr
+					value: $valueArray
 				)
 			) {
-				$tmpParamArr = [];
+				$tmpParamArray = [];
 				$count = 1;
-				foreach ($valueArr as $value) {
+				foreach ($valueArray as $value) {
 					if (
 						is_array(
 							value: $value
@@ -276,7 +276,7 @@ class MySql implements ExportDatabaseServerInterface
 					if (
 						in_array(
 							needle: $newParameterisedColumn,
-							haystack: $tmpParamArr,
+							haystack: $tmpParamArray,
 							strict: Constant::$TRUE
 						)
 					) {
@@ -284,26 +284,26 @@ class MySql implements ExportDatabaseServerInterface
 							message: "Invalid new param key '{$newParameterisedColumn}'"
 						);
 					}
-					$tmpParamArr[$newParameterisedColumn] = $value;
+					$tmpParamArray[$newParameterisedColumn] = $value;
 				}
 				$sql = str_replace(
 					search: $parameterisedColumn,
 					replace: implode(
 						separator: ', ',
 						array: array_keys(
-							array: $tmpParamArr
+							array: $tmpParamArray
 						)
 					),
 					subject: $sql
 				);
-				$bindParamArr = array_merge($bindParamArr, $tmpParamArr);
+				$bindParamArray = array_merge($bindParamArray, $tmpParamArray);
 			} else {
-				$bindParamArr[$parameterisedColumn] = $valueArr;
+				$bindParamArray[$parameterisedColumn] = $valueArray;
 			}
 		}
 
-		//Replace parameterized valueArr.
-		foreach ($bindParamArr as $parameterisedColumn => $value) {
+		//Replace parameterized valueArray.
+		foreach ($bindParamArray as $parameterisedColumn => $value) {
 			if (
 				!ctype_digit(
 					text: $value
@@ -333,17 +333,17 @@ class MySql implements ExportDatabaseServerInterface
 	 * Returns Shell Command
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * 
 	 * @return string
 	 */
 	public function getShellCommand(
 		$sql,
-		$paramArr = null
+		$paramArray = null
 	): string {
 		$sql = $this->generateRawSqlQuery(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 
 		// Shell command.

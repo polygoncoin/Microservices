@@ -13,10 +13,11 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return array_merge(
-	require $this->httpObj->httpRequestObj->QUERIES_DIR
+	require $this->httpObject->httpRequestObject->sqlDirectory
 		. DIRECTORY_SEPARATOR . 'CustomerDB'
 		. DIRECTORY_SEPARATOR . 'Common'
 		. DIRECTORY_SEPARATOR . 'Address.php',
@@ -32,11 +33,11 @@ return array_merge(
 			[
 				'column' => 'is_deleted',
 				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => $Constant::$NO
+				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
 				'column' => 'id',
-				'activeRequestDataKey' => 'routeParamArr',
+				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey
 			]

@@ -55,22 +55,22 @@ public static $CustomINT = [
 
 // Optional params
 	// Value can be null
-	'canBeNull' => $Constant::$FALSE,
+	'canBeNull' => Constant::$FALSE,
 	// Minimum value (int)
-	'minValue' => $Constant::$FALSE,
+	'minValue' => Constant::$FALSE,
 	// Maximum value (int)
-	'maxValue' => $Constant::$FALSE,
+	'maxValue' => Constant::$FALSE,
 	// Minimum length (string)
-	'minLength' => $Constant::$FALSE,
+	'minLength' => Constant::$FALSE,
 	// Maximum length (string)
-	'maxLength' => $Constant::$FALSE,
+	'maxLength' => Constant::$FALSE,
 	// Any one value from the Array
-	'enumValues' => $Constant::$FALSE,
+	'enumValues' => Constant::$FALSE,
 	// Values belonging to this Array
-	'setValues' => $Constant::$FALSE,
+	'setValues' => Constant::$FALSE,
 
 	// Values should pass this regex before use
-	'regex' => $Constant::$FALSE
+	'regex' => Constant::$FALSE
 ];
 ```
 

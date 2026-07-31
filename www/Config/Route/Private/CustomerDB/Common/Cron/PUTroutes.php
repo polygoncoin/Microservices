@@ -13,10 +13,12 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
 
 return [
-	$Env::$cronRequestRoutePrefix => [
+	Env::$cronRequestRoutePrefix => [
 		'{cron:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
 		]

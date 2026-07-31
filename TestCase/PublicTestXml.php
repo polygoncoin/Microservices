@@ -15,15 +15,17 @@
 
 namespace Microservices\TestCase;
 
+use Microservices\App\Constant;
 use Microservices\App\Web;
 
 if (!defined('PUBLIC_GET')) {
-	define('PUBLIC_GET', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'GET');
-	define('PUBLIC_QUERY', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'QUERY');
-	define('PUBLIC_POST', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'POST');
-	define('PUBLIC_PUT', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'PUT');
-	define('PUBLIC_PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'PATCH');
-	define('PUBLIC_DELETE', __DIR__ . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'DELETE');
+	define('PUBLIC_DIRECTORY', __DIR__ . DIRECTORY_SEPARATOR . 'Public');
+	define('PUBLIC_GET', PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$GET);
+	define('PUBLIC_QUERY', PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$QUERY);
+	define('PUBLIC_POST', PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$POST);
+	define('PUBLIC_PUT', PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$PUT);
+	define('PUBLIC_PATCH', PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$PATCH);
+	define('PUBLIC_DELETE', PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$DELETE);
 }
 
 // $apiVersion = 'X-API-Version: v1.0.0';
@@ -32,9 +34,9 @@ $cacheControl = 'Cache-Control: no-cache';
 // $contentType = 'Content-Type: multipart/form-data; charset=utf-8';
 $contentType = 'Content-Type: text/plain; charset=utf-8';
 
-$defaultHeaderArr = [];
-// $defaultHeaderArr[] = $apiVersion;
-$defaultHeaderArr[] = $cacheControl;
+$defaultHeaderArray = [];
+// $defaultHeaderArray[] = $apiVersion;
+$defaultHeaderArray[] = $cacheControl;
 
 $response = [];
 
@@ -44,7 +46,7 @@ if (defined('__MODE__')) {
 	$homeURL = 'http://customer001.localhost/Microservices/www/public_html/index.php';
 }
 
-$paramArr = [
+$paramArray = [
 	'Payload' => [
 		'firstname' => 'Ramesh1',
 		'lastname' => 'Jangid',
@@ -59,16 +61,16 @@ $paramArr = [
 
 $payload = '<?xml version="1.0" encoding="UTF-8" ?>';
 Web::genXmlPayload(
-	xmlParamArr: $paramArr,
+	xmlParamArray: $paramArray,
 	payload: $payload
 );
 
 $response[] = Web::trigger(
 	homeURL: $homeURL,
-	method: 'POST',
+	method: Constant::$POST,
 	route: '/registration-with-address'
 		. '&inputRepresentation=XML&outputRepresentation=XML',
-	header: $defaultHeaderArr,
+	header: $defaultHeaderArray,
 	payload: $payload
 );
 

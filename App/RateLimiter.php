@@ -39,17 +39,17 @@ class RateLimiter
 	 * 
 	 * @var null|object
 	 */
-	private $cacheObj = null;
+	private $cacheObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param object $cacheObj
+	 * @param object $cacheObject
 	 */
 	public function __construct(
-		&$cacheObj
+		&$cacheObject
 	) {
-		$this->cacheObj = &$cacheObj;
+		$this->cacheObject = &$cacheObject;
 	}
 
 	/**
@@ -80,7 +80,7 @@ class RateLimiter
 			);
 		}
 
-		if ($this->cacheObj === Constant::$NULL) {
+		if ($this->cacheObject === Constant::$NULL) {
 			throw new \Exception(
 				message: 'Invalid Rate Limiter Cache object',
 				code: HttpStatus::$InternalServerError
@@ -96,16 +96,16 @@ class RateLimiter
 		$rateLimitCacheKey = $rateLimitPrefix . $rateLimitKey;
 
 		if (
-			$this->cacheObj->cacheExist(
+			$this->cacheObject->cacheExist(
 				cacheKey: $rateLimitKey
 			)
 		) {
-			$requestCount = (int)$this->cacheObj->cacheGet(
+			$requestCount = (int)$this->cacheObject->cacheGet(
 				cacheKey: $rateLimitCacheKey
 			);
 		} else {
 			$requestCount = 0;
-			$this->cacheObj->cacheSet(
+			$this->cacheObject->cacheSet(
 				cacheKey: $rateLimitKey,
 				cacheValue: $requestCount,
 				cacheExpire: $remainder
@@ -121,7 +121,7 @@ class RateLimiter
 		$resetOn = Env::$timestamp + $remainder;
 
 		if ($allowed) {
-			$this->cacheObj->cacheIncrement(
+			$this->cacheObject->cacheIncrement(
 				cacheKey: $rateLimitKey
 			);
 		}
@@ -181,7 +181,7 @@ class RateLimiter
 				);
 			}
 		} catch (\Exception $e) {
-			// Handle connection errorArr
+			// Handle connection errorArray
 			throw new \Exception(
 				message: $e->getMessage(),
 				code: $e->getCode()

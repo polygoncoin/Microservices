@@ -87,7 +87,7 @@ class QueryCacheServer
 	 * 
 	 * @var null|QueryCacheServerInterface
 	 */
-	private $queryCacheServerObj = null;
+	private $queryCacheServerObject = null;
 
 	/**
 	 * Constructor
@@ -125,7 +125,7 @@ class QueryCacheServer
 	 */
 	public function connectQueryCache(): void
 	{
-		if ($this->queryCacheServerObj !== Constant::$NULL) {
+		if ($this->queryCacheServerObject !== Constant::$NULL) {
 			return;
 		}
 
@@ -149,7 +149,7 @@ class QueryCacheServer
 		$queryCacheServerNS = 'Microservices\\App\\Server\\QueryCacheServer\\'
             . $this->queryCacheServerType . 'QueryCache';
 
-		$this->queryCacheServerObj = new $queryCacheServerNS(
+		$this->queryCacheServerObject = new $queryCacheServerNS(
 			queryCacheServerHostname: $this->queryCacheServerHostname,
 			queryCacheServerPort: $this->queryCacheServerPort,
 			queryCacheServerUsername: $this->queryCacheServerUsername,
@@ -175,7 +175,7 @@ class QueryCacheServer
 			return false;
 		}
 
-		return $this->queryCacheServerObj->queryCacheExist(
+		return $this->queryCacheServerObject->queryCacheExist(
 			queryCacheKey: $queryCacheKey
 		);
 	}
@@ -196,7 +196,7 @@ class QueryCacheServer
 			return false;
 		}
 
-		return $this->queryCacheServerObj->queryCacheGet(
+		return $this->queryCacheServerObject->queryCacheGet(
 			queryCacheKey: $queryCacheKey
 		);
 	}
@@ -219,7 +219,7 @@ class QueryCacheServer
 			return false;
 		}
 
-		return $this->queryCacheServerObj->queryCacheSet(
+		return $this->queryCacheServerObject->queryCacheSet(
 			queryCacheKey: $queryCacheKey,
 			queryCacheValue:  $queryCacheValue
 		);
@@ -243,7 +243,7 @@ class QueryCacheServer
 			return false;
 		}
 
-		return $this->queryCacheServerObj->queryCacheIncrement(
+		return $this->queryCacheServerObject->queryCacheIncrement(
 			queryCacheKey: $queryCacheKey,
 			queryCacheOffset: $queryCacheOffset
 		);
@@ -265,7 +265,7 @@ class QueryCacheServer
 			return false;
 		}
 
-		return $this->queryCacheServerObj->queryCacheDelete(
+		return $this->queryCacheServerObject->queryCacheDelete(
 			queryCacheKey: $queryCacheKey
 		);
 	}

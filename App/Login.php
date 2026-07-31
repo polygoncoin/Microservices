@@ -63,17 +63,17 @@ class Login
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -83,8 +83,8 @@ class Login
 	 */
 	public function init(): bool
 	{
-		if ($this->httpObj->httpResponseObj !== Constant::$NULL) {
-			$this->httpObj->initResponse();
+		if ($this->httpObject->httpResponseObject !== Constant::$NULL) {
+			$this->httpObject->initResponse();
 		}
 
 		return true;
@@ -99,7 +99,7 @@ class Login
 	public function process(): mixed
 	{
 		// Check request method is POST
-		if ($this->httpObj->httpReqData['server']['httpMethod'] !== Constant::$POST) {
+		if ($this->httpObject->httpReqData['server']['httpMethod'] !== Constant::$POST) {
 			throw new \Exception(
 				message: 'Invalid request method',
 				code: HttpStatus::$NotFound
@@ -109,33 +109,33 @@ class Login
 		$this->loadPayload();
 		$this->loadUserData();
 		CommonFunction::checkPrivateRequestCidr(
-			httpObj: $this->httpObj
+			httpObject: $this->httpObject
 		);
 		$this->validatePassword();
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_rate_limiting_for_user_per_ip'
 			)
-			&& !empty($this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip'])
-			&& !empty($this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip_window'])
+			&& !empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip'])
+			&& !empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip_window'])
 		) {
-			$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(
+			$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserAsPerHttpRequestIpPrefix,
-				rateLimitMaxRequest: $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip'],
-				rateLimitMaxRequestWindow: $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip_window'],
-				rateLimitKey: $this->httpObj->httpReqData['server']['httpRequestIp']
+				rateLimitMaxRequest: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip'],
+				rateLimitMaxRequestWindow: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_per_ip_window'],
+				rateLimitKey: $this->httpObject->httpReqData['server']['httpRequestIp']
 			);
 		}
 
-		if ($this->httpObj->httpRequestObj->isPrivateSessionDomain) {
+		if ($this->httpObject->httpRequestObject->isPrivateSessionDomain) {
 			$this->startSession();
-		} elseif ($this->httpObj->httpRequestObj->isPrivateTokenDomain) {
+		} elseif ($this->httpObject->httpRequestObject->isPrivateTokenDomain) {
 			$this->outputTokenData();
 		} else {
 			throw new \Exception(
-				message: "Invalid domain: '{$this->httpObj->httpReqData['server']['domainName']}' to login",
+				message: "Invalid domain: '{$this->httpObject->httpReqData['server']['domainName']}' to login",
 				code: HttpStatus::$BadRequest
 			);
 		}
@@ -152,15 +152,15 @@ class Login
 	private function loadPayload(): void
 	{
 		// Check request method is POST
-		if ($this->httpObj->httpReqData['server']['httpMethod'] !== Constant::$POST) {
+		if ($this->httpObject->httpReqData['server']['httpMethod'] !== Constant::$POST) {
 			throw new \Exception(
 				message: 'Invalid request method',
 				code: HttpStatus::$NotFound
 			);
 		}
 
-		$this->httpObj->httpRequestObj->loadPayload();
-		$this->payload = $this->httpObj->httpRequestObj->dataDecodeObj->get();
+		$this->httpObject->httpRequestObject->loadPayload();
+		$this->payload = $this->httpObject->httpRequestObject->dataDecodeObject->get();
 
 		// Check for required conditions variables
 		$requiredParamData = [
@@ -191,7 +191,7 @@ class Login
 	 */
 	private function loadUserData(): void
 	{
-		$customerId = $this->httpObj->httpRequestObj->customerId;
+		$customerId = $this->httpObject->httpRequestObject->customerId;
 		$customerUserKey = CacheServerKey::customerUsername(
 			customerId: $customerId,
 			username: $this->payload['username']
@@ -220,9 +220,9 @@ class Login
 				code: HttpStatus::$Unauthorized
 			);
 		}
-		$this->httpObj->httpRequestObj->activeRequestData['userData'] = $userData;
-		$this->httpObj->httpRequestObj->customerUserId = $userData['customer_user_id'];
-		$this->httpObj->httpRequestObj->customerUserGroupId = $userData['customer_user_group_id'];
+		$this->httpObject->httpRequestObject->activeRequestData['userData'] = $userData;
+		$this->httpObject->httpRequestObject->customerUserId = $userData['customer_user_id'];
+		$this->httpObject->httpRequestObject->customerUserGroupId = $userData['customer_user_group_id'];
 	}
 
 	/**
@@ -234,14 +234,14 @@ class Login
 	private function validatePassword(): void
 	{
 		if (
-			!empty($this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_login_request'])
-			&& !empty($this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_login_request_window'])
+			!empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_login_request'])
+			&& !empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_login_request_window'])
 		) {
-			$this->httpObj->httpRequestObj->rateLimiterObj->checkRateLimit(
+			$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
 				rateLimitPrefix: Env::$rateLimitUserLoginPrefix,
-				rateLimitMaxRequest: $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_login_request'],
-				rateLimitMaxRequestWindow: $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_rate_limit_max_user_login_request_window'],
-				rateLimitKey: $this->httpObj->httpReqData['server']['httpRequestIp'] . ':' . $this->customer_user_username
+				rateLimitMaxRequest: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_login_request'],
+				rateLimitMaxRequestWindow: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_rate_limit_max_user_login_request_window'],
+				rateLimitKey: $this->httpObject->httpReqData['server']['httpRequestIp'] . ':' . $this->customer_user_username
 			);
 		}
 
@@ -249,7 +249,7 @@ class Login
 		if (
 			!password_verify(
 				password: $this->customer_user_password,
-				hash: $this->httpObj->httpRequestObj->activeRequestData['userData']['customer_user_password_hash']
+				hash: $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_password_hash']
 			)
 		) {
 			throw new \Exception(
@@ -292,13 +292,13 @@ class Login
 					'authId' => $authId,
 					'authMode' => 'Token',
 					'authTimestamp' => Env::$timestamp,
-					'httpRequestHash' => $this->httpObj->httpReqData['httpRequestHash']
+					'httpRequestHash' => $this->httpObject->httpReqData['httpRequestHash']
 				];
 				break;
 			}
 		}
 
-		foreach ($this->httpObj->httpRequestObj->activeRequestData['userData'] as $userDataKey => &$userDataKeyValue) {
+		foreach ($this->httpObject->httpRequestObject->activeRequestData['userData'] as $userDataKey => &$userDataKeyValue) {
 			$userTokenData[$userDataKey] = $userDataKeyValue;
 		}
 
@@ -320,23 +320,23 @@ class Login
 	 */
 	private function generateSession(): array
 	{
-		if ($this->httpObj->httpRequestObj->sessionObj === Constant::$NULL) {
-			$this->httpObj->httpRequestObj->sessionObj = new Session();
-			$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
-			$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-				customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
+		if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+			$this->httpObject->httpRequestObject->sessionObject = new Session();
+			$this->httpObject->httpRequestObject->sessionObject->sessionDomain = $this->httpObject->httpReqData['server']['domainName'];
+			$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
+				customerData: $this->httpObject->httpRequestObject->activeRequestData['customerData'],
 				options: []
 			);
 		}
-		$this->httpObj->httpRequestObj->sessionObj->sessionStartReadWrite();
+		$this->httpObject->httpRequestObject->sessionObject->sessionStartReadWrite();
 		$userSessionData = [
 			'authId' => session_id(),
 			'authMode' => 'Session',
 			'authTimestamp' => Env::$timestamp,
-			'httpRequestHash' => $this->httpObj->httpReqData['httpRequestHash']
+			'httpRequestHash' => $this->httpObject->httpReqData['httpRequestHash']
 		];
 
-		foreach ($this->httpObj->httpRequestObj->activeRequestData['userData'] as $userDataKey => &$userDataKeyValue) {
+		foreach ($this->httpObject->httpRequestObject->activeRequestData['userData'] as $userDataKey => &$userDataKeyValue) {
 			$userSessionData[$userDataKey] = $userDataKeyValue;
 		}
 
@@ -352,7 +352,7 @@ class Login
 	 */
 	private function outputTokenData(): void
 	{
-		$httpRequestHash = $this->httpObj->httpReqData['httpRequestHash'];
+		$httpRequestHash = $this->httpObject->httpReqData['httpRequestHash'];
 
 		$customerUserTokenKey = null;
 		$customerUserToken = null;
@@ -364,8 +364,8 @@ class Login
 		$customerUserConcurrencyData = null;
 
 		$customerUserTokenKey = CacheServerKey::customerUserToken(
-			customerId: $this->httpObj->httpRequestObj->customerId,
-			customerUserId: $this->httpObj->httpRequestObj->customerUserId
+			customerId: $this->httpObject->httpRequestObject->customerId,
+			customerUserId: $this->httpObject->httpRequestObject->customerUserId
 		);
 
 		if (
@@ -380,13 +380,13 @@ class Login
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
 			$customerUserConcurrencyKey = CacheServerKey::customerUserConcurrency(
-				customerId: $this->httpObj->httpRequestObj->customerId,
-				customerUserId: $this->httpObj->httpRequestObj->customerUserId
+				customerId: $this->httpObject->httpRequestObject->customerId,
+				customerUserId: $this->httpObject->httpRequestObject->customerUserId
 			);
 
 			if (
@@ -394,11 +394,11 @@ class Login
 					cacheKey: $customerUserConcurrencyKey
 				)
 			) {
-				if ($this->httpObj->httpRequestObj->sessionObj === Constant::$NULL) {
-					$this->httpObj->httpRequestObj->sessionObj = new Session();
-					$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
-					$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-						customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
+				if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+					$this->httpObject->httpRequestObject->sessionObject = new Session();
+					$this->httpObject->httpRequestObject->sessionObject->sessionDomain = $this->httpObject->httpReqData['server']['domainName'];
+					$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
+						customerData: $this->httpObject->httpRequestObject->activeRequestData['customerData'],
 						options: []
 					);
 				}
@@ -421,7 +421,7 @@ class Login
 					if ($authData['authMode'] === 'Session') {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
 						if ((Constant::$TOKEN_EXPIRY_TIME - $timeLeft) <= 0) {
-							$this->httpObj->httpRequestObj->sessionObj->deleteSession(
+							$this->httpObject->httpRequestObject->sessionObject->deleteSession(
 								sessionId: $authId
 							);
 							unset($customerUserConcurrencyData[$authId]);
@@ -475,7 +475,7 @@ class Login
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
@@ -491,8 +491,8 @@ class Login
 				);
 			}
 			$customerUserConcurrencyKey = $customerUserConcurrencyKey ?? CacheServerKey::customerUserConcurrency(
-				customerId: $this->httpObj->httpRequestObj->customerId,
-				customerUserId: $this->httpObj->httpRequestObj->customerUserId
+				customerId: $this->httpObject->httpRequestObject->customerId,
+				customerUserId: $this->httpObject->httpRequestObject->customerUserId
 			);
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
@@ -521,9 +521,9 @@ class Login
 	 */
 	private function outputDetail(&$output): void
 	{
-		$this->httpObj->initResponse();
-		$this->httpObj->httpResponseObj->dataEncodeObj->startObject();
-		$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
+		$this->httpObject->initResponse();
+		$this->httpObject->httpResponseObject->dataEncodeObject->startObject();
+		$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
 			objectKey: 'Results',
 			data: $output
 		);
@@ -536,7 +536,7 @@ class Login
 	 */
 	private function startSession(): void
 	{
-		$httpRequestHash = $this->httpObj->httpReqData['httpRequestHash'];
+		$httpRequestHash = $this->httpObject->httpReqData['httpRequestHash'];
 
 		$customerUserSessionIdKey = null;
 		$customerUserSessionId = null;
@@ -548,8 +548,8 @@ class Login
 		$customerUserConcurrencyData = null;
 
 		$customerUserSessionIdKey = CacheServerKey::customerUserSessionId(
-			customerId: $this->httpObj->httpRequestObj->customerId,
-			customerUserId: $this->httpObj->httpRequestObj->customerUserId
+			customerId: $this->httpObject->httpRequestObject->customerId,
+			customerUserId: $this->httpObject->httpRequestObject->customerUserId
 		);
 
 		if (
@@ -564,13 +564,13 @@ class Login
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
 			$customerUserConcurrencyKey = CacheServerKey::customerUserConcurrency(
-				customerId: $this->httpObj->httpRequestObj->customerId,
-				customerUserId: $this->httpObj->httpRequestObj->customerUserId
+				customerId: $this->httpObject->httpRequestObject->customerId,
+				customerUserId: $this->httpObject->httpRequestObject->customerUserId
 			);
 
 			if (
@@ -578,11 +578,11 @@ class Login
 					cacheKey: $customerUserConcurrencyKey
 				)
 			) {
-				if ($this->httpObj->httpRequestObj->sessionObj === Constant::$NULL) {
-					$this->httpObj->httpRequestObj->sessionObj = new Session();
-					$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
-					$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-						customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
+				if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+					$this->httpObject->httpRequestObject->sessionObject = new Session();
+					$this->httpObject->httpRequestObject->sessionObject->sessionDomain = $this->httpObject->httpReqData['server']['domainName'];
+					$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
+						customerData: $this->httpObject->httpRequestObject->activeRequestData['customerData'],
 						options: []
 					);
 				}
@@ -605,7 +605,7 @@ class Login
 					if ($authData['authMode'] === 'Session') {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
 						if ((Constant::$TOKEN_EXPIRY_TIME - $timeLeft) <= 0) {
-							$this->httpObj->httpRequestObj->sessionObj->deleteSession(
+							$this->httpObject->httpRequestObject->sessionObject->deleteSession(
 								sessionId: $authId
 							);
 							unset($customerUserConcurrencyData[$authId]);
@@ -623,15 +623,15 @@ class Login
 				}
 			}
 		} else {
-			if ($this->httpObj->httpRequestObj->sessionObj === Constant::$NULL) {
-				$this->httpObj->httpRequestObj->sessionObj = new Session();
-				$this->httpObj->httpRequestObj->sessionObj->sessionDomain = $this->httpObj->httpReqData['server']['domainName'];
-				$this->httpObj->httpRequestObj->sessionObj->initSessionHandler(
-					customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
+			if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+				$this->httpObject->httpRequestObject->sessionObject = new Session();
+				$this->httpObject->httpRequestObject->sessionObject->sessionDomain = $this->httpObject->httpReqData['server']['domainName'];
+				$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
+					customerData: $this->httpObject->httpRequestObject->activeRequestData['customerData'],
 					options: []
 				);
 			}
-			$this->httpObj->httpRequestObj->sessionObj->sessionStartReadonly();
+			$this->httpObject->httpRequestObject->sessionObject->sessionStartReadonly();
 			if ($customerUserSessionId === session_id()) {
 				if ($_SESSION['httpRequestHash'] === $httpRequestHash) {
 					$authFoundData = $_SESSION;
@@ -655,7 +655,7 @@ class Login
 
 		if (
 			CommonFunction::isEnabled(
-				httpObj: $this->httpObj,
+				httpObject: $this->httpObject,
 				feature: 'customer_enabled_concurrent_login'
 			)
 		) {
@@ -671,8 +671,8 @@ class Login
 				);
 			}
 			$customerUserConcurrencyKey = $customerUserConcurrencyKey ?? CacheServerKey::customerUserConcurrency(
-				customerId: $this->httpObj->httpRequestObj->customerId,
-				customerUserId: $this->httpObj->httpRequestObj->customerUserId
+				customerId: $this->httpObject->httpRequestObject->customerId,
+				customerUserId: $this->httpObject->httpRequestObject->customerUserId
 			);
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
@@ -702,8 +702,8 @@ class Login
 	private function cacheExist(
 		$cacheKey
 	): mixed {
-		if ($this->httpObj->httpRequestObj->customerCacheObj) {
-			return $this->httpObj->httpRequestObj->customerCacheObj->cacheExist(
+		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+			return $this->httpObject->httpRequestObject->customerCacheObject->cacheExist(
 				cacheKey: $cacheKey
 			);
 		}
@@ -721,8 +721,8 @@ class Login
 	private function cacheGet(
 		$cacheKey
 	): mixed {
-		if ($this->httpObj->httpRequestObj->customerCacheObj) {
-			return $this->httpObj->httpRequestObj->customerCacheObj->cacheGet(
+		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+			return $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 				cacheKey: $cacheKey
 			);
 		}
@@ -744,8 +744,8 @@ class Login
 		$cacheValue,
 		$cacheExpire = 0
 	): mixed {
-		if ($this->httpObj->httpRequestObj->customerCacheObj) {
-			return $this->httpObj->httpRequestObj->customerCacheObj->cacheSet(
+		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+			return $this->httpObject->httpRequestObject->customerCacheObject->cacheSet(
 				cacheKey: $cacheKey,
 				cacheValue: $cacheValue,
 				cacheExpire: $cacheExpire
@@ -765,8 +765,8 @@ class Login
 	private function cacheDelete(
 		$cacheKey
 	): mixed {
-		if ($this->httpObj->httpRequestObj->customerCacheObj) {
-			return $this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
+		if ($this->httpObject->httpRequestObject->customerCacheObject) {
+			return $this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
 				cacheKey: $cacheKey
 			);
 		}

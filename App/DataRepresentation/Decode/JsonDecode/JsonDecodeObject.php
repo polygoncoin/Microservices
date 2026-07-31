@@ -71,14 +71,14 @@ class JsonDecodeObject
 	 * 
 	 * @var array
 	 */
-	public $objectValueArr = [];
+	public $objectValueArray = [];
 
 	/**
 	 * Array values
 	 * 
 	 * @var array
 	 */
-	public $arrayValueArr = [];
+	public $arrayValueArray = [];
 
 	/**
 	 * Constructor

@@ -15,12 +15,14 @@
 
 namespace Microservices\TestCase;
 
+use Microservices\App\Constant;
+use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
-$headerArr[] = $contentType;
+$headerArray = $defaultHeaderArray;
+$headerArray[] = $contentType;
 
-$paramArr = [
+$paramArray = [
 	'firstname' => 'Ramesh',
 	'lastname' => 'Jangid',
 	'email' => 'ramesh@test.com',
@@ -30,8 +32,8 @@ $paramArr = [
 
 return Web::trigger(
 	homeURL: $homeURL,
-	method: 'POST',
+	method: Constant::$POST,
 	route: '/registration',
-	header: $headerArr,
-	payload: json_encode(value: $paramArr)
+	header: $headerArray,
+	payload: json_encode(value: $paramArray)
 );

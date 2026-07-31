@@ -42,7 +42,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	public $pgSqlServerDatabase = null;
 	public $pgSqlServerTable = null;
 
-	private $pgSqlServerObj = null;
+	private $pgSqlServerObject = null;
 
 	/**
 	 * Initialize
@@ -74,14 +74,14 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			FROM {$this->pgSqlServerTable}
 			WHERE session_id = $1 AND last_accessed > $2
 		";
-		$paramArr = [
+		$paramArray = [
 			$sessionId,
 			(Env::$timestamp - $this->sessionMaxLifetime)
 		];
 
 		$record = $this->getSql(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 		if (isset($record['session_data'])) {
 			return $this->decryptData(
@@ -107,7 +107,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			INSERT INTO {$this->pgSqlServerTable} (session_id, last_accessed, session_data)
 			VALUES ($1, $2, $3)
 		";
-		$paramArr = [
+		$paramArray = [
 			$sessionId,
 			Env::$timestamp,
 			$this->encryptData(
@@ -117,7 +117,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 
 		return $this->execSql(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 	}
 
@@ -141,7 +141,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			WHERE
 				session_id = $3
 		";
-		$paramArr = [
+		$paramArray = [
 			Env::$timestamp,
 			$this->encryptData(
 				plainText: $sessionData
@@ -151,7 +151,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 
 		return $this->execSql(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 	}
 
@@ -172,13 +172,13 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			SET last_accessed = $1
 			WHERE session_id = $2
 		";
-		$paramArr = [
+		$paramArray = [
 			Env::$timestamp,
 			$sessionId
 		];
 		return $this->execSql(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 	}
 
@@ -196,12 +196,12 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			DELETE FROM {$this->pgSqlServerTable}
 			WHERE last_accessed < $1
 		";
-		$paramArr = [
+		$paramArray = [
 			(Env::$timestamp - $sessionMaxLifetime)
 		];
 		return $this->execSql(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 	}
 
@@ -219,12 +219,12 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			DELETE FROM {$this->pgSqlServerTable}
 			WHERE session_id = $1
 		";
-		$paramArr = [
+		$paramArray = [
 			$sessionId
 		];
 		return $this->execSql(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
 	}
 
@@ -236,9 +236,9 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	public function closeSession(): void
 	{
 		pg_close(
-			$this->pgSqlServerObj
+			$this->pgSqlServerObject
 		);
-		$this->pgSqlServerObj = null;
+		$this->pgSqlServerObject = null;
 	}
 
 	/**
@@ -256,7 +256,7 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 			) {
 				$UP = "user={$this->pgSqlServerUsername} password={$this->pgSqlServerPassword}";
 			}
-			$this->pgSqlServerObj = pg_connect(
+			$this->pgSqlServerObject = pg_connect(
 				"host={$this->pgSqlServerHostname} "
 				. "port={$this->pgSqlServerPort} "
 				. "dbname={$this->pgSqlServerDatabase} {$UP}"
@@ -272,20 +272,20 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 * Get Session
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * 
 	 * @return mixed
 	 */
 	private function getSql(
 		$sql,
-		$paramArr
+		$paramArray
 	): mixed {
 		try {
 			// Execute the query with parameters
 			$result = pg_query_params(
-				$this->pgSqlServerObj,
+				$this->pgSqlServerObject,
 				$sql,
-				$paramArr
+				$paramArray
 			);
 			if ($result) {
 				$record = [];
@@ -314,19 +314,19 @@ class PostgreSqlBasedSessionContainer extends SessionContainerHelper implements
 	 * Execute SQL
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * 
 	 * @return bool
 	 */
 	private function execSql(
 		$sql,
-		$paramArr
+		$paramArray
 	): bool {
 		try {
 			$result = pg_query_params(
-				$this->pgSqlServerObj,
+				$this->pgSqlServerObject,
 				$sql,
-				$paramArr
+				$paramArray
 			);
 			if ($result) {
 				return true;

@@ -15,13 +15,17 @@
 
 namespace Microservices\TestCase;
 
+use Microservices\App\Constant;
+use Microservices\App\Web;
+
 if (!defined('PRIVATE_GET')) {
-	define('PRIVATE_GET', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'GET');
-	define('PRIVATE_QUERY', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'QUERY');
-	define('PRIVATE_POST', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'POST');
-	define('PRIVATE_PUT', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'PUT');
-	define('PRIVATE_PATCH', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'PATCH');
-	define('PRIVATE_DELETE', __DIR__ . DIRECTORY_SEPARATOR . 'Private' . DIRECTORY_SEPARATOR . 'DELETE');
+	define('PRIVATE_DIRECTORY', __DIR__ . DIRECTORY_SEPARATOR . 'Private');
+	define('PRIVATE_GET', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$GET);
+	define('PRIVATE_QUERY', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$QUERY);
+	define('PRIVATE_POST', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$POST);
+	define('PRIVATE_PUT', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$PUT);
+	define('PRIVATE_PATCH', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$PATCH);
+	define('PRIVATE_DELETE', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$DELETE);
 }
 
 // $apiVersion = 'X-API-Version: v1.0.0';
@@ -30,9 +34,9 @@ $cacheControl = 'Cache-Control: no-cache';
 // $contentType = 'Content-Type: multipart/form-data; charset=utf-8';
 $contentType = 'Content-Type: text/plain; charset=utf-8';
 
-$defaultHeaderArr = [];
-// $defaultHeaderArr[] = $apiVersion;
-$defaultHeaderArr[] = $cacheControl;
+$defaultHeaderArray = [];
+// $defaultHeaderArray[] = $apiVersion;
+$defaultHeaderArray[] = $cacheControl;
 
 $response = [];
 

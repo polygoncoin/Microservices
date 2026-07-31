@@ -19,27 +19,27 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
-$headerArr[] = $contentType;
+$headerArray = $defaultHeaderArray;
+$headerArray[] = $contentType;
 $proceed = false;
 
 if (
 	isset($token)
 	&& $token !== Constant::$NULL
 ) {
-	$headerArr[] = "Authorization: Bearer {$token}";
+	$headerArray[] = "Authorization: Bearer {$token}";
 	$proceed = true;
 }
 if (
 	isset($sessionCookie)
 	&& $sessionCookie !== Constant::$NULL
 ) {
-	$headerArr[] = "Cookie: {$sessionCookie}";
+	$headerArray[] = "Cookie: {$sessionCookie}";
 	$proceed = true;
 }
 
 if (isset($proceed)) {
-	$paramArr = [
+	$paramArray = [
 		'firstname' => 'Ramesh',
 		'lastname' => 'Jangid',
 		'email' => 'ramesh_test@test.com'
@@ -47,9 +47,9 @@ if (isset($proceed)) {
 
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: 'PATCH',
+		method: Constant::$PATCH,
 		route: '/registration/1',
-		header: $headerArr,
-		payload: json_encode(value: $paramArr)
+		header: $headerArray,
+		payload: json_encode(value: $paramArray)
 	);
 }

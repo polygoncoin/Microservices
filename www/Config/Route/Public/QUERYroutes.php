@@ -13,39 +13,13 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	$Env::$cronRequestRoutePrefix => [
-		'{cron:string}' => [
-			'dataType' => DatabaseServerDataType::$Default,
-			'__FILE__' => $Constant::$FALSE,
-		]
-	],
-	'login' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Login.php',
-	],
 	'category' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-			. DIRECTORY_SEPARATOR . 'GET'
-			. DIRECTORY_SEPARATOR . 'Category-all.php',
-		'search' => [
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Category-search.php',
-		],
-		'{id:int}' => [
-			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Category-Single.php',
-		],
-		'download' => [
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
-				. DIRECTORY_SEPARATOR . 'GET'
-				. DIRECTORY_SEPARATOR . 'Download.php',
-		]
+		'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
+			. DIRECTORY_SEPARATOR . Constant::$QUERY
+			. DIRECTORY_SEPARATOR . 'Category.php',
 	]
 ];

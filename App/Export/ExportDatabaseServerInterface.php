@@ -52,12 +52,12 @@ interface ExportDatabaseServerInterface
 	 * Returns Shell Command
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * 
 	 * @return string
 	 */
 	public function getShellCommand(
 		$sql,
-		$paramArr = null
+		$paramArray = null
 	): string;
 }

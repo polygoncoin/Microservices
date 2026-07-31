@@ -19,30 +19,30 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
+$headerArray = $defaultHeaderArray;
 $proceed = false;
 
 if (
 	isset($token)
 	&& $token !== Constant::$NULL
 ) {
-	$headerArr[] = "Authorization: Bearer {$token}";
+	$headerArray[] = "Authorization: Bearer {$token}";
 	$proceed = true;
 }
 if (
 	isset($sessionCookie)
 	&& $sessionCookie !== Constant::$NULL
 ) {
-	$headerArr[] = "Cookie: {$sessionCookie}";
+	$headerArray[] = "Cookie: {$sessionCookie}";
 	$proceed = true;
 }
 
 if (isset($proceed)) {
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: 'GET',
+		method: Constant::$GET,
 		route: '/address',
-		header: $headerArr,
+		header: $headerArray,
 		payload: ''
 	);
 }

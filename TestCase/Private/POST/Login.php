@@ -19,14 +19,14 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
-$headerArr[] = $contentType;
+$headerArray = $defaultHeaderArray;
+$headerArray[] = $contentType;
 
 $webResponse = Web::trigger(
 	homeURL: $homeURL,
-	method: 'POST',
+	method: Constant::$POST,
 	route: '/login',
-	header: $headerArr,
+	header: $headerArray,
 	payload: json_encode(value: $payload)
 );
 

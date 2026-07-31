@@ -73,7 +73,7 @@ class MySql implements SqlInterface
 	 * 
 	 * @var null|\PDO
 	 */
-	private $mysqlServerObj = null;
+	private $mysqlServerObject = null;
 
 	/**
 	 * Executed query statement
@@ -87,7 +87,7 @@ class MySql implements SqlInterface
 	 * 
 	 * @var \PDOStatement[]
 	 */
-	private $stmtArr = [];
+	private $stmtArray = [];
 
 	/**
 	 * Transaction started flag
@@ -126,12 +126,12 @@ class MySql implements SqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->mysqlServerObj !== Constant::$NULL) {
+		if ($this->mysqlServerObject !== Constant::$NULL) {
 			return;
 		}
 
 		try {
-			$this->mysqlServerObj = new \PDO(
+			$this->mysqlServerObject = new \PDO(
 				dsn: "mysql:host={$this->dbServerHostname};port={$this->dbServerPort}",
 				username: $this->dbServerUsername,
 				password: $this->dbServerPassword,
@@ -145,7 +145,7 @@ class MySql implements SqlInterface
 				$this->useDatabase();
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -164,12 +164,12 @@ class MySql implements SqlInterface
 
 		try {
 			if ($this->dbServerDatabase !== Constant::$NULL) {
-				$this->mysqlServerObj->exec(
+				$this->mysqlServerObject->exec(
 					statement: "USE `{$this->dbServerDatabase}`"
 				);
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -189,9 +189,9 @@ class MySql implements SqlInterface
 
 		$this->beganTransaction = true;
 		try {
-			$this->mysqlServerObj->beginTransaction();
+			$this->mysqlServerObject->beginTransaction();
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -209,10 +209,10 @@ class MySql implements SqlInterface
 		try {
 			if ($this->beganTransaction) {
 				$this->beganTransaction = false;
-				$this->mysqlServerObj->commit();
+				$this->mysqlServerObject->commit();
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -230,10 +230,10 @@ class MySql implements SqlInterface
 		try {
 			if ($this->beganTransaction) {
 				$this->beganTransaction = false;
-				$this->mysqlServerObj->rollBack();
+				$this->mysqlServerObject->rollBack();
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -256,7 +256,7 @@ class MySql implements SqlInterface
 			if ($this->beganTransaction) {
 				$this->rollBack();
 			}
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -273,14 +273,14 @@ class MySql implements SqlInterface
 	public function lastInsertId(): bool|int
 	{
 		try {
-			if (($lastInsertId = $this->mysqlServerObj->lastInsertId()) !== Constant::$FALSE) {
+			if (($lastInsertId = $this->mysqlServerObject->lastInsertId()) !== Constant::$FALSE) {
 				return $lastInsertId;
 			}
 		} catch (\PDOException $e) {
 			if ($this->beganTransaction) {
 				$this->rollBack();
 			}
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -293,14 +293,14 @@ class MySql implements SqlInterface
 	 * Execute query
 	 * 
 	 * @param string $sql      SQL query
-	 * @param array  $paramArr SQL query params
+	 * @param array  $paramArray SQL query params
 	 * @param bool   $pushPop  Push Pop result set stmt
 	 * 
 	 * @return void
 	 */
 	public function execQuery(
 		$sql,
-		$paramArr = [],
+		$paramArray = [],
 		$pushPop = false
 	): void {
 		$this->connect();
@@ -311,25 +311,25 @@ class MySql implements SqlInterface
 				&& $this->stmt
 			) {
 				array_push(
-					$this->stmtArr,
+					$this->stmtArray,
 					$this->stmt
 				);
 			}
-			$this->stmt = $this->mysqlServerObj->prepare(
+			$this->stmt = $this->mysqlServerObject->prepare(
 				query: $sql,
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
 			if ($this->stmt) {
 				if (
 					is_array(
-						value: $paramArr
+						value: $paramArray
 					)
 					&& count(
-						value: $paramArr
+						value: $paramArray
 					) > 0
 				) {
 					$this->stmt->execute(
-						$paramArr
+						$paramArray
 					);
 				} else {
 					$this->stmt->execute();
@@ -339,7 +339,7 @@ class MySql implements SqlInterface
 			if ($this->beganTransaction) {
 				$this->rollBack();
 			}
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -361,7 +361,7 @@ class MySql implements SqlInterface
 				);
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -384,7 +384,7 @@ class MySql implements SqlInterface
 				);
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);
@@ -409,16 +409,16 @@ class MySql implements SqlInterface
 				if (
 					$pushPop
 					&& count(
-						value: $this->stmtArr
+						value: $this->stmtArray
 					)
 				) {
 					$this->stmt = array_pop(
-						array: $this->stmtArr
+						array: $this->stmtArray
 					);
 				}
 			}
 		} catch (\PDOException $e) {
-			if ((int)$this->mysqlServerObj->errorCode()) {
+			if ((int)$this->mysqlServerObject->errorCode()) {
 				$this->manageException(
 					e: $e
 				);

@@ -13,24 +13,25 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
 	'group' => [
 		'{customer_user_group_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
-				. DIRECTORY_SEPARATOR . 'DELETE'
+				. DIRECTORY_SEPARATOR . Constant::$DELETE
 				. DIRECTORY_SEPARATOR . 'groups.php',
 		],
 	],
 	'customer' => [
 		'{customer_id:int}'  => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
+			'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
 				. DIRECTORY_SEPARATOR . 'GlobalDB'
-				. DIRECTORY_SEPARATOR . 'DELETE'
+				. DIRECTORY_SEPARATOR . Constant::$DELETE
 				. DIRECTORY_SEPARATOR . 'customer.php',
 		],
 	],

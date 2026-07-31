@@ -15,15 +15,17 @@
 
 namespace Microservices\TestCase;
 
+use Microservices\App\Constant;
+use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
+$headerArray = $defaultHeaderArray;
 
 return Web::trigger(
 	homeURL: $homeURL,
-	method: 'GET',
+	method: Constant::$GET,
 	route: '/category',
-	header: $headerArr,
+	header: $headerArray,
 	payload: ''
 );
 

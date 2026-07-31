@@ -81,7 +81,7 @@ class MongoDbCache implements CacheServerInterface
 	 * 
 	 * @var null|Cache_MongoDb
 	 */
-	private $noSqlServerObj = null;
+	private $noSqlServerObject = null;
 
 	/**
 	 * Constructor
@@ -117,12 +117,12 @@ class MongoDbCache implements CacheServerInterface
 	 */
 	public function connectCache(): void
 	{
-		if ($this->noSqlServerObj !== Constant::$NULL) {
+		if ($this->noSqlServerObject !== Constant::$NULL) {
 			return;
 		}
 
 		try {
-			$this->noSqlServerObj = new Cache_MongoDb(
+			$this->noSqlServerObject = new Cache_MongoDb(
 				cacheServerHostname: $this->cacheServerHostname,
 				cacheServerPort: $this->cacheServerPort,
 				cacheServerUsername: $this->cacheServerUsername,
@@ -154,7 +154,7 @@ class MongoDbCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->exist(
+		return $this->noSqlServerObject->exist(
 			key: $cacheKey
 		);
 	}
@@ -175,7 +175,7 @@ class MongoDbCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->get(
+		return $this->noSqlServerObject->get(
 			key: $cacheKey
 		);
 	}
@@ -200,7 +200,7 @@ class MongoDbCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->set(
+		return $this->noSqlServerObject->set(
 			key: $cacheKey,
 			value: $cacheValue,
 			expire: $cacheExpire
@@ -225,7 +225,7 @@ class MongoDbCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->increment(
+		return $this->noSqlServerObject->increment(
 			key: $cacheKey,
 			offset: $cacheOffset
 		);
@@ -247,7 +247,7 @@ class MongoDbCache implements CacheServerInterface
 			return false;
 		}
 
-		return $this->noSqlServerObj->delete(
+		return $this->noSqlServerObject->delete(
 			key: $cacheKey
 		);
 	}

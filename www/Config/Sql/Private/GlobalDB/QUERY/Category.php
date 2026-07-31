@@ -13,15 +13,21 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
-	'countQuery' => 'SELECT count(1) as `count` FROM `address` WHERE __WHERE__',
-	'__QUERY__' => 'SELECT * FROM `address` WHERE __WHERE__',
+	'__QUERY__' => 'SELECT * FROM `category` WHERE __WHERE__',
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
-		]
+			'activeRequestDataKeySubKey' => Constant::$NO
+		],
+		[
+			'column' => 'id',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'id'
+		],
 	],
-	'__MODE__' => 'multipleRecordFormat'
+	'__MODE__' => 'singleRecordFormat'
 ];

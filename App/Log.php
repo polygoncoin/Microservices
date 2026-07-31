@@ -37,17 +37,17 @@ class Log
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -84,11 +84,11 @@ class Log
 		$exceptionJson = json_encode(
 			value: $logData
 		);
-		if (isset($this->httpObj->httpRequestObj)) {
+		if (isset($this->httpObject->httpRequestObject)) {
 			$exceptionJson = json_encode(
 				value: $logData
 			);
-			return $this->httpObj->httpRequestObj->logErrorData(
+			return $this->httpObject->httpRequestObject->logErrorData(
 				exceptionJson: $exceptionJson
 			);
 		} else {
@@ -108,7 +108,7 @@ class Log
 	public function logInFilesystem(
 		&$logData
 	): int {
-		$logFile = Constant::$LOG_DIR
+		$logFile = Constant::$LOG_DIRECTORY
 			. DIRECTORY_SEPARATOR . 'log-' . date(
 				format: 'YmdH'
 			);

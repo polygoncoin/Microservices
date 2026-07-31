@@ -13,6 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'__QUERY__' => 'INSERT INTO `category` SET __SET__',
 	'__SET__' => [
@@ -64,9 +66,9 @@ return [
 			]
 		]
 	],
-	'useHierarchy' => $Constant::$TRUE,
-	'affectedQueryCacheKeyArr' => [
-		$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_id'] . ':category',
-		$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_id'] . ':category1'
+	'useHierarchy' => Constant::$TRUE,
+	'affectedQueryCacheKeyArray' => [
+		$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category',
+		$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category1'
 	]
 ];

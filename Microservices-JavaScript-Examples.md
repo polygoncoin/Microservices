@@ -12,9 +12,9 @@ xmlhttp . setRequestHeader('Content-type', 'text/plain; charset=utf-8');
 xmlhttp . onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
 		var responseJson = this.responseText;
-		var responseArr = JSON.parse(responseJson);
-		console.log(responseArr);
-		var token = responseArr['Output']['Results']['Token'];
+		var responseArray = JSON.parse(responseJson);
+		console.log(responseArray);
+		var token = responseArray['Output']['Results']['Token'];
 		console.log(token);
 	}
 };
@@ -42,8 +42,8 @@ xmlhttp . setRequestHeader('Authorization', 'Bearer <Token-from-login-api>');
 xmlhttp . onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
 		var responseJson = this.responseText;
-		var responseArr = JSON.parse(responseJson);
-		console.log(responseArr);
+		var responseArray = JSON.parse(responseJson);
+		console.log(responseArray);
 	}
 };
 
@@ -63,8 +63,8 @@ xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 xmlhttp . onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
 		var responseJson = this.responseText;
-		var responseArr = JSON.parse(responseJson);
-		console.log(responseArr);
+		var responseArray = JSON.parse(responseJson);
+		console.log(responseArray);
 	}
 };
 
@@ -89,8 +89,8 @@ xmlhttp . setRequestHeader('Authorization', ‘Bearer <Token-from-login-api>');
 xmlhttp . onreadystatechange = function() {
 	if (this.readyState == 4 && this.status == 200) {
 		var responseJson = this.responseText;
-		var responseArr = JSON.parse(responseJson);
-		console.log(responseArr);
+		var responseArray = JSON.parse(responseJson);
+		console.log(responseArray);
 	}
 };
 

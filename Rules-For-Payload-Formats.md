@@ -57,8 +57,8 @@ var payload = [
 - **$activeRequestData\['userData'\]** Session Data.
 This remains same for every request and contains key's like id, group\_id, customer\_id
 
-- **$activeRequestData\['routeParamArr'\]** Data passed in URI.
-Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $activeRequestData\['routeParamArr'\] will hold these dynamic values as below.
+- **$activeRequestData\['routeParamArray'\]** Data passed in URI.
+Suppose our configured route is **/{table:string}/{id:int}** and we make an HTTP request for **/tableName/1** then $activeRequestData\['routeParamArray'\] will hold these dynamic values as below.
 
 - **$activeRequestData\['payload'\]** request data.
 For **GET** method, the **$\_GET** is the payload.

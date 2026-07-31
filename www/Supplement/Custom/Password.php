@@ -43,17 +43,17 @@ class Password implements CustomInterface
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 	}
 
 	/**
@@ -63,7 +63,7 @@ class Password implements CustomInterface
 	 */
 	public function init(): bool
 	{
-		$this->httpObj->httpRequestObj->loadPayload();
+		$this->httpObject->httpRequestObject->loadPayload();
 
 		return true;
 	}
@@ -75,18 +75,18 @@ class Password implements CustomInterface
 	 */
 	public function process(): mixed
 	{
-		switch ($this->httpObj->httpRequestObj->activeRequestData['payloadType']) {
+		switch ($this->httpObject->httpRequestObject->activeRequestData['payloadType']) {
 			case 'Array':
-				$payload = $this->httpObj->httpRequestObj->dataDecodeObj->get('0');
+				$payload = $this->httpObject->httpRequestObject->dataDecodeObject->get('0');
 				break;
 			case 'Object':
-				$payload = $this->httpObj->httpRequestObj->dataDecodeObj->get();
+				$payload = $this->httpObject->httpRequestObject->dataDecodeObject->get();
 				break;
 		}
-		$this->httpObj->httpRequestObj->activeRequestData['payload'] = $payload;
+		$this->httpObject->httpRequestObject->activeRequestData['payload'] = $payload;
 
-		$oldPassword = $this->httpObj->httpRequestObj->activeRequestData['payload']['old_password'];
-		$oldPasswordHash = $this->httpObj->httpRequestObj->activeRequestData['userData']['password_hash'];
+		$oldPassword = $this->httpObject->httpRequestObject->activeRequestData['payload']['old_password'];
+		$oldPasswordHash = $this->httpObject->httpRequestObject->activeRequestData['userData']['password_hash'];
 
 		if (
 			password_verify(
@@ -94,47 +94,47 @@ class Password implements CustomInterface
 				hash: $oldPasswordHash
 			)
 		) {
-			$userName = $this->httpObj->httpRequestObj->activeRequestData['userData']['username'];
-			$newPassword = $this->httpObj->httpRequestObj->activeRequestData['payload']['new_password'];
+			$userName = $this->httpObject->httpRequestObject->activeRequestData['userData']['username'];
+			$newPassword = $this->httpObject->httpRequestObject->activeRequestData['payload']['new_password'];
 			$newPasswordHash = password_hash(
 				password: $newPassword,
 				algo: PASSWORD_DEFAULT
 			);
 
 			$sql = "
-				UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}`
+				UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}`
 				SET password_hash = :password_hash
 				WHERE username = :username AND is_deleted = :is_deleted
 			";
-			$paramArr = [
+			$paramArray = [
 				':password_hash' => $newPasswordHash,
 				':username' => $userName,
 				':is_deleted' => Constant::$NO,
 			];
 
-			$this->httpObj->httpRequestObj->customerDbObj->execQuery(
+			$this->httpObject->httpRequestObject->customerDbObject->execQuery(
 				sql: $sql,
-				paramArr: $paramArr
+				paramArray: $paramArray
 			);
-			$this->httpObj->httpRequestObj->customerDbObj->closeCursor();
+			$this->httpObject->httpRequestObject->customerDbObject->closeCursor();
 
-			$customerId = $this->httpObj->httpRequestObj->customerId;
+			$customerId = $this->httpObject->httpRequestObject->customerId;
 			$cacheKey = CacheServerKey::customerUsername(
 				customerId: $customerId,
 				username: $userName
 			);
 			Reload::processUser(
-				httpRequestIp: $this->httpObj->httpReqData['server']['httpRequestIp'],
-				customerData: $this->httpObj->httpRequestObj->activeRequestData['customerData'],
-				customerUserId: $this->httpObj->httpRequestObj->customerUserId
+				httpRequestIp: $this->httpObject->httpReqData['server']['httpRequestIp'],
+				customerData: $this->httpObject->httpRequestObject->activeRequestData['customerData'],
+				customerUserId: $this->httpObject->httpRequestObject->customerUserId
 			);
-			$this->httpObj->httpRequestObj->customerCacheObj->cacheDelete(
+			$this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
 				cacheKey: CacheServerKey::token(
-					token: $this->httpObj->httpRequestObj->activeRequestData['authId']
+					token: $this->httpObject->httpRequestObject->activeRequestData['authId']
 				)
 			);
 
-			$this->httpObj->httpResponseObj->dataEncodeObj->addKeyData(
+			$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
 				objectKey: 'Results',
 				data: 'Password changed successfully. Please login'
 			);

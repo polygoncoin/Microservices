@@ -46,21 +46,21 @@ class HttpResponse
 	 * 
 	 * @var null|string
 	 */
-	public $HTML_DIR = null;
+	public $htmlDirectory = null;
 
 	/**
 	 * Directory for PHP output format
 	 * 
 	 * @var null|string
 	 */
-	public $PHP_DIR = null;
+	public $phpDirectory = null;
 
 	/**
 	 * Directory for XML output format
 	 * 
 	 * @var null|string
 	 */
-	public $XSLT_DIR = null;
+	public $xsltDirectory = null;
 
 	/**
 	 * HTTP Status
@@ -74,28 +74,28 @@ class HttpResponse
 	 * 
 	 * @var null|DataEncode
 	 */
-	public $dataEncodeObj = null;
+	public $dataEncodeObject = null;
 
 	/**
 	 * HTTP object
 	 * 
 	 * @var null|Http
 	 */
-	private $httpObj = null;
+	private $httpObject = null;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param Http $httpObj
+	 * @param Http $httpObject
 	 */
 	public function __construct(
-		Http &$httpObj
+		Http &$httpObject
 	) {
-		$this->httpObj = &$httpObj;
+		$this->httpObject = &$httpObject;
 		$this->httpStatus = HttpStatus::$Ok;
 		$this->outputRepresentation = Env::$outputRepresentation;
-		$this->dataEncodeObj = new DataEncode(
-			httpObj: $this->httpObj
+		$this->dataEncodeObject = new DataEncode(
+			httpObject: $this->httpObject
 		);
 	}
 
@@ -106,7 +106,7 @@ class HttpResponse
 	 */
 	public function init(): bool
 	{
-		$this->dataEncodeObj->init();
+		$this->dataEncodeObject->init();
 
 		return true;
 	}

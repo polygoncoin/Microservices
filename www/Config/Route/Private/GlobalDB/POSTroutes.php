@@ -13,17 +13,19 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'group' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
+		'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
 			. DIRECTORY_SEPARATOR . 'GlobalDB'
-			. DIRECTORY_SEPARATOR . 'POST'
+			. DIRECTORY_SEPARATOR . Constant::$POST
 			. DIRECTORY_SEPARATOR . 'groups.php',
 	],
 	'customer' => [
-		'__FILE__' => $this->httpObj->httpRequestObj->QUERIES_DIR
+		'__FILE__' => $this->httpObject->httpRequestObject->sqlDirectory
 			. DIRECTORY_SEPARATOR . 'GlobalDB'
-			. DIRECTORY_SEPARATOR . 'POST'
+			. DIRECTORY_SEPARATOR . Constant::$POST
 			. DIRECTORY_SEPARATOR . 'customer.php',
 	],
 ];

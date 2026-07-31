@@ -19,27 +19,27 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Web;
 
-$headerArr = $defaultHeaderArr;
-// $headerArr[] = 'Content-Type: multipart/form-data; charset=utf-8';
+$headerArray = $defaultHeaderArray;
+// $headerArray[] = 'Content-Type: multipart/form-data; charset=utf-8';
 $proceed = false;
 
 if (
 	isset($token)
 	&& $token !== Constant::$NULL
 ) {
-	$headerArr[] = "Authorization: Bearer {$token}";
+	$headerArray[] = "Authorization: Bearer {$token}";
 	$proceed = true;
 }
 if (
 	isset($sessionCookie)
 	&& $sessionCookie !== Constant::$NULL
 ) {
-	$headerArr[] = "Cookie: {$sessionCookie}";
+	$headerArray[] = "Cookie: {$sessionCookie}";
 	$proceed = true;
 }
 
 if (isset($proceed)) {
-	$paramArr = [
+	$paramArray = [
 		[
 			'name' => 'ramesh0',
 			'sub' => [
@@ -67,10 +67,10 @@ if (isset($proceed)) {
 
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: 'POST',
+		method: Constant::$POST,
 		route: '/category/import',
-		header: $headerArr,
-		payload: '',//json_encode(value: $paramArr),
+		header: $headerArray,
+		payload: '',//json_encode(value: $paramArray),
 		fileLocation: $curlFile
 	);
 }

@@ -13,17 +13,19 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
-	'__QUERY__' => "SELECT * FROM `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` WHERE __WHERE__",
+	'__QUERY__' => "SELECT * FROM `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` WHERE __WHERE__",
 	'__WHERE__' => [
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'id',
-			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id'
 		]
 	],

@@ -50,7 +50,7 @@ class DbCommonFunction
 	 * 
 	 * @var null|CacheServer
 	 */
-	public static $globalCacheServerObj = null;
+	public static $globalCacheServerObject = null;
 
 	/**
 	 * Connect Cache
@@ -94,10 +94,10 @@ class DbCommonFunction
 	 */
 	public static function connectGlobalCache(): void
 	{
-		if (self::$globalCacheServerObj !== Constant::$NULL) {
+		if (self::$globalCacheServerObject !== Constant::$NULL) {
 			return;
 		}
-		self::$globalCacheServerObj = self::connectCache(
+		self::$globalCacheServerObject = self::connectCache(
 			cacheServerType: Env::$gCacheServerType,
 			cacheServerHostname: Env::$gCacheServerHostname,
 			cacheServerPort: Env::$gCacheServerPort,

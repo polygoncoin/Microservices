@@ -71,20 +71,20 @@ class Reload
 		$customerTable = getenv(name: 'customerTable');
 
 		$sql = "SELECT * FROM `{$customerTable}` C";
-		$paramArr = [];
+		$paramArray = [];
 
 		if ($customerId > 0) {
 			$sql = "SELECT * FROM `{$customerTable}` C WHERE customer_id = :customer_id";
-			$paramArr[':customer_id'] = $customerId;
+			$paramArray[':customer_id'] = $customerId;
 		}
 
 		DbCommonFunction::$gDbServer->execQuery(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
-		$customerDataArr = DbCommonFunction::$gDbServer->fetchAll();
+		$customerDataArray = DbCommonFunction::$gDbServer->fetchAll();
 		DbCommonFunction::$gDbServer->closeCursor();
-		foreach ($customerDataArr as $customerData) {
+		foreach ($customerDataArray as $customerData) {
 			CommonFunction::checkCidr(
 				ip: $httpRequestIp,
 				cidrString: Env::$reloadRestrictedCidr
@@ -94,7 +94,7 @@ class Reload
 				$privateTokenDomainCacheKey = CacheServerKey::privateTokenDomain(
 					domainName: $customerData['customer_private_token_domain']
 				);
-				DbCommonFunction::$globalCacheServerObj->cacheSet(
+				DbCommonFunction::$globalCacheServerObject->cacheSet(
 					cacheKey: $privateTokenDomainCacheKey,
 					cacheValue: $customerData
 				);
@@ -104,7 +104,7 @@ class Reload
 				$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(
 					domainName: $customerData['customer_private_session_domain']
 				);
-				DbCommonFunction::$globalCacheServerObj->cacheSet(
+				DbCommonFunction::$globalCacheServerObject->cacheSet(
 					cacheKey: $privateSessionDomainCacheKey,
 					cacheValue: $customerData
 				);
@@ -114,27 +114,27 @@ class Reload
 				$publicDomainCacheKey = CacheServerKey::publicDomain(
 					domainName: $customerData['customer_public_domain']
 				);
-				DbCommonFunction::$globalCacheServerObj->cacheSet(
+				DbCommonFunction::$globalCacheServerObject->cacheSet(
 					cacheKey: $publicDomainCacheKey,
 					cacheValue: $customerData
 				);
 			}
 
 			if ($customerData['customer_allowed_cidr'] !== Constant::$NULL) {
-				$customerCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
+				$customerCidrIpNumberRangeArray = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $customerData['customer_allowed_cidr']
 				);
 				if (
 					count(
-						value: $customerCidrIpNumberRangeArr
+						value: $customerCidrIpNumberRangeArray
 					) > 0
 				) {
 					$customerCidrCacheKey = CacheServerKey::customerCidr(
 						customerId: $customerData['customer_id']
 					);
-					DbCommonFunction::$globalCacheServerObj->cacheSet(
+					DbCommonFunction::$globalCacheServerObject->cacheSet(
 						cacheKey: $customerCidrCacheKey,
-						cacheValue: $customerCidrIpNumberRangeArr
+						cacheValue: $customerCidrIpNumberRangeArray
 					);
 				}
 			}
@@ -169,7 +169,7 @@ class Reload
 		$customerCacheServerCred = DbCommonFunction::customerCacheServerCred(
 			customerData: $customerData
 		);
-		$customerCacheObj = DbCommonFunction::connectCache(
+		$customerCacheObject = DbCommonFunction::connectCache(
 			cacheServerType: $customerCacheServerCred['cacheServerType'],
 			cacheServerHostname: $customerCacheServerCred['cacheServerHostname'],
 			cacheServerPort: $customerCacheServerCred['cacheServerPort'],
@@ -182,7 +182,7 @@ class Reload
 		$customerMasterDatabaseServerCred = DbCommonFunction::customerMasterDatabaseServerCred(
 			customerData: $customerData
 		);
-		$customerDbObj = DbCommonFunction::connectDb(
+		$customerDbObject = DbCommonFunction::connectDb(
 			dbServerType: $customerMasterDatabaseServerCred['dbServerType'],
 			dbServerHostname: $customerMasterDatabaseServerCred['dbServerHostname'],
 			dbServerPort: $customerMasterDatabaseServerCred['dbServerPort'],
@@ -192,46 +192,46 @@ class Reload
 		);
 
 		$sql = "SELECT * FROM `{$customerData['customer_user_group_table']}` G";
-		$paramArr = [];
+		$paramArray = [];
 
 		if ($customerUserGroupId > 0) {
 			$sql = "SELECT * FROM `{$customerData['customer_user_group_table']}` G WHERE customer_user_group_id = :customer_user_group_id";
-			$paramArr[':customer_user_group_id'] = $customerUserGroupId;
+			$paramArray[':customer_user_group_id'] = $customerUserGroupId;
 		}
 
 		// Groups
-		$customerDbObj->execQuery(
+		$customerDbObject->execQuery(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
-		$groupDataArr = $customerDbObj->fetchAll();
-		$customerDbObj->closeCursor();
+		$groupDataArray = $customerDbObject->fetchAll();
+		$customerDbObject->closeCursor();
 
-		foreach ($groupDataArr as $groupData) {
+		foreach ($groupDataArray as $groupData) {
 			$g_key = CacheServerKey::customerGroup(
 				customerId: $customerData['customer_id'],
 				customerUserGroupId: $groupData['customer_user_group_id']
 			);
-			$customerCacheObj->cacheSet(
+			$customerCacheObject->cacheSet(
 				cacheKey: $g_key,
 				cacheValue: $groupData
 			);
 			if ($groupData['customer_user_group_allowed_cidr'] !== Constant::$NULL) {
-				$groupCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
+				$groupCidrIpNumberRangeArray = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $groupData['customer_user_group_allowed_cidr']
 				);
 				if (
 					count(
-						value: $groupCidrIpNumberRangeArr
+						value: $groupCidrIpNumberRangeArray
 					) > 0
 				) {
 					$groupCidrCacheKey = CacheServerKey::customerGroupCidr(
 						customerId: $customerData['customer_id'],
 						customerUserGroupId: $groupData['customer_user_group_id']
 					);
-					$customerCacheObj->cacheSet(
+					$customerCacheObject->cacheSet(
 						cacheKey: $groupCidrCacheKey,
-						cacheValue: $groupCidrIpNumberRangeArr
+						cacheValue: $groupCidrIpNumberRangeArray
 					);
 				}
 			}
@@ -257,7 +257,7 @@ class Reload
 		$customerCacheServerCred = DbCommonFunction::customerCacheServerCred(
 			customerData: $customerData
 		);
-		$customerCacheObj = DbCommonFunction::connectCache(
+		$customerCacheObject = DbCommonFunction::connectCache(
 			cacheServerType: $customerCacheServerCred['cacheServerType'],
 			cacheServerHostname: $customerCacheServerCred['cacheServerHostname'],
 			cacheServerPort: $customerCacheServerCred['cacheServerPort'],
@@ -270,7 +270,7 @@ class Reload
 		$customerMasterDatabaseServerCred = DbCommonFunction::customerMasterDatabaseServerCred(
 			customerData: $customerData
 		);
-		$customerDbObj = DbCommonFunction::connectDb(
+		$customerDbObject = DbCommonFunction::connectDb(
 			dbServerType: $customerMasterDatabaseServerCred['dbServerType'],
 			dbServerHostname: $customerMasterDatabaseServerCred['dbServerHostname'],
 			dbServerPort: $customerMasterDatabaseServerCred['dbServerPort'],
@@ -280,37 +280,37 @@ class Reload
 		);
 
 		$sql = "SELECT * FROM `{$customerData['customer_user_table']}` U";
-		$paramArr = [];
+		$paramArray = [];
 
 		if ($customerUserId > 0) {
 			$sql = "SELECT * FROM `{$customerData['customer_user_table']}` U WHERE customer_user_id = :customer_user_id";
-			$paramArr[':customer_user_id'] = $customerUserId;
+			$paramArray[':customer_user_id'] = $customerUserId;
 		}
 
 		// Groups
-		$customerDbObj->execQuery(
+		$customerDbObject->execQuery(
 			sql: $sql,
-			paramArr: $paramArr
+			paramArray: $paramArray
 		);
-		$userDataArr = $customerDbObj->fetchAll();
-		$customerDbObj->closeCursor();
-		foreach ($userDataArr as $userData) {
+		$userDataArray = $customerDbObject->fetchAll();
+		$customerDbObject->closeCursor();
+		foreach ($userDataArray as $userData) {
 			if ($userData['customer_user_allowed_cidr'] !== Constant::$NULL) {
-				$userCidrIpNumberRangeArr = CommonFunction::cidrStringIpNumberRange(
+				$userCidrIpNumberRangeArray = CommonFunction::cidrStringIpNumberRange(
 					cidrString: $userData['customer_user_allowed_cidr']
 				);
 				if (
 					count(
-						value: $userCidrIpNumberRangeArr
+						value: $userCidrIpNumberRangeArray
 					) > 0
 				) {
 					$userCidrCacheKey = CacheServerKey::customerUserCidr(
 						customerId: $customerData['customer_id'],
 						customerUserId: $userData['customer_user_id']
 					);
-					$customerCacheObj->cacheSet(
+					$customerCacheObject->cacheSet(
 						cacheKey: $userCidrCacheKey,
-						cacheValue: $userCidrIpNumberRangeArr
+						cacheValue: $userCidrIpNumberRangeArray
 					);
 				}
 			}
@@ -318,7 +318,7 @@ class Reload
 				customerId: $customerData['customer_id'],
 				username: $userData['customer_user_username']
 			);
-			$customerCacheObj->cacheSet(
+			$customerCacheObject->cacheSet(
 				cacheKey: $cu_key,
 				cacheValue: $userData
 			);

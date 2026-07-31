@@ -44,7 +44,7 @@ class DataDecode
 	 * 
 	 * @var null|Object
 	 */
-	private $dataDecoderObj = null;
+	private $dataDecoderObject = null;
 
 	/**
 	 * Constructor
@@ -59,11 +59,11 @@ class DataDecode
 		$this->dataFileHandle = &$dataFileHandle;
 
 		if ($inputRepresentation === 'JSON') {
-			$this->dataDecoderObj = new JsonDecode(
+			$this->dataDecoderObject = new JsonDecode(
 				jsonFileHandle: $this->dataFileHandle
 			);
 		} else {
-			$this->dataDecoderObj = new XmlDecode(
+			$this->dataDecoderObject = new XmlDecode(
 				jsonFileHandle: $this->dataFileHandle
 			);
 		}
@@ -76,7 +76,7 @@ class DataDecode
 	 */
 	public function init(): bool
 	{
-		return $this->dataDecoderObj->init();
+		return $this->dataDecoderObject->init();
 	}
 
 	/**
@@ -86,7 +86,7 @@ class DataDecode
 	 */
 	public function validate(): void
 	{
-		$this->dataDecoderObj->validate();
+		$this->dataDecoderObject->validate();
 	}
 
 	/**
@@ -96,7 +96,7 @@ class DataDecode
 	 */
 	public function indexData(): void
 	{
-		$this->dataDecoderObj->indexData();
+		$this->dataDecoderObject->indexData();
 	}
 
 	/**
@@ -109,7 +109,7 @@ class DataDecode
 	public function isset(
 		$keyString = null
 	): bool {
-		return $this->dataDecoderObj->isset(
+		return $this->dataDecoderObject->isset(
 			keyString: $keyString
 		);
 	}
@@ -124,7 +124,7 @@ class DataDecode
 	public function dataType(
 		$keyString = null
 	): string {
-		return $this->dataDecoderObj->dataType(
+		return $this->dataDecoderObject->dataType(
 			keyString: $keyString
 		);
 	}
@@ -139,7 +139,7 @@ class DataDecode
 	public function count(
 		$keyString = null
 	): int {
-		return $this->dataDecoderObj->count(
+		return $this->dataDecoderObject->count(
 			keyString: $keyString
 		);
 	}
@@ -154,7 +154,7 @@ class DataDecode
 	public function get(
 		$keyString = ''
 	): mixed {
-		return $this->dataDecoderObj->get(
+		return $this->dataDecoderObject->get(
 			keyString: $keyString
 		);
 	}
@@ -169,7 +169,7 @@ class DataDecode
 	public function getCompleteArray(
 		$keyString = ''
 	): mixed {
-		return $this->dataDecoderObj->getCompleteArray(
+		return $this->dataDecoderObject->getCompleteArray(
 			keyString: $keyString
 		);
 	}
@@ -187,7 +187,7 @@ class DataDecode
 	public function load(
 		$keyString
 	): void {
-		$this->dataDecoderObj->load(
+		$this->dataDecoderObject->load(
 			keyString: $keyString
 		);
 	}

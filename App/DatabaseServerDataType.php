@@ -395,7 +395,7 @@ class DatabaseServerDataType
 
 	public static $HttpMethod = [
 		'dataType' => 'string',
-		'enumValues' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+		'enumValues' => ['GET', 'QUERY', 'POST', 'PUT', 'PATCH', 'DELETE']
 	];
 
 	/**

@@ -13,10 +13,11 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'customer_user_contact_name',
@@ -58,11 +59,11 @@ return [
 		[
 			'column' => 'customer_user_is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'customer_user_id',
-			'activeRequestDataKey' => 'routeParamArr',
+			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
 		]
@@ -81,7 +82,7 @@ return [
 				[
 					'column' => 'is_deleted',
 					'activeRequestDataKey' => 'custom',
-					'activeRequestDataKeySubKey' => $Constant::$NO
+					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
 					'column' => 'id',
@@ -96,13 +97,13 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObj->httpRequestObj->activeRequestData['customerData']['customer_user_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
 				'primary' => ['custom', 'customer_user_id'],
-				'id' => ['routeParamArr', 'id']
+				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'
 		],
 	],
-	'useHierarchy' => $Constant::$TRUE,
+	'useHierarchy' => Constant::$TRUE,
 	'idempotentWindow' => 10
 ];

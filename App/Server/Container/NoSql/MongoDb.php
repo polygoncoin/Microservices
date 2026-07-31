@@ -86,21 +86,21 @@ class MongoDb implements NoSqlInterface
 	 * 
 	 * @var null|\MongoDB\Customer
 	 */
-	private $cacheServerObj = null;
+	private $cacheServerObject = null;
 
 	/**
 	 * Database Object
 	 * 
 	 * @var null|Object
 	 */
-	private $cacheServerDatabaseObj = null;
+	private $cacheServerDatabaseObject = null;
 
 	/**
 	 * Collection Object
 	 * 
 	 * @var null|Object
 	 */
-	private $collectionObj = null;
+	private $collectionObject = null;
 
 	/**
 	 * Constructor
@@ -136,7 +136,7 @@ class MongoDb implements NoSqlInterface
 	 */
 	public function connect(): void
 	{
-		if ($this->cacheServerObj !== Constant::$NULL) {
+		if ($this->cacheServerObject !== Constant::$NULL) {
 			return;
 		}
 
@@ -152,23 +152,23 @@ class MongoDb implements NoSqlInterface
 				$this->uri = 'mongodb://' . $UP
 					. $this->cacheServerHostname . ':' . $this->cacheServerPort;
 			}
-			$this->cacheServerObj = new \MongoDB\Customer(
+			$this->cacheServerObject = new \MongoDB\Customer(
 				$this->uri
 			);
 
 			// Select a database
-			$this->cacheServerDatabaseObj = $this->cacheServerObj->selectDatabase(
+			$this->cacheServerDatabaseObject = $this->cacheServerObject->selectDatabase(
 				$this->cacheServerDatabase
 			);
 
 			// Select a collection
-			$this->collectionObj = $this->cacheServerDatabaseObj->selectCollection(
+			$this->collectionObject = $this->cacheServerDatabaseObject->selectCollection(
 				$this->cacheServerTable
 			);
 
 			// Create the TTL index
 			// Set the indexed field to 'expireOn' and expireAfterSeconds to 0
-			$this->collectionObj->createIndex(
+			$this->collectionObject->createIndex(
 				['expireOn' => 1],
 				['expireAfterSeconds' => 0]
 			);
@@ -199,7 +199,7 @@ class MongoDb implements NoSqlInterface
 		$filter = ['key' => $key];
 
 		if (
-			$document = $this->collectionObj->findOne(
+			$document = $this->collectionObject->findOne(
 				$filter
 			)
 		) {
@@ -227,7 +227,7 @@ class MongoDb implements NoSqlInterface
 		$filter = ['key' => $key];
 
 		$return = CommonFunction::jsonDecode(
-			value: $this->collectionObj->findOne(
+			value: $this->collectionObject->findOne(
 				$filter
 			)
 		);
@@ -265,7 +265,7 @@ class MongoDb implements NoSqlInterface
 		];
 
 		if ($expire === Constant::$NULL) {
-			if ($this->collectionObj->insertOne($document)) {
+			if ($this->collectionObject->insertOne($document)) {
 				return true;
 			}
 		} else {
@@ -273,7 +273,7 @@ class MongoDb implements NoSqlInterface
 			$document['expireOn'] = new MongoDB\BSON\UTCDateTime(
 				(Env::$timestamp + $expire) * 1000
 			);
-			if ($this->collectionObj->insertOne($document)) {
+			if ($this->collectionObject->insertOne($document)) {
 				return true;
 			}
 		}
@@ -300,7 +300,7 @@ class MongoDb implements NoSqlInterface
 
 		$filter = ['key' => $key];
 		$update = ['$inc' => ['value' => $offset]];
-		$result = $this->collectionObj->updateOne(
+		$result = $this->collectionObject->updateOne(
 			$filter,
 			$update
 		);
@@ -325,7 +325,7 @@ class MongoDb implements NoSqlInterface
 		}
 
 		$filter = ['key' => $key];
-		if ($this->collectionObj->deleteOne($filter)) {
+		if ($this->collectionObject->deleteOne($filter)) {
 			return true;
 		}
 		return false;

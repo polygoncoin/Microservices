@@ -13,6 +13,9 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+use Microservices\App\Env;
+
 return [
 	'__QUERY__' => "INSERT INTO `{$Env::$customerTable}` SET __SET__",
 	'__SET__' => [
@@ -39,17 +42,17 @@ return [
 		[
 			'column' => 'is_approved',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_disabled',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
 			'column' => 'is_deleted',
 			'activeRequestDataKey' => 'custom',
-			'activeRequestDataKeySubKey' => $Constant::$NO
+			'activeRequestDataKeySubKey' => Constant::$NO
 		]
 	],
 	'__INSERT-IDs__' => 'customer:id',

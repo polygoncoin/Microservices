@@ -13,6 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	// detail of data to perform task
 	'__PAYLOAD__' => [
@@ -47,5 +49,5 @@ return [
 		'Hook_Example',
 	],
 
-	'useHierarchy' => $Constant::$TRUE
+	'useHierarchy' => Constant::$TRUE
 ];
