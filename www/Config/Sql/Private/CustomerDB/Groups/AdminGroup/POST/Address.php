@@ -15,17 +15,19 @@
 
 use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => 'INSERT INTO `address` SET __SET__',
 	'__SET__' => [
 		[
-			'column' => Constant::$customerPrimaryKey,
+			'column' => DatabaseTable::$customerPrimaryKey,
 			'activeRequestDataKey' => 'customerData',
-			'activeRequestDataKeySubKey' => Constant::$customerPrimaryKey
+			'activeRequestDataKeySubKey' => DatabaseTable::$customerPrimaryKey
 		],
 		[
-			'column' => Constant::$customerUserPrimaryKey,
+			'column' => DatabaseTable::$customerUserPrimaryKey,
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -37,5 +39,5 @@ return [
 		],
 	],
 	'__INSERT-IDs__' => 'address:id',
-	'__PRIMARY-KEY__' => Constant::$addressPrimaryKey
+	'__PRIMARY-KEY__' => DatabaseTable::$addressPrimaryKey
 ];

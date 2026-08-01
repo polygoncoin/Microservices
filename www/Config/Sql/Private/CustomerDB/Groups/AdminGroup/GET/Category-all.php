@@ -14,6 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'countQuery' => 'SELECT count(1) as `count` FROM `category` WHERE __WHERE__',
@@ -43,7 +46,7 @@ return [
 				[
 					'column' => 'parent_id',
 					'activeRequestDataKey' => 'sqlResults',
-					'activeRequestDataKeySubKey' => 'return:' . Constant::$categoryPrimaryKey
+					'activeRequestDataKeySubKey' => 'return:' . DatabaseTable::$categoryPrimaryKey
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
@@ -59,7 +62,7 @@ return [
 						[
 							'column' => 'parent_id',
 							'activeRequestDataKey' => 'sqlResults',
-							'activeRequestDataKeySubKey' => 'return:sub:' . Constant::$categoryPrimaryKey
+							'activeRequestDataKeySubKey' => 'return:sub:' . DatabaseTable::$categoryPrimaryKey
 						],
 					],
 					'__MODE__' => 'multipleRecordFormat',
@@ -75,7 +78,7 @@ return [
 								[
 									'column' => 'parent_id',
 									'activeRequestDataKey' => 'sqlResults',
-									'activeRequestDataKeySubKey' => 'return:sub:subsub:' . Constant::$categoryPrimaryKey
+									'activeRequestDataKeySubKey' => 'return:sub:subsub:' . DatabaseTable::$categoryPrimaryKey
 								],
 							],
 							'__MODE__' => 'multipleRecordFormat',
@@ -87,5 +90,5 @@ return [
 	],
 	'maintainHierarchy' => Constant::$TRUE,
 	'fetchDbMode' => 'Master',
-	'queryCacheKey' => $this->httpObject->httpRequestObject->activeRequestData['customerData'][Constant::$customerPrimaryKey] . ':category'
+	'queryCacheKey' => $this->httpObject->httpRequestObject->activeRequestData['customerData'][DatabaseTable::$customerPrimaryKey] . ':category'
 ];

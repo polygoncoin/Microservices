@@ -14,6 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => 'SELECT * FROM `address` WHERE __WHERE__',
@@ -24,7 +27,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => Constant::$addressPrimaryKey,
+			'column' => DatabaseTable::$addressPrimaryKey,
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id'
 		]

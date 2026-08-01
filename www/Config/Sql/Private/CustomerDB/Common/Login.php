@@ -14,6 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__PAYLOAD__' => [
@@ -33,7 +36,7 @@ return [
 	//         'function' => 'primaryKeyExist',
 	//         'functionArgs' => [
 	//             'table' => ['custom', 'address'],
-	//             'primary' => ['custom', Constant::$addressPrimaryKey],
+	//             'primary' => ['custom', DatabaseTable::$addressPrimaryKey],
 	//             'id' => ['routeParamArray', 'id']
 	//         ],
 	//         'errorMessage' => 'Invalid address id'

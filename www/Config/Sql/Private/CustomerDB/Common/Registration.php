@@ -14,6 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
@@ -22,7 +25,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
-				'primary' => ['custom', Constant::$customerUserPrimaryKey],
+				'primary' => ['custom', DatabaseTable::$customerUserPrimaryKey],
 				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

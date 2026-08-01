@@ -15,6 +15,8 @@
 
 use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return array_merge(
 	require $this->httpObject->httpRequestObject->sqlDirectory
@@ -41,7 +43,7 @@ return array_merge(
 		],
 		'__WHERE__' => [
 			[
-				'column' => Constant::$customerUserPrimaryKey,
+				'column' => DatabaseTable::$customerUserPrimaryKey,
 				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey

@@ -14,7 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => "INSERT INTO `{$Env::$customerTable}` SET __SET__",
@@ -32,7 +34,7 @@ return [
 		[
 			'column' => 'created_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
+			'activeRequestDataKeySubKey' => DatabaseTable::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'created_on',

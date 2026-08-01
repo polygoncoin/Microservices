@@ -15,6 +15,8 @@
 
 use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
@@ -32,7 +34,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => Constant::$customerUserPrimaryKey,
+			'column' => DatabaseTable::$customerUserPrimaryKey,
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
@@ -55,13 +57,13 @@ return [
 					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
-					'column' => Constant::$addressPrimaryKey,
+					'column' => DatabaseTable::$addressPrimaryKey,
 					'activeRequestDataKey' => 'payload',
 					'activeRequestDataKeySubKey' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 				[
-					'column' => Constant::$customerUserPrimaryKey,
+					'column' => DatabaseTable::$customerUserPrimaryKey,
 					'activeRequestDataKey' => 'routeParamArray',
 					'activeRequestDataKeySubKey' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
@@ -74,7 +76,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
-				'primary' => ['custom', Constant::$customerUserPrimaryKey],
+				'primary' => ['custom', DatabaseTable::$customerUserPrimaryKey],
 				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

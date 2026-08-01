@@ -14,6 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => 'SELECT * FROM `category` WHERE __WHERE__',
@@ -29,7 +32,7 @@ return [
 			'activeRequestDataKeySubKey' => 0
 		],
 		[
-			'column' => Constant::$categoryPrimaryKey,
+			'column' => DatabaseTable::$categoryPrimaryKey,
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id'
 		]
@@ -47,7 +50,7 @@ return [
 				[
 					'column' => 'parent_id',
 					'activeRequestDataKey' => 'sqlResults',
-					'activeRequestDataKeySubKey' => 'return:' . Constant::$categoryPrimaryKey
+					'activeRequestDataKeySubKey' => 'return:' . DatabaseTable::$categoryPrimaryKey
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
@@ -63,7 +66,7 @@ return [
 						[
 							'column' => 'parent_id',
 							'activeRequestDataKey' => 'sqlResults',
-							'activeRequestDataKeySubKey' => 'return:sub:' . Constant::$categoryPrimaryKey
+							'activeRequestDataKeySubKey' => 'return:sub:' . DatabaseTable::$categoryPrimaryKey
 						],
 					],
 					'__MODE__' => 'multipleRecordFormat',
@@ -79,7 +82,7 @@ return [
 								[
 									'column' => 'parent_id',
 									'activeRequestDataKey' => 'sqlResults',
-									'activeRequestDataKeySubKey' => 'return:sub:subsub:' . Constant::$categoryPrimaryKey
+									'activeRequestDataKeySubKey' => 'return:sub:subsub:' . DatabaseTable::$categoryPrimaryKey
 								],
 							],
 							'__MODE__' => 'multipleRecordFormat',

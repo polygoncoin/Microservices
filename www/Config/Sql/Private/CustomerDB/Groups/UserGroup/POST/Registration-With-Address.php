@@ -14,6 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
+use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
@@ -59,24 +62,24 @@ return [
 			'activeRequestDataKeySubKey' => '0.0.0.0/0'
 		],
 		[
-			'column' => Constant::$customerUserGroupPrimaryKey,
+			'column' => DatabaseTable::$customerUserGroupPrimaryKey,
 			'activeRequestDataKey' => 'custom',
 			'activeRequestDataKeySubKey' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
-	'__PRIMARY-KEY__' => Constant::$customerUserPrimaryKey,
+	'__PRIMARY-KEY__' => DatabaseTable::$customerUserPrimaryKey,
 	'__SUB-QUERY__' => [
 		'address' => [
 			'__QUERY__' => 'INSERT INTO `address` SET __SET__',
 			'__SET__' => [
 				[
-					'column' => Constant::$customerPrimaryKey,
+					'column' => DatabaseTable::$customerPrimaryKey,
 					'activeRequestDataKey' => 'customerData',
-					'activeRequestDataKeySubKey' => Constant::$customerPrimaryKey
+					'activeRequestDataKeySubKey' => DatabaseTable::$customerPrimaryKey
 				],
 				[
-					'column' => Constant::$customerUserPrimaryKey,
+					'column' => DatabaseTable::$customerUserPrimaryKey,
 					'activeRequestDataKey' => '__INSERT-IDs__',
 					'activeRequestDataKeySubKey' => 'registration:id'
 				],
@@ -87,7 +90,7 @@ return [
 				]
 			],
 			'__INSERT-IDs__' => 'address:id',
-			'__PRIMARY-KEY__' => Constant::$addressPrimaryKey,
+			'__PRIMARY-KEY__' => DatabaseTable::$addressPrimaryKey,
 			'__PAYLOAD-TYPE__' => 'Array',
 			'__MAX-PAYLOAD-OBJECTS__' => 2
 		]

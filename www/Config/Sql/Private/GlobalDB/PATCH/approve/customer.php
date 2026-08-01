@@ -16,6 +16,7 @@
 use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'__QUERY__' => "UPDATE `{$Env::$customerTable}` SET __SET__ WHERE __WHERE__",
@@ -28,7 +29,7 @@ return [
 		[
 			'column' => 'updated_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
+			'activeRequestDataKeySubKey' => DatabaseTable::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'updated_on',
@@ -53,7 +54,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => Constant::$customerPrimaryKey,
+			'column' => DatabaseTable::$customerPrimaryKey,
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -64,7 +65,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', Env::$customerTable],
-				'primary' => ['custom', Constant::$customerPrimaryKey],
+				'primary' => ['custom', DatabaseTable::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
 			'errorMessage' => 'Invalid Customer Id'
@@ -75,7 +76,7 @@ return [
 				'table' => ['custom', Env::$customerTable],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', Constant::$NO],
-				'primary' => ['custom', Constant::$customerPrimaryKey],
+				'primary' => ['custom', DatabaseTable::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is deleted'
@@ -86,7 +87,7 @@ return [
 				'table' => ['custom', Env::$customerTable],
 				'column' => ['custom', 'is_approved'],
 				'columnValue' => ['custom', Constant::$NO],
-				'primary' => ['custom', Constant::$customerPrimaryKey],
+				'primary' => ['custom', DatabaseTable::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is already approved'

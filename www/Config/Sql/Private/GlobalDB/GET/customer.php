@@ -14,7 +14,9 @@
  */
 
 use Microservices\App\Constant;
+use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
+use Microservices\DatabaseTable;
 
 return [
 	'all' => [
@@ -58,7 +60,7 @@ return [
 				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
-				'column' => Constant::$customerPrimaryKey,
+				'column' => DatabaseTable::$customerPrimaryKey,
 				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id'
 			]
