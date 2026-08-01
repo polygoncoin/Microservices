@@ -236,7 +236,7 @@ class CommonFunction
 	/**
 	 * Check IP with CIDR based on cache key containing start and end IP number
 	 * 
-	 * @param CacheServerInterface $cacheObject     Cache Server object
+	 * @param CacheServerInterface $cacheObject  Cache Server object
 	 * @param string               $ip           Request Ip
 	 * @param string               $cidrCacheKey Cache Key(s)
 	 * 
@@ -311,7 +311,7 @@ class CommonFunction
 	/**
 	 * Belongs to Cidr IP number range
 	 * 
-	 * @param string $ip                   IP
+	 * @param string $ip                     IP Address
 	 * @param array  $cidrIpNumberRangeArray Cidr IP number ranges
 	 * 
 	 * @return bool

@@ -114,7 +114,7 @@ class Supplement
 	{
 		$return = $this->writeBasics(
 			$sqlConfig,
-			$useHierarchy
+			$maintainHierarchy
 		);
 
 		if ($return !== Constant::$FALSE) {
@@ -137,7 +137,7 @@ class Supplement
 
 		$this->supplement(
 			supplementSqlConfig: $sqlConfig,
-			supplementUseHierarchy: $useHierarchy
+			supplementMaintainHierarchy: $maintainHierarchy
 		);
 
 		if (isset($sqlConfig['affectedQueryCacheKeyArray'])) {
@@ -158,15 +158,15 @@ class Supplement
 	/**
 	 * Process Function to insert/update
 	 * 
-	 * @param array $supplementSqlConfig    Sql config
-	 * @param bool  $supplementUseHierarchy If true - Uses parent payload/results in child
+	 * @param array $supplementSqlConfig         Sql config
+	 * @param bool  $supplementMaintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
 	private function supplement(
 		&$supplementSqlConfig,
-		$supplementUseHierarchy
+		$supplementMaintainHierarchy
 	): void {
 		// Check for payloadType
 		if (isset($supplementSqlConfig['__PAYLOAD-TYPE__'])) {
@@ -196,7 +196,7 @@ class Supplement
 		// Set required fields
 		$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'] = $this->getRequired(
 			sqlConfig: $supplementSqlConfig,
-			flag: $supplementUseHierarchy,
+			maintainHierarchy: $supplementMaintainHierarchy,
 			isFirstCall: Constant::$TRUE
 		);
 
@@ -266,7 +266,7 @@ class Supplement
 					supplementParentRequiredFieldArray: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'],
 					supplementParentResponse: $supplementResponse,
 					supplementParentModule: '',
-					supplementParentUseHierarchy: $supplementUseHierarchy
+					supplementParentMaintainHierarchy: $supplementMaintainHierarchy
 				);
 
 				if ($this->httpObject->httpResponseObject->httpStatus === HttpStatus::$Ok) {
@@ -346,12 +346,12 @@ class Supplement
 	/**
 	 * Supplement Parent Function
 	 * 
-	 * @param array  $supplementParentSqlConfig        Sql config
-	 * @param array  $supplementParentPayloadKeyArray       Payload Indexes
+	 * @param array  $supplementParentSqlConfig          Sql config
+	 * @param array  $supplementParentPayloadKeyArray    Payload Indexes
 	 * @param array  $supplementParentRequiredFieldArray Required fields
-	 * @param array  $supplementParentResponse         Response by reference
-	 * @param string $supplementParentModule           Parent Module
-	 * @param bool   $supplementParentUseHierarchy     If true - Uses parent payload/results in child
+	 * @param array  $supplementParentResponse           Response by reference
+	 * @param string $supplementParentModule             Parent Module
+	 * @param bool   $supplementParentMaintainHierarchy  If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -362,7 +362,7 @@ class Supplement
 		&$supplementParentRequiredFieldArray,
 		&$supplementParentResponse,
 		$supplementParentModule,
-		$supplementParentUseHierarchy
+		$supplementParentMaintainHierarchy
 	): void {
 		if ($supplementParentPayloadKeyArray === Constant::$NULL) {
 			$supplementParentPayloadKeyArray = [];
@@ -419,7 +419,7 @@ class Supplement
 					keyString: $supplementParentCurrentPayloadKey
 				)
 			) {
-				if ($supplementParentUseHierarchy) {
+				if ($supplementParentMaintainHierarchy) {
 					throw new \Exception(
 						message: "Payload key '{$supplementParentCurrentPayloadKey}' not set",
 						code: HttpStatus::$NotFound
@@ -511,7 +511,7 @@ class Supplement
 					supplementChildPayloadKeyArray: $supplementParentCurrentPayloadKeyArray,
 					supplementChildRequiredFieldArray: $supplementParentRequiredFieldArray,
 					supplementChildResponse: $supplementParentCurrentResponse,
-					supplementChildUseHierarchy: $supplementParentUseHierarchy
+					supplementChildMaintainHierarchy: $supplementParentMaintainHierarchy
 				);
 			}
 		}
@@ -520,11 +520,11 @@ class Supplement
 	/**
 	 * Write Child Function
 	 * 
-	 * @param array $supplementChildSqlConfig        Sql config
-	 * @param array $supplementChildPayloadKeyArray       Payload Indexes
+	 * @param array $supplementChildSqlConfig          Sql config
+	 * @param array $supplementChildPayloadKeyArray    Payload Indexes
 	 * @param array $supplementChildRequiredFieldArray Required fields
-	 * @param array $supplementChildResponse         Response by reference
-	 * @param bool  $supplementChildUseHierarchy     If true - Uses parent payload/results in child
+	 * @param array $supplementChildResponse           Response by reference
+	 * @param bool  $supplementChildMaintainHierarchy  If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 */
@@ -533,9 +533,9 @@ class Supplement
 		&$supplementChildPayloadKeyArray,
 		&$supplementChildRequiredFieldArray,
 		&$supplementChildResponse,
-		$supplementChildUseHierarchy
+		$supplementChildMaintainHierarchy
 	): void {
-		if ($supplementChildUseHierarchy) {
+		if ($supplementChildMaintainHierarchy) {
 			$record = $this->httpObject->httpRequestObject->activeRequestData['payload'];
 			$this->resetFetchData(
 				activeRequestDataKey: 'sqlPayload',
@@ -587,7 +587,7 @@ class Supplement
 				keyString: $supplementChildModulePayloadKey
 			);
 			if (
-				$supplementChildUseHierarchy
+				$supplementChildMaintainHierarchy
 				&& !$dataExist
 			) { // use parent data of a payload
 				throw new \Exception(
@@ -617,9 +617,8 @@ class Supplement
 				$supplementChildModuleRequiredFieldArray = &$supplementChildRequiredFieldArray;
 			}
 
-			$supplementChildModuleUseHierarchy = $supplementChildUseHierarchy ?? $this->getUseHierarchy(
-				sqlConfig: $supplementChildModuleSqlConfig,
-				keyword: 'useHierarchy'
+			$supplementChildModuleMaintainHierarchy = $supplementChildMaintainHierarchy ?? $this->getMaintainHierarchy(
+				sqlConfig: $supplementChildModuleSqlConfig
 			);
 
 			for ($index = 0; $index < $indexCount; $index++) {
@@ -647,7 +646,7 @@ class Supplement
 				);
 
 				if (
-					$supplementChildModuleUseHierarchy
+					$supplementChildModuleMaintainHierarchy
 					&& !$dataExist
 				) { // use parent data of a payload
 					throw new \Exception(
@@ -666,7 +665,7 @@ class Supplement
 					supplementParentRequiredFieldArray: $supplementChildModuleRequiredFieldArray,
 					supplementParentResponse: $supplementChildModuleCurrentResponse,
 					supplementParentModule: $supplementModule,
-					supplementParentUseHierarchy: $supplementChildModuleUseHierarchy
+					supplementParentMaintainHierarchy: $supplementChildModuleMaintainHierarchy
 				);
 			}
 		}
@@ -675,8 +674,8 @@ class Supplement
 	/**
 	 * Checks if the payload is valid
 	 * 
-	 * @param array $sqlConfig  Sql config
-	 * @param array $response   Response by reference
+	 * @param array $sqlConfig Sql config
+	 * @param array $response  Response by reference
 	 * 
 	 * @return bool
 	 */

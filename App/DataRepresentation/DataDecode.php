@@ -50,7 +50,7 @@ class DataDecode
 	 * Constructor
 	 * 
 	 * @param string   $inputRepresentation Input Representation
-	 * @param resource $dataFileHandle  File handle
+	 * @param resource $dataFileHandle      File handle
 	 */
 	public function __construct(
 		$inputRepresentation,

@@ -90,7 +90,7 @@ return [
 			'__MAX-PAYLOAD-OBJECTS__' => 2
 		]
 	],
-	'useHierarchy' => Constant::$TRUE,
+	'maintainHierarchy' => Constant::$TRUE,
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10
 ];

@@ -96,8 +96,8 @@ class ExportDatabaseServer
 	/**
 	 * Returns Shell Command
 	 * 
-	 * @param string $sql      SQL query
-	 * @param array  $paramArray SQL query params
+	 * @param string $sql        Sql query
+	 * @param array  $paramArray Sql query params
 	 * 
 	 * @return string
 	 */
@@ -108,7 +108,7 @@ class ExportDatabaseServer
 		// Validation
 		if (empty($sql)) {
 			throw new \Exception(
-				message: 'Empty SQL query'
+				message: 'Empty Sql query'
 			);
 		}
 

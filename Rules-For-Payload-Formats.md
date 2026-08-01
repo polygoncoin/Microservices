@@ -10,7 +10,7 @@ One can clean the URL by making the required changes in the web server .conf fil
 
 ## Pagination in GET request
 
-Requires **countQuery** SQL in the configuration for GET request
+Requires **countQuery** Sql in the configuration for GET request
 ```ini
 defaultPerpage=10
 maxResultsPerPage=1000
@@ -72,7 +72,7 @@ For **GET** method, the **$\_GET** is the payload.
 ## Hierarchy Configs
 
 - Config/Sql/CustomerDB/GET/Category.php
->In this file one can confirm how previous select data is used recursively in subQuery select as indicated by useHierarchy flag.
+>In this file one can confirm how previous select data is used recursively in subQuery select as indicated by maintainHierarchy flag.
 
 ```PHP
 [
@@ -102,7 +102,7 @@ return [
 			'__INSERT-IDs__' => 'sub:id',
 		]
 	],
-	'useHierarchy' => Constant::$TRUE
+	'maintainHierarchy' => Constant::$TRUE
 ];
 ```
 

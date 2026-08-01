@@ -92,9 +92,10 @@ return [
 	],
 	'rateLimitMaxRequest' => 100,
 	'rateLimitMaxRequestWindow' => 3600,
-	'useHierarchy' => Constant::$TRUE,
+	'maintainHierarchy' => Constant::$TRUE,
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10,
+	'responseLagWindow' => 3600,
 	'responseLag' => [
 		// No of request => Seconds Lag
 		1 => 0,

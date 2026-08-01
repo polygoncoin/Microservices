@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SQL Container
+ * Sql Container
  * php version 8.3
  * 
  * @category  SqlContainers
@@ -16,7 +16,7 @@
 namespace Microservices\App\Server\Container\Sql;
 
 /**
- * SQL Interface
+ * Sql Interface
  * php version 8.3
  * 
  * @category  Sql_Interface
@@ -81,9 +81,9 @@ interface SqlInterface
 	/**
 	 * Execute query
 	 * 
-	 * @param string $sql      SQL query
-	 * @param array  $paramArray SQL query params
-	 * @param bool   $pushPop  Push Pop result set stmt
+	 * @param string $sql        Sql query
+	 * @param array  $paramArray Sql query params
+	 * @param bool   $pushPop    Push Pop result set stmt
 	 * 
 	 * @return void
 	 */

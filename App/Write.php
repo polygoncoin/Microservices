@@ -101,7 +101,7 @@ class Write
 	{
 		$return = $this->writeBasics(
 			sqlConfig: $sqlConfig,
-			useHierarchy: $useHierarchy
+			maintainHierarchy: $maintainHierarchy
 		);
 
 
@@ -125,7 +125,7 @@ class Write
 
 		$this->write(
 			writeSqlConfig: $sqlConfig,
-			writeUseHierarchy: $useHierarchy
+			writeMaintainHierarchy: $maintainHierarchy
 		);
 
 		if (isset($sqlConfig['affectedQueryCacheKeyArray'])) {
@@ -146,15 +146,15 @@ class Write
 	/**
 	 * Perform write operation
 	 * 
-	 * @param array $writeSqlConfig    Sql config
-	 * @param bool  $writeUseHierarchy If true - Uses parent payload/results in child
+	 * @param array $writeSqlConfig         Sql config
+	 * @param bool  $writeMaintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
 	private function write(
 		&$writeSqlConfig,
-		$writeUseHierarchy
+		$writeMaintainHierarchy
 	): void {
 		// Check for payloadType
 		if (isset($writeSqlConfig['__PAYLOAD-TYPE__'])) {
@@ -184,7 +184,7 @@ class Write
 		// Set required fields
 		$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'] = $this->getRequired(
 			sqlConfig: $writeSqlConfig,
-			flag: $writeUseHierarchy,
+			maintainHierarchy: $writeMaintainHierarchy,
 			isFirstCall: Constant::$TRUE
 		);
 
@@ -254,7 +254,7 @@ class Write
 					writeParentPayloadKeyArray: $writePayloadKeyArray,
 					writeParentRequiredFieldArray: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'],
 					writeParentResponse: $writeResponse,
-					writeParentUseHierarchy: $writeUseHierarchy
+					writeParentMaintainHierarchy: $writeMaintainHierarchy
 				);
 
 				if ($this->httpObject->httpResponseObject->httpStatus === HttpStatus::$Ok) {
@@ -341,7 +341,7 @@ class Write
 	 * @param array $writeParentPayloadKeyArray    Payload Indexes
 	 * @param array $writeParentRequiredFieldArray Required fields
 	 * @param array $writeParentResponse           Response by reference
-	 * @param bool  $writeParentUseHierarchy       If true - Uses parent payload/results in child
+	 * @param bool  $writeParentMaintainHierarchy  If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -351,7 +351,7 @@ class Write
 		&$writeParentPayloadKeyArray,
 		&$writeParentRequiredFieldArray,
 		&$writeParentResponse,
-		$writeParentUseHierarchy
+		$writeParentMaintainHierarchy
 	): void {
 		if ($writeParentPayloadKeyArray === Constant::$NULL) {
 			$writeParentPayloadKeyArray = [];
@@ -410,7 +410,7 @@ class Write
 					keyString: $writeParentCurrentPayloadKey
 				)
 			) {
-				if ($writeParentUseHierarchy) {
+				if ($writeParentMaintainHierarchy) {
 					throw new \Exception(
 						message: "Payload key '{$writeParentCurrentPayloadKey}' not set",
 						code: HttpStatus::$NotFound
@@ -461,7 +461,7 @@ class Write
 				);
 			}
 
-			// Set SQL and ParamArray
+			// Set Sql and ParamArray
 			[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
 				sqlConfig: $writeParentSqlConfig
 			);
@@ -533,7 +533,7 @@ class Write
 					writeChildPayloadKeyArray: $writeParentCurrentPayloadKeyArray,
 					writeChildRequiredFieldArray: $writeParentRequiredFieldArray,
 					writeChildResponse: $writeParentCurrentResponse,
-					writeChildUseHierarchy: $writeParentUseHierarchy
+					writeChildMaintainHierarchy: $writeParentMaintainHierarchy
 				);
 			}
 		}
@@ -542,11 +542,11 @@ class Write
 	/**
 	 * Write Child Function
 	 * 
-	 * @param array $writeChildSqlConfig        Sql config
+	 * @param array $writeChildSqlConfig          Sql config
 	 * @param array $writeChildPayloadKeyArray    Payload Key's
 	 * @param array $writeChildRequiredFieldArray Required fields
-	 * @param array $writeChildResponse         Response by reference
-	 * @param bool  $writeChildUseHierarchy     If true - Uses parent payload/results in child
+	 * @param array $writeChildResponse           Response by reference
+	 * @param bool  $writeChildMaintainHierarchy  If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 */
@@ -555,9 +555,9 @@ class Write
 		&$writeChildPayloadKeyArray,
 		&$writeChildRequiredFieldArray,
 		&$writeChildResponse,
-		$writeChildUseHierarchy
+		$writeChildMaintainHierarchy
 	): void {
-		if ($writeChildUseHierarchy) {
+		if ($writeChildMaintainHierarchy) {
 			$record = $this->httpObject->httpRequestObject->activeRequestData['payload'];
 			$this->resetFetchData(
 				activeRequestDataKey: 'sqlPayload',
@@ -609,7 +609,7 @@ class Write
 				keyString: $writeChildModulePayloadKey
 			);
 			if (
-				$writeChildUseHierarchy
+				$writeChildMaintainHierarchy
 				&& !$dataExist
 			) { // use parent data of a payload
 				throw new \Exception(
@@ -639,9 +639,8 @@ class Write
 				$writeChildModuleRequiredFieldArray = &$writeChildRequiredFieldArray;
 			}
 
-			$writeChildModuleUseHierarchy = $writeChildUseHierarchy ?? $this->getUseHierarchy(
-				sqlConfig: $writeChildModuleSqlConfig,
-				keyword: 'useHierarchy'
+			$writeChildModuleMaintainHierarchy = $writeChildMaintainHierarchy ?? $this->getMaintainHierarchy(
+				sqlConfig: $writeChildModuleSqlConfig
 			);
 
 			for ($index = 0; $index < $indexCount; $index++) {
@@ -669,7 +668,7 @@ class Write
 				);
 
 				if (
-					$writeChildModuleUseHierarchy
+					$writeChildModuleMaintainHierarchy
 					&& !$dataExist
 				) { // use parent data of a payload
 					throw new \Exception(
@@ -687,7 +686,7 @@ class Write
 					writeParentPayloadKeyArray: $writeChildModuleCurrentPayloadKeyArray,
 					writeParentRequiredFieldArray: $writeChildModuleRequiredFieldArray,
 					writeParentResponse: $writeChildModuleCurrentResponse,
-					writeParentUseHierarchy: $writeChildModuleUseHierarchy
+					writeParentMaintainHierarchy: $writeChildModuleMaintainHierarchy
 				);
 			}
 		}

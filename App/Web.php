@@ -91,12 +91,12 @@ class Web
 	/**
 	 * Trigger cURL
 	 * 
-	 * @param string $homeURL Site URL
-	 * @param string $method  HTTP method
-	 * @param string $route   Route
-	 * @param array  $header  Header
-	 * @param string $payload Payload
-	 * @param string $fileLocation    File path
+	 * @param string $homeURL      Site URL
+	 * @param string $method       HTTP method
+	 * @param string $route        Route
+	 * @param array  $header       Header
+	 * @param string $payload      Payload
+	 * @param string $fileLocation File path
 	 * 
 	 * @return mixed
 	 */
@@ -393,7 +393,7 @@ class Web
 	/**
 	 * Generates XML Payload
 	 * 
-	 * @param array $xmlParamArray     Xml param's
+	 * @param array $xmlParamArray   Xml param's
 	 * @param array $payload         Payload
 	 * @param bool  $rowTagStartFlag Flag
 	 * 

@@ -100,7 +100,7 @@ class Read
 	{
 		$return = $this->readBasics(
 			$sqlConfig,
-			$useResultSet
+			$maintainHierarchy
 		);
 
 		if ($return !== Constant::$FALSE) {
@@ -146,7 +146,7 @@ class Read
 
 		$this->read(
 			readSqlConfig: $sqlConfig,
-			readUseResultSet: $useResultSet
+			readMaintainHierarchy: $maintainHierarchy
 		);
 
 		if (
@@ -173,14 +173,14 @@ class Read
 	/**
 	 * Perform read operation
 	 * 
-	 * @param array $readSqlConfig    Sql config
-	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
+	 * @param array $readSqlConfig         Sql config
+	 * @param bool  $readMaintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 */
 	private function read(
 		&$readSqlConfig,
-		$readUseResultSet
+		$readMaintainHierarchy
 	): void {
 		// Check for payloadType
 		if (isset($readSqlConfig['__PAYLOAD-TYPE__'])) {
@@ -210,7 +210,7 @@ class Read
 		// Set required fields
 		$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'] = $this->getRequired(
 			sqlConfig: $readSqlConfig,
-			flag: $readUseResultSet,
+			maintainHierarchy: $readMaintainHierarchy,
 			isFirstCall: Constant::$TRUE
 		);
 
@@ -281,7 +281,7 @@ class Read
 				readParentSqlConfig: $readSqlConfig,
 				readParentPayloadKeyArray: $readPayloadKeyArray,
 				readParentRequiredFieldArray: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'],
-				readParentUseResultSet: $readUseResultSet,
+				readParentMaintainHierarchy: $readMaintainHierarchy,
 				readParentIsFirstCall: Constant::$TRUE
 			);
 			
@@ -298,11 +298,11 @@ class Read
 	/**
 	 * Process Read Parent Config Function
 	 * 
-	 * @param array $readParentSqlConfig    Sql config
-	 * @param array $readParentPayloadKeyArray
-	 * @param array $readParentRequiredFieldArray
-	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
-	 * @param bool  $readIsFirstCall  true to represent the first call in recursion
+	 * @param array $readParentSqlConfig          Sql config
+	 * @param array $readParentPayloadKeyArray.   
+	 * @param array $readParentRequiredFieldArray 
+	 * @param bool  $readMaintainHierarchy        If true - Uses parent payload/results in child
+	 * @param bool  $readIsFirstCall              true to represent the first call in recursion
 	 * 
 	 * @return void
 	 */
@@ -310,7 +310,7 @@ class Read
 		&$readParentSqlConfig,
 		&$readParentPayloadKeyArray,
 		&$readParentRequiredFieldArray,
-		$readParentUseResultSet,
+		$readParentMaintainHierarchy,
 		$readParentIsFirstCall
 	): void {
 		if ($readParentPayloadKeyArray === Constant::$NULL) {
@@ -358,7 +358,7 @@ class Read
 					keyString: $readParentCurrentPayloadKey
 				)
 			) {
-				if ($readParentUseResultSet) {
+				if ($readParentMaintainHierarchy) {
 					throw new \Exception(
 						message: "Payload key '{$readParentCurrentPayloadKey}' not set",
 						code: HttpStatus::$NotFound
@@ -413,7 +413,7 @@ class Read
 					$this->fetchSingleRecord(
 						readSqlConfig: $readParentSqlConfig,
 						readPayloadKeyArray: $readParentPayloadKeyArray,
-						readUseResultSet: $readParentUseResultSet,
+						readMaintainHierarchy: $readParentMaintainHierarchy,
 						readIsFirstCall: $readParentIsFirstCall
 					);
 					$this->dataEncodeObject->endObject();
@@ -450,7 +450,7 @@ class Read
 					$this->fetchMultipleRecords(
 						readSqlConfig: $readParentSqlConfig,
 						readPayloadKeyArray: $readParentPayloadKeyArray,
-						readUseResultSet: $readParentUseResultSet,
+						readMaintainHierarchy: $readParentMaintainHierarchy,
 						readIsFirstCall: $readParentIsFirstCall
 					);
 					$this->dataEncodeObject->endArray();
@@ -490,10 +490,10 @@ class Read
 	/**
 	 * Process Read Child Config Function
 	 * 
-	 * @param array $readSqlConfig    Sql config
+	 * @param array $readSqlConfig         Sql config
 	 * @param array $readPayloadKeyArray
-	 * @param array $dbFetchedRecord          Record data fetched from DB
-	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
+	 * @param array $dbFetchedRecord       Record data fetched from DB
+	 * @param bool  $readMaintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return void
 	 */
@@ -501,9 +501,9 @@ class Read
 		&$readChildSqlConfig,
 		&$readChildPayloadKeyArray,
 		&$dbFetchedRecord,
-		$readChildUseResultSet
+		$readChildMaintainHierarchy
 	): void {
-		if ($readChildUseResultSet) {
+		if ($readChildMaintainHierarchy) {
 			$this->resetFetchData(
 				activeRequestDataKey: 'sqlPayload',
 				payloadKeyArray: $readChildPayloadKeyArray,
@@ -551,7 +551,7 @@ class Read
 				keyString: $readChildModulePayloadKey
 			);
 			if (
-				$readChildUseHierarchy
+				$readChildMaintainHierarchy
 				&& !$dataExist
 			) { // use parent data of a payload
 				throw new \Exception(
@@ -581,9 +581,8 @@ class Read
 				$readChildModuleRequiredFieldArray = &$readChildRequiredFieldArray;
 			}
 
-			$readChildModuleUseHierarchy = $readChildUseHierarchy ?? $this->getUseHierarchy(
-				sqlConfig: $readChildModuleSqlConfig,
-				keyword: 'useHierarchy'
+			$readChildModuleMaintainHierarchy = $readChildMaintainHierarchy ?? $this->getMaintainHierarchy(
+				sqlConfig: $readChildModuleSqlConfig
 			);
 
 			for ($index = 0; $index < $indexCount; $index++) {
@@ -607,7 +606,7 @@ class Read
 				);
 
 				if (
-					$readChildModuleUseHierarchy
+					$readChildModuleMaintainHierarchy
 					&& !$dataExist
 				) { // use parent data of a payload
 					throw new \Exception(
@@ -624,7 +623,7 @@ class Read
 					readParentSqlConfig: $readChildModuleSqlConfig,
 					readParentPayloadKeyArray: $readChildModulePayloadKeyArray,
 					readParentRequiredFieldArray: $readChildModuleCurrentPayloadKeyArray,
-					readParentUseResultSet: $readChildModuleUseResultSet,
+					readParentMaintainHierarchy: $readChildModuleMaintainHierarchy,
 					readParentIsFirstCall: Constant::$FALSE
 				);
 			}
@@ -719,10 +718,10 @@ class Read
 	/**
 	 * Fetch single record
 	 * 
-	 * @param array $readSqlConfig     Sql config
+	 * @param array $readSqlConfig          Sql config
 	 * @param array $readPayloadKeyArray
-	 * @param bool  $readUseResultSet  If true - Uses parent payload/results in child
-	 * @param bool  $readIsFirstCall   true to represent the first call in recursion
+	 * @param bool  $readMaintainHierarchy  If true - Uses parent payload/results in child
+	 * @param bool  $readIsFirstCall        true to represent the first call in recursion
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -730,7 +729,7 @@ class Read
 	private function fetchSingleRecord(
 		&$readSqlConfig,
 		&$readPayloadKeyArray,
-		$readUseResultSet,
+		$readMaintainHierarchy,
 		$readIsFirstCall
 	): void {
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
@@ -797,7 +796,7 @@ class Read
 				readChildSqlConfig: $readSqlConfig,
 				readChildPayloadKeyArray: $readPayloadKeyArray,
 				dbFetchedRecord: $dbFetchedRecord,
-				readChildUseResultSet: $readUseResultSet
+				readChildMaintainHierarchy: $readMaintainHierarchy
 			);
 		}
 	}
@@ -805,10 +804,10 @@ class Read
 	/**
 	 * Fetch multiple record
 	 * 
-	 * @param array $readSqlConfig    Sql config
+	 * @param array $readSqlConfig         Sql config
 	 * @param array $readPayloadKeyArray
-	 * @param bool  $readUseResultSet If true - Uses parent payload/results in child
-	 * @param bool  $readIsFirstCall  true to represent first call in recursion
+	 * @param bool  $readMaintainHierarchy If true - Uses parent payload/results in child
+	 * @param bool  $readIsFirstCall       true to represent first call in recursion
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -816,7 +815,7 @@ class Read
 	private function fetchMultipleRecords(
 		&$readSqlConfig,
 		&$readPayloadKeyArray,
-		$readUseResultSet,
+		$readMaintainHierarchy,
 		$readIsFirstCall
 	): void {
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
@@ -923,7 +922,7 @@ class Read
 					readChildSqlConfig: $readSqlConfig,
 					readChildPayloadKeyArray: $readPayloadKeyArray,
 					dbFetchedRecord: $dbFetchedRecord,
-					readChildUseResultSet: $readUseResultSet
+					readChildMaintainHierarchy: $readMaintainHierarchy
 				);
 				$this->dataEncodeObject->endObject();
 			} else {

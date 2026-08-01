@@ -7,7 +7,7 @@
 return [
 	'tableName' => [
 		'parts' => [
-			'__FILE__' => 'SQL file location'
+			'__FILE__' => 'Sql file location'
 		]
 	]
 ];
@@ -19,7 +19,7 @@ return [
 	'tableName' => [
 		'{id:int}' => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => 'SQL file location'
+			'__FILE__' => 'Sql file location'
 		]
 	]
 ];
@@ -32,11 +32,11 @@ return [
 	'tableName' => [
 		'{id:int}' => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => 'SQL file location for integer data type'
+			'__FILE__' => 'Sql file location for integer data type'
 		],
 		'{id:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
-			'__FILE__' => 'SQL file location for string data type'
+			'__FILE__' => 'Sql file location for string data type'
 		]
 	]
 ];
@@ -49,7 +49,7 @@ return [
 	'{tableName:string}' => [
 		'dataType' => DatabaseServerDataType::$Tables,
 		'{id:int}' => [
-			'__FILE__' => 'SQL file location'
+			'__FILE__' => 'Sql file location'
 		]
 	]
 ];
@@ -61,7 +61,7 @@ return [
 return [
 	'{tableName:string}' => [
 		'dataType' => DatabaseServerDataType::$Tables,
-		'__FILE__' => 'SQL file location',
+		'__FILE__' => 'Sql file location',
 		'__PRE-ROUTE-HOOKS__' => [// These will apply recursively
 			'Hook_1',
 			'...'
@@ -72,7 +72,7 @@ return [
 		]
 		'{id:int}' => [
 			'dataType' => DatabaseServerDataType::$PrimaryKey,
-			'__FILE__' => 'SQL file location',
+			'__FILE__' => 'Sql file location',
 			'__PRE-ROUTE-HOOKS__' => [], // For noi hooks
 			'__POST-ROUTE-HOOKS__' => [] // For noi hooks
 		],

@@ -88,6 +88,6 @@ return [
 			'__INSERT-IDs__' => 'address:id',
 		]
 	],
-	'useHierarchy' => Constant::$TRUE,
+	'maintainHierarchy' => Constant::$TRUE,
 	'idempotentWindow' => 10
 ];

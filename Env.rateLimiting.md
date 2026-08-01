@@ -63,7 +63,7 @@ If **customer_enabled_rate_limiting_for_route** is **enabled** the Rate Limiting
 rateLimitRoutePrefix='RRL:'   ; Route based Rate Limiting (RRL) Key prefix used in Redis
 ```
 
-- SQL file configuration
+- Sql file configuration
 
 ```PHP
 return [

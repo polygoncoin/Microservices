@@ -271,8 +271,8 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	/**
 	 * Get Session
 	 * 
-	 * @param string $sql      SQL query
-	 * @param array  $paramArray SQL query params
+	 * @param string $sql        Sql query
+	 * @param array  $paramArray Sql query params
 	 * 
 	 * @return mixed
 	 */
@@ -310,10 +310,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	}
 
 	/**
-	 * Execute SQL
+	 * Execute Sql
 	 * 
-	 * @param string $sql      SQL query
-	 * @param array  $paramArray SQL query params
+	 * @param string $sql        Sql query
+	 * @param array  $paramArray Sql query params
 	 * 
 	 * @return bool
 	 */

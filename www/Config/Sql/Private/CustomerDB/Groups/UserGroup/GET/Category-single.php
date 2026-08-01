@@ -89,5 +89,5 @@ return [
 			],
 		]
 	],
-	'useResultSet' => Constant::$TRUE,
+	'maintainHierarchy' => Constant::$TRUE,
 ];

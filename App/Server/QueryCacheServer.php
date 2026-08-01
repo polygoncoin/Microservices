@@ -228,8 +228,8 @@ class QueryCacheServer
 	/**
 	 * Increment Query Cache key as per offset
 	 * 
-	 * @param string $queryCacheKey Query Cache key
-	 * @param int    $queryCacheOffset        Query Cache offset
+	 * @param string $queryCacheKey    Query Cache key
+	 * @param int    $queryCacheOffset Query Cache offset
 	 * 
 	 * @return mixed
 	 */

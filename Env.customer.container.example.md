@@ -131,7 +131,7 @@ One can on similar lines can configure slaves server detail or a dedicated maste
 
 ### The query_placeholder column
 
-These column contains key's containing detail about the way the queries are build to use data provided for SQL's'
+These column contains key's containing detail about the way the queries are build to use data provided for Sql's'
 
 ```SQL
 `customer`.`customer_master_db_server_query_placeholder` varchar(255) NOT NULL,

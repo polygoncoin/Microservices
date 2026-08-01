@@ -240,9 +240,9 @@ class DatabaseServer
 	/**
 	 * Execute query
 	 * 
-	 * @param string $sql      SQL query
-	 * @param array  $paramArray SQL query params
-	 * @param bool   $pushPop  Push Pop result set stmt
+	 * @param string $sql        Sql query
+	 * @param array  $paramArray Sql query params
+	 * @param bool   $pushPop    Push Pop result set stmt
 	 * 
 	 * @return void
 	 */

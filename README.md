@@ -16,17 +16,17 @@ This is a light & easy low code API generator using configuration arrays. It can
 - **[Rules For Custom DataTypes Configuration](Rules-For-Custom-DataTypes-Configuration.md)**
 - **[Rules For Payload Formats](Rules-For-Payload-Formats.md)**
 - **[Rules For Route Configuration](Rules-For-Route-Configuration.md)**
-- **[Rules For SQL Configuration](Rules-For-SQL-Configuration.md)**
+- **[Rules For Sql Configuration](Rules-For-SQL-Configuration.md)**
 - **[Rules For TestCase Configuration](Rules-For-TestCase-Configuration.md)**
 
 ## JavaScript Examples
 
 - **[JavaScript Examples](Microservices-JavaScript-Examples.md)**
 
-## SQL File
+## Sql File
 
-- **Sql/global.sql** Import this SQL file on your **MySql global** instance
-- **Sql/customer\_master.sql** Import this SQL file on your **MySql customer** instance
+- **Sql/global.sql** Import this Sql file on your **MySql global** instance
+- **Sql/customer\_master.sql** Import this Sql file on your **MySql customer** instance
 
 - **Note**: One can import both sql's in a single database to start with. Just configure the same detail in the environment files.
 
@@ -82,7 +82,7 @@ This is a light & easy low code API generator using configuration arrays. It can
 - **/PATCHroutes.php** for all PATCH method routes configuration.
 - **/DELETEroutes.php** for all DELETE method routes configuration.
 
-### SQL Folder
+### Sql Folder
 
 These files locations are used in routes config to be used for generating response.
 
@@ -94,11 +94,11 @@ These files locations are used in routes config to be used for generating respon
 
 #### File
 
-- **/GET/&lt;filenames&gt;.php** GET method SQL.
-- **/POST/&lt;filenames&gt;;.php** POST method SQL.
-- **/PUT/&lt;filenames&gt;.php** PUT method SQL.
-- **/PATCH/&lt;filenames&gt;.php** PATCH method SQL.
-- **/DELETE/&lt;filenames&gt;.php** DELETE method SQL.
+- **/GET/&lt;filenames&gt;.php** GET method Sql.
+- **/POST/&lt;filenames&gt;;.php** POST method Sql.
+- **/PUT/&lt;filenames&gt;.php** PUT method Sql.
+- **/PATCH/&lt;filenames&gt;.php** PATCH method Sql.
+- **/DELETE/&lt;filenames&gt;.php** DELETE method Sql.
 
 One can replace **&lt;filenames&gt;** tag with desired name as per functionality.
 

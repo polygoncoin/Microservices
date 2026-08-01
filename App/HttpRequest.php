@@ -61,7 +61,7 @@ class HttpRequest
 	public $routesDirectory = null;
 
 	/**
-	 * SQL & Payload Configuration Directory
+	 * Sql & Payload Configuration Directory
 	 * Payload Configuration Directory for Supplement
 	 * 
 	 * @var null|string

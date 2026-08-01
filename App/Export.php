@@ -205,8 +205,8 @@ class Export
 	/**
 	 * Get Shell Command
 	 * 
-	 * @param string      $sql        SQL query
-	 * @param array       $paramArray   SQL query params
+	 * @param string      $sql        Sql query
+	 * @param array       $paramArray Sql query params
 	 * @param null|string $exportFile Absolute file path
 	 * 
 	 * @return array
@@ -255,8 +255,8 @@ class Export
 	 * Initialize download.
 	 * 
 	 * @param $downloadFile Name of CSV file on customer side.
-	 * @param $sql          SQL query
-	 * @param $paramArray     SQL query params
+	 * @param $sql          Sql query
+	 * @param $paramArray   Sql query params
 	 * @param $exportFile   Absolute file path with filename
 	 * 
 	 * @return array
@@ -312,8 +312,8 @@ class Export
 	/**
 	 * Save Export on server
 	 * 
-	 * @param $sql        SQL query
-	 * @param $paramArray   SQL query params
+	 * @param $sql        Sql query
+	 * @param $paramArray Sql query params
 	 * @param $exportFile Absolute file path with filename
 	 * 
 	 * @return array

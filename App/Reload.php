@@ -243,9 +243,9 @@ class Reload
 	/**
 	 * Cache User Data
 	 * 
-	 * @param string   $httpRequestIp Request Ip
-	 * @param array    $customerData  Customer Data
-	 * @param null|int $customerUserId        User Id
+	 * @param string   $httpRequestIp  Request Ip
+	 * @param array    $customerData   Customer Data
+	 * @param null|int $customerUserId User Id
 	 * 
 	 * @return bool
 	 */

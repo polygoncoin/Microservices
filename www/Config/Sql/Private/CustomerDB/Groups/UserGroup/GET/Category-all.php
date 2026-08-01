@@ -85,7 +85,7 @@ return [
 			],
 		]
 	],
-	'useResultSet' => Constant::$TRUE,
+	'maintainHierarchy' => Constant::$TRUE,
 	'fetchDbMode' => 'Master',
 	// 'queryCacheKey' => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category',
 	'outputRepresentation' => 'PHP',

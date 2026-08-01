@@ -81,6 +81,6 @@ return [
 			'errorMessage' => 'Invalid registration id'
 		],
 	],
-	'useHierarchy' => Constant::$TRUE,
+	'maintainHierarchy' => Constant::$TRUE,
 	'idempotentWindow' => 10
 ];

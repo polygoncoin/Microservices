@@ -48,5 +48,5 @@ return [
 			'__MODE__' => 'multipleRecordFormat',
 		]
 	],
-	'useResultSet' => Constant::$TRUE
+	'maintainHierarchy' => Constant::$TRUE
 ];

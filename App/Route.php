@@ -161,7 +161,7 @@ class Route
 	 * Create Route list
 	 * 
 	 * @param array  $routeArray     Route
-	 * @param string $route        Current Route
+	 * @param string $route          Current Route
 	 * @param array  $httpRouteArray All HTTP Route
 	 * 
 	 * @return void

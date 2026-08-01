@@ -62,16 +62,16 @@ trait AppTrait
 	/**
 	 * Get required payload
 	 * 
-	 * @param array $sqlConfig   Sql config
-	 * @param bool  $flag        useHierarchy / useResultSet flag
-	 * @param bool  $isFirstCall true to represent the first call in recursion
+	 * @param array $sqlConfig         Sql config
+	 * @param bool  $maintainHierarchy Maintain Hierarchy
+	 * @param bool  $isFirstCall       true to represent the first call in recursion
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private function getRequired(
 		&$sqlConfig,
-		$flag,
+		$maintainHierarchy,
 		$isFirstCall
 	): array {
 		$requiredFieldArray = [];
@@ -139,7 +139,7 @@ trait AppTrait
 			}
 			// if (
 			// 	!$isFirstCall
-			// 	&& $flag
+			// 	&& $maintainHierarchy
 			// 	&& !$foundHierarchy
 			// ) {
 			//     throw new \Exception(
@@ -179,15 +179,15 @@ trait AppTrait
 			foreach (['__SUB-QUERY__', '__SUB-PAYLOAD__'] as $option) {
 				if (isset($sqlConfig[$option])) {
 					foreach ($sqlConfig[$option] as $module => &$moduleSqlConfig) {
-						$flag = ($flag) ?? $this->getUseHierarchy(
+						$maintainHierarchy = ($maintainHierarchy) ?? $this->getMaintainHierarchy(
 							sqlConfig: $moduleSqlConfig
 						);
 						$moduleRequiredFieldArray = $this->getRequired(
 							sqlConfig: $moduleSqlConfig,
-							flag: $flag,
+							maintainHierarchy: $maintainHierarchy,
 							isFirstCall: Constant::$FALSE
 						);
-						if ($flag) {
+						if ($maintainHierarchy) {
 							$requiredFieldArray[$module] = $moduleRequiredFieldArray;
 						} else {
 							foreach ($moduleRequiredFieldArray as $activeRequestDataKey => &$activeRequestDataKeySubKeyArray) {
@@ -236,9 +236,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Generate SQL query and its param's in Named format
+	 * Generate Sql query and its param's in Named format
 	 * 
-	 * @param array      $sqlConfig     Sql config
+	 * @param array      $sqlConfig       Sql config
 	 * @param array|null $payloadKeyArray Payload key's
 	 * 
 	 * @return array
@@ -393,9 +393,9 @@ trait AppTrait
 	}
 
 	/**
-	 * Generate SQL query and its param's in Unnamed format
+	 * Generate Sql query and its param's in Unnamed format
 	 * 
-	 * @param array      $sqlConfig     Sql config
+	 * @param array      $sqlConfig       Sql config
 	 * @param array|null $payloadKeyArray Payload key's
 	 * 
 	 * @return array
@@ -543,7 +543,7 @@ trait AppTrait
 	/**
 	 * Generates ParamArray for statement to execute
 	 * 
-	 * @param array $sqlConfig          Sql config
+	 * @param array $sqlConfig            Sql config
 	 * @param array $payloadVariableArray Payload Variables
 	 * 
 	 * @return array
@@ -690,29 +690,15 @@ trait AppTrait
 	 * Use results in where clause of sub queries recursively
 	 * 
 	 * @param array  $sqlConfig Sql config
-	 * @param string $keyword   useHierarchy/useResultSet
 	 * 
 	 * @return bool
 	 */
-	private function getUseHierarchy(
-		&$sqlConfig,
-		$keyword = ''
+	private function getMaintainHierarchy(
+		&$sqlConfig
 	): bool {
 		if (
-			isset($sqlConfig[$keyword])
-			&& $sqlConfig[$keyword] === Constant::$TRUE
-		) {
-			return true;
-		}
-		if (
-			isset($sqlConfig['useHierarchy'])
-			&& $sqlConfig['useHierarchy'] === Constant::$TRUE
-		) {
-			return true;
-		}
-		if (
-			isset($sqlConfig['useResultSet'])
-			&& $sqlConfig['useResultSet'] === Constant::$TRUE
+			isset($sqlConfig['maintainHierarchy'])
+			&& $sqlConfig['maintainHierarchy'] === Constant::$TRUE
 		) {
 			return true;
 		}
@@ -722,16 +708,16 @@ trait AppTrait
 	/**
 	 * Return explain params recursively
 	 * 
-	 * @param array $sqlConfig   Sql config
-	 * @param bool  $flag        useHierarchy/useResultSet flag
-	 * @param bool  $isFirstCall Flag to check if this is first request
+	 * @param array $sqlConfig         Sql config
+	 * @param bool  $maintainHierarchy Maintain Hierarchy flag
+	 * @param bool  $isFirstCall       Flag to check if this is first request
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private function getExplainParam(
 		&$sqlConfig,
-		$flag,
+		$maintainHierarchy,
 		$isFirstCall
 	): array {
 		$explainParamArray = [];
@@ -814,7 +800,7 @@ trait AppTrait
 			}
 			if (
 				!$isFirstCall
-				&& $flag
+				&& $maintainHierarchy
 				&& !$foundHierarchy
 			) {
 				throw new \Exception(
@@ -828,15 +814,15 @@ trait AppTrait
 		foreach (['__SUB-PAYLOAD__', '__SUB-QUERY__'] as $option) {
 			if (isset($sqlConfig[$option])) {
 				foreach ($sqlConfig[$option] as $module => &$moduleSqlConfig) {
-					$flag = ($flag) ?? $this->getUseHierarchy(
+					$maintainHierarchy = ($maintainHierarchy) ?? $this->getMaintainHierarchy(
 						sqlConfig: $moduleSqlConfig
 					);
 					$moduleExplainParamArray = $this->getExplainParam(
 						sqlConfig: $moduleSqlConfig,
-						flag: $flag,
+						maintainHierarchy: $maintainHierarchy,
 						isFirstCall: Constant::$FALSE
 					);
-					if ($flag) {
+					if ($maintainHierarchy) {
 						if (!empty($moduleExplainParamArray)) {
 							$explainParamArray[$module] = $moduleExplainParamArray;
 						}
@@ -858,8 +844,8 @@ trait AppTrait
 	 * Function to reset data for module key wise
 	 * 
 	 * @param string $activeRequestDataKey sqlResults / sqlParamArray / sqlPayload
-	 * @param array  $payloadKeyArray              Module key's in recursion
-	 * @param array  $record                     Record data fetched from DB
+	 * @param array  $payloadKeyArray      Module key's in recursion
+	 * @param array  $record               Record data fetched from DB
 	 * 
 	 * @return void
 	 */
@@ -1043,7 +1029,7 @@ trait AppTrait
 	/**
 	 * Check for Idempotent Window
 	 * 
-	 * @param array $sqlConfig     Sql config
+	 * @param array $sqlConfig       Sql config
 	 * @param array $payloadKeyArray Payload Indexes
 	 * 
 	 * @return array
@@ -1164,7 +1150,7 @@ trait AppTrait
 		$this->httpObject->httpRequestObject->customerCacheObject->cacheSet(
 			cacheKey: $hashKey,
 			cacheValue: ++$noOfRequest,
-			cacheExpire: 3600
+			cacheExpire: $sqlConfig['responseLagWindow']
 		);
 
 		$lag = 0;
@@ -1386,18 +1372,18 @@ trait AppTrait
 	/**
 	 * Process import function of configuration
 	 * 
-	 * @param array $sqlConfig    Sql config
-	 * @param bool  $useHierarchy If true - Uses parent payload/results in child
+	 * @param array $sqlConfig         Sql config
+	 * @param bool  $maintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return string
 	 */
 	private function generateImportSampleCsv(
 		&$sqlConfig,
-		$useHierarchy
+		$maintainHierarchy
 	): string {
 		$explainParamArray = $this->getExplainParam(
 			sqlConfig: $sqlConfig,
-			flag: $useHierarchy,
+			maintainHierarchy: $maintainHierarchy,
 			isFirstCall: Constant::$TRUE
 		);
 		$paramArray = $this->genCsvHelper(
@@ -1486,14 +1472,14 @@ trait AppTrait
 	/**
 	 * Basic Read Processes for process Function
 	 * 
-	 * @param array $sqlConfig    Sql config
-	 * @param bool  $useResultSet If true - Uses parent payload/results in child
+	 * @param array $sqlConfig         Sql config
+	 * @param bool  $maintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return array
 	 */
 	private function readBasics(
 		&$sqlConfig,
-		&$useResultSet
+		&$maintainHierarchy
 	) {
 		// Load Sql
 		$sqlConfig = $this->httpObject->httpRequestObject->routeParserObject->sqlConfig;
@@ -1509,9 +1495,8 @@ trait AppTrait
 		);
 
 		// Use results in where clause of sub queries recursively
-		$useResultSet = $this->getUseHierarchy(
-			sqlConfig: $sqlConfig,
-			keyword: 'useResultSet'
+		$maintainHierarchy = $this->getMaintainHierarchy(
+			sqlConfig: $sqlConfig
 		);
 
 		if (
@@ -1524,7 +1509,7 @@ trait AppTrait
 		) {
 			return $this->explain(
 				sqlConfig: $sqlConfig,
-				flag: $useResultSet
+				maintainHierarchy: $maintainHierarchy
 			);
 		}
 
@@ -1534,14 +1519,14 @@ trait AppTrait
 	/**
 	 * Basic Write Processes for process Function (Supplement is considered as Write)
 	 * 
-	 * @param array $sqlConfig    Sql config
-	 * @param bool  $useHierarchy If true - Uses parent payload/results in child
+	 * @param array $sqlConfig         Sql config
+	 * @param bool  $maintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return bool
 	 */
 	private function writeBasics(
 		&$sqlConfig,
-		&$useHierarchy
+		&$maintainHierarchy
 	): bool {
 		// Load Sql
 		$sqlConfig = $this->httpObject->httpRequestObject->routeParserObject->sqlConfig;
@@ -1562,9 +1547,8 @@ trait AppTrait
 		);
 
 		// Use results in where clause of sub queries recursively
-		$useHierarchy = $this->getUseHierarchy(
-			sqlConfig: $sqlConfig,
-			keyword: 'useHierarchy'
+		$maintainHierarchy = $this->getMaintainHierarchy(
+			sqlConfig: $sqlConfig
 		);
 
 		if (
@@ -1577,7 +1561,7 @@ trait AppTrait
 		) {
 			return $this->explain(
 				sqlConfig: $sqlConfig,
-				flag: $useHierarchy
+				maintainHierarchy: $maintainHierarchy
 			);
 		}
 
@@ -1587,7 +1571,7 @@ trait AppTrait
 		) {
 			return $this->generateImportSampleCsv(
 				sqlConfig: $sqlConfig,
-				useHierarchy: $useHierarchy
+				maintainHierarchy: $maintainHierarchy
 			);
 		}
 
@@ -1665,14 +1649,14 @@ trait AppTrait
 	/**
 	 * Explain configuration
 	 * 
-	 * @param array $sqlConfig Sql config
-	 * @param bool  $flag      If true - Uses parent payload/results in child
+	 * @param array $sqlConfig         Sql config
+	 * @param bool  $maintainHierarchy If true - Uses parent payload/results in child
 	 * 
 	 * @return bool
 	 */
 	private function explain(
 		&$sqlConfig,
-		$flag
+		$maintainHierarchy
 	): bool {
 		$this->dataEncodeObject->startObject(
 			objectKey: 'Config'
@@ -1685,7 +1669,7 @@ trait AppTrait
 			objectKey: 'Payload',
 			data: $this->getExplainParam(
 				sqlConfig: $sqlConfig,
-				flag: $flag,
+				maintainHierarchy: $maintainHierarchy,
 				isFirstCall: Constant::$TRUE
 			)
 		);

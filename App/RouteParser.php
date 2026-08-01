@@ -709,7 +709,7 @@ class RouteParser
 	 * Find Ruute and Param Name from Dynamic String configured in Route file.
 	 * 
 	 * @param array  $routeConfig Route config
-	 * @param string $element      Route element
+	 * @param string $element     Route element
 	 * 
 	 * @return array
 	 */

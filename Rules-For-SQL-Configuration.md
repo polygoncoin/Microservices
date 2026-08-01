@@ -1,4 +1,4 @@
-# SQL Configuration Rules
+# Sql Configuration Rules
 
 ## Available configuration options explained
 
@@ -120,7 +120,7 @@ return [
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 					'isRequired' => Constant::$REQUIRED              // Represents required field
 				],
-				// Database DataTypes settings required when useHierarchy is true
+				// Database DataTypes settings required when maintainHierarchy is true
 				// to validate each data set before procedding forward
 				[
 					// Fetch value of last insert IDs
@@ -131,19 +131,19 @@ return [
 				[
 					// Fetch values of params from previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlParamArray',                     // sqlParamArray (with useHierarchy)
+					'activeRequestDataKey' => 'sqlParamArray',                     // sqlParamArray (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
-					// Fetch values of SQL results from previous queries
+					// Fetch values of Sql results from previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
+					'activeRequestDataKey' => 'sqlResults',                    // sqlResults for DQL operations (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
-					// Fetch values of SQL payload for previous queries
+					// Fetch values of Sql payload for previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
+					'activeRequestDataKey' => 'sqlPayload',                    // sqlPayload (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
@@ -178,11 +178,11 @@ return [
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
 					// 'activeRequestDataKey' => 'userData', // Fetch value from User Data session
 					// 'activeRequestDataKey' => 'custom', // Static values
-					// 'activeRequestDataKey' => '__INSERT-IDs__', // SQL Insert IDs
+					// 'activeRequestDataKey' => '__INSERT-IDs__', // Sql Insert IDs
 					'activeRequestDataKeySubKey' => 'address'
 				],
 				[
-					// SQL Insert IDs
+					// Sql Insert IDs
 					'activeRequestDataKey' => '__INSERT-IDs__',
 					'activeRequestDataKeySubKey' => 'address:id'
 				]
@@ -197,7 +197,7 @@ return [
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
 					// 'activeRequestDataKey' => 'userData', // Fetch value from User Data session
 					// 'activeRequestDataKey' => 'custom', // Static values
-					// 'activeRequestDataKey' => '__INSERT-IDs__', // SQL Insert IDs
+					// 'activeRequestDataKey' => '__INSERT-IDs__', // Sql Insert IDs
 					'activeRequestDataKeySubKey' => 'address'
 				],
 				[...]
@@ -213,7 +213,7 @@ return [
 					// 'activeRequestDataKey' => 'customerData', // Fetch value from Customer Data
 					// 'activeRequestDataKey' => 'userData', // Fetch value from User Data session
 					// 'activeRequestDataKey' => 'custom', // Static values
-					// 'activeRequestDataKey' => '__INSERT-IDs__', // SQL Insert IDs
+					// 'activeRequestDataKey' => '__INSERT-IDs__', // Sql Insert IDs
 					'activeRequestDataKeySubKey' => 'address'
 				],
 				[...]
@@ -249,12 +249,14 @@ return [
 
 	'isTransaction' => Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
 
-	'useHierarchy' => Constant::$TRUE, // For DML
-	'useResultSet' => Constant::$TRUE, // For DQL
+	'maintainHierarchy' => Constant::$TRUE, // For DML
 
 	// Rate Limiting Route access
 	'rateLimitMaxRequest' => 1, // Allowed number of request in defined seconds window
 	'rateLimitMaxRequestWindow' => 3600, // Seconds Window for restricting number of request
+
+	// Maintain responseLag for window
+	'responseLagWindow' => 3600,
 
 	// Control response time as per number of hits by configuring lags in seconds as below
 	'responseLag' => [
@@ -307,7 +309,7 @@ return [
 ];
 ```
 
-- **Note**: 'useHierarchy' => Constant::$TRUE also includes 'useResultSet' => Constant::$TRUE feature.
+- **Note**: 'maintainHierarchy' => Constant::$TRUE also includes 'maintainHierarchy' => Constant::$TRUE feature.
 
 - If there are repeated modules or configurations; one can reuse them by palcing them in a separate file and including as below.
 
@@ -403,23 +405,23 @@ return [
 					'dataType' => DatabaseServerDataType::$PrimaryKey,   // key data type
 					'isRequired' => Constant::$REQUIRED              // Represents required field
 				],
-				// Database DataTypes settings required when useHierarchy is true
+				// Database DataTypes settings required when maintainHierarchy is true
 				// to validate each data set before procedding forward
 				[	// Fetch values of params from previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlParamArray',                     // sqlParamArray (with useHierarchy)
+					'activeRequestDataKey' => 'sqlParamArray',                     // sqlParamArray (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
-					// Fetch values of SQL results from previous queries
+					// Fetch values of Sql results from previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlResults',                    // sqlResults for DQL operations (with useResultSet)
+					'activeRequestDataKey' => 'sqlResults',                    // sqlResults for DQL operations (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[
-					// Fetch values of SQL payload for previous queries
+					// Fetch values of Sql payload for previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlPayload',                    // sqlPayload (with useHierarchy)
+					'activeRequestDataKey' => 'sqlPayload',                    // sqlPayload (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 			],
@@ -513,11 +515,14 @@ return [
 
 	'isTransaction' => Constant::$FALSE, // Flag to follow transaction Begin, Commit and rollback on error
 
-	'useHierarchy' => Constant::$TRUE, // For DML
+	'maintainHierarchy' => Constant::$TRUE, // For DML
 
 	// Rate Limiting Route access
 	'rateLimitMaxRequest' => 1, // Allowed number of request in defined seconds window
 	'rateLimitMaxRequestWindow' => 3600, // Seconds Window for restricting number of request
+
+	// Maintain responseLag for window
+	'responseLagWindow' => 3600,
 
 	// Control response time as per number of hits by configuring lags in seconds as below
 	'responseLag' => [
