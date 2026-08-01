@@ -36,7 +36,7 @@ class Web
 	 * Return cURL Config
 	 * 
 	 * @param string $homeURL     Site URL
-	 * @param string $method      HTTP method
+	 * @param string $httpRequestMethod      HTTP httpRequestMethod
 	 * @param string $route       Route
 	 * @param string $queryString Query String
 	 * @param array  $header      Header
@@ -46,7 +46,7 @@ class Web
 	 */
 	public static function getCurlConfig(
 		$homeURL,
-		$method,
+		$httpRequestMethod,
 		$route,
 		$queryString,
 		$header = [],
@@ -57,7 +57,7 @@ class Web
 		$curlConfig[\CURLOPT_HTTPHEADER] = $header;
 		$curlConfig[\CURLOPT_HEADER] = 1;
 
-		switch ($method) {
+		switch ($httpRequestMethod) {
 			case Constant::$GET:
 				break;
 			case Constant::$POST:
@@ -70,7 +70,7 @@ class Web
 			case Constant::$PUT:
 			case Constant::$PATCH:
 			case Constant::$DELETE:
-				$curlConfig[\CURLOPT_CUSTOMREQUEST] = $method;
+				$curlConfig[\CURLOPT_CUSTOMREQUEST] = $httpRequestMethod;
 				if ($fileLocation === Constant::$NULL) {
 					$curlConfig[\CURLOPT_POSTFIELDS] = $payload;
 				}
@@ -92,7 +92,7 @@ class Web
 	 * Trigger cURL
 	 * 
 	 * @param string $homeURL      Site URL
-	 * @param string $method       HTTP method
+	 * @param string $httpRequestMethod       HTTP httpRequestMethod
 	 * @param string $route        Route
 	 * @param array  $header       Header
 	 * @param string $payload      Payload
@@ -102,7 +102,7 @@ class Web
 	 */
 	public static function trigger(
 		$homeURL,
-		$method,
+		$httpRequestMethod,
 		$route,
 		$header = [],
 		$payload = '',
@@ -112,7 +112,7 @@ class Web
 		$curl = curl_init();
 		$curlConfig = self::getCurlConfig(
 			homeURL: $homeURL,
-			method: $method,
+			httpRequestMethod: $httpRequestMethod,
 			route: $route,
 			queryString: $queryString,
 			header: $header,
@@ -120,7 +120,7 @@ class Web
 			fileLocation: $fileLocation
 		);
 		if ($fileLocation !== Constant::$NULL) {
-			switch ($method) {
+			switch ($httpRequestMethod) {
 				case Constant::$POST:
 					// // Create a CURLFile object
 					// if (function_exists('curl_file_create')) {
@@ -217,10 +217,19 @@ class Web
 			'URL' => htmlspecialchars(
 				string: "{$homeURL}?route={$route}{$queryString}"
 			),
-			'Method' => $method,
-			'Headers' => $curlConfig[\CURLOPT_HTTPHEADER],
-			'Payload' => $requestPayload,
+			'Method' => $httpRequestMethod,
+			'Headers' => $curlConfig[\CURLOPT_HTTPHEADER]
 		];
+
+		switch ($httpRequestMethod) {
+			case Constant::$QUERY:
+			case Constant::$POST:
+			case Constant::$PUT:
+			case Constant::$PATCH:
+			case Constant::$DELETE:
+				$return['HttpRequest']['Payload'] = $requestPayload;
+				break;
+		}
 
 		$return['HttpResponse'] = [
 			'HttpCode' => $responseHttpCode,

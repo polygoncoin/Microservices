@@ -48,7 +48,7 @@ if (isset($proceed)) {
 
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: Constant::$PUT,
+		httpRequestMethod: Constant::$PUT,
 		route: '/registration/1',
 		header: $headerArray,
 		payload: json_encode(value: $paramArray)

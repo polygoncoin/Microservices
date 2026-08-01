@@ -35,7 +35,7 @@ $paramArray = [
 
 return Web::trigger(
 	homeURL: $homeURL,
-	method: Constant::$POST,
+	httpRequestMethod: Constant::$POST,
 	route: '/registration-with-address',
 	header: $headerArray,
 	payload: json_encode(value: $paramArray)

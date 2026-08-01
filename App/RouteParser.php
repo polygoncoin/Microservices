@@ -220,8 +220,8 @@ class RouteParser
 			value: $this->routeElementArray
 		) - 1;
 		// if ($this->routeElementArray[$routeLastElementPos] === Env::$importSampleRequestRouteKeyword) {
-		//     if (isset($this->httpObject->httpReqData['server']['httpMethod'])) {
-		//         $this->httpObject->httpReqData['server']['httpMethod'] = $this->httpObject->httpReqData['server']['httpMethod'];
+		//     if (isset($this->httpObject->httpReqData['server']['httpRequestMethod'])) {
+		//         $this->httpObject->httpReqData['server']['httpRequestMethod'] = $this->httpObject->httpReqData['server']['httpRequestMethod'];
 		//     }
 		// }
 
@@ -231,10 +231,10 @@ class RouteParser
 					. DIRECTORY_SEPARATOR . 'CustomerDB'
 					. DIRECTORY_SEPARATOR . 'Groups'
 					. DIRECTORY_SEPARATOR . $this->httpObject->httpRequestObject->activeRequestData['groupData']['customer_user_group_name']
-					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpRequestMethod'] . 'routes.php';
 			} else {
 				$routeFileLocation = $this->httpObject->httpRequestObject->routesDirectory
-					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpMethod'] . 'routes.php';
+					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpRequestMethod'] . 'routes.php';
 			}
 		}
 
@@ -250,7 +250,7 @@ class RouteParser
 			$routeConfig = include $routeFileLocation;
 		} else {
 			throw new \Exception(
-				message: 'Route file missing: ' . $this->httpObject->httpReqData['server']['httpMethod'] . ' method',
+				message: 'Route file missing: HTTP ' . $this->httpObject->httpReqData['server']['httpRequestMethod'] . ' method',
 				code: HttpStatus::$InternalServerError
 			);
 		}
@@ -578,7 +578,7 @@ class RouteParser
 				)
 			) {
 				throw new \Exception(
-					message: 'Missing config for ' . $this->httpObject->httpReqData['server']['httpMethod'] . ' method',
+					message: 'Missing config for HTTP ' . $this->httpObject->httpReqData['server']['httpRequestMethod'] . ' method',
 					code: HttpStatus::$InternalServerError
 				);
 			}

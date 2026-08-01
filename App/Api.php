@@ -227,7 +227,7 @@ class Api
 				$supplementClass = Constant::$SUPPLEMENT_NS . '\\ThirdParty\\' . $supplementClassFileName;
 			}
 		} else {
-			switch ($this->httpObject->httpReqData['server']['httpMethod']) {
+			switch ($this->httpObject->httpReqData['server']['httpRequestMethod']) {
 				case Constant::$GET:
 				case Constant::$QUERY:
 					if (

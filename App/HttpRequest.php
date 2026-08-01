@@ -445,7 +445,7 @@ class HttpRequest
 	private function setPayloadStream(): string
 	{
 		$payloadJson = '{}';
-		switch ($this->httpObject->httpReqData['server']['httpMethod']) {
+		switch ($this->httpObject->httpReqData['server']['httpRequestMethod']) {
 			case Constant::$GET:
 				$payloadJson = json_encode($this->httpObject->httpReqData['get']);
 				break;
@@ -533,7 +533,7 @@ class HttpRequest
 			customerUserGroupId: $this->customerUserGroupId,
 			customerUserId: $this->customerUserId,
 			route: $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
-			httpMethod: $this->httpObject->httpReqData['server']['httpMethod'],
+			httpRequestMethod: $this->httpObject->httpReqData['server']['httpRequestMethod'],
 			httpRequestIp: $this->httpObject->httpReqData['server']['httpRequestIp'],
 			payloadJson: $payloadJson
 		);
@@ -582,7 +582,7 @@ class HttpRequest
 	 * @param int    $customerUserGroupId
 	 * @param int    $customerUserId
 	 * @param string $route
-	 * @param string $httpMethod
+	 * @param string $httpRequestMethod
 	 * @param string $httpRequestIp
 	 * @param string $payloadJson
 	 * 
@@ -593,7 +593,7 @@ class HttpRequest
 		&$customerUserGroupId,
 		&$customerUserId,
 		&$route,
-		&$httpMethod,
+		&$httpRequestMethod,
 		&$httpRequestIp,
 		&$payloadJson
 	): int {
@@ -613,7 +613,7 @@ class HttpRequest
 			$paramArray[':customer_user_group_id'] = $customerUserGroupId;
 			$paramArray[':customer_user_id'] = $customerUserId;
 			$paramArray[':request_route'] = $route;
-			$paramArray[':request_method'] = $httpMethod;
+			$paramArray[':request_method'] = $httpRequestMethod;
 			$paramArray[':request_ip'] = $httpRequestIp;
 			$paramArray[':request_payload_json'] = $payloadJson;
 
@@ -662,7 +662,7 @@ class HttpRequest
 			$paramArray[':customer_user_group_id'] = $this->customerUserGroupId;
 			$paramArray[':customer_user_id'] = $this->customerUserId;
 			$paramArray[':request_route'] = $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM];
-			$paramArray[':request_method'] = $this->httpObject->httpReqData['server']['httpMethod'];
+			$paramArray[':request_method'] = $this->httpObject->httpReqData['server']['httpRequestMethod'];
 			$paramArray[':request_payload_json'] = isset($this->activeRequestData['payload']) ? json_encode(
 				value: $this->activeRequestData['payload']
 			) : '{}';
@@ -716,7 +716,7 @@ class HttpRequest
 			$paramArray[':customer_user_group_id'] = $this->customerUserGroupId;
 			$paramArray[':customer_user_id'] = $this->customerUserId;
 			$paramArray[':request_route'] = $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM];
-			$paramArray[':request_method'] = $this->httpObject->httpReqData['server']['httpMethod'];
+			$paramArray[':request_method'] = $this->httpObject->httpReqData['server']['httpRequestMethod'];
 			$paramArray[':request_payload_json'] = isset($this->activeRequestData['payload']) ? json_encode(
 				value: $this->activeRequestData['payload']
 			) : '{}';

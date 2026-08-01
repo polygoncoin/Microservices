@@ -458,16 +458,13 @@ class Write
 			}
 
 			// Set Sql and ParamArray
-			[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
+			[$insertId, $sql, $paramArray, $errorArray] = $this->$function(
 				sqlConfig: $writeParentSqlConfig
 			);
 
 			if (!empty($errorArray)) {
 				$writeParentCurrentResponse['Error'] = $errorArray;
 				$this->httpObject->httpRequestObject->customerDbObject->rollBack();
-				return;
-			}
-			if ($missExecution) {
 				return;
 			}
 
@@ -488,9 +485,7 @@ class Write
 
 			// For Setting Data
 			if (isset($writeParentSqlConfig['__INSERT-IDs__'])) {
-				if (Env::$enableGlobalCounter) {
-					$insertId = $id;
-				} else {
+				if ($insertId === Constant::$NULL) {
 					$insertId = $this->httpObject->httpRequestObject->customerDbObject->lastInsertId();
 				}
 

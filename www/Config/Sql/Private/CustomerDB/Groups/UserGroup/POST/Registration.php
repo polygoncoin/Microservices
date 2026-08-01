@@ -63,5 +63,6 @@ return [
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
+	'__PRIMARY-KEY__' => 'customer_user_id',
 	'idempotentWindow' => 10
 ];

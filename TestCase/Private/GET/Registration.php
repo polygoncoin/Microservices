@@ -40,7 +40,7 @@ if (
 if (isset($proceed)) {
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: Constant::$GET,
+		httpRequestMethod: Constant::$GET,
 		route: '/registration',
 		header: $headerArray,
 		payload: ''

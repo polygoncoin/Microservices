@@ -121,10 +121,10 @@ class Route
 				. DIRECTORY_SEPARATOR . $this->httpObject->httpRequestObject->activeRequestData['groupData']['customer_user_group_name'];
 		}
 
-		foreach ($this->httpMethodArray as $method) {
-			$httpRouteArray[$method] = [];
+		foreach ($this->httpMethodArray as $httpRequestMethod) {
+			$httpRouteArray[$httpRequestMethod] = [];
 			$routeFileLocation =  $userRoutesFolder
-				. DIRECTORY_SEPARATOR . $method . 'routes.php';
+				. DIRECTORY_SEPARATOR . $httpRequestMethod . 'routes.php';
 			if (
 				!file_exists(
 					filename: $routeFileLocation
@@ -146,7 +146,7 @@ class Route
 			$this->getRoutes(
 				routeArray: $routeArray,
 				route: $route,
-				httpRouteArray: $httpRouteArray[$method]
+				httpRouteArray: $httpRouteArray[$httpRequestMethod]
 			);
 		}
 		$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(

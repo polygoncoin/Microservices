@@ -41,7 +41,7 @@ if (
 if (isset($proceed)) {
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: Constant::$DELETE,
+		httpRequestMethod: Constant::$DELETE,
 		route: '/registration-with-address/1',
 		header: $headerArray,
 		payload: ''

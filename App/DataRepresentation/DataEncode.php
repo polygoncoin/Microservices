@@ -98,7 +98,7 @@ class DataEncode
 	public function init(
 		$header = true
 	): void {
-		if ($this->httpObject->httpReqData['server']['httpMethod'] === Constant::$GET) {
+		if ($this->httpObject->httpReqData['server']['httpRequestMethod'] === Constant::$GET) {
 			if ($this->httpObject->httpResponseObject->outputRepresentation === 'PHP') {
 				$this->tempStream = [];
 			} else {

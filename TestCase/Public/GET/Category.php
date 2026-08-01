@@ -23,7 +23,7 @@ $headerArray = $defaultHeaderArray;
 
 return Web::trigger(
 	homeURL: $homeURL,
-	method: Constant::$GET,
+	httpRequestMethod: Constant::$GET,
 	route: '/category',
 	header: $headerArray,
 	payload: ''

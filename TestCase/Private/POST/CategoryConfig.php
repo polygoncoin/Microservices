@@ -41,7 +41,7 @@ if (
 if (isset($proceed)) {
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: Constant::$POST,
+		httpRequestMethod: Constant::$POST,
 		route: '/category/explain',
 		header: $headerArray,
 		payload: ''

@@ -67,7 +67,7 @@ Depending on HTTP method create a file &lt;get-route-file&gt;.php / &lt;dml-rout
 $header = $defaultHeaderArray;
 return Web::trigger(
 	homeURL: $homeURL,
-	method: 'GET',
+	httpRequestMethod: 'GET',
 	route: '/routes',
 	header: $header,
 	payload: ''
@@ -83,7 +83,7 @@ if (isset($token)) {
 
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: 'GET',
+		httpRequestMethod: 'GET',
 		route: '/routes',
 		header: $header,
 		payload: ''

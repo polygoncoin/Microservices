@@ -99,7 +99,7 @@ class Login
 	public function process(): mixed
 	{
 		// Check request method is POST
-		if ($this->httpObject->httpReqData['server']['httpMethod'] !== Constant::$POST) {
+		if ($this->httpObject->httpReqData['server']['httpRequestMethod'] !== Constant::$POST) {
 			throw new \Exception(
 				message: 'Invalid request method',
 				code: HttpStatus::$NotFound
@@ -152,9 +152,9 @@ class Login
 	private function loadPayload(): void
 	{
 		// Check request method is POST
-		if ($this->httpObject->httpReqData['server']['httpMethod'] !== Constant::$POST) {
+		if ($this->httpObject->httpReqData['server']['httpRequestMethod'] !== Constant::$POST) {
 			throw new \Exception(
-				message: 'Invalid request method',
+				message: 'Invalid HTTP request method: ' . $this->httpObject->httpReqData['server']['httpRequestMethod'],
 				code: HttpStatus::$NotFound
 			);
 		}

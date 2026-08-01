@@ -48,7 +48,7 @@ class Start
 	): array {
 		$headerArray = [];
 
-		if ($httpReqData['server']['httpMethod'] == Constant::$POST) {
+		if ($httpReqData['server']['httpRequestMethod'] == Constant::$POST) {
 			$isArray = str_starts_with(
 				haystack: $httpReqData['post'],
 				needle: '['
@@ -79,7 +79,7 @@ class Start
 
 			if (
 				$httpReqData['streamData']
-				&& $httpReqData['server']['httpMethod'] == Constant::$OPTIONS
+				&& $httpReqData['server']['httpRequestMethod'] == Constant::$OPTIONS
 			) {
 				// Setting CORS
 				$headerArray = $Microservices->getHeaders();

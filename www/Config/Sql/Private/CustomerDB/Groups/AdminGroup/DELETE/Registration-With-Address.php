@@ -74,8 +74,8 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', Env::$customerTable],
-				'primary' => ['custom', 'customer_id'],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
+				'primary' => ['custom', 'customer_user_id'],
 				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

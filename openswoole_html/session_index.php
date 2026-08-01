@@ -73,7 +73,7 @@ $server->on(
 
 		$httpReqData['streamData'] = true;
 		$httpReqData['server']['domainName'] = $DOMAIN_NAME;
-		$httpReqData['server']['httpMethod'] = $request->server['request_method'];
+		$httpReqData['server']['httpRequestMethod'] = $request->server['request_method'];
 
 		if (
 			((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1

@@ -672,7 +672,7 @@ class Read
 		);
 
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
+		[$id, $sql, $paramArray, $errorArray] = $this->$function(
 			sqlConfig: $readSqlConfig
 		);
 
@@ -683,10 +683,6 @@ class Read
 				),
 				code: HttpStatus::$InternalServerError
 			);
-		}
-
-		if ($missExecution) {
-			return;
 		}
 
 		$this->httpObject->httpRequestObject->customerDbObject->execQuery(
@@ -737,7 +733,7 @@ class Read
 		$readIsFirstCall
 	): void {
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
+		[$id, $sql, $paramArray, $errorArray] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payloadKeyArray: $readPayloadKeyArray
 		);
@@ -749,10 +745,6 @@ class Read
 				),
 				code: HttpStatus::$InternalServerError
 			);
-		}
-
-		if ($missExecution) {
-			return;
 		}
 
 		$this->httpObject->httpRequestObject->customerDbObject->execQuery(
@@ -825,7 +817,7 @@ class Read
 	): void {
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
 
-		[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
+		[$id, $sql, $paramArray, $errorArray] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payloadKeyArray: $readPayloadKeyArray
 		);
@@ -837,10 +829,6 @@ class Read
 				),
 				code: HttpStatus::$InternalServerError
 			);
-		}
-
-		if ($missExecution) {
-			return;
 		}
 
 		if ($readIsFirstCall) {
@@ -965,7 +953,7 @@ class Read
 		}
 
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		[$id, $sql, $paramArray, $errorArray, $missExecution] = $this->$function(
+		[$id, $sql, $paramArray, $errorArray] = $this->$function(
 			sqlConfig: $readSqlConfig
 		);
 		$fetchDbMode = $readSqlConfig['fetchDbMode'] ?? 'Slave';

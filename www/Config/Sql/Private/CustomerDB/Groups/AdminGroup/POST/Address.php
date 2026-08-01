@@ -25,7 +25,7 @@ return [
 			'activeRequestDataKeySubKey' => 'customer_id'
 		],
 		[
-			'column' => 'user_id',
+			'column' => 'customer_user_id',
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT

@@ -25,7 +25,7 @@ return [
 			'activeRequestDataKeySubKey' => 'customer_id'
 		],
 		[
-			'column' => 'user_id',
+			'column' => 'customer_user_id',
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -37,6 +37,7 @@ return [
 		],
 	],
 	'__INSERT-IDs__' => 'address:id',
+	'__PRIMARY-KEY__' => 'id',
 	// '__TRIGGERS__' => [
 	//     [
 	//         '__ROUTE__' => [

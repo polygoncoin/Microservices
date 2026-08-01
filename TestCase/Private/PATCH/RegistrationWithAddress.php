@@ -51,7 +51,7 @@ if (isset($proceed)) {
 
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: Constant::$PATCH,
+		httpRequestMethod: Constant::$PATCH,
 		route: '/registration-with-address/1',
 		header: $headerArray,
 		payload: json_encode(value: $paramArray)

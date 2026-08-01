@@ -65,6 +65,7 @@ return [
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
+	'__PRIMARY-KEY__' => 'customer_user_id',
 	'__SUB-QUERY__' => [
 		'address' => [
 			'__QUERY__' => 'INSERT INTO `address` SET __SET__',
@@ -75,7 +76,7 @@ return [
 					'activeRequestDataKeySubKey' => 'customer_id'
 				],
 				[
-					'column' => 'user_id',
+					'column' => 'customer_user_id',
 					'activeRequestDataKey' => '__INSERT-IDs__',
 					'activeRequestDataKeySubKey' => 'registration:id'
 				],
@@ -86,6 +87,7 @@ return [
 				]
 			],
 			'__INSERT-IDs__' => 'address:id',
+			'__PRIMARY-KEY__' => 'id',
 		]
 	],
 	'maintainHierarchy' => Constant::$TRUE,

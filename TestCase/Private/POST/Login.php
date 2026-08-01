@@ -24,7 +24,7 @@ $headerArray[] = $contentType;
 
 $webResponse = Web::trigger(
 	homeURL: $homeURL,
-	method: Constant::$POST,
+	httpRequestMethod: Constant::$POST,
 	route: '/login',
 	header: $headerArray,
 	payload: json_encode(value: $payload)

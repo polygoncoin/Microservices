@@ -67,7 +67,7 @@ Web::genXmlPayload(
 
 $response[] = Web::trigger(
 	homeURL: $homeURL,
-	method: Constant::$POST,
+	httpRequestMethod: Constant::$POST,
 	route: '/registration-with-address'
 		. '&inputRepresentation=XML&outputRepresentation=XML',
 	header: $defaultHeaderArray,

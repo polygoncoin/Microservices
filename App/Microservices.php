@@ -326,7 +326,7 @@ class Microservices
 		$headerArray['Cross-Origin-Opener-Policy'] = 'unsafe-none';
 
 		// Access-Control header are received during OPTIONS request
-		if ($this->httpReqData['server']['httpMethod'] === Constant::$OPTIONS) {
+		if ($this->httpReqData['server']['httpRequestMethod'] === Constant::$OPTIONS) {
 			// may also be using PUT, PATCH, HEAD etc
 			$methods = 'GET, QUERY, POST, PUT, PATCH, DELETE, OPTIONS';
 			$headerArray['Access-Control-Allow-Methods'] = $methods;

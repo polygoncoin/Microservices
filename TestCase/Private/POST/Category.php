@@ -67,7 +67,7 @@ if (isset($proceed)) {
 
 	return Web::trigger(
 		homeURL: $homeURL,
-		method: Constant::$POST,
+		httpRequestMethod: Constant::$POST,
 		route: '/category/import',
 		header: $headerArray,
 		payload: '',//json_encode(value: $paramArray),

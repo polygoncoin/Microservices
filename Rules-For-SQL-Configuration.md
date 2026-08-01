@@ -75,6 +75,9 @@ return [
 	// Last insert id to be made available as $activeRequestData['__INSERT-IDs__'][uniqueParamString];
 	'__INSERT-IDs__' => '<keyName>:id',
 
+	// mention primary key column name when using global counter
+	'__PRIMARY-KEY__' => 'table_primary_column_name',
+
 	// Indicator to generate JSON in Single(Object) record / Multiple(Array) rows format.
 	'__MODE__' => 'singleRecordFormat/multipleRecordFormat',
 

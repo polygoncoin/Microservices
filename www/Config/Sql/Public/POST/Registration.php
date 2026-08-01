@@ -66,6 +66,7 @@ return [
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
+	'__PRIMARY-KEY__' => 'customer_user_id',
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10
 ];

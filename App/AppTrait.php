@@ -269,7 +269,6 @@ trait AppTrait
 		$record = [];
 		$__SET__ = [];
 
-		$missExecution = $wMissExecution = false;
 		// Check __SET__
 		if (
 			isset($sqlConfig['__SET__'])
@@ -277,15 +276,11 @@ trait AppTrait
 				value: $sqlConfig['__SET__']
 			) !== 0
 		) {
-			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
-			[$setParamArray, $errorArray, $missExecution] = $this->getSqlParam(
+			[$setParamArray, $errorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
-				payloadVariableArray: $payloadVariableArray
+				sqlConfigVariables: $sqlConfig['__VARIABLES__'] ?? []
 			);
-			if (
-				empty($errorArray)
-				&& !$missExecution
-			) {
+			if (empty($errorArray)) {
 				if (!empty($setParamArray)) {
 					// __SET__ not compulsory in query
 					$found = strpos(
@@ -296,6 +291,7 @@ trait AppTrait
 					if (
 						$found
 						&& Env::$enableGlobalCounter
+						&& isset($sqlConfig['__PRIMARY-KEY__'])
 						&& !isset($sqlConfig['__WHERE__'])
 						&& isset($sqlConfig['__QUERY__'])
 						&& strpos(
@@ -304,7 +300,7 @@ trait AppTrait
 							) === 0
 					) {
 						$insertId = Counter::getGlobalCounter();
-						$setParamArray['id'] = $insertId;
+						$setParamArray[$sqlConfig['__PRIMARY-KEY__']] = $insertId;
 					}
 
 					foreach ($setParamArray as $paramKey => &$paramKeyValue) {
@@ -327,22 +323,17 @@ trait AppTrait
 		// Check __WHERE__
 		if (
 			empty($errorArray)
-			&& !$missExecution
 			&& isset($sqlConfig['__WHERE__'])
 			&& count(
 				value: $sqlConfig['__WHERE__']
 			) !== 0
 		) {
 			$wErrorArray = [];
-			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
-			[$whereParamArray, $wErrorArray, $wMissExecution] = $this->getSqlParam(
+			[$whereParamArray, $wErrorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
-				payloadVariableArray: $payloadVariableArray
+				sqlConfigVariables: $sqlConfig['__VARIABLES__'] ?? []
 			);
-			if (
-				empty($wErrorArray)
-				&& !$wMissExecution
-			) {
+			if (empty($wErrorArray)) {
 				if (!empty($whereParamArray)) {
 					// __WHERE__ not compulsory in query
 					$whereFound = strpos(
@@ -404,7 +395,7 @@ trait AppTrait
 			);
 		}
 
-		return [$insertId, $sql, $paramArray, $errorArray, ($missExecution || $wMissExecution)];
+		return [$insertId, $sql, $paramArray, $errorArray];
 	}
 
 	/**
@@ -419,7 +410,7 @@ trait AppTrait
 		&$sqlConfig,
 		$payloadKeyArray = null
 	): array {
-		$id = null;
+		$insertId = null;
 		$sql = '';
 		/*!999999 comment goes here */
 		if (isset($sqlConfig['__SQL-COMMENT__'])) {
@@ -441,7 +432,6 @@ trait AppTrait
 		$record = [];
 		$__SET__ = [];
 
-		$missExecution = $wMissExecution = false;
 		// Check __SET__
 		if (
 			isset($sqlConfig['__SET__'])
@@ -449,21 +439,33 @@ trait AppTrait
 				value: $sqlConfig['__SET__']
 			) !== 0
 		) {
-			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
-			[$setParamArray, $errorArray, $missExecution] = $this->getSqlParam(
+			[$setParamArray, $errorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
-				payloadVariableArray: $payloadVariableArray
+				sqlConfigVariables: $sqlConfig['__VARIABLES__'] ?? []
 			);
-			if (
-				empty($errorArray)
-				&& !$missExecution
-			) {
+			if (empty($errorArray)) {
 				if (!empty($setParamArray)) {
 					// __SET__ not compulsory in query
 					$found = strpos(
 						haystack: $sql,
 						needle: '__SET__'
 					) !== Constant::$FALSE;
+
+					if (
+						$found
+						&& Env::$enableGlobalCounter
+						&& isset($sqlConfig['__PRIMARY-KEY__'])
+						&& !isset($sqlConfig['__WHERE__'])
+						&& isset($sqlConfig['__QUERY__'])
+						&& strpos(
+								haystack: strtolower(trim($sqlConfig['__QUERY__'])),
+								needle: 'insert'
+							) === 0
+					) {
+						$insertId = Counter::getGlobalCounter();
+						$setParamArray[$sqlConfig['__PRIMARY-KEY__']] = $insertId;
+					}
+
 					foreach ($setParamArray as $paramKey => &$paramKeyValue) {
 						$paramKeyArray[] = $paramKey;
 						if ($found) {
@@ -479,22 +481,17 @@ trait AppTrait
 		// Check __WHERE__
 		if (
 			empty($errorArray)
-			&& !$missExecution
 			&& isset($sqlConfig['__WHERE__'])
 			&& count(
 				value: $sqlConfig['__WHERE__']
 			) !== 0
 		) {
 			$wErrorArray = [];
-			$payloadVariableArray = $sqlConfig['__VARIABLES__'] ?? [];
-			[$whereParamArray, $wErrorArray, $wMissExecution] = $this->getSqlParam(
+			[$whereParamArray, $wErrorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
-				payloadVariableArray: $payloadVariableArray
+				sqlConfigVariables: $sqlConfig['__VARIABLES__'] ?? []
 			);
-			if (
-				empty($wErrorArray)
-				&& !$wMissExecution
-			) {
+			if (empty($wErrorArray)) {
 				if (!empty($whereParamArray)) {
 					// __WHERE__ not compulsory in query
 					$whereFound = strpos(
@@ -552,23 +549,22 @@ trait AppTrait
 			);
 		}
 
-		return [$id, $sql, $paramArray, $errorArray, ($missExecution || $wMissExecution)];
+		return [$insertId, $sql, $paramArray, $errorArray];
 	}
 
 	/**
 	 * Generates ParamArray for statement to execute
 	 * 
-	 * @param array $sqlConfig            Sql config
-	 * @param array $payloadVariableArray Payload Variables
+	 * @param array $sqlConfig          Sql config
+	 * @param array $sqlConfigVariables Payload Variables
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private function getSqlParam(
 		&$sqlConfig,
-		&$payloadVariableArray
+		$sqlConfigVariables
 	): array {
-		$missExecution = false;
 		$paramArray = [];
 		$errorArray = [];
 
@@ -593,23 +589,29 @@ trait AppTrait
 					$errorArray[] = "Missing key '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
 					continue;
 				}
-				$activeRequestDataKeySubKeyArray = explode(
-					separator: ':',
-					string: $activeRequestDataKeySubKey
-				);
 				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey];
-				foreach ($activeRequestDataKeySubKeyArray as $_activeRequestDataKeySubKey) {
-					if (!isset($value[$_activeRequestDataKeySubKey])) {
-						$errorArray[] = "Missing hierarchy key '{$_activeRequestDataKeySubKey}' of '{$activeRequestDataKeySubKey}' in '{$activeRequestDataKey}'";
+				$break = false;
+				foreach (
+					explode(
+						separator: ':',
+						string: $activeRequestDataKeySubKey
+					) as $_activeRequestDataKeySubKey
+				) {
+					if (isset($value[$_activeRequestDataKeySubKey])) {
+						$value = &$value[$_activeRequestDataKeySubKey];
 						continue;
 					}
-					$value = &$value[$_activeRequestDataKeySubKey];
+					$errorArray[] = "Missing '{$activeRequestDataKey}' for '{$_activeRequestDataKeySubKey}'";
+					$break = true;
+					break;
 				}
-				$paramArray[$column] = $value;
+				if (!$break) {
+					$paramArray[$column] = $value;
+				}
 				continue;
 			} elseif ($activeRequestDataKey === 'sqlResults') {
 				if (!isset($this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey])) {
-					$missExecution = true;
+					$errorArray[] = "Missing '{$activeRequestDataKey}'";
 					continue;
 				}
 				$activeRequestDataKeySubKeyArray = explode(
@@ -618,11 +620,12 @@ trait AppTrait
 				);
 				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey];
 				foreach ($activeRequestDataKeySubKeyArray as $_activeRequestDataKeySubKey) {
-					if (!isset($value[$_activeRequestDataKeySubKey])) {
-						$missExecution = true;
+					if (isset($value[$_activeRequestDataKeySubKey])) {
+						$value = &$value[$_activeRequestDataKeySubKey];
 						continue;
 					}
-					$value = &$value[$_activeRequestDataKeySubKey];
+					$errorArray[] = "Missing '{$activeRequestDataKey}' for '{$_activeRequestDataKeySubKey}'";
+					break;
 				}
 				$paramArray[$column] = $value;
 				continue;
@@ -631,8 +634,8 @@ trait AppTrait
 				$paramArray[$column] = $value;
 				continue;
 			} elseif ($activeRequestDataKey === 'variables') {
-				if (isset($payloadVariableArray[$activeRequestDataKeySubKey])) {
-					$paramArray[$column] = $payloadVariableArray[$activeRequestDataKeySubKey];
+				if (isset($sqlConfigVariables[$activeRequestDataKeySubKey])) {
+					$paramArray[$column] = $sqlConfigVariables[$activeRequestDataKeySubKey];
 				} else {
 					$errorArray[] = "Missing '{$activeRequestDataKey}' for '{$activeRequestDataKeySubKey}'";
 				}
@@ -676,7 +679,7 @@ trait AppTrait
 			}
 		}
 
-		return [$paramArray, $errorArray, $missExecution];
+		return [$paramArray, $errorArray];
 	}
 
 	/**
@@ -915,7 +918,7 @@ trait AppTrait
 		$payloadSignature = [
 			'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
 			'customerId' => $this->httpObject->httpRequestObject->customerId,
-			'httpMethod' => $this->httpObject->httpReqData['server']['httpMethod'],
+			'httpRequestMethod' => $this->httpObject->httpReqData['server']['httpRequestMethod'],
 			'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
 		];
 		if (isset($this->httpObject->httpRequestObject->activeRequestData['userData'])) {
@@ -1071,7 +1074,7 @@ trait AppTrait
 					'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
 					'customerId' => $this->httpObject->httpRequestObject->customerId,
 					'customerUserId' => $this->httpObject->httpRequestObject->customerUserId,
-					'httpMethod' => $this->httpObject->httpReqData['server']['httpMethod'],
+					'httpRequestMethod' => $this->httpObject->httpReqData['server']['httpRequestMethod'],
 					'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
 					'payload' => $this->httpObject->httpRequestObject->dataDecodeObject->get(
 						keyString: $this->getPayloadKey(
@@ -1133,7 +1136,7 @@ trait AppTrait
 		$payloadSignature = [
 			'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
 			'customerId' => $this->httpObject->httpRequestObject->customerId,
-			'httpMethod' => $this->httpObject->httpReqData['server']['httpMethod'],
+			'httpRequestMethod' => $this->httpObject->httpReqData['server']['httpRequestMethod'],
 			'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
 		];
 		if (isset($this->httpObject->httpRequestObject->activeRequestData['userData'])) {
@@ -1255,7 +1258,7 @@ trait AppTrait
 	 */
 	public function getTriggerHttp($triggerConfig)
 	{
-		$method = $triggerConfig['__METHOD__'];
+		$httpRequestMethod = $triggerConfig['__METHOD__'];
 		[$routeElementArrayArray, $errorArray] = $this->getTriggerParam(
 			payloadConfig: $triggerConfig['__ROUTE__']
 		);
@@ -1291,7 +1294,7 @@ trait AppTrait
 
 		$httpReqData['streamData'] = false;
 		$httpReqData['server']['domainName'] = $this->httpObject->httpReqData['server']['domainName'];
-		$httpReqData['server']['httpMethod'] = $method;
+		$httpReqData['server']['httpRequestMethod'] = $httpRequestMethod;
 		$httpReqData['server']['httpRequestIp'] = $this->httpObject->httpReqData['server']['httpRequestIp'];
 		$httpReqData['header'] = $this->httpObject->httpReqData['header'];
 		$httpReqData['post'] = json_encode(

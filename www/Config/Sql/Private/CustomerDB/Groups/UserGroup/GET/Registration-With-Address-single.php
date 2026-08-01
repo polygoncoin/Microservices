@@ -24,7 +24,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => 'id',
+			'column' => 'customer_user_id',
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id'
 		]
@@ -40,9 +40,9 @@ return [
 					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
-					'column' => 'customer_id',
+					'column' => 'customer_user_id',
 					'activeRequestDataKey' => 'sqlResults',
-					'activeRequestDataKeySubKey' => 'return:id'
+					'activeRequestDataKeySubKey' => 'return:customer_user_id'
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',

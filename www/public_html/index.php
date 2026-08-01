@@ -46,7 +46,7 @@ $httpReqData = [];
 
 $httpReqData['streamData'] = true;
 $httpReqData['server']['domainName'] = $_SERVER['HTTP_HOST'];
-$httpReqData['server']['httpMethod'] = $_SERVER['REQUEST_METHOD'];
+$httpReqData['server']['httpRequestMethod'] = $_SERVER['REQUEST_METHOD'];
 
 if (
 	((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
