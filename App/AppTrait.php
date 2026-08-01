@@ -247,7 +247,7 @@ trait AppTrait
 		&$sqlConfig,
 		$payloadKeyArray = null
 	): array {
-		$id = null;
+		$insertId = null;
 		$sql = '';
 		/*!999999 comment goes here */
 		if (isset($sqlConfig['__SQL-COMMENT__'])) {
@@ -292,6 +292,21 @@ trait AppTrait
 						haystack: $sql,
 						needle: '__SET__'
 					) !== Constant::$FALSE;
+
+					if (
+						$found
+						&& Env::$enableGlobalCounter
+						&& !isset($sqlConfig['__WHERE__'])
+						&& isset($sqlConfig['__QUERY__'])
+						&& strpos(
+								haystack: strtolower(trim($sqlConfig['__QUERY__'])),
+								needle: 'insert'
+							) === 0
+					) {
+						$insertId = Counter::getGlobalCounter();
+						$setParamArray['id'] = $insertId;
+					}
+
 					foreach ($setParamArray as $paramKey => &$paramKeyValue) {
 						$paramKey = str_replace(
 							search: ['`', ' '],
@@ -389,7 +404,7 @@ trait AppTrait
 			);
 		}
 
-		return [$id, $sql, $paramArray, $errorArray, ($missExecution || $wMissExecution)];
+		return [$insertId, $sql, $paramArray, $errorArray, ($missExecution || $wMissExecution)];
 	}
 
 	/**

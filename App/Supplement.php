@@ -509,7 +509,7 @@ class Supplement
 			// For Child
 			if (isset($supplementParentSqlConfig['__SUB-QUERY__'])) {
 				$this->supplementChild(
-					supplementChildSqlConfig: $supplementParentSqlConfig,
+					supplementChildSqlConfig: $supplementParentSqlConfig['__SUB-PAYLOAD__'],
 					supplementChildPayloadKeyArray: $supplementParentCurrentPayloadKeyArray,
 					supplementChildRequiredFieldArray: $supplementParentRequiredFieldArray,
 					supplementChildResponse: $supplementParentCurrentResponse,
@@ -558,18 +558,7 @@ class Supplement
 			$supplementChildPayloadKeyArray = [];
 		}
 
-		if (
-			!(
-				isset($supplementChildSqlConfig['__SUB-QUERY__'])
-				&& !$this->isObject(
-					arr: $supplementChildSqlConfig['__SUB-QUERY__']
-				)
-			)
-		) {
-			return;
-		}
-
-		foreach ($supplementChildSqlConfig['__SUB-PAYLOAD__'] as $supplementModule => &$supplementChildModuleSqlConfig) {
+		foreach ($supplementChildSqlConfig as $supplementModule => &$supplementChildModuleSqlConfig) {
 			// For payloadKeyArray
 			$supplementChildModulePayloadKeyArray = $supplementChildPayloadKeyArray;
 			array_push(
@@ -656,8 +645,8 @@ class Supplement
 				if ($isObject) {
 					$supplementChildModuleCurrentResponse = &$supplementChildModuleResponse;
 				} else {
-					$supplementChildModuleCurrentResponse[$index] = [];
-					$supplementChildModuleCurrentResponse = &$supplementChildCurrentResponse[$index];
+					$supplementChildModuleResponse[$index] = [];
+					$supplementChildModuleCurrentResponse = &$supplementChildModuleResponse[$index];
 				}
 
 				// For Parent

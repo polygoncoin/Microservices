@@ -445,13 +445,6 @@ class Write
 				continue;
 			}
 
-			// if (
-			// 	Env::$enableGlobalCounter
-			// 	&& isset($writeParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
-			// ) {
-			// 	$writeParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
-			// }
-
 			// For Pre Hook
 			if (isset($writeParentSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hookObject === Constant::$NULL) {
@@ -495,24 +488,22 @@ class Write
 
 			// For Setting Data
 			if (isset($writeParentSqlConfig['__INSERT-IDs__'])) {
-				if (
-					Env::$enableGlobalCounter
-					&& isset($writeParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
-				) {
-					$id = $writeParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'];
+				if (Env::$enableGlobalCounter) {
+					$insertId = $id;
 				} else {
-					$id = $this->httpObject->httpRequestObject->customerDbObject->lastInsertId();
+					$insertId = $this->httpObject->httpRequestObject->customerDbObject->lastInsertId();
 				}
+
 				if ($isObject) {
-					$writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']] = $id;
+					$writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']] = $insertId;
 				} else {
 					if (!is_array($writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']])) {
 						$writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']] = [];
 					}
-					$writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']][] = $id;
+					$writeParentCurrentResponse[$writeParentSqlConfig['__INSERT-IDs__']][] = $insertId;
 				}
 
-				$this->httpObject->httpRequestObject->activeRequestData['__INSERT-IDs__'][$writeParentSqlConfig['__INSERT-IDs__']] = $id;
+				$this->httpObject->httpRequestObject->activeRequestData['__INSERT-IDs__'][$writeParentSqlConfig['__INSERT-IDs__']] = $insertId;
 			} else {
 				$affectedRecordCount = $this->httpObject->httpRequestObject->customerDbObject->affectedRecordCount();
 				$writeParentCurrentResponse['affectedRecordCount'] = $affectedRecordCount;
@@ -520,6 +511,17 @@ class Write
 
 			// For Close Cursor
 			$this->httpObject->httpRequestObject->customerDbObject->closeCursor();
+
+			// For Child
+			if (isset($writeParentSqlConfig['__SUB-QUERY__'])) {
+				$this->writeChild(
+					writeChildSqlConfig: $writeParentSqlConfig['__SUB-QUERY__'],
+					writeChildPayloadKeyArray: $writeParentCurrentPayloadKeyArray,
+					writeChildRequiredFieldArray: $writeParentRequiredFieldArray,
+					writeChildResponse: $writeParentCurrentResponse,
+					writeChildMaintainHierarchy: $writeParentCurrentMaintainHierarchy
+				);
+			}
 
 			// For Triggers
 			if (isset($writeParentSqlConfig['__TRIGGERS__'])) {
@@ -540,17 +542,6 @@ class Write
 				}
 				$this->hookObject->triggerHook(
 					hookArray: $writeParentSqlConfig['__POST-SQL-HOOKS__']
-				);
-			}
-
-			// For Child
-			if (isset($writeParentSqlConfig['__SUB-QUERY__'])) {
-				$this->writeChild(
-					writeChildSqlConfig: $writeParentSqlConfig,
-					writeChildPayloadKeyArray: $writeParentCurrentPayloadKeyArray,
-					writeChildRequiredFieldArray: $writeParentRequiredFieldArray,
-					writeChildResponse: $writeParentCurrentResponse,
-					writeChildMaintainHierarchy: $writeParentCurrentMaintainHierarchy
 				);
 			}
 		}
@@ -595,18 +586,7 @@ class Write
 			$writeChildPayloadKeyArray = [];
 		}
 
-		if (
-			!(
-				isset($writeChildSqlConfig['__SUB-QUERY__'])
-				&& !$this->isObject(
-					arr: $writeChildSqlConfig['__SUB-QUERY__']
-				)
-			)
-		) {
-			return;
-		}
-
-		foreach ($writeChildSqlConfig['__SUB-QUERY__'] as $writeModule => &$writeChildModuleSqlConfig) {
+		foreach ($writeChildSqlConfig as $writeModule => $writeChildModuleSqlConfig) {
 			// For payloadKeyArray
 			$writeChildModulePayloadKeyArray = $writeChildPayloadKeyArray;
 			array_push(
@@ -693,8 +673,8 @@ class Write
 				if ($isObject) {
 					$writeChildModuleCurrentResponse = &$writeChildModuleResponse;
 				} else {
-					$writeChildModuleCurrentResponse[$index] = [];
-					$writeChildModuleCurrentResponse = &$writeChildCurrentResponse[$index];
+					$writeChildModuleResponse[$index] = [];
+					$writeChildModuleCurrentResponse = &$writeChildModuleResponse[$index];
 				}
 
 				// For Parent
