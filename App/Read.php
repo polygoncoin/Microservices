@@ -313,18 +313,20 @@ class Read
 		$readParentMaintainHierarchy,
 		$readParentIsFirstCall
 	): void {
-		if ($readParentPayloadKeyArray === Constant::$NULL) {
-			$readParentPayloadKeyArray = [];
-		}
-
+		// For payloadKey
 		$readParentPayloadKey = $this->getPayloadKey(
 			payloadKeyArray: $readParentPayloadKeyArray
 		);
 
+		// For isObject
 		$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
 			keyString: $readParentPayloadKey
 		) === 'Object';
+		if ($isObject === Constant::$NULL) {
+			return;
+		}
 
+		// For indexCount
 		$indexCount = ($isObject || $isObject === Constant::$NULL)
 			? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
 				keyString: $readParentPayloadKey
@@ -333,14 +335,15 @@ class Read
 		$mode = getenv(name: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_master_db_server_query_placeholder']);
 		$function = "getSqlAndParam{$mode}Mode";
 
-		for ($index = 0; $index < $indexCount; $index++) {
-			if (
-				$isObject
-				&& $index > 0
-			) {
-				return;
-			}
+		// For Required Fields
+		if (count(value: $readParentRequiredFieldArray)) {
+			$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = $readParentRequiredFieldArray;
+		} else {
+			$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = [];
+		}
 
+		for ($index = 0; $index < $indexCount; $index++) {
+			// For payloadKeyArray
 			$readParentCurrentPayloadKeyArray = $readParentPayloadKeyArray;
 			if (!$isObject) {
 				array_push(
@@ -349,44 +352,50 @@ class Read
 				);
 			}
 
+			// For payloadKey
 			$readParentCurrentPayloadKey = $this->getPayloadKey(
 				payloadKeyArray: $readParentCurrentPayloadKeyArray
 			);
 		
+			// For Validating Hierarchy
+			$readParentCurrentMaintainHierarchy = $readParentMaintainHierarchy;
 			if (
-				!$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+				$readParentCurrentMaintainHierarchy
+				&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
 					keyString: $readParentCurrentPayloadKey
 				)
 			) {
-				if ($readParentMaintainHierarchy) {
-					throw new \Exception(
-						message: "Payload key '{$readParentCurrentPayloadKey}' not set",
-						code: HttpStatus::$NotFound
-					);
-				} else {
-					continue;
-				}
+				throw new \Exception(
+					message: "Payload key '{$readParentCurrentPayloadKey}' not set",
+					code: HttpStatus::$NotFound
+				);
 			}
 
-			// Load Payload
+			// For isObject
+			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+				keyString: $readParentCurrentPayloadKey
+			) === 'Object';
+			if ($isObject === Constant::$NULL) {
+				return;
+			}
+
+			// For Payload
 			$this->httpObject->httpRequestObject->activeRequestData['payload'] = $this->httpObject->httpRequestObject->dataDecodeObject->get(
 				keyString: $readParentCurrentPayloadKey
 			);
 
-			if (count(value: $readParentRequiredFieldArray)) {
-				$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = $readParentRequiredFieldArray;
-			} else {
-				$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = [];
-			}
-
+			// For Validation
 			if (
-				Env::$enableGlobalCounter
-				&& isset($readParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'])
+				isset($readParentSqlConfig['__VALIDATE__'])
+				&& !$this->isValidPayload(
+					sqlConfig: $readParentSqlConfig,
+					response: $readParentCurrentResponse
+				)
 			) {
-				$readParentSqlConfig['__VARIABLES__']['__GLOBAL_COUNTER__'] = Counter::getGlobalCounter();
+				continue;
 			}
 
-			// Execute - Pre Hook
+			// For Pre Hook
 			if (isset($readParentSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hookObject === Constant::$NULL) {
 					$this->hookObject = new Hook(
@@ -398,7 +407,7 @@ class Read
 				);
 			}
 
-			// Execute
+			// For Execute
 			switch ($readParentSqlConfig['__MODE__']) {
 				// Query will return single dbFetchedRecord
 				case 'singleRecordFormat':
@@ -412,8 +421,8 @@ class Read
 
 					$this->fetchSingleRecord(
 						readSqlConfig: $readParentSqlConfig,
-						readPayloadKeyArray: $readParentPayloadKeyArray,
-						readMaintainHierarchy: $readParentMaintainHierarchy,
+						readPayloadKeyArray: $readParentCurrentPayloadKeyArray,
+						readMaintainHierarchy: $readParentCurrentMaintainHierarchy,
 						readIsFirstCall: $readParentIsFirstCall
 					);
 					$this->dataEncodeObject->endObject();
@@ -449,8 +458,8 @@ class Read
 					}
 					$this->fetchMultipleRecords(
 						readSqlConfig: $readParentSqlConfig,
-						readPayloadKeyArray: $readParentPayloadKeyArray,
-						readMaintainHierarchy: $readParentMaintainHierarchy,
+						readPayloadKeyArray: $readParentCurrentPayloadKeyArray,
+						readMaintainHierarchy: $readParentCurrentMaintainHierarchy,
 						readIsFirstCall: $readParentIsFirstCall
 					);
 					$this->dataEncodeObject->endArray();
@@ -463,7 +472,7 @@ class Read
 					break;
 			}
 
-			// Triggers
+			// For Triggers
 			if (isset($readParentSqlConfig['__TRIGGERS__'])) {
 				$this->dataEncodeObject->addKeyData(
 					objectKey: '__TRIGGERS__',
@@ -473,7 +482,7 @@ class Read
 				);
 			}
 
-			// Execute - Post Hook
+			// For Post Hook
 			if (isset($readParentSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hookObject === Constant::$NULL) {
 					$this->hookObject = new Hook(
@@ -535,95 +544,90 @@ class Read
 		}
 
 		foreach ($readChildSqlConfig['__SUB-QUERY__'] as $readModule => &$readChildModuleSqlConfig) {
-			$dataExist = false;
-
+			// For payloadKeyArray
 			$readChildModulePayloadKeyArray = $readChildPayloadKeyArray;
 			array_push(
 				$readChildModulePayloadKeyArray,
-				$readModule
+				"{$readModule}"
 			);
 
+			// For payloadKey
 			$readChildModulePayloadKey = $this->getPayloadKey(
 				payloadKeyArray: $readChildModulePayloadKeyArray
 			);
 			
-			$dataExist = $this->httpObject->httpRequestObject->dataDecodeObject->isset(
-				keyString: $readChildModulePayloadKey
+			// For Validating Hierarchy
+			$readChildModuleMaintainHierarchy = $readChildMaintainHierarchy ?? $this->getMaintainHierarchy(
+				sqlConfig: $readChildModuleSqlConfig
 			);
 			if (
-				$readChildMaintainHierarchy
-				&& !$dataExist
-			) { // use parent data of a payload
+				$readChildModuleMaintainHierarchy
+				&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+					keyString: $readChildModulePayloadKey
+				)
+			) {
 				throw new \Exception(
 					message: "Invalid payload: Module '{$readModule}' missing",
 					code: HttpStatus::$NotFound
 				);
 			}
-			if ($dataExist) {
+
+			// For isObject
+			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+				keyString: $readChildModulePayloadKey
+			) === 'Object';
+			if ($isObject === Constant::$NULL) {
 				return;
 			}
 
-			$isObject = null;
-			if ($readChildModulePayloadKey !== Constant::$NULL) {
-				$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-					keyString: $readChildModulePayloadKey
-				) === 'Object';
-			}
-
+			// For indexCount
 			$indexCount = ($isObject || $isObject === Constant::$NULL)
 				? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
 					keyString: $readChildModulePayloadKey
 				);
 
+			// For Required Fields
 			if (isset($readChildRequiredFieldArray[$readModule])) {
 				$readChildModuleRequiredFieldArray = &$readChildRequiredFieldArray[$readModule];
 			} else {
 				$readChildModuleRequiredFieldArray = &$readChildRequiredFieldArray;
 			}
 
-			$readChildModuleMaintainHierarchy = $readChildMaintainHierarchy ?? $this->getMaintainHierarchy(
-				sqlConfig: $readChildModuleSqlConfig
-			);
-
 			for ($index = 0; $index < $indexCount; $index++) {
+				// For payloadKeyArray
 				$readChildModuleCurrentPayloadKeyArray = $readChildModulePayloadKeyArray;
-				array_push(
-					$readChildModuleCurrentPayloadKeyArray,
-					$readModule
-				);
-
-				if (
-					$isObject
-					|| $isObject === Constant::$NULL
-				) {
-					$readChildModuleCurrentPayloadKey = $readChildModulePayloadKey;
-				} else {
-					$readChildModuleCurrentPayloadKey = "{$readChildModulePayloadKey}:{$index}";
+				if (!$isObject) {
+					array_push(
+						$readChildModuleCurrentPayloadKeyArray,
+						"{$index}"
+					);
 				}
-
-				$dataExist = $this->httpObject->httpRequestObject->dataDecodeObject->isset(
-					keyString: $readChildModuleCurrentPayloadKey
+				
+				// For payloadKey
+				$readChildModuleCurrentPayloadKey = $this->getPayloadKey(
+					payloadKeyArray: $readChildModuleCurrentPayloadKeyArray
 				);
 
+				// For Validating Hierarchy
+				$readChildModuleCurrentMaintainHierarchy = $readChildModuleMaintainHierarchy;
 				if (
-					$readChildModuleMaintainHierarchy
-					&& !$dataExist
-				) { // use parent data of a payload
+					$readChildModuleCurrentMaintainHierarchy
+					&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+						keyString: $readChildModuleCurrentPayloadKey
+					)
+				) {
 					throw new \Exception(
 						message: "Invalid payload: Module '{$readModule}' missing",
 						code: HttpStatus::$NotFound
 					);
 				}
 
-				if (!$dataExist) {
-					continue;
-				}
-
+				// For Parent
 				$this->readParent(
 					readParentSqlConfig: $readChildModuleSqlConfig,
 					readParentPayloadKeyArray: $readChildModulePayloadKeyArray,
 					readParentRequiredFieldArray: $readChildModuleCurrentPayloadKeyArray,
-					readParentMaintainHierarchy: $readChildModuleMaintainHierarchy,
+					readParentMaintainHierarchy: $readChildModuleCurrentMaintainHierarchy,
 					readParentIsFirstCall: Constant::$FALSE
 				);
 			}
@@ -791,6 +795,7 @@ class Read
 		}
 		$this->httpObject->httpRequestObject->customerDbObject->closeCursor();
 
+		// For Child
 		if (isset($readSqlConfig['__SUB-QUERY__'])) {
 			$this->readChild(
 				readChildSqlConfig: $readSqlConfig,
@@ -918,6 +923,8 @@ class Read
 						data: $rowKeyValue
 					);
 				}
+				
+				// For Child
 				$this->readChild(
 					readChildSqlConfig: $readSqlConfig,
 					readChildPayloadKeyArray: $readPayloadKeyArray,

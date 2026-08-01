@@ -220,7 +220,7 @@ class Supplement
 			}
 		}
 
-		// Perform action
+		// For indexCount
 		$indexCount = $this->httpObject->httpRequestObject->activeRequestData['payloadType'] === 'Array'
 			? $this->httpObject->httpRequestObject->dataDecodeObject->count() : 1;
 
@@ -232,13 +232,13 @@ class Supplement
 				$supplementPayloadKeyArray[] = "{$index}";
 			}
 
-			// Check for Idempotent Window
+			// For Idempotent Window
 			[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
 				sqlConfig: $supplementSqlConfig,
 				payloadKeyArray: $supplementPayloadKeyArray
 			);
 
-			// Begin DML operation
+			// For DML operation
 			if ($hashJson === Constant::$NULL) {
 				if ($this->operateAsTransaction) {
 					$this->httpObject->httpRequestObject->customerDbObject->begin();
@@ -260,6 +260,8 @@ class Supplement
 				}
 
 				$supplementResponse = [];
+
+				// For Parent
 				$this->supplementParent(
 					supplementParentSqlConfig: $supplementSqlConfig,
 					supplementParentPayloadKeyArray: $supplementPayloadKeyArray,
@@ -364,83 +366,83 @@ class Supplement
 		$supplementParentModule,
 		$supplementParentMaintainHierarchy
 	): void {
-		if ($supplementParentPayloadKeyArray === Constant::$NULL) {
-			$supplementParentPayloadKeyArray = [];
-		}
-
+		// For payloadKey
 		$supplementParentPayloadKey = $this->getPayloadKey(
 			payloadKeyArray: $supplementParentPayloadKeyArray
 		);
 
+		// For isObject
 		$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
 			keyString: $supplementParentPayloadKey
 		) === 'Object';
+		if ($isObject === Constant::$NULL) {
+			return;
+		}
 
-		$indexCount = ($isObject || $isObject === Constant::$NULL)
+		// For indexCount
+		$indexCount = ($isObject)
 			? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
 				keyString: $supplementParentPayloadKey
 			);
 
 		for ($index = 0; $index < $indexCount; $index++) {
-			if (
-				$this->operateAsTransaction
-				&& !$this->httpObject->httpRequestObject->customerDbObject->beganTransaction
-			) {
-				$currentResponse['Error'] = 'Transaction rolled back';
-				return;
-			}
-
-			// For Response
-			if (
-				$isObject
-				|| $isObject === Constant::$NULL
-			) {
-				$supplementParentCurrentResponse = &$supplementParentResponse;
-			} else {
-				$supplementParentResponse[$index] = [];
-				$supplementParentCurrentResponse = &$supplementParentResponse[$index];
-			}
-
-			$supplementParentCurrentPayloadKeyArray = $supplementParentPayloadKeyArray;
-
-			if (!$isObject) {
-				array_push(
-					$supplementParentCurrentPayloadKeyArray,
-					$index
-				);
-			}
-
-			$supplementParentCurrentPayloadKey = $this->getPayloadKey(
-				payloadKeyArray: $supplementParentCurrentPayloadKeyArray
-			);
-
-			if (
-				!$this->httpObject->httpRequestObject->dataDecodeObject->isset(
-					keyString: $supplementParentCurrentPayloadKey
-				)
-			) {
-				if ($supplementParentMaintainHierarchy) {
-					throw new \Exception(
-						message: "Payload key '{$supplementParentCurrentPayloadKey}' not set",
-						code: HttpStatus::$NotFound
-					);
-				} else {
-					continue;
-				}
-			}
-
-			// Load Payload
-			$this->httpObject->httpRequestObject->activeRequestData['payload'] = $this->httpObject->httpRequestObject->dataDecodeObject->get(
-				keyString: $supplementParentCurrentPayloadKey
-			);
-
+			// For Required Fields
 			if (count(value: $supplementParentRequiredFieldArray)) {
 				$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = $supplementParentRequiredFieldArray;
 			} else {
 				$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = [];
 			}
 
-			// Validation
+			// For payloadKeyArray
+			$supplementParentCurrentPayloadKeyArray = $supplementParentPayloadKeyArray;
+			if (!$isObject) {
+				array_push(
+					$supplementParentCurrentPayloadKeyArray,
+					"{$index}"
+				);
+			}
+
+			// For payloadKey
+			$supplementParentCurrentPayloadKey = $this->getPayloadKey(
+				payloadKeyArray: $supplementParentCurrentPayloadKeyArray
+			);
+
+			// For Response
+			if ($isObject) {
+				$supplementParentCurrentResponse = &$supplementParentResponse;
+			} else {
+				$supplementParentResponse[$index] = [];
+				$supplementParentCurrentResponse = &$supplementParentResponse[$index];
+			}
+
+			// For Validating Hierarchy
+			$supplementParentCurrentMaintainHierarchy = $supplementParentMaintainHierarchy;
+			if (
+				$supplementParentCurrentMaintainHierarchy
+				&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+					keyString: $supplementParentCurrentPayloadKey
+				)
+			) {
+				throw new \Exception(
+					message: "Payload key '{$supplementParentCurrentPayloadKey}' not set",
+					code: HttpStatus::$NotFound
+				);
+			}
+
+			// For isObject
+			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+				keyString: $supplementParentCurrentPayloadKey
+			) === 'Object';
+			if ($isObject === Constant::$NULL) {
+				return;
+			}
+
+			// For Payload
+			$this->httpObject->httpRequestObject->activeRequestData['payload'] = $this->httpObject->httpRequestObject->dataDecodeObject->get(
+				keyString: $supplementParentCurrentPayloadKey
+			);
+
+			// For Validation
 			if (
 				isset($supplementParentSqlConfig['__VALIDATE__'])
 				&& !$this->isValidPayload(
@@ -451,7 +453,7 @@ class Supplement
 				continue;
 			}
 
-			// Execute - Pre Hook
+			// For Pre Hook
 			if (isset($supplementParentSqlConfig['__PRE-SQL-HOOKS__'])) {
 				if ($this->hookObject === Constant::$NULL) {
 					$this->hookObject = new Hook(
@@ -463,26 +465,26 @@ class Supplement
 				);
 			}
 
-			// Set Function
+			// For Function
 			if ($supplementParentModule === '') {
 				$processFunction  = 'process';
 			} else {
-				$processFunction  = "{$supplementParentModule}Process";
+				$processFunction  = "{$supplementParentModule}" . Env::$appendSupplementFunctionWith;
 			}
 
-			// Execute
+			// For Execute
 			$supplementParentCurrentResponse = $this->supplementObject->$processFunction();
+			
+			// For Rollback
 			if (
 				$this->operateAsTransaction
 				&& !$this->httpObject->httpRequestObject->customerDbObject->beganTransaction
 			) {
 				$supplementParentCurrentResponse['Error'] = 'Something went wrong';
 				return;
-			} else {
-
 			}
 
-			// Triggers
+			// For Triggers
 			if (isset($supplementParentSqlConfig['__TRIGGERS__'])) {
 				$this->dataEncodeObject->addKeyData(
 					objectKey: '__TRIGGERS__',
@@ -492,7 +494,7 @@ class Supplement
 				);
 			}
 
-			// Execute - Post Hook
+			// For Post Hook
 			if (isset($supplementParentSqlConfig['__POST-SQL-HOOKS__'])) {
 				if ($this->hookObject === Constant::$NULL) {
 					$this->hookObject = new Hook(
@@ -504,14 +506,14 @@ class Supplement
 				);
 			}
 
-			// Call Child
+			// For Child
 			if (isset($supplementParentSqlConfig['__SUB-QUERY__'])) {
 				$this->supplementChild(
 					supplementChildSqlConfig: $supplementParentSqlConfig,
 					supplementChildPayloadKeyArray: $supplementParentCurrentPayloadKeyArray,
 					supplementChildRequiredFieldArray: $supplementParentRequiredFieldArray,
 					supplementChildResponse: $supplementParentCurrentResponse,
-					supplementChildMaintainHierarchy: $supplementParentMaintainHierarchy
+					supplementChildMaintainHierarchy: $supplementParentCurrentMaintainHierarchy
 				);
 			}
 		}
@@ -568,104 +570,104 @@ class Supplement
 		}
 
 		foreach ($supplementChildSqlConfig['__SUB-PAYLOAD__'] as $supplementModule => &$supplementChildModuleSqlConfig) {
-			$dataExist = false;
-
-			$supplementChildResponse[$supplementModule] = [];
-			$supplementChildModuleResponse = &$supplementChildResponse[$supplementModule];
-
+			// For payloadKeyArray
 			$supplementChildModulePayloadKeyArray = $supplementChildPayloadKeyArray;
 			array_push(
 				$supplementChildModulePayloadKeyArray,
-				$supplementModule
+				"{$supplementModule}"
 			);
 
+			// For payloadKey
 			$supplementChildModulePayloadKey = $this->getPayloadKey(
 				payloadKeyArray: $supplementParentPayloadKeyArray
 			);
 
-			$dataExist = $this->httpObject->httpRequestObject->dataDecodeObject->isset(
-				keyString: $supplementChildModulePayloadKey
+			// For Validating Hierarchy
+			$supplementChildModuleMaintainHierarchy = $supplementChildMaintainHierarchy ?? $this->getMaintainHierarchy(
+				sqlConfig: $supplementChildModuleSqlConfig
 			);
 			if (
-				$supplementChildMaintainHierarchy
-				&& !$dataExist
-			) { // use parent data of a payload
+				$supplementChildModuleMaintainHierarchy
+				&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+					keyString: $supplementChildModulePayloadKey
+				)
+			) {
 				throw new \Exception(
 					message: "Invalid payload: Module '{$supplementModule}' missing",
 					code: HttpStatus::$NotFound
 				);
 			}
-			if ($dataExist) {
+
+			// For isObject
+			$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+				keyString: $supplementChildModulePayloadKey
+			) === 'Object';
+			if ($isObject === Constant::$NULL) {
 				return;
 			}
 
-			$isObject = null;
-			if ($supplementChildModulePayloadKey !== Constant::$NULL) {
-				$isObject = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-					keyString: $supplementChildModulePayloadKey
-				) === 'Object';
-			}
-
+			// For indexCount
 			$indexCount = ($isObject || $isObject === Constant::$NULL)
 				? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
 					keyString: $supplementChildModulePayloadKey
 				);
 
+			// For Required Fields
 			if (isset($supplementChildRequiredFieldArray[$supplementModule])) {
 				$supplementChildModuleRequiredFieldArray = &$supplementChildRequiredFieldArray[$supplementModule];
 			} else {
 				$supplementChildModuleRequiredFieldArray = &$supplementChildRequiredFieldArray;
 			}
 
-			$supplementChildModuleMaintainHierarchy = $supplementChildMaintainHierarchy ?? $this->getMaintainHierarchy(
-				sqlConfig: $supplementChildModuleSqlConfig
-			);
+			// For Response
+			$supplementChildResponse[$supplementModule] = [];
+			$supplementChildModuleResponse = &$supplementChildResponse[$supplementModule];
 
 			for ($index = 0; $index < $indexCount; $index++) {
+				// For payloadKeyArray
 				$supplementChildModuleCurrentPayloadKeyArray = $supplementChildModulePayloadKeyArray;
-				array_push(
-					$supplementChildModuleCurrentPayloadKeyArray,
-					$module
-				);
-
-				$supplementChildModuleCurrentResponse = &$supplementChildModuleResponse;
-				$supplementChildModuleCurrentResponse[$index] = [];
-				$supplementChildModuleCurrentResponse = &$supplementChildCurrentResponse[$index];
-
-				if (
-					$isObject
-					|| $isObject === Constant::$NULL
-				) {
-					$supplementChildModuleCurrentPayloadKey = $supplementChildModulePayloadKey;
-				} else {
-					$supplementChildModuleCurrentPayloadKey = "{$supplementChildModulePayloadKey}:{$index}";
+				if (!$isObject) {
+					array_push(
+						$supplementChildModuleCurrentPayloadKeyArray,
+						"{$index}"
+					);
 				}
 
-				$dataExist = $this->httpObject->httpRequestObject->dataDecodeObject->isset(
-					keyString: $supplementChildModuleCurrentPayloadKey
+				// For payloadKey
+				$supplementChildModuleCurrentPayloadKey = $this->getPayloadKey(
+					payloadKeyArray: $supplementChildModuleCurrentPayloadKeyArray
 				);
 
+				// For Validating Hierarchy
+				$supplementChildModuleCurrentMaintainHierarchy = $supplementChildModuleMaintainHierarchy;
 				if (
-					$supplementChildModuleMaintainHierarchy
-					&& !$dataExist
-				) { // use parent data of a payload
+					$supplementChildModuleCurrentMaintainHierarchy
+					&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+						keyString: $supplementChildModuleCurrentPayloadKey
+					)
+				) {
 					throw new \Exception(
 						message: "Invalid payload: Module '{$supplementModule}' missing",
 						code: HttpStatus::$NotFound
 					);
 				}
-
-				if (!$dataExist) {
-					continue;
+				
+				// For Response
+				if ($isObject) {
+					$supplementChildModuleCurrentResponse = &$supplementChildModuleResponse;
+				} else {
+					$supplementChildModuleCurrentResponse[$index] = [];
+					$supplementChildModuleCurrentResponse = &$supplementChildCurrentResponse[$index];
 				}
 
+				// For Parent
 				$this->supplementParent(
 					supplementParentSqlConfig: $supplementChildModuleSqlConfig,
 					supplementParentPayloadKeyArray: $supplementChildModuleCurrentPayloadKeyArray,
 					supplementParentRequiredFieldArray: $supplementChildModuleRequiredFieldArray,
 					supplementParentResponse: $supplementChildModuleCurrentResponse,
 					supplementParentModule: $supplementModule,
-					supplementParentMaintainHierarchy: $supplementChildModuleMaintainHierarchy
+					supplementParentMaintainHierarchy: $supplementChildModuleCurrentMaintainHierarchy
 				);
 			}
 		}

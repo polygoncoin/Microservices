@@ -99,14 +99,8 @@ class Env
 	public static $rateLimitUserLoginPrefix = null;
 	public static $rateLimitUserRequestPrefix = null;
 
-	public static $queryCacheServerType = null;
-	public static $queryCacheServerHostname = null;
-	public static $queryCacheServerPort = null;
-	public static $queryCacheServerUsername = null;
-	public static $queryCacheServerPassword = null;
-	public static $queryCacheServerDatabase = null;
-	public static $queryCacheServerTable = null;
-
+	public static $appendSupplementFunctionWith = null;
+	
 	public static $iAllowedRepresentation = ['JSON', 'XML'];
 	public static $oAllowedRepresentation = ['JSON', 'XML', 'XSLT', 'HTML', 'PHP'];
 
@@ -188,13 +182,7 @@ class Env
 		self::$rateLimitUserLoginPrefix = getenv(name: 'rateLimitUserLoginPrefix');
 		self::$rateLimitUserRequestPrefix = getenv(name: 'rateLimitUserRequestPrefix');
 
-		self::$queryCacheServerType = getenv(name: 'queryCacheServerType');
-		self::$queryCacheServerHostname = getenv(name: 'queryCacheServerHostname');
-		self::$queryCacheServerPort = getenv(name: 'queryCacheServerPort');
-		self::$queryCacheServerUsername = getenv(name: 'queryCacheServerUsername');
-		self::$queryCacheServerPassword = getenv(name: 'queryCacheServerPassword');
-		self::$queryCacheServerDatabase = getenv(name: 'queryCacheServerDatabase');
-		self::$queryCacheServerTable = getenv(name: 'queryCacheServerTable');
+		self::$appendSupplementFunctionWith = getenv(name: 'appendSupplementFunctionWith');
 
 		self::$initialized = true;
 	}

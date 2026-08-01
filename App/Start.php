@@ -163,7 +163,7 @@ class Start
 					'Message' => 'Too Many request',
 					'RetryAfter' => $e->getMessage()
 				];
-			} elseif(
+			} elseif (
 				isset($logId)
 				&& $logId > 0
 			) {

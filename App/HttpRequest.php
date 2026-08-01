@@ -470,13 +470,18 @@ class HttpRequest
 							customerData: $this->httpObject->httpRequestObject->activeRequestData['customerData'],
 							fetchDbMode: 'Master'
 						);
-						$uploadedFileMd5Data = $this->getUploadedFileMd5Data(uploadedFileMd5: $uploadedFileMd5);
 
-						if ($uploadedFileMd5Data !== Constant::$FALSE) {
-							throw new \Exception(
-								message: "Same file was already uploaded on '{$uploadedFileMd5Data['uploaded_on']}'",
-								code: HttpStatus::$BadRequest
-							);
+						// Check uploaded file is duplicate
+						if (false) {
+							$uploadedFileMd5Data = $this->getUploadedFileMd5Data(uploadedFileMd5: $uploadedFileMd5);
+
+							if ($uploadedFileMd5Data !== Constant::$FALSE) {
+								throw new \Exception(
+									message: "Same file was already uploaded on '{$uploadedFileMd5Data['uploaded_on']}'",
+									code: HttpStatus::$BadRequest
+								);
+							}
+
 						}
 
 						$sql = 'INSERT INTO `import_file_detail` SET

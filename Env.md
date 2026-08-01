@@ -55,6 +55,17 @@ This helps managing cache for idempotent request.
 idempotentSecret='changeme'         ; hash_hmac secret
 ```
 
+## Supplement
+
+This helps Supplement to execute function on unreserved Keys.
+The function name is com bination of key and this setting value.
+
+```ini
+; Settings to append string to supplement function
+appendSupplementFunctionWith='Process'
+```
+
+
 ## Contributing
 
 Issues and feature request are welcome.<br />

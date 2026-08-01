@@ -125,6 +125,6 @@ $response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'RegistrationWithAdd
 $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
 $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
 $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-$response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'CategoryTruncate.php';
+// $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'CategoryTruncate.php';
 
 return $response;

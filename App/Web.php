@@ -206,7 +206,7 @@ class Web
 				$requestPayload = CommonFunction::jsonDecode(
 					value: $payload
 				);
-			} elseif($isXml) {
+			} elseif ($isXml) {
 				$requestPayload = htmlspecialchars(
 					string: $payload
 				);
@@ -303,7 +303,7 @@ class Web
 				$return['HttpResponse']['ResponseBody'] = CommonFunction::jsonDecode(
 					value: $return['HttpResponse']['ResponseBody']
 				);
-			} elseif($isXml) {
+			} elseif ($isXml) {
 				$return['HttpResponse']['ResponseBody'] = htmlspecialchars(
 					string: $return['HttpResponse']['ResponseBody']
 				);
