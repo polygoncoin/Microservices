@@ -474,7 +474,7 @@ class Supplement
 
 			// For Execute
 			$supplementParentCurrentResponse = $this->supplementObject->$processFunction();
-			
+
 			// For Rollback
 			if (
 				$this->operateAsTransaction
@@ -640,7 +640,7 @@ class Supplement
 						code: HttpStatus::$NotFound
 					);
 				}
-				
+
 				// For Response
 				if ($isObject) {
 					$supplementChildModuleCurrentResponse = &$supplementChildModuleResponse;

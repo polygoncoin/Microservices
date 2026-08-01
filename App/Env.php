@@ -100,7 +100,7 @@ class Env
 	public static $rateLimitUserRequestPrefix = null;
 
 	public static $appendSupplementFunctionWith = null;
-	
+
 	public static $iAllowedRepresentation = ['JSON', 'XML'];
 	public static $oAllowedRepresentation = ['JSON', 'XML', 'XSLT', 'HTML', 'PHP'];
 

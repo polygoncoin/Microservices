@@ -268,7 +268,7 @@ class Read
 				$readPayloadKey = $this->getPayloadKey(
 					payloadKeyArray: $readPayloadKeyArray
 				);
-	
+
 				$this->dataEncodeObject->addKeyData(
 					objectKey: Env::$payloadKeyInResponse,
 					data: $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
@@ -284,7 +284,7 @@ class Read
 				readParentMaintainHierarchy: $readMaintainHierarchy,
 				readParentIsFirstCall: Constant::$TRUE
 			);
-			
+
 			if ($this->httpObject->httpRequestObject->activeRequestData['payloadType'] === 'Array') {
 				$this->dataEncodeObject->endObject();
 			}
@@ -299,8 +299,8 @@ class Read
 	 * Process Read Parent Config Function
 	 * 
 	 * @param array $readParentSqlConfig          Sql config
-	 * @param array $readParentPayloadKeyArray.   
-	 * @param array $readParentRequiredFieldArray 
+	 * @param array $readParentPayloadKeyArray.
+	 * @param array $readParentRequiredFieldArray
 	 * @param bool  $readMaintainHierarchy        If true - Uses parent payload/results in child
 	 * @param bool  $readIsFirstCall              true to represent the first call in recursion
 	 * 
@@ -356,7 +356,7 @@ class Read
 			$readParentCurrentPayloadKey = $this->getPayloadKey(
 				payloadKeyArray: $readParentCurrentPayloadKeyArray
 			);
-		
+
 			// For Validating Hierarchy
 			$readParentCurrentMaintainHierarchy = $readParentMaintainHierarchy;
 			if (
@@ -555,7 +555,7 @@ class Read
 			$readChildModulePayloadKey = $this->getPayloadKey(
 				payloadKeyArray: $readChildModulePayloadKeyArray
 			);
-			
+
 			// For Validating Hierarchy
 			$readChildModuleMaintainHierarchy = $readChildMaintainHierarchy ?? $this->getMaintainHierarchy(
 				sqlConfig: $readChildModuleSqlConfig
@@ -602,7 +602,7 @@ class Read
 						"{$index}"
 					);
 				}
-				
+
 				// For payloadKey
 				$readChildModuleCurrentPayloadKey = $this->getPayloadKey(
 					payloadKeyArray: $readChildModuleCurrentPayloadKeyArray
@@ -923,7 +923,7 @@ class Read
 						data: $rowKeyValue
 					);
 				}
-				
+
 				// For Child
 				$this->readChild(
 					readChildSqlConfig: $readSqlConfig,
