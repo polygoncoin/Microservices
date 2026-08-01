@@ -13,6 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
 	'__VALIDATE__' => [
@@ -20,7 +22,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
-				'primary' => ['custom', 'customer_user_id'],
+				'primary' => ['custom', Constant::$customerUserPrimaryKey],
 				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

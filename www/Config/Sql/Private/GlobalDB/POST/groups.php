@@ -17,7 +17,7 @@ use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` SET __SET__",
+	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']}` SET __SET__",
 	'__SET__' => [
 		[
 			'column' => 'name',
@@ -25,7 +25,7 @@ return [
 			'activeRequestDataKeySubKey' => 'name'
 		],
 		[
-			'column' => 'customer_id',
+			'column' => Constant::$customerPrimaryKey,
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'customer_id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -49,7 +49,7 @@ return [
 		[
 			'column' => 'created_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => 'id'
+			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'created_on',

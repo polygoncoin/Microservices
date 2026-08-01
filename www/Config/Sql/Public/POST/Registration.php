@@ -60,13 +60,13 @@ return [
 			'activeRequestDataKeySubKey' => '0.0.0.0/0'
 		],
 		[
-			'column' => 'customer_user_group_id',
+			'column' => Constant::$customerUserGroupPrimaryKey,
 			'activeRequestDataKey' => 'custom',
 			'activeRequestDataKeySubKey' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
-	'__PRIMARY-KEY__' => 'customer_user_id',
+	'__PRIMARY-KEY__' => Constant::$customerUserPrimaryKey,
 	'__PAYLOAD-TYPE__' => 'Object',
 	'idempotentWindow' => 10
 ];

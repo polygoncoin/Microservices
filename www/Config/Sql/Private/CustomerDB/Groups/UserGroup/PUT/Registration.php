@@ -66,7 +66,7 @@ return array_merge(
 				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
-				'column' => 'id',
+				'column' => Constant::$customerUserPrimaryKey,
 				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey

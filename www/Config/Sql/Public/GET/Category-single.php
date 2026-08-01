@@ -24,7 +24,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => 'id',
+			'column' => Constant::$categoryPrimaryKey,
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id'
 		],

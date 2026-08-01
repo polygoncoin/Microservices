@@ -13,6 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'__SQL-COMMENT__' => '',
 	'__QUERY__' => 'UPDATE `address` SET __SET__ WHERE __WHERE__',
@@ -21,7 +23,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', 'address'],
-				'primary' => ['custom', 'id'],
+				'primary' => ['custom', Constant::$addressPrimaryKey],
 				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid address id'

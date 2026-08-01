@@ -17,7 +17,7 @@ use Microservices\App\Constant;
 
 return [
 	'all' => [
-		'__QUERY__' => "SELECT * FROM `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` WHERE __WHERE__ ORDER BY id ASC",
+		'__QUERY__' => "SELECT * FROM `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']}` WHERE __WHERE__ ORDER BY id ASC",
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
@@ -38,7 +38,7 @@ return [
 		'__MODE__' => 'multipleRecordFormat'
 	],
 	'single' => [
-		'__QUERY__' => "SELECT * FROM `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` WHERE __WHERE__",
+		'__QUERY__' => "SELECT * FROM `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']}` WHERE __WHERE__",
 		'__WHERE__' => [
 			[
 				'column' => 'is_approved',
@@ -56,7 +56,7 @@ return [
 				'activeRequestDataKeySubKey' => Constant::$NO
 			],
 			[
-				'column' => 'id',
+				'column' => Constant::$customerUserGroupPrimaryKey,
 				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id'
 			],

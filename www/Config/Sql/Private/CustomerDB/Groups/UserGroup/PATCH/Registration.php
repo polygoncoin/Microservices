@@ -41,7 +41,7 @@ return array_merge(
 		],
 		'__WHERE__' => [
 			[
-				'column' => 'id',
+				'column' => Constant::$customerUserPrimaryKey,
 				'activeRequestDataKey' => 'routeParamArray',
 				'activeRequestDataKeySubKey' => 'id',
 				'dataType' => DatabaseServerDataType::$PrimaryKey

@@ -20,12 +20,12 @@ return [
 	'__QUERY__' => 'INSERT INTO `address` SET __SET__',
 	'__SET__' => [
 		[
-			'column' => 'customer_id',
+			'column' => Constant::$customerPrimaryKey,
 			'activeRequestDataKey' => 'customerData',
-			'activeRequestDataKeySubKey' => 'customer_id'
+			'activeRequestDataKeySubKey' => Constant::$customerPrimaryKey
 		],
 		[
-			'column' => 'customer_user_id',
+			'column' => Constant::$customerUserPrimaryKey,
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -36,5 +36,6 @@ return [
 			'activeRequestDataKeySubKey' => 'address'
 		],
 	],
-	'__INSERT-IDs__' => 'address:id'
+	'__INSERT-IDs__' => 'address:id',
+	'__PRIMARY-KEY__' => Constant::$addressPrimaryKey
 ];

@@ -43,7 +43,7 @@ return [
 				[
 					'column' => 'parent_id',
 					'activeRequestDataKey' => 'sqlResults',
-					'activeRequestDataKeySubKey' => 'return:id'
+					'activeRequestDataKeySubKey' => 'return:' . Constant::$categoryPrimaryKey
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
@@ -59,7 +59,7 @@ return [
 						[
 							'column' => 'parent_id',
 							'activeRequestDataKey' => 'sqlResults',
-							'activeRequestDataKeySubKey' => 'return:sub:id'
+							'activeRequestDataKeySubKey' => 'return:sub:' . Constant::$categoryPrimaryKey
 						],
 					],
 					'__MODE__' => 'multipleRecordFormat',
@@ -75,7 +75,7 @@ return [
 								[
 									'column' => 'parent_id',
 									'activeRequestDataKey' => 'sqlResults',
-									'activeRequestDataKeySubKey' => 'return:sub:subsub:id'
+									'activeRequestDataKeySubKey' => 'return:sub:subsub:' . Constant::$categoryPrimaryKey
 								],
 							],
 							'__MODE__' => 'multipleRecordFormat',
@@ -87,5 +87,5 @@ return [
 	],
 	'maintainHierarchy' => Constant::$TRUE,
 	'fetchDbMode' => 'Master',
-	'queryCacheKey' => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category'
+	'queryCacheKey' => $this->httpObject->httpRequestObject->activeRequestData['customerData'][Constant::$customerPrimaryKey] . ':category'
 ];

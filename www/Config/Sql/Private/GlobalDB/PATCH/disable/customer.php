@@ -28,7 +28,7 @@ return [
 		[
 			'column' => 'updated_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => 'id'
+			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'updated_on',
@@ -48,7 +48,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => 'id',
+			'column' => Constant::$customerPrimaryKey,
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -59,7 +59,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', Env::$customerTable],
-				'primary' => ['custom', 'customer_id'],
+				'primary' => ['custom', Constant::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
 			'errorMessage' => 'Invalid Customer Id'
@@ -70,7 +70,7 @@ return [
 				'table' => ['custom', Env::$customerTable],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', Constant::$NO],
-				'primary' => ['custom', 'customer_id'],
+				'primary' => ['custom', Constant::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is deleted'
@@ -81,7 +81,7 @@ return [
 				'table' => ['custom', Env::$customerTable],
 				'column' => ['custom', 'is_disabled'],
 				'columnValue' => ['custom', Constant::$NO],
-				'primary' => ['custom', 'customer_id'],
+				'primary' => ['custom', Constant::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is already disabled'

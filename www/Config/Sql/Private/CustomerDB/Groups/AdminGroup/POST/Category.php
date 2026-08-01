@@ -68,7 +68,7 @@ return [
 	],
 	'maintainHierarchy' => Constant::$TRUE,
 	'affectedQueryCacheKeyArray' => [
-		$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category',
-		$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_id'] . ':category1'
+		$this->httpObject->httpRequestObject->activeRequestData['customerData'][Constant::$customerPrimaryKey] . ':category',
+		$this->httpObject->httpRequestObject->activeRequestData['customerData'][Constant::$customerPrimaryKey] . ':category1'
 	]
 ];

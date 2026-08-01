@@ -17,7 +17,7 @@ use Microservices\App\Constant;
 use Microservices\App\DatabaseServerDataType;
 
 return [
-	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
+	'__QUERY__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']}` SET __SET__ WHERE __WHERE__",
 	'__SET__' => [
 		[
 			'column' => 'is_disabled',
@@ -27,7 +27,7 @@ return [
 		[
 			'column' => 'updated_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => 'id'
+			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'updated_on',
@@ -47,7 +47,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => 'id',
+			'column' => Constant::$customerUserGroupPrimaryKey,
 			'activeRequestDataKey' => 'payload',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -57,8 +57,8 @@ return [
 		[
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
-				'primary' => ['custom', 'id'],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']],
+				'primary' => ['custom', Constant::$customerUserGroupPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
 			'errorMessage' => 'Invalid Group Id'
@@ -66,10 +66,10 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']],
 				'column' => ['custom', 'is_deleted'],
 				'columnValue' => ['custom', Constant::$NO],
-				'primary' => ['custom', 'id'],
+				'primary' => ['custom', Constant::$customerUserGroupPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is deleted'
@@ -77,10 +77,10 @@ return [
 		[
 			'function' => '_checkColumnValueExist',
 			'functionArgs' => [
-				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_group_table']],
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_group_table']],
 				'column' => ['custom', 'is_disabled'],
 				'columnValue' => ['custom', Constant::$NO],
-				'primary' => ['custom', 'id'],
+				'primary' => ['custom', Constant::$customerUserGroupPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT],
 			],
 			'errorMessage' => 'Record is already disabled'

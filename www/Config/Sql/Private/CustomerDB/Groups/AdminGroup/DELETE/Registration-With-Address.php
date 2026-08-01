@@ -33,7 +33,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => 'customer_user_id',
+			'column' => Constant::$customerUserPrimaryKey,
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$PrimaryKey
@@ -56,13 +56,13 @@ return [
 					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
-					'column' => 'id',
+					'column' => Constant::$addressPrimaryKey,
 					'activeRequestDataKey' => 'payload',
 					'activeRequestDataKeySubKey' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
 				],
 				[
-					'column' => 'customer_id',
+					'column' => Constant::$customerUserPrimaryKey,
 					'activeRequestDataKey' => 'routeParamArray',
 					'activeRequestDataKeySubKey' => 'id',
 					'dataType' => DatabaseServerDataType::$PrimaryKey
@@ -75,7 +75,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
-				'primary' => ['custom', 'customer_user_id'],
+				'primary' => ['custom', Constant::$customerUserPrimaryKey],
 				'id' => ['routeParamArray', 'id']
 			],
 			'errorMessage' => 'Invalid registration id'

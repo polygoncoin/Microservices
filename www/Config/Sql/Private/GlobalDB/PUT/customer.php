@@ -33,7 +33,7 @@ return [
 		[
 			'column' => 'updated_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => 'id'
+			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'updated_on',
@@ -58,7 +58,7 @@ return [
 			'activeRequestDataKeySubKey' => Constant::$NO
 		],
 		[
-			'column' => 'customer_id',
+			'column' => Constant::$customerPrimaryKey,
 			'activeRequestDataKey' => 'routeParamArray',
 			'activeRequestDataKeySubKey' => 'id',
 			'dataType' => DatabaseServerDataType::$INT
@@ -69,7 +69,7 @@ return [
 			'function' => 'primaryKeyExist',
 			'functionArgs' => [
 				'table' => ['custom', Env::$customerTable],
-				'primary' => ['custom', 'customer_id'],
+				'primary' => ['custom', Constant::$customerPrimaryKey],
 				'id' => ['payload', 'id', DatabaseServerDataType::$INT]
 			],
 			'errorMessage' => 'Invalid Customer Id'

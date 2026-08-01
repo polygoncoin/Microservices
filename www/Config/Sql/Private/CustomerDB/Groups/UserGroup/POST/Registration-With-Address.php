@@ -59,24 +59,24 @@ return [
 			'activeRequestDataKeySubKey' => '0.0.0.0/0'
 		],
 		[
-			'column' => 'customer_user_group_id',
+			'column' => Constant::$customerUserGroupPrimaryKey,
 			'activeRequestDataKey' => 'custom',
 			'activeRequestDataKeySubKey' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
-	'__PRIMARY-KEY__' => 'customer_user_id',
+	'__PRIMARY-KEY__' => Constant::$customerUserPrimaryKey,
 	'__SUB-QUERY__' => [
 		'address' => [
 			'__QUERY__' => 'INSERT INTO `address` SET __SET__',
 			'__SET__' => [
 				[
-					'column' => 'customer_id',
+					'column' => Constant::$customerPrimaryKey,
 					'activeRequestDataKey' => 'customerData',
-					'activeRequestDataKeySubKey' => 'customer_id'
+					'activeRequestDataKeySubKey' => Constant::$customerPrimaryKey
 				],
 				[
-					'column' => 'customer_user_id',
+					'column' => Constant::$customerUserPrimaryKey,
 					'activeRequestDataKey' => '__INSERT-IDs__',
 					'activeRequestDataKeySubKey' => 'registration:id'
 				],
@@ -87,7 +87,7 @@ return [
 				]
 			],
 			'__INSERT-IDs__' => 'address:id',
-			'__PRIMARY-KEY__' => 'id',
+			'__PRIMARY-KEY__' => Constant::$addressPrimaryKey,
 			'__PAYLOAD-TYPE__' => 'Array',
 			'__MAX-PAYLOAD-OBJECTS__' => 2
 		]

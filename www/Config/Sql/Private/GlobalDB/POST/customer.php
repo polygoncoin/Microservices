@@ -32,7 +32,7 @@ return [
 		[
 			'column' => 'created_by',
 			'activeRequestDataKey' => 'userData',
-			'activeRequestDataKeySubKey' => 'id'
+			'activeRequestDataKeySubKey' => Constant::$customerUserPrimaryKey
 		],
 		[
 			'column' => 'created_on',

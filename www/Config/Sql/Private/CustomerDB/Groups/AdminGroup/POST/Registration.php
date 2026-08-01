@@ -13,6 +13,8 @@
  * @since     Class available since Release 1.0.0
  */
 
+use Microservices\App\Constant;
+
 return [
 	'__QUERY__' => "INSERT INTO `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__",
 	'__SET__' => [
@@ -52,12 +54,12 @@ return [
 			'activeRequestDataKey' => 'custom',
 			'activeRequestDataKeySubKey' => '0.0.0.0/0'],
 		[
-			'column' => 'customer_user_group_id',
+			'column' => Constant::$customerUserGroupPrimaryKey,
 			'activeRequestDataKey' => 'custom',
 			'activeRequestDataKeySubKey' => '1'
 		],
 	],
 	'__INSERT-IDs__' => 'registration:id',
-	'__PRIMARY-KEY__' => 'customer_user_id',
+	'__PRIMARY-KEY__' => Constant::$customerUserPrimaryKey,
 	'idempotentWindow' => 10
 ];

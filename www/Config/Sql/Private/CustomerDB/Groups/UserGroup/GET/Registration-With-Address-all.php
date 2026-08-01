@@ -36,9 +36,9 @@ return [
 					'activeRequestDataKeySubKey' => Constant::$NO
 				],
 				[
-					'column' => 'customer_user_id',
+					'column' => Constant::$customerUserPrimaryKey,
 					'activeRequestDataKey' => 'sqlResults',
-					'activeRequestDataKeySubKey' => 'return:customer_user_id'
+					'activeRequestDataKeySubKey' => 'return:' . Constant::$customerUserPrimaryKey
 				],
 			],
 			'__MODE__' => 'multipleRecordFormat',
