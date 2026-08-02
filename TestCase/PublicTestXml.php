@@ -46,6 +46,13 @@ if (defined('__MODE__')) {
 	$homeURL = 'http://customer001.localhost/Microservices/www/public_html/index.php';
 }
 
+if (!defined('PRIVATE_GET')) {
+	define('PRIVATE_DIRECTORY', __DIR__ . DIRECTORY_SEPARATOR . 'Private');
+	define('PRIVATE_GET', PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . Constant::$GET);
+}
+
+$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Reload.php';
+
 $paramArray = [
 	'Payload' => [
 		'firstname' => 'Ramesh1',
