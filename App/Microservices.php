@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\CommonFunction;
 use Microservices\App\Constant;
 use Microservices\App\Dropbox;
 use Microservices\App\Env;
@@ -196,10 +197,16 @@ class Microservices
 			$methods = 'GET, QUERY, POST, PUT, PATCH, DELETE, OPTIONS';
 			$headerArray['Access-Control-Allow-Methods'] = $methods;
 		} else {
-			if ($this->httpObject->httpResponseObject === Constant::$NULL) {
+			if (
+				$this->httpObject->httpResponseObject === Constant::$NULL
+				|| !isset($this->httpObject->httpRequestObject->routeParserObject->sqlConfig)
+			) {
 				$outputRepresentation = Env::$outputRepresentation;
 			} else {
-				$outputRepresentation = $this->httpObject->httpResponseObject->outputRepresentation;
+				$outputRepresentation = CommonFunction::getOutputRepresentation(
+					sqlConfig: $this->httpObject->httpRequestObject->routeParserObject->sqlConfig,
+					httpReqData: $this->httpObject->httpReqData
+				);
 			}
 			switch ($outputRepresentation) {
 				case 'XML':

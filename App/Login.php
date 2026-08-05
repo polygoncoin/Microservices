@@ -156,7 +156,7 @@ class Login
 		}
 
 		$this->httpObject->httpRequestObject->loadPayload();
-		$this->payload = $this->httpObject->httpRequestObject->dataDecodeObject->get();
+		$this->payload = $this->httpObject->httpRequestObject->dataDecodeObject->getObject();
 
 		// Check for required conditions variables
 		$requiredParamData = [

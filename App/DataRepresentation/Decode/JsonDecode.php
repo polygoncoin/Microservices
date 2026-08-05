@@ -321,6 +321,29 @@ class JsonDecode implements DataDecodeInterface
 	}
 
 	/**
+	 * Get Object as per $keyString (Ignores Sub Objects/Array)
+	 * 
+	 * @param string $keyString Key values separated by colon
+	 * 
+	 * @return mixed
+	 */
+	public function getObject(
+		$keyString = ''
+	): mixed {
+		$valueArray = $this->get(
+			keyString: $keyString
+		);
+
+		foreach($valueArray as $key => $value) {
+			if (is_array($value)) {
+				unset($valueArray[$key]);
+			}
+		}
+
+		return $valueArray;
+	}
+
+	/**
 	 * Get complete result as per $keyString
 	 * 
 	 * @param string $keyString Key values separated by colon

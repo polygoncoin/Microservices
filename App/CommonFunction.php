@@ -428,4 +428,60 @@ class CommonFunction
 
 		return $value;
 	}
+
+	/**
+	 * Get Output Representation
+	 * 
+	 * @param array $sqlConfig            		 Sql config
+	 * @param array $httpReqData                 HTTP request data
+	 * @param array $currentOutputRepresentation Current Output Representation
+	 * 
+	 * @return null|array
+	 */
+	public static function getOutputRepresentation(
+		$sqlConfig,
+		$httpReqData,
+		$currentOutputRepresentation = null
+	): null|array {
+		switch (true) {
+			case isset($httpReqData['get']['outputRepresentation'])
+				&& in_array(
+					needle: $httpReqData['get']['outputRepresentation'],
+					haystack: ['JSON', 'XML'],
+					strict: Constant::$TRUE
+				):
+				$returnOutputRepresentation = [
+					'outputRepresentation' => $httpReqData['get']['outputRepresentation'],
+					'outputRepresentationFileLocation' => false
+				];
+				break;
+			case isset($sqlConfig['__OUTPUT-REPRESENTATION__'])
+				&& Env::isValidDataRep(
+					dataRepresentation: $sqlConfig['__OUTPUT-REPRESENTATION__'],
+					mode: 'output'
+				)
+				&& in_array(
+					needle: $sqlConfig['__OUTPUT-REPRESENTATION__'],
+					haystack: ['HTML', 'PHP', 'XSLT'],
+					strict: Constant::$TRUE
+				)
+				&& isset($sqlConfig['__OUTPUT-REPRESENTATION-FILE__']):
+				$returnOutputRepresentation = [
+					'outputRepresentation' => $sqlConfig['__OUTPUT-REPRESENTATION__'],
+					'outputRepresentationFileLocation' => $sqlConfig['__OUTPUT-REPRESENTATION-FILE__']
+				];
+				break;
+			default:
+				$returnOutputRepresentation = [
+					'outputRepresentation' => Env::$outputRepresentation,
+					'outputRepresentationFileLocation' => false
+				];
+		}
+
+		if ($returnOutputRepresentation === $currentOutputRepresentation) {
+			return null;
+		} else {
+			return $returnOutputRepresentation;
+		}
+	}
 }

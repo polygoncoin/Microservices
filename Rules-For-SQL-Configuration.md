@@ -74,7 +74,7 @@ return [
 			// Fetch value from function
 			'column' => 'password',
 			'activeRequestDataKey' => 'function',                       // function
-			'activeRequestDataKeySubKey' => function($activeRequestData) {        // execute a function and return value
+			'activeRequestDataKeySubKey' => function($activeRequestData, $payload) {        // execute a function and return value
 				return 'value';
 			}
 		],
@@ -209,7 +209,7 @@ return [
 				[
 					// Fetch values of Sql payload for previous queries
 					'column' => 'id',
-					'activeRequestDataKey' => 'sqlPayload',                    // sqlPayload (with maintainHierarchy)
+					'activeRequestDataKey' => 'previousPayload',                    // previousPayload (with maintainHierarchy)
 					'activeRequestDataKeySubKey' => '<return:keys-separated-by-colon>'
 				],
 				[

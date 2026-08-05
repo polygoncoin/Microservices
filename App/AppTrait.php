@@ -117,7 +117,7 @@ trait AppTrait
 					$isFirstCall
 					&& in_array(
 						needle: $activeRequestDataKey,
-						haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
+						haystack: ['sqlResults', 'sqlParamArray', 'previousPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
@@ -129,7 +129,7 @@ trait AppTrait
 				if (
 					in_array(
 						needle: $activeRequestDataKey,
-						haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
+						haystack: ['sqlResults', 'sqlParamArray', 'previousPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
@@ -239,12 +239,14 @@ trait AppTrait
 	 * Generate Sql query and its param's in Named format
 	 * 
 	 * @param array      $sqlConfig       Sql config
+	 * @param array      $payload         Payload
 	 * @param array|null $payloadKeyArray Payload key's
 	 * 
 	 * @return array
 	 */
 	private function getSqlAndParamNamedMode(
 		&$sqlConfig,
+		&$payload,
 		$payloadKeyArray = null
 	): array {
 		$insertId = null;
@@ -278,7 +280,8 @@ trait AppTrait
 		) {
 			[$setParamArray, $errorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
-				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? []
+				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
+				payload: $payload
 			);
 			if (empty($errorArray)) {
 				if (!empty($setParamArray)) {
@@ -331,7 +334,8 @@ trait AppTrait
 			$wErrorArray = [];
 			[$whereParamArray, $wErrorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
-				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? []
+				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
+				payload: $payload
 			);
 			if (empty($wErrorArray)) {
 				if (!empty($whereParamArray)) {
@@ -402,12 +406,14 @@ trait AppTrait
 	 * Generate Sql query and its param's in Unnamed format
 	 * 
 	 * @param array      $sqlConfig       Sql config
+	 * @param array      $payload         Payload
 	 * @param array|null $payloadKeyArray Payload key's
 	 * 
 	 * @return array
 	 */
 	private function getSqlAndParamUnnamedMode(
 		&$sqlConfig,
+		&$payload,
 		$payloadKeyArray = null
 	): array {
 		$insertId = null;
@@ -441,7 +447,8 @@ trait AppTrait
 		) {
 			[$setParamArray, $errorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
-				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? []
+				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
+				payload: $payload
 			);
 			if (empty($errorArray)) {
 				if (!empty($setParamArray)) {
@@ -489,7 +496,8 @@ trait AppTrait
 			$wErrorArray = [];
 			[$whereParamArray, $wErrorArray] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
-				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? []
+				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
+				payload: $payload
 			);
 			if (empty($wErrorArray)) {
 				if (!empty($whereParamArray)) {
@@ -557,13 +565,15 @@ trait AppTrait
 	 * 
 	 * @param array $sqlConfig          Sql config
 	 * @param array $sqlConfigVariables Payload Variables
+	 * @param array $payload.           Payload
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private function getSqlParam(
 		&$sqlConfig,
-		$sqlConfigVariables
+		$sqlConfigVariables,
+		&$payload
 	): array {
 		$paramArray = [];
 		$errorArray = [];
@@ -575,13 +585,13 @@ trait AppTrait
 			$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 			if ($activeRequestDataKey === 'function') {
 				$function = $activeRequestDataKeySubKey;
-				$value = $function($this->httpObject->httpRequestObject->activeRequestData);
+				$value = $function($this->httpObject->httpRequestObject->activeRequestData, $payload);
 				$paramArray[$column] = $value;
 				continue;
 			} elseif (
 				in_array(
 					needle: $activeRequestDataKey,
-					haystack: ['sqlParamArray', 'sqlPayload'],
+					haystack: ['sqlParamArray', 'previousPayload'],
 					strict: Constant::$TRUE
 				)
 			) {
@@ -628,6 +638,12 @@ trait AppTrait
 					break;
 				}
 				$paramArray[$column] = $value;
+				continue;
+			} elseif (
+				$activeRequestDataKey === 'payload'
+				&& isset($payload[$activeRequestDataKeySubKey])
+			) {
+				$paramArray[$column] = $payload[$activeRequestDataKeySubKey];
 				continue;
 			} elseif ($activeRequestDataKey === 'custom') {
 				$value = $activeRequestDataKeySubKey;
@@ -808,7 +824,7 @@ trait AppTrait
 				if (
 					in_array(
 						needle: $activeRequestDataKey,
-						haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
+						haystack: ['sqlResults', 'sqlParamArray', 'previousPayload'],
 						strict: Constant::$TRUE
 					)
 				) {
@@ -861,7 +877,7 @@ trait AppTrait
 	/**
 	 * Function to reset data for module key wise
 	 * 
-	 * @param string $activeRequestDataKey sqlResults / sqlParamArray / sqlPayload
+	 * @param string $activeRequestDataKey sqlResults / sqlParamArray / previousPayload
 	 * @param array  $payloadKeyArray      Module key's in recursion
 	 * @param array  $record               Record data fetched from DB
 	 * 
@@ -1196,11 +1212,14 @@ trait AppTrait
 	 * Get Trigger data
 	 * 
 	 * @param array $triggerConfig Trigger Config
+	 * @param array $payload       Payload
 	 * 
 	 * @return mixed
 	 */
-	public function getTriggerData($triggerConfig): mixed
-	{
+	public function getTriggerData(
+		&$triggerConfig,
+		&$payload
+	): mixed {
 		if (!isset($this->httpObject->httpRequestObject->activeRequestData['authId'])) {
 			throw new \Exception(
 				message: 'Missing token',
@@ -1225,7 +1244,8 @@ trait AppTrait
 		$triggerOutput = [];
 		if ($isObject) {
 			$httpReqData = $this->getTriggerHttp(
-				triggerConfig: $triggerConfig
+				triggerConfig: $triggerConfig,
+				payload: $payload
 			);
 			[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
 				httpReqData: $httpReqData
@@ -1237,7 +1257,8 @@ trait AppTrait
 			);
 			for ($iTrigger = 0; $iTrigger < $iTriggerCount; $iTrigger++) {
 				$httpReqData = $this->getTriggerHttp(
-					triggerConfig: $triggerConfig[$iTrigger]
+					triggerConfig: $triggerConfig[$iTrigger],
+					payload: $payload
 				);
 				[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
 					httpReqData: $httpReqData
@@ -1253,14 +1274,18 @@ trait AppTrait
 	 * Get Trigger detail
 	 * 
 	 * @param array $triggerConfig Trigger Config
+	 * @param array $payload       Payload
 	 * 
 	 * @return mixed
 	 */
-	public function getTriggerHttp($triggerConfig)
-	{
+	public function getTriggerHttp(
+		&$triggerConfig,
+		&$payload
+	): mixed {
 		$httpRequestMethod = $triggerConfig['__METHOD__'];
 		[$routeElementArrayArray, $errorArray] = $this->getTriggerParam(
-			payloadConfig: $triggerConfig['__ROUTE__']
+			payloadConfig: $triggerConfig['__ROUTE__'],
+			payload: $payload
 		);
 
 		if ($errorArray) {
@@ -1276,7 +1301,8 @@ trait AppTrait
 
 		if (isset($triggerConfig['__QUERY-STRING__'])) {
 			[$queryStringArray, $errorArray] = $this->getTriggerParam(
-				payloadConfig: $triggerConfig['__QUERY-STRING__']
+				payloadConfig: $triggerConfig['__QUERY-STRING__'],
+				payload: $payload
 			);
 
 			if ($errorArray) {
@@ -1285,7 +1311,8 @@ trait AppTrait
 		}
 		if (isset($triggerConfig['__PAYLOAD__'])) {
 			[$payloadArray, $errorArray] = $this->getTriggerParam(
-				payloadConfig: $triggerConfig['__PAYLOAD__']
+				payloadConfig: $triggerConfig['__PAYLOAD__'],
+				payload: $payload
 			);
 			if ($errorArray) {
 				return $errorArray;
@@ -1311,12 +1338,14 @@ trait AppTrait
 	 * Get Trigger param's
 	 * 
 	 * @param array $payloadConfig API Payload configuration
+	 * @param array $payload       Payload
 	 * 
 	 * @return array
 	 * @throws \Exception
 	 */
 	private function getTriggerParam(
-		&$payloadConfig
+		&$payloadConfig,
+		&$payload
 	): array {
 		$triggerParamArray = [];
 		$triggerErrorArray = [];
@@ -1329,7 +1358,7 @@ trait AppTrait
 			$activeRequestDataKeySubKey = $payloadParamConfig['activeRequestDataKeySubKey'];
 			if ($activeRequestDataKey === 'function') {
 				$function = $activeRequestDataKeySubKey;
-				$value = $function($this->httpObject->httpRequestObject->activeRequestData);
+				$value = $function($this->httpObject->httpRequestObject->activeRequestData, $payload);
 				if ($column === Constant::$NULL) {
 					$triggerParamArray[] = $value;
 				} else {
@@ -1339,7 +1368,7 @@ trait AppTrait
 			} elseif (
 				in_array(
 					needle: $activeRequestDataKey,
-					haystack: ['sqlResults', 'sqlParamArray', 'sqlPayload'],
+					haystack: ['sqlResults', 'sqlParamArray', 'previousPayload'],
 					strict: Constant::$TRUE
 				)
 			) {

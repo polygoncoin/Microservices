@@ -97,6 +97,6 @@ return [
 		1 => 0,
 		// 2 => 10,
 	],
-	'__OUTPUT-REPRESENTATION-FILE__' => $this->httpObject->httpResponseObject->xsltDirectory
+	'__OUTPUT-REPRESENTATION-FILE__' => Constant::$XSLT_PUBLIC_DIRECTORY
 		. DIRECTORY_SEPARATOR . 'Category.xls'
 ];

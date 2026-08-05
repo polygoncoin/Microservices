@@ -598,56 +598,6 @@ class RouteParser
 			// Output data representation over rides global
 			// Output data representation set in Query config file
 			$this->sqlConfig = include $this->sqlConfigFile;
-			if (
-				isset($this->sqlConfig['__OUTPUT-REPRESENTATION__'])
-				&& Env::isValidDataRep(
-					dataRepresentation: $this->sqlConfig['__OUTPUT-REPRESENTATION__'],
-					mode: 'output'
-				)
-			) {
-				if (
-					$this->sqlConfig['__OUTPUT-REPRESENTATION__'] === 'HTML'
-					&& isset($this->sqlConfig['__OUTPUT-REPRESENTATION-FILE__'])
-				) {
-					$this->httpObject->httpResponseObject->outputRepresentation = $this->sqlConfig['__OUTPUT-REPRESENTATION__'];
-					$this->httpObject->httpResponseObject->dataEncodeObject->htmlFile = $this->sqlConfig['__OUTPUT-REPRESENTATION-FILE__'];
-				} elseif (
-					$this->sqlConfig['__OUTPUT-REPRESENTATION__'] === 'PHP'
-					&& isset($this->sqlConfig['__OUTPUT-REPRESENTATION-FILE__'])
-				) {
-					$this->httpObject->httpResponseObject->outputRepresentation = $this->sqlConfig['__OUTPUT-REPRESENTATION__'];
-					$this->httpObject->httpResponseObject->dataEncodeObject->phpFile = $this->sqlConfig['__OUTPUT-REPRESENTATION-FILE__'];
-				} elseif (
-					$this->sqlConfig['__OUTPUT-REPRESENTATION__'] === 'XSLT'
-					&& isset($this->sqlConfig['__OUTPUT-REPRESENTATION-FILE__'])
-				) {
-					$this->httpObject->httpResponseObject->outputRepresentation = $this->sqlConfig['__OUTPUT-REPRESENTATION__'];
-					$this->httpObject->httpResponseObject->dataEncodeObject->xsltFile = $this->sqlConfig['__OUTPUT-REPRESENTATION-FILE__'];
-				} elseif (isset($this->httpObject->httpReqData['get']['outputRepresentation'])) {
-					$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
-				} else {
-					$this->httpObject->httpResponseObject->outputRepresentation = Env::$outputRepresentation;
-				}
-			}
-		}
-
-		// Switch Output data representation if set in URL param
-		if (
-			CommonFunction::isEnabled(
-				httpObject: $this->httpObject,
-				feature: 'customer_enabled_output_representation_in_query_string'
-			)
-			&& isset($this->httpObject->httpReqData['get']['outputRepresentation'])
-			&& Env::isValidDataRep(
-				dataRepresentation: $this->httpObject->httpReqData['get']['outputRepresentation'],
-				mode: 'output'
-			)
-			&& in_array(
-				$this->httpObject->httpReqData['get']['outputRepresentation'],
-				['JSON', 'XML']
-			)
-		) {
-			$this->httpObject->httpResponseObject->outputRepresentation = $this->httpObject->httpReqData['get']['outputRepresentation'];
 		}
 	}
 

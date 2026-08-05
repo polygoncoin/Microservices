@@ -400,10 +400,6 @@ class HttpRequest
 	 */
 	public function loadPayload(): void
 	{
-		if (isset($this->activeRequestData['payloadType'])) {
-			return;
-		}
-
 		$payloadJson = "{}";
 
 		$this->urlDecode(
@@ -424,9 +420,6 @@ class HttpRequest
 
 		$this->dataDecodeObject->init();
 		$this->dataDecodeObject->indexData();
-
-		$this->activeRequestData['payloadType'] = $this->dataDecodeObject->dataType();
-
 	}
 
 	/**
@@ -624,12 +617,14 @@ class HttpRequest
 	 * 
 	 * @param string $debugMode
 	 * @param string $debugJson
+	 * @param string $payloadJson
 	 * 
 	 * @return int
 	 */
 	public function logDebugData(
 		$debugMode,
-		$debugJson
+		&$debugJson,
+		&$payloadJson
 	): int {
 		$logId = 0;
 		if ($this->isPrivateRequest) {
@@ -655,9 +650,7 @@ class HttpRequest
 			$paramArray[':customer_user_id'] = $this->customerUserId;
 			$paramArray[':request_route'] = $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArray[':request_method'] = $this->httpObject->httpReqData['server']['httpRequestMethod'];
-			$paramArray[':request_payload_json'] = isset($this->activeRequestData['payload']) ? json_encode(
-				value: $this->activeRequestData['payload']
-			) : '{}';
+			$paramArray[':request_payload_json'] = $payloadJson;
 			$paramArray[':request_config_json'] = isset($this->routeParserObject->sqlConfig) ? json_encode(
 				value: $this->routeParserObject->sqlConfig
 			) : '{}';
@@ -681,11 +674,13 @@ class HttpRequest
 	 * Log Error Data
 	 * 
 	 * @param string $exceptionJson
+	 * @param string $payloadJson
 	 * 
 	 * @return int
 	 */
 	public function logErrorData(
-		$exceptionJson
+		&$exceptionJson,
+		&$payloadJson
 	): int {
 		$logId = 0;
 		if ($this->isPrivateRequest) {
@@ -709,9 +704,7 @@ class HttpRequest
 			$paramArray[':customer_user_id'] = $this->customerUserId;
 			$paramArray[':request_route'] = $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM];
 			$paramArray[':request_method'] = $this->httpObject->httpReqData['server']['httpRequestMethod'];
-			$paramArray[':request_payload_json'] = isset($this->activeRequestData['payload']) ? json_encode(
-				value: $this->activeRequestData['payload']
-			) : '{}';
+			$paramArray[':request_payload_json'] = $payloadJson;
 			$paramArray[':request_config_json'] = isset($this->routeParserObject->sqlConfig) ? json_encode(
 				value: $this->routeParserObject->sqlConfig
 			) : '{}';
