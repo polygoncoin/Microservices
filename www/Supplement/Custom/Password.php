@@ -75,11 +75,11 @@ class Password implements CustomInterface
 	 */
 	public function process(): mixed
 	{
-		$supplementPayloadType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+		$payloadType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
 			keyString: null
 		);
 
-		switch ($supplementPayloadType) {
+		switch ($payloadType) {
 			case 'Array':
 				$payload = $this->httpObject->httpRequestObject->dataDecodeObject->getObject('0');
 				break;

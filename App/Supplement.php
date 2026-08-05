@@ -363,7 +363,7 @@ class Supplement
 		if (isset($supplementParentSqlConfig['__PAYLOAD-TYPE__'])) {
 			$supplementPayloadType = $isObject ? 'Object' : 'Array';
 			if ($supplementPayloadType !== $supplementParentSqlConfig['__PAYLOAD-TYPE__']) {
-				$errorArray[] = "Payload can't be an {$readPayloadType}";
+				$errorArray[] = "Payload can't be an {$supplementPayloadType}";
 			}
 
 			// Check for maximum object's supported when payloadType is Array
