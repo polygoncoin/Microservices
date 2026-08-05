@@ -539,7 +539,7 @@ class HttpRequest
 		$uploadedFileMd5Data = false;
 
 		$sql = "SELECT
-				*
+				 *
 			FROM
 				`import_file_detail`
 			WHERE

@@ -185,7 +185,7 @@ class DatabaseServer
 	{
 		if ($this->beganTransaction) {
 			$this->beganTransaction = false;
-	        $this->dbServerObject->commit();
+			$this->dbServerObject->commit();
 		}
 	}
 
@@ -198,7 +198,7 @@ class DatabaseServer
 	{
 		if ($this->beganTransaction) {
 			$this->beganTransaction = false;
-	        $this->dbServerObject->rollBack();
+			$this->dbServerObject->rollBack();
 		}
 	}
 
@@ -228,7 +228,7 @@ class DatabaseServer
 	public function lastInsertId(): bool|int
 	{
 		try {
-	        return $this->dbServerObject->lastInsertId();
+			return $this->dbServerObject->lastInsertId();
 		} catch (\Exception $e) {
 			if ($this->beganTransaction) {
 				$this->rollBack();

@@ -159,7 +159,7 @@ class PostgreSqlDatabase implements DatabaseServerInterface
 	{
 		if ($this->beganTransaction) {
 			$this->beganTransaction = false;
-	        $this->sqlServerObject->commit();
+			$this->sqlServerObject->commit();
 		}
 	}
 
@@ -172,7 +172,7 @@ class PostgreSqlDatabase implements DatabaseServerInterface
 	{
 		if ($this->beganTransaction) {
 			$this->beganTransaction = false;
-	        $this->sqlServerObject->rollBack();
+			$this->sqlServerObject->rollBack();
 		}
 	}
 
@@ -202,7 +202,7 @@ class PostgreSqlDatabase implements DatabaseServerInterface
 	public function lastInsertId(): bool|int
 	{
 		try {
-	        return $this->sqlServerObject->lastInsertId();
+			return $this->sqlServerObject->lastInsertId();
 		} catch (\Exception $e) {
 			if ($this->beganTransaction) {
 				$this->rollBack();

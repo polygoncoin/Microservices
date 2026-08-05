@@ -102,9 +102,9 @@ class Api
 						continue;
 					}
 
-					 $indexCount = count(
+					$indexCount = count(
 						value: $preRouteHookConfig
-					 );
+					);
 					for ($index = 0; $index < $indexCount; $index++) {
 						if (
 							!in_array(

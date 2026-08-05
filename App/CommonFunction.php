@@ -432,7 +432,7 @@ class CommonFunction
 	/**
 	 * Get Output Representation
 	 * 
-	 * @param array $sqlConfig            		 Sql config
+	 * @param array $sqlConfig                   Sql config
 	 * @param array $httpReqData                 HTTP request data
 	 * @param array $currentOutputRepresentation Current Output Representation
 	 * 

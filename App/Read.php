@@ -926,7 +926,7 @@ class Read
 			paramArray: $paramArray,
 			pushPop: $pushPop
 		);
-		
+
 		$singleColumn = false;
 		for ($index = 0; $dbFetchedRecord = $this->httpObject->httpRequestObject->customerDbObject->fetch(); $index++) {
 			if ($index === 0) {
