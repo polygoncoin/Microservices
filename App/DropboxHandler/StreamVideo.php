@@ -245,7 +245,7 @@ class StreamVideo
 		$data = file_get_contents(
 			filename: $this->fileLocation,
 			use_include_path: Constant::$FALSE,
-			context: null,
+			context: Constant::$NULL,
 			offset: $this->streamFrom,
 			length: $totalBytes
 		);

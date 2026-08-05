@@ -66,7 +66,7 @@ class Category implements CustomInterface
 	 */
 	public function init(): bool
 	{
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -96,6 +96,6 @@ class Category implements CustomInterface
 			data: $rowArray
 		);
 
-		return true;
+		return Constant::$TRUE;
 	}
 }

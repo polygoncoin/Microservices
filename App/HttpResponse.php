@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\DataRepresentation\DataEncode;
 use Microservices\App\Env;
 use Microservices\App\Http;
@@ -98,12 +99,12 @@ class HttpResponse
 		);
 		$this->dataEncodeObject = new DataEncode(
 			httpObject: $this->httpObject,
-			outputRepresentationData: $outputRepresentation
+			outputRepresentation: $outputRepresentation
 		);
 
 		$this->dataEncodeObject->init();
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 

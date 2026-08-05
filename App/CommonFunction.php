@@ -55,7 +55,7 @@ class CommonFunction
 			);
 		}
 		if (empty($httpObject->httpRequestObject->activeRequestData['customerData'][$feature])) {
-			return false;
+			return Constant::$FALSE;
 		} else {
 			return ($httpObject->httpRequestObject->activeRequestData['customerData'][$feature] === Constant::$YES) ? Constant::$TRUE : Constant::$FALSE;
 		}
@@ -287,7 +287,7 @@ class CommonFunction
 		$ip,
 		$cidrString
 	): null|bool {
-		$isValidIp = true;
+		$isValidIp = Constant::$TRUE;
 		$cidrIpNumberRangeArray = self::cidrStringIpNumberRange(
 			cidrString: $cidrString
 		);
@@ -323,7 +323,7 @@ class CommonFunction
 		$ip,
 		$cidrIpNumberRangeArray
 	): bool {
-		$isValidIp = false;
+		$isValidIp = Constant::$FALSE;
 		if (
 			count(
 				value: $cidrIpNumberRangeArray
@@ -341,13 +341,13 @@ class CommonFunction
 				$cidrIpNumber['start'] === 0
 				&& $cidrIpNumber['end'] === 0
 			) {
-				$isValidIp = true;
+				$isValidIp = Constant::$TRUE;
 				break;
 			} elseif (
 				$cidrIpNumber['start'] <= $ipNumber
 				&& $ipNumber <= $cidrIpNumber['end']
 			) {
-				$isValidIp = true;
+				$isValidIp = Constant::$TRUE;
 				break;
 			}
 		}
@@ -446,7 +446,7 @@ class CommonFunction
 		$httpReqData,
 		$currentOutputRepresentation = null
 	): null|array {
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case isset($httpReqData['get']['outputRepresentation'])
 				&& in_array(
 					needle: $httpReqData['get']['outputRepresentation'],
@@ -455,7 +455,7 @@ class CommonFunction
 				):
 				$returnOutputRepresentation = [
 					'outputRepresentation' => $httpReqData['get']['outputRepresentation'],
-					'outputRepresentationFileLocation' => false
+					'outputRepresentationFileLocation' => Constant::$FALSE
 				];
 				break;
 			case isset($sqlConfig['__OUTPUT-REPRESENTATION__'])
@@ -477,12 +477,12 @@ class CommonFunction
 			default:
 				$returnOutputRepresentation = [
 					'outputRepresentation' => Env::$outputRepresentation,
-					'outputRepresentationFileLocation' => false
+					'outputRepresentationFileLocation' => Constant::$FALSE
 				];
 		}
 
 		if ($returnOutputRepresentation === $currentOutputRepresentation) {
-			return null;
+			return Constant::$NULL;
 		} else {
 			return $returnOutputRepresentation;
 		}

@@ -87,7 +87,7 @@ class Http
 			$this->httpRequestObject->sqlDirectory = Constant::$SQL_CONFIG_PUBLIC_DIRECTORY;
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**

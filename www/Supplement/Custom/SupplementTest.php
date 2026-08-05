@@ -15,6 +15,7 @@
 
 namespace Microservices\www\Supplement\Custom;
 
+use Microservices\App\Constant;
 use Microservices\App\Http;
 use Microservices\www\Supplement\Custom\CustomInterface;
 use Microservices\www\Supplement\Custom\CustomTrait;
@@ -60,7 +61,7 @@ class SupplementTest implements CustomInterface
 	 */
 	public function init(): bool
 	{
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**

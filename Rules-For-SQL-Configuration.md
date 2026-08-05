@@ -347,9 +347,14 @@ return [
 
 	// Control response time as per number of hits by configuring lags in seconds as below
 	'responseLag' => [
-		// No of request => Seconds Lag
-		10	=> 0,
-		20	=> 10,
+		[
+			'requestCount' => 10,
+			'lagResponse' => 0
+		],
+		[
+			'requestCount' => 20,
+			'lagResponse' => 10
+		]
 	],
 
 	// Enable referrer lag for current route

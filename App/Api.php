@@ -69,7 +69,7 @@ class Api
 	 */
 	public function init(): bool
 	{
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -148,8 +148,8 @@ class Api
 			$this->httpObject->httpRequestObject->loadPayload();
 		}
 
-		$class = null;
-		$supplementClass = null;
+		$class = Constant::$NULL;
+		$supplementClass = Constant::$NULL;
 		if (
 			$this->checkSupplement(
 				Env::$cronRequestRoutePrefix
@@ -359,7 +359,7 @@ class Api
 			return $return;
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -385,6 +385,6 @@ class Api
 	 */
 	private function processAfterPayload(): bool
 	{
-		return true;
+		return Constant::$TRUE;
 	}
 }

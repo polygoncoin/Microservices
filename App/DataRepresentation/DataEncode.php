@@ -61,7 +61,7 @@ class DataEncode
 	 * 
 	 * @var null|string
 	 */
-	public $outputRepresentationFile = null;
+	public $outputRepresentationFileLocation = null;
 
 	/**
 	 * Temporary Stream
@@ -73,15 +73,23 @@ class DataEncode
 	/**
 	 * Constructor
 	 * 
-	 * @param Http   $httpObject
-	 * @param string $outputRepresentationData
+	 * @param Http       $httpObject
+	 * @param null|array $outputRepresentation
 	 */
 	public function __construct(
 		Http &$httpObject,
-		$outputRepresentationData = ['outputRepresentation' => 'JSON']
+		$outputRepresentation = null
 	) {
 		$this->httpObject = &$httpObject;
-		$this->outputRepresentation = $outputRepresentationData['outputRepresentation'];
+
+		if ($outputRepresentation === Constant::$NULL) {
+			$outputRepresentation = [
+				'outputRepresentation' => 'JSON',
+				'outputRepresentationFileLocation' => Constant::$FALSE
+			];
+		}
+		$this->outputRepresentation = $outputRepresentation['outputRepresentation'];
+		$this->outputRepresentationFileLocation = $outputRepresentation['outputRepresentationFileLocation'];
 	}
 
 	/**
@@ -293,16 +301,16 @@ class DataEncode
 	{
 		$this->end();
 
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case (
 					$this->outputRepresentation === 'XSLT'
-					&& $this->outputRepresentationFile !== Constant::$NULL
+					&& $this->outputRepresentationFileLocation !== Constant::$NULL
 					&& file_exists(
-						filename: $this->outputRepresentationFile
+						filename: $this->outputRepresentationFileLocation
 					)
 				):
 				echo $this->processPublicXml(
-					xmlFile: $this->outputRepresentationFile
+					xmlFile: $this->outputRepresentationFileLocation
 				);
 				fclose(
 					stream: $this->tempStream
@@ -310,13 +318,13 @@ class DataEncode
 				break;
 			case (
 					$this->outputRepresentation === 'HTML'
-					&& $this->outputRepresentationFile !== Constant::$NULL
+					&& $this->outputRepresentationFileLocation !== Constant::$NULL
 					&& file_exists(
-						filename: $this->outputRepresentationFile
+						filename: $this->outputRepresentationFileLocation
 					)
 				):
 				echo $this->processPublicXml(
-					xmlFile: $this->outputRepresentationFile
+					xmlFile: $this->outputRepresentationFileLocation
 				);
 				fclose(
 					stream: $this->tempStream
@@ -324,14 +332,14 @@ class DataEncode
 				break;
 			case (
 					$this->outputRepresentation === 'PHP'
-					&& $this->outputRepresentationFile !== Constant::$NULL
+					&& $this->outputRepresentationFileLocation !== Constant::$NULL
 					&& file_exists(
-						filename: $this->outputRepresentationFile
+						filename: $this->outputRepresentationFileLocation
 					)
 				):
 				$finalArray = &$this->tempStream->finalArray;
-				include_once $this->outputRepresentationFile;
-				$this->tempStream = null;
+				include_once $this->outputRepresentationFileLocation;
+				$this->tempStream = Constant::$NULL;
 				break;
 			default:
 				rewind(
@@ -364,16 +372,16 @@ class DataEncode
 	{
 		$this->end();
 
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case (
 					$this->outputRepresentation === 'XSLT'
-					&& $this->outputRepresentationFile !== Constant::$NULL
+					&& $this->outputRepresentationFileLocation !== Constant::$NULL
 					&& file_exists(
-						filename: $this->outputRepresentationFile
+						filename: $this->outputRepresentationFileLocation
 					)
 				):
 				$streamContent = $this->processPublicXml(
-					xmlFile: $this->outputRepresentationFile
+					xmlFile: $this->outputRepresentationFileLocation
 				);
 				fclose(
 					stream: $this->tempStream
@@ -381,13 +389,13 @@ class DataEncode
 				break;
 			case (
 					$this->outputRepresentation === 'HTML'
-					&& $this->outputRepresentationFile !== Constant::$NULL
+					&& $this->outputRepresentationFileLocation !== Constant::$NULL
 					&& file_exists(
-						filename: $this->outputRepresentationFile
+						filename: $this->outputRepresentationFileLocation
 					)
 				):
 				$streamContent = $this->processPublicXml(
-					xmlFile: $this->outputRepresentationFile
+					xmlFile: $this->outputRepresentationFileLocation
 				);
 				fclose(
 					stream: $this->tempStream
@@ -395,16 +403,16 @@ class DataEncode
 				break;
 			case (
 					$this->outputRepresentation === 'PHP'
-					&& $this->outputRepresentationFile !== Constant::$NULL
+					&& $this->outputRepresentationFileLocation !== Constant::$NULL
 					&& file_exists(
-						filename: $this->outputRepresentationFile
+						filename: $this->outputRepresentationFileLocation
 					)
 				):
 				$finalArray = &$this->dataEncoderObject->finalArray;
 				@ob_clean();
-				include_once $this->outputRepresentationFile;
+				include_once $this->outputRepresentationFileLocation;
 				$streamContent = ob_get_clean();
-				$this->tempStream = null;
+				$this->tempStream = Constant::$NULL;
 				break;
 			default:
 				rewind(

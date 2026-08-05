@@ -15,6 +15,7 @@
 
 namespace Microservices\App;
 
+use Microservices\App\Constant;
 use Microservices\App\Export\ExportDatabaseServer;
 use Microservices\App\Http;
 use Microservices\App\HttpStatus;
@@ -134,7 +135,7 @@ class Export
 		$sql = 'SELECT 1;';
 
 		$toggleUseTmpFile = $this->useTmpFile;
-		$this->useTmpFile = false;
+		$this->useTmpFile = Constant::$FALSE;
 		[
 			$shellCommand,
 			$tmpFilename
@@ -247,7 +248,7 @@ class Export
 				arg: $tmpFilename
 			);
 		} else {
-			$tmpFilename = null;
+			$tmpFilename = Constant::$NULL;
 			$shellCommand .= ' 2>&1';
 		}
 
@@ -287,8 +288,8 @@ class Export
 				value: $exportFile
 			)
 		) {
-			$this->useTmpFile = true;
-			$this->unlink = false;
+			$this->useTmpFile = Constant::$TRUE;
+			$this->unlink = Constant::$FALSE;
 		}
 
 		if ($this->useTmpFile) {

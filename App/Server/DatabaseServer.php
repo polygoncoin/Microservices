@@ -172,7 +172,7 @@ class DatabaseServer
 	{
 		$this->connectDb();
 
-		$this->beganTransaction = true;
+		$this->beganTransaction = Constant::$TRUE;
         $this->dbServerObject->begin();
 	}
 
@@ -184,7 +184,7 @@ class DatabaseServer
 	public function commit(): void
 	{
 		if ($this->beganTransaction) {
-			$this->beganTransaction = false;
+			$this->beganTransaction = Constant::$FALSE;
 			$this->dbServerObject->commit();
 		}
 	}
@@ -197,7 +197,7 @@ class DatabaseServer
 	public function rollBack(): void
 	{
 		if ($this->beganTransaction) {
-			$this->beganTransaction = false;
+			$this->beganTransaction = Constant::$FALSE;
 			$this->dbServerObject->rollBack();
 		}
 	}
@@ -216,7 +216,7 @@ class DatabaseServer
 				$this->rollBack();
 			}
 		}
-		return false;
+		return Constant::$FALSE;
 
 	}
 
@@ -234,7 +234,7 @@ class DatabaseServer
 				$this->rollBack();
 			}
 		}
-		return false;
+		return Constant::$FALSE;
 	}
 
 	/**

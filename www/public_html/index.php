@@ -44,7 +44,7 @@ Env::init();
 // Process the request
 $httpReqData = [];
 
-$httpReqData['streamData'] = true;
+$httpReqData['streamData'] = Constant::$TRUE;
 $httpReqData['server']['domainName'] = $_SERVER['HTTP_HOST'];
 $httpReqData['server']['httpRequestMethod'] = $_SERVER['REQUEST_METHOD'];
 
@@ -85,7 +85,7 @@ $httpReqData['files'] = [];
 if (isset($_FILES)) {
 	$httpReqData['files'] = &$_FILES;
 }
-$httpReqData['isWebRequest'] = true;
+$httpReqData['isWebRequest'] = Constant::$TRUE;
 $httpReqData['httpRequestHash'] = httpRequestHash(
 	hashArray: [
 		$_SERVER['HTTP_ACCEPT_ENCODING'] ?? '',
@@ -134,7 +134,7 @@ if (
 		Reload::process(
 			httpRequestIp: $httpReqData['server']['httpRequestIp']
 		);
-		return false;
+		return Constant::$FALSE;
 	} else {
 		ob_start();
 		[

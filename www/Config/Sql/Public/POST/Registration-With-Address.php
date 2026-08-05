@@ -102,8 +102,9 @@ return [
 	'idempotentWindow' => 10,
 	'responseLagWindow' => 3600,
 	'responseLag' => [
-		// No of request => Seconds Lag
-		1 => 0,
-		// 2 => 10,
+		[
+			'requestCount' => 1,
+			'lagResponse' => 0
+		]
 	]
 ];

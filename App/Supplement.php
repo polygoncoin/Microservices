@@ -139,7 +139,7 @@ class Supplement
 			supplementOutputRepresentation: $outputRepresentation
 		);
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -171,7 +171,7 @@ class Supplement
 		);
 
 		$supplementPayloadType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-			keyString: null
+			keyString: Constant::$NULL
 		);
 
 		if ($supplementPayloadType === 'Array') {
@@ -193,7 +193,7 @@ class Supplement
 			? $this->httpObject->httpRequestObject->dataDecodeObject->count() : 1;
 
 		for ($index = 0; $index < $indexCount; $index++) {
-			$supplementPayloadKeyArray = null;
+			$supplementPayloadKeyArray = Constant::$NULL;
 
 			if ($supplementPayloadType === 'Array') {
 				$supplementPayloadKeyArray = [];
@@ -707,8 +707,8 @@ class Supplement
 		$sqlConfig,
 		$response
 	): bool {
-		$return = true;
-		// $isValidData = true;
+		$return = Constant::$TRUE;
+		// $isValidData = Constant::$TRUE;
 		// if (isset($sqlConfig['__VALIDATE__'])) {
 		// 	[$isValidData, $errorArray] = $this->validate(
 		// 		validationConfig: $sqlConfig['__VALIDATE__']
@@ -716,7 +716,7 @@ class Supplement
 		// 	if ($isValidData !== Constant::$TRUE) {
 		// 		$this->httpObject->httpResponseObject->httpStatus = HttpStatus::$BadRequest;
 		// 		$response['Error'] = $errorArray;
-		// 		$return = false;
+		// 		$return = Constant::$FALSE;
 		// 	}
 		// }
 		return $return;

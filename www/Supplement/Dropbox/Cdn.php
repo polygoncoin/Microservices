@@ -160,7 +160,7 @@ class Cdn implements DropboxInterface
 		// Get the $fileLocation file mime
 		$this->mimeType = mime_content_type($this->fileLocation);
 
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case in_array(
 				needle: $this->mimeType,
 				haystack: $this->supportedVideoMimeArray,

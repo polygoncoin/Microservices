@@ -178,7 +178,7 @@ class RouteParser
 					cidrString: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_dropbox_request_restricted_cidr']
 				);
 			}
-			$this->routeStartingWithReservedKeywordFlag = true;
+			$this->routeStartingWithReservedKeywordFlag = Constant::$TRUE;
 			$this->routeStartingReservedKeyword = Env::$dropboxRequestRoutePrefix;
 
 			$this->configuredRoute = '/' . implode(
@@ -205,7 +205,7 @@ class RouteParser
 				cidrString: $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_routes_request_restricted_cidr']
 			);
 
-			$this->routeStartingWithReservedKeywordFlag = true;
+			$this->routeStartingWithReservedKeywordFlag = Constant::$TRUE;
 			$this->routeStartingReservedKeyword = Env::$routesRequestRoute;
 
 			$this->configuredRoute = '/' . implode(
@@ -400,7 +400,7 @@ class RouteParser
 				strict: Constant::$TRUE
 			)
 		) {
-			$this->routeStartingWithReservedKeywordFlag = true;
+			$this->routeStartingWithReservedKeywordFlag = Constant::$TRUE;
 			$this->routeStartingReservedKeyword = $routeStartingKeyword;
 			if (
 				CommonFunction::isEnabled(
@@ -417,7 +417,7 @@ class RouteParser
 			}
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -430,7 +430,7 @@ class RouteParser
 	private function isEndingWithReservedRouteKeyword(
 		$routeEndingKeyword
 	): bool {
-		$return = false;
+		$return = Constant::$FALSE;
 
 		if (
 			CommonFunction::isEnabled(
@@ -439,9 +439,9 @@ class RouteParser
 			)
 			&& Env::$explainRequestRouteKeyword === $routeEndingKeyword
 		) {
-			$this->routeEndingWithReservedKeywordFlag = true;
+			$this->routeEndingWithReservedKeywordFlag = Constant::$TRUE;
 			$this->routeEndingReservedKeyword = Env::$explainRequestRouteKeyword;
-			$return = true;
+			$return = Constant::$TRUE;
 		} elseif (
 			CommonFunction::isEnabled(
 				httpObject: $this->httpObject,
@@ -449,9 +449,9 @@ class RouteParser
 			)
 			&& Env::$importRequestRouteKeyword === $routeEndingKeyword
 		) {
-			$this->routeEndingWithReservedKeywordFlag = true;
+			$this->routeEndingWithReservedKeywordFlag = Constant::$TRUE;
 			$this->routeEndingReservedKeyword = Env::$importRequestRouteKeyword;
-			$return = true;
+			$return = Constant::$TRUE;
 		} elseif (
 			CommonFunction::isEnabled(
 				httpObject: $this->httpObject,
@@ -459,9 +459,9 @@ class RouteParser
 			)
 			&& Env::$importSampleRequestRouteKeyword === $routeEndingKeyword
 		) {
-			$this->routeEndingWithReservedKeywordFlag = true;
+			$this->routeEndingWithReservedKeywordFlag = Constant::$TRUE;
 			$this->routeEndingReservedKeyword = Env::$importSampleRequestRouteKeyword;
-			$return = true;
+			$return = Constant::$TRUE;
 		}
 
 		return $return;
@@ -496,7 +496,7 @@ class RouteParser
 				needle: '{'
 			) !== 0
 		) {
-			return false;
+			return Constant::$FALSE;
 		}
 
 		$dynamicRoute = trim(
@@ -546,7 +546,7 @@ class RouteParser
 			);
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -644,10 +644,10 @@ class RouteParser
 		&$routeConfig,
 		&$element
 	): array {
-		$foundIntRoute = false;
-		$foundIntParamName = false;
-		$foundStringRoute = false;
-		$foundStringParamName = false;
+		$foundIntRoute = Constant::$FALSE;
+		$foundIntParamName = Constant::$FALSE;
+		$foundStringRoute = Constant::$FALSE;
+		$foundStringParamName = Constant::$FALSE;
 		foreach (
 			array_keys(
 				array: $routeConfig

@@ -88,7 +88,7 @@ class Read
 	 */
 	public function init(): bool
 	{
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -132,7 +132,7 @@ class Read
 		) {
 			$this->dataEncodeObject = new DataEncode(
 				httpObject: $this->httpObject,
-				outputRepresentationData: $outputRepresentation
+				outputRepresentation: $outputRepresentation
 			);
 			$this->dataEncodeObject->init(
 				header: Constant::$FALSE
@@ -174,7 +174,7 @@ class Read
 			);
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -203,10 +203,10 @@ class Read
 		);
 
 		$readPayloadType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-			keyString: null
+			keyString: Constant::$NULL
 		);
 
-		$startArray = false;
+		$startArray = Constant::$FALSE;
 		if ($readPayloadType === 'Array') {
 			if (
 				in_array(
@@ -215,7 +215,7 @@ class Read
 					strict: Constant::$TRUE
 				)
 			) {
-				$startArray = true;
+				$startArray = Constant::$TRUE;
 			}
 		}
 
@@ -230,7 +230,7 @@ class Read
 
 		// Start Read operation
 		for ($index = 0; $index < $indexCount; $index++) {
-			$readPayloadKeyArray = null;
+			$readPayloadKeyArray = Constant::$NULL;
 
 			if (isset($this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'])) {
 				$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArray'] = $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'];
@@ -445,8 +445,8 @@ class Read
 					break;
 				// Query will return multiple rows
 				case 'multipleRecordFormat':
-					$start = null;
-					$perPage = null;
+					$start = Constant::$NULL;
+					$perPage = Constant::$NULL;
 					if ($readParentIsFirstCall) {
 						if (isset($readParentSqlConfig['__COUNT-SQL__'])) {
 							$this->dataEncodeObject->startObject(
@@ -935,14 +935,14 @@ class Read
 			$sql .= " LIMIT {$start}, {$offset}";
 		}
 
-		$pushPop = true;
+		$pushPop = Constant::$TRUE;
 		$this->httpObject->httpRequestObject->customerDbObject->execQuery(
 			sql: $sql,
 			paramArray: $paramArray,
 			pushPop: $pushPop
 		);
 
-		$singleColumn = false;
+		$singleColumn = Constant::$FALSE;
 		for ($index = 0; $dbFetchedRecord = $this->httpObject->httpRequestObject->customerDbObject->fetch(); $index++) {
 			if ($index === 0) {
 				if (
@@ -950,7 +950,7 @@ class Read
 						value: $dbFetchedRecord
 					) === 1
 				) {
-					$singleColumn = true;
+					$singleColumn = Constant::$TRUE;
 				}
 				$singleColumn = $singleColumn
 					&& !isset($readSqlConfig['__SUB-CONFIG__']);
@@ -1013,7 +1013,7 @@ class Read
 		}
 
 		$readPayload = $this->httpObject->httpRequestObject->dataDecodeObject->getObject(
-			keyString: null
+			keyString: Constant::$NULL
 		);
 
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";

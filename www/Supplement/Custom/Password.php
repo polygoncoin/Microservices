@@ -65,7 +65,7 @@ class Password implements CustomInterface
 	{
 		$this->httpObject->httpRequestObject->loadPayload();
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Password implements CustomInterface
 	public function process(): mixed
 	{
 		$payloadType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-			keyString: null
+			keyString: Constant::$NULL
 		);
 
 		switch ($payloadType) {
@@ -143,6 +143,6 @@ class Password implements CustomInterface
 			);
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 }

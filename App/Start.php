@@ -163,7 +163,13 @@ class Start
 					httpObject: $Microservices->httpObject
 				);
 				
-				$payload = $Microservices->httpObject->httpRequestObject->dataDecodeObject->get();
+				$payload = [];
+				if (
+					isset($Microservices->httpObject->httpRequestObject)
+					&& isset($Microservices->httpObject->httpRequestObject->dataDecodeObject)
+				) {
+					$payload = $Microservices->httpObject->httpRequestObject->dataDecodeObject->get();
+				}
 				$logId = $logObject->log(
 					logData: $logData,
 					payload: $payload

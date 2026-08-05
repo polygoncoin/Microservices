@@ -32,8 +32,8 @@ $webResponse = Web::trigger(
 	)
 );
 
-$token = null;
-$sessionCookie = null;
+$token = Constant::$NULL;
+$sessionCookie = Constant::$NULL;
 
 if (isset($webResponse['HttpResponse']['Headers']['Set-Cookie'])) {
 	$sessionCookie = substr(

@@ -184,7 +184,7 @@ class Env
 
 		self::$appendSupplementFunctionWith = getenv(name: 'appendSupplementFunctionWith');
 
-		self::$initialized = true;
+		self::$initialized = Constant::$TRUE;
 	}
 
 	/**
@@ -209,7 +209,7 @@ class Env
 						strict: Constant::$TRUE
 					)
 				) {
-					return true;
+					return Constant::$TRUE;
 				} else {
 					throw new \Exception(
 						message: "Invalid Data Representation '{$dataRepresentation}'",
@@ -225,7 +225,7 @@ class Env
 						strict: Constant::$TRUE
 					)
 				) {
-					return true;
+					return Constant::$TRUE;
 				} else {
 					throw new \Exception(
 						message: "Invalid Data Representation '{$dataRepresentation}'",
@@ -234,6 +234,6 @@ class Env
 				}
 				break;
 		}
-		return false;
+		return Constant::$FALSE;
 	}
 }

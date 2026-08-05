@@ -89,7 +89,7 @@ class Write
 	 */
 	public function init(): bool
 	{
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Write
 			writeOutputRepresentation: $outputRepresentation
 		);
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -165,7 +165,7 @@ class Write
 		);
 
 		$writePayloadType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
-			keyString: null
+			keyString: Constant::$NULL
 		);
 
 		if ($writePayloadType === 'Array') {
@@ -187,7 +187,7 @@ class Write
 			? $this->httpObject->httpRequestObject->dataDecodeObject->count() : 1;
 
 		for ($index = 0; $index < $indexCount; $index++) {
-			$writePayloadKeyArray = null;
+			$writePayloadKeyArray = Constant::$NULL;
 
 			if ($writePayloadType === 'Array') {
 				$writePayloadKeyArray = [];
@@ -740,8 +740,8 @@ class Write
 		$sqlConfig,
 		&$response
 	): bool {
-		$return = true;
-		// $isValidData = true;
+		$return = Constant::$TRUE;
+		// $isValidData = Constant::$TRUE;
 		// if (isset($sqlConfig['__VALIDATE__'])) {
 		// 	[$isValidData, $errorArray] = $this->validate(
 		// 		validationConfig: $sqlConfig['__VALIDATE__']
@@ -749,7 +749,7 @@ class Write
 		// 	if ($isValidData !== Constant::$TRUE) {
 		// 		$this->httpObject->httpResponseObject->httpStatus = HttpStatus::$BadRequest;
 		// 		$response = $errorArray;
-		// 		$return = false;
+		// 		$return = Constant::$FALSE;
 		// 	}
 		// }
 		return $return;

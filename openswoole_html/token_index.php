@@ -80,7 +80,7 @@ $server->on(
 
 		$httpReqData = [];
 
-		$httpReqData['streamData'] = true;
+		$httpReqData['streamData'] = Constant::$TRUE;
 		$httpReqData['server']['domainName'] = $DOMAIN_NAME;
 		$httpReqData['server']['httpRequestMethod'] = $request->server['request_method'];
 

@@ -93,9 +93,10 @@ return [
 	'__CACHE-KEY__' => $this->httpObject->httpRequestObject->activeRequestData['customerData'][DatabaseTable::$customerPrimaryKey] . ':category',
 	'responseLagWindow' => 3600,
 	'responseLag' => [
-		// No of request => Seconds Lag
-		1 => 0,
-		// 2 => 10,
+		[
+			'requestCount' => 1,
+			'lagResponse' => 0
+		]
 	],
 	'__OUTPUT-REPRESENTATION-FILE__' => Constant::$XSLT_PUBLIC_DIRECTORY
 		. DIRECTORY_SEPARATOR . 'Category.xls'

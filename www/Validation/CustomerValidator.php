@@ -64,7 +64,7 @@ class CustomerValidator implements ValidatorInterface
 	public function validate(
 		&$validationConfig
 	): array {
-		$isValidData = true;
+		$isValidData = Constant::$TRUE;
 		$errorArray = [];
 		foreach ($validationConfig as &$v) {
 			$argArray = [];
@@ -83,7 +83,7 @@ class CustomerValidator implements ValidatorInterface
 			$function = $v['function'];
 			if (!$this->$function($argArray)) {
 				$errorArray[] = $v['errorMessage'];
-				$isValidData = false;
+				$isValidData = Constant::$FALSE;
 			}
 		}
 

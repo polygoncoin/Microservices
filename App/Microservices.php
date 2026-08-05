@@ -85,9 +85,9 @@ class Microservices
 	{
 		$this->httpObject->initRequest();
 
-		$class = null;
+		$class = Constant::$NULL;
 
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case $this->httpReqData['get'][ROUTE_URL_PARAM] === '/logout':
 				$class = __NAMESPACE__ . '\\Logout';
 				break;
@@ -103,7 +103,7 @@ class Microservices
 					httpObject: $this->httpObject
 				);
 				$gateway->init();
-				$gateway = null;
+				$gateway = Constant::$NULL;
 
 				$class = __NAMESPACE__ . '\\Api';
 				break;
@@ -141,7 +141,7 @@ class Microservices
 			);
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -166,7 +166,7 @@ class Microservices
 	public function returnResults(): bool|string
 	{
 		if ($this->httpObject->httpResponseObject === Constant::$NULL) {
-			return false;
+			return Constant::$FALSE;
 		}
 		return $this->httpObject->httpResponseObject->dataEncodeObject->getData();
 	}

@@ -107,7 +107,7 @@ trait AppTrait
 		}
 
 		// Check for hierarchy setting
-		$foundHierarchy = false;
+		$foundHierarchy = Constant::$FALSE;
 		if (isset($sqlConfig['__WHERE__'])) {
 			foreach ($sqlConfig['__WHERE__'] as $sqlParamConfig) {
 				$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
@@ -133,7 +133,7 @@ trait AppTrait
 						strict: Constant::$TRUE
 					)
 				) {
-					$foundHierarchy = true;
+					$foundHierarchy = Constant::$TRUE;
 					break;
 				}
 			}
@@ -250,7 +250,7 @@ trait AppTrait
 		&$payload,
 		$payloadKeyArray = null
 	): array {
-		$insertId = null;
+		$insertId = Constant::$NULL;
 		$sql = '';
 		/*!999999 comment goes here */
 		if (isset($sqlConfig['__SQL-COMMENT__'])) {
@@ -258,7 +258,7 @@ trait AppTrait
 			$sql .= $sqlConfig['__SQL-COMMENT__'];
 			$sql .= ' */';
 		}
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case isset($sqlConfig['__SQL__']):
 				$sql .= $sqlConfig['__SQL__'];
 				break;
@@ -431,7 +431,7 @@ trait AppTrait
 		&$payload,
 		$payloadKeyArray = null
 	): array {
-		$insertId = null;
+		$insertId = Constant::$NULL;
 		$sql = '';
 		/*!999999 comment goes here */
 		if (isset($sqlConfig['__SQL-COMMENT__'])) {
@@ -439,7 +439,7 @@ trait AppTrait
 			$sql .= $sqlConfig['__SQL-COMMENT__'];
 			$sql .= ' */';
 		}
-		switch (true) {
+		switch (Constant::$TRUE) {
 			case isset($sqlConfig['__SQL__']):
 				$sql .= $sqlConfig['__SQL__'];
 				break;
@@ -632,7 +632,7 @@ trait AppTrait
 					continue;
 				}
 				$value = $this->httpObject->httpRequestObject->activeRequestData[$activeRequestDataKey];
-				$break = false;
+				$break = Constant::$FALSE;
 				foreach (
 					explode(
 						separator: ':',
@@ -644,7 +644,7 @@ trait AppTrait
 						continue;
 					}
 					$errorArray[] = "Missing '{$activeRequestDataKey}' for '{$_activeRequestDataKeySubKey}'";
-					$break = true;
+					$break = Constant::$TRUE;
 					break;
 				}
 				if (!$break) {
@@ -743,12 +743,12 @@ trait AppTrait
 	private function isObject(
 		&$arr
 	): bool {
-		$isObject = false;
+		$isObject = Constant::$FALSE;
 
 		$index = 0;
 		foreach ($arr as $key => &$value) {
 			if ($key !== $index++) {
-				$isObject = true;
+				$isObject = Constant::$TRUE;
 				break;
 			}
 		}
@@ -770,9 +770,9 @@ trait AppTrait
 			isset($sqlConfig['__HIERARCHY__'])
 			&& $sqlConfig['__HIERARCHY__'] === Constant::$TRUE
 		) {
-			return true;
+			return Constant::$TRUE;
 		}
-		return false;
+		return Constant::$FALSE;
 	}
 
 	/**
@@ -852,7 +852,7 @@ trait AppTrait
 		}
 
 		// Check for hierarchy
-		$foundHierarchy = false;
+		$foundHierarchy = Constant::$FALSE;
 		if (isset($sqlConfig['__WHERE__'])) {
 			foreach ($sqlConfig['__WHERE__'] as $sqlParamConfig) {
 				$activeRequestDataKey = $sqlParamConfig['activeRequestDataKey'];
@@ -864,7 +864,7 @@ trait AppTrait
 						strict: Constant::$TRUE
 					)
 				) {
-					$foundHierarchy = true;
+					$foundHierarchy = Constant::$TRUE;
 					break;
 				}
 			}
@@ -1038,7 +1038,7 @@ trait AppTrait
 				isset($referrerLagData['initRoute'])
 				&& isset($referrerLagData['timestamp'])
 			) {
-				$found = false;
+				$found = Constant::$FALSE;
 				foreach ($sqlConfig['referrerLagWindow'] as $referrerSqlConfig) {
 					if ($referrerLagData['initRoute'] === $referrerSqlConfig['referrer']) {
 						$tsDiff = Env::$timestamp - $referrerSqlConfig['timestamp'];
@@ -1048,14 +1048,14 @@ trait AppTrait
 						) {
 							if (isset($referrerSqlConfig['maximumReferrerLagWindow'])) {
 								if ($tsDiff <= $referrerSqlConfig['maximumReferrerLagWindow']) {
-									$found = true;
+									$found = Constant::$TRUE;
 								} else {
 									$this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
 										cacheKey: $customerUserReferrerLagKey
 									);
 								}
 							} else {
-								$found = true;
+								$found = Constant::$TRUE;
 							}
 						} else {
 							$this->httpObject->httpRequestObject->customerCacheObject->cacheDelete(
@@ -1111,8 +1111,8 @@ trait AppTrait
 		$payloadKeyArray
 	): array {
 		$idempotentWindow = 0;
-		$hashKey = null;
-		$hashJson = null;
+		$hashKey = Constant::$NULL;
+		$hashJson = Constant::$NULL;
 		if (
 			isset($sqlConfig['idempotentWindow'])
 			&& is_numeric(
@@ -1217,11 +1217,11 @@ trait AppTrait
 				cacheKey: $hashKey
 			)
 		) {
-			$noOfRequest = $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
+			$currentNoOfRequest = $this->httpObject->httpRequestObject->customerCacheObject->cacheGet(
 				cacheKey: $hashKey
 			);
 		} else {
-			$noOfRequest = 0;
+			$currentNoOfRequest = 0;
 		}
 
 		$this->httpObject->httpRequestObject->customerCacheObject->cacheSet(
@@ -1230,23 +1230,23 @@ trait AppTrait
 			cacheExpire: $sqlConfig['responseLagWindow']
 		);
 
-		$lag = 0;
-		$responseLag = &$sqlConfig['responseLag'];
+		$lagResponse = 0;
+		$responseLagArray = &$sqlConfig['responseLag'];
 		if (
 			is_array(
-				value: $responseLag
+				value: $responseLagArray
 			)
 		) {
-			foreach ($responseLag as $start => $newLag) {
-				if ($noOfRequest > $start) {
-					$lag = $newLag;
+			foreach ($responseLagArray as $responseLag) {
+				if ($currentNoOfRequest > $responseLag['requestCount']) {
+					$lagResponse = $responseLag['lagResponse'];
 				}
 			}
 		}
 
-		if ($lag > 0) {
+		if ($lagResponse > 0) {
 			sleep(
-				seconds: $lag
+				seconds: $lagResponse
 			);
 		}
 	}
@@ -1281,7 +1281,7 @@ trait AppTrait
 			) === 1
 		) {
 			$triggerConfig = $triggerConfig[0];
-			$isObject = true;
+			$isObject = Constant::$TRUE;
 		}
 
 		$triggerOutput = [];
@@ -1379,7 +1379,7 @@ trait AppTrait
 			}
 		}
 
-		$httpReqData['streamData'] = false;
+		$httpReqData['streamData'] = Constant::$FALSE;
 		$httpReqData['server']['domainName'] = $this->httpObject->httpReqData['server']['domainName'];
 		$httpReqData['server']['httpRequestMethod'] = $httpRequestMethod;
 		$httpReqData['server']['httpRequestIp'] = $this->httpObject->httpReqData['server']['httpRequestIp'];
@@ -1389,7 +1389,7 @@ trait AppTrait
 		);
 		$httpReqData['get'] = $queryStringArray;
 		$httpReqData['get'][ROUTE_URL_PARAM] = $route;
-		$httpReqData['isWebRequest'] = false;
+		$httpReqData['isWebRequest'] = Constant::$FALSE;
 
 		return $httpReqData;
 	}
@@ -1412,7 +1412,7 @@ trait AppTrait
 
 		// Collect param values as per config respectively
 		foreach ($payloadConfig as &$payloadParamConfig) {
-			$column = $payloadParamConfig['column'] ?? null;
+			$column = $payloadParamConfig['column'] ?? Constant::$NULL;
 
 			$activeRequestDataKey = $payloadParamConfig['activeRequestDataKey'];
 			$activeRequestDataKeySubKey = $payloadParamConfig['activeRequestDataKeySubKey'];
@@ -1630,7 +1630,7 @@ trait AppTrait
 			);
 		}
 
-		return false;
+		return Constant::$FALSE;
 	}
 
 	/**
@@ -1692,7 +1692,7 @@ trait AppTrait
 			);
 		}
 
-		return false;
+		return Constant::$FALSE;
 	}
 
 	/**
@@ -1705,7 +1705,7 @@ trait AppTrait
 	private function getToBeCached(
 		$sqlConfig
 	): bool {
-		$toBeCached = false;
+		$toBeCached = Constant::$FALSE;
 		if (
 			CommonFunction::isEnabled(
 				httpObject: $this->httpObject,
@@ -1715,7 +1715,7 @@ trait AppTrait
 			&& !isset($this->httpObject->httpRequestObject->activeRequestData['queryParamArray']['orderBy'])
 		) {
 			$cacheReqCount = 0;
-			$queryCacheReqFlag = false;
+			$queryCacheReqFlag = Constant::$FALSE;
 			for ($index = 0;$index < 5; $index++) {
 				$json = $this->httpObject->httpRequestObject->customerQueryCacheObject->queryCacheGet(
 					customerId: $this->httpObject->httpRequestObject->customerId,
@@ -1730,7 +1730,7 @@ trait AppTrait
 					$this->httpObject->httpResponseObject->dataEncodeObject->appendData(
 						data: $json
 					);
-					return true;
+					return Constant::$TRUE;
 				} else {
 					if (!$queryCacheReqFlag) {
 						$cacheReqCount = $this->httpObject->httpRequestObject->customerQueryCacheObject->queryCacheIncrement(
@@ -1738,10 +1738,10 @@ trait AppTrait
 							queryCacheKey: $sqlConfig['__CACHE-KEY__']
 						);
 						if ($cacheReqCount === 1) {
-							$toBeCached = true;
+							$toBeCached = Constant::$TRUE;
 							break;
 						} else {
-							$queryCacheReqFlag = true;
+							$queryCacheReqFlag = Constant::$TRUE;
 						}
 					}
 					if ($queryCacheReqFlag) {
@@ -1792,7 +1792,7 @@ trait AppTrait
 		);
 		$this->dataEncodeObject->endObject();
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -1818,6 +1818,6 @@ trait AppTrait
 				array: $payloadKeyArray
 			),
 			characters: ':'
-		) : null;
+		) : Constant::$NULL;
 	}
 }

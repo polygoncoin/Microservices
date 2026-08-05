@@ -226,9 +226,9 @@ class HttpRequest
 
 		DbCommonFunction::connectGlobalCache();
 
-		$this->isPublicDomain = false;
-		$this->isPrivateSessionDomain = false;
-		$this->isPrivateTokenDomain = false;
+		$this->isPublicDomain = Constant::$FALSE;
+		$this->isPrivateSessionDomain = Constant::$FALSE;
+		$this->isPrivateTokenDomain = Constant::$FALSE;
 
 		$publicDomainCacheKey = CacheServerKey::publicDomain(
 			domainName: $this->httpObject->httpReqData['server']['domainName']
@@ -238,10 +238,10 @@ class HttpRequest
 				cacheKey: $publicDomainCacheKey
 			)
 		) {
-			$this->isPublicDomain = true;
+			$this->isPublicDomain = Constant::$TRUE;
 			$this->domainCacheKey = $publicDomainCacheKey;
-			$this->isPrivateRequest = false;
-			$this->isPublicRequest = true;
+			$this->isPrivateRequest = Constant::$FALSE;
+			$this->isPublicRequest = Constant::$TRUE;
 		}
 		if (!$this->isPublicDomain) {
 			$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(
@@ -252,10 +252,10 @@ class HttpRequest
 					cacheKey: $privateSessionDomainCacheKey
 				)
 			) {
-				$this->isPrivateSessionDomain = true;
+				$this->isPrivateSessionDomain = Constant::$TRUE;
 				$this->domainCacheKey = $privateSessionDomainCacheKey;
-				$this->isPrivateRequest = true;
-				$this->isPublicRequest = false;
+				$this->isPrivateRequest = Constant::$TRUE;
+				$this->isPublicRequest = Constant::$FALSE;
 			}
 		}
 		if (
@@ -270,10 +270,10 @@ class HttpRequest
 					cacheKey: $privateTokenDomainCacheKey
 				)
 			) {
-				$this->isPrivateTokenDomain = true;
+				$this->isPrivateTokenDomain = Constant::$TRUE;
 				$this->domainCacheKey = $privateTokenDomainCacheKey;
-				$this->isPrivateRequest = true;
-				$this->isPublicRequest = false;
+				$this->isPrivateRequest = Constant::$TRUE;
+				$this->isPublicRequest = Constant::$FALSE;
 			}
 		}
 	}
@@ -390,7 +390,7 @@ class HttpRequest
 			$this->routeParserObject->parseRoute();
 		}
 
-		return true;
+		return Constant::$TRUE;
 	}
 
 	/**
@@ -439,7 +439,7 @@ class HttpRequest
 			case Constant::$PUT:
 			case Constant::$PATCH:
 			case Constant::$DELETE:
-				switch (true) {
+				switch (Constant::$TRUE) {
 					case (
 						$this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
 						&& $this->routeParserObject->routeEndingWithReservedKeywordFlag
@@ -536,7 +536,7 @@ class HttpRequest
 	public function getUploadedFileMd5Data(
 		$uploadedFileMd5
 	): mixed {
-		$uploadedFileMd5Data = false;
+		$uploadedFileMd5Data = Constant::$FALSE;
 
 		$sql = "SELECT
 				 *
@@ -887,8 +887,8 @@ class HttpRequest
 		);
 		$dataEncodeObject->startObject();
 
-		$csvHeaderData = false;
-		$counter = null;
+		$csvHeaderData = Constant::$FALSE;
+		$counter = Constant::$NULL;
 		$currentModeArray = [];
 
 		$fp = fopen($csvFile, "r");
@@ -1012,7 +1012,7 @@ class HttpRequest
 		}
 		$dataEncodeObject->endObject();
 		$json = $dataEncodeObject->getData();
-		$dataEncodeObject = null;
+		$dataEncodeObject = Constant::$NULL;
 		$json = substr(
 			string: $json,
 			offset: 7,
