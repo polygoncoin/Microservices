@@ -74,7 +74,10 @@ return [
 			// Fetch value from function
 			'column' => 'password',
 			'activeRequestDataKey' => 'function',                       // function
-			'activeRequestDataKeySubKey' => function($activeRequestData, $payload) {        // execute a function and return value
+			'activeRequestDataKeySubKey' => function(
+				$activeRequestData,
+				$payload
+			) {        // execute a function and return value
 				return 'value';
 			}
 		],

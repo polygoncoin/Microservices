@@ -702,7 +702,12 @@ class Read
 		$start = ($page - 1) * $perPage;
 
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		[$id, $sql, $paramArray, $errorArray] = $this->$function(
+		[
+			$id,
+			$sql,
+			$paramArray,
+			$errorArray
+		] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payload: $readPayload
 		);
@@ -768,7 +773,12 @@ class Read
 		$readIsFirstCall
 	): void {
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		[$id, $sql, $paramArray, $errorArray] = $this->$function(
+		[
+			$id,
+			$sql,
+			$paramArray,
+			$errorArray
+		] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payload: $readPayload,
 			payloadKeyArray: $readPayloadKeyArray
@@ -863,7 +873,12 @@ class Read
 			httpReqData: $this->httpObject->httpReqData
 		);
 
-		[$id, $sql, $paramArray, $errorArray] = $this->$function(
+		[
+			$id,
+			$sql,
+			$paramArray,
+			$errorArray
+		] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payload: $readPayload,
 			payloadKeyArray: $readPayloadKeyArray
@@ -1002,7 +1017,12 @@ class Read
 		);
 
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		[$id, $sql, $paramArray, $errorArray] = $this->$function(
+		[
+			$id,
+			$sql,
+			$paramArray,
+			$errorArray
+		] = $this->$function(
 			sqlConfig: $readSqlConfig,
 			payload: $readPayload
 		);

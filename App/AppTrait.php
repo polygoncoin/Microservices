@@ -222,8 +222,9 @@ trait AppTrait
 	 * 
 	 * @return array
 	 */
-	public function validate(&$validationConfig): array
-	{
+	public function validate(
+		&$validationConfig
+	): array {
 		if ($this->validatorObject === Constant::$NULL) {
 			$this->validatorObject = new Validator(
 				httpObject: $this->httpObject
@@ -278,7 +279,10 @@ trait AppTrait
 				value: $sqlConfig['__SET__']
 			) !== 0
 		) {
-			[$setParamArray, $errorArray] = $this->getSqlParam(
+			[
+				$setParamArray,
+				$errorArray
+			] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
 				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
 				payload: $payload
@@ -332,7 +336,10 @@ trait AppTrait
 			) !== 0
 		) {
 			$wErrorArray = [];
-			[$whereParamArray, $wErrorArray] = $this->getSqlParam(
+			[
+				$whereParamArray,
+				$wErrorArray
+			] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
 				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
 				payload: $payload
@@ -378,7 +385,10 @@ trait AppTrait
 					}
 				}
 			} else {
-				$errorArray = array_merge($errorArray, $wErrorArray);
+				$errorArray = array_merge(
+					$errorArray,
+					$wErrorArray
+				);
 			}
 		}
 		if (!empty($__SET__)) {
@@ -399,7 +409,12 @@ trait AppTrait
 			);
 		}
 
-		return [$insertId, $sql, $paramArray, $errorArray];
+		return [
+			$insertId,
+			$sql,
+			$paramArray,
+			$errorArray
+		];
 	}
 
 	/**
@@ -445,7 +460,10 @@ trait AppTrait
 				value: $sqlConfig['__SET__']
 			) !== 0
 		) {
-			[$setParamArray, $errorArray] = $this->getSqlParam(
+			[
+				$setParamArray,
+				$errorArray
+			] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__SET__'],
 				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
 				payload: $payload
@@ -494,7 +512,10 @@ trait AppTrait
 			) !== 0
 		) {
 			$wErrorArray = [];
-			[$whereParamArray, $wErrorArray] = $this->getSqlParam(
+			[
+				$whereParamArray,
+				$wErrorArray
+			] = $this->getSqlParam(
 				sqlConfig: $sqlConfig['__WHERE__'],
 				sqlConfigVariables: $sqlConfig['__VARIABLE__'] ?? [],
 				payload: $payload
@@ -536,7 +557,10 @@ trait AppTrait
 					}
 				}
 			} else {
-				$errorArray = array_merge($errorArray, $wErrorArray);
+				$errorArray = array_merge(
+					$errorArray,
+					$wErrorArray
+				);
 			}
 		}
 		if (!empty($__SET__)) {
@@ -557,7 +581,12 @@ trait AppTrait
 			);
 		}
 
-		return [$insertId, $sql, $paramArray, $errorArray];
+		return [
+			$insertId,
+			$sql,
+			$paramArray,
+			$errorArray
+		];
 	}
 
 	/**
@@ -585,7 +614,10 @@ trait AppTrait
 			$activeRequestDataKeySubKey = $sqlParamConfig['activeRequestDataKeySubKey'];
 			if ($activeRequestDataKey === 'function') {
 				$function = $activeRequestDataKeySubKey;
-				$value = $function($this->httpObject->httpRequestObject->activeRequestData, $payload);
+				$value = $function(
+					$this->httpObject->httpRequestObject->activeRequestData,
+					$payload
+				);
 				$paramArray[$column] = $value;
 				continue;
 			} elseif (
@@ -695,7 +727,10 @@ trait AppTrait
 			}
 		}
 
-		return [$paramArray, $errorArray];
+		return [
+			$paramArray,
+			$errorArray
+		];
 	}
 
 	/**
@@ -705,8 +740,9 @@ trait AppTrait
 	 * 
 	 * @return bool
 	 */
-	private function isObject($arr): bool
-	{
+	private function isObject(
+		&$arr
+	): bool {
 		$isObject = false;
 
 		$index = 0;
@@ -917,8 +953,9 @@ trait AppTrait
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function rateLimitRoute(&$sqlConfig): void
-	{
+	private function rateLimitRoute(
+		&$sqlConfig
+	): void {
 		if (
 			$this->httpObject->httpRequestObject->isPublicRequest
 			|| !CommonFunction::isEnabled(
@@ -967,8 +1004,9 @@ trait AppTrait
 	 * @return void
 	 * @throws \Exception
 	 */
-	private function checkReferrerLag(&$sqlConfig): void
-	{
+	private function checkReferrerLag(
+		&$sqlConfig
+	): void {
 		$customerUserId = 0;
 		if (isset($this->httpObject->httpRequestObject->customerUserId)) {
 			$customerUserId = $this->httpObject->httpRequestObject->customerUserId;
@@ -1130,7 +1168,11 @@ trait AppTrait
 			}
 		}
 
-		return [$idempotentWindow, $hashKey, $hashJson];
+		return [
+			$idempotentWindow,
+			$hashKey,
+			$hashJson
+		];
 	}
 
 	/**
@@ -1140,8 +1182,9 @@ trait AppTrait
 	 * 
 	 * @return void
 	 */
-	private function lagResponse($sqlConfig): void
-	{
+	private function lagResponse(
+		&$sqlConfig
+	): void {
 		if (
 			$this->httpObject->httpRequestObject->isPublicRequest
 			|| !isset($sqlConfig['responseLag'])
@@ -1247,7 +1290,11 @@ trait AppTrait
 				triggerConfig: $triggerConfig,
 				payload: $payload
 			);
-			[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
+			[
+				$responseHeaderArray,
+				$responseContent,
+				$responseCode
+			] = Start::http(
 				httpReqData: $httpReqData
 			);
 			$triggerOutput = &$responseContent;
@@ -1260,7 +1307,11 @@ trait AppTrait
 					triggerConfig: $triggerConfig[$iTrigger],
 					payload: $payload
 				);
-				[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
+				[
+					$responseHeaderArray,
+					$responseContent,
+					$responseCode
+				] = Start::http(
 					httpReqData: $httpReqData
 				);
 				$triggerOutput[] = &$responseContent;
@@ -1283,7 +1334,10 @@ trait AppTrait
 		&$payload
 	): mixed {
 		$httpRequestMethod = $triggerConfig['__METHOD__'];
-		[$routeElementArrayArray, $errorArray] = $this->getTriggerParam(
+		[
+			$routeElementArrayArray,
+			$errorArray
+		] = $this->getTriggerParam(
 			payloadConfig: $triggerConfig['__ROUTE__'],
 			payload: $payload
 		);
@@ -1300,7 +1354,10 @@ trait AppTrait
 		$payload = [];
 
 		if (isset($triggerConfig['__QUERY-STRING__'])) {
-			[$queryStringArray, $errorArray] = $this->getTriggerParam(
+			[
+				$queryStringArray,
+				$errorArray
+			] = $this->getTriggerParam(
 				payloadConfig: $triggerConfig['__QUERY-STRING__'],
 				payload: $payload
 			);
@@ -1310,7 +1367,10 @@ trait AppTrait
 			}
 		}
 		if (isset($triggerConfig['__PAYLOAD__'])) {
-			[$payloadArray, $errorArray] = $this->getTriggerParam(
+			[
+				$payloadArray,
+				$errorArray
+			] = $this->getTriggerParam(
 				payloadConfig: $triggerConfig['__PAYLOAD__'],
 				payload: $payload
 			);
@@ -1358,7 +1418,10 @@ trait AppTrait
 			$activeRequestDataKeySubKey = $payloadParamConfig['activeRequestDataKeySubKey'];
 			if ($activeRequestDataKey === 'function') {
 				$function = $activeRequestDataKeySubKey;
-				$value = $function($this->httpObject->httpRequestObject->activeRequestData, $payload);
+				$value = $function(
+					$this->httpObject->httpRequestObject->activeRequestData,
+					$payload
+				);
 				if ($column === Constant::$NULL) {
 					$triggerParamArray[] = $value;
 				} else {
@@ -1413,7 +1476,10 @@ trait AppTrait
 			}
 		}
 
-		return [$triggerParamArray, $triggerErrorArray];
+		return [
+			$triggerParamArray,
+			$triggerErrorArray
+		];
 	}
 
 	/**
@@ -1481,7 +1547,11 @@ trait AppTrait
 		$headerArray['Pragma'] = 'no-cache';
 		$headerArray['Expires'] = '0';
 
-		return [$headerArray, $csv, HttpStatus::$Ok];
+		return [
+			$headerArray,
+			$csv,
+			HttpStatus::$Ok
+		];
 	}
 
 	/**

@@ -110,7 +110,10 @@ class StreamVideo
 			separator: '=',
 			string: $this->httpReqData['header']['range']
 		)[1];
-		list($this->streamFrom, $this->streamTill) = explode(
+		[
+			$this->streamFrom,
+			$this->streamTill
+		] = explode(
 			separator: '-',
 			string: $range
 		);
@@ -197,7 +200,10 @@ class StreamVideo
 			if ($safariBrowser) {
 				$this->streamTill = $this->size - 1;
 				$headerArray['Content-Length'] = $this->size;
-				return [$headerArray, $status];
+				return [
+					$headerArray,
+					$status
+				];
 			} else {
 				$chunkSize = $this->size > $this->chunkSize
 					? $this->chunkSize : $this->size;
@@ -217,7 +223,10 @@ class StreamVideo
 		$headerArray['Content-Range'] = 'bytes ' . $this->streamFrom . '-'
 			. $this->streamTill . '/' . $this->size;
 
-		return [$headerArray, $status];
+		return [
+			$headerArray,
+			$status
+		];
 	}
 
 	/**
@@ -227,7 +236,10 @@ class StreamVideo
 	 */
 	public function serveContent(): array
 	{
-		[$headerArray, $status] = $this->setHeaders();
+		[
+			$headerArray,
+			$status
+		] = $this->setHeaders();
 
 		$totalBytes = $this->streamTill - $this->streamFrom + 1;
 		$data = file_get_contents(
@@ -238,6 +250,10 @@ class StreamVideo
 			length: $totalBytes
 		);
 
-		return [$headerArray, $data, $status];
+		return [
+			$headerArray,
+			$data,
+			$status
+		];
 	}
 }

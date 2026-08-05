@@ -931,7 +931,10 @@ class HttpRequest
 				continue;
 			}
 
-			[$currentModeArray, $csvFieldRecordArray] = $this->formatCsvArray(
+			[
+				$currentModeArray,
+				$csvFieldRecordArray
+			] = $this->formatCsvArray(
 				csvHeaderData: $csvHeaderData,
 				csvRecordArray: $csvRecordArray
 			);
@@ -1059,6 +1062,9 @@ class HttpRequest
 			}
 			$csvFieldRecordArray[$field] = $csvRecordArray[$column];
 		}
-		return [$currentModeArray, $csvFieldRecordArray];
+		return [
+			$currentModeArray,
+			$csvFieldRecordArray
+		];
 	}
 }

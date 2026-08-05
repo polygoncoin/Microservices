@@ -48,7 +48,10 @@ return array_merge(
 			[
 				'column' => 'password_hash',
 				'activeRequestDataKey' => 'function',
-				'activeRequestDataKeySubKey' => function($activeRequestData, $payload) {
+				'activeRequestDataKeySubKey' => function(
+					$activeRequestData,
+					$payload
+				) {
 					if (isset($payload['password'])) {
 						return password_hash(
 							password: $payload['password'],

@@ -87,10 +87,18 @@ class Validator
 			) > 0
 		) {
 			if (
-				([$isValidData, $errorArray] = $this->validateRequired())
+				(
+					[
+						$isValidData,
+						$errorArray
+					] = $this->validateRequired()
+				)
 				&& !$isValidData
 			) {
-				return [$isValidData, $errorArray];
+				return [
+					$isValidData,
+					$errorArray
+				];
 			}
 		}
 
@@ -124,6 +132,9 @@ class Validator
 			}
 		}
 
-		return [$isValidData, $errorArray];
+		return [
+			$isValidData,
+			$errorArray
+		];
 	}
 }

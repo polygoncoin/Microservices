@@ -135,7 +135,10 @@ class Export
 
 		$toggleUseTmpFile = $this->useTmpFile;
 		$this->useTmpFile = false;
-		[$shellCommand, $tmpFilename] = $this->getShellCommand(
+		[
+			$shellCommand,
+			$tmpFilename
+		] = $this->getShellCommand(
 			sql: $sql
 		);
 		$this->useTmpFile = $toggleUseTmpFile;
@@ -248,7 +251,10 @@ class Export
 			$shellCommand .= ' 2>&1';
 		}
 
-		return [$shellCommand, $tmpFilename];
+		return [
+			$shellCommand,
+			$tmpFilename
+		];
 	}
 
 	/**
@@ -267,7 +273,10 @@ class Export
 		$paramArray = [],
 		$exportFile = null
 	): array {
-		[$shellCommand, $tmpFilename] = $this->getShellCommand(
+		[
+			$shellCommand,
+			$tmpFilename
+		] = $this->getShellCommand(
 			sql: $sql,
 			paramArray: $paramArray,
 			exportFile: $exportFile
@@ -303,7 +312,11 @@ class Export
 			$data = shell_exec(
 				command: $shellCommand
 			);
-			$return = [$headerArray, $data, HttpStatus::$Ok];
+			$return = [
+				$headerArray,
+				$data,
+				HttpStatus::$Ok
+			];
 		}
 
 		return $return;
@@ -323,7 +336,10 @@ class Export
 		$paramArray = [],
 		$exportFile = null
 	): array {
-		[$shellCommand, $tmpFilename] = $this->getShellCommand(
+		[
+			$shellCommand,
+			$tmpFilename
+		] = $this->getShellCommand(
 			sql: $sql,
 			paramArray: $paramArray,
 			exportFile: $exportFile
@@ -335,7 +351,11 @@ class Export
 			command: $shellCommand
 		);
 
-		return [$headerArray = [], $data = '', HttpStatus::$Ok];
+		return [
+			$headerArray = [],
+			$data = '',
+			HttpStatus::$Ok
+		];
 	}
 
 	/**
@@ -394,6 +414,10 @@ class Export
 			//handle error via logs.
 		}
 
-		return [$headerArray, $data, HttpStatus::$Ok];
+		return [
+			$headerArray,
+			$data,
+			HttpStatus::$Ok
+		];
 	}
 }

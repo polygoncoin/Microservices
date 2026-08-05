@@ -248,8 +248,9 @@ class DataEncode
 	 * 
 	 * @return void
 	 */
-	public function appendData(&$data): void
-	{
+	public function appendData(
+		&$data
+	): void {
 		$this->dataEncoderObject->appendData(
 			data: $data
 		);

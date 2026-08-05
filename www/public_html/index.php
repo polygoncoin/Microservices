@@ -137,7 +137,11 @@ if (
 		return false;
 	} else {
 		ob_start();
-		[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
+		[
+			$responseHeaderArray,
+			$responseContent,
+			$responseCode
+		] = Start::http(
 			httpReqData: $httpReqData
 		);
 		@ob_clean();
@@ -185,7 +189,10 @@ function getHttpRequestIp() {
 	elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
 		// HTTP_X_FORWARDED_FOR can contain a comma-separated list of IPs
 		// The first one is typically the original customer IP
-		$ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+		$ipList = explode(
+			',',
+			$_SERVER['HTTP_X_FORWARDED_FOR']
+		);
 		$ip = trim($ipList[0]);
 	}
 	// Default method: get the remote address directly

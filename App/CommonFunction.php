@@ -178,7 +178,10 @@ class CommonFunction
 					needle: '/'
 				)
 			) {
-				[$cidrIp, $bits] = explode(
+				[
+					$cidrIp,
+					$bits
+				] = explode(
 					separator: '/',
 					string: str_replace(
 						search: ' ',

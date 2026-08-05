@@ -68,7 +68,12 @@ class CustomerValidator implements ValidatorInterface
 		$errorArray = [];
 		foreach ($validationConfig as &$v) {
 			$argArray = [];
-			foreach ($v['functionArgs'] as $argName => [$activeRequestDataKey, $activeRequestDataKeySubKey]) {
+			foreach (
+				$v['functionArgs'] as $argName => [
+					$activeRequestDataKey,
+					$activeRequestDataKeySubKey
+				]
+			) {
 				if ($activeRequestDataKey === 'custom') {
 					$argArray[$argName] = $activeRequestDataKeySubKey;
 				} else {
@@ -82,7 +87,10 @@ class CustomerValidator implements ValidatorInterface
 			}
 		}
 
-		return [$isValidData, $errorArray];
+		return [
+			$isValidData,
+			$errorArray
+		];
 	}
 
 	/**

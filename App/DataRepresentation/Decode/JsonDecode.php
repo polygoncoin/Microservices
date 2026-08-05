@@ -178,8 +178,9 @@ class JsonDecode implements DataDecodeInterface
 	 * 
 	 * @return bool
 	 */
-	public function isset($keyString = null): bool
-	{
+	public function isset(
+		$keyString = null
+	): bool {
 		$return = true;
 		if (
 			($keyString !== Constant::$NULL)

@@ -195,7 +195,11 @@ class Write
 			}
 
 			// For Idempotent Window
-			[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
+			[
+				$idempotentWindow,
+				$hashKey,
+				$hashJson
+			] = $this->checkIdempotent(
 				sqlConfig: $writeSqlConfig,
 				payloadKeyArray: $writePayloadKeyArray
 			);
@@ -458,7 +462,12 @@ class Write
 			}
 
 			// Set Sql and ParamArray
-			[$insertId, $sql, $paramArray, $errorArray] = $this->$function(
+			[
+				$insertId,
+				$sql,
+				$paramArray,
+				$errorArray
+			] = $this->$function(
 				sqlConfig: $writeParentSqlConfig,
 				payload: $writeParentPayload
 			);

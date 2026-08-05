@@ -163,7 +163,11 @@ $server->on(
 				$response->end();
 			} else {
 				ob_start();
-				[$responseHeaderArray, $responseContent, $responseCode] = Start::http(
+				[
+					$responseHeaderArray,
+					$responseContent,
+					$responseCode
+				] = Start::http(
 					httpReqData: $httpReqData
 				);
 				@ob_clean();

@@ -503,7 +503,10 @@ class RouteParser
 			string: $routeElement,
 			characters: '{}'
 		);
-		[$paramName, $paramDataType] = explode(
+		[
+			$paramName,
+			$paramDataType
+		] = explode(
 			separator: ':',
 			string: $dynamicRoute
 		);

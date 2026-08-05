@@ -201,7 +201,11 @@ class Supplement
 			}
 
 			// For Idempotent Window
-			[$idempotentWindow, $hashKey, $hashJson] = $this->checkIdempotent(
+			[
+				$idempotentWindow,
+				$hashKey,
+				$hashJson
+			] = $this->checkIdempotent(
 				sqlConfig: $supplementSqlConfig,
 				payloadKeyArray: $supplementPayloadKeyArray
 			);
