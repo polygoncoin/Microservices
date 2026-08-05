@@ -27,7 +27,9 @@ $webResponse = Web::trigger(
 	httpRequestMethod: Constant::$POST,
 	route: '/login',
 	header: $headerArray,
-	payload: json_encode(value: $payload)
+	payload: json_encode(
+		value: $payload
+	)
 );
 
 $token = null;

@@ -55,6 +55,8 @@ if (isset($proceed)) {
 		httpRequestMethod: Constant::$POST,
 		route: '/registration-with-address',
 		header: $headerArray,
-		payload: json_encode(value: $paramArray)
+		payload: json_encode(
+			value: $paramArray
+		)
 	);
 }

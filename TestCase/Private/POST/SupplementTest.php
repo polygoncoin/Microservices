@@ -79,6 +79,8 @@ if (isset($proceed)) {
 		httpRequestMethod: Constant::$POST,
 		route: '/custom/SupplementTest',
 		header: $headerArray,
-		payload: json_encode(value: $paramArray)
+		payload: json_encode(
+			value: $paramArray
+		)
 	);
 }

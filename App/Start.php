@@ -151,7 +151,8 @@ class Start
 				$logObject = new Log(
 					httpObject: $Microservices->httpObject
 				);
-				$payload = [];
+				
+				$payload = $this->httpObject->httpRequestObject->dataDecodeObject->get();
 				$logId = $logObject->log(
 					logData: $logData,
 					payload: $payload
