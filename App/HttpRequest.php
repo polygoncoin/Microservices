@@ -1050,7 +1050,10 @@ class HttpRequest
 		if (!isset($csvHeaderData['__column__'])) {
 			throw new \Exception(
 				message: json_encode(
-					value: [$currentModeArray,$csvHeaderData]
+					value: [
+						$currentModeArray,
+						$csvHeaderData
+					]
 				),
 				code: HttpStatus::$BadRequest
 			);
