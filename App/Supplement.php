@@ -113,11 +113,6 @@ class Supplement
 		$operateAsTransaction = isset($sqlConfig['__TRANSACTION__'])
 			? $sqlConfig['__TRANSACTION__'] : Constant::$FALSE;
 
-		$outputRepresentation = CommonFunction::getOutputRepresentation(
-			sqlConfig: $sqlConfig,
-			httpReqData: $this->httpObject->httpReqData
-		);
-
 		if ($return !== Constant::$FALSE) {
 			return $return;
 		}
@@ -135,8 +130,7 @@ class Supplement
 		$this->supplement(
 			supplementSqlConfig: $sqlConfig,
 			supplementMaintainHierarchy: $maintainHierarchy,
-			supplementOperateAsTransaction: $operateAsTransaction,
-			supplementOutputRepresentation: $outputRepresentation
+			supplementOperateAsTransaction: $operateAsTransaction
 		);
 
 		return Constant::$TRUE;
@@ -148,7 +142,6 @@ class Supplement
 	 * @param array $supplementSqlConfig            Sql config
 	 * @param bool  $supplementMaintainHierarchy    If true - Uses parent payload/results in child
 	 * @param bool  $supplementOperateAsTransaction If true - Operates as transaction
-	 * @param bool  $supplementOutputRepresentation Output Representation
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -156,9 +149,13 @@ class Supplement
 	private function supplement(
 		&$supplementSqlConfig,
 		$supplementMaintainHierarchy,
-		$supplementOperateAsTransaction,
-		$supplementOutputRepresentation
+		$supplementOperateAsTransaction
 	): void {
+		$supplementOutputRepresentation = CommonFunction::getOutputRepresentation(
+			sqlConfig: $supplementSqlConfig,
+			httpReqData: $this->httpObject->httpReqData
+		);
+
 		// Set required fields
 		$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'] = $this->getRequired(
 			sqlConfig: $supplementSqlConfig,
@@ -177,7 +174,7 @@ class Supplement
 		if ($supplementPayloadType === 'Array') {
 			if (
 				in_array(
-					needle: $supplementOutputRepresentation,
+					needle: $supplementOutputRepresentation['outputRepresentation'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -242,8 +239,7 @@ class Supplement
 					supplementParentResponse: $supplementResponse,
 					supplementParentModule: '',
 					supplementParentMaintainHierarchy: $supplementMaintainHierarchy,
-					supplementParentOperateAsTransaction: $supplementOperateAsTransaction,
-					supplementParentOutputRepresentation: $supplementOutputRepresentation
+					supplementParentOperateAsTransaction: $supplementOperateAsTransaction
 				);
 
 				if ($this->httpObject->httpResponseObject->httpStatus === HttpStatus::$Ok) {
@@ -282,7 +278,7 @@ class Supplement
 			} else {
 				if (
 					in_array(
-						needle: $supplementOutputRepresentation,
+						needle: $supplementOutputRepresentation['outputRepresentation'],
 						haystack: ['XML', 'XSLT', 'HTML'],
 						strict: Constant::$TRUE
 					)
@@ -309,7 +305,7 @@ class Supplement
 		if ($supplementPayloadType === 'Array') {
 			if (
 				in_array(
-					needle: $supplementOutputRepresentation,
+					needle: $supplementOutputRepresentation['outputRepresentation'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -330,7 +326,6 @@ class Supplement
 	 * @param string $supplementParentModule               Parent Module
 	 * @param bool   $supplementParentMaintainHierarchy    If true - Uses parent payload/results in child
 	 * @param bool   $supplementParentOperateAsTransaction If true - Operates as transaction
-	 * @param bool   $supplementParentOutputRepresentation Output Representation
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -342,8 +337,7 @@ class Supplement
 		&$supplementParentResponse,
 		$supplementParentModule,
 		$supplementParentMaintainHierarchy,
-		$supplementParentOperateAsTransaction,
-		$supplementParentOutputRepresentation
+		$supplementParentOperateAsTransaction
 	): void {
 		// For payloadKey
 		$supplementParentPayloadKey = $this->getPayloadKey(
@@ -412,7 +406,6 @@ class Supplement
 			}
 
 			// For Setting Current Values
-			$supplementParentCurrentOutputRepresentation = $supplementParentOutputRepresentation;
 			$supplementParentCurrentOperateAsTransaction = $supplementParentOperateAsTransaction;
 			$supplementParentCurrentMaintainHierarchy = $supplementParentMaintainHierarchy;
 
@@ -499,8 +492,7 @@ class Supplement
 					supplementChildRequiredFieldArray: $supplementParentRequiredFieldArray,
 					supplementChildResponse: $supplementParentCurrentResponse,
 					supplementChildMaintainHierarchy: $supplementParentCurrentMaintainHierarchy,
-					supplementChildOperateAsTransaction: $supplementParentCurrentOperateAsTransaction,
-					supplementChildOutputRepresentation: $supplementParentCurrentOutputRepresentation
+					supplementChildOperateAsTransaction: $supplementParentCurrentOperateAsTransaction
 				);
 			}
 
@@ -545,13 +537,12 @@ class Supplement
 	/**
 	 * Write Child Function
 	 * 
-	 * @param array $supplementChildSqlConfig            Sql config
-	 * @param array $supplementChildPayloadKeyArray      Payload Indexes
-	 * @param array $supplementChildRequiredFieldArray   Required fields
-	 * @param array $supplementChildResponse             Response by reference
-	 * @param bool  $supplementChildMaintainHierarchy    If true - Uses parent payload/results in child
-	 * @param bool  $supplementChildOperateAsTransaction If true - Operates as transaction
-	 * @param bool  $supplementChildOutputRepresentation Output Representation
+	 * @param array  $supplementChildSqlConfig            Sql config
+	 * @param array  $supplementChildPayloadKeyArray      Payload Indexes
+	 * @param array  $supplementChildRequiredFieldArray   Required fields
+	 * @param array  $supplementChildResponse             Response by reference
+	 * @param bool   $supplementChildMaintainHierarchy    If true - Uses parent payload/results in child
+	 * @param bool   $supplementChildOperateAsTransaction If true - Operates as transaction
 	 * 
 	 * @return void
 	 */
@@ -561,8 +552,7 @@ class Supplement
 		&$supplementChildRequiredFieldArray,
 		&$supplementChildResponse,
 		$supplementChildMaintainHierarchy,
-		$supplementChildOperateAsTransaction,
-		$supplementChildOutputRepresentation
+		$supplementChildOperateAsTransaction
 	): void {
 		if (
 			isset($supplementChildPayloadKeyArray[0])
@@ -592,11 +582,6 @@ class Supplement
 			// For Setting Current Values
 			$supplementChildModuleOperateAsTransaction = $supplementChildOperateAsTransaction ?? isset($supplementChildModuleSqlConfig['__TRANSACTION__'])
 				? $supplementChildModuleSqlConfig['__TRANSACTION__'] : Constant::$FALSE;
-			$supplementChildModuleOutputRepresentation = CommonFunction::getOutputRepresentation(
-				sqlConfig: $supplementChildModuleSqlConfig,
-				httpReqData: $this->httpObject->httpReqData,
-				currentOutputRepresentation: $supplementChildOutputRepresentation
-			);
 			$supplementChildModuleMaintainHierarchy = $supplementChildMaintainHierarchy ?? $this->getMaintainHierarchy(
 				sqlConfig: $supplementChildModuleSqlConfig
 			);
@@ -655,7 +640,6 @@ class Supplement
 				);
 
 				// For Setting Current Values
-				$supplementChildModuleCurrentOutputRepresentation = $supplementChildModuleOutputRepresentation;
 				$supplementChildModuleCurrentOperateAsTransaction = $supplementChildModuleOperateAsTransaction;
 				$supplementChildModuleCurrentMaintainHierarchy = $supplementChildModuleMaintainHierarchy;
 
@@ -688,8 +672,7 @@ class Supplement
 					supplementParentResponse: $supplementChildModuleCurrentResponse,
 					supplementParentModule: $supplementModule,
 					supplementParentMaintainHierarchy: $supplementChildModuleCurrentMaintainHierarchy,
-					supplementParentOperateAsTransaction: $supplementChildModuleCurrentOperateAsTransaction,
-					supplementParentOutputRepresentation: $supplementChildModuleCurrentOutputRepresentation
+					supplementParentOperateAsTransaction: $supplementChildModuleCurrentOperateAsTransaction
 				);
 			}
 		}

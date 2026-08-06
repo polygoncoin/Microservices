@@ -208,7 +208,7 @@ class Microservices
 					httpReqData: $this->httpObject->httpReqData
 				);
 			}
-			switch ($outputRepresentation) {
+			switch ($outputRepresentation['outputRepresentation']) {
 				case 'XML':
 				case 'XSLT':
 					$headerArray['Content-Type'] = 'text/xml; charset=utf-8';

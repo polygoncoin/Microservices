@@ -131,7 +131,10 @@ class Env
 		self::$concurrentAccessInterval = getenv(name: 'concurrentAccessInterval');
 
 		self::$inputRepresentation = getenv(name: 'inputRepresentation');
-		self::$outputRepresentation = getenv(name: 'outputRepresentation');
+		self::$outputRepresentation = [
+			'outputRepresentation' => getenv(name: 'outputRepresentation'),
+			'outputRepresentationFileLocation' => Constant::$FALSE
+		];
 		self::$payloadKeyInResponse = getenv(name: 'payloadKeyInResponse');
 
 		self::$gCacheServerType = getenv(name: 'gCacheServerType');

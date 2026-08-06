@@ -107,11 +107,6 @@ class Write
 		$operateAsTransaction = isset($sqlConfig['__TRANSACTION__'])
 			? $sqlConfig['__TRANSACTION__'] : Constant::$FALSE;
 
-		$outputRepresentation = CommonFunction::getOutputRepresentation(
-			sqlConfig: $sqlConfig,
-			httpReqData: $this->httpObject->httpReqData
-		);
-
 		if ($return !== Constant::$FALSE) {
 			return $return;
 		}
@@ -129,8 +124,7 @@ class Write
 		$this->write(
 			writeSqlConfig: $sqlConfig,
 			writeMaintainHierarchy: $maintainHierarchy,
-			writeOperateAsTransaction: $operateAsTransaction,
-			writeOutputRepresentation: $outputRepresentation
+			writeOperateAsTransaction: $operateAsTransaction
 		);
 
 		return Constant::$TRUE;
@@ -142,7 +136,6 @@ class Write
 	 * @param array $writeSqlConfig            Sql config
 	 * @param bool  $writeMaintainHierarchy    If true - Uses parent payload/results in child
 	 * @param bool  $writeOperateAsTransaction If true - Operates as transaction
-	 * @param bool  $writeOutputRepresentation Output Representation
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -150,9 +143,13 @@ class Write
 	private function write(
 		&$writeSqlConfig,
 		$writeMaintainHierarchy,
-		$writeOperateAsTransaction,
-		$writeOutputRepresentation
+		$writeOperateAsTransaction
 	): void {
+		$writeOutputRepresentation = CommonFunction::getOutputRepresentation(
+			sqlConfig: $writeSqlConfig,
+			httpReqData: $this->httpObject->httpReqData
+		);
+
 		// Set required fields
 		$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'] = $this->getRequired(
 			sqlConfig: $writeSqlConfig,
@@ -171,7 +168,7 @@ class Write
 		if ($writePayloadType === 'Array') {
 			if (
 				in_array(
-					needle: $writeOutputRepresentation,
+					needle: $writeOutputRepresentation['outputRepresentation'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -234,8 +231,7 @@ class Write
 					writeParentRequiredFieldArray: $this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'],
 					writeParentResponse: $writeResponse,
 					writeParentMaintainHierarchy: $writeMaintainHierarchy,
-					writeParentOperateAsTransaction: $writeOperateAsTransaction,
-					writeParentOutputRepresentation: $writeOutputRepresentation
+					writeParentOperateAsTransaction: $writeOperateAsTransaction
 				);
 
 				if ($this->httpObject->httpResponseObject->httpStatus === HttpStatus::$Ok) {
@@ -277,7 +273,7 @@ class Write
 			} else {
 				if (
 					in_array(
-						needle: $writeOutputRepresentation,
+						needle: $writeOutputRepresentation['outputRepresentation'],
 						haystack: ['XML', 'XSLT', 'HTML'],
 						strict: Constant::$TRUE
 					)
@@ -304,7 +300,7 @@ class Write
 		if ($writePayloadType === 'Array') {
 			if (
 				in_array(
-					needle: $writeOutputRepresentation,
+					needle: $writeOutputRepresentation['outputRepresentation'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -324,7 +320,6 @@ class Write
 	 * @param array $writeParentResponse             Response by reference
 	 * @param bool  $writeParentMaintainHierarchy    If true - Uses parent payload/results in child
 	 * @param bool  $writeParentOperateAsTransaction If true - Operates as transaction
-	 * @param bool  $writeParentOutputRepresentation Output Representation
 	 * 
 	 * @return void
 	 * @throws \Exception
@@ -335,8 +330,7 @@ class Write
 		&$writeParentRequiredFieldArray,
 		&$writeParentResponse,
 		$writeParentMaintainHierarchy,
-		$writeParentOperateAsTransaction,
-		$writeParentOutputRepresentation
+		$writeParentOperateAsTransaction
 	): void {
 		// For payloadKey
 		$writeParentPayloadKey = $this->getPayloadKey(
@@ -408,7 +402,6 @@ class Write
 			}
 
 			// For Setting Current Values
-			$writeParentCurrentOutputRepresentation = $writeParentOutputRepresentation;
 			$writeParentCurrentOperateAsTransaction = $writeParentOperateAsTransaction;
 			$writeParentCurrentMaintainHierarchy = $writeParentMaintainHierarchy;
 
@@ -533,8 +526,7 @@ class Write
 					writeChildRequiredFieldArray: $writeParentRequiredFieldArray,
 					writeChildResponse: $writeParentCurrentResponse,
 					writeChildMaintainHierarchy: $writeParentCurrentMaintainHierarchy,
-					writeChildOperateAsTransaction: $writeParentCurrentOperateAsTransaction,
-					writeChildOutputRepresentation: $writeParentCurrentOutputRepresentation
+					writeChildOperateAsTransaction: $writeParentCurrentOperateAsTransaction
 				);
 			}
 
@@ -585,7 +577,6 @@ class Write
 	 * @param array $writeChildResponse             Response by reference
 	 * @param bool  $writeChildMaintainHierarchy    If true - Uses parent payload/results in child
 	 * @param bool  $writeChildOperateAsTransaction If true - Operates as transaction
-	 * @param bool  $writeChildOutputRepresentation Output Representation
 	 * 
 	 * @return void
 	 */
@@ -595,8 +586,7 @@ class Write
 		&$writeChildRequiredFieldArray,
 		&$writeChildResponse,
 		$writeChildMaintainHierarchy,
-		$writeChildOperateAsTransaction,
-		$writeChildOutputRepresentation
+		$writeChildOperateAsTransaction
 	): void {
 		if (
 			isset($writeChildPayloadKeyArray[0])
@@ -626,11 +616,6 @@ class Write
 			// For Setting Current Values
 			$writeChildModuleOperateAsTransaction = $writeChildOperateAsTransaction ?? isset($writeChildModuleSqlConfig['__TRANSACTION__'])
 				? $writeChildModuleSqlConfig['__TRANSACTION__'] : Constant::$FALSE;
-			$writeChildModuleOutputRepresentation = CommonFunction::getOutputRepresentation(
-				sqlConfig: $writeChildModuleSqlConfig,
-				httpReqData: $this->httpObject->httpReqData,
-				currentOutputRepresentation: $writeChildOutputRepresentation
-			);
 			$writeChildModuleMaintainHierarchy = $writeChildMaintainHierarchy ?? $this->getMaintainHierarchy(
 				sqlConfig: $writeChildModuleSqlConfig
 			);
@@ -689,7 +674,6 @@ class Write
 				);
 
 				// For Setting Current Values
-				$writeChildModuleCurrentOutputRepresentation = $writeChildModuleOutputRepresentation;
 				$writeChildModuleCurrentOperateAsTransaction = $writeChildModuleOperateAsTransaction;
 				$writeChildModuleCurrentMaintainHierarchy = $writeChildModuleMaintainHierarchy;
 
@@ -721,8 +705,7 @@ class Write
 					writeParentRequiredFieldArray: $writeChildModuleRequiredFieldArray,
 					writeParentResponse: $writeChildModuleCurrentResponse,
 					writeParentMaintainHierarchy: $writeChildModuleCurrentMaintainHierarchy,
-					writeParentOperateAsTransaction: $writeChildModuleCurrentOperateAsTransaction,
-					writeParentOutputRepresentation: $writeChildModuleCurrentOutputRepresentation
+					writeParentOperateAsTransaction: $writeChildModuleCurrentOperateAsTransaction
 				);
 			}
 		}

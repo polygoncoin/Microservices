@@ -446,6 +446,7 @@ class CommonFunction
 		$httpReqData,
 		$currentOutputRepresentation = null
 	): null|array {
+		$returnOutputRepresentation = [];
 		switch (Constant::$TRUE) {
 			case isset($httpReqData['get']['outputRepresentation'])
 				&& in_array(
@@ -475,10 +476,8 @@ class CommonFunction
 				];
 				break;
 			default:
-				$returnOutputRepresentation = [
-					'outputRepresentation' => Env::$outputRepresentation,
-					'outputRepresentationFileLocation' => Constant::$FALSE
-				];
+				$returnOutputRepresentation = Env::$outputRepresentation;
+				break;
 		}
 
 		if ($returnOutputRepresentation === $currentOutputRepresentation) {

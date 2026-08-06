@@ -182,7 +182,7 @@ class Read
 	 * 
 	 * @param array $readSqlConfig            Sql config
 	 * @param bool  $readMaintainHierarchy    If true - Uses parent payload/results in child
-	 * @param bool  $readOutputRepresentation Output Representation
+	 * @param array $readOutputRepresentation Output Representation
 	 * 
 	 * @return void
 	 */
@@ -298,11 +298,6 @@ class Read
 		$readParentMaintainHierarchy,
 		$readParentIsFirstCall
 	): void {
-		$readParentOutputRepresentation = CommonFunction::getOutputRepresentation(
-			sqlConfig: $readParentSqlConfig,
-			httpReqData: $this->httpObject->httpReqData
-		);
-
 		// For payloadKey
 		$readParentPayloadKey = $this->getPayloadKey(
 			payloadKeyArray: $readParentPayloadKeyArray
@@ -868,10 +863,6 @@ class Read
 		$offset = null
 	): void {
 		$function = "getSqlAndParam{$this->placeholderMode}Mode";
-		$outputRepresentation = CommonFunction::getOutputRepresentation(
-			sqlConfig: $readSqlConfig,
-			httpReqData: $this->httpObject->httpReqData
-		);
 
 		[
 			$id,
