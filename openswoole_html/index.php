@@ -5,17 +5,17 @@
  * php version 8.3
  * 
  * @category  Start
- * @package   Openswoole-Microservices
+ * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
- * @link      https://github.com/polygoncoin/Openswoole-Microservices
+ * @link      https://github.com/polygoncoin/Microservices
  * @since     Class available since Release 1.0.0
  */
 
-define ('__MODE__', 'private_api'); // private_api/private_web/public
-// define ('__MODE__', 'private_web'); // private_api/private_web/public
-// define ('__MODE__', 'public'); // private_api/private_web/public
+// define ('__MODE__', 'private_api'); // token based auth
+// define ('__MODE__', 'private_web'); // session based auth
+define ('__MODE__', 'public'); // public
 
 switch (__MODE__) {
 	case 'public':

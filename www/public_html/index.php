@@ -58,6 +58,12 @@ if (
 $httpReqData['server']['httpRequestIp'] = getHttpRequestIp();
 
 $httpReqData['header'] = getallheaders();
+
+if (isset($httpReqData['header']['Content-Type'])) {
+	$httpReqData['header']['contentType'] = $httpReqData['header']['Content-Type'];
+} else {
+	$httpReqData['header']['contentType'] = '';
+}
 if (isset($_SERVER['Range'])) {
 	$httpReqData['header']['range'] = $_SERVER['Range'];
 }
@@ -81,10 +87,8 @@ if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
 $httpReqData['post'] = file_get_contents(
 	filename: 'php://input'
 );
-$httpReqData['files'] = [];
-if (isset($_FILES)) {
-	$httpReqData['files'] = &$_FILES;
-}
+$httpReqData['files'] = parseMultipartInput($httpReqData);
+
 $httpReqData['isWebRequest'] = Constant::$TRUE;
 $httpReqData['httpRequestHash'] = httpRequestHash(
 	hashArray: [
@@ -129,7 +133,6 @@ if (
 			break;
 	}
 } else {
-
 	if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix) {
 		Reload::process(
 			httpRequestIp: $httpReqData['server']['httpRequestIp']
@@ -200,4 +203,77 @@ function getHttpRequestIp() {
 		$ip = $_SERVER['REMOTE_ADDR'];
 	}
 	return $ip;
+}
+
+/**
+ * Parse Multipart Input
+ * 
+ * @param array $httpReqData HTTP request data
+ * 
+ * @return array
+ */
+function parseMultipartInput($httpReqData) {
+	$FILES = [];
+	// 1. Verify content type and extract boundary
+	if (!preg_match('/boundary=(.*)$/', $httpReqData['header']['contentType'], $matches)) {
+		return;
+	}
+	$boundary = $matches[1];
+
+	// 2. Read the raw stream block by block (memory-safe approach)
+	$raw_data = $httpReqData['post'];
+
+	if (empty($raw_data)) {
+		return;
+	}
+
+	// 3. Split the stream using the boundary marker
+	$parts = explode("--" . $boundary, $raw_data);
+
+	foreach ($parts as $part) {
+		$part = ltrim($part, "\r\n");
+		if (empty($part) || $part === "--\r\n" || $part === "--") {
+			continue;
+		}
+
+		// Separate headers from the binary file payload
+		list($headers_block, $body) = explode("\r\n\r\n", $part, 2);
+		// Trim trailing carriage return added by boundary layout
+		if (substr($body, -2) === "\r\n") {
+			$body = substr($body, 0, -2);
+		}
+
+		// Parse individual section headers
+		$headers = [];
+		foreach (explode("\r\n", $headers_block) as $line) {
+			list($key, $val) = explode(": ", $line, 2);
+			$headers[strtolower($key)] = $val;
+		}
+
+		// 4. Look for Content-Disposition to check if it's a file component
+		if (isset($headers['content-disposition'])) {
+			preg_match('/name="([^"]*)"/', $headers['content-disposition'], $nameMatch);
+			$inputName = $nameMatch[1] ?? '';
+
+			if (preg_match('/filename="([^"]*)"/', $headers['content-disposition'], $fileMatch)) {
+				// It's a file component!
+				$originalName = $fileMatch[1];
+				$mimeType = $headers['content-type'] ?? 'application/octet-stream';
+
+				// Write binary body data into a secure system tmp file
+				$tmpPath = tempnam(sys_get_temp_dir(), 'php_upload_');
+				file_put_contents($tmpPath, $body);
+
+				// 5. Explicitly populate the $_FILES global array
+				$FILES[$inputName] = [
+					'name' => $originalName,
+					'type' => $mimeType,
+					'tmp_name' => $tmpPath,
+					'error'	=> UPLOAD_ERR_OK,
+					'size' => filesize($tmpPath)
+				];
+			}
+		}
+		return $FILES;
+	}
 }
