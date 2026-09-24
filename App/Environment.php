@@ -36,7 +36,7 @@ class Environment
     public $DISABLE_REQUESTS_VIA_PROXIES = null;
 
     public $SECRET = null;
-    public $ENABLE_PAYLOAD_IN_RESPONSE = null;
+    public $PAYLOAD_IN_RESPONSE = null;
 
     public $ENABLE_RELOAD_CACHE = null;
     public $RELOAD_REQUEST_KEYWORD = null;

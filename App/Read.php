@@ -259,7 +259,7 @@ class Read
 				);
 
 				$this->dataEncodeObject->addKeyData(
-					objectKey: Env::$config[$this->httpObject->httpRequestObject->customerId]->ENABLE_PAYLOAD_IN_RESPONSE,
+					objectKey: Env::$config[$this->httpObject->httpRequestObject->customerId]->PAYLOAD_IN_RESPONSE,
 					data: $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
 						keyString: $readPayloadKey
 					)

@@ -219,7 +219,7 @@ class Write
 						feature: 'customer_enabled_payload_in_response'
 					)
 				) {
-					$output[Env::$config[$this->httpObject->httpRequestObject->customerId]->ENABLE_PAYLOAD_IN_RESPONSE] = $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
+					$output[Env::$config[$this->httpObject->httpRequestObject->customerId]->PAYLOAD_IN_RESPONSE] = $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
 						keyString: $this->getPayloadKey(
 							payloadKeyArray: $writePayloadKeyArray
 						)
