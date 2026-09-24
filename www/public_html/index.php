@@ -21,11 +21,7 @@ error_reporting(error_level: E_ALL);
 
 // Load .env(s)
 foreach ([
-	'.env',
-	'.env.customer.container',
-	'.env.global.container',
-	'.env.rateLimiting',
-	'.env.route'
+	'.env'
 ] as $envFilename) {
 	$envDataArray = parse_ini_file(
 		filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
@@ -133,7 +129,7 @@ if (
 			break;
 	}
 } else {
-	if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$reloadRequestRoutePrefix) {
+	if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_REQUEST_KEYWORD) {
 		Reload::process(
 			httpRequestIp: $httpReqData['server']['httpRequestIp']
 		);
@@ -164,9 +160,9 @@ if (
 
 /**
  * Unique HTTP request hash
- * 
+ *
  * @param array $hashArray Hash array
- * 
+ *
  * @return string
  */
 function httpRequestHash($hashArray): string
@@ -180,7 +176,7 @@ function httpRequestHash($hashArray): string
 
 /**
  * Get request IP
- * 
+ *
  * @return string
  */
 function getHttpRequestIp() {
@@ -207,9 +203,9 @@ function getHttpRequestIp() {
 
 /**
  * Parse Multipart Input
- * 
+ *
  * @param array $httpReqData HTTP request data
- * 
+ *
  * @return array
  */
 function parseMultipartInput($httpReqData) {

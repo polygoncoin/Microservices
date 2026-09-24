@@ -20,7 +20,7 @@ xmlhttp . onreadystatechange = function() {
 };
 
 var payload = {
-	"username":"customer_1_user_1",
+	"username":"customer_user_1",
 	"password":"shames11"
 };
 
@@ -105,7 +105,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - XML request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address&inputRepresentation=XML&outputRepresentation=XML";
+var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address&INPUT_REPRESENTATION=XML&OUTPUT_REPRESENTATION=XML";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Payload>' +

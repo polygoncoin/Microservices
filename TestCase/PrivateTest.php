@@ -3,7 +3,7 @@
 /**
  * Test Case
  * php version 8.3
- * 
+ *
  * @category  Test Case
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -52,7 +52,7 @@ if (defined('__MODE__')) {
 $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Reload.php';
 
 $payload = [
-	'username' => 'customer_1_group_1_user_1',
+	'username' => 'customer_group_user_1',
 	'password' => 'shames11'
 ];
 $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Login.php';
@@ -91,7 +91,7 @@ if (defined('__MODE__')) {
 
 // Admin login
 $payload = [
-	'username' => 'customer_1_admin_1',
+	'username' => 'customer_admin_1',
 	'password' => 'shames11'
 ];
 $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Login.php';

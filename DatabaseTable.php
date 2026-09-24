@@ -3,7 +3,7 @@
 /**
  * Database Table Details
  * php version 8.3
- * 
+ *
  * @category  DatabaseTable
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
@@ -18,7 +18,7 @@ namespace Microservices;
 /**
  * Database Table Details
  * php version 8.3
- * 
+ *
  * @category  DatabaseTable
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
