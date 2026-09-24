@@ -320,7 +320,6 @@ class Login
 			$this->httpObject->httpRequestObject->sessionObject = new Session(
 				customerId: $this->httpObject->httpRequestObject->customerId
 			);
-			$this->httpObject->httpRequestObject->sessionObject->sessionDomain = $this->httpObject->httpReqData['server']['domainName'];
 			$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
 				options: []
 			);

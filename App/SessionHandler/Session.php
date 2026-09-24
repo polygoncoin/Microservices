@@ -258,16 +258,6 @@ class Session
 	public function initSessionHandler(
 		$options = []
 	): void {
-		$envFilename = '.env.session';
-		$envDataArray = parse_ini_file(
-			filename: ROOT . DIRECTORY_SEPARATOR . $envFilename
-		);
-		foreach ($envDataArray as $envVarName => $envVarValue) {
-			putenv(
-				assignment: "{$envVarName}={$envVarValue}"
-			);
-		}
-
 		$this->sessionMode = Env::$config[$this->customerId]->SESSION_STORE_MODE;
 
 		// Initialize
