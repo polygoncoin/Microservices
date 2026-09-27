@@ -60,7 +60,7 @@ class Env
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function init(): void
@@ -95,9 +95,9 @@ class Env
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param int $customerId Customer id
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function loadEnv(
@@ -113,10 +113,10 @@ class Env
 
 	/**
 	 * Validate Data Representation
-	 *
+	 * 
 	 * @param string $dataRepresentation Data Representation
 	 * @param string $mode               input / output
-	 *
+	 * 
 	 * @return bool
 	 * @throws \Exception
 	 */

@@ -77,14 +77,6 @@ class Constant
 
 	public static $CONFIG_DIRECTORY = null;
 
-	public static $ROUTES_CONFIG_DIRECTORY = null;
-	public static $ROUTES_CONFIG_PRIVATE_DIRECTORY = null;
-	public static $ROUTES_CONFIG_PUBLIC_DIRECTORY = null;
-
-	public static $SQL_CONFIG_DIRECTORY = null;
-	public static $SQL_CONFIG_PRIVATE_DIRECTORY = null;
-	public static $SQL_CONFIG_PUBLIC_DIRECTORY = null;
-
 	public static $SUPPLEMENT_CONFIG_DIRECTORY = null;
 	public static $SUPPLEMENT_CONFIG_PRIVATE_DIRECTORY = null;
 	public static $SUPPLEMENT_CONFIG_PUBLIC_DIRECTORY = null;
@@ -96,7 +88,7 @@ class Constant
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function init(): void
@@ -131,14 +123,6 @@ class Constant
 		self::$XSLT_PUBLIC_DIRECTORY = self::$SERVING_PUBLIC_DIRECTORY . DIRECTORY_SEPARATOR . 'XSLT';
 
 		self::$CONFIG_DIRECTORY = self::$WWW . DIRECTORY_SEPARATOR . 'Config';
-
-		self::$ROUTES_CONFIG_DIRECTORY = self::$CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Route';
-		self::$ROUTES_CONFIG_PRIVATE_DIRECTORY = self::$ROUTES_CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Private';
-		self::$ROUTES_CONFIG_PUBLIC_DIRECTORY = self::$ROUTES_CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Public';
-
-		self::$SQL_CONFIG_DIRECTORY = self::$CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Sql';
-		self::$SQL_CONFIG_PRIVATE_DIRECTORY = self::$SQL_CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Private';
-		self::$SQL_CONFIG_PUBLIC_DIRECTORY = self::$SQL_CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Public';
 
 		self::$SUPPLEMENT_CONFIG_DIRECTORY = self::$CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Supplement';
 		self::$SUPPLEMENT_CONFIG_PRIVATE_DIRECTORY = self::$SUPPLEMENT_CONFIG_DIRECTORY . DIRECTORY_SEPARATOR . 'Private';

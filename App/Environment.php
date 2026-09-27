@@ -34,6 +34,7 @@ class Environment
 {
     public $OUTPUT_PERFORMANCE_STATS = null;
     public $DISABLE_REQUESTS_VIA_PROXIES = null;
+    public $CUSTOMER_CONFIG_DIRECTORY = null;
 
     public $SECRET = null;
     public $PAYLOAD_IN_RESPONSE = null;
@@ -41,9 +42,6 @@ class Environment
     public $ENABLE_RELOAD_CACHE = null;
     public $RELOAD_REQUEST_KEYWORD = null;
     public $RELOAD_CACHE_CIDR = null;
-
-    public $MAX_CONCURRENT_LOGIN = null;
-    public $MAX_CONCURRENT_LOGIN_WINDOW = null;
 
     public $CACHE_MODE = null;
     public $CACHE_HOST = null;
@@ -154,7 +152,7 @@ class Environment
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param string $envFile Enviroment file name
 	 */
 	public function __construct($envFile)

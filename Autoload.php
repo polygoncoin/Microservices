@@ -31,9 +31,9 @@ class Autoload
 {
 	/**
 	 * Autoload Register function
-	 *
+	 * 
 	 * @param string $className Class name
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function register(

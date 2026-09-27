@@ -37,42 +37,42 @@ class DataEncode
 {
 	/**
 	 * Temporary Stream
-	 *
+	 * 
 	 * @var null|resource|array
 	 */
 	private $tempStream = null;
 
 	/**
 	 * HTTP object
-	 *
+	 * 
 	 * @var null|Http
 	 */
 	private $httpObject = null;
 
 	/**
 	 * Output Representation
-	 *
+	 * 
 	 * @var null|string
 	 */
 	private $OUTPUT_REPRESENTATION = null;
 
 	/**
 	 * Output Representation File
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $outputRepresentationFileLocation = null;
 
 	/**
 	 * Temporary Stream
-	 *
+	 * 
 	 * @var null|Object
 	 */
 	private $dataEncoderObject = null;
 
 	/**
 	 * Constructor
-	 *
+	 * 
 	 * @param Http       $httpObject
 	 * @param null|array $OUTPUT_REPRESENTATION
 	 */
@@ -94,9 +94,9 @@ class DataEncode
 
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @param bool $header Append XML header flag
-	 *
+	 * 
 	 * @return void
 	 */
 	public function init(
@@ -150,9 +150,9 @@ class DataEncode
 
 	/**
 	 * Start array
-	 *
+	 * 
 	 * @param null|string $objectKey Used while creating simple array inside an object
-	 *
+	 * 
 	 * @return void
 	 */
 	public function startArray(
@@ -165,9 +165,9 @@ class DataEncode
 
 	/**
 	 * Add array/value as in the data format
-	 *
+	 * 
 	 * @param string|array $data Representation Data
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -181,7 +181,7 @@ class DataEncode
 
 	/**
 	 * End array
-	 *
+	 * 
 	 * @return void
 	 */
 	public function endArray(): void
@@ -191,9 +191,9 @@ class DataEncode
 
 	/**
 	 * Start object
-	 *
+	 * 
 	 * @param null|string $objectKey Used while creating associative array inside an object
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -207,10 +207,10 @@ class DataEncode
 
 	/**
 	 * Add array/value as in the data format
-	 *
+	 * 
 	 * @param string       $objectKey Key of associative array
 	 * @param string|array $data      Representation Data
-	 *
+	 * 
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -226,7 +226,7 @@ class DataEncode
 
 	/**
 	 * End object
-	 *
+	 * 
 	 * @return void
 	 */
 	public function endObject(): void
@@ -236,9 +236,9 @@ class DataEncode
 
 	/**
 	 * Encode data
-	 *
+	 * 
 	 * @param string|array $data Representation Data
-	 *
+	 * 
 	 * @return void
 	 */
 	public function encode(
@@ -251,9 +251,9 @@ class DataEncode
 
 	/**
 	 * Append raw data string
-	 *
+	 * 
 	 * @param string $data Representation Data
-	 *
+	 * 
 	 * @return void
 	 */
 	public function appendData(
@@ -266,10 +266,10 @@ class DataEncode
 
 	/**
 	 * Append object data
-	 *
+	 * 
 	 * @param string $objectKey Key of associative array
 	 * @param string $data      Representation Data
-	 *
+	 * 
 	 * @return void
 	 */
 	public function appendKeyData(
@@ -284,7 +284,7 @@ class DataEncode
 
 	/**
 	 * End encoding
-	 *
+	 * 
 	 * @return void
 	 */
 	public function end(): void
@@ -294,7 +294,7 @@ class DataEncode
 
 	/**
 	 * Stream encoded data
-	 *
+	 * 
 	 * @return void
 	 */
 	public function streamData(): void
@@ -365,7 +365,7 @@ class DataEncode
 
 	/**
 	 * Get encoded data
-	 *
+	 * 
 	 * @return bool|string
 	 */
 	public function getData(): bool|string
@@ -432,9 +432,9 @@ class DataEncode
 
 	/**
 	 * Generate XML(XSLT)/HTML data
-	 *
+	 * 
 	 * @param string $xmlFile XML file location
-	 *
+	 * 
 	 * @return string
 	 */
 	private function processPublicXml(

@@ -39,7 +39,7 @@ class DbCommonFunction
 	/** Database Connection */
 	/**
 	 * Global
-	 *
+	 * 
 	 * @var null|DatabaseServer
 	 */
 	public static $gDbServer = null;
@@ -47,14 +47,14 @@ class DbCommonFunction
 	/** Cache Connection */
 	/**
 	 * Global
-	 *
+	 * 
 	 * @var null|CacheServer
 	 */
 	public static $globalCacheServerObject = null;
 
 	/**
 	 * Connect Cache
-	 *
+	 * 
 	 * @param string      $cacheServerType     Cache Server Type
 	 * @param string      $cacheServerHostname Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
@@ -62,7 +62,7 @@ class DbCommonFunction
 	 * @param string      $cacheServerPassword Cache Server Password
 	 * @param null|string $cacheServerDatabase Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
-	 *
+	 * 
 	 * @return CacheServer
 	 */
 	public static function connectCacheServer(
@@ -89,9 +89,9 @@ class DbCommonFunction
 
 	/**
 	 * Connect customer Cache based on $activeRequestDataKey
-	 *
+	 * 
 	 * @param array $customerId Customer Data
-	 *
+	 * 
 	 * @return CacheServer
 	 * @throws \Exception
 	 */
@@ -115,7 +115,7 @@ class DbCommonFunction
 
 	/**
 	 * Connect query Cache
-	 *
+	 * 
 	 * @return QueryCacheServer
 	 */
 	public static function connectQueryCache(): QueryCacheServer
@@ -136,9 +136,9 @@ class DbCommonFunction
 
 	/**
 	 * Connect global Cache
-	 *
+	 * 
 	 * @param array $customerId Customer Data
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function connectGlobalCache(
@@ -164,14 +164,14 @@ class DbCommonFunction
 
 	/**
 	 * Connect Database
-	 *
+	 * 
 	 * @param string      $dbServerType     Database Server Type
 	 * @param string      $dbServerHostname Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
 	 * @param string      $dbServerUsername Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
 	 * @param null|string $dbServerDatabase Database Server Database
-	 *
+	 * 
 	 * @return DatabaseServer
 	 */
 	public static function connectDatabaseServer(
@@ -196,10 +196,10 @@ class DbCommonFunction
 
 	/**
 	 * Connect customer Database based on $activeRequestDataKey
-	 *
+	 * 
 	 * @param int    $customerId  Customer id
 	 * @param string $fetchDbMode Master/Slave
-	 *
+	 * 
 	 * @return DatabaseServer
 	 * @throws \Exception
 	 */
@@ -245,17 +245,17 @@ class DbCommonFunction
 
 	/**
 	 * Connect global Database
-	 *
+	 * 
 	 * @param int $customerId Customer id
-	 *
+	 * 
 	 * @return void
 	 */
 	public static function connectGlobalDb(
 		$customerId
 	): void {
-		// if (isset(Env::$config[$customerId])) {
-		// 	return;
-		// }
+		if (isset(Env::$config[$customerId])) {
+			return;
+		}
 
 		$masterDatabaseServerCred = self::getMasterDatabaseCred(
 			customerId: $customerId
@@ -273,9 +273,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Cache Master Server detail
-	 *
+	 * 
 	 * @param int $customerId Customer id
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function getCacheCred(
@@ -299,9 +299,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Query Cache Server detail
-	 *
+	 * 
 	 * @param int $customerId Customer id
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function getQueryCacheCred(
@@ -325,9 +325,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Database Master Server detail
-	 *
+	 * 
 	 * @param int $customerId Customer id
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function getMasterDatabaseCred(
@@ -350,9 +350,9 @@ class DbCommonFunction
 
 	/**
 	 * Returns Database Slave Server detail
-	 *
+	 * 
 	 * @param int $customerId Customer id
-	 *
+	 * 
 	 * @return array
 	 */
 	public static function getSlaveDatabaseServerCred(

@@ -37,11 +37,11 @@ class Session
 	/**
 	 * SET THESE TO ENABLE ENCRYPTION
 	 * ENCRYPTION PASS PHRASE
-	 *
+	 * 
 	 * Value = base64_encode(openssl_random_pseudo_bytes(32))
 	 * Example: public $sessionEncryptionPassPhrase =
 	 * 'H7OO2m3qe9pHyAHFiERlYJKnlTMtCJs9ZbGphX9NO/c=';
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sessionEncryptionPassPhrase = null;
@@ -49,45 +49,45 @@ class Session
 	/**
 	 * SET THESE TO ENABLE ENCRYPTION
 	 * ENCRYPTION IV
-	 *
+	 * 
 	 * Value = base64_encode(openssl_random_pseudo_bytes(16))
 	 * Example: public $sessionEncryptionIv = 'HnPG5az9Xaxam9G9tMuRaw==';
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sessionEncryptionIv = null;
 
 	/**
 	 * Session mode
-	 *
+	 * 
 	 * @var null|string
 	 */
 	public $sessionMode = null;
 
 	/**
 	 * Session Start function argument
-	 *
+	 * 
 	 * @var null|array
 	 */
 	public $optionArray = null;
 
 	/**
 	 * Session handler Container
-	 *
+	 * 
 	 * @var null|SessionContainerInterface
 	 */
 	public $sessionContainer = null;
 
 	/**
 	 * Session initProcess function initialized
-	 *
+	 * 
 	 * @var bool
 	 */
 	public $initProcessInitialized = false;
 
 	/**
 	 * Session customer id
-	 *
+	 * 
 	 * @var bool
 	 */
 	public $customerId = null;
@@ -107,7 +107,7 @@ class Session
 
 	/**
 	 * Initialize container
-	 *
+	 * 
 	 * @return void
 	 */
 	private function initContainer(): void
@@ -178,7 +178,7 @@ class Session
 
 	/**
 	 * Initialize session_set_save_handler process
-	 *
+	 * 
 	 * @return void
 	 */
 	private function initProcess(): void
@@ -205,9 +205,9 @@ class Session
 
 	/**
 	 * Generates session optionArray argument
-	 *
+	 * 
 	 * @param array $optionArray Options
-	 *
+	 * 
 	 * @return void
 	 */
 	private function setOptions(
@@ -250,9 +250,9 @@ class Session
 
 	/**
 	 * Initialize session handler
-	 *
+	 * 
 	 * @param array $options Options
-	 *
+	 * 
 	 * @return void
 	 */
 	public function initSessionHandler(
@@ -269,7 +269,7 @@ class Session
 
 	/**
 	 * Close if Session is Active in write mode
-	 *
+	 * 
 	 * @return void
 	 */
 	public function sessionStartCheck(): void
@@ -286,7 +286,7 @@ class Session
 
 	/**
 	 * Start session in read only mode
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function sessionStartReadonly(): bool
@@ -308,7 +308,7 @@ class Session
 
 	/**
 	 * Start session in read/write mode
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function sessionStartReadWrite(): bool
@@ -326,9 +326,9 @@ class Session
 
 	/**
 	 * For Custom Session Handler - Destroy a session
-	 *
+	 * 
 	 * @param string $sessionId Session id
-	 *
+	 * 
 	 * @return bool
 	 */
 	public function deleteSession(
@@ -341,9 +341,9 @@ class Session
 
 	/**
 	 * For Custom Session Handler - Destroy a session
-	 *
+	 * 
 	 * @param array $sessionIds Session IDs
-	 *
+	 * 
 	 * @return void
 	 */
 	public function deleteSessions(

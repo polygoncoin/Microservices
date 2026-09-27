@@ -31,13 +31,13 @@ interface ExportDatabaseServerInterface
 {
 	/**
 	 * Initialize
-	 *
+	 * 
 	 * @param string      $dbServerHostname Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
 	 * @param string      $dbServerUsername Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
 	 * @param null|string $dbServerDatabase Database Server Database
-	 *
+	 * 
 	 * @return void
 	 */
 	public function init(
@@ -50,10 +50,10 @@ interface ExportDatabaseServerInterface
 
 	/**
 	 * Returns Shell Command
-	 *
+	 * 
 	 * @param string $sql        Sql query
 	 * @param array  $paramArray Sql query params
-	 *
+	 * 
 	 * @return string
 	 */
 	public function getShellCommand(
