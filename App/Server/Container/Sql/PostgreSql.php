@@ -38,7 +38,7 @@ class PostgreSql implements SqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $dbServerHostname = null;
+	private $dbServerHost = null;
 
 	/**
 	 * Database Server Port
@@ -52,7 +52,7 @@ class PostgreSql implements SqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $dbServerUsername = null;
+	private $dbServerUser = null;
 
 	/**
 	 * Database Server Password
@@ -66,7 +66,7 @@ class PostgreSql implements SqlInterface
 	 * 
 	 * @var null|string
 	 */
-	public $dbServerDatabase = null;
+	public $dbServerDb = null;
 
 	/**
 	 * Database Server Object
@@ -99,24 +99,24 @@ class PostgreSql implements SqlInterface
 	/**
 	 * Constructor
 	 * 
-	 * @param string      $dbServerHostname Database Server Hostname
+	 * @param string      $dbServerHost Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
-	 * @param string      $dbServerUsername Database Server Username
+	 * @param string      $dbServerUser Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDatabase Database Server Database
+	 * @param null|string $dbServerDb Database Server Database
 	 */
 	public function __construct(
-		$dbServerHostname,
+		$dbServerHost,
 		$dbServerPort,
-		$dbServerUsername,
+		$dbServerUser,
 		$dbServerPassword,
-		$dbServerDatabase
+		$dbServerDb
 	) {
-		$this->dbServerHostname = $dbServerHostname;
+		$this->dbServerHost = $dbServerHost;
 		$this->dbServerPort = $dbServerPort;
-		$this->dbServerUsername = $dbServerUsername;
+		$this->dbServerUser = $dbServerUser;
 		$this->dbServerPassword = $dbServerPassword;
-		$this->dbServerDatabase = $dbServerDatabase;
+		$this->dbServerDb = $dbServerDb;
 	}
 
 	/**
@@ -137,8 +137,8 @@ class PostgreSql implements SqlInterface
 				$dbServerPassword
 			);
 			$this->pgsqlServerObject = new \PDO(
-				dsn: "pgsql:host={$this->dbServerHostname};port={$this->dbServerPort};dbname={$this->dbServerDatabase}",
-				username: $this->dbServerUsername,
+				dsn: "pgsql:host={$this->dbServerHost};port={$this->dbServerPort};dbname={$this->dbServerDb}",
+				username: $this->dbServerUser,
 				password: $this->dbServerPassword,
 			);
 			$pgsqlServerObject->setAttribute(

@@ -38,7 +38,7 @@ class MySql implements SqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $dbServerHostname = null;
+	private $dbServerHost = null;
 
 	/**
 	 * Database Server Port
@@ -52,7 +52,7 @@ class MySql implements SqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $dbServerUsername = null;
+	private $dbServerUser = null;
 
 	/**
 	 * Database Server Password
@@ -66,7 +66,7 @@ class MySql implements SqlInterface
 	 * 
 	 * @var null|string
 	 */
-	public $dbServerDatabase = null;
+	public $dbServerDb = null;
 
 	/**
 	 * Database Server Object
@@ -99,24 +99,24 @@ class MySql implements SqlInterface
 	/**
 	 * Constructor
 	 * 
-	 * @param string      $dbServerHostname Database Server Hostname
+	 * @param string      $dbServerHost Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
-	 * @param string      $dbServerUsername Database Server Username
+	 * @param string      $dbServerUser Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDatabase Database Server Database
+	 * @param null|string $dbServerDb Database Server Database
 	 */
 	public function __construct(
-		$dbServerHostname,
+		$dbServerHost,
 		$dbServerPort,
-		$dbServerUsername,
+		$dbServerUser,
 		$dbServerPassword,
-		$dbServerDatabase
+		$dbServerDb
 	) {
-		$this->dbServerHostname = $dbServerHostname;
+		$this->dbServerHost = $dbServerHost;
 		$this->dbServerPort = $dbServerPort;
-		$this->dbServerUsername = $dbServerUsername;
+		$this->dbServerUser = $dbServerUser;
 		$this->dbServerPassword = $dbServerPassword;
-		$this->dbServerDatabase = $dbServerDatabase;
+		$this->dbServerDb = $dbServerDb;
 	}
 
 	/**
@@ -129,11 +129,11 @@ class MySql implements SqlInterface
 		if ($this->mysqlServerObject !== Constant::$NULL) {
 			return;
 		}
-
+		
 		try {
 			$this->mysqlServerObject = new \PDO(
-				dsn: "mysql:host={$this->dbServerHostname};port={$this->dbServerPort}",
-				username: $this->dbServerUsername,
+				dsn: "mysql:host={$this->dbServerHost};port={$this->dbServerPort}",
+				username: $this->dbServerUser,
 				password: $this->dbServerPassword,
 				options: [
 					\PDO::ATTR_EMULATE_PREPARES => Constant::$FALSE,
@@ -141,7 +141,7 @@ class MySql implements SqlInterface
 				]
 			);
 
-			if ($this->dbServerDatabase !== Constant::$NULL) {
+			if ($this->dbServerDb !== Constant::$NULL) {
 				$this->useDatabase();
 			}
 		} catch (\PDOException $e) {
@@ -163,9 +163,9 @@ class MySql implements SqlInterface
 		$this->connect();
 
 		try {
-			if ($this->dbServerDatabase !== Constant::$NULL) {
+			if ($this->dbServerDb !== Constant::$NULL) {
 				$this->mysqlServerObject->exec(
-					statement: "USE `{$this->dbServerDatabase}`"
+					statement: "USE `{$this->dbServerDb}`"
 				);
 			}
 		} catch (\PDOException $e) {

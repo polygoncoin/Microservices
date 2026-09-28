@@ -45,7 +45,7 @@ class CacheServer
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerHostname = null;
+	private $cacheServerHost = null;
 
 	/**
 	 * Cache Server Port
@@ -59,7 +59,7 @@ class CacheServer
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerUsername = null;
+	private $cacheServerUser = null;
 
 	/**
 	 * Cache Server Password
@@ -73,7 +73,7 @@ class CacheServer
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerDatabase = null;
+	private $cacheServerDb = null;
 
 	/**
 	 * Cache collection
@@ -93,28 +93,28 @@ class CacheServer
 	 * Constructor
 	 * 
 	 * @param string      $cacheServerType     Cache Server Type
-	 * @param string      $cacheServerHostname Cache Server Hostname
+	 * @param string      $cacheServerHost Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
-	 * @param string      $cacheServerUsername Cache Server Username
+	 * @param string      $cacheServerUser Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDatabase Cache Server Database
+	 * @param null|string $cacheServerDb Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
         $cacheServerType,
-		$cacheServerHostname,
+		$cacheServerHost,
 		$cacheServerPort,
-		$cacheServerUsername,
+		$cacheServerUser,
 		$cacheServerPassword,
-		$cacheServerDatabase,
+		$cacheServerDb,
 		$cacheServerTable
 	) {
 		$this->cacheServerType = $cacheServerType;
-		$this->cacheServerHostname = $cacheServerHostname;
+		$this->cacheServerHost = $cacheServerHost;
 		$this->cacheServerPort = $cacheServerPort;
-		$this->cacheServerUsername = $cacheServerUsername;
+		$this->cacheServerUser = $cacheServerUser;
 		$this->cacheServerPassword = $cacheServerPassword;
-		$this->cacheServerDatabase = $cacheServerDatabase;
+		$this->cacheServerDb = $cacheServerDb;
 		$this->cacheServerTable = $cacheServerTable;
 	}
 
@@ -150,11 +150,11 @@ class CacheServer
             . $this->cacheServerType . 'Cache';
 
 		$this->cacheServerObject = new $cacheServerNS(
-			cacheServerHostname: $this->cacheServerHostname,
+			cacheServerHost: $this->cacheServerHost,
 			cacheServerPort: $this->cacheServerPort,
-			cacheServerUsername: $this->cacheServerUsername,
+			cacheServerUser: $this->cacheServerUser,
 			cacheServerPassword: $this->cacheServerPassword,
-			cacheServerDatabase: $this->cacheServerDatabase,
+			cacheServerDb: $this->cacheServerDb,
 			cacheServerTable: $this->cacheServerTable
 		);
 	}

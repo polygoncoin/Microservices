@@ -38,7 +38,7 @@ class MySql implements ExportDatabaseServerInterface
 	 * 
 	 * @var null|string
 	 */
-	private $dbServerHostname = null;
+	private $dbServerHost = null;
 
 	/**
 	 * Database Server Port
@@ -52,7 +52,7 @@ class MySql implements ExportDatabaseServerInterface
 	 * 
 	 * @var null|string
 	 */
-	private $dbServerUsername = null;
+	private $dbServerUser = null;
 
 	/**
 	 * Database Server Password
@@ -66,7 +66,7 @@ class MySql implements ExportDatabaseServerInterface
 	 * 
 	 * @var null|string
 	 */
-	public $dbServerDatabase = null;
+	public $dbServerDb = null;
 
 	/**
 	 * Mysql Customer binary location (One can find this by "which mysql" command)
@@ -109,26 +109,26 @@ class MySql implements ExportDatabaseServerInterface
 	/**
 	 * Initialize
 	 * 
-	 * @param string      $dbServerHostname Database Server Hostname
+	 * @param string      $dbServerHost Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
-	 * @param string      $dbServerUsername Database Server Username
+	 * @param string      $dbServerUser Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDatabase Database Server Database
+	 * @param null|string $dbServerDb Database Server Database
 	 * 
 	 * @return void
 	 */
 	public function init(
-		$dbServerHostname,
+		$dbServerHost,
 		$dbServerPort,
-		$dbServerUsername,
+		$dbServerUser,
 		$dbServerPassword,
-		$dbServerDatabase
+		$dbServerDb
 	): void {
-		$this->dbServerHostname = $dbServerHostname;
+		$this->dbServerHost = $dbServerHost;
 		$this->dbServerPort = $dbServerPort;
-		$this->dbServerUsername = $dbServerUsername;
+		$this->dbServerUser = $dbServerUser;
 		$this->dbServerPassword = $dbServerPassword;
-		$this->dbServerDatabase = $dbServerDatabase;
+		$this->dbServerDb = $dbServerDb;
 	}
 
 	/**
@@ -240,10 +240,10 @@ class MySql implements ExportDatabaseServerInterface
 
 		//mysqli connection
 		$mysqli = mysqli_connect(
-			hostname: $this->dbServerHostname,
-			username: $this->dbServerUsername,
+			hostname: $this->dbServerHost,
+			username: $this->dbServerUser,
 			password: $this->dbServerPassword,
-			db: $this->dbServerDatabase,
+			db: $this->dbServerDb,
 			port: $this->dbServerPort
 		);
 		if (!$mysqli) {
@@ -351,11 +351,11 @@ class MySql implements ExportDatabaseServerInterface
 
 		// Shell command.
 		$shellCommand = $this->binaryLoc . ' '
-			. '--host=' . escapeshellarg(arg: $this->dbServerHostname) . ' '
+			. '--host=' . escapeshellarg(arg: $this->dbServerHost) . ' '
 			. '--port=' . escapeshellarg(arg: $this->dbServerPort) . ' '
-			. '--user=' . escapeshellarg(arg: $this->dbServerUsername) . ' '
+			. '--user=' . escapeshellarg(arg: $this->dbServerUser) . ' '
 			. '--password=' . escapeshellarg(arg: $this->dbServerPassword) . ' '
-			. '--database=' . escapeshellarg(arg: $this->dbServerDatabase) . ' '
+			. '--database=' . escapeshellarg(arg: $this->dbServerDb) . ' '
 			. '--execute=' . escapeshellarg(arg: $sql);
 
 		return $shellCommand;

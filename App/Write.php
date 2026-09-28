@@ -148,7 +148,7 @@ class Write
 		$writeMaintainHierarchy,
 		$writeOperateAsTransaction
 	): void {
-		$writeOutputRepresentation = CommonFunction::getOutputRepresentation(
+		$writeOUTPUT_REPRESENTATION = CommonFunction::getOUTPUT_REPRESENTATION(
 			sqlConfig: $writeSqlConfig,
 			httpReqData: $this->httpObject->httpReqData,
 			customerId: $this->httpObject->httpReqData['current']['customerId']
@@ -172,7 +172,7 @@ class Write
 		if ($writePayloadDataType === 'Array') {
 			if (
 				in_array(
-					needle: $writeOutputRepresentation['OUTPUT_REPRESENTATION'],
+					needle: $writeOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -272,7 +272,7 @@ class Write
 			} else {
 				if (
 					in_array(
-						needle: $writeOutputRepresentation['OUTPUT_REPRESENTATION'],
+						needle: $writeOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 						haystack: ['XML', 'XSLT', 'HTML'],
 						strict: Constant::$TRUE
 					)
@@ -299,7 +299,7 @@ class Write
 		if ($writePayloadDataType === 'Array') {
 			if (
 				in_array(
-					needle: $writeOutputRepresentation['OUTPUT_REPRESENTATION'],
+					needle: $writeOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)

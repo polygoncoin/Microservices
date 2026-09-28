@@ -39,7 +39,7 @@ class Redis implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerHostname = null;
+	private $cacheServerHost = null;
 
 	/**
 	 * Cache Server Port
@@ -53,7 +53,7 @@ class Redis implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerUsername = null;
+	private $cacheServerUser = null;
 
 	/**
 	 * Cache Server Password
@@ -67,7 +67,7 @@ class Redis implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerDatabase = null;
+	private $cacheServerDb = null;
 
 	/**
 	 * Cache Server Object
@@ -79,26 +79,26 @@ class Redis implements NoSqlInterface
 	/**
 	 * Constructor
 	 * 
-	 * @param string      $cacheServerHostname Cache Server Hostname
+	 * @param string      $cacheServerHost Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
-	 * @param string      $cacheServerUsername Cache Server Username
+	 * @param string      $cacheServerUser Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDatabase Cache Server Database
+	 * @param null|string $cacheServerDb Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
-		$cacheServerHostname,
+		$cacheServerHost,
 		$cacheServerPort,
-		$cacheServerUsername,
+		$cacheServerUser,
 		$cacheServerPassword,
-		$cacheServerDatabase,
+		$cacheServerDb,
 		$cacheServerTable
 	) {
-		$this->cacheServerHostname = $cacheServerHostname;
+		$this->cacheServerHost = $cacheServerHost;
 		$this->cacheServerPort = $cacheServerPort;
-		$this->cacheServerUsername = $cacheServerUsername;
+		$this->cacheServerUser = $cacheServerUser;
 		$this->cacheServerPassword = $cacheServerPassword;
-		$this->cacheServerDatabase = $cacheServerDatabase;
+		$this->cacheServerDb = $cacheServerDb;
 	}
 
 	/**
@@ -116,17 +116,17 @@ class Redis implements NoSqlInterface
 		try {
 			// https://github.com/phpredis/phpredis?tab=readme-ov-file#class-redis
 			$connParamArray = [
-				'host' => $this->cacheServerHostname,
+				'host' => $this->cacheServerHost,
 				'port' => (int)$this->cacheServerPort,
 				'connectTimeout' => 2.5
 			];
 
 			if (
-				($this->cacheServerUsername !== '')
+				($this->cacheServerUser !== '')
 				&& ($this->cacheServerPassword !== '')
 			) {
 				$connParamArray['auth'] = [
-					$this->cacheServerUsername,
+					$this->cacheServerUser,
 					$this->cacheServerPassword
 				];
 			}
@@ -134,9 +134,9 @@ class Redis implements NoSqlInterface
 				$connParamArray
 			);
 
-			if (!empty($this->cacheServerDatabase)) {
+			if (!empty($this->cacheServerDb)) {
 				$this->cacheServerObject->select(
-					$this->cacheServerDatabase
+					$this->cacheServerDb
 				);
 			}
 

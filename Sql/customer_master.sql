@@ -70,8 +70,8 @@ CREATE TABLE `import_file_detail` (
 
 LOCK TABLES `customer_user_group` WRITE;
 INSERT INTO `customer_user_group` VALUES
-(2,'Customer001UserGroup1',NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No'),
-(3,'AdminGroup',NULL,'',NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No');
+(2,'Customer001UserGroup1',NULL,NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No'),
+(3,'AdminGroup',NULL,NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No');
 UNLOCK TABLES;
 
 LOCK TABLES `customer_user` WRITE;

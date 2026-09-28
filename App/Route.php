@@ -111,8 +111,6 @@ class Route
 		} else {
 			$userRoutesFolder = Constant::$WWW . $this->routesFolder
 				. DIRECTORY_SEPARATOR . 'Private'
-				. DIRECTORY_SEPARATOR . 'CustomerDB'
-				. DIRECTORY_SEPARATOR . 'Groups'
 				. DIRECTORY_SEPARATOR . $this->httpObject->httpRequestObject->activeRequestData['groupData']['customer_user_group_name'];
 		}
 
@@ -126,9 +124,7 @@ class Route
 				)
 			) {
 				throw new \Exception(
-					message: json_encode(
-						value: [$routeFileLocation]
-					),
+					message: 'Route file missing',
 					code: HttpStatus::$BadRequest
 				);
 				continue;

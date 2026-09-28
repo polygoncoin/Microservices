@@ -107,10 +107,10 @@ class CustomerValidator implements ValidatorInterface
 		$primary,
 		&$id
 	): int {
-		$dbServerDatabase = $this->httpObject->httpRequestObject->databaseServerObject->dbServerDatabase;
+		$dbServerDb = $this->httpObject->httpRequestObject->databaseServerObject->dbServerDb;
 		$sql = "
 			SELECT count(1) as `count`
-			FROM `{$dbServerDatabase}`.`{$table}`
+			FROM `{$dbServerDb}`.`{$table}`
 			WHERE `{$primary}` = ?
 		";
 		$paramArray = [$id];

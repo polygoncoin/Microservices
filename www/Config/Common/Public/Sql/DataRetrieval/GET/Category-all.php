@@ -98,6 +98,7 @@ return [
 			'lagResponse' => 0
 		]
 	],
-	'OUTPUT_REPRESENTATION_FILE' => Constant::$XSLT_PUBLIC_DIRECTORY
+	'OUTPUT_REPRESENTATION_FILE' => $this->httpObject->httpReqData['current']['commonServingFileDir']
+		. DIRECTORY_SEPARATOR . 'XSLT'
 		. DIRECTORY_SEPARATOR . 'Category.xls'
 ];

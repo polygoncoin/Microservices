@@ -39,7 +39,7 @@ class MongoDbCache implements CacheServerInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerHostname = null;
+	private $cacheServerHost = null;
 
 	/**
 	 * Cache Server Port
@@ -53,7 +53,7 @@ class MongoDbCache implements CacheServerInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerUsername = null;
+	private $cacheServerUser = null;
 
 	/**
 	 * Cache Server Password
@@ -67,7 +67,7 @@ class MongoDbCache implements CacheServerInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerDatabase = null;
+	private $cacheServerDb = null;
 
 	/**
 	 * Cache collection
@@ -86,26 +86,26 @@ class MongoDbCache implements CacheServerInterface
 	/**
 	 * Constructor
 	 * 
-	 * @param string      $cacheServerHostname Cache Server Hostname
+	 * @param string      $cacheServerHost Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
-	 * @param string      $cacheServerUsername Cache Server Username
+	 * @param string      $cacheServerUser Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDatabase Cache Server Database
+	 * @param null|string $cacheServerDb Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
-		$cacheServerHostname,
+		$cacheServerHost,
 		$cacheServerPort,
-		$cacheServerUsername,
+		$cacheServerUser,
 		$cacheServerPassword,
-		$cacheServerDatabase,
+		$cacheServerDb,
 		$cacheServerTable
 	) {
-		$this->cacheServerHostname = $cacheServerHostname;
+		$this->cacheServerHost = $cacheServerHost;
 		$this->cacheServerPort = $cacheServerPort;
-		$this->cacheServerUsername = $cacheServerUsername;
+		$this->cacheServerUser = $cacheServerUser;
 		$this->cacheServerPassword = $cacheServerPassword;
-		$this->cacheServerDatabase = $cacheServerDatabase;
+		$this->cacheServerDb = $cacheServerDb;
 		$this->cacheServerTable = $cacheServerTable;
 	}
 
@@ -123,11 +123,11 @@ class MongoDbCache implements CacheServerInterface
 
 		try {
 			$this->noSqlServerObject = new Cache_MongoDb(
-				cacheServerHostname: $this->cacheServerHostname,
+				cacheServerHost: $this->cacheServerHost,
 				cacheServerPort: $this->cacheServerPort,
-				cacheServerUsername: $this->cacheServerUsername,
+				cacheServerUser: $this->cacheServerUser,
 				cacheServerPassword: $this->cacheServerPassword,
-				cacheServerDatabase: $this->cacheServerDatabase,
+				cacheServerDb: $this->cacheServerDb,
 				cacheServerTable: $this->cacheServerTable
 			);
 		} catch (\Exception $e) {

@@ -74,11 +74,11 @@ class QueryCache
 		);
 		$this->queryCacheServerObject = new QueryCacheServer(
 			queryCacheServerMode: $queryCacheServerCred['cacheServerType'],
-			queryCacheServerHost: $queryCacheServerCred['cacheServerHostname'],
+			queryCacheServerHost: $queryCacheServerCred['cacheServerHost'],
 			queryCacheServerPort: $queryCacheServerCred['cacheServerPort'],
-			queryCacheServerUser: $queryCacheServerCred['cacheServerUsername'],
+			queryCacheServerUser: $queryCacheServerCred['cacheServerUser'],
 			queryCacheServerPassword: $queryCacheServerCred['cacheServerPassword'],
-			queryCacheServerDb: $queryCacheServerCred['cacheServerDatabase'],
+			queryCacheServerDb: $queryCacheServerCred['cacheServerDb'],
 			queryCacheServerTable: $queryCacheServerCred['cacheServerTable']
 		);
 	}

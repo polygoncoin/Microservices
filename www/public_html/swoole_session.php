@@ -24,7 +24,7 @@ use Microservices\App\Reload;
 use Microservices\App\Start;
 use Microservices\TestCase\Test;
 
-define('ROOT', realpath(path: __DIR__ . DIRECTORY_SEPARATOR . '../'));
+define('ROOT', realpath(path: __DIR__ . '/../../'));
 define('ROUTE_URL_PARAM', 'route');
 
 require_once ROOT . DIRECTORY_SEPARATOR . 'Autoload.php';

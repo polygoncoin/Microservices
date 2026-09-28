@@ -110,7 +110,7 @@ class Read
 			return $return;
 		}
 
-		$OUTPUT_REPRESENTATION = CommonFunction::getOutputRepresentation(
+		$OUTPUT_REPRESENTATION = CommonFunction::getOUTPUT_REPRESENTATION(
 			sqlConfig: $sqlConfig,
 			httpReqData: $this->httpObject->httpReqData,
 			customerId: $this->httpObject->httpReqData['current']['customerId']
@@ -154,7 +154,7 @@ class Read
 		$this->read(
 			readSqlConfig: $sqlConfig,
 			readMaintainHierarchy: $maintainHierarchy,
-			readOutputRepresentation: $OUTPUT_REPRESENTATION
+			readOUTPUT_REPRESENTATION: $OUTPUT_REPRESENTATION
 		);
 
 		if (
@@ -180,14 +180,14 @@ class Read
 	 * 
 	 * @param array $readSqlConfig            Sql config
 	 * @param bool  $readMaintainHierarchy    If true - Uses parent payload/results in child
-	 * @param array $readOutputRepresentation Output Representation
+	 * @param array $readOUTPUT_REPRESENTATION Output Representation
 	 * 
 	 * @return void
 	 */
 	private function read(
 		&$readSqlConfig,
 		$readMaintainHierarchy,
-		$readOutputRepresentation
+		$readOUTPUT_REPRESENTATION
 	): void {
 		// Set required fields
 		$this->httpObject->httpRequestObject->activeRequestData['requiredFieldArrayCollection'] = $this->getRequired(
@@ -208,7 +208,7 @@ class Read
 		if ($readPayloadDataType === 'Array') {
 			if (
 				in_array(
-					needle: $readOutputRepresentation['OUTPUT_REPRESENTATION'],
+					needle: $readOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -534,7 +534,7 @@ class Read
 	 * @param array $readPayloadKeyArray
 	 * @param array $dbFetchedRecord               Record data fetched from DB
 	 * @param bool  $readMaintainHierarchy         If true - Uses parent payload/results in child
-	 * @param bool  $readChildOutputRepresentation Output Representation
+	 * @param bool  $readChildOUTPUT_REPRESENTATION Output Representation
 	 * 
 	 * @return void
 	 */
@@ -1030,11 +1030,11 @@ class Read
 			dbServerType: $exportDbData['dbServerType']
 		);
 		$export->init(
-			dbServerHostname: $exportDbData['dbServerHostname'],
+			dbServerHost: $exportDbData['dbServerHost'],
 			dbServerPort: $exportDbData['dbServerPort'],
-			dbServerUsername: $exportDbData['dbServerUsername'],
+			dbServerUser: $exportDbData['dbServerUser'],
 			dbServerPassword: $exportDbData['dbServerPassword'],
-			dbServerDatabase: $exportDbData['dbServerDatabase']
+			dbServerDb: $exportDbData['dbServerDb']
 		);
 
 		if (isset($readSqlConfig['downloadFile'])) {

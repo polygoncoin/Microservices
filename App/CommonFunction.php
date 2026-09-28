@@ -38,31 +38,6 @@ use Microservices\App\Server\CacheServer\CacheServerInterface;
 class CommonFunction
 {
 	/**
-	 * Check Feature is Enabled (Yes/No)
-	 * 
-	 * @param Http   $httpObject
-	 * @param string $feature
-	 * 
-	 * @return bool
-	 */
-	public static function isEnabled(
-		&$httpObject,
-		$feature
-	): bool {
-		if (!isset($httpObject->httpRequestObject->activeRequestData['customerData'][$feature])) {
-			throw new \Exception(
-				message: "Provided feature '{$feature}' not found",
-				code: HttpStatus::$InternalServerError
-			);
-		}
-		if (empty($httpObject->httpRequestObject->activeRequestData['customerData'][$feature])) {
-			return Constant::$FALSE;
-		} else {
-			return ($httpObject->httpRequestObject->activeRequestData['customerData'][$feature] === Constant::$YES) ? Constant::$TRUE : Constant::$FALSE;
-		}
-	}
-
-	/**
 	 * Check Errors related to File Upload
 	 * 
 	 * @param array $httpFileArray $httpReqData['files']
@@ -366,7 +341,7 @@ class CommonFunction
 	public static function checkPrivateRequestCidr(
 		&$httpObject
 	): void {
-		if (!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_CIDR) {
+		if (!Env::$config[$httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_CIDR) {
 			return;
 		}
 
@@ -437,12 +412,12 @@ class CommonFunction
 	 * 
 	 * @return null|array
 	 */
-	public static function getOutputRepresentation(
+	public static function getOUTPUT_REPRESENTATION(
 		$sqlConfig,
 		$httpReqData,
 		$customerId
 	): null|array {
-		$returnOutputRepresentation = [];
+		$returnOUTPUT_REPRESENTATION = [];
 		switch (Constant::$TRUE) {
 			case isset($httpReqData['get']['OUTPUT_REPRESENTATION'])
 				&& in_array(
@@ -450,7 +425,7 @@ class CommonFunction
 					haystack: ['JSON', 'XML'],
 					strict: Constant::$TRUE
 				):
-				$returnOutputRepresentation = [
+				$returnOUTPUT_REPRESENTATION = [
 					'OUTPUT_REPRESENTATION' => $httpReqData['get']['OUTPUT_REPRESENTATION'],
 					'OUTPUT_REPRESENTATION_FILE' => Constant::$FALSE
 				];
@@ -466,7 +441,7 @@ class CommonFunction
 					strict: Constant::$TRUE
 				)
 				&& isset($sqlConfig['OUTPUT_REPRESENTATION_FILE']):
-				$returnOutputRepresentation = [
+				$returnOUTPUT_REPRESENTATION = [
 					'OUTPUT_REPRESENTATION' => $sqlConfig['OUTPUT_REPRESENTATION'],
 					'OUTPUT_REPRESENTATION_FILE' => $sqlConfig['OUTPUT_REPRESENTATION_FILE']
 				];
@@ -475,10 +450,10 @@ class CommonFunction
 				Env::loadEnv(
 					customerId: $customerId
 				);
-				$returnOutputRepresentation = Env::$config[$customerId]->OUTPUT_REPRESENTATION;
+				$returnOUTPUT_REPRESENTATION = Env::$config[$customerId]->OUTPUT_REPRESENTATION;
 				break;
 		}
 
-		return $returnOutputRepresentation;
+		return $returnOUTPUT_REPRESENTATION;
 	}
 }

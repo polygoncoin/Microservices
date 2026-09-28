@@ -18,30 +18,37 @@ use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
 use Microservices\DatabaseTable;
 
-return array_merge(
-	require $this->httpObject->httpReqData['current']['commonSqlDir']
-		. DIRECTORY_SEPARATOR . 'Common'
-		. DIRECTORY_SEPARATOR . 'Registration.php',
-	[
-		'__SET__' => [
-			[
-				'column' => 'is_deleted',
-				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => Constant::$YES
-			]
-		],
-		'__WHERE__' => [
-			[
-				'column' => 'is_deleted',
-				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => Constant::$NO
+return [
+	'__SQL__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__VALIDATE__' => [
+		[
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
+				'primary' => ['custom', DatabaseTable::$customerUserPrimaryKey],
+				'id' => ['routeParamArray', 'id']
 			],
-			[
-				'column' => DatabaseTable::$customerUserPrimaryKey,
-				'activeRequestDataKey' => 'routeParamArray',
-				'activeRequestDataKeySubKey' => 'id',
-				'dataType' => DatabaseServerDataType::$PrimaryKey
-			]
+			'errorMessage' => 'Invalid registration id'
 		],
-	]
-);
+	],
+	'__SET__' => [
+		[
+			'column' => 'is_deleted',
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => Constant::$YES
+		]
+	],
+	'__WHERE__' => [
+		[
+			'column' => 'is_deleted',
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => Constant::$NO
+		],
+		[
+			'column' => DatabaseTable::$customerUserPrimaryKey,
+			'activeRequestDataKey' => 'routeParamArray',
+			'activeRequestDataKeySubKey' => 'id',
+			'dataType' => DatabaseServerDataType::$PrimaryKey
+		]
+	],
+];

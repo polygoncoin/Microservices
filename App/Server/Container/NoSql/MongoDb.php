@@ -35,7 +35,7 @@ use Microservices\App\Server\Container\NoSql\NoSqlInterface;
  */
 class MongoDb implements NoSqlInterface
 {
-	// "mongodb://<cacheServerUsername>:<cacheServerPassword>@<cluster-url>:<cacheServerPort>/<database-name>
+	// "mongodb://<cacheServerUser>:<cacheServerPassword>@<cluster-url>:<cacheServerPort>/<database-name>
 	// ?retryWrites=true&w=majority"
 	private $uri = null;
 
@@ -44,7 +44,7 @@ class MongoDb implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerHostname = null;
+	private $cacheServerHost = null;
 
 	/**
 	 * Cache Server Port
@@ -58,7 +58,7 @@ class MongoDb implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerUsername = null;
+	private $cacheServerUser = null;
 
 	/**
 	 * Cache Server Password
@@ -72,7 +72,7 @@ class MongoDb implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerDatabase = null;
+	private $cacheServerDb = null;
 
 	/**
 	 * Cache collection
@@ -93,7 +93,7 @@ class MongoDb implements NoSqlInterface
 	 * 
 	 * @var null|Object
 	 */
-	private $cacheServerDatabaseObject = null;
+	private $cacheServerDbObject = null;
 
 	/**
 	 * Collection Object
@@ -105,26 +105,26 @@ class MongoDb implements NoSqlInterface
 	/**
 	 * Constructor
 	 * 
-	 * @param string      $cacheServerHostname Cache Server Hostname
+	 * @param string      $cacheServerHost Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
-	 * @param string      $cacheServerUsername Cache Server Username
+	 * @param string      $cacheServerUser Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDatabase Cache Server Database
+	 * @param null|string $cacheServerDb Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
-		$cacheServerHostname,
+		$cacheServerHost,
 		$cacheServerPort,
-		$cacheServerUsername,
+		$cacheServerUser,
 		$cacheServerPassword,
-		$cacheServerDatabase,
+		$cacheServerDb,
 		$cacheServerTable
 	) {
-		$this->cacheServerHostname = $cacheServerHostname;
+		$this->cacheServerHost = $cacheServerHost;
 		$this->cacheServerPort = $cacheServerPort;
-		$this->cacheServerUsername = $cacheServerUsername;
+		$this->cacheServerUser = $cacheServerUser;
 		$this->cacheServerPassword = $cacheServerPassword;
-		$this->cacheServerDatabase = $cacheServerDatabase;
+		$this->cacheServerDb = $cacheServerDb;
 		$this->cacheServerTable = $cacheServerTable;
 	}
 
@@ -144,25 +144,25 @@ class MongoDb implements NoSqlInterface
 			if ($this->uri === Constant::$NULL) {
 				$UP = '';
 				if (
-					$this->cacheServerUsername !== Constant::$NULL
+					$this->cacheServerUser !== Constant::$NULL
 					&& $this->cacheServerPassword !== Constant::$NULL
 				) {
-					$UP = "{$this->cacheServerUsername}:{$this->cacheServerPassword}@";
+					$UP = "{$this->cacheServerUser}:{$this->cacheServerPassword}@";
 				}
 				$this->uri = 'mongodb://' . $UP
-					. $this->cacheServerHostname . ':' . $this->cacheServerPort;
+					. $this->cacheServerHost . ':' . $this->cacheServerPort;
 			}
 			$this->cacheServerObject = new \MongoDB\Customer(
 				$this->uri
 			);
 
 			// Select a database
-			$this->cacheServerDatabaseObject = $this->cacheServerObject->selectDatabase(
-				$this->cacheServerDatabase
+			$this->cacheServerDbObject = $this->cacheServerObject->selectDatabase(
+				$this->cacheServerDb
 			);
 
 			// Select a collection
-			$this->collectionObject = $this->cacheServerDatabaseObject->selectCollection(
+			$this->collectionObject = $this->cacheServerDbObject->selectCollection(
 				$this->cacheServerTable
 			);
 

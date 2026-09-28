@@ -176,7 +176,7 @@ class RouteParser
 
 			return;
 		}
-		if ($this->routeElementArray[0] === Env::$SYSTEM_ROUTE_REQUEST_KEYWORD) {
+		if ($this->routeElementArray[0] === Env::$SYSTEM_KEYWORD) {
 			if (!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_ROUTES_REQUEST) {
 				throw new \Exception(
 					message: 'Route not supported',
@@ -189,7 +189,7 @@ class RouteParser
 			);
 
 			$this->routeStartingWithReservedKeywordFlag = Constant::$TRUE;
-			$this->routeStartingReservedKeyword = Env::$SYSTEM_ROUTE_REQUEST_KEYWORD;
+			$this->routeStartingReservedKeyword = Env::$SYSTEM_KEYWORD;
 
 			$this->configuredRoute = '/' . implode(
 				separator: '/',
@@ -214,21 +214,21 @@ class RouteParser
 		}
 
 		if (
-			file_exists(
+			!file_exists(
 				filename: $routeFileLocation
 			)
 		) {
-			$Constant = __NAMESPACE__ . '\Constant';
-			$Env = __NAMESPACE__ . '\Env';
-
-			$this->routeFileLocation = $routeFileLocation;
-			$routeConfig = include $routeFileLocation;
-		} else {
 			throw new \Exception(
 				message: 'Route file missing: HTTP ' . $this->httpObject->httpReqData['server']['httpRequestMethod'] . ' method',
+				// message: 'Route file missing: ' . $routeFileLocation,
 				code: HttpStatus::$InternalServerError
 			);
 		}
+		$Constant = __NAMESPACE__ . '\Constant';
+		$Env = __NAMESPACE__ . '\Env';
+
+		$this->routeFileLocation = $routeFileLocation;
+		$routeConfig = include $routeFileLocation;
 
 		$configuredRoute = [];
 		$indexCount = count(
@@ -335,13 +335,13 @@ class RouteParser
 		// Switch Input data representation if set in URL param
 		if (
 			Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_INPUT_REPRESENTATION_IN_QUERY_STRING
-			&& isset($this->httpObject->httpReqData['get']['INPUT_REPRESENTATION'])
+			&& isset($this->httpObject->httpReqData['get']['inputRepresentation'])
 			&& Env::isValidDataRep(
-				dataRepresentation: $this->httpObject->httpReqData['get']['INPUT_REPRESENTATION'],
+				dataRepresentation: $this->httpObject->httpReqData['get']['inputRepresentation'],
 				mode: 'input'
 			)
 		) {
-			$this->httpObject->httpRequestObject->INPUT_REPRESENTATION = $this->httpObject->httpReqData['get']['INPUT_REPRESENTATION'];
+			$this->httpObject->httpRequestObject->INPUT_REPRESENTATION = $this->httpObject->httpReqData['get']['inputRepresentation'];
 		}
 
 		$this->configuredRoute = '/' . implode(
@@ -414,10 +414,7 @@ class RouteParser
 			$this->routeEndingReservedKeyword = Env::$config[$this->httpObject->httpReqData['current']['customerId']]->IMPORT_REQUEST_KEYWORD;
 			$return = Constant::$TRUE;
 		} elseif (
-			CommonFunction::isEnabled(
-				httpObject: $this->httpObject,
-				feature: 'customer_enable_import_sample'
-			)
+			Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_IMPORT_SAMPLE_REQUEST
 			&& Env::$config[$this->httpObject->httpReqData['current']['customerId']]->IMPORT_SAMPLE_REQUEST_KEYWORD === $routeEndingKeyword
 		) {
 			$this->routeEndingWithReservedKeywordFlag = Constant::$TRUE;
@@ -660,13 +657,13 @@ class RouteParser
 		$this->reservedRoutesPrefix = [
 			Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CRON_REQUEST_KEYWORD,
 			Env::$SYSTEM_RELOAD_REQUEST_KEYWORD,
-			Env::$SYSTEM_ROUTE_REQUEST_KEYWORD
+			Env::$SYSTEM_KEYWORD
 		];
 
 		$this->reservedRoutesCidrString = [
 			Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CRON_REQUEST_KEYWORD => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_cron_cidr'],
 			Env::$SYSTEM_RELOAD_REQUEST_KEYWORD => Env::$config[$this->httpObject->httpReqData['current']['customerId']]->RELOAD_CACHE_CIDR,
-			Env::$SYSTEM_ROUTE_REQUEST_KEYWORD => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_routes_cidr']
+			Env::$SYSTEM_KEYWORD => $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_routes_cidr']
 		];
 
 		if (Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_CUSTOM_REQUEST) {

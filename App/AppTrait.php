@@ -958,7 +958,7 @@ trait AppTrait
 	): void {
 		if (
 			$this->httpObject->httpRequestObject->isPublicRequest
-			|| !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_ROUTE_REQUEST
+			|| !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
 		) {
@@ -1612,8 +1612,8 @@ trait AppTrait
 
 		if (
 			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$config[$this->httpObject->httpReqData['current']['customerId']]->EXPLAIN_REQUEST_KEYWORD
 			&& Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_EXPLAIN_REQUEST
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$config[$this->httpObject->httpReqData['current']['customerId']]->EXPLAIN_REQUEST_KEYWORD
 		) {
 			return $this->explain(
 				sqlConfig: $sqlConfig,
@@ -1658,8 +1658,8 @@ trait AppTrait
 
 		if (
 			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$config[$this->httpObject->httpReqData['current']['customerId']]->EXPLAIN_REQUEST_KEYWORD
 			&& Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_EXPLAIN_REQUEST
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === Env::$config[$this->httpObject->httpReqData['current']['customerId']]->EXPLAIN_REQUEST_KEYWORD
 		) {
 			return $this->explain(
 				sqlConfig: $sqlConfig,
@@ -1763,6 +1763,10 @@ trait AppTrait
 		$this->dataEncodeObject->addKeyData(
 			objectKey: 'Route',
 			data: $this->httpObject->httpRequestObject->routeParserObject->configuredRoute
+		);
+		$this->dataEncodeObject->addKeyData(
+			objectKey: 'HttpMethod',
+			data: $this->httpObject->httpReqData['server']['httpRequestMethod']
 		);
 		$this->dataEncodeObject->addKeyData(
 			objectKey: 'Payload',

@@ -102,17 +102,17 @@ class Gateway
 	{
 		if (
 			!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING
-			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_route_request_count'])
-			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_route_request_count_window'])
+			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_count'])
+			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_count_window'])
 		) {
 			return;
 		}
 
 		$RATE_LIMIT_IP_PREFIX = Env::$config[$this->httpObject->httpReqData['current']['customerId']]->RATE_LIMIT_IP_PREFIX;
 		$rateLimitMaxRequest =
-				$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_route_request_count'];
+				$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_count'];
 		$rateLimitMaxRequestWindow =
-				$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_route_request_count_window'];
+				$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_count_window'];
 		$rateLimitKey = $this->httpObject->httpReqData['current']['customerId'];
 
 		$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
@@ -131,7 +131,7 @@ class Gateway
 	private function rateLimitUser(): void
 	{
 		if (
-			!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_LOGIN_ROUTE_REQUEST_PER_USER
+			!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_LOGIN_PER_USER
 			|| empty($this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_count'])
 			|| empty($this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_count_window'])
 		) {
@@ -162,16 +162,16 @@ class Gateway
 	private function rateLimitUserRequest(): void
 	{
 		if (
-			!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_LOGGED_IN_USER_ROUTE_REQUEST
-			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_route_request_count'])
-			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_route_request_count_window'])
+			!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_LOGGED_IN_USER
+			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_count'])
+			|| empty($this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_count_window'])
 		) {
 			return;
 		}
 
 		$RATE_LIMIT_USER_PREFIX = Env::$config[$this->httpObject->httpReqData['current']['customerId']]->RATE_LIMIT_USER_PREFIX;
-		$rateLimitMaxRequest = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_route_request_count'];
-		$rateLimitMaxRequestWindow = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_route_request_count_window'];
+		$rateLimitMaxRequest = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_count'];
+		$rateLimitMaxRequestWindow = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_logged_in_user_count_window'];
 		$rateLimitKey = $this->httpObject->httpReqData['current']['customerId'] . ':'
 			. $this->httpObject->httpReqData['current']['customerUserId'];
 
@@ -190,13 +190,13 @@ class Gateway
 	 */
 	private function rateLimitIp(): void
 	{
-		if (!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_ROUTE_REQUEST_PER_IP) {
+		if (!Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_PER_IP) {
 			return;
 		}
 
 		$RATE_LIMIT_IP_PREFIX = Env::$config[$this->httpObject->httpReqData['current']['customerId']]->RATE_LIMIT_IP_PREFIX;
-		$customer_ip_count = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_route_request_per_ip_count'];
-		$customer_ip_count_window = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_route_request_per_ip_count_window'];
+		$customer_ip_count = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_per_ip_count'];
+		$customer_ip_count_window = $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_limiting_per_ip_count_window'];
 		$rateLimitKey = $this->httpObject->httpReqData['current']['customerId'] . ':' . $this->httpObject->httpReqData['server']['httpRequestIp'];
 
 		$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(

@@ -18,35 +18,42 @@ use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
 use Microservices\DatabaseTable;
 
-return array_merge(
-	require $this->httpObject->httpReqData['current']['commonSqlDir']
-		. DIRECTORY_SEPARATOR . 'Common'
-		. DIRECTORY_SEPARATOR . 'Registration.php',
-	[
-		'__SET__' => [
-			[
-				'column' => 'firstname',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'firstname'
+return [
+	'__SQL__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__VALIDATE__' => [
+		[
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
+				'primary' => ['custom', DatabaseTable::$customerUserPrimaryKey],
+				'id' => ['routeParamArray', 'id']
 			],
-			[
-				'column' => 'lastname',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'lastname'
-			],
-			[
-				'column' => 'email',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'email'
-			],
+			'errorMessage' => 'Invalid registration id'
 		],
-		'__WHERE__' => [
-			[
-				'column' => DatabaseTable::$customerUserPrimaryKey,
-				'activeRequestDataKey' => 'routeParamArray',
-				'activeRequestDataKeySubKey' => 'id',
-				'dataType' => DatabaseServerDataType::$PrimaryKey
-			]
+	],
+	'__SET__' => [
+		[
+			'column' => 'firstname',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'firstname'
 		],
-	]
-);
+		[
+			'column' => 'lastname',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'lastname'
+		],
+		[
+			'column' => 'email',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'email'
+		],
+	],
+	'__WHERE__' => [
+		[
+			'column' => DatabaseTable::$customerUserPrimaryKey,
+			'activeRequestDataKey' => 'routeParamArray',
+			'activeRequestDataKeySubKey' => 'id',
+			'dataType' => DatabaseServerDataType::$PrimaryKey
+		]
+	],
+];

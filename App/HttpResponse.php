@@ -81,9 +81,7 @@ class HttpResponse
 		$this->httpObject = &$httpObject;
 		$this->httpStatus = HttpStatus::$Ok;
 
-		if (Env::$config[$this->httpObject->httpReqData['current']['customerId']]->OUTPUT_PERFORMANCE_STATS) {
-			$this->startMicroTimestamp = microtime(as_float: Constant::$TRUE);
-		}
+		$this->startMicroTimestamp = microtime(as_float: Constant::$TRUE);
 	}
 
 	/**
@@ -94,7 +92,7 @@ class HttpResponse
 	public function init(): bool
 	{
 		$sqlConfig = $this->httpObject->httpRequestObject->routeParserObject->sqlConfig ?? [];
-		$OUTPUT_REPRESENTATION = CommonFunction::getOutputRepresentation(
+		$OUTPUT_REPRESENTATION = CommonFunction::getOUTPUT_REPRESENTATION(
 			sqlConfig: $sqlConfig,
 			httpReqData: $this->httpObject->httpReqData,
 			customerId: $this->httpObject->httpReqData['current']['customerId']

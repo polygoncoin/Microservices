@@ -123,11 +123,11 @@ class RedisQueryCache implements QueryCacheServerInterface
 
 		try {
 			$this->queryCacheServerObject = new QueryCache_Redis(
-				cacheServerHostname: $this->queryCacheServerHost,
+				cacheServerHost: $this->queryCacheServerHost,
 				cacheServerPort: $this->queryCacheServerPort,
-				cacheServerUsername: $this->queryCacheServerUser,
+				cacheServerUser: $this->queryCacheServerUser,
 				cacheServerPassword: $this->queryCacheServerPassword,
-				cacheServerDatabase: $this->queryCacheServerDb,
+				cacheServerDb: $this->queryCacheServerDb,
 				cacheServerTable: $this->queryCacheServerTable
 			);
 		} catch (\Exception $e) {

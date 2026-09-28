@@ -293,7 +293,6 @@ class HttpRequest
 			$this->sessionObject = new Session(
 				customerId: $this->httpObject->httpReqData['current']['customerId']
 			);
-			$this->sessionObject->sessionDomain = $this->httpObject->httpReqData['server']['domainName'];
 			$this->sessionObject->initSessionHandler(
 				options: []
 			);
@@ -368,14 +367,17 @@ class HttpRequest
 				$configDir .= DIRECTORY_SEPARATOR . 'Private';
 				$commonConfigDir .= DIRECTORY_SEPARATOR . 'Private';
 
+				$servingFileDir = $configDir . DIRECTORY_SEPARATOR . 'ServingFile';
 				$routeDir = $configDir . DIRECTORY_SEPARATOR . 'Route'
-					. DIRECTORY_SEPARATOR . "GroupId.{$this->httpObject->httpReqData['current']['customerUserGroupId']}";
+					. DIRECTORY_SEPARATOR . "GroupId.{$this->httpObject->httpReqData['current']['customerUserGroupId']}"
+					. DIRECTORY_SEPARATOR . $this->getDataMode();
 				$sqlDir = $configDir . DIRECTORY_SEPARATOR . 'Sql'
 					. DIRECTORY_SEPARATOR . "GroupId.{$this->httpObject->httpReqData['current']['customerUserGroupId']}"
 					. DIRECTORY_SEPARATOR . $this->getDataMode()
 					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpRequestMethod'];
 
-				$commonRouteDir = $commonConfigDir . DIRECTORY_SEPARATOR . 'Route';
+				$commonRouteDir = $commonConfigDir . DIRECTORY_SEPARATOR . 'Route'
+					. DIRECTORY_SEPARATOR . $this->getDataMode();
 				$commonSqlDir = $commonConfigDir . DIRECTORY_SEPARATOR . 'Sql'
 					. DIRECTORY_SEPARATOR . $this->getDataMode()
 					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpRequestMethod'];
@@ -383,21 +385,26 @@ class HttpRequest
 				$configDir .= DIRECTORY_SEPARATOR . 'Public';
 				$commonConfigDir .= DIRECTORY_SEPARATOR . 'Public';
 
-				$routeDir = $configDir . DIRECTORY_SEPARATOR . 'Route';
+				$servingFileDir = $configDir . DIRECTORY_SEPARATOR . 'ServingFile';
+				$routeDir = $configDir . DIRECTORY_SEPARATOR . 'Route'
+					. DIRECTORY_SEPARATOR . $this->getDataMode();
 				$sqlDir = $configDir . DIRECTORY_SEPARATOR . 'Sql'
 					. DIRECTORY_SEPARATOR . $this->getDataMode()
 					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpRequestMethod'];
 
-				$commonRouteDir = $commonConfigDir . DIRECTORY_SEPARATOR . 'Route';
+				$commonRouteDir = $commonConfigDir . DIRECTORY_SEPARATOR . 'Route'
+					. DIRECTORY_SEPARATOR . $this->getDataMode();
 				$commonSqlDir = $commonConfigDir . DIRECTORY_SEPARATOR . 'Sql'
 					. DIRECTORY_SEPARATOR . $this->getDataMode()
 					. DIRECTORY_SEPARATOR . $this->httpObject->httpReqData['server']['httpRequestMethod'];
 			}
 
+			$this->httpObject->httpReqData['current']['servingFileDir'] = $servingFileDir;
 			$this->httpObject->httpReqData['current']['configDir'] = $configDir;
 			$this->httpObject->httpReqData['current']['routeDir'] = $routeDir;
 			$this->httpObject->httpReqData['current']['sqlDir'] = $sqlDir;
 
+			$this->httpObject->httpReqData['current']['commonServingFileDir'] = $servingFileDir;
 			$this->httpObject->httpReqData['current']['commonConfigDir'] = $configDir;
 			$this->httpObject->httpReqData['current']['commonRouteDir'] = $commonRouteDir;
 			$this->httpObject->httpReqData['current']['commonSqlDir'] = $commonSqlDir;

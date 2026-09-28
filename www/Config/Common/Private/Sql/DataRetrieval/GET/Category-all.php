@@ -92,5 +92,7 @@ return [
 	'__FETCH-MODE__' => 'Master',
 	// '__CACHE-KEY__' => $this->httpObject->httpRequestObject->activeRequestData['customerData'][DatabaseTable::$customerPrimaryKey] . ':category',
 	'OUTPUT_REPRESENTATION' => 'PHP',
-	'OUTPUT_REPRESENTATION_FILE' => Constant::$PHP_PRIVATE_DIRECTORY . DIRECTORY_SEPARATOR . 'index.php'
+	'OUTPUT_REPRESENTATION_FILE' => $this->httpObject->httpReqData['current']['commonServingFileDir']
+		. DIRECTORY_SEPARATOR . 'PHP'
+		. DIRECTORY_SEPARATOR . 'index.php'
 ];

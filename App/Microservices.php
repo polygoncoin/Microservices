@@ -203,7 +203,7 @@ class Microservices
 			) {
 				$OUTPUT_REPRESENTATION = Env::$SYSTEM_OUTPUT_REPRESENTATION;
 			} else {
-				$OUTPUT_REPRESENTATION = CommonFunction::getOutputRepresentation(
+				$OUTPUT_REPRESENTATION = CommonFunction::getOUTPUT_REPRESENTATION(
 					sqlConfig: $this->httpObject->httpRequestObject->routeParserObject->sqlConfig,
 					httpReqData: $this->httpObject->httpReqData,
 					customerId: $this->httpObject->httpReqData['current']['customerId']

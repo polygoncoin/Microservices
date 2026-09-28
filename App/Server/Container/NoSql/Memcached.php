@@ -39,7 +39,7 @@ class Memcached implements NoSqlInterface
 	 * 
 	 * @var null|string
 	 */
-	private $cacheServerHostname = null;
+	private $cacheServerHost = null;
 
 	/**
 	 * Cache Server Port
@@ -58,22 +58,22 @@ class Memcached implements NoSqlInterface
 	/**
 	 * Constructor
 	 * 
-	 * @param string      $cacheServerHostname Cache Server Hostname
+	 * @param string      $cacheServerHost Cache Server Hostname
 	 * @param int         $cacheServerPort     Cache Server Port
-	 * @param string      $cacheServerUsername Cache Server Username
+	 * @param string      $cacheServerUser Cache Server Username
 	 * @param string      $cacheServerPassword Cache Server Password
-	 * @param null|string $cacheServerDatabase Cache Server Database
+	 * @param null|string $cacheServerDb Cache Server Database
 	 * @param null|string $cacheServerTable    Cache Server Table
 	 */
 	public function __construct(
-		$cacheServerHostname,
+		$cacheServerHost,
 		$cacheServerPort,
-		$cacheServerUsername,
+		$cacheServerUser,
 		$cacheServerPassword,
-		$cacheServerDatabase,
+		$cacheServerDb,
 		$cacheServerTable
 	) {
-		$this->cacheServerHostname = $cacheServerHostname;
+		$this->cacheServerHost = $cacheServerHost;
 		$this->cacheServerPort = $cacheServerPort;
 	}
 
@@ -103,7 +103,7 @@ class Memcached implements NoSqlInterface
 		try {
 			$this->cacheServerObject = new \Memcached();
 			$this->cacheServerObject->addServer(
-				$this->cacheServerHostname,
+				$this->cacheServerHost,
 				$this->cacheServerPort
 			);
 		} catch (\Exception $e) {

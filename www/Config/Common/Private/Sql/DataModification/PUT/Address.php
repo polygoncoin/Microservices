@@ -18,30 +18,38 @@ use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
 use Microservices\DatabaseTable;
 
-return array_merge(
-	require $this->httpObject->httpReqData['current']['commonSqlDir']
-		. DIRECTORY_SEPARATOR . 'Common'
-		. DIRECTORY_SEPARATOR . 'Address.php',
-	[
-		'__SET__' => [
-			[
-				'column' => 'address',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'address'
-			]
-		],
-		'__WHERE__' => [
-			[
-				'column' => 'is_deleted',
-				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => Constant::$NO
+return [
+	'__SQL-COMMENT__' => '',
+	'__SQL__' => 'UPDATE `address` SET __SET__ WHERE __WHERE__',
+	'__VALIDATE__' => [
+		[
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
+				'table' => ['custom', 'address'],
+				'primary' => ['custom', DatabaseTable::$addressPrimaryKey],
+				'id' => ['routeParamArray', 'id']
 			],
-			[
-				'column' => DatabaseTable::$addressPrimaryKey,
-				'activeRequestDataKey' => 'routeParamArray',
-				'activeRequestDataKeySubKey' => 'id',
-				'dataType' => DatabaseServerDataType::$PrimaryKey
-			]
+			'errorMessage' => 'Invalid address id'
 		],
-	]
-);
+	],
+	'__SET__' => [
+		[
+			'column' => 'address',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'address'
+		]
+	],
+	'__WHERE__' => [
+		[
+			'column' => 'is_deleted',
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => Constant::$NO
+		],
+		[
+			'column' => DatabaseTable::$addressPrimaryKey,
+			'activeRequestDataKey' => 'routeParamArray',
+			'activeRequestDataKeySubKey' => 'id',
+			'dataType' => DatabaseServerDataType::$PrimaryKey
+		]
+	],
+];

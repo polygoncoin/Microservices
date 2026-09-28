@@ -131,30 +131,30 @@ class Session
 				$this->sessionContainer->sessionServerTable = Env::$config[$this->customerId]->SESSION_MYSQL_TABLE;
 				break;
 			case 'PostgreSql':
-				$this->sessionContainer->pgSqlServerHostname = Env::$config[$this->customerId]->SESSION_PGSQL_HOST;
+				$this->sessionContainer->pgSqlServerHost = Env::$config[$this->customerId]->SESSION_PGSQL_HOST;
 				$this->sessionContainer->pgSqlServerPort = Env::$config[$this->customerId]->SESSION_PGSQL_PORT;
-				$this->sessionContainer->pgSqlServerUsername = Env::$config[$this->customerId]->SESSION_PGSQL_USER;
+				$this->sessionContainer->pgSqlServerUser = Env::$config[$this->customerId]->SESSION_PGSQL_USER;
 				$this->sessionContainer->pgSqlServerPassword = Env::$config[$this->customerId]->SESSION_PGSQL_PASSWORD;
-				$this->sessionContainer->pgSqlServerDatabase = Env::$config[$this->customerId]->SESSION_PGSQL_DB;
+				$this->sessionContainer->pgSqlServerDb = Env::$config[$this->customerId]->SESSION_PGSQL_DB;
 				$this->sessionContainer->pgSqlServerTable = Env::$config[$this->customerId]->SESSION_PGSQL_TABLE;
 				break;
 			case 'MongoDb':
-				$this->sessionContainer->mongoDbServerHostname = Env::$config[$this->customerId]->SESSION_MONGO_HOST;
+				$this->sessionContainer->mongoDbServerHost = Env::$config[$this->customerId]->SESSION_MONGO_HOST;
 				$this->sessionContainer->mongoDbServerPort = Env::$config[$this->customerId]->SESSION_MONGO_PORT;
-				$this->sessionContainer->mongoDbServerUsername = Env::$config[$this->customerId]->SESSION_MONGO_USER;
+				$this->sessionContainer->mongoDbServerUser = Env::$config[$this->customerId]->SESSION_MONGO_USER;
 				$this->sessionContainer->mongoDbServerPassword = Env::$config[$this->customerId]->SESSION_MONGO_PASSWORD;
-				$this->sessionContainer->mongoDbServerDatabase = Env::$config[$this->customerId]->SESSION_MONGO_DB;
+				$this->sessionContainer->mongoDbServerDb = Env::$config[$this->customerId]->SESSION_MONGO_DB;
 				$this->sessionContainer->mongoDbServerCollection = Env::$config[$this->customerId]->SESSION_MONGO_TABLE;
 				break;
 			case 'Redis':
-				$this->sessionContainer->redisServerHostname = Env::$config[$this->customerId]->SESSION_REDIS_HOST;
+				$this->sessionContainer->redisServerHost = Env::$config[$this->customerId]->SESSION_REDIS_HOST;
 				$this->sessionContainer->redisServerPort = Env::$config[$this->customerId]->SESSION_REDIS_PORT;
-				$this->sessionContainer->redisServerUsername = Env::$config[$this->customerId]->SESSION_REDIS_USER;
+				$this->sessionContainer->redisServerUser = Env::$config[$this->customerId]->SESSION_REDIS_USER;
 				$this->sessionContainer->redisServerPassword = Env::$config[$this->customerId]->SESSION_REDIS_PASSWORD;
-				$this->sessionContainer->redisServerDatabase = Env::$config[$this->customerId]->SESSION_REDIS_DB;
+				$this->sessionContainer->redisServerDb = Env::$config[$this->customerId]->SESSION_REDIS_DB;
 				break;
 			case 'Memcached':
-				$this->sessionContainer->memcachedServerHostname = Env::$config[$this->customerId]->SESSION_MEMCACHE_HOST;
+				$this->sessionContainer->memcachedServerHost = Env::$config[$this->customerId]->SESSION_MEMCACHE_HOST;
 				$this->sessionContainer->memcachedServerPort = Env::$config[$this->customerId]->SESSION_MEMCACHE_PORT;
 				break;
 			case 'Cookie':

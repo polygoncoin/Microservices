@@ -145,13 +145,9 @@ CREATE TABLE `customer` (
     `customer_user_table` VARCHAR(255) NOT NULL,
     `customer_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_comments` VARCHAR(255) DEFAULT NULL,
-
--- Customer level domain settings
     `customer_public_domain` VARCHAR(255) DEFAULT NULL,
     `customer_private_session_domain` VARCHAR(255) DEFAULT NULL,
     `customer_private_token_domain` VARCHAR(255) DEFAULT NULL,
-
--- CIDR columns at customer level
     `customer_cron_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_custom_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_dropbox_cidr` VARCHAR(250) DEFAULT NULL,
@@ -161,22 +157,18 @@ CREATE TABLE `customer` (
     `customer_routes_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_thirdparty_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_upload_cidr` VARCHAR(250) DEFAULT NULL,
-
--- Rate limiting columns at customer level
-    `customer_limiting_route_request_count` INT DEFAULT NULL,
-    `customer_limiting_route_request_count_window` INT DEFAULT NULL,
-    `customer_limiting_route_request_per_ip_count` INT DEFAULT NULL,
-    `customer_limiting_route_request_per_ip_count_window` INT DEFAULT NULL,
-    `customer_limiting_login_route_request_per_user_count` INT DEFAULT NULL,
+    `customer_limiting_count` INT DEFAULT NULL,
+    `customer_limiting_count_window` INT DEFAULT NULL,
+    `customer_limiting_per_ip_count` INT DEFAULT NULL,
+    `customer_limiting_per_ip_count_window` INT DEFAULT NULL,
+    `customer_limiting_login_per_user_count` INT DEFAULT NULL,
     `customer_limiting_login_request_per_user_count_window` INT DEFAULT NULL,
-    `customer_limiting_login_successfull_login_route_request_per_user_count` INT DEFAULT NULL,
-    `customer_limiting_login_successfull_login_route_request_per_user_count_window` INT DEFAULT NULL,
-    `customer_limiting_logged_in_user_route_request_count` INT DEFAULT NULL, -- ; Max request allowed for user
-    `customer_limiting_logged_in_user_route_request_count_window` INT DEFAULT NULL, -- ; Window for Max request allowed for user
-    `customer_limiting_logged_in_user_route_request_per_ip_count` INT DEFAULT NULL, -- ; Max User Login request
-    `customer_limiting_logged_in_user_route_request_per_ip_count_window` INT DEFAULT NULL, -- ; Window for Max User Login request
-
--- Miscellaneous columns at customer level
+    `customer_limiting_login_successfull_per_user_count` INT DEFAULT NULL,
+    `customer_limiting_login_successfull_per_user_count_window` INT DEFAULT NULL,
+    `customer_limiting_logged_in_user_count` INT DEFAULT NULL,
+    `customer_limiting_logged_in_user_count_window` INT DEFAULT NULL,
+    `customer_limiting_logged_in_user_per_ip_count` INT DEFAULT NULL,
+    `customer_limiting_logged_in_user_per_ip_count_window` INT DEFAULT NULL,
     `customer_created_by` INT DEFAULT NULL,
     `customer_created_on` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `customer_approved_by` INT DEFAULT NULL,
@@ -247,18 +239,18 @@ INSERT INTO `customer` SET
     `customer_upload_cidr` =  NULL,
 
 -- Rate limiting columns at customer level
-    `customer_limiting_route_request_count` =  600,
-    `customer_limiting_route_request_count_window` =  300,
-    `customer_limiting_route_request_per_ip_count` =  600,
-    `customer_limiting_route_request_per_ip_count_window` =  300,
-    `customer_limiting_login_route_request_per_user_count` =  600, --
+    `customer_limiting_count` =  600,
+    `customer_limiting_count_window` =  300,
+    `customer_limiting_per_ip_count` =  600,
+    `customer_limiting_per_ip_count_window` =  300,
+    `customer_limiting_login_per_user_count` =  600, --
     `customer_limiting_login_request_per_user_count_window` =  300, --
-    `customer_limiting_login_successfull_login_route_request_per_user_count` =  600,
-    `customer_limiting_login_successfull_login_route_request_per_user_count_window` =  300, --
-    `customer_limiting_logged_in_user_route_request_count` =  600,
-    `customer_limiting_logged_in_user_route_request_count_window` =  300,
-    `customer_limiting_logged_in_user_route_request_per_ip_count` =  600,
-    `customer_limiting_logged_in_user_route_request_per_ip_count_window` =  300,
+    `customer_limiting_login_successfull_per_user_count` =  600,
+    `customer_limiting_login_successfull_per_user_count_window` =  300, --
+    `customer_limiting_logged_in_user_count` =  600,
+    `customer_limiting_logged_in_user_count_window` =  300,
+    `customer_limiting_logged_in_user_per_ip_count` =  600,
+    `customer_limiting_logged_in_user_per_ip_count_window` =  300,
 
 -- Customer level other settings
     `customer_created_by` = NULL,

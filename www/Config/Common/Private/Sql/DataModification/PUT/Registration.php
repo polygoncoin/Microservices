@@ -18,60 +18,67 @@ use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
 use Microservices\DatabaseTable;
 
-return array_merge(
-	require $this->httpObject->httpReqData['current']['commonSqlDir']
-		. DIRECTORY_SEPARATOR . 'Common'
-		. DIRECTORY_SEPARATOR . 'Registration.php',
-	[
-		'__SET__' => [
-			[
-				'column' => 'firstname',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'firstname'
+return [
+	'__SQL__' => "UPDATE `{$this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']}` SET __SET__ WHERE __WHERE__",
+	'__VALIDATE__' => [
+		[
+			'function' => 'primaryKeyExist',
+			'functionArgs' => [
+				'table' => ['custom', $this->httpObject->httpRequestObject->activeRequestData['customerData']['customer_user_table']],
+				'primary' => ['custom', DatabaseTable::$customerUserPrimaryKey],
+				'id' => ['routeParamArray', 'id']
 			],
-			[
-				'column' => 'lastname',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'lastname'
-			],
-			[
-				'column' => 'email',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'email'
-			],
-			[
-				'column' => 'username',
-				'activeRequestDataKey' => 'payload',
-				'activeRequestDataKeySubKey' => 'username'
-			],
-			[
-				'column' => 'password_hash',
-				'activeRequestDataKey' => 'function',
-				'activeRequestDataKeySubKey' => function(
-					$activeRequestData,
-					$payload
-				) {
-					if (isset($payload['password'])) {
-						return password_hash(
-							password: $payload['password'],
-							algo: PASSWORD_DEFAULT
-						);
-					}
+			'errorMessage' => 'Invalid registration id'
+		],
+	],
+	'__SET__' => [
+		[
+			'column' => 'firstname',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'firstname'
+		],
+		[
+			'column' => 'lastname',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'lastname'
+		],
+		[
+			'column' => 'email',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'email'
+		],
+		[
+			'column' => 'username',
+			'activeRequestDataKey' => 'payload',
+			'activeRequestDataKeySubKey' => 'username'
+		],
+		[
+			'column' => 'password_hash',
+			'activeRequestDataKey' => 'function',
+			'activeRequestDataKeySubKey' => function(
+				$activeRequestData,
+				$payload
+			) {
+				if (isset($payload['password'])) {
+					return password_hash(
+						password: $payload['password'],
+						algo: PASSWORD_DEFAULT
+					);
 				}
-			]
+			}
+		]
+	],
+	'__WHERE__' => [
+		[
+			'column' => 'is_deleted',
+			'activeRequestDataKey' => 'custom',
+			'activeRequestDataKeySubKey' => Constant::$NO
 		],
-		'__WHERE__' => [
-			[
-				'column' => 'is_deleted',
-				'activeRequestDataKey' => 'custom',
-				'activeRequestDataKeySubKey' => Constant::$NO
-			],
-			[
-				'column' => DatabaseTable::$customerUserPrimaryKey,
-				'activeRequestDataKey' => 'routeParamArray',
-				'activeRequestDataKeySubKey' => 'id',
-				'dataType' => DatabaseServerDataType::$PrimaryKey
-			]
-		],
+		[
+			'column' => DatabaseTable::$customerUserPrimaryKey,
+			'activeRequestDataKey' => 'routeParamArray',
+			'activeRequestDataKeySubKey' => 'id',
+			'dataType' => DatabaseServerDataType::$PrimaryKey
+		]
 	]
-);
+];

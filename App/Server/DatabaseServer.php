@@ -45,7 +45,7 @@ class DatabaseServer
 	 * 
 	 * @var null|string
 	 */
-	public $dbServerHostname = null;
+	public $dbServerHost = null;
 
 	/**
 	 * Database Server Port
@@ -59,7 +59,7 @@ class DatabaseServer
 	 * 
 	 * @var null|string
 	 */
-	public $dbServerUsername = null;
+	public $dbServerUser = null;
 
 	/**
 	 * Database Server Password
@@ -73,7 +73,7 @@ class DatabaseServer
 	 * 
 	 * @var null|string
 	 */
-	public $dbServerDatabase = null;
+	public $dbServerDb = null;
 
 	/**
 	 * Database Server Object
@@ -93,26 +93,26 @@ class DatabaseServer
 	 * Constructor
 	 * 
 	 * @param string      $dbServerType     Database Server Type
-	 * @param string      $dbServerHostname Database Server Hostname
+	 * @param string      $dbServerHost Database Server Hostname
 	 * @param int         $dbServerPort     Database Server Port
-	 * @param string      $dbServerUsername Database Server Username
+	 * @param string      $dbServerUser Database Server Username
 	 * @param string      $dbServerPassword Database Server Password
-	 * @param null|string $dbServerDatabase Database Server Database
+	 * @param null|string $dbServerDb Database Server Database
 	 */
 	public function __construct(
         $dbServerType,
-		$dbServerHostname,
+		$dbServerHost,
 		$dbServerPort,
-		$dbServerUsername,
+		$dbServerUser,
 		$dbServerPassword,
-		$dbServerDatabase
+		$dbServerDb
 	) {
 		$this->dbServerType = $dbServerType;
-		$this->dbServerHostname = $dbServerHostname;
+		$this->dbServerHost = $dbServerHost;
 		$this->dbServerPort = $dbServerPort;
-		$this->dbServerUsername = $dbServerUsername;
+		$this->dbServerUser = $dbServerUser;
 		$this->dbServerPassword = $dbServerPassword;
-		$this->dbServerDatabase = $dbServerDatabase;
+		$this->dbServerDb = $dbServerDb;
 	}
 
 	/**
@@ -143,11 +143,11 @@ class DatabaseServer
             . $this->dbServerType . 'Database';
 
 		$this->dbServerObject = new $dbServerNS(
-			dbServerHostname: $this->dbServerHostname,
+			dbServerHost: $this->dbServerHost,
 			dbServerPort: $this->dbServerPort,
-			dbServerUsername: $this->dbServerUsername,
+			dbServerUser: $this->dbServerUser,
 			dbServerPassword: $this->dbServerPassword,
-			dbServerDatabase: $this->dbServerDatabase
+			dbServerDb: $this->dbServerDb
 		);
 	}
 

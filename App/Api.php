@@ -251,7 +251,7 @@ class Api
 						}
 					} elseif (
 						$this->checkSupplement(
-							Env::$SYSTEM_ROUTE_REQUEST_KEYWORD
+							Env::$SYSTEM_KEYWORD
 						)
 					) {
 						$class = __NAMESPACE__ . '\\Route';

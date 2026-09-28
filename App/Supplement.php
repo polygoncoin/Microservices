@@ -154,7 +154,7 @@ class Supplement
 		$supplementMaintainHierarchy,
 		$supplementOperateAsTransaction
 	): void {
-		$supplementOutputRepresentation = CommonFunction::getOutputRepresentation(
+		$supplementOUTPUT_REPRESENTATION = CommonFunction::getOUTPUT_REPRESENTATION(
 			sqlConfig: $supplementSqlConfig,
 			httpReqData: $this->httpObject->httpReqData,
 			customerId: $this->httpObject->httpReqData['current']['customerId']
@@ -178,7 +178,7 @@ class Supplement
 		if ($supplementPayloadDataType === 'Array') {
 			if (
 				in_array(
-					needle: $supplementOutputRepresentation['OUTPUT_REPRESENTATION'],
+					needle: $supplementOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
@@ -277,7 +277,7 @@ class Supplement
 			} else {
 				if (
 					in_array(
-						needle: $supplementOutputRepresentation['OUTPUT_REPRESENTATION'],
+						needle: $supplementOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 						haystack: ['XML', 'XSLT', 'HTML'],
 						strict: Constant::$TRUE
 					)
@@ -304,7 +304,7 @@ class Supplement
 		if ($supplementPayloadDataType === 'Array') {
 			if (
 				in_array(
-					needle: $supplementOutputRepresentation['OUTPUT_REPRESENTATION'],
+					needle: $supplementOUTPUT_REPRESENTATION['OUTPUT_REPRESENTATION'],
 					haystack: ['XML', 'XSLT', 'HTML'],
 					strict: Constant::$TRUE
 				)
