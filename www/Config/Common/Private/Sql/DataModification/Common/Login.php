@@ -1,4 +1,5 @@
 <?php
+namespace Microservices\www\Config\Common\Private\Sql\DataModification\Common;
 
 /**
  * API Query config

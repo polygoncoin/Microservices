@@ -66,6 +66,14 @@ CREATE TABLE `import_file_detail` (
     `is_deleted` ENUM('Yes', 'No') NOT NULL DEFAULT 'No',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
+
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+    `sessionId` VARCHAR(250) NOT NULL,
+    `sessionData` TEXT NOT NULL,
+    `lastAccessed` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    KEY (`sessionId`)
+) ENGINE = InnoDB;
 -- ----------- Tables Customer level (Customer Entered Data) --------------
 
 LOCK TABLES `customer_user_group` WRITE;

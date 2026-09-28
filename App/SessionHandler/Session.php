@@ -123,12 +123,12 @@ class Session
 		// Setting required parameters as per session Mode / Type
 		switch ($this->sessionMode) {
 			case 'MySql':
-				$this->sessionContainer->sessionServerHost = Env::$config[$this->customerId]->SESSION_MYSQL_HOST;
-				$this->sessionContainer->sessionServerPort = Env::$config[$this->customerId]->SESSION_MYSQL_PORT;
-				$this->sessionContainer->sessionServerUser = Env::$config[$this->customerId]->SESSION_MYSQL_USER;
-				$this->sessionContainer->sessionServerPassword = Env::$config[$this->customerId]->SESSION_MYSQL_PASSWORD;
-				$this->sessionContainer->sessionServerDb = Env::$config[$this->customerId]->SESSION_MYSQL_DB;
-				$this->sessionContainer->sessionServerTable = Env::$config[$this->customerId]->SESSION_MYSQL_TABLE;
+				$this->sessionContainer->mySqlServerHost = Env::$config[$this->customerId]->SESSION_MYSQL_HOST;
+				$this->sessionContainer->mySqlServerPort = Env::$config[$this->customerId]->SESSION_MYSQL_PORT;
+				$this->sessionContainer->mySqlServerUser = Env::$config[$this->customerId]->SESSION_MYSQL_USER;
+				$this->sessionContainer->mySqlServerPassword = Env::$config[$this->customerId]->SESSION_MYSQL_PASSWORD;
+				$this->sessionContainer->mySqlServerDb = Env::$config[$this->customerId]->SESSION_MYSQL_DB;
+				$this->sessionContainer->mySqlServerTable = Env::$config[$this->customerId]->SESSION_MYSQL_TABLE;
 				break;
 			case 'PostgreSql':
 				$this->sessionContainer->pgSqlServerHost = Env::$config[$this->customerId]->SESSION_PGSQL_HOST;
@@ -215,15 +215,14 @@ class Session
 	): void {
 		$this->optionArray = [ // always required.
 			'use_strict_mode' => Constant::$TRUE,
+			'use_cookies' => Constant::$TRUE,
 			'name' => Env::$config[$this->customerId]->SESSION_COOKIE_NAME,
 			'serialize_handler' => 'php_serialize',
 			'lazy_write' => Constant::$TRUE,
-			'gc_maxlifetime' => Env::$config[$this->customerId]->SESSION_LIFETIME,
-			'cookie_lifetime' => Env::$config[$this->customerId]->SESSION_LIFETIME,
+			'cookie_lifetime' => (int)Env::$config[$this->customerId]->SESSION_LIFETIME,
 			'cookie_path' => Env::$config[$this->customerId]->SESSION_COOKIE_PATH,
-			'cookie_domain' => Env::$config[$this->customerId]->SESSION_COOKIE_DOMAIN,
-			'cookie_secure' => Env::$config[$this->customerId]->SESSION_COOKIE_SECURE,
-			'cookie_httponly' => Env::$config[$this->customerId]->SESSION_COOKIE_HTTPONLY,
+			'cookie_secure' => (bool)Env::$config[$this->customerId]->SESSION_COOKIE_SECURE,
+			'cookie_httponly' => (bool)Env::$config[$this->customerId]->SESSION_COOKIE_HTTPONLY,
 			'cookie_samesite' => Env::$config[$this->customerId]->SESSION_COOKIE_SAMESITE,
 		];
 

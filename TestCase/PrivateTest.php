@@ -83,49 +83,49 @@ $response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
 $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
 $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
 
-if (defined('__MODE__')) {
-	$homeURL = 'http://127.0.0.1:9501';
-} else {
-	$homeURL = 'http://web.customer001.localhost/Microservices/www/public_html/index.php';
-}
+// if (defined('__MODE__')) {
+// 	$homeURL = 'http://127.0.0.1:9501';
+// } else {
+// 	$homeURL = 'http://web.customer001.localhost/Microservices/www/public_html/index.php';
+// }
 
-// Admin login
-$payload = [
-	'username' => 'customer_admin_1',
-	'password' => 'shames11'
-];
-$response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Login.php';
+// // Admin login
+// $payload = [
+// 	'username' => 'customer_admin_1',
+// 	'password' => 'shames11'
+// ];
+// $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Login.php';
 
-$response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
-$response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Category.php';
-$response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Registration.php';
-$response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Address.php';
-$response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+// $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'CategoryConfig.php';
+// $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Category.php';
+// $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Registration.php';
+// $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'Address.php';
+// $response[] = include PRIVATE_POST . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
 
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Route.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Category.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Registration.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Address.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-$response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddressSingle.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Route.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Category.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'CategorySingle.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'CategoryOrderBy.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Registration.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'RegistrationSingle.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'Address.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'AddressSingle.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+// $response[] = include PRIVATE_GET . DIRECTORY_SEPARATOR . 'RegistrationWithAddressSingle.php';
 
-$response[] = include PRIVATE_QUERY . DIRECTORY_SEPARATOR . 'Category.php';
+// $response[] = include PRIVATE_QUERY . DIRECTORY_SEPARATOR . 'Category.php';
 
-$response[] = include PRIVATE_PUT . DIRECTORY_SEPARATOR . 'Registration.php';
-$response[] = include PRIVATE_PUT . DIRECTORY_SEPARATOR . 'Address.php';
-$response[] = include PRIVATE_PUT . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+// $response[] = include PRIVATE_PUT . DIRECTORY_SEPARATOR . 'Registration.php';
+// $response[] = include PRIVATE_PUT . DIRECTORY_SEPARATOR . 'Address.php';
+// $response[] = include PRIVATE_PUT . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
 
-$response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'Registration.php';
-$response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
-$response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+// $response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'Registration.php';
+// $response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'Address.php';
+// $response[] = include PRIVATE_PATCH . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
 
-$response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
-$response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
-$response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
-// $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'CategoryTruncate.php';
+// $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Registration.php';
+// $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'Address.php';
+// $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'RegistrationWithAddress.php';
+// // $response[] = include PRIVATE_DELETE . DIRECTORY_SEPARATOR . 'CategoryTruncate.php';
 
 return $response;

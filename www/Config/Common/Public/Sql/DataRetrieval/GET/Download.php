@@ -1,4 +1,5 @@
 <?php
+namespace Microservices\www\Config\Common\Public\Sql\DataRetrieval\GET;
 
 /**
  * API Query config

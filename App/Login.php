@@ -322,6 +322,7 @@ class Login
 			);
 		}
 		$this->httpObject->httpRequestObject->sessionObject->sessionStartReadWrite();
+
 		$userSessionData = [
 			'authId' => session_id(),
 			'authMode' => 'Session',
@@ -543,7 +544,30 @@ class Login
 			);
 		}
 
-		if (Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
+		if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+			$this->httpObject->httpRequestObject->sessionObject = new Session(
+				customerId: $this->httpObject->httpReqData['current']['customerId']
+			);
+			$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
+				options: []
+			);
+		}
+
+		if (
+			isset(
+				$this->httpObject->httpReqData['header']['cookie'][
+					Env::$config[$this->httpObject->httpReqData['current']['customerId']]->SESSION_COOKIE_NAME
+				]
+			)	
+		) {
+			$this->httpObject->httpRequestObject->sessionObject->sessionStartReadonly();
+			if ($customerUserSessionId === session_id()) {
+				if ($_SESSION['httpRequestHash'] === $httpRequestHash) {
+					$authFoundData = $_SESSION;
+					$authFound = Constant::$TRUE;
+				}
+			}
+		} else {
 			$customerUserConcurrencyKey = CacheServerKey::customerUserConcurrency(
 				customerId: $this->httpObject->httpReqData['current']['customerId'],
 				customerUserId: $this->httpObject->httpReqData['current']['customerUserId']
@@ -554,14 +578,6 @@ class Login
 					cacheKey: $customerUserConcurrencyKey
 				)
 			) {
-				if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
-					$this->httpObject->httpRequestObject->sessionObject = new Session(
-						customerId: $this->httpObject->httpReqData['current']['customerId']
-					);
-					$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
-						options: []
-					);
-				}
 				$customerUserConcurrencyData = $this->cacheGet(
 					cacheKey: $customerUserConcurrencyKey
 				);
@@ -596,22 +612,6 @@ class Login
 						$authFoundData = $authData;
 						$authFound = Constant::$TRUE;
 					}
-				}
-			}
-		} else {
-			if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
-				$this->httpObject->httpRequestObject->sessionObject = new Session(
-					customerId: $this->httpObject->httpReqData['current']['customerId']
-				);
-				$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
-					options: []
-				);
-			}
-			$this->httpObject->httpRequestObject->sessionObject->sessionStartReadonly();
-			if ($customerUserSessionId === session_id()) {
-				if ($_SESSION['httpRequestHash'] === $httpRequestHash) {
-					$authFoundData = $_SESSION;
-					$authFound = Constant::$TRUE;
 				}
 			}
 		}

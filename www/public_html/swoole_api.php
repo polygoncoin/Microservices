@@ -1,4 +1,5 @@
 <?php
+namespace Microservices\www\public_html;
 
 /**
  * Index
@@ -99,14 +100,17 @@ $server->on(
 		}
 
 		$httpReqData['header'] = $request->header;
+
 		if (isset($httpReqData['header']['content-type'])) {
 			$httpReqData['header']['contentType'] = $httpReqData['header']['content-type'];
 		} else {
 			$httpReqData['header']['contentType'] = '';
 		}
+		
 		if (isset($request->header['authorization'])) {
 			$httpReqData['header']['tokenHeader'] = $request->header['authorization'];
 		}
+
 		$httpReqData['get'] = &$request->get;
 		if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
 			$httpReqData['get'][ROUTE_URL_PARAM] = '/' . trim(

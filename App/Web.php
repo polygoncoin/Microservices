@@ -55,7 +55,7 @@ class Web
 	): array {
 		$curlConfig[\CURLOPT_URL] = "{$homeURL}?route={$route}{$queryString}";
 		$curlConfig[\CURLOPT_HTTPHEADER] = $header;
-		$curlConfig[\CURLOPT_HEADER] = 1;
+		$curlConfig[\CURLOPT_HEADER] = true;
 
 		switch ($httpRequestMethod) {
 			case Constant::$GET:
@@ -78,9 +78,7 @@ class Web
 		}
 		$curlConfig[\CURLOPT_RETURNTRANSFER] = Constant::$TRUE;
 
-		$cookieFileName = '/' . md5(
-			$homeURL
-		) . '-cookies.txt';
+		$cookieFileName = '/cookies-jar.txt';
 		$cookieFile = Constant::$WEB_COOKIES_DIRECTORY . $cookieFileName;
 		$curlConfig[\CURLOPT_COOKIEJAR] = $cookieFile; // Store cookies
 		$curlConfig[\CURLOPT_COOKIEFILE] = $cookieFile; // Read cookies

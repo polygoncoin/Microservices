@@ -1,4 +1,5 @@
 <?php
+namespace Microservices\www\public_html;
 
 use Microservices\App\Constant;
 use Microservices\App\Env;
@@ -60,12 +61,21 @@ if (isset($httpReqData['header']['Content-Type'])) {
 } else {
 	$httpReqData['header']['contentType'] = '';
 }
+
+if (isset($_COOKIE)) {
+	$httpReqData['header']['cookie'] = $_COOKIE;
+} else {
+	$httpReqData['header']['cookie'] = null;
+}
+
 if (isset($_SERVER['Range'])) {
 	$httpReqData['header']['range'] = $_SERVER['Range'];
 }
+
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
 	$httpReqData['header']['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
 }
+
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 	$httpReqData['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
