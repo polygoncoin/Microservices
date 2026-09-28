@@ -276,6 +276,9 @@ class HttpRequest
 			cacheKey: $this->domainCacheKey
 		);
 		$this->httpObject->httpReqData['current']['customerId'] = $this->activeRequestData['customerData']['customer_id'];
+		Env::loadEnv(
+			customerId: $this->httpObject->httpReqData['current']['customerId']
+		);
 
 		if (
 			!$this->isPublicDomain
@@ -310,14 +313,23 @@ class HttpRequest
 		}
 
 		if (
-			$this->isPrivateRequest
-			&& !(
-				Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_SESSION_REQUEST
-				|| Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_TOKEN_REQUEST
-			)
+			$this->isPrivateSessionDomain
+			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
+			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_SESSION_REQUEST
 		) {
 			throw new \Exception(
-				message: 'Private request are disabled',
+				message: 'Session based request are disabled',
+				code: HttpStatus::$BadRequest
+			);
+		}
+
+		if (
+			$this->isPrivateTokenDomain
+			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
+			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_TOKEN_REQUEST
+		) {
+			throw new \Exception(
+				message: 'Token based request are disabled',
 				code: HttpStatus::$BadRequest
 			);
 		}
