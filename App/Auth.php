@@ -104,7 +104,7 @@ class Auth
 				)
 			) {
 				throw new \Exception(
-					message: 'Please login 1',
+					message: 'Please login',
 					code: HttpStatus::$BadRequest
 				);
 			}
@@ -113,7 +113,7 @@ class Auth
 			);
 		} else {
 			throw new \Exception(
-				message: 'Please login 2',
+				message: 'Please login',
 				code: HttpStatus::$BadRequest
 			);
 		}

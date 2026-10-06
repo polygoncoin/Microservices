@@ -125,8 +125,11 @@ if (
 		case '/all-test':
 			echo '<pre>'.print_r(value: $testObject->processAllTest(), return: Constant::$TRUE);
 			break;
-		case '/auth-test':
-			echo '<pre>'.print_r(value: $testObject->processPrivate(), return: Constant::$TRUE);
+		case '/token-test':
+			echo '<pre>'.print_r(value: $testObject->processTokenPrivate(), return: Constant::$TRUE);
+			break;
+		case '/session-test':
+			echo '<pre>'.print_r(value: $testObject->processSessionPrivate(), return: Constant::$TRUE);
 			break;
 		case '/open-test':
 			echo '<pre>'.print_r(value: $testObject->processPublic(), return: Constant::$TRUE);
