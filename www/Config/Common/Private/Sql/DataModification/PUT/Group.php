@@ -51,7 +51,7 @@ return [
 		],
 		[
 			'column' => 'updated_by',
-			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKey' => 'customerUserData',
 			'activeRequestDataKeySubKey' => DatabaseTable::$customerUserPrimaryKey
 		],
 		[

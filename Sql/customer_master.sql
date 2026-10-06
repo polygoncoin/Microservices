@@ -70,9 +70,10 @@ CREATE TABLE `import_file_detail` (
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
     `sessionId` VARCHAR(250) NOT NULL,
+    `customerId` INT UNSIGNED,
     `sessionData` TEXT NOT NULL,
-    `lastAccessed` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    KEY (`sessionId`)
+    `lastAccessed` INT UNSIGNED,
+    UNIQUE KEY (`sessionId`)
 ) ENGINE = InnoDB;
 -- ----------- Tables Customer level (Customer Entered Data) --------------
 

@@ -17,6 +17,8 @@ namespace Microservices\App\SessionHandler\Container;
 
 use Microservices\App\Constant;
 use Microservices\App\Env;
+use Microservices\App\Http;
+use Microservices\App\HttpStatus;
 use Microservices\App\SessionHandler\Container\SessionContainerInterface;
 use Microservices\App\SessionHandler\Container\SessionContainerHelper;
 
@@ -45,6 +47,24 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	private $mySqlServerObject = null;
 
 	/**
+	 * HTTP object
+	 * 
+	 * @var null|Http
+	 */
+	private $httpObject = null;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param Http $httpObject
+	 */
+	public function __construct(
+		Http &$httpObject
+	) {
+		$this->httpObject = &$httpObject;
+	}
+
+	/**
 	 * Initialize
 	 * 
 	 * @param string $sessionSavePath Session Save Path
@@ -70,13 +90,13 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool|string {
 		$sql = "
-			SELECT `sessionData`
+			SELECT *
 			FROM `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
 			WHERE `sessionId` = :sessionId AND lastAccessed > :lastAccessed
 		";
 		$paramArray = [
 			':sessionId' => $sessionId,
-			':lastAccessed' => (Env::$timestamp - $this->sessionMaxLifetime)
+			':lastAccessed' => (Env::$timestamp - $this->sessionOptions['cookie_lifetime'])
 		];
 		if (
 			(
@@ -87,9 +107,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 			)
 			&& isset($record['sessionData'])
 		) {
-			return $this->decryptData(
+			$sessionData = $this->decryptData(
 				cipherText: $record['sessionData']
 			);
+			return $sessionData;
 		}
 		return Constant::$FALSE;
 	}
@@ -106,15 +127,26 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
+		$sessionDataArray = unserialize(
+			data: $sessionData
+		);
+
+		
+		$sessionData = serialize(
+			value: $sessionDataArray
+		);
+
 		$sql = "
 			INSERT INTO `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
 			SET
+				`sessionId` = :sessionId,
+				`customerId` = :customerId,
 				`sessionData` = :sessionData,
-				`lastAccessed` = :lastAccessed,
-				`sessionId` = :sessionId
+				`lastAccessed` = :lastAccessed
 		";
 		$paramArray = [
 			':sessionId' => $sessionId,
+			':customerId' => $this->customerId,
 			':sessionData' => $this->encryptData(
 				plainText: $sessionData
 			),
@@ -139,6 +171,15 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
+		$sessionDataArray = unserialize(
+			data: $sessionData
+		);
+
+		
+		$sessionData = serialize(
+			value: $sessionDataArray
+		);
+
 		$sql = "
 			UPDATE `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
 			SET
@@ -173,6 +214,15 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool {
+		$sessionDataArray = unserialize(
+			data: $sessionData
+		);
+
+		
+		$sessionData = serialize(
+			value: $sessionDataArray
+		);
+
 		$sql = "
 			UPDATE `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
 			SET `lastAccessed` = :lastAccessed

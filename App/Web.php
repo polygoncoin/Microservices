@@ -55,7 +55,9 @@ class Web
 	): array {
 		$curlConfig[\CURLOPT_URL] = "{$homeURL}?route={$route}{$queryString}";
 		$curlConfig[\CURLOPT_HTTPHEADER] = $header;
-		$curlConfig[\CURLOPT_HEADER] = true;
+		$curlConfig[\CURLOPT_HEADER] = Constant::$TRUE;
+		$curlConfig[\CURLOPT_FOLLOWLOCATION] = Constant::$TRUE;
+		$curlConfig[\CURLOPT_RETURNTRANSFER] = Constant::$TRUE;
 
 		switch ($httpRequestMethod) {
 			case Constant::$GET:
@@ -76,7 +78,9 @@ class Web
 				}
 				break;
 		}
-		$curlConfig[\CURLOPT_RETURNTRANSFER] = Constant::$TRUE;
+
+		$userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+		$curlConfig[\CURLOPT_USERAGENT] = $userAgent;
 
 		$cookieFileName = '/cookies-jar.txt';
 		$cookieFile = Constant::$WEB_COOKIES_DIRECTORY . $cookieFileName;

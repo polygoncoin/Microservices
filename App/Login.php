@@ -184,9 +184,8 @@ class Login
 	 */
 	private function loadUserData(): void
 	{
-		$customerId = $this->httpObject->httpReqData['current']['customerId'];
 		$customerUserKey = CacheServerKey::customerUsername(
-			customerId: $customerId,
+			customerId: $this->httpObject->httpReqData['current']['customerId'],
 			username: $this->payload['username']
 		);
 		// Redis - one can find the customerUserId from customer username
@@ -213,7 +212,7 @@ class Login
 				code: HttpStatus::$Unauthorized
 			);
 		}
-		$this->httpObject->httpRequestObject->activeRequestData['userData'] = $userData;
+		$this->httpObject->httpRequestObject->activeRequestData['customerUserData'] = $userData;
 		$this->httpObject->httpReqData['current']['customerUserId'] = $userData['customer_user_id'];
 		$this->httpObject->httpReqData['current']['customerUserGroupId'] = $userData['customer_user_group_id'];
 	}
@@ -242,7 +241,7 @@ class Login
 		if (
 			!password_verify(
 				password: $this->customer_user_password,
-				hash: $this->httpObject->httpRequestObject->activeRequestData['userData']['customer_user_password_hash']
+				hash: $this->httpObject->httpRequestObject->activeRequestData['customerUserData']['customer_user_password_hash']
 			)
 		) {
 			throw new \Exception(
@@ -291,7 +290,7 @@ class Login
 			}
 		}
 
-		foreach ($this->httpObject->httpRequestObject->activeRequestData['userData'] as $userDataKey => &$userDataKeyValue) {
+		foreach ($this->httpObject->httpRequestObject->activeRequestData['customerUserData'] as $userDataKey => &$userDataKeyValue) {
 			$userTokenData[$userDataKey] = $userDataKeyValue;
 		}
 
@@ -313,15 +312,14 @@ class Login
 	 */
 	private function generateSession(): array
 	{
-		if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
-			$this->httpObject->httpRequestObject->sessionObject = new Session(
-				customerId: $this->httpObject->httpReqData['current']['customerId']
-			);
-			$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
-				options: []
-			);
+		if (!$this->httpObject->httpRequestObject->isPrivateSessionDomain) {
+			return [];
 		}
-		$this->httpObject->httpRequestObject->sessionObject->sessionStartReadWrite();
+		$this->httpObject->httpRequestObject->sessionObject = new Session(
+			httpObject: $this->httpObject
+		);
+		$this->httpObject->httpRequestObject->sessionObject->initSessionHandler();
+		$this->httpObject->httpRequestObject->sessionObject->startReadWrite();
 
 		$userSessionData = [
 			'authId' => session_id(),
@@ -330,7 +328,7 @@ class Login
 			'httpRequestHash' => $this->httpObject->httpReqData['httpRequestHash']
 		];
 
-		foreach ($this->httpObject->httpRequestObject->activeRequestData['userData'] as $userDataKey => &$userDataKeyValue) {
+		foreach ($this->httpObject->httpRequestObject->activeRequestData['customerUserData'] as $userDataKey => &$userDataKeyValue) {
 			$userSessionData[$userDataKey] = $userDataKeyValue;
 		}
 
@@ -383,13 +381,14 @@ class Login
 					cacheKey: $customerUserConcurrencyKey
 				)
 			) {
-				if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+				if (
+					$this->httpObject->httpRequestObject->isPrivateSessionDomain
+					&& $this->httpObject->httpRequestObject->sessionObject === Constant::$NULL
+				) {
 					$this->httpObject->httpRequestObject->sessionObject = new Session(
-						customerId: $this->httpObject->httpReqData['current']['customerId']
+						httpObject: $this->httpObject
 					);
-					$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
-						options: []
-					);
+					$this->httpObject->httpRequestObject->sessionObject->initSessionHandler();
 				}
 				$customerUserConcurrencyData = $this->cacheGet(
 					cacheKey: $customerUserConcurrencyKey
@@ -544,13 +543,14 @@ class Login
 			);
 		}
 
-		if ($this->httpObject->httpRequestObject->sessionObject === Constant::$NULL) {
+		if (
+			$this->httpObject->httpRequestObject->isPrivateSessionDomain
+			&& $this->httpObject->httpRequestObject->sessionObject === Constant::$NULL
+		) {
 			$this->httpObject->httpRequestObject->sessionObject = new Session(
-				customerId: $this->httpObject->httpReqData['current']['customerId']
+				httpObject: $this->httpObject
 			);
-			$this->httpObject->httpRequestObject->sessionObject->initSessionHandler(
-				options: []
-			);
+			$this->httpObject->httpRequestObject->sessionObject->initSessionHandler();
 		}
 
 		if (
@@ -560,7 +560,7 @@ class Login
 				]
 			)	
 		) {
-			$this->httpObject->httpRequestObject->sessionObject->sessionStartReadonly();
+			$this->httpObject->httpRequestObject->sessionObject->startReadonly();
 			if ($customerUserSessionId === session_id()) {
 				if ($_SESSION['httpRequestHash'] === $httpRequestHash) {
 					$authFoundData = $_SESSION;

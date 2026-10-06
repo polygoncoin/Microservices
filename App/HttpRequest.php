@@ -294,16 +294,6 @@ class HttpRequest
 			);
 		}
 
-		if ($this->isPrivateSessionDomain) {
-			$this->sessionObject = new Session(
-				customerId: $this->httpObject->httpReqData['current']['customerId']
-			);
-			$this->sessionObject->initSessionHandler(
-				options: []
-			);
-			$this->sessionObject->sessionStartReadonly();
-		}
-
 		if (
 			$this->isPublicRequest
 			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PUBLIC_REQUEST

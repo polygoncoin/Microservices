@@ -63,9 +63,10 @@ CREATE TABLE `debug_log` (
 DROP TABLE IF EXISTS `session`;
 CREATE TABLE `session` (
     `sessionId` VARCHAR(250) NOT NULL,
+    `customerId` INT UNSIGNED,
     `sessionData` TEXT NOT NULL,
-    `lastAccessed` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    KEY (`sessionId`)
+    `lastAccessed` INT UNSIGNED,
+    UNIQUE KEY (`sessionId`)
 ) ENGINE = InnoDB;
 
 DROP TABLE IF EXISTS `super_admin`;

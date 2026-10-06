@@ -39,6 +39,9 @@ $publicHeaderArray = [];
 $publicHeaderArray[] = $cacheControl;
 $publicHeaderArray[] = $contentType;
 
+$token = Constant::$NULL;
+$proceed = Constant::$FALSE;
+
 $response = [];
 
 if (defined('__MODE__')) {

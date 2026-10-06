@@ -24,7 +24,7 @@ return [
 	'__SET__' => [
 		[
 			'column' => 'updated_by',
-			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKey' => 'customerUserData',
 			'activeRequestDataKeySubKey' => DatabaseTable::$customerUserPrimaryKey
 		],
 		[

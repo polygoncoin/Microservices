@@ -34,7 +34,7 @@ return [
 		],
 		[
 			'column' => 'created_by',
-			'activeRequestDataKey' => 'userData',
+			'activeRequestDataKey' => 'customerUserData',
 			'activeRequestDataKeySubKey' => DatabaseTable::$customerUserPrimaryKey
 		],
 		[
