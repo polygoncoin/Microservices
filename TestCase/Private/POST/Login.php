@@ -32,16 +32,17 @@ $webResponse = Web::trigger(
 	)
 );
 
-if (isset($webResponse['HttpResponse']['ResponseBody']['Results']['ApiToken'])) {
-	$apiToken = $webResponse['HttpResponse']['ResponseBody']['Results']['ApiToken'];
-	$privateHeaderArray = $publicHeaderArray;
-	$privateHeaderArray[] = "Authorization: Bearer {$apiToken}";
+$privateHeaderArray = $publicHeaderArray;
+
+if (
+	isset($webResponse['HttpResponse']['ResponseBody']['Results']['authMode'])
+	&& isset($webResponse['HttpResponse']['ResponseBody']['Results']['authId'])
+) {
+	if ($webResponse['HttpResponse']['ResponseBody']['Results']['authMode'] === 'API Token') {
+		$apiToken = $webResponse['HttpResponse']['ResponseBody']['Results']['authId'];
+		$privateHeaderArray[] = "Authorization: Bearer {$apiToken}";
+	}
 	$proceed = Constant::$TRUE;
-} elseif (isset($webResponse['HttpResponse']['ResponseBody']['Results']['WebSessionId'])) {
-	$privateHeaderArray = $publicHeaderArray;
-	$proceed = Constant::$TRUE;
-} else {
-	$privateHeaderArray = $publicHeaderArray;
 }
 
 return $webResponse;

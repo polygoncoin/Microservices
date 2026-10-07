@@ -17,6 +17,6 @@ namespace Microservices\www\Config\GlobalConfigSet\Private\Route\GroupId_2\DataM
 use Microservices\App\Constant;
 
 return array_merge(
-	require $this->httpObject->httpReqData['current']['commonRouteDir']
+	require $this->httpObject->httpReqData['active']['commonRouteDir']
 		. DIRECTORY_SEPARATOR . 'POSTroutes.php',
 );

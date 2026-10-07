@@ -21,47 +21,40 @@ This is a light & easy low code API generator using configuration arrays. It can
 
 - **Note**: One can import both sql's in a single database to start with. Just configure the same detail in the environment files.
 
-## Folders
+## folders
 
 ### Openswoole
 
-- **openswoole_html** Folder for Openswoole based application start files.
+- **openswoole_html** folder for Openswoole based application start files.
 
-### File Folder
+### File folder
 
-- **Log** Folder for application Log.
-- **TestCase** Folder for Test Cases
+- **Log** folder for application Log.
+- **TestCase** folder for Test Cases
 
-### www Folder
+### www folder
 
 - **Config** Basic configuration folder
-- **File** Folder for uploaded files.
 - **Hook** Hook.
 - **Supplement** Customised coding for APIs
 - **Validation** Contains validation classes.
 - **public\_html** Contains index.php file.
 
-#### www/File Folder
-
-- **Dropbox/Public** Uploaded files for open to web
-- **Dropbox/Closed** Uploaded files by authorised user
-- **ServingFile/HTML** HTML files to be served with dynamic response (XSLT)
-- **ServingFile/PHP** PHP view files to be served with dynamic response
-- **ServingFile/XSLT** XSLT files to be served with dynamic response
-
-#### www/Supplement Folder
+#### www/Supplement code folder
 
 - **Crons** Contains classes for cron API's
 - **Custom** Contains classes for custom API's
+- **Dropbox** Contains classes for third-party API's
+- **LegacyCode** Contains classes for third-party API's
 - **ThirdParty** Contains classes for third-party API's
 - **Upload** Contains classes for upload file API's
 
-### Route Folder
+### Route folder
 
 #### www/Config/Route
 
-- **/Config/Route/Private/&lt;GroupName&gt;**
-- **/Config/Route/Public**
+- **/Config/&lt;CustomerFoldername&gt;/Private/Route/&lt;GroupName&gt;**
+- **/Config/&lt;CustomerFoldername&gt;/Public**
 
 - **&lt;GroupName&gt;** is the group user belongs to for accessing the API's
 
@@ -73,11 +66,11 @@ This is a light & easy low code API generator using configuration arrays. It can
 - **/PATCHroutes.php** for all PATCH method routes configuration.
 - **/DELETEroutes.php** for all DELETE method routes configuration.
 
-### Sql Folder
+### Sql folder
 
 These files locations are used in routes config to be used for generating response.
 
-#### www/Config/Sql
+#### www//Config/&lt;CustomerFoldername&gt;/Private/Sql
 
 - **/Config/Sql/Private/GlobalDB** for global database.
 - **/Config/Sql/Private/CustomerDB** for customer (including all hosts and their databases).
@@ -116,13 +109,13 @@ To enable CIDR settings at Customer / Group / User level one can set them in res
 
 ```SQL
 -- Customer level
-`customer`.`allowed_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+`customer`.`customer_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
 
 -- Group level
-`group`.`allowed_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+`group`.`customer_user_group_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
 
 -- User level
-`user`.`allowed_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
+`user`.`customer_user_cidr` VARCHAR(250) DEFAULT '0.0.0.0/0',
 ```
 
 ## Contributing

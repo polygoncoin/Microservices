@@ -40,6 +40,7 @@ Env::init();
 
 // Process the request
 $httpReqData = [];
+$httpReqData['active'] = [];
 
 $httpReqData['streamData'] = Constant::$TRUE;
 $httpReqData['server']['domainName'] = $_SERVER['HTTP_HOST'];
@@ -77,7 +78,19 @@ if (isset($_SERVER['HTTP_USER_AGENT'])) {
 }
 
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-	$httpReqData['header']['apiToken'] = $_SERVER['HTTP_AUTHORIZATION'];
+	if (
+		!preg_match(
+			pattern: '/Bearer\s(\S+)/',
+			subject: $_SERVER['HTTP_AUTHORIZATION'],
+			matches: $matches
+		)
+	) {
+		throw new \Exception(
+			message: 'Api token missing',
+			code: HttpStatus::$BadRequest
+		);
+	}
+	$httpReqData['active']['authId'] = $matches[1];
 }
 
 $httpReqData['get'] = &$_GET;

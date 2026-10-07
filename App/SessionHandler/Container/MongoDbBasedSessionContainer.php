@@ -96,7 +96,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool|string {
 		try {
-			$filter = ['WebSessionId' => $sessionId];
+			$filter = ['sessionId' => $sessionId];
 
 			if ($document = $this->collectionObject->findOne($filter)) {
 				$lastAccessed = Env::$timestamp - $this->sessionOptions['cookie_lifetime'];
@@ -177,7 +177,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		);
 
 		try {
-			$filter = ['WebSessionId' => $sessionId];
+			$filter = ['sessionId' => $sessionId];
 			$update = [
 				'$set' => [
 					'lastAccessed' => Env::$timestamp,
@@ -224,7 +224,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		);
 
 		try {
-			$filter = ['WebSessionId' => $sessionId];
+			$filter = ['sessionId' => $sessionId];
 			$update = [
 				'$set' => [
 					'lastAccessed' => Env::$timestamp
@@ -271,7 +271,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool {
 		try {
-			$filter = ['WebSessionId' => $sessionId];
+			$filter = ['sessionId' => $sessionId];
 
 			if ($this->collectionObject->deleteOne($filter)) {
 				return Constant::$TRUE;
