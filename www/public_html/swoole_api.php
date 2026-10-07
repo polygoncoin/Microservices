@@ -108,7 +108,7 @@ $server->on(
 		}
 		
 		if (isset($request->header['authorization'])) {
-			$httpReqData['header']['tokenHeader'] = $request->header['authorization'];
+			$httpReqData['header']['apiToken'] = $request->header['authorization'];
 		}
 
 		$httpReqData['get'] = &$request->get;

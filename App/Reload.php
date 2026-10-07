@@ -102,29 +102,29 @@ class Reload
 				cidrString: Env::$config[$customerId]->RELOAD_CACHE_CIDR
 			);
 
-			if (!empty($customerData['customer_private_token_domain'])) {
-				$privateTokenDomainCacheKey = CacheServerKey::privateTokenDomain(
-					domainName: $customerData['customer_private_token_domain']
+			if (!empty(Env::$config[$customerId]->PRIVATE_API_DOMAIN_NAME)) {
+				$privateApiDomainCacheKey = CacheServerKey::privateApiDomain(
+					domainName: Env::$config[$customerId]->PRIVATE_API_DOMAIN_NAME
 				);
 				DbCommonFunction::$globalCacheServerObject->cacheSet(
-					cacheKey: $privateTokenDomainCacheKey,
+					cacheKey: $privateApiDomainCacheKey,
 					cacheValue: $customerData
 				);
 			}
 
-			if (!empty($customerData['customer_private_session_domain'])) {
-				$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(
-					domainName: $customerData['customer_private_session_domain']
+			if (!empty(Env::$config[$customerId]->PRIVATE_WEB_DOMAIN_NAME)) {
+				$privateWebDomainCacheKey = CacheServerKey::privateWebDomain(
+					domainName: Env::$config[$customerId]->PRIVATE_WEB_DOMAIN_NAME
 				);
 				DbCommonFunction::$globalCacheServerObject->cacheSet(
-					cacheKey: $privateSessionDomainCacheKey,
+					cacheKey: $privateWebDomainCacheKey,
 					cacheValue: $customerData
 				);
 			}
 
-			if (!empty($customerData['customer_public_domain'])) {
+			if (!empty(Env::$config[$customerId]->PRIVATE_DOMAIN_NAME)) {
 				$publicDomainCacheKey = CacheServerKey::publicDomain(
-					domainName: $customerData['customer_public_domain']
+					domainName: Env::$config[$customerId]->PRIVATE_DOMAIN_NAME
 				);
 				DbCommonFunction::$globalCacheServerObject->cacheSet(
 					cacheKey: $publicDomainCacheKey,

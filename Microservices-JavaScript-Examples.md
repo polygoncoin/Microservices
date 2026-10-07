@@ -14,7 +14,7 @@ xmlhttp . onreadystatechange = function() {
 		var responseJson = this.responseText;
 		var responseArray = JSON.parse(responseJson);
 		console.log(responseArray);
-		var token = responseArray['Output']['Results']['Token'];
+		var token = responseArray['Output']['Results']['ApiToken'];
 		console.log(token);
 	}
 };

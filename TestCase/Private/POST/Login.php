@@ -19,7 +19,7 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\Web;
 
-$token = Constant::$NULL;
+$apiToken = Constant::$NULL;
 $proceed = Constant::$FALSE;
 
 $webResponse = Web::trigger(
@@ -32,12 +32,12 @@ $webResponse = Web::trigger(
 	)
 );
 
-if (isset($webResponse['HttpResponse']['ResponseBody']['Results']['Token'])) {
-	$token = $webResponse['HttpResponse']['ResponseBody']['Results']['Token'];
+if (isset($webResponse['HttpResponse']['ResponseBody']['Results']['ApiToken'])) {
+	$apiToken = $webResponse['HttpResponse']['ResponseBody']['Results']['ApiToken'];
 	$privateHeaderArray = $publicHeaderArray;
-	$privateHeaderArray[] = "Authorization: Bearer {$token}";
+	$privateHeaderArray[] = "Authorization: Bearer {$apiToken}";
 	$proceed = Constant::$TRUE;
-} elseif (isset($webResponse['HttpResponse']['ResponseBody']['Results']['SessionId'])) {
+} elseif (isset($webResponse['HttpResponse']['ResponseBody']['Results']['WebSessionId'])) {
 	$privateHeaderArray = $publicHeaderArray;
 	$proceed = Constant::$TRUE;
 } else {

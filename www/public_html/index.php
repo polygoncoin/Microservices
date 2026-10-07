@@ -77,7 +77,7 @@ if (isset($_SERVER['HTTP_USER_AGENT'])) {
 }
 
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-	$httpReqData['header']['tokenHeader'] = $_SERVER['HTTP_AUTHORIZATION'];
+	$httpReqData['header']['apiToken'] = $_SERVER['HTTP_AUTHORIZATION'];
 }
 
 $httpReqData['get'] = &$_GET;

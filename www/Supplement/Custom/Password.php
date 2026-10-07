@@ -131,8 +131,8 @@ class Password implements CustomInterface
 				customerUserId: $this->httpObject->httpReqData['current']['customerUserId']
 			);
 			$this->httpObject->httpRequestObject->cacheServerObject->cacheDelete(
-				cacheKey: CacheServerKey::token(
-					token: $this->httpObject->httpRequestObject->activeRequestData['authId']
+				cacheKey: CacheServerKey::apiToken(
+					apiToken: $this->httpObject->httpRequestObject->activeRequestData['authId']
 				)
 			);
 

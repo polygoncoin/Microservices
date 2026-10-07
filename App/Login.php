@@ -122,9 +122,9 @@ class Login
 			);
 		}
 
-		if ($this->httpObject->httpRequestObject->isPrivateSessionDomain) {
+		if ($this->httpObject->httpRequestObject->isPrivateWebDomain) {
 			$this->startSession();
-		} elseif ($this->httpObject->httpRequestObject->isPrivateTokenDomain) {
+		} elseif ($this->httpObject->httpRequestObject->isPrivateApiDomain) {
 			$this->outputTokenData();
 		} else {
 			throw new \Exception(
@@ -256,7 +256,7 @@ class Login
 	 * 
 	 * @return array
 	 */
-	private function generateToken(): array
+	private function generateApiToken(): array
 	{
 		//generates a crypto-secure 64 characters long
 		while (Constant::$TRUE) {
@@ -268,21 +268,21 @@ class Login
 
 			if (
 				!$this->cacheExist(
-					cacheKey: CacheServerKey::token(
-						token: $authId
+					cacheKey: CacheServerKey::apiToken(
+						apiToken: $authId
 					)
 				)
 			) {
 				$this->cacheSet(
-					cacheKey: CacheServerKey::token(
-						token: $authId
+					cacheKey: CacheServerKey::apiToken(
+						apiToken: $authId
 					),
 					cacheValue: '{}',
 					cacheExpire: Constant::$TOKEN_EXPIRY_TIME
 				);
 				$userTokenData = [
 					'authId' => $authId,
-					'authMode' => 'Token',
+					'authMode' => 'ApiToken',
 					'authTimestamp' => Env::$timestamp,
 					'httpRequestHash' => $this->httpObject->httpReqData['httpRequestHash']
 				];
@@ -295,8 +295,8 @@ class Login
 		}
 
 		$this->cacheSet(
-			cacheKey: CacheServerKey::token(
-				token: $userTokenData['authId']
+			cacheKey: CacheServerKey::apiToken(
+				apiToken: $userTokenData['authId']
 			),
 			cacheValue: $userTokenData,
 			cacheExpire: Constant::$TOKEN_EXPIRY_TIME
@@ -312,7 +312,7 @@ class Login
 	 */
 	private function generateSession(): array
 	{
-		if (!$this->httpObject->httpRequestObject->isPrivateSessionDomain) {
+		if (!$this->httpObject->httpRequestObject->isPrivateWebDomain) {
 			return [];
 		}
 		$this->httpObject->httpRequestObject->sessionObject = new Session(
@@ -355,7 +355,7 @@ class Login
 		$customerUserConcurrencyKey = Constant::$NULL;
 		$customerUserConcurrencyData = Constant::$NULL;
 
-		$customerUserTokenKey = CacheServerKey::customerUserToken(
+		$customerUserTokenKey = CacheServerKey::customerUserApiToken(
 			customerId: $this->httpObject->httpReqData['current']['customerId'],
 			customerUserId: $this->httpObject->httpReqData['current']['customerUserId']
 		);
@@ -382,7 +382,7 @@ class Login
 				)
 			) {
 				if (
-					$this->httpObject->httpRequestObject->isPrivateSessionDomain
+					$this->httpObject->httpRequestObject->isPrivateWebDomain
 					&& $this->httpObject->httpRequestObject->sessionObject === Constant::$NULL
 				) {
 					$this->httpObject->httpRequestObject->sessionObject = new Session(
@@ -396,10 +396,10 @@ class Login
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
-						$authData['authMode'] === 'Token'
+						$authData['authMode'] === 'ApiToken'
 						&& !$this->cacheExist(
-							cacheKey: CacheServerKey::token(
-								token: $authId
+							cacheKey: CacheServerKey::apiToken(
+								apiToken: $authId
 							)
 						)
 					) {
@@ -430,15 +430,15 @@ class Login
 			if (
 				$customerUserToken !== Constant::$NULL
 				&& $this->cacheExist(
-					cacheKey: CacheServerKey::token(
-						token: $customerUserToken
+					cacheKey: CacheServerKey::apiToken(
+						apiToken: $customerUserToken
 					)
 				)
 			) {
 				$authId = $customerUserToken;
 				$authData = $this->cacheGet(
-					cacheKey: CacheServerKey::token(
-						token: $customerUserToken
+					cacheKey: CacheServerKey::apiToken(
+						apiToken: $customerUserToken
 					)
 				);
 				if ($authData['httpRequestHash'] === $httpRequestHash) {
@@ -449,7 +449,7 @@ class Login
 		}
 
 		if (!$authFound) {
-			$authFoundData = $this->generateToken();
+			$authFoundData = $this->generateApiToken();
 			$authFound = Constant::$TRUE;
 
 			$this->cacheSet(
@@ -486,7 +486,7 @@ class Login
 
 		$timeLeft = Env::$timestamp - $authFoundData['authTimestamp'];
 		$output = [
-			'Token' => $authFoundData['authId'],
+			'ApiToken' => $authFoundData['authId'],
 			'Expires' => date('d\ \d\a\y H\ \h\o\u\r i\ \m\i\n s\ \s\e\c', (Constant::$TOKEN_EXPIRY_TIME - $timeLeft))
 		];
 
@@ -544,7 +544,7 @@ class Login
 		}
 
 		if (
-			$this->httpObject->httpRequestObject->isPrivateSessionDomain
+			$this->httpObject->httpRequestObject->isPrivateWebDomain
 			&& $this->httpObject->httpRequestObject->sessionObject === Constant::$NULL
 		) {
 			$this->httpObject->httpRequestObject->sessionObject = new Session(
@@ -584,10 +584,10 @@ class Login
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
-						$authData['authMode'] === 'Token'
+						$authData['authMode'] === 'ApiToken'
 						&& !$this->cacheExist(
-							cacheKey: CacheServerKey::token(
-								token: $authId
+							cacheKey: CacheServerKey::apiToken(
+								apiToken: $authId
 							)
 						)
 					) {
@@ -654,7 +654,7 @@ class Login
 
 		$timeLeft = Env::$timestamp - $authFoundData['authTimestamp'];
 		$output = [
-			'SessionId' => $authFoundData['authId'],
+			'WebSessionId' => $authFoundData['authId'],
 			'Expires' => date('d\ \d\a\y H\ \h\o\u\r i\ \m\i\n s\ \s\e\c', (Constant::$TOKEN_EXPIRY_TIME - $timeLeft))
 		];
 

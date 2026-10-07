@@ -135,14 +135,14 @@ class HttpRequest
 	 * 
 	 * @var null|bool
 	 */
-	public $isPrivateSessionDomain = null;
+	public $isPrivateWebDomain = null;
 
 	/**
 	 * Private token domain cache key exist flag
 	 * 
 	 * @var null|bool
 	 */
-	public $isPrivateTokenDomain = null;
+	public $isPrivateApiDomain = null;
 
 	/**
 	 * Domain cache key
@@ -214,8 +214,8 @@ class HttpRequest
 		);
 
 		$this->isPublicDomain = Constant::$FALSE;
-		$this->isPrivateSessionDomain = Constant::$FALSE;
-		$this->isPrivateTokenDomain = Constant::$FALSE;
+		$this->isPrivateWebDomain = Constant::$FALSE;
+		$this->isPrivateApiDomain = Constant::$FALSE;
 
 		$publicDomainCacheKey = CacheServerKey::publicDomain(
 			domainName: $this->httpObject->httpReqData['server']['domainName']
@@ -232,16 +232,16 @@ class HttpRequest
 		}
 
 		if (!$this->isPublicDomain) {
-			$privateSessionDomainCacheKey = CacheServerKey::privateSessionDomain(
+			$privateWebDomainCacheKey = CacheServerKey::privateWebDomain(
 				domainName: $this->httpObject->httpReqData['server']['domainName']
 			);
 			if (
 				DbCommonFunction::$globalCacheServerObject->cacheExist(
-					cacheKey: $privateSessionDomainCacheKey
+					cacheKey: $privateWebDomainCacheKey
 				)
 			) {
-				$this->isPrivateSessionDomain = Constant::$TRUE;
-				$this->domainCacheKey = $privateSessionDomainCacheKey;
+				$this->isPrivateWebDomain = Constant::$TRUE;
+				$this->domainCacheKey = $privateWebDomainCacheKey;
 				$this->isPrivateRequest = Constant::$TRUE;
 				$this->isPublicRequest = Constant::$FALSE;
 			}
@@ -249,18 +249,18 @@ class HttpRequest
 
 		if (
 			!$this->isPublicDomain
-			&& !$this->isPrivateSessionDomain
+			&& !$this->isPrivateWebDomain
 		) {
-			$privateTokenDomainCacheKey = CacheServerKey::privateTokenDomain(
+			$privateApiDomainCacheKey = CacheServerKey::privateApiDomain(
 				domainName: $this->httpObject->httpReqData['server']['domainName']
 			);
 			if (
 				DbCommonFunction::$globalCacheServerObject->cacheExist(
-					cacheKey: $privateTokenDomainCacheKey
+					cacheKey: $privateApiDomainCacheKey
 				)
 			) {
-				$this->isPrivateTokenDomain = Constant::$TRUE;
-				$this->domainCacheKey = $privateTokenDomainCacheKey;
+				$this->isPrivateApiDomain = Constant::$TRUE;
+				$this->domainCacheKey = $privateApiDomainCacheKey;
 				$this->isPrivateRequest = Constant::$TRUE;
 				$this->isPublicRequest = Constant::$FALSE;
 			}
@@ -284,8 +284,8 @@ class HttpRequest
 
 		if (
 			!$this->isPublicDomain
-			&& !$this->isPrivateSessionDomain
-			&& !$this->isPrivateTokenDomain
+			&& !$this->isPrivateWebDomain
+			&& !$this->isPrivateApiDomain
 			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/' . Env::$config[$this->httpObject->httpReqData['current']['customerId']]->RELOAD_REQUEST_KEYWORD
 		) {
 			throw new \Exception(
@@ -305,9 +305,9 @@ class HttpRequest
 		}
 
 		if (
-			$this->isPrivateSessionDomain
+			$this->isPrivateWebDomain
 			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_SESSION_REQUEST
+			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST
 		) {
 			throw new \Exception(
 				message: 'Session based request are disabled',
@@ -316,9 +316,9 @@ class HttpRequest
 		}
 
 		if (
-			$this->isPrivateTokenDomain
+			$this->isPrivateApiDomain
 			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_TOKEN_REQUEST
+			&& !Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_PRIVATE_API_REQUEST
 		) {
 			throw new \Exception(
 				message: 'Token based request are disabled',
@@ -334,8 +334,8 @@ class HttpRequest
 			|| (
 				$this->isPrivateRequest
 				&& (
-					Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_SESSION_REQUEST
-					|| Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_TOKEN_REQUEST
+					Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB_REQUEST
+					|| Env::$config[$this->httpObject->httpReqData['current']['customerId']]->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_API_REQUEST
 				)
 			)
 		) {

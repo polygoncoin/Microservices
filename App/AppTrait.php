@@ -1262,7 +1262,7 @@ trait AppTrait
 	): mixed {
 		if (!isset($this->httpObject->httpRequestObject->activeRequestData['authId'])) {
 			throw new \Exception(
-				message: 'Missing token',
+				message: 'Missing API token',
 				code: HttpStatus::$InternalServerError
 			);
 		}

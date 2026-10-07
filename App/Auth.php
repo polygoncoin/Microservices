@@ -67,7 +67,7 @@ class Auth
 		}
 
 		if (
-			$this->httpObject->httpRequestObject->isPrivateSessionDomain
+			$this->httpObject->httpRequestObject->isPrivateWebDomain
 			&& isset($this->httpObject->httpReqData['header']['cookie'][Env::$config[$this->httpObject->httpReqData['current']['customerId']]->SESSION_COOKIE_NAME])
 		) {
 			$this->httpObject->httpRequestObject->sessionObject = new Session(
@@ -78,29 +78,29 @@ class Auth
 
 			$this->httpObject->httpRequestObject->activeRequestData['customerUserData'] = $_SESSION;
 		} elseif (
-			$this->httpObject->httpRequestObject->isPrivateTokenDomain
-			&& isset($this->httpObject->httpReqData['header']['tokenHeader'])
-			&& $this->httpObject->httpReqData['header']['tokenHeader'] !== Constant::$NULL
+			$this->httpObject->httpRequestObject->isPrivateApiDomain
+			&& isset($this->httpObject->httpReqData['header']['apiToken'])
+			&& $this->httpObject->httpReqData['header']['apiToken'] !== Constant::$NULL
 		) {
 			if (
 				!preg_match(
 					pattern: '/Bearer\s(\S+)/',
-					subject: $this->httpObject->httpReqData['header']['tokenHeader'],
+					subject: $this->httpObject->httpReqData['header']['apiToken'],
 					matches: $matches
 				)
 			) {
 				throw new \Exception(
-					message: 'Token missing',
+					message: 'Api token missing',
 					code: HttpStatus::$BadRequest
 				);
 			}
 			$this->httpObject->httpRequestObject->activeRequestData['authId'] = $matches[1];
-			$tokenKey = CacheServerKey::token(
-				token: $this->httpObject->httpRequestObject->activeRequestData['authId']
+			$apiTokenKey = CacheServerKey::apiToken(
+				apiToken: $this->httpObject->httpRequestObject->activeRequestData['authId']
 			);
 			if (
 				!$this->httpObject->httpRequestObject->cacheServerObject->cacheExist(
-					cacheKey: $tokenKey
+					cacheKey: $apiTokenKey
 				)
 			) {
 				throw new \Exception(
@@ -109,7 +109,7 @@ class Auth
 				);
 			}
 			$this->httpObject->httpRequestObject->activeRequestData['customerUserData'] = $this->httpObject->httpRequestObject->cacheServerObject->cacheGet(
-				cacheKey: $tokenKey
+				cacheKey: $apiTokenKey
 			);
 		} else {
 			throw new \Exception(
