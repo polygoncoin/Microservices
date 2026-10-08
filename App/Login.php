@@ -306,38 +306,6 @@ class Login
 	}
 
 	/**
-	 * Generates session
-	 * 
-	 * @return array
-	 */
-	private function generateSession(): array
-	{
-		if (!$this->httpObject->httpRequestObject->isPrivateWebDomain) {
-			return [];
-		}
-		$this->httpObject->httpRequestObject->sessionObject = new Session(
-			httpObject: $this->httpObject
-		);
-		$this->httpObject->httpRequestObject->sessionObject->initSessionHandler();
-		$this->httpObject->httpRequestObject->sessionObject->startReadWrite();
-
-		$activeData = [
-			'authId' => session_id(),
-			'authMode' => 'Web Session',
-			'authTimestamp' => Env::$timestamp,
-			'httpRequestHash' => $this->httpObject->httpReqData['httpRequestHash']
-		];
-
-		foreach ($this->httpObject->httpReqData['active']['customerUserData'] as $activeDataKey => &$activeDataKeyValue) {
-			$activeData[$activeDataKey] = $activeDataKeyValue;
-		}
-
-		$_SESSION = $activeData;
-
-		return $activeData;
-	}
-
-	/**
 	 * Outputs active/newly generated token detail
 	 * 
 	 * @return void
@@ -497,18 +465,35 @@ class Login
 	}
 
 	/**
-	 * Output detail
+	 * Generates session
 	 * 
-	 * @param array $output
-	 * 
-	 * @return void
+	 * @return array
 	 */
-	private function outputDetail(&$output): void
+	private function generateSession(): array
 	{
-		$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
-			objectKey: 'Results',
-			data: $output
+		if (!$this->httpObject->httpRequestObject->isPrivateWebDomain) {
+			return [];
+		}
+		$this->httpObject->httpRequestObject->sessionObject = new Session(
+			httpObject: $this->httpObject
 		);
+		$this->httpObject->httpRequestObject->sessionObject->initSessionHandler();
+		$this->httpObject->httpRequestObject->sessionObject->startReadWrite();
+
+		$activeData = [
+			'authId' => session_id(),
+			'authMode' => 'Web Session',
+			'authTimestamp' => Env::$timestamp,
+			'httpRequestHash' => $this->httpObject->httpReqData['httpRequestHash']
+		];
+
+		foreach ($this->httpObject->httpReqData['active']['customerUserData'] as $activeDataKey => &$activeDataKeyValue) {
+			$activeData[$activeDataKey] = $activeDataKeyValue;
+		}
+
+		$_SESSION = $activeData;
+
+		return $activeData;
 	}
 
 	/**
@@ -662,6 +647,21 @@ class Login
 
 		$this->outputDetail(
 			output: $output
+		);
+	}
+
+	/**
+	 * Output detail
+	 * 
+	 * @param array $output
+	 * 
+	 * @return void
+	 */
+	private function outputDetail(&$output): void
+	{
+		$this->httpObject->httpResponseObject->dataEncodeObject->addKeyData(
+			objectKey: 'Results',
+			data: $output
 		);
 	}
 

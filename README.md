@@ -36,9 +36,9 @@ This is a light & easy low code API generator using configuration arrays. It can
 
 - **Config** Basic configuration folder
 - **Hook** Hook.
+- **public\_html** Contains index.php file.
 - **Supplement** Customised coding for APIs
 - **Validation** Contains validation classes.
-- **public\_html** Contains index.php file.
 
 #### www/Supplement code folder
 
@@ -51,10 +51,13 @@ This is a light & easy low code API generator using configuration arrays. It can
 
 ### Route folder
 
-#### www/Config/Route
+#### www/Config//&lt;CustomerFoldername&gt;/&lt;mode&gt;/Route
 
-- **/Config/&lt;CustomerFoldername&gt;/Private/Route/&lt;GroupName&gt;**
-- **/Config/&lt;CustomerFoldername&gt;/Public**
+- **/Config/&lt;CustomerFoldername&gt;/Private/Route/&lt;GroupName&gt;/DataModification**
+- **/Config/&lt;CustomerFoldername&gt;/Private/Route/&lt;GroupName&gt;/DataRetrival**
+
+- **/Config/&lt;CustomerFoldername&gt;/Public/Route//DataModification**
+- **/Config/&lt;CustomerFoldername&gt;/Public/Route//DataRetrival**
 
 - **&lt;GroupName&gt;** is the group user belongs to for accessing the API's
 
@@ -72,9 +75,8 @@ These files locations are used in routes config to be used for generating respon
 
 #### www//Config/&lt;CustomerFoldername&gt;/Private/Sql
 
-- **/Config/Sql/Private/GlobalDB** for global database.
-- **/Config/Sql/Private/CustomerDB** for customer (including all hosts and their databases).
-- **/Config/Sql/Public** for Public Web API's (No Authentication).
+- **/Config//&lt;CustomerFoldername&gt;/&lt;mode&gt;/Sql/DataModification**
+- **/Config//&lt;CustomerFoldername&gt;/&lt;mode&gt;/Sql/DataRetrival**
 
 #### File
 
