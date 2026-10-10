@@ -122,9 +122,9 @@ class Reload
 				);
 			}
 
-			if (!empty(Env::$config[$customerId]->PRIVATE_DOMAIN_NAME)) {
+			if (!empty(Env::$config[$customerId]->PUBLIC_DOMAIN_NAME)) {
 				$publicDomainCacheKey = CacheServerKey::publicDomain(
-					domainName: Env::$config[$customerId]->PRIVATE_DOMAIN_NAME
+					domainName: Env::$config[$customerId]->PUBLIC_DOMAIN_NAME
 				);
 				DbCommonFunction::$globalCacheServerObject->cacheSet(
 					cacheKey: $publicDomainCacheKey,

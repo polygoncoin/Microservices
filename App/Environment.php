@@ -32,7 +32,7 @@ use Microservices\App\HttpStatus;
  */
 class Environment
 {
-    public $PRIVATE_DOMAIN_NAME = null;
+    public $PUBLIC_DOMAIN_NAME = null;
     public $PRIVATE_WEB_DOMAIN_NAME = null;
     public $PRIVATE_API_DOMAIN_NAME = null;
 
