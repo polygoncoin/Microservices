@@ -102,6 +102,12 @@ $server->on(
 
 		$httpReqData['header'] = $request->header;
 
+		if (isset($request->cookie)) {
+			$httpReqData['header']['cookie'] = $request->cookie;
+		} else {
+			$httpReqData['header']['cookie'] = null;
+		}
+
 		if (isset($httpReqData['header']['content-type'])) {
 			$httpReqData['header']['contentType'] = $httpReqData['header']['content-type'];
 		} else {
