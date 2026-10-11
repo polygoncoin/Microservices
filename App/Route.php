@@ -90,7 +90,7 @@ class Route
 	 */
 	public function init(): bool
 	{
-		if ($this->httpObject->Env->CUSTOMER_ENABLE_ROUTES_REQUEST) {
+		if ($this->httpObject->Env->ENABLE_ROUTES) {
 			return Constant::$TRUE;
 		}
 

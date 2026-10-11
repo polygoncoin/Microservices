@@ -958,7 +958,7 @@ trait AppTrait
 	): void {
 		if (
 			$this->httpObject->httpRequestObject->isPublicRequest
-			|| !$this->httpObject->Env->CUSTOMER_ENABLE_LIMITING
+			|| !$this->httpObject->Env->ENABLE_RATE_LIMITING
 			|| !isset($sqlConfig['rateLimitMaxRequest'])
 			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
 		) {
@@ -986,7 +986,7 @@ trait AppTrait
 
 		// @throws \Exception
 		$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
-			rateLimitPrefix: $this->httpObject->Env->RATE_LIMIT_ROUTE_PREFIX,
+			rateLimitPrefix: $this->httpObject->Env->RATE_LIMITING_ROUTE_PREFIX,
 			rateLimitMaxRequest: $sqlConfig['rateLimitMaxRequest'],
 			rateLimitMaxRequestWindow: $sqlConfig['rateLimitMaxRequestWindow'],
 			rateLimitKey: $rateLimitKey
@@ -1612,8 +1612,8 @@ trait AppTrait
 
 		if (
 			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
-			&& $this->httpObject->Env->CUSTOMER_ENABLE_EXPLAIN_REQUEST
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->EXPLAIN_REQUEST_KEYWORD
+			&& $this->httpObject->Env->ENABLE_EXPLAIN
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->EXPLAIN_KEYWORD
 		) {
 			return $this->explain(
 				sqlConfig: $sqlConfig,
@@ -1658,8 +1658,8 @@ trait AppTrait
 
 		if (
 			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
-			&& $this->httpObject->Env->CUSTOMER_ENABLE_EXPLAIN_REQUEST
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->EXPLAIN_REQUEST_KEYWORD
+			&& $this->httpObject->Env->ENABLE_EXPLAIN
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->EXPLAIN_KEYWORD
 		) {
 			return $this->explain(
 				sqlConfig: $sqlConfig,
@@ -1669,7 +1669,7 @@ trait AppTrait
 
 		if (
 			$this->httpObject->httpRequestObject->routeParserObject->routeEndingWithReservedKeywordFlag
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_SAMPLE_REQUEST_KEYWORD
+			&& $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_SAMPLE_KEYWORD
 		) {
 			return $this->generateImportSampleCsv(
 				sqlConfig: $sqlConfig,
@@ -1692,7 +1692,11 @@ trait AppTrait
 	): bool {
 		$toBeCached = Constant::$FALSE;
 		if (
-			$this->httpObject->Env->CUSTOMER_ENABLE_RESPONSE_CACHING
+			(
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicDomain
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebDomain
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiDomain
+			)
 			&& isset($sqlConfig['__CACHE-KEY__'])
 			&& !isset($this->httpObject->httpReqData['active']['queryParamArray']['orderBy'])
 		) {

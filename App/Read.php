@@ -128,7 +128,11 @@ class Read
 		);
 
 		if (
-			$this->httpObject->Env->CUSTOMER_ENABLE_RESPONSE_CACHING
+			(
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicDomain
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebDomain
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiDomain
+			)
 			&& $toBeCached
 		) {
 			$this->dataEncodeObject = new DataEncode(
@@ -158,7 +162,11 @@ class Read
 		);
 
 		if (
-			$this->httpObject->Env->CUSTOMER_ENABLE_RESPONSE_CACHING
+			(
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicDomain
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebDomain
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiDomain
+			)
 			&& $toBeCached
 		) {
 			$json = $this->dataEncodeObject->getData();
@@ -242,7 +250,7 @@ class Read
 				$this->dataEncodeObject->startObject($index);
 			}
 
-			if ($this->httpObject->Env->CUSTOMER_ENABLE_PAYLOAD_IN_RESPONSE) {
+			if ($this->httpObject->Env->ENABLE_PAYLOAD_IN_RESPONSE) {
 				$readPayloadKey = $this->getPayloadKey(
 					payloadKeyArray: $readPayloadKeyArray
 				);
@@ -990,7 +998,7 @@ class Read
 	): array {
 		$return = [[], '', HttpStatus::$Ok];
 
-		if (!$this->httpObject->Env->CUSTOMER_ENABLE_DOWNLOAD_REQUEST) {
+		if (!$this->httpObject->Env->ENABLE_DOWNLOAD) {
 			return [[], '', HttpStatus::$NotFound];
 		}
 

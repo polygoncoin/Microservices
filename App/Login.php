@@ -110,12 +110,12 @@ class Login
 		$this->validatePassword();
 
 		if (
-			$this->httpObject->Env->CUSTOMER_ENABLE_LIMITING_LOGGED_IN_USER_PER_IP
+			$this->httpObject->Env->ENABLE_RATE_LIMITING_LOGGED_IN_USER_PER_IP
 			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'])
 			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'])
 		) {
 			$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
-				rateLimitPrefix: $this->httpObject->Env->RATE_LIMIT_IP_USER_PREFIX,
+				rateLimitPrefix: $this->httpObject->Env->RATE_LIMITING_USER_IP_PREFIX,
 				rateLimitMaxRequest: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'],
 				rateLimitMaxRequestWindow: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'],
 				rateLimitKey: $this->httpObject->httpReqData['server']['httpRequestIp']
@@ -123,12 +123,12 @@ class Login
 		}
 
 		if (
-			$this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST
+			$this->httpObject->Env->ENABLE_PRIVATE_WEB
 			&& $this->httpObject->httpRequestObject->isPrivateWebDomain
 		) {
 			$this->startSession();
 		} elseif (
-			$this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_API_REQUEST
+			$this->httpObject->Env->ENABLE_PRIVATE_API
 			&& $this->httpObject->httpRequestObject->isPrivateApiDomain
 		) {
 			$this->outputTokenData();
@@ -236,7 +236,7 @@ class Login
 			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'])
 		) {
 			$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
-				rateLimitPrefix: $this->httpObject->Env->RATE_LIMIT_USER_LOGIN_PREFIX,
+				rateLimitPrefix: $this->httpObject->Env->RATE_LIMITING_LOGIN_PREFIX,
 				rateLimitMaxRequest: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'],
 				rateLimitMaxRequestWindow: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'],
 				rateLimitKey: $this->httpObject->httpReqData['server']['httpRequestIp'] . ':' . $this->customer_user_username
@@ -318,7 +318,7 @@ class Login
 	 */
 	private function outputTokenData(): void
 	{
-		if ($this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST) {
+		if ($this->httpObject->Env->ENABLE_PRIVATE_WEB) {
 			$this->httpObject->sessionObject = new Session(
 				httpObject: $this->httpObject
 			);
@@ -351,7 +351,7 @@ class Login
 			);
 		}
 
-		if ($this->httpObject->Env->CUSTOMER_ENABLE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
+		if ($this->httpObject->Env->ENABLE_RATE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
 			$customerUserConcurrencyKey = CacheServerKey::customerUserConcurrency(
 				customerId: $this->httpObject->httpReqData['active']['customerId'],
 				customerUserId: $this->httpObject->httpReqData['active']['customerUserId']
@@ -379,7 +379,7 @@ class Login
 						continue;
 					}
 					if (
-						$this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST
+						$this->httpObject->Env->ENABLE_PRIVATE_WEB
 						&& $authData['authMode'] === 'Web Session'
 					) {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
@@ -436,7 +436,7 @@ class Login
 			$customerUserConcurrencyData[$authFoundData['authId']] = $authFoundData;
 		}
 
-		if ($this->httpObject->Env->CUSTOMER_ENABLE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
+		if ($this->httpObject->Env->ENABLE_RATE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
 			if (
 				count(
 					value: $customerUserConcurrencyData
@@ -565,7 +565,7 @@ class Login
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
-						$this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_API_REQUEST
+						$this->httpObject->Env->ENABLE_PRIVATE_API
 						&& $authData['authMode'] === 'API Token'
 						&& !$this->cacheExist(
 							cacheKey: CacheServerKey::apiToken(
@@ -613,7 +613,7 @@ class Login
 			$customerUserConcurrencyData[$authFoundData['authId']] = $authFoundData;
 		}
 
-		if ($this->httpObject->Env->CUSTOMER_ENABLE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
+		if ($this->httpObject->Env->ENABLE_RATE_LIMITING_SUCCESSFULL_LOGIN_PER_USER) {
 			if (
 				count(
 					value: $customerUserConcurrencyData

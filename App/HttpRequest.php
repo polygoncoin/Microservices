@@ -170,7 +170,7 @@ class HttpRequest
 	) {
 		$this->httpObject = &$httpObject;
 		$this->INPUT_REPRESENTATION = Env::$SYSTEM_INPUT_REPRESENTATION;
-		
+
 		Env::loadEnv(
 			customerId: 0
 		);
@@ -253,7 +253,7 @@ class HttpRequest
 			!$this->isPublicDomain
 			&& !$this->isPrivateWebDomain
 			&& !$this->isPrivateApiDomain
-			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/' . $this->httpObject->Env->RELOAD_REQUEST_KEYWORD
+			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/' . $this->httpObject->Env->RELOAD_KEYWORD
 		) {
 			throw new \Exception(
 				message: "Invalid domain: '{$this->httpObject->httpReqData['server']['domainName']}'",
@@ -263,7 +263,7 @@ class HttpRequest
 
 		if (
 			$this->isPublicRequest
-			&& !$this->httpObject->Env->CUSTOMER_ENABLE_PUBLIC_REQUEST
+			&& !$this->httpObject->Env->ENABLE_PUBLIC
 		) {
 			throw new \Exception(
 				message: 'Public request are disabled',
@@ -274,7 +274,7 @@ class HttpRequest
 		if (
 			$this->isPrivateWebDomain
 			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-			&& !$this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST
+			&& !$this->httpObject->Env->ENABLE_PRIVATE_WEB
 		) {
 			throw new \Exception(
 				message: 'Session based request are disabled',
@@ -285,7 +285,7 @@ class HttpRequest
 		if (
 			$this->isPrivateApiDomain
 			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-			&& !$this->httpObject->Env->CUSTOMER_ENABLE_PRIVATE_API_REQUEST
+			&& !$this->httpObject->Env->ENABLE_PRIVATE_API
 		) {
 			throw new \Exception(
 				message: 'Token based request are disabled',
@@ -296,13 +296,13 @@ class HttpRequest
 		if (
 			(
 				$this->isPublicRequest
-				&& $this->httpObject->Env->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PUBLIC_REQUEST
+				&& $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC
 			)
 			|| (
 				$this->isPrivateRequest
 				&& (
-					$this->httpObject->Env->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB_REQUEST
-					|| $this->httpObject->Env->CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_API_REQUEST
+					$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB
+					|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API
 				)
 			)
 		) {
@@ -315,7 +315,7 @@ class HttpRequest
 			$this->httpObject->cacheObject = DbCommonFunction::connectCache(
 				customerId: $this->httpObject->httpReqData['active']['customerId']
 			);
-			if ($this->httpObject->Env->CUSTOMER_ENABLE_LIMITING) {
+			if ($this->httpObject->Env->ENABLE_RATE_LIMITING) {
 				$this->rateLimiterObject = new RateLimiter(
 					cacheObject: $this->httpObject->cacheObject
 				);
@@ -463,7 +463,7 @@ class HttpRequest
 					case (
 						$this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
 						&& $this->routeParserObject->routeEndingWithReservedKeywordFlag
-						&& ($this->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_REQUEST_KEYWORD)
+						&& ($this->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_CSV_KEYWORD)
 						&& isset($this->httpObject->httpReqData['files']['file']['tmp_name'])
 					):
 						$uploadedFileName = $this->httpObject->httpReqData['files']['file']['tmp_name'];

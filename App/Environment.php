@@ -37,51 +37,50 @@ class Environment
     public $PRIVATE_API_DOMAIN_NAME = null;
 
     public $OUTPUT_PERFORMANCE_STATS = null;
-    public $DISABLE_REQUESTS_VIA_PROXIES = null;
+    public $DISABLES_VIA_PROXIES = null;
     public $CUSTOMER_CONFIG_DIRECTORY = null;
 
     public $SECRET = null;
     public $PAYLOAD_IN_RESPONSE = null;
 
     public $ENABLE_RELOAD_CACHE = null;
-    public $RELOAD_REQUEST_KEYWORD = null;
+    public $RELOAD_KEYWORD = null;
     public $RELOAD_CACHE_CIDR = null;
 
-    public $CUSTOMER_ENABLE_INPUT_REPRESENTATION_IN_QUERY_STRING = null;
-    public $CUSTOMER_ENABLE_OUTPUT_REPRESENTATION_IN_QUERY_STRING = null;
+    public $ENABLE_INPUT_REPRESENTATION_IN_QUERY_STRING = null;
+    public $ENABLE_OUTPUT_REPRESENTATION_IN_QUERY_STRING = null;
 
-    public $CUSTOMER_ENABLE_PAYLOAD_IN_RESPONSE = null;
+    public $ENABLE_PAYLOAD_IN_RESPONSE = null;
 
-    public $CUSTOMER_ENABLE_RESPONSE_CACHING = null;
-    public $CUSTOMER_ENABLE_QUERY_CACHE_FOR_PUBLIC_REQUEST = null;
-    public $CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB_REQUEST = null;
-    public $CUSTOMER_ENABLE_QUERY_CACHE_FOR_PRIVATE_API_REQUEST = null;
+    public $ENABLE_QUERY_CACHE_FOR_PUBLIC = null;
+    public $ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB = null;
+    public $ENABLE_QUERY_CACHE_FOR_PRIVATE_API = null;
 
-    public $CUSTOMER_ENABLE_PUBLIC_REQUEST = null;
-    public $CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST = null;
-    public $CUSTOMER_ENABLE_PRIVATE_API_REQUEST = null;
+    public $ENABLE_PUBLIC = null;
+    public $ENABLE_PRIVATE_WEB = null;
+    public $ENABLE_PRIVATE_API = null;
 
     public $TOKEN_LIFETIME = null;
     public $SESSION_LIFETIME = null;
-    
-    public $CUSTOMER_ENABLE_CIDR = null;
-    public $CUSTOMER_ENABLE_CRON_REQUEST = null;
-    public $CUSTOMER_ENABLE_CUSTOM_REQUEST = null;
-    public $CUSTOMER_ENABLE_DROPBOX_REQUEST = null;
-    public $CUSTOMER_ENABLE_DOWNLOAD_REQUEST = null;
-    public $CUSTOMER_ENABLE_EXPLAIN_REQUEST = null;
-    public $CUSTOMER_ENABLE_IMPORT_REQUEST = null;
-    public $CUSTOMER_ENABLE_IMPORT_SAMPLE_REQUEST = null;
-    public $CUSTOMER_ENABLE_ROUTES_REQUEST = null;
-    public $CUSTOMER_ENABLE_THIRDPARTY_REQUEST = null;
-    public $CUSTOMER_ENABLE_UPLOAD_REQUEST = null;
 
-    public $CUSTOMER_ENABLE_LIMITING = null;
-    public $CUSTOMER_ENABLE_LIMITING_PER_IP = null;
-    public $CUSTOMER_ENABLE_LIMITING_LOGIN_PER_USER = null;
-    public $CUSTOMER_ENABLE_LIMITING_SUCCESSFULL_LOGIN_PER_USER = null;
-    public $CUSTOMER_ENABLE_LIMITING_LOGGED_IN_USER = null;
-    public $CUSTOMER_ENABLE_LIMITING_LOGGED_IN_USER_PER_IP = null;
+    public $ENABLE_CIDR = null;
+    public $ENABLE_CRON = null;
+    public $ENABLE_CUSTOM = null;
+    public $ENABLE_DROPBOX = null;
+    public $ENABLE_DOWNLOAD = null;
+    public $ENABLE_EXPLAIN = null;
+    public $ENABLE_IMPORT = null;
+    public $ENABLE_IMPORT_SAMPLE = null;
+    public $ENABLE_ROUTES = null;
+    public $ENABLE_THIRDPARTY = null;
+    public $ENABLE_UPLOAD = null;
+
+    public $ENABLE_RATE_LIMITING = null;
+    public $ENABLE_RATE_LIMITING_IP = null;
+    public $ENABLE_RATE_LIMITING_USER_LOGIN = null;
+    public $ENABLE_RATE_LIMITING_SUCCESSFULL_LOGIN_PER_USER = null;
+    public $ENABLE_RATE_LIMITING_LOGGED_IN_USER = null;
+    public $ENABLE_RATE_LIMITING_LOGGED_IN_USER_PER_IP = null;
 
     public $CACHE_MODE = null;
     public $CACHE_HOST = null;
@@ -118,6 +117,7 @@ class Environment
     public $SESSION_STORE_MODE = null;
 
     public $SESSION_STORE_PATH = null;
+
     public $SESSION_COOKIE_NAME = null;
     public $SESSION_COOKIE_PATH = null;
     public $SESSION_COOKIE_SECURE = null;
@@ -127,35 +127,12 @@ class Environment
     public $SESSION_ENCRYPTION_PASS_PHRASE = null;
     public $SESSION_ENCRYPTION_IV = null;
 
-    public $SESSION_MYSQL_HOST = null;
-    public $SESSION_MYSQL_PORT = null;
-    public $SESSION_MYSQL_USER = null;
-    public $SESSION_MYSQL_PASSWORD = null;
-    public $SESSION_MYSQL_DB = null;
-    public $SESSION_MYSQL_TABLE = null;
-
-    public $SESSION_PGSQL_HOST = null;
-    public $SESSION_PGSQL_PORT = null;
-    public $SESSION_PGSQL_USER = null;
-    public $SESSION_PGSQL_PASSWORD = null;
-    public $SESSION_PGSQL_DB = null;
-    public $SESSION_PGSQL_TABLE = null;
-
-    public $SESSION_MONGO_HOST = null;
-    public $SESSION_MONGO_PORT = null;
-    public $SESSION_MONGO_USER = null;
-    public $SESSION_MONGO_PASSWORD = null;
-    public $SESSION_MONGO_DB = null;
-    public $SESSION_MONGO_TABLE = null;
-
-    public $SESSION_REDIS_HOST = null;
-    public $SESSION_REDIS_PORT = null;
-    public $SESSION_REDIS_USER = null;
-    public $SESSION_REDIS_PASSWORD = null;
-    public $SESSION_REDIS_DB = null;
-
-    public $SESSION_MEMCACHE_HOST = null;
-    public $SESSION_MEMCACHE_PORT = null;
+    public $SESSION_HOST = null;
+    public $SESSION_PORT = null;
+    public $SESSION_USER = null;
+    public $SESSION_PASSWORD = null;
+    public $SESSION_DB = null;
+    public $SESSION_TABLE = null;
 
     public $SESSION_DATA_COOKIE_NAME = null;
 
@@ -167,26 +144,26 @@ class Environment
 
     public $APPEND_SUPPLEMENT_FUNCTION_KEYWORD = null;
 
-    public $EXPLAIN_REQUEST_KEYWORD = null;
-    public $IMPORT_REQUEST_KEYWORD = null;
-    public $IMPORT_SAMPLE_REQUEST_KEYWORD = null;
+    public $EXPLAIN_KEYWORD = null;
+    public $IMPORT_CSV_KEYWORD = null;
+    public $IMPORT_SAMPLE_KEYWORD = null;
 
-    public $DROPBOX_REQUEST_KEYWORD = null;
-    public $CRON_REQUEST_KEYWORD = null;
-    public $CUSTOM_REQUEST_KEYWORD = null;
-    public $THIRD_PARTY_REQUEST_KEYWORD = null;
-    public $UPLOAD_REQUEST_KEYWORD = null;
+    public $DROPBOX_KEYWORD = null;
+    public $CRON_KEYWORD = null;
+    public $CUSTOM_KEYWORD = null;
+    public $THIRD_PARTY_KEYWORD = null;
+    public $UPLOAD_KEYWORD = null;
 
-    public $MYSQL_CLIENT_LOCATION = null;
+    public $DOWNLOAD_CLIENT_LOCATION = null;
 
-    public $RATE_LIMIT_IP_PREFIX = null;
-    public $RATE_LIMIT_ROUTE_PREFIX = null;
-    public $RATE_LIMIT_IP_ROUTE_PREFIX = null;
-    public $RATE_LIMIT_GROUP_PREFIX = null;
-    public $RATE_LIMIT_IP_GROUP_PREFIX = null;
-    public $RATE_LIMIT_USER_PREFIX = null;
-    public $RATE_LIMIT_IP_USER_PREFIX = null;
-    public $RATE_LIMIT_USER_LOGIN_PREFIX = null;
+    public $RATE_LIMITING_PER_IP_PREFIX = null;
+    public $RATE_LIMITING_ROUTE_PREFIX = null;
+    public $RATE_LIMITING_ROUTE_IP_PREFIX = null;
+    public $RATE_LIMITING_GROUP_PREFIX = null;
+    public $RATE_LIMITING_GROUP_IP_PREFIX = null;
+    public $RATE_LIMITING_USER_PREFIX = null;
+    public $RATE_LIMITING_USER_IP_PREFIX = null;
+    public $RATE_LIMITING_LOGIN_PREFIX = null;
 
 	/**
 	 * Constructor

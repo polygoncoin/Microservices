@@ -45,7 +45,7 @@ class Env
 	public static $SYSTEM_CUSTOMER_TABLE = null;
 
 	public static $SYSTEM_ENABLE_RELOAD_CACHE = null;
-    public static $SYSTEM_RELOAD_REQUEST_KEYWORD = null;
+    public static $SYSTEM_RELOAD_KEYWORD = null;
 
 	public static $SYSTEM_ROUTES_KEYWORD = null;
 
@@ -79,7 +79,7 @@ class Env
 		self::$SYSTEM_CUSTOMER_TABLE = getenv(name: 'SYSTEM_CUSTOMER_TABLE');
 
 		self::$SYSTEM_ENABLE_RELOAD_CACHE = (bool)getenv(name: 'SYSTEM_ENABLE_RELOAD_CACHE');
-		self::$SYSTEM_RELOAD_REQUEST_KEYWORD = getenv(name: 'SYSTEM_RELOAD_REQUEST_KEYWORD');
+		self::$SYSTEM_RELOAD_KEYWORD = getenv(name: 'SYSTEM_RELOAD_KEYWORD');
 
 		self::$SYSTEM_ROUTES_KEYWORD = getenv(name: 'SYSTEM_ROUTES_KEYWORD');
 

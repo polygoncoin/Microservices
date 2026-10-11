@@ -139,8 +139,8 @@ class Api
 			!in_array(
 				needle: $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword,
 				haystack: [
-					$this->httpObject->Env->EXPLAIN_REQUEST_KEYWORD,
-					$this->httpObject->Env->IMPORT_SAMPLE_REQUEST_KEYWORD
+					$this->httpObject->Env->EXPLAIN_KEYWORD,
+					$this->httpObject->Env->IMPORT_SAMPLE_KEYWORD
 				],
 				strict: Constant::$TRUE
 			)
@@ -152,7 +152,7 @@ class Api
 		$supplementClass = Constant::$NULL;
 		if (
 			$this->checkSupplement(
-				$this->httpObject->Env->CRON_REQUEST_KEYWORD
+				$this->httpObject->Env->CRON_KEYWORD
 			)
 		) {
 			$supplementClassFileName = ucfirst(
@@ -171,7 +171,7 @@ class Api
 			}
 		} elseif (
 			$this->checkSupplement(
-				$this->httpObject->Env->CUSTOM_REQUEST_KEYWORD
+				$this->httpObject->Env->CUSTOM_KEYWORD
 			)
 		) {
 			$supplementClassFileName = ucfirst(
@@ -190,7 +190,7 @@ class Api
 			}
 		} elseif (
 			$this->checkSupplement(
-				$this->httpObject->Env->UPLOAD_REQUEST_KEYWORD
+				$this->httpObject->Env->UPLOAD_KEYWORD
 			)
 		) {
 			$supplementClassFileName = ucfirst(
@@ -209,7 +209,7 @@ class Api
 			}
 		} elseif (
 			$this->checkSupplement(
-				$this->httpObject->Env->THIRD_PARTY_REQUEST_KEYWORD
+				$this->httpObject->Env->THIRD_PARTY_KEYWORD
 			)
 		) {
 			$supplementClassFileName = ucfirst(
@@ -232,7 +232,7 @@ class Api
 				case Constant::$QUERY:
 					if (
 						$this->checkSupplement(
-							$this->httpObject->Env->DROPBOX_REQUEST_KEYWORD
+							$this->httpObject->Env->DROPBOX_KEYWORD
 						)
 					) {
 						$classFileName = ucfirst(

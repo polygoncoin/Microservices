@@ -213,7 +213,7 @@ class Write
 
 				$output = [];
 				$output['Status'] = HttpStatus::$Ok;
-				if ($this->httpObject->Env->CUSTOMER_ENABLE_PAYLOAD_IN_RESPONSE) {
+				if ($this->httpObject->Env->ENABLE_PAYLOAD_IN_RESPONSE) {
 					$output[$this->httpObject->Env->PAYLOAD_IN_RESPONSE] = $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
 						keyString: $this->getPayloadKey(
 							payloadKeyArray: $writePayloadKeyArray

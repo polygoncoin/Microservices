@@ -83,7 +83,7 @@ $server->on(
 		$httpReqData['server']['httpRequestMethod'] = $request->server['request_method'];
 
 		if (
-			((int)getenv('DISABLE_REQUESTS_VIA_PROXIES')) === 1
+			((int)getenv('DISABLES_VIA_PROXIES')) === 1
 			&& !isset($request->server['remote_addr'])
 		) {
 			$response->end('Invalid request');
@@ -186,7 +186,7 @@ $server->on(
 					break;
 			}
 		} else {
-			if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_REQUEST_KEYWORD) {
+			if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_KEYWORD) {
 				Reload::init();
 				Reload::process(
 					httpRequestIp: $httpReqData['server']['httpRequestIp']

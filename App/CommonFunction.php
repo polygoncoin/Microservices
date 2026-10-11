@@ -341,7 +341,7 @@ class CommonFunction
 	public static function checkPrivateRequestCidr(
 		&$httpObject
 	): void {
-		if (!Env::$config[$httpObject->httpReqData['active']['customerId']]->CUSTOMER_ENABLE_CIDR) {
+		if (!Env::$config[$httpObject->httpReqData['active']['customerId']]->ENABLE_CIDR) {
 			return;
 		}
 
