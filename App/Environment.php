@@ -61,6 +61,9 @@ class Environment
     public $CUSTOMER_ENABLE_PRIVATE_WEB_REQUEST = null;
     public $CUSTOMER_ENABLE_PRIVATE_API_REQUEST = null;
 
+    public $TOKEN_LIFETIME = null;
+    public $SESSION_LIFETIME = null;
+    
     public $CUSTOMER_ENABLE_CIDR = null;
     public $CUSTOMER_ENABLE_CRON_REQUEST = null;
     public $CUSTOMER_ENABLE_CUSTOM_REQUEST = null;
@@ -114,7 +117,6 @@ class Environment
 
     public $SESSION_STORE_MODE = null;
 
-    public $SESSION_LIFETIME = null;
     public $SESSION_STORE_PATH = null;
     public $SESSION_COOKIE_NAME = null;
     public $SESSION_COOKIE_PATH = null;

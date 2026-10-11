@@ -4,34 +4,32 @@
  * Custom Session Handler
  * php version 7
  *
- * @category  SessionHandler
+ * @category  SessionHandlerContainer
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
- * @link      https://github.com/polygoncoin/Microservices
+ * @link      https://github.com/polygoncoin/Session-Handlers
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\SessionHandler\Container;
+namespace Microservices\App\SessionHandler\Containers;
 
 use Microservices\App\Constant;
 use Microservices\App\Env;
-use Microservices\App\Http;
-use Microservices\App\HttpStatus;
-use Microservices\App\SessionHandler\Container\SessionContainerInterface;
-use Microservices\App\SessionHandler\Container\SessionContainerHelper;
+use Microservices\App\SessionHandler\Containers\SessionContainerInterface;
+use Microservices\App\SessionHandler\Containers\SessionContainerHelper;
 
 /**
  * Custom Session Handler using Redis
  * php version 7
  *
- * @category  CustomSessionHandler_MongoDb
+ * @category  SessionHandlerContainer_MongoDb
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
- * @link      https://github.com/polygoncoin/Microservices
+ * @link      https://github.com/polygoncoin/Session-Handlers
  * @since     Class available since Release 1.0.0
  */
 class MongoDbBasedSessionContainer extends SessionContainerHelper implements
@@ -48,26 +46,16 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	public $sessionServerDb = null;
 	public $sessionServerTable = null;
 
-	private $mongoDbServerObject = null;
+	private $sessionObject = null;
 	private $dbObject = null;
 	private $collectionObject = null;
 
-	/**
-	 * HTTP object
-	 * 
-	 * @var null|Http
-	 */
-	private $httpObject = null;
 
 	/**
 	 * Constructor
-	 * 
-	 * @param Http $httpObject
 	 */
-	public function __construct(
-		Http &$httpObject
-	) {
-		$this->httpObject = &$httpObject;
+	public function __construct() {
+
 	}
 
 	/**
@@ -127,15 +115,6 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		$sessionDataArray = unserialize(
-			data: $sessionData
-		);
-
-		
-		$sessionData = serialize(
-			value: $sessionDataArray
-		);
-
 		try {
 			$document = [
 				"sessionId" => $sessionId,
@@ -167,15 +146,6 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		$sessionDataArray = unserialize(
-			data: $sessionData
-		);
-
-		
-		$sessionData = serialize(
-			value: $sessionDataArray
-		);
-
 		try {
 			$filter = ['sessionId' => $sessionId];
 			$update = [
@@ -214,15 +184,6 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool {
-		$sessionDataArray = unserialize(
-			data: $sessionData
-		);
-
-		
-		$sessionData = serialize(
-			value: $sessionDataArray
-		);
-
 		try {
 			$filter = ['sessionId' => $sessionId];
 			$update = [
@@ -285,13 +246,13 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	}
 
 	/**
-	 * Close File Container
+	 * Close Container
 	 * 
 	 * @return void
 	 */
 	public function closeSession(): void
 	{
-		$this->mongoDbServerObject = Constant::$NULL;
+		$this->sessionObject = Constant::$NULL;
 	}
 
 	/**
@@ -305,20 +266,20 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 			if ($this->mongoDbServerUri === Constant::$NULL) {
 				$UP = '';
 				if (
-					$this->sessionServerUser !== Constant::$NULL
-					&& $this->sessionServerPassword !== Constant::$NULL
+					$this->sessionServerUser !== null
+					&& $this->sessionServerPassword !== null
 				) {
 					$UP = "{$this->sessionServerUser}:{$this->sessionServerPassword}@";
 				}
 				$this->mongoDbServerUri = 'mongodb://' . $UP
 					. $this->sessionServerHost . ':' . $this->sessionServerPort;
 			}
-			$this->mongoDbServerObject = new \MongoDB\Customer(
+			$this->sessionObject = new \MongoDB\Customer(
 				$this->mongoDbServerUri
 			);
 
 			// Select a database
-			$this->dbObject = $this->mongoDbServerObject->selectDatabase(
+			$this->dbObject = $this->sessionObject->selectDatabase(
 				$this->sessionServerDb
 			);
 
@@ -345,7 +306,7 @@ class MongoDbBasedSessionContainer extends SessionContainerHelper implements
 	): never {
 		throw new \Exception(
 			message: $e->getMessage(),
-			code: HttpStatus::$InternalServerError
+			code: 500
 		);
 	}
 }

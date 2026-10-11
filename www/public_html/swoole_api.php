@@ -107,7 +107,7 @@ $server->on(
 		} else {
 			$httpReqData['header']['contentType'] = '';
 		}
-		
+
 		if (isset($request->header['authorization'])) {
 			if (
 				!preg_match(
@@ -181,6 +181,7 @@ $server->on(
 			}
 		} else {
 			if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_REQUEST_KEYWORD) {
+				Reload::init();
 				Reload::process(
 					httpRequestIp: $httpReqData['server']['httpRequestIp']
 				);

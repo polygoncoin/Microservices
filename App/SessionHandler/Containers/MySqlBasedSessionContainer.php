@@ -4,64 +4,52 @@
  * Custom Session Handler
  * php version 7
  *
- * @category  SessionHandler
+ * @category  SessionHandlerContainer
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
- * @link      https://github.com/polygoncoin/Microservices
+ * @link      https://github.com/polygoncoin/Session-Handlers
  * @since     Class available since Release 1.0.0
  */
 
-namespace Microservices\App\SessionHandler\Container;
+namespace Microservices\App\SessionHandler\Containers;
 
 use Microservices\App\Constant;
 use Microservices\App\Env;
-use Microservices\App\Http;
-use Microservices\App\HttpStatus;
-use Microservices\App\SessionHandler\Container\SessionContainerInterface;
-use Microservices\App\SessionHandler\Container\SessionContainerHelper;
+use Microservices\App\SessionHandler\Containers\SessionContainerInterface;
+use Microservices\App\SessionHandler\Containers\SessionContainerHelper;
 
 /**
- * Custom Session Handler using MySql
+ * Custom Session Handler using MySQL
  * php version 7
  *
- * @category  CustomSessionHandler_MySQL
+ * @category  SessionHandlerContainer_MySQL
  * @package   Microservices
  * @author    Ramesh N. Jangid (Sharma) <polygon.co.in@gmail.com>
  * @copyright © 2026 Ramesh N. Jangid (Sharma)
  * @license   MIT https://opensource.org/license/mit
- * @link      https://github.com/polygoncoin/Microservices
+ * @link      https://github.com/polygoncoin/Session-Handlers
  * @since     Class available since Release 1.0.0
  */
 class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	SessionContainerInterface
 {
-	public $mySqlServerHost = null;
-	public $mySqlServerPort = null;
-	public $mySqlServerUser = null;
-	public $mySqlServerPassword = null;
-	public $mySqlServerDb = null;
-	public $mySqlServerTable = null;
+	public $sessionServerHost = null;
+	public $sessionServerPort = null;
+	public $sessionServerUser = null;
+	public $sessionServerPassword = null;
+	public $sessionServerDb = null;
+	public $sessionServerTable = null;
 
-	private $mySqlServerObject = null;
+	private $sessionObject = null;
 
-	/**
-	 * HTTP object
-	 * 
-	 * @var null|Http
-	 */
-	private $httpObject = null;
 
 	/**
 	 * Constructor
-	 * 
-	 * @param Http $httpObject
 	 */
-	public function __construct(
-		Http &$httpObject
-	) {
-		$this->httpObject = &$httpObject;
+	public function __construct() {
+
 	}
 
 	/**
@@ -91,12 +79,12 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	): bool|string {
 		$sql = "
 			SELECT *
-			FROM `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
-			WHERE `sessionId` = :sessionId AND lastAccessed > :lastAccessed
+			FROM `{$this->sessionServerDb}`.`{$this->sessionServerTable}`
+			WHERE `session_id` = :session_id AND `last_accessed` > :last_accessed
 		";
 		$paramArray = [
-			':sessionId' => $sessionId,
-			':lastAccessed' => (Env::$timestamp - $this->sessionOptions['cookie_lifetime'])
+			':session_id' => $sessionId,
+			':last_accessed' => (Env::$timestamp - $this->sessionOptions['cookie_lifetime'])
 		];
 		if (
 			(
@@ -105,10 +93,10 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 					paramArray: $paramArray
 				)
 			)
-			&& isset($record['sessionData'])
+			&& isset($record['session_data'])
 		) {
 			$sessionData = $this->decryptData(
-				cipherText: $record['sessionData']
+				cipherText: $record['session_data']
 			);
 			return $sessionData;
 		}
@@ -127,30 +115,19 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		$sessionDataArray = unserialize(
-			data: $sessionData
-		);
-
-		
-		$sessionData = serialize(
-			value: $sessionDataArray
-		);
-
 		$sql = "
-			INSERT INTO `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
+			INSERT INTO `{$this->sessionServerDb}`.`{$this->sessionServerTable}`
 			SET
-				`sessionId` = :sessionId,
-				`customerId` = :customerId,
-				`sessionData` = :sessionData,
-				`lastAccessed` = :lastAccessed
+				`session_id` = :session_id,
+				`session_data` = :session_data,
+				`last_accessed` = :last_accessed
 		";
 		$paramArray = [
-			':sessionId' => $sessionId,
-			':customerId' => $this->customerId,
-			':sessionData' => $this->encryptData(
+			':session_id' => $sessionId,
+			':session_data' => $this->encryptData(
 				plainText: $sessionData
 			),
-			':lastAccessed' => Env::$timestamp
+			':last_accessed' => Env::$timestamp
 		];
 
 		return $this->execSql(
@@ -171,29 +148,20 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool|int {
-		$sessionDataArray = unserialize(
-			data: $sessionData
-		);
-
-		
-		$sessionData = serialize(
-			value: $sessionDataArray
-		);
-
 		$sql = "
-			UPDATE `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
+			UPDATE `{$this->sessionServerDb}`.`{$this->sessionServerTable}`
 			SET
-				`sessionData` = :sessionData,
-				`lastAccessed` = :lastAccessed
+				`session_data` = :session_data,
+				`last_accessed` = :last_accessed
 			WHERE
-				`sessionId` = :sessionId
+				`session_id` = :session_id
 		";
 		$paramArray = [
-			':sessionId' => $sessionId,
-			':sessionData' => $this->encryptData(
+			':session_id' => $sessionId,
+			':session_data' => $this->encryptData(
 				plainText: $sessionData
 			),
-			':lastAccessed' => Env::$timestamp
+			':last_accessed' => Env::$timestamp
 		];
 
 		return $this->execSql(
@@ -214,23 +182,14 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId,
 		$sessionData
 	): bool {
-		$sessionDataArray = unserialize(
-			data: $sessionData
-		);
-
-		
-		$sessionData = serialize(
-			value: $sessionDataArray
-		);
-
 		$sql = "
-			UPDATE `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
-			SET `lastAccessed` = :lastAccessed
-			WHERE `sessionId` = :sessionId
+			UPDATE `{$this->sessionServerDb}`.`{$this->sessionServerTable}`
+			SET `last_accessed` = :last_accessed
+			WHERE `session_id` = :session_id
 		";
 		$paramArray = [
-			':sessionId' => $sessionId,
-			':lastAccessed' => Env::$timestamp
+			':session_id' => $sessionId,
+			':last_accessed' => Env::$timestamp
 		];
 		return $this->execSql(
 			sql: $sql,
@@ -250,11 +209,11 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	): bool {
 		$lastAccessed = Env::$timestamp - $sessionMaxLifetime;
 		$sql = "
-			DELETE FROM `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
-			WHERE `lastAccessed` < :lastAccessed
+			DELETE FROM `{$this->sessionServerDb}`.`{$this->sessionServerTable}`
+			WHERE `last_accessed` < :last_accessed
 		";
 		$paramArray = [
-			':lastAccessed' => $lastAccessed
+			':last_accessed' => $lastAccessed
 		];
 		return $this->execSql(
 			sql: $sql,
@@ -273,11 +232,11 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$sessionId
 	): bool {
 		$sql = "
-			DELETE FROM `{$this->mySqlServerDb}`.`{$this->mySqlServerTable}`
-			WHERE `sessionId` = :sessionId
+			DELETE FROM `{$this->sessionServerDb}`.`{$this->sessionServerTable}`
+			WHERE `session_id` = :session_id
 		";
 		$paramArray = [
-			':sessionId' => $sessionId
+			':session_id' => $sessionId
 		];
 		return $this->execSql(
 			sql: $sql,
@@ -286,13 +245,13 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	}
 
 	/**
-	 * Close File Container
+	 * Close Container
 	 * 
 	 * @return void
 	 */
 	public function closeSession(): void
 	{
-		$this->mySqlServerObject = Constant::$NULL;
+		$this->sessionObject = Constant::$NULL;
 	}
 
 	/**
@@ -303,12 +262,12 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	private function connect(): void
 	{
 		try {
-			$this->mySqlServerObject = new \PDO(
-				dsn: "mysql:host={$this->mySqlServerHost}",
-				username: $this->mySqlServerUser,
-				password: $this->mySqlServerPassword,
+			$this->sessionObject = new \PDO(
+				dsn: "mysql:host={$this->sessionServerHost}",
+				username: $this->sessionServerUser,
+				password: $this->sessionServerPassword,
 				options: [
-					\PDO::ATTR_EMULATE_PREPARES => Constant::$FALSE,
+					\PDO::ATTR_EMULATE_PREPARES => false,
 				]
 			);
 		} catch (\Exception $e) {
@@ -332,7 +291,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	): mixed {
 		$record = [];
 		try {
-			$stmt = $this->mySqlServerObject->prepare(
+			$stmt = $this->sessionObject->prepare(
 				query: $sql,
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
@@ -372,7 +331,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 		$paramArray = []
 	): bool {
 		try {
-			$stmt = $this->mySqlServerObject->prepare(
+			$stmt = $this->sessionObject->prepare(
 				query: $sql,
 				options: [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]
 			);
@@ -400,7 +359,7 @@ class MySqlBasedSessionContainer extends SessionContainerHelper implements
 	): never {
 		throw new \Exception(
 			message: $e->getMessage(),
-			code: HttpStatus::$InternalServerError
+			code: 500
 		);
 	}
 }
