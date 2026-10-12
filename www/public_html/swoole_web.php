@@ -74,7 +74,7 @@ $server->on(
 		$httpReqData['server']['httpRequestMethod'] = $request->server['request_method'];
 
 		if (
-			((int)getenv('DISABLES_VIA_PROXIES')) === 1
+			((int)getenv('DISABLE_PROXY_REQUEST')) === 1
 			&& !isset($request->server['remote_addr'])
 		) {
 			$response->end('Invalid request');

@@ -63,7 +63,7 @@ class Auth
 	public function loadUserData(): void
 	{
 		if (
-			$this->httpObject->httpRequestObject->isPrivateWebDomain
+			$this->httpObject->httpRequestObject->isPrivateWebRequest
 			&& isset($this->httpObject->httpReqData['header']['cookie'][$this->httpObject->Env->SESSION_COOKIE_NAME])
 		) {
 			$this->httpObject->sessionObject = new Session(
@@ -75,7 +75,7 @@ class Auth
 
 			$this->httpObject->httpReqData['active']['customerUserData'] = $_SESSION;
 		} elseif (
-			$this->httpObject->httpRequestObject->isPrivateApiDomain
+			$this->httpObject->httpRequestObject->isPrivateApiRequest
 			&& isset($this->httpObject->httpReqData['active']['authId'])
 			&& $this->httpObject->httpReqData['active']['authId'] !== Constant::$NULL
 		) {
@@ -136,10 +136,14 @@ class Auth
 			customerUserGroupId: $this->httpObject->httpReqData['active']['customerUserGroupId']
 		);
 		if (
-			!$this->httpObject->cacheObject->cacheExist(
+			$this->httpObject->cacheObject->cacheExist(
 				cacheKey: $groupCacheKey
 			)
 		) {
+			$this->httpObject->httpReqData['active']['customerUserGroupData'] = $this->httpObject->cacheObject->cacheGet(
+				cacheKey: $groupCacheKey
+			);
+		} else {
 			throw new \Exception(
 				message: "Cache '{$groupCacheKey}' missing",
 				code: HttpStatus::$InternalServerError

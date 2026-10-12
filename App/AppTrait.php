@@ -956,40 +956,8 @@ trait AppTrait
 	private function rateLimitRoute(
 		&$sqlConfig
 	): void {
-		if (
-			$this->httpObject->httpRequestObject->isPublicRequest
-			|| !$this->httpObject->Env->ENABLE_RATE_LIMITING
-			|| !isset($sqlConfig['rateLimitMaxRequest'])
-			|| !isset($sqlConfig['rateLimitMaxRequestWindow'])
-		) {
-			return;
-		}
-
-		$payloadSignature = [
-			'httpRequestIp' => $this->httpObject->httpReqData['server']['httpRequestIp'],
-			'customerId' => $this->httpObject->httpReqData['active']['customerId'],
-			'httpRequestMethod' => $this->httpObject->httpReqData['server']['httpRequestMethod'],
-			'Route' => $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM],
-		];
-		if (isset($this->httpObject->httpReqData['active']['customerUserData'])) {
-			$payloadSignature['customerUserGroupId'] = ($this->httpObject->httpReqData['active']['customerUserData']['customer_user_group_id'] !== Constant::$NULL
-				? $this->httpObject->httpReqData['active']['customerUserData']['customer_user_group_id'] : 0);
-			$payloadSignature['customerUserId'] = ($this->httpObject->httpReqData['active']['customerUserId'] !== Constant::$NULL
-				? $this->httpObject->httpReqData['active']['customerUserId'] : 0);
-		}
-		$hash = json_encode(
-			value: $payloadSignature
-		);
-		$rateLimitKey = md5(
-			string: $hash
-		);
-
-		// @throws \Exception
-		$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
-			rateLimitPrefix: $this->httpObject->Env->RATE_LIMITING_ROUTE_PREFIX,
-			rateLimitMaxRequest: $sqlConfig['rateLimitMaxRequest'],
-			rateLimitMaxRequestWindow: $sqlConfig['rateLimitMaxRequestWindow'],
-			rateLimitKey: $rateLimitKey
+		$this->httpObject->rateLimiterObject->rateLimitFeature(
+			feature: 'USER_ROUTE'
 		);
 	}
 
@@ -1693,9 +1661,9 @@ trait AppTrait
 		$toBeCached = Constant::$FALSE;
 		if (
 			(
-				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicDomain
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebDomain
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiDomain
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiRequest
 			)
 			&& isset($sqlConfig['__CACHE-KEY__'])
 			&& !isset($this->httpObject->httpReqData['active']['queryParamArray']['orderBy'])

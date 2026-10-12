@@ -199,12 +199,12 @@ class Microservices
 		} else {
 			if (
 				$this->httpObject->httpResponseObject === Constant::$NULL
-				|| !isset($this->httpObject->httpRequestObject->routeParserObject->sqlConfig)
+				|| !isset($this->httpObject->httpReqData['active']['sqlConfigData'])
 			) {
 				$OUTPUT_REPRESENTATION = Env::$SYSTEM_OUTPUT_REPRESENTATION;
 			} else {
 				$OUTPUT_REPRESENTATION = CommonFunction::getOutputRepresentation(
-					sqlConfig: $this->httpObject->httpRequestObject->routeParserObject->sqlConfig,
+					sqlConfig: $this->httpObject->httpReqData['active']['sqlConfigData'],
 					httpReqData: $this->httpObject->httpReqData,
 					customerId: $this->httpObject->httpReqData['active']['customerId']
 				);

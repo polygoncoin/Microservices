@@ -4,6 +4,14 @@ DROP TABLE IF EXISTS `customer_user_group`;
 CREATE TABLE `customer_user_group` (
     `customer_user_group_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `customer_user_group_name` VARCHAR(100) NOT NULL,
+    `customer_user_group_limit_count` INT DEFAULT NULL,
+    `customer_user_group_limit_window` INT DEFAULT NULL,
+    `customer_user_group_limit_ip_count` INT DEFAULT NULL,
+    `customer_user_group_limit_ip_window` INT DEFAULT NULL,
+    `customer_user_group_limit_route_count` INT DEFAULT NULL,
+    `customer_user_group_limit_route_window` INT DEFAULT NULL,
+    `customer_user_group_limit_route_ip_count` INT DEFAULT NULL,
+    `customer_user_group_limit_route_ip_window` INT DEFAULT NULL,
     `customer_user_group_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_user_group_general_information` VARCHAR(250) DEFAULT NULL,
     `customer_user_group_created_by` INT DEFAULT NULL,
@@ -23,6 +31,14 @@ DROP TABLE IF EXISTS `customer_user`;
 CREATE TABLE `customer_user` (
     `customer_user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `customer_user_group_id` INT UNSIGNED NOT NULL,
+    `customer_user_limit_count` INT DEFAULT NULL,
+    `customer_user_limit_window` INT DEFAULT NULL,
+    `customer_user_limit_ip_count` INT DEFAULT NULL,
+    `customer_user_limit_ip_window` INT DEFAULT NULL,
+    `customer_user_limit_route_count` INT DEFAULT NULL,
+    `customer_user_limit_route_window` INT DEFAULT NULL,
+    `customer_user_limit_route_ip_count` INT DEFAULT NULL,
+    `customer_user_limit_route_ip_window` INT DEFAULT NULL,
     `customer_user_cidr` VARCHAR(250) DEFAULT NULL,
     `customer_user_username` VARCHAR(100) NOT NULL,
     `customer_user_password_hash` VARCHAR(150) NOT NULL,
@@ -79,14 +95,14 @@ CREATE TABLE `session` (
 
 LOCK TABLES `customer_user_group` WRITE;
 INSERT INTO `customer_user_group` VALUES
-(2,'Customer001UserGroup1',NULL,NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No'),
-(3,'AdminGroup',NULL,NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No');
+(2,'Customer001UserGroup1',600,300,600,300,600,300,600,300,NULL,NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No'),
+(3,'AdminGroup',600,300,600,300,600,300,600,300,NULL,NULL,NULL,'2023-04-15 08:54:50',NULL,NULL,NULL,'2023-04-21 06:38:22','Yes','Yes','No','No');
 UNLOCK TABLES;
 
 LOCK TABLES `customer_user` WRITE;
 INSERT INTO `customer_user` VALUES
-(4,2,NULL,'customer_group_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6','','','','','','','','','','','','','',0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','Yes','No','No'),
-(5,3,NULL,'customer_admin_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6','','','','','','','','','','','','','',0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','Yes','No','No');
+(4,2,600,300,600,300,600,300,600,300,NULL,'customer_group_user_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6','','','','','','','','','','','','','',0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','Yes','No','No'),
+(5,3,600,300,600,300,600,300,600,300,NULL,'customer_admin_1','$2y$10$o8hFTjBIXQS.fOED2Ut1ZOCSdDjTnS3lyELI4rWyFEnu4GUyJr3O6','','','','','','','','','','','','','',0,'2023-02-22 04:12:50',NULL,NULL,0,'2023-04-20 16:53:57','Yes','Yes','No','No');
 UNLOCK TABLES;
 
 -- Product Tables definition goes below

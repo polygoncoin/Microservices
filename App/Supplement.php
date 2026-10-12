@@ -106,7 +106,7 @@ class Supplement
 	public function process(): mixed
 	{
 		// Load Sql
-		$sqlConfig = &$this->httpObject->httpRequestObject->routeParserObject->sqlConfig;
+		$sqlConfig = &$this->httpObject->httpReqData['active']['sqlConfigData'];
 
 		$return = $this->writeBasics(
 			$sqlConfig,
@@ -221,7 +221,7 @@ class Supplement
 				$output = [];
 				$output['Status'] = HttpStatus::$Ok;
 				if ($this->httpObject->Env->ENABLE_PAYLOAD_IN_RESPONSE) {
-					$output[$this->httpObject->Env->PAYLOAD_IN_RESPONSE] = $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
+					$output[$this->httpObject->Env->PAYLOAD_KEY_IN_RESPONSE] = $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
 						keyString: $this->getPayloadKey(
 							payloadKeyArray: $supplementPayloadKeyArray
 						)

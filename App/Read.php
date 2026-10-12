@@ -99,7 +99,7 @@ class Read
 	public function process(): mixed
 	{
 		// Load Sql
-		$sqlConfig = &$this->httpObject->httpRequestObject->routeParserObject->sqlConfig;
+		$sqlConfig = &$this->httpObject->httpReqData['active']['sqlConfigData'];
 
 		$return = $this->readBasics(
 			$sqlConfig,
@@ -129,9 +129,9 @@ class Read
 
 		if (
 			(
-				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicDomain
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebDomain
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiDomain
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiRequest
 			)
 			&& $toBeCached
 		) {
@@ -163,9 +163,9 @@ class Read
 
 		if (
 			(
-				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicDomain
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebDomain
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiDomain
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiRequest
 			)
 			&& $toBeCached
 		) {
@@ -256,7 +256,7 @@ class Read
 				);
 
 				$this->dataEncodeObject->addKeyData(
-					objectKey: $this->httpObject->Env->PAYLOAD_IN_RESPONSE,
+					objectKey: $this->httpObject->Env->PAYLOAD_KEY_IN_RESPONSE,
 					data: $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
 						keyString: $readPayloadKey
 					)

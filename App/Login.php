@@ -111,26 +111,17 @@ class Login
 
 		if (
 			$this->httpObject->Env->ENABLE_RATE_LIMITING_LOGGED_IN_USER_PER_IP
-			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'])
-			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'])
+			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limit_login_ip_count'])
+			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limit_login_ip_window'])
 		) {
-			$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
-				rateLimitPrefix: $this->httpObject->Env->RATE_LIMITING_USER_IP_PREFIX,
-				rateLimitMaxRequest: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'],
-				rateLimitMaxRequestWindow: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'],
-				rateLimitKey: $this->httpObject->httpReqData['server']['httpRequestIp']
+			$this->httpObject->rateLimiterObject->rateLimitFeature(
+				feature: 'USER_IP'
 			);
 		}
 
-		if (
-			$this->httpObject->Env->ENABLE_PRIVATE_WEB
-			&& $this->httpObject->httpRequestObject->isPrivateWebDomain
-		) {
+		if ($this->httpObject->httpRequestObject->isPrivateWebRequest) {
 			$this->startSession();
-		} elseif (
-			$this->httpObject->Env->ENABLE_PRIVATE_API
-			&& $this->httpObject->httpRequestObject->isPrivateApiDomain
-		) {
+		} elseif ($this->httpObject->httpRequestObject->isPrivateApiRequest) {
 			$this->outputTokenData();
 		} else {
 			throw new \Exception(
@@ -221,6 +212,26 @@ class Login
 		$this->httpObject->httpReqData['active']['customerUserData'] = $userData;
 		$this->httpObject->httpReqData['active']['customerUserId'] = $userData['customer_user_id'];
 		$this->httpObject->httpReqData['active']['customerUserGroupId'] = $userData['customer_user_group_id'];
+
+		// Load groupData
+		$groupCacheKey = CacheServerKey::customerGroup(
+			customerId: $this->httpObject->httpReqData['active']['customerId'],
+			customerUserGroupId: $this->httpObject->httpReqData['active']['customerUserGroupId']
+		);
+		if (
+			$this->httpObject->cacheObject->cacheExist(
+				cacheKey: $groupCacheKey
+			)
+		) {
+			$this->httpObject->httpReqData['active']['customerUserGroupData'] = $this->httpObject->cacheObject->cacheGet(
+				cacheKey: $groupCacheKey
+			);
+		} else {
+			throw new \Exception(
+				message: "Cache '{$groupCacheKey}' missing",
+				code: HttpStatus::$InternalServerError
+			);
+		}
 	}
 
 	/**
@@ -232,14 +243,11 @@ class Login
 	private function validatePassword(): void
 	{
 		if (
-			!empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'])
-			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'])
+			!empty($this->httpObject->httpReqData['active']['customerData']['customer_limit_login_ip_count'])
+			&& !empty($this->httpObject->httpReqData['active']['customerData']['customer_limit_login_ip_window'])
 		) {
-			$this->httpObject->httpRequestObject->rateLimiterObject->checkRateLimit(
-				rateLimitPrefix: $this->httpObject->Env->RATE_LIMITING_LOGIN_PREFIX,
-				rateLimitMaxRequest: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count'],
-				rateLimitMaxRequestWindow: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_logged_in_user_per_ip_count_window'],
-				rateLimitKey: $this->httpObject->httpReqData['server']['httpRequestIp'] . ':' . $this->customer_user_username
+			$this->httpObject->rateLimiterObject->rateLimitFeature(
+				feature: 'LOGIN'
 			);
 		}
 
@@ -318,7 +326,7 @@ class Login
 	 */
 	private function outputTokenData(): void
 	{
-		if ($this->httpObject->Env->ENABLE_PRIVATE_WEB) {
+		if ($this->httpObject->Env->ENABLE_PRIVATE_WEB_DOMAIN) {
 			$this->httpObject->sessionObject = new Session(
 				httpObject: $this->httpObject
 			);
@@ -379,11 +387,11 @@ class Login
 						continue;
 					}
 					if (
-						$this->httpObject->Env->ENABLE_PRIVATE_WEB
+						$this->httpObject->Env->ENABLE_PRIVATE_WEB_DOMAIN
 						&& $authData['authMode'] === 'Web Session'
 					) {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
-						if (($this->httpObject->Env->TOKEN_LIFETIME - $timeLeft) <= 0) {
+						if (($this->httpObject->Env->SESSION_LIFETIME - $timeLeft) <= 0) {
 							$this->httpObject->sessionObject->deleteSession(
 								sessionId: $authId
 							);
@@ -440,11 +448,11 @@ class Login
 			if (
 				count(
 					value: $customerUserConcurrencyData
-				) >= $this->httpObject->httpReqData['active']['customerData']['customer_limiting_login_successfull_per_user_count']
+				) >= $this->httpObject->httpReqData['active']['customerData']['customer_limit_login_successfull_per_user_count']
 			) {
 				throw new \Exception(
 					message: 'Account already in use. '
-						. 'Please try after ' . $this->httpObject->httpReqData['active']['customerData']['customer_limiting_login_successfull_per_user_count'] . ' second(s)',
+						. 'Please try after ' . $this->httpObject->httpReqData['active']['customerData']['customer_limit_login_successfull_per_user_count'] . ' second(s)',
 					code: HttpStatus::$Conflict
 				);
 			}
@@ -455,7 +463,7 @@ class Login
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
 				cacheValue: $customerUserConcurrencyData,
-				cacheExpire: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_login_successfull_per_user_count']
+				cacheExpire: $this->httpObject->httpReqData['active']['customerData']['customer_limit_login_successfull_per_user_count']
 			);
 		}
 
@@ -478,7 +486,7 @@ class Login
 	 */
 	private function generateSession(): array
 	{
-		if (!$this->httpObject->httpRequestObject->isPrivateWebDomain) {
+		if (!$this->httpObject->httpRequestObject->isPrivateWebRequest) {
 			return [];
 		}
 
@@ -565,7 +573,7 @@ class Login
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
-						$this->httpObject->Env->ENABLE_PRIVATE_API
+						$this->httpObject->Env->ENABLE_PRIVATE_API_DOMAIN
 						&& $authData['authMode'] === 'API Token'
 						&& !$this->cacheExist(
 							cacheKey: CacheServerKey::apiToken(
@@ -578,7 +586,7 @@ class Login
 					}
 					if ($authData['authMode'] === 'Web Session') {
 						$timeLeft = Env::$timestamp - $authData['authTimestamp'];
-						if (($this->httpObject->Env->TOKEN_LIFETIME - $timeLeft) <= 0) {
+						if (($this->httpObject->Env->SESSION_LIFETIME - $timeLeft) <= 0) {
 							$this->httpObject->sessionObject->deleteSession(
 								sessionId: $authId
 							);
@@ -607,7 +615,7 @@ class Login
 			$this->cacheSet(
 				cacheKey: $customerUserSessionIdKey,
 				cacheValue: $authFoundData['authId'],
-				cacheExpire: $this->httpObject->Env->TOKEN_LIFETIME
+				cacheExpire: $this->httpObject->Env->SESSION_LIFETIME
 			);
 
 			$customerUserConcurrencyData[$authFoundData['authId']] = $authFoundData;
@@ -617,11 +625,11 @@ class Login
 			if (
 				count(
 					value: $customerUserConcurrencyData
-				) >= $this->httpObject->httpReqData['active']['customerData']['customer_limiting_login_successfull_per_user_count']
+				) >= $this->httpObject->httpReqData['active']['customerData']['customer_limit_login_successfull_per_user_count']
 			) {
 				throw new \Exception(
 					message: 'Account already in use. '
-						. 'Please try after ' . $this->httpObject->httpReqData['active']['customerData']['customer_limiting_login_successfull_per_user_count'] . ' second(s)',
+						. 'Please try after ' . $this->httpObject->httpReqData['active']['customerData']['customer_limit_login_successfull_per_user_count'] . ' second(s)',
 					code: HttpStatus::$Conflict
 				);
 			}
@@ -632,7 +640,7 @@ class Login
 			$this->cacheSet(
 				cacheKey: $customerUserConcurrencyKey,
 				cacheValue: $customerUserConcurrencyData,
-				cacheExpire: $this->httpObject->httpReqData['active']['customerData']['customer_limiting_login_successfull_per_user_count']
+				cacheExpire: $this->httpObject->httpReqData['active']['customerData']['customer_limit_login_successfull_per_user_count']
 			);
 		}
 
@@ -640,7 +648,7 @@ class Login
 		$output = [
 			'authMode' => 'Web Session',
 			'authId' => $authFoundData['authId'],
-			'Expires' => date('d\ \d\a\y H\ \h\o\u\r i\ \m\i\n s\ \s\e\c', ($this->httpObject->Env->TOKEN_LIFETIME - $timeLeft))
+			'Expires' => date('d\ \d\a\y H\ \h\o\u\r i\ \m\i\n s\ \s\e\c', ($this->httpObject->Env->SESSION_LIFETIME - $timeLeft))
 		];
 
 		$this->outputDetail(

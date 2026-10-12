@@ -151,7 +151,8 @@ class Api
 		$class = Constant::$NULL;
 		$supplementClass = Constant::$NULL;
 		if (
-			$this->checkSupplement(
+			$this->httpObject->Env->ENABLE_CRON
+			&& $this->checkSupplement(
 				$this->httpObject->Env->CRON_KEYWORD
 			)
 		) {
@@ -170,7 +171,8 @@ class Api
 				$supplementClass = Constant::$SUPPLEMENT_NS . '\\Cron\\' . $supplementClassFileName;
 			}
 		} elseif (
-			$this->checkSupplement(
+			$this->httpObject->Env->ENABLE_CUSTOM
+			&& $this->checkSupplement(
 				$this->httpObject->Env->CUSTOM_KEYWORD
 			)
 		) {
@@ -189,7 +191,8 @@ class Api
 				$supplementClass = Constant::$SUPPLEMENT_NS . '\\Custom\\' . $supplementClassFileName;
 			}
 		} elseif (
-			$this->checkSupplement(
+			$this->httpObject->Env->ENABLE_UPLOAD
+			&& $this->checkSupplement(
 				$this->httpObject->Env->UPLOAD_KEYWORD
 			)
 		) {
@@ -208,8 +211,9 @@ class Api
 				$supplementClass = Constant::$SUPPLEMENT_NS . '\\Upload\\' . $supplementClassFileName;
 			}
 		} elseif (
-			$this->checkSupplement(
-				$this->httpObject->Env->THIRD_PARTY_KEYWORD
+			$this->httpObject->Env->ENABLE_THIRDPARTY
+			&& $this->checkSupplement(
+				$this->httpObject->Env->THIRDPARTY_KEYWORD
 			)
 		) {
 			$supplementClassFileName = ucfirst(
@@ -251,7 +255,7 @@ class Api
 						}
 					} elseif (
 						$this->checkSupplement(
-							Env::$SYSTEM_ROUTES_KEYWORD
+							Env::$ROUTES_KEYWORD
 						)
 					) {
 						$class = __NAMESPACE__ . '\\Route';

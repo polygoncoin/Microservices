@@ -19,7 +19,7 @@ use Microservices\App\DatabaseServerDataType;
 use Microservices\App\Env;
 
 return [
-	$this->httpObject->Env->THIRD_PARTY_KEYWORD => [
+	$this->httpObject->Env->THIRDPARTY_KEYWORD => [
 		'{thirdParty:string}' => [
 			'dataType' => DatabaseServerDataType::$Default,
 			'{id:int}'  => [

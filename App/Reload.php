@@ -77,7 +77,7 @@ class Reload
 		$httpRequestIp,
 		$customerId = null
 	): bool {
-		$SYSTEM_CUSTOMER_TABLE = getenv(name: 'SYSTEM_CUSTOMER_TABLE');
+		$SYSTEM_CUSTOMER_TABLE = Env::$SYSTEM_CUSTOMER_TABLE;
 
 		$sql = "SELECT * FROM `{$SYSTEM_CUSTOMER_TABLE}` C";
 		$paramArray = [];
@@ -100,7 +100,7 @@ class Reload
 			);
 			CommonFunction::checkCidr(
 				ip: $httpRequestIp,
-				cidrString: Env::$config[$customerId]->RELOAD_CACHE_CIDR
+				cidrString: Env::$SYSTEM_RELOAD_CACHE_CIDR
 			);
 
 			if (!empty(Env::$config[$customerId]->PRIVATE_API_DOMAIN_NAME)) {

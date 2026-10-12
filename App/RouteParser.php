@@ -176,7 +176,7 @@ class RouteParser
 
 			return;
 		}
-		if ($this->routeElementArray[0] === Env::$SYSTEM_ROUTES_KEYWORD) {
+		if ($this->routeElementArray[0] === $this->httpObject->Env->ROUTES_KEYWORD) {
 			if (!$this->httpObject->Env->ENABLE_ROUTES) {
 				throw new \Exception(
 					message: 'Route not supported',
@@ -189,7 +189,7 @@ class RouteParser
 			);
 
 			$this->routeStartingWithReservedKeywordFlag = Constant::$TRUE;
-			$this->routeStartingReservedKeyword = Env::$SYSTEM_ROUTES_KEYWORD;
+			$this->routeStartingReservedKeyword = $this->httpObject->Env->ROUTES_KEYWORD;
 
 			$this->configuredRoute = '/' . implode(
 				separator: '/',
@@ -557,6 +557,7 @@ class RouteParser
 			// Output data representation over rides global
 			// Output data representation set in Query config file
 			$this->sqlConfig = include $routeConfig['__FILE__'];
+			$this->httpObject->httpReqData['active']['sqlConfigData'] = &$this->sqlConfig;
 		}
 	}
 
@@ -656,14 +657,14 @@ class RouteParser
 	{
 		$this->reservedRoutesPrefix = [
 			$this->httpObject->Env->CRON_KEYWORD,
-			Env::$SYSTEM_RELOAD_KEYWORD,
-			Env::$SYSTEM_ROUTES_KEYWORD
+			$this->httpObject->Env->RELOAD_KEYWORD,
+			$this->httpObject->Env->ROUTES_KEYWORD
 		];
 
 		$this->reservedRoutesCidrString = [
 			$this->httpObject->Env->CRON_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_cron_cidr'],
-			Env::$SYSTEM_RELOAD_KEYWORD => $this->httpObject->Env->RELOAD_CACHE_CIDR,
-			Env::$SYSTEM_ROUTES_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_routes_cidr']
+			$this->httpObject->Env->RELOAD_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_reload_cidr'],
+			$this->httpObject->Env->ROUTES_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_routes_cidr']
 		];
 
 		if ($this->httpObject->Env->ENABLE_CUSTOM) {
@@ -671,8 +672,8 @@ class RouteParser
 			$this->reservedRoutesCidrString[$this->httpObject->Env->CUSTOM_KEYWORD] = $this->httpObject->httpReqData['active']['customerData']['customer_custom_cidr'];
 		}
 		if ($this->httpObject->Env->ENABLE_THIRDPARTY) {
-			$this->reservedRoutesPrefix[] = $this->httpObject->Env->THIRD_PARTY_KEYWORD;
-			$this->reservedRoutesCidrString[$this->httpObject->Env->THIRD_PARTY_KEYWORD] = $this->httpObject->httpReqData['active']['customerData']['customer_thirdparty_cidr'];
+			$this->reservedRoutesPrefix[] = $this->httpObject->Env->THIRDPARTY_KEYWORD;
+			$this->reservedRoutesCidrString[$this->httpObject->Env->THIRDPARTY_KEYWORD] = $this->httpObject->httpReqData['active']['customerData']['customer_thirdparty_cidr'];
 		}
 		if ($this->httpObject->Env->ENABLE_UPLOAD) {
 			$this->reservedRoutesPrefix[] = $this->httpObject->Env->UPLOAD_KEYWORD;

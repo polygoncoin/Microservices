@@ -19,6 +19,7 @@ use Microservices\App\Constant;
 use Microservices\App\Environment;
 use Microservices\App\HttpRequest;
 use Microservices\App\HttpResponse;
+use Microservices\App\RateLimiter;
 use Microservices\App\Server\CacheServer;
 use Microservices\App\Server\DatabaseServer;
 use Microservices\App\SessionHandler\Session;
@@ -92,6 +93,13 @@ class Http
 	 * @var null|CacheServer
 	 */
 	public $queryCacheObject = null;
+
+	/**
+	 * Rate Limiter
+	 * 
+	 * @var null|RateLimiter
+	 */
+	public $rateLimiterObject = null;
 
 	/**
 	 * Constructor
