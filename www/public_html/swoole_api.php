@@ -186,7 +186,10 @@ $server->on(
 					break;
 			}
 		} else {
-			if ($httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_KEYWORD) {
+			if (
+				Env::$SYSTEM_ENABLE_RELOAD
+				&& $httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_KEYWORD
+			) {
 				Reload::init();
 				Reload::process(
 					httpRequestIp: $httpReqData['server']['httpRequestIp']

@@ -123,20 +123,27 @@ class Environment
     // ; Rate limiting config
     // ;
 
-    // ;; Requests
     public $ENABLE_RATE_LIMITING = null;
-    public $ENABLE_RATE_LIMITING_GROUP = null;
-    public $ENABLE_RATE_LIMITING_USER = null;
+
+    // ;; Requests
+    public $ENABLE_RATE_LIMITING_CUSTOMER = null;
     public $ENABLE_RATE_LIMITING_ROUTE = null;
+    public $ENABLE_RATE_LIMITING_GROUP = null;
+    public $ENABLE_RATE_LIMITING_GROUP_ROUTE = null;
+    public $ENABLE_RATE_LIMITING_USER = null;
+    public $ENABLE_RATE_LIMITING_USER_ROUTE = null;
     // ;; IP requests
     public $ENABLE_RATE_LIMITING_CUSTOMER_IP = null;
-    public $ENABLE_RATE_LIMITING_GROUP_IP = null;
-    public $ENABLE_RATE_LIMITING_USER_IP = null;
     public $ENABLE_RATE_LIMITING_ROUTE_IP = null;
+    public $ENABLE_RATE_LIMITING_GROUP_IP = null;
+    public $ENABLE_RATE_LIMITING_GROUP_ROUTE_IP = null;
+    public $ENABLE_RATE_LIMITING_USER_IP = null;
+    public $ENABLE_RATE_LIMITING_USER_ROUTE_IP = null;
     // ;; Login requests
     public $ENABLE_RATE_LIMITING_LOGIN = null;
     public $ENABLE_RATE_LIMITING_LOGIN_IP = null;
-    public $ENABLE_RATE_LIMITING_LOGIN_USER = null;
+    public $ENABLE_RATE_LIMITING_EACH_USER_LOGIN = null;
+    public $ENABLE_RATE_LIMITING_EACH_USER_LOGIN_IP = null;
 
 
     // ;

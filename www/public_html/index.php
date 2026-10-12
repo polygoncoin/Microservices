@@ -156,7 +156,7 @@ if (
 	}
 } else {
 	if (
-		$this->httpObject->Env->ENABLE_RELOAD
+		Env::$SYSTEM_ENABLE_RELOAD
 		&& $httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_KEYWORD
 	) {
 		Reload::init();
