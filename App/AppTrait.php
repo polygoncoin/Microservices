@@ -1459,6 +1459,10 @@ trait AppTrait
 		&$sqlConfig,
 		$maintainHierarchy
 	): string {
+		CommonFunction::checkCidr(
+			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_import_sample_cidr']
+		);
 		$explainParamArray = $this->getExplainParam(
 			sqlConfig: $sqlConfig,
 			maintainHierarchy: $maintainHierarchy,
@@ -1729,6 +1733,10 @@ trait AppTrait
 		&$sqlConfig,
 		$maintainHierarchy
 	): bool {
+		CommonFunction::checkCidr(
+			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_explain_cidr']
+		);
 		$this->dataEncodeObject->startObject(
 			objectKey: 'Config'
 		);

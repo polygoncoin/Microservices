@@ -1033,6 +1033,10 @@ class Read
 		}
 
 		// Export
+		CommonFunction::checkCidr(
+			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_download_cidr']
+		);
 		$export = new Export(
 			httpObject: $this->httpObject,
 			dbServerType: $exportDbData['dbServerType']

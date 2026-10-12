@@ -226,6 +226,10 @@ class HttpRequest
 	 */
 	public function init(): bool
 	{
+		CommonFunction::checkCidr(
+			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_cidr']
+		);
 		if (
 			!$this->isPublicRequest
 			&& !$this->isPrivateWebRequest
@@ -436,6 +440,11 @@ class HttpRequest
 						&& ($this->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_CSV_KEYWORD)
 						&& isset($this->httpObject->httpReqData['files']['file']['tmp_name'])
 					):
+						CommonFunction::checkCidr(
+							ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+							cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_import_cidr']
+						);
+
 						$uploadedFileName = $this->httpObject->httpReqData['files']['file']['tmp_name'];
 						$uploadedFileMd5 = md5_file(
 							$this->httpObject->httpReqData['files']['file']['tmp_name']

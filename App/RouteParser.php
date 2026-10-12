@@ -176,6 +176,29 @@ class RouteParser
 
 			return;
 		}
+		if ($this->routeElementArray[0] === $this->httpObject->Env->RELOAD_KEYWORD) {
+			if (!$this->httpObject->Env->ENABLE_RELOAD) {
+				throw new \Exception(
+					message: 'Route not supported',
+					code: HttpStatus::$BadRequest
+				);
+			}
+			CommonFunction::checkCidr(
+				ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+				cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_reload_cidr']
+			);
+
+			$this->routeStartingWithReservedKeywordFlag = Constant::$TRUE;
+			$this->routeStartingReservedKeyword = $this->httpObject->Env->RELOAD_KEYWORD;
+
+			$this->configuredRoute = '/' . implode(
+				separator: '/',
+				array: $this->routeElementArray
+			);
+
+			return;
+		}
+
 		if ($this->routeElementArray[0] === $this->httpObject->Env->ROUTES_KEYWORD) {
 			if (!$this->httpObject->Env->ENABLE_ROUTES) {
 				throw new \Exception(
@@ -655,17 +678,10 @@ class RouteParser
 	 */
 	private function setReservedRouteArray(): void
 	{
-		$this->reservedRoutesPrefix = [
-			$this->httpObject->Env->CRON_KEYWORD,
-			$this->httpObject->Env->RELOAD_KEYWORD,
-			$this->httpObject->Env->ROUTES_KEYWORD
-		];
-
-		$this->reservedRoutesCidrString = [
-			$this->httpObject->Env->CRON_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_cron_cidr'],
-			$this->httpObject->Env->RELOAD_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_reload_cidr'],
-			$this->httpObject->Env->ROUTES_KEYWORD => $this->httpObject->httpReqData['active']['customerData']['customer_routes_cidr']
-		];
+		if ($this->httpObject->Env->ENABLE_CRON) {
+			$this->reservedRoutesPrefix[] = $this->httpObject->Env->CRON_KEYWORD;
+			$this->reservedRoutesCidrString[$this->httpObject->Env->CRON_KEYWORD] = $this->httpObject->httpReqData['active']['customerData']['customer_cron_cidr'];
+		};
 
 		if ($this->httpObject->Env->ENABLE_CUSTOM) {
 			$this->reservedRoutesPrefix[] = $this->httpObject->Env->CUSTOM_KEYWORD;

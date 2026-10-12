@@ -101,7 +101,10 @@ class Auth
 				code: HttpStatus::$BadRequest
 			);
 		}
-
+		CommonFunction::checkCidr(
+			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+			cidrString: $this->httpObject->httpReqData['active']['customerUserData']['customer_user_cidr']
+		);
 		$allowedTokenTimestamp = $this->httpObject->httpReqData['active']['customerUserData']['authTimestamp'] + $this->httpObject->Env->TOKEN_LIFETIME;
 		$allowedSesssionTimestamp = $this->httpObject->httpReqData['active']['customerUserData']['authTimestamp'] + $this->httpObject->Env->SESSION_LIFETIME;
 		if (
@@ -149,6 +152,11 @@ class Auth
 				code: HttpStatus::$InternalServerError
 			);
 		}
+
+		CommonFunction::checkCidr(
+			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+			cidrString: $this->httpObject->httpReqData['active']['customerUserGroupData']['customer_user_group_cidr']
+		);
 
 		$this->httpObject->httpReqData['active']['groupData'] = $this->httpObject->cacheObject->cacheGet(
 			cacheKey: $groupCacheKey
