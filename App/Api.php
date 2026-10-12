@@ -82,16 +82,16 @@ class Api
 		// Execute Pre Route Hook
 		if (
 			isset($this->httpObject)
-			&& isset($this->httpObject->httpRequestObject)
-			&& isset($this->httpObject->httpRequestObject->routeParserObject)
-			&& isset($this->httpObject->httpRequestObject->routeParserObject->routeHook)
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeHook !== Constant::$NULL
+			&& isset($this->httpObject->request)
+			&& isset($this->httpObject->request->routeParser)
+			&& isset($this->httpObject->request->routeParser->routeHook)
+			&& $this->httpObject->request->routeParser->routeHook !== Constant::$NULL
 			&& is_array(
-				value: $this->httpObject->httpRequestObject->routeParserObject->routeHook
+				value: $this->httpObject->request->routeParser->routeHook
 			)
 		) {
 			$preRouteHookArray = [];
-			foreach ($this->httpObject->httpRequestObject->routeParserObject->routeHook as $element => &$hookArray) {
+			foreach ($this->httpObject->request->routeParser->routeHook as $element => &$hookArray) {
 				if (isset($hookArray['__PRE-ROUTE-HOOK__'])) {
 					$preRouteHookConfig = $hookArray['__PRE-ROUTE-HOOK__'];
 					if (
@@ -137,7 +137,7 @@ class Api
 		// Load Payloads
 		if (
 			!in_array(
-				needle: $this->httpObject->httpRequestObject->routeParserObject->routeEndingReservedKeyword,
+				needle: $this->httpObject->request->routeParser->routeEndingReservedKeyword,
 				haystack: [
 					$this->httpObject->Env->EXPLAIN_KEYWORD,
 					$this->httpObject->Env->IMPORT_SAMPLE_KEYWORD
@@ -145,7 +145,7 @@ class Api
 				strict: Constant::$TRUE
 			)
 		) {
-			$this->httpObject->httpRequestObject->loadPayload();
+			$this->httpObject->request->loadPayload();
 		}
 
 		$class = Constant::$NULL;
@@ -157,7 +157,7 @@ class Api
 			)
 		) {
 			$supplementClassFileName = ucfirst(
-				string: $this->httpObject->httpRequestObject->routeParserObject->routeElementArray[1]
+				string: $this->httpObject->request->routeParser->routeElementArray[1]
 			);
 			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIRECTORY
 					. DIRECTORY_SEPARATOR . 'Cron'
@@ -177,7 +177,7 @@ class Api
 			)
 		) {
 			$supplementClassFileName = ucfirst(
-				string: $this->httpObject->httpRequestObject->routeParserObject->routeElementArray[1]
+				string: $this->httpObject->request->routeParser->routeElementArray[1]
 			);
 			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIRECTORY
 					. DIRECTORY_SEPARATOR . 'Custom'
@@ -197,7 +197,7 @@ class Api
 			)
 		) {
 			$supplementClassFileName = ucfirst(
-				string: $this->httpObject->httpRequestObject->routeParserObject->routeElementArray[1]
+				string: $this->httpObject->request->routeParser->routeElementArray[1]
 			);
 			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIRECTORY
 					. DIRECTORY_SEPARATOR . 'Upload'
@@ -217,7 +217,7 @@ class Api
 			)
 		) {
 			$supplementClassFileName = ucfirst(
-				string: $this->httpObject->httpRequestObject->routeParserObject->routeElementArray[1]
+				string: $this->httpObject->request->routeParser->routeElementArray[1]
 			);
 			$supplementClassFileLocation = Constant::$SUPPLEMENT_DIRECTORY
 					. DIRECTORY_SEPARATOR . 'ThirdParty'
@@ -240,7 +240,7 @@ class Api
 						)
 					) {
 						$classFileName = ucfirst(
-							string: $this->httpObject->httpRequestObject->routeParserObject->routeElementArray[1]
+							string: $this->httpObject->request->routeParser->routeElementArray[1]
 						);
 						$classFileLocation = Constant::$SUPPLEMENT_DIRECTORY
 								. DIRECTORY_SEPARATOR . 'Dropbox'
@@ -255,7 +255,7 @@ class Api
 						}
 					} elseif (
 						$this->checkSupplement(
-							Env::$ROUTES_KEYWORD
+							$this->httpObject->Env->ROUTES_KEYWORD
 						)
 					) {
 						$class = __NAMESPACE__ . '\\Route';
@@ -300,16 +300,16 @@ class Api
 		// Execute Post Route Hook
 		if (
 			isset($this->httpObject)
-			&& isset($this->httpObject->httpRequestObject)
-			&& isset($this->httpObject->httpRequestObject->routeParserObject)
-			&& isset($this->httpObject->httpRequestObject->routeParserObject->routeHook)
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeHook !== Constant::$NULL
+			&& isset($this->httpObject->request)
+			&& isset($this->httpObject->request->routeParser)
+			&& isset($this->httpObject->request->routeParser->routeHook)
+			&& $this->httpObject->request->routeParser->routeHook !== Constant::$NULL
 			&& is_array(
-				value: $this->httpObject->httpRequestObject->routeParserObject->routeHook
+				value: $this->httpObject->request->routeParser->routeHook
 			)
 		) {
 			$postRouteHookArray = [];
-			foreach ($this->httpObject->httpRequestObject->routeParserObject->routeHook as $element => &$hookArray) {
+			foreach ($this->httpObject->request->routeParser->routeHook as $element => &$hookArray) {
 				if (isset($hookArray['__POST-ROUTE-HOOK__'])) {
 					$postRouteHookConfig = $hookArray['__POST-ROUTE-HOOK__'];
 					if (
@@ -377,8 +377,8 @@ class Api
 		$supplementMode
 	): bool {
 		return (
-			$this->httpObject->httpRequestObject->routeParserObject->routeStartingWithReservedKeywordFlag
-			&& $this->httpObject->httpRequestObject->routeParserObject->routeStartingReservedKeyword === $supplementMode
+			$this->httpObject->request->routeParser->routeStartingWithReservedKeywordFlag
+			&& $this->httpObject->request->routeParser->routeStartingReservedKeyword === $supplementMode
 		);
 	}
 

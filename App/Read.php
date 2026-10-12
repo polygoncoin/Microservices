@@ -116,7 +116,7 @@ class Read
 			customerId: $this->httpObject->httpReqData['active']['customerId']
 		);
 
-		if (isset($sqlConfig['__DOWNLOAD__'])) {
+		if (isset($sqlConfig['__EXPORT__'])) {
 			return $this->download(
 				readSqlConfig: $sqlConfig
 			);
@@ -129,9 +129,9 @@ class Read
 
 		if (
 			(
-				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicRequest
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebRequest
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiRequest
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->request->isPublicRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->request->isPrivateWebRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->request->isPrivateApiRequest
 			)
 			&& $toBeCached
 		) {
@@ -143,14 +143,14 @@ class Read
 				header: Constant::$FALSE
 			);
 		} else {
-			$this->dataEncodeObject = &$this->httpObject->httpResponseObject->dataEncodeObject;
+			$this->dataEncodeObject = &$this->httpObject->response->dataEncodeObject;
 		}
 
 		// Set Server mode to execute query on - Read / Write Server
 		$fetchDbMode = $sqlConfig['__FETCH-MODE__'] ?? 'Slave';
 		$placeholderModeKey = strtoupper($fetchDbMode) . '_DB_PLACEHOLDER';
 		$this->placeholderMode = $this->httpObject->Env->$placeholderModeKey;
-		$this->httpObject->databaseObject = DbCommonFunction::connectDatabase(
+		$this->httpObject->db = DbCommonFunction::connectDatabase(
 			customerId: $this->httpObject->httpReqData['active']['customerId'],
 			fetchDbMode: $fetchDbMode
 		);
@@ -163,19 +163,19 @@ class Read
 
 		if (
 			(
-				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->httpRequestObject->isPublicRequest
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->httpRequestObject->isPrivateWebRequest
-				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->httpRequestObject->isPrivateApiRequest
+				$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC && $this->httpObject->request->isPublicRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB && $this->httpObject->request->isPrivateWebRequest
+				|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API && $this->httpObject->request->isPrivateApiRequest
 			)
 			&& $toBeCached
 		) {
 			$json = $this->dataEncodeObject->getData();
-			$this->httpObject->queryCacheObject->queryCacheSet(
+			$this->httpObject->queryCache->queryCacheSet(
 				customerId: $this->httpObject->httpReqData['active']['customerId'],
 				queryCacheKey: $sqlConfig['__CACHE-KEY__'],
 				queryCacheValue: $json
 			);
-			$this->httpObject->httpResponseObject->dataEncodeObject->appendData(
+			$this->httpObject->response->dataEncodeObject->appendData(
 				data: $json
 			);
 		}
@@ -208,7 +208,7 @@ class Read
 			objectKey: 'Results'
 		);
 
-		$readPayloadDataType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+		$readPayloadDataType = $this->httpObject->request->dataDecodeObject->dataType(
 			keyString: Constant::$NULL
 		);
 
@@ -232,7 +232,7 @@ class Read
 		}
 
 		$indexCount = $readPayloadDataType === 'Array'
-			? $this->httpObject->httpRequestObject->dataDecodeObject->count() : 1;
+			? $this->httpObject->request->dataDecodeObject->count() : 1;
 
 		// Start Read operation
 		for ($index = 0; $index < $indexCount; $index++) {
@@ -257,7 +257,7 @@ class Read
 
 				$this->dataEncodeObject->addKeyData(
 					objectKey: $this->httpObject->Env->PAYLOAD_KEY_IN_RESPONSE,
-					data: $this->httpObject->httpRequestObject->dataDecodeObject->getCompleteArray(
+					data: $this->httpObject->request->dataDecodeObject->getCompleteArray(
 						keyString: $readPayloadKey
 					)
 				);
@@ -305,7 +305,7 @@ class Read
 		);
 
 		// For isObject
-		$dataType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+		$dataType = $this->httpObject->request->dataDecodeObject->dataType(
 			keyString: $readParentPayloadKey
 		);
 		if ($dataType === Constant::$NULL) {
@@ -315,7 +315,7 @@ class Read
 
 		// For indexCount
 		$indexCount = ($isObject || $isObject === Constant::$NULL)
-			? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
+			? 1 : $this->httpObject->request->dataDecodeObject->count(
 				keyString: $readParentPayloadKey
 			);
 
@@ -365,7 +365,7 @@ class Read
 			$readParentCurrentMaintainHierarchy = $readParentMaintainHierarchy;
 			if (
 				$readParentCurrentMaintainHierarchy
-				&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+				&& !$this->httpObject->request->dataDecodeObject->isset(
 					keyString: $readParentCurrentPayloadKey
 				)
 			) {
@@ -376,7 +376,7 @@ class Read
 			}
 
 			// For isObject
-			$dataType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+			$dataType = $this->httpObject->request->dataDecodeObject->dataType(
 				keyString: $readParentCurrentPayloadKey
 			);
 			if ($dataType === Constant::$NULL) {
@@ -385,7 +385,7 @@ class Read
 			$isObject = $dataType === 'Object';
 
 			// For Payload
-			$readParentPayload = $this->httpObject->httpRequestObject->dataDecodeObject->getObject(
+			$readParentPayload = $this->httpObject->request->dataDecodeObject->getObject(
 				keyString: $readParentCurrentPayloadKey
 			);
 
@@ -526,7 +526,7 @@ class Read
 					value: $readParentSqlConfig['__AFFECTED-CACHE-KEY__']
 				);
 				for ($index = 0; $index < $indexCount; $index++) {
-					$this->httpObject->queryCacheObject->queryCacheDelete(
+					$this->httpObject->queryCache->queryCacheDelete(
 						customerId: $this->httpObject->httpReqData['active']['customerId'],
 						queryCacheKey: $readParentSqlConfig['__AFFECTED-CACHE-KEY__'][$index]
 					);
@@ -594,7 +594,7 @@ class Read
 			);
 			if (
 				$readChildModuleMaintainHierarchy
-				&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+				&& !$this->httpObject->request->dataDecodeObject->isset(
 					keyString: $readChildModulePayloadKey
 				)
 			) {
@@ -605,7 +605,7 @@ class Read
 			}
 
 			// For isObject
-			$dataType = $this->httpObject->httpRequestObject->dataDecodeObject->dataType(
+			$dataType = $this->httpObject->request->dataDecodeObject->dataType(
 				keyString: $readChildModulePayloadKey
 			);
 			if ($dataType === Constant::$NULL) {
@@ -615,7 +615,7 @@ class Read
 
 			// For indexCount
 			$indexCount = ($isObject || $isObject === Constant::$NULL)
-				? 1 : $this->httpObject->httpRequestObject->dataDecodeObject->count(
+				? 1 : $this->httpObject->request->dataDecodeObject->count(
 					keyString: $readChildModulePayloadKey
 				);
 
@@ -645,7 +645,7 @@ class Read
 				$readChildModuleCurrentMaintainHierarchy = $readChildModuleMaintainHierarchy;
 				if (
 					$readChildModuleCurrentMaintainHierarchy
-					&& !$this->httpObject->httpRequestObject->dataDecodeObject->isset(
+					&& !$this->httpObject->request->dataDecodeObject->isset(
 						keyString: $readChildModuleCurrentPayloadKey
 					)
 				) {
@@ -720,12 +720,12 @@ class Read
 			);
 		}
 
-		$this->httpObject->databaseObject->execQuery(
+		$this->httpObject->db->execQuery(
 			sql: $sql,
 			paramArray: $paramArray
 		);
-		$dbFetchedRecord = $this->httpObject->databaseObject->fetch();
-		$this->httpObject->databaseObject->closeCursor();
+		$dbFetchedRecord = $this->httpObject->db->fetch();
+		$this->httpObject->db->closeCursor();
 
 		$totalRecordsCount = isset($dbFetchedRecord['count']) ? $dbFetchedRecord['count'] : 0;
 		$totalPages = ceil(
@@ -792,11 +792,11 @@ class Read
 			);
 		}
 
-		$this->httpObject->databaseObject->execQuery(
+		$this->httpObject->db->execQuery(
 			sql: $sql,
 			paramArray: $paramArray
 		);
-		if ($dbFetchedRecord = $this->httpObject->databaseObject->fetch()) {
+		if ($dbFetchedRecord = $this->httpObject->db->fetch()) {
 			foreach ($dbFetchedRecord as $objectKey => &$objectKeyValue) {
 				$this->dataEncodeObject->addKeyData(
 					objectKey: $objectKey,
@@ -826,11 +826,11 @@ class Read
 			}
 		} else {
 			if ($readIsFirstCall) {
-				$this->httpObject->httpResponseObject->httpStatus = HttpStatus::$NotFound;
+				$this->httpObject->response->httpStatus = HttpStatus::$NotFound;
 				return;
 			}
 		}
-		$this->httpObject->databaseObject->closeCursor();
+		$this->httpObject->db->closeCursor();
 
 		// For Child
 		if (isset($readSqlConfig['__SUB-CONFIG__'])) {
@@ -931,14 +931,14 @@ class Read
 		}
 
 		$pushPop = Constant::$TRUE;
-		$this->httpObject->databaseObject->execQuery(
+		$this->httpObject->db->execQuery(
 			sql: $sql,
 			paramArray: $paramArray,
 			pushPop: $pushPop
 		);
 
 		$singleColumn = Constant::$FALSE;
-		for ($index = 0; $dbFetchedRecord = $this->httpObject->databaseObject->fetch(); $index++) {
+		for ($index = 0; $dbFetchedRecord = $this->httpObject->db->fetch(); $index++) {
 			if ($index === 0) {
 				if (
 					count(
@@ -981,7 +981,7 @@ class Read
 				);
 			}
 		}
-		$this->httpObject->databaseObject->closeCursor(
+		$this->httpObject->db->closeCursor(
 			pushPop: $pushPop
 		);
 	}
@@ -998,11 +998,11 @@ class Read
 	): array {
 		$return = [[], '', HttpStatus::$Ok];
 
-		if (!$this->httpObject->Env->ENABLE_DOWNLOAD) {
+		if (!$this->httpObject->Env->ENABLE_EXPORT) {
 			return [[], '', HttpStatus::$NotFound];
 		}
 
-		$readPayload = $this->httpObject->httpRequestObject->dataDecodeObject->getObject(
+		$readPayload = $this->httpObject->request->dataDecodeObject->getObject(
 			keyString: Constant::$NULL
 		);
 
@@ -1035,7 +1035,7 @@ class Read
 		// Export
 		CommonFunction::checkCidr(
 			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
-			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_download_cidr']
+			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_export_cidr']
 		);
 		$export = new Export(
 			httpObject: $this->httpObject,

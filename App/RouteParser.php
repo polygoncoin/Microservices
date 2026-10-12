@@ -154,7 +154,10 @@ class RouteParser
 			isset($this->routeElementArray[1])
 			&& $this->routeElementArray[1] === $this->httpObject->Env->DROPBOX_KEYWORD
 		) {
-			if ($this->httpObject->httpRequestObject->isPrivateRequest) {
+			if (
+				$this->httpObject->request->isPrivateWebRequest
+				|| $this->httpObject->request->isPrivateApiRequest
+			) {
 				if (!$this->httpObject->Env->ENABLE_DROPBOX) {
 					throw new \Exception(
 						message: 'Route not supported',
@@ -349,7 +352,7 @@ class RouteParser
 						mode: 'input'
 					)
 				) {
-					$this->httpObject->httpRequestObject->INPUT_REPRESENTATION = $routeConfig['__INPUT-REPRESENTATION__'];
+					$this->httpObject->request->INPUT_REPRESENTATION = $routeConfig['__INPUT-REPRESENTATION__'];
 				}
 			}
 		}
@@ -364,7 +367,7 @@ class RouteParser
 				mode: 'input'
 			)
 		) {
-			$this->httpObject->httpRequestObject->INPUT_REPRESENTATION = $this->httpObject->httpReqData['get']['inputRepresentation'];
+			$this->httpObject->request->INPUT_REPRESENTATION = $this->httpObject->httpReqData['get']['inputRepresentation'];
 		}
 
 		$this->configuredRoute = '/' . implode(

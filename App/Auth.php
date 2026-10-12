@@ -63,19 +63,19 @@ class Auth
 	public function loadUserData(): void
 	{
 		if (
-			$this->httpObject->httpRequestObject->isPrivateWebRequest
+			$this->httpObject->request->isPrivateWebRequest
 			&& isset($this->httpObject->httpReqData['header']['cookie'][$this->httpObject->Env->SESSION_COOKIE_NAME])
 		) {
-			$this->httpObject->sessionObject = new Session(
+			$this->httpObject->webSession = new Session(
 				httpObject: $this->httpObject
 			);
 
-			$this->httpObject->sessionObject->initSessionHandler();
-			$this->httpObject->sessionObject->startReadonly();
+			$this->httpObject->webSession->initSessionHandler();
+			$this->httpObject->webSession->startReadonly();
 
 			$this->httpObject->httpReqData['active']['customerUserData'] = $_SESSION;
 		} elseif (
-			$this->httpObject->httpRequestObject->isPrivateApiRequest
+			$this->httpObject->request->isPrivateApiRequest
 			&& isset($this->httpObject->httpReqData['active']['authId'])
 			&& $this->httpObject->httpReqData['active']['authId'] !== Constant::$NULL
 		) {
@@ -83,7 +83,7 @@ class Auth
 				apiToken: $this->httpObject->httpReqData['active']['authId']
 			);
 			if (
-				!$this->httpObject->cacheObject->cacheExist(
+				!$this->httpObject->cache->cacheExist(
 					cacheKey: $apiTokenKey
 				)
 			) {
@@ -92,7 +92,7 @@ class Auth
 					code: HttpStatus::$BadRequest
 				);
 			}
-			$this->httpObject->httpReqData['active']['customerUserData'] = $this->httpObject->cacheObject->cacheGet(
+			$this->httpObject->httpReqData['active']['customerUserData'] = $this->httpObject->cache->cacheGet(
 				cacheKey: $apiTokenKey
 			);
 		} else {
@@ -139,11 +139,11 @@ class Auth
 			customerUserGroupId: $this->httpObject->httpReqData['active']['customerUserGroupId']
 		);
 		if (
-			$this->httpObject->cacheObject->cacheExist(
+			$this->httpObject->cache->cacheExist(
 				cacheKey: $groupCacheKey
 			)
 		) {
-			$this->httpObject->httpReqData['active']['customerUserGroupData'] = $this->httpObject->cacheObject->cacheGet(
+			$this->httpObject->httpReqData['active']['customerUserGroupData'] = $this->httpObject->cache->cacheGet(
 				cacheKey: $groupCacheKey
 			);
 		} else {
@@ -158,7 +158,7 @@ class Auth
 			cidrString: $this->httpObject->httpReqData['active']['customerUserGroupData']['customer_user_group_cidr']
 		);
 
-		$this->httpObject->httpReqData['active']['groupData'] = $this->httpObject->cacheObject->cacheGet(
+		$this->httpObject->httpReqData['active']['groupData'] = $this->httpObject->cache->cacheGet(
 			cacheKey: $groupCacheKey
 		);
 	}

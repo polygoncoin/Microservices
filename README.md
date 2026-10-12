@@ -97,7 +97,7 @@ Below are route level CIDR settings for a set of system routes (starting / endin
 `customer`.`customer_custom_cidr` VARCHAR(250) DEFAULT NULL
 `customer`.`customer_dropbox_cidr` VARCHAR(250) DEFAULT NULL
 `customer`.`customer_explain_cidr` VARCHAR(250) DEFAULT NULL
-`customer`.`customer_download_cidr` VARCHAR(250) DEFAULT NULL
+`customer`.`customer_export_cidr` VARCHAR(250) DEFAULT NULL
 `customer`.`customer_import_sample_cidr` VARCHAR(250) DEFAULT NULL
 `customer`.`customer_import_cidr` VARCHAR(250) DEFAULT NULL
 `customer`.`customer_reload_cidr` VARCHAR(250) DEFAULT NULL

@@ -99,13 +99,6 @@ class HttpRequest
 	public $isPrivateApiRequest = null;
 
 	/**
-	 * Flag for Private request
-	 * 
-	 * @var null|bool
-	 */
-	public $isPrivateRequest = null;
-
-	/**
 	 * Domain cache key
 	 * 
 	 * @var null|bool
@@ -122,7 +115,7 @@ class HttpRequest
 	 * 
 	 * @var null|RouteParser
 	 */
-	public $routeParserObject = null;
+	public $routeParser = null;
 
 	/**
 	 * HTTP object
@@ -130,6 +123,8 @@ class HttpRequest
 	 * @var null|Http
 	 */
 	private $httpObject = null;
+
+	private $temp = null;
 
 	/**
 	 * Constructor
@@ -153,26 +148,19 @@ class HttpRequest
 		$this->isPrivateWebRequest = Constant::$FALSE;
 		$this->isPrivateApiRequest = Constant::$FALSE;
 
-		if ($this->httpObject->Env->ENABLE_PUBLIC_DOMAIN) {
-			$publicDomainCacheKey = CacheServerKey::publicDomain(
-				domainName: $this->httpObject->httpReqData['server']['domainName']
-			);
-			if (
-				DbCommonFunction::$globalCacheObject->cacheExist(
-					cacheKey: $publicDomainCacheKey
-				)
-			) {
-				$this->isPublicRequest = Constant::$TRUE;
-				$this->domainCacheKey = $publicDomainCacheKey;
-				$this->isPrivateRequest = Constant::$FALSE;
-				$this->isPublicRequest = Constant::$TRUE;
-			}
+		$publicDomainCacheKey = CacheServerKey::publicDomain(
+			domainName: $this->httpObject->httpReqData['server']['domainName']
+		);
+		if (
+			DbCommonFunction::$globalCacheObject->cacheExist(
+				cacheKey: $publicDomainCacheKey
+			)
+		) {
+			$this->isPublicRequest = Constant::$TRUE;
+			$this->domainCacheKey = $publicDomainCacheKey;
 		}
 
-		if (
-			$this->httpObject->Env->ENABLE_PRIVATE_WEB_DOMAIN
-			&& !$this->isPublicRequest
-		) {
+		if (!$this->isPublicRequest) {
 			$privateWebDomainCacheKey = CacheServerKey::privateWebDomain(
 				domainName: $this->httpObject->httpReqData['server']['domainName']
 			);
@@ -183,14 +171,11 @@ class HttpRequest
 			) {
 				$this->isPrivateWebRequest = Constant::$TRUE;
 				$this->domainCacheKey = $privateWebDomainCacheKey;
-				$this->isPrivateRequest = Constant::$TRUE;
-				$this->isPublicRequest = Constant::$FALSE;
 			}
 		}
 
 		if (
-			$this->httpObject->Env->ENABLE_PRIVATE_API_DOMAIN
-			&& !$this->isPublicRequest
+			!$this->isPublicRequest
 			&& !$this->isPrivateWebRequest
 		) {
 			$privateApiDomainCacheKey = CacheServerKey::privateApiDomain(
@@ -203,20 +188,28 @@ class HttpRequest
 			) {
 				$this->isPrivateApiRequest = Constant::$TRUE;
 				$this->domainCacheKey = $privateApiDomainCacheKey;
-				$this->isPrivateRequest = Constant::$TRUE;
-				$this->isPublicRequest = Constant::$FALSE;
 			}
 		}
-////////////////////////////
-		$this->httpObject->httpReqData['active']['customerData'] = DbCommonFunction::$globalCacheObject->cacheGet(
-			cacheKey: $this->domainCacheKey
-		);
-		$this->httpObject->httpReqData['active']['customerId'] = $this->httpObject->httpReqData['active']['customerData']['customer_id'];
+		if (
+			$this->isPublicRequest
+			|| $this->isPrivateWebRequest
+			|| $this->isPrivateApiRequest
+		) {
+			$this->httpObject->httpReqData['active']['customerData'] = DbCommonFunction::$globalCacheObject->cacheGet(
+				cacheKey: $this->domainCacheKey
+			);
+			$this->httpObject->httpReqData['active']['customerId'] = $this->httpObject->httpReqData['active']['customerData']['customer_id'];
 
-		Env::loadEnv(
-			customerId: $this->httpObject->httpReqData['active']['customerId']
-		);
-		$this->httpObject->Env = Env::$config[$this->httpObject->httpReqData['active']['customerId']];
+			CommonFunction::checkCidr(
+				ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
+				cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_cidr']
+			);
+
+			Env::loadEnv(
+				customerId: $this->httpObject->httpReqData['active']['customerId']
+			);
+			$this->httpObject->Env = Env::$config[$this->httpObject->httpReqData['active']['customerId']];
+		}
 	}
 
 	/**
@@ -226,83 +219,49 @@ class HttpRequest
 	 */
 	public function init(): bool
 	{
-		CommonFunction::checkCidr(
-			ip: $this->httpObject->httpReqData['server']['httpRequestIp'],
-			cidrString: $this->httpObject->httpReqData['active']['customerData']['customer_cidr']
-		);
 		if (
 			!$this->isPublicRequest
 			&& !$this->isPrivateWebRequest
 			&& !$this->isPrivateApiRequest
-			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/' . $this->httpObject->Env->RELOAD_KEYWORD
 		) {
 			throw new \Exception(
-				message: "Invalid domain: '{$this->httpObject->httpReqData['server']['domainName']}'",
+				message: "Invalid domain : '{$this->httpObject->httpReqData['server']['domainName']}'",
 				code: HttpStatus::$BadRequest
 			);
 		}
 
-		if ($this->isPublicRequest) {
-			throw new \Exception(
-				message: 'Public request are disabled',
-				code: HttpStatus::$BadRequest
+		if (
+			$this->isPublicRequest && $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC
+			|| $this->isPrivateWebRequest && $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB
+			|| $this->isPrivateApiRequest && $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API
+		) {
+			$this->httpObject->queryCache = new QueryCache(
+				$this->httpObject
 			);
 		}
 
 		if (
 			$this->isPrivateWebRequest
-			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
+			|| $this->isPrivateApiRequest
 		) {
-			throw new \Exception(
-				message: 'Session based request are disabled',
-				code: HttpStatus::$BadRequest
-			);
-		}
-
-		if (
-			$this->isPrivateApiRequest
-			&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-		) {
-			throw new \Exception(
-				message: 'Token based request are disabled',
-				code: HttpStatus::$BadRequest
-			);
-		}
-
-		if (
-			(
-				$this->isPublicRequest
-				&& $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PUBLIC
-			)
-			|| (
-				$this->isPrivateRequest
-				&& (
-					$this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_WEB
-					|| $this->httpObject->Env->ENABLE_QUERY_CACHE_FOR_PRIVATE_API
-				)
-			)
-		) {
-			$this->httpObject->queryCacheObject = new QueryCache(
-				$this->httpObject
-			);
-		}
-
-		if ($this->isPrivateRequest) {
-			$this->httpObject->cacheObject = DbCommonFunction::connectCache(
+			$this->httpObject->cache = DbCommonFunction::connectCache(
 				customerId: $this->httpObject->httpReqData['active']['customerId']
 			);
-			$this->httpObject->rateLimiterObject = new RateLimiter(
+			$this->httpObject->rateLimiter = new RateLimiter(
 				httpObject: $this->httpObject
 			);
 		}
 
 		if ($this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login') {
-			$configDir = Constant::$CUSTOMER_CONFIG_DIRECTORY
+			$configDir = Constant::$CONFIG_DIRECTORY
 				. DIRECTORY_SEPARATOR . $this->httpObject->Env->CUSTOMER_CONFIG_DIRECTORY;
-			$commonConfigDir = Constant::$CUSTOMER_CONFIG_DIRECTORY
+			$commonConfigDir = Constant::$CONFIG_DIRECTORY
 				. DIRECTORY_SEPARATOR . 'Common';
 
-			if ($this->isPrivateRequest) {
+			if (
+				$this->isPrivateWebRequest
+				|| $this->isPrivateApiRequest
+			) {
 				$this->authObject = new Auth(
 					httpObject: $this->httpObject
 				);
@@ -353,10 +312,10 @@ class HttpRequest
 			$this->httpObject->httpReqData['active']['commonRouteDir'] = $commonRouteDir;
 			$this->httpObject->httpReqData['active']['commonSqlDir'] = $commonSqlDir;
 
-			$this->routeParserObject = new RouteParser(
+			$this->routeParser = new RouteParser(
 				httpObject: $this->httpObject
 			);
-			$this->routeParserObject->parseRoute();
+			$this->routeParser->parseRoute();
 		}
 
 		return Constant::$TRUE;
@@ -436,8 +395,8 @@ class HttpRequest
 				switch (Constant::$TRUE) {
 					case (
 						$this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] !== '/login'
-						&& $this->routeParserObject->routeEndingWithReservedKeywordFlag
-						&& ($this->routeParserObject->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_CSV_KEYWORD)
+						&& $this->routeParser->routeEndingWithReservedKeywordFlag
+						&& ($this->routeParser->routeEndingReservedKeyword === $this->httpObject->Env->IMPORT_CSV_KEYWORD)
 						&& isset($this->httpObject->httpReqData['files']['file']['tmp_name'])
 					):
 						CommonFunction::checkCidr(
@@ -450,7 +409,7 @@ class HttpRequest
 							$this->httpObject->httpReqData['files']['file']['tmp_name']
 						);
 
-						$this->httpObject->databaseObject = DbCommonFunction::connectDatabase(
+						$this->httpObject->db = DbCommonFunction::connectDatabase(
 							customerId: $this->httpObject->httpReqData['active']['customerId'],
 							fetchDbMode: 'Master'
 						);
@@ -483,11 +442,11 @@ class HttpRequest
 						$paramArray[':uploaded_file_md5'] = $uploadedFileMd5;
 						$paramArray[':request_ip'] = $this->httpObject->httpReqData['server']['httpRequestIp'];
 
-						$this->httpObject->databaseObject->execQuery(
+						$this->httpObject->db->execQuery(
 							sql: $sql,
 							paramArray: $paramArray
 						);
-						$importFileMd5Id = $this->httpObject->databaseObject->lastInsertId();
+						$importFileMd5Id = $this->httpObject->db->lastInsertId();
 
 						$payloadJson = $this->formatCsvPayload(
 							csvFile: $this->httpObject->httpReqData['files']['file']['tmp_name']
@@ -548,11 +507,11 @@ class HttpRequest
 		";
 		$paramArray[':uploaded_file_md5'] = $uploadedFileMd5;
 
-		$this->httpObject->databaseObject->execQuery(
+		$this->httpObject->db->execQuery(
 			sql: $sql,
 			paramArray: $paramArray
 		);
-		if ($record = $this->httpObject->databaseObject->fetch()) {
+		if ($record = $this->httpObject->db->fetch()) {
 			$uploadedFileMd5Data = &$record;
 		}
 
@@ -582,7 +541,10 @@ class HttpRequest
 		&$payloadJson
 	): int {
 		$requestId = 0;
-		if ($this->isPrivateRequest) {
+		if (
+			$this->isPrivateWebRequest
+			|| $this->isPrivateApiRequest
+		) {
 			$sql = 'INSERT INTO `request` SET
 				customer_id = :customer_id,
 				customer_user_group_id = :customer_user_group_id,
@@ -625,7 +587,10 @@ class HttpRequest
 		&$payloadJson
 	): int {
 		$logId = 0;
-		if ($this->isPrivateRequest) {
+		if (
+			$this->isPrivateWebRequest
+			|| $this->isPrivateApiRequest
+		) {
 			$sql = 'INSERT INTO `debug_log` SET
 				debug_mode = :debug_mode,
 				request_id = :request_id,
@@ -680,7 +645,10 @@ class HttpRequest
 		&$payloadJson
 	): int {
 		$logId = 0;
-		if ($this->isPrivateRequest) {
+		if (
+			$this->isPrivateWebRequest
+			|| $this->isPrivateApiRequest
+		) {
 			$sql = 'INSERT INTO `error_log` SET
 				request_id = :request_id,
 				customer_id = :customer_id,

@@ -41,7 +41,7 @@ return [
 			'__FILE__' => $this->httpObject->httpReqData['active']['commonSqlDir']
 					. DIRECTORY_SEPARATOR . 'Category-Single.php',
 		],
-		'download' => [
+		'export' => [
 			'__FILE__' => $this->httpObject->httpReqData['active']['commonSqlDir']
 					. DIRECTORY_SEPARATOR . 'Download.php',
 		]

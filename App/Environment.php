@@ -65,6 +65,10 @@ class Environment
     // ;; Encryption secret setting
     public $SECRET = null;
 
+    // ;; Concurrent logins
+    public $ENABLE_CONCURRENT_LOGIN = null;
+    public $CONCURRENT_LOGIN_COUNT = null;
+
     // ;; Payload settings
     public $ENABLE_PAYLOAD_IN_RESPONSE = null;
     public $PAYLOAD_KEY_IN_RESPONSE = null;
@@ -114,9 +118,9 @@ class Environment
     public $IMPORT_SAMPLE_KEYWORD = null;
 
     // ;; Download client location for export CSV
-    public $ENABLE_DOWNLOAD = null;
-    public $DOWNLAOD_KEYWORD = null;
-    public $DOWNLOAD_CLIENT_LOCATION = null;
+    public $ENABLE_EXPORT = null;
+    public $EXPORT_KEYWORD = null;
+    public $EXPORT_CLIENT_LOCATION = null;
 
 
     // ;

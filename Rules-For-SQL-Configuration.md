@@ -396,7 +396,7 @@ return [
 return [
 	// Query to perform task
 	'__SQL-COMMENT__' => 'Comment prepended to query for monitoring queries in logs',
-	'__DOWNLOAD__' => 'SELECT columns FROM TableName WHERE __WHERE__',
+	'__EXPORT__' => 'SELECT columns FROM TableName WHERE __WHERE__',
 	// Where clause of the Query to perform task
 	'__WHERE__' => [
 		[

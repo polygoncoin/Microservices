@@ -59,12 +59,11 @@ class Gateway
 	 */
 	public function init(): bool
 	{
-		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
-			$this->httpObject->httpRequestObject->authObject->loadUserData();
-			CommonFunction::checkPrivateRequestCidr(
-				httpObject: $this->httpObject
-			);
-
+		if (
+			$this->httpObject->request->isPrivateWebRequest
+			|| $this->httpObject->request->isPrivateApiRequest
+		) {
+			$this->httpObject->request->authObject->loadUserData();
 			$this->rateLimitRequest();
 		}
 
@@ -78,7 +77,10 @@ class Gateway
 	 */
 	private function rateLimitRequest(): void
 	{
-		if ($this->httpObject->httpRequestObject->isPrivateRequest) {
+		if (
+			$this->httpObject->request->isPrivateWebRequest
+			|| $this->httpObject->request->isPrivateApiRequest
+		) {
 			// IP Rate Limiting
 			$this->rateLimitIp();
 
@@ -100,7 +102,7 @@ class Gateway
 	 */
 	private function rateLimitCustomer(): void
 	{
-		$this->httpObject->rateLimiterObject->rateLimitFeature(
+		$this->httpObject->rateLimiter->rateLimitFeature(
 			feature: 'CUSTOMER'
 		);
 	}
@@ -112,7 +114,7 @@ class Gateway
 	 */
 	private function rateLimitUser(): void
 	{
-		$this->httpObject->rateLimiterObject->rateLimitFeature(
+		$this->httpObject->rateLimiter->rateLimitFeature(
 			feature: 'USER'
 		);
 	}
@@ -124,7 +126,7 @@ class Gateway
 	 */
 	private function rateLimitUserRequest(): void
 	{
-		$this->httpObject->rateLimiterObject->rateLimitFeature(
+		$this->httpObject->rateLimiter->rateLimitFeature(
 			feature: 'USER_ROUTE'
 		);
 	}
@@ -136,7 +138,7 @@ class Gateway
 	 */
 	private function rateLimitIp(): void
 	{
-		$this->httpObject->rateLimiterObject->rateLimitFeature(
+		$this->httpObject->rateLimiter->rateLimitFeature(
 			feature: 'CUSTOMER_IP'
 		);
 	}
