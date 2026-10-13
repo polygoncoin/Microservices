@@ -375,7 +375,8 @@ class RouteParser
 			routeStartingKeyword: $routeStartingKeyword
 		);
 		if (
-			in_array(
+			is_array($this->reservedRoutesPrefix)
+			&& in_array(
 				needle: $routeStartingKeyword,
 				haystack: $this->reservedRoutesPrefix,
 				strict: Constant::$TRUE

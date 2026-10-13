@@ -264,7 +264,7 @@ class Api
 						$class = __NAMESPACE__ . '\\Route';
 					} elseif (
 						$this->httpObject->Env->ENABLE_RELOAD
-						&& $httpReqData['get'][ROUTE_URL_PARAM] === '/' . $this->httpObject->Env->RELOAD_KEYWORD
+						&& $this->httpObject->httpReqData['get'][ROUTE_URL_PARAM] === '/' . $this->httpObject->Env->RELOAD_KEYWORD
 					) {
 						$class = __NAMESPACE__ . '\\Reload';
 					} else {
