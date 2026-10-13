@@ -5,8 +5,8 @@ use Microservices\App\Constant;
 use Microservices\App\Env;
 use Microservices\App\HttpStatus;
 use Microservices\App\SessionHandler\Session;
-use Microservices\App\Reload;
 use Microservices\App\Start;
+use Microservices\App\SystemReload;
 use Microservices\TestCase\Test;
 
 define('ROOT', realpath(path: __DIR__ . '/../../'));
@@ -159,11 +159,10 @@ if (
 		Env::$SYSTEM_ENABLE_RELOAD
 		&& $httpReqData['get'][ROUTE_URL_PARAM] === '/' . Env::$SYSTEM_RELOAD_KEYWORD
 	) {
-		Reload::init();
-		Reload::process(
+		SystemReload::init();
+		SystemReload::process(
 			httpRequestIp: $httpReqData['server']['httpRequestIp']
 		);
-		return Constant::$FALSE;
 	} else {
 		ob_start();
 		[
