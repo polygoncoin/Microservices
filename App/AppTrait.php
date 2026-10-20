@@ -759,7 +759,7 @@ trait AppTrait
 	/**
 	 * Use results in where clause of sub queries recursively
 	 * 
-	 * @param array  $sqlConfig Sql config
+	 * @param array $sqlConfig Sql config
 	 * 
 	 * @return bool
 	 */
@@ -913,9 +913,9 @@ trait AppTrait
 	/**
 	 * Function to reset data for module key wise
 	 * 
-	 * @param string $activeDataKey sqlResults / sqlParamArray / previousPayload
-	 * @param array  $payloadKeyArray      Module key's in recursion
-	 * @param array  $record               Record data fetched from DB
+	 * @param string $activeDataKey   sqlResults / sqlParamArray / previousPayload
+	 * @param array  $payloadKeyArray Module key's in recursion
+	 * @param array  $record          Record data fetched from DB
 	 * 
 	 * @return void
 	 */

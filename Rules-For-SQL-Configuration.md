@@ -154,8 +154,6 @@ return [
 		 * __VALIDATE__, - for all
 		 * __PAYLOAD-TYPE__, - for all
 		 * __MAX-PAYLOAD-OBJECT__, - for all
-		 * __TRANSACTION__, - for all
-		 * __FOLLOW-SQL_CONFIG-THREAD__, - for all
 		 * __CACHE-KEY__, - for all
 		 * __AFFECTED-CACHE-KEY__, - for all
 		 * 

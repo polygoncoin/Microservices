@@ -188,7 +188,7 @@ class Read
 	 * 
 	 * @param array  $readSqlConfig             Sql config
 	 * @param array  $readOutputRepresentation  Output reepresentation
-	 * @param object $readEncodeObject      Read data encode object
+	 * @param object $readEncodeObject          Read data encode object
 	 * @param bool   $readFollowSqlConfigThread Follow Sql Config Thread
 	 * 
 	 * @return void
@@ -764,12 +764,12 @@ class Read
 	/**
 	 * Fetch dbFetchedRecord count
 	 * 
-	 * @param array  $readSqlConfig            Sql config
+	 * @param array  $readSqlConfig        Sql config
 	 * @param array  $outputRepresentation Output reepresentation
 	 * @param object $encodeObject         Read data encode object
-	 * @param array  $readPayload   Payload
-	 * @param int    $page          Page Number
-	 * @param int    $perPage       Records Per Page
+	 * @param array  $readPayload          Payload
+	 * @param int    $page                 Page Number
+	 * @param int    $perPage              Records Per Page
 	 * 
 	 * @return int
 	 * @throws \Exception
@@ -854,8 +854,8 @@ class Read
 	 * Fetch single record
 	 * 
 	 * @param array  $readSqlConfig             Sql config
-	 * @param array  $outputRepresentation  Output reepresentation
-	 * @param object $encodeObject      Read data encode object
+	 * @param array  $outputRepresentation      Output reepresentation
+	 * @param object $encodeObject              Read data encode object
 	 * @param array  $readPayload               Payload
 	 * @param array  $readPayloadKeyArray
 	 * @param bool   $readFollowSqlConfigThread Follow Sql Config Thread
@@ -951,8 +951,8 @@ class Read
 	 * Fetch multiple record
 	 * 
 	 * @param array  $readSqlConfig             Sql config
-	 * @param array  $outputRepresentation  Output reepresentation
-	 * @param object $encodeObject      Read data encode object
+	 * @param array  $outputRepresentation      Output reepresentation
+	 * @param object $encodeObject              Read data encode object
 	 * @param array  $readPayload               Payload
 	 * @param array  $readPayloadKeyArray
 	 * @param bool   $readFollowSqlConfigThread Follow Sql Config Thread
