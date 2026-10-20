@@ -80,7 +80,7 @@ $response[] = Web::trigger(
 	homeURL: $homeURL,
 	httpRequestMethod: Constant::$POST,
 	route: '/registration-with-address'
-		. '&INPUT_REPRESENTATION=XML&OUTPUT_REPRESENTATION=XML',
+		. '&inputRepresentation=XML&outputRepresentation=XML',
 	header: $publicHeaderArray,
 	payload: $payload
 );
