@@ -148,7 +148,8 @@ class Environment
     public $ENABLE_RATE_LIMITING_LOGIN_IP = null;
     public $ENABLE_RATE_LIMITING_EACH_USER_LOGIN = null;
     public $ENABLE_RATE_LIMITING_EACH_USER_LOGIN_IP = null;
-
+    // ;; Referrer Lag
+    public $ENABLE_RATE_LIMITING_REFERRER_LAG = null;
 
     // ;
     // ; --- Containers detail -------
