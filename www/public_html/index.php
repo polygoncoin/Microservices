@@ -100,8 +100,40 @@ if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
 		characters: '/'
 	);
 } else {
-	die('Missing route');
+	$httpReqData['get'][ROUTE_URL_PARAM] = '/';
 }
+switch (
+	trim(
+		substr(
+			string: $httpReqData['get'][ROUTE_URL_PARAM],
+			start: strlen($httpReqData['get'][ROUTE_URL_PARAM]) - 1,
+			length: -4
+		),
+		'.'
+	)
+) {
+		case 'json':
+			$httpReqData['OUTPUT_REPRESENTATION'] = 'JSON';
+			$httpReqData['INPUT_REPRESENTATION'] = 'JSON';
+			break;
+		case 'xml':
+			$httpReqData['OUTPUT_REPRESENTATION'] = 'XML';
+			$httpReqData['INPUT_REPRESENTATION'] = 'XML';
+			break;
+		case 'xslt':
+			$httpReqData['OUTPUT_REPRESENTATION'] = 'XSLT';
+			$httpReqData['INPUT_REPRESENTATION'] = 'XML';
+			break;
+		case 'html':
+			$httpReqData['OUTPUT_REPRESENTATION'] = 'HTML';
+			$httpReqData['INPUT_REPRESENTATION'] = 'HTML';
+			break;
+		case 'php':
+			$httpReqData['OUTPUT_REPRESENTATION'] = 'PHP';
+			$httpReqData['INPUT_REPRESENTATION'] = 'HTML';
+			break;
+}
+
 
 $httpReqData['post'] = file_get_contents(
 	filename: 'php://input'

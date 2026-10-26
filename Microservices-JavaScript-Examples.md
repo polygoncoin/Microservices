@@ -105,7 +105,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - XML request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address&inputRepresentation=XML&outputRepresentation=XML";
+var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Payload>' +
