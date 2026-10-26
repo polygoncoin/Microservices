@@ -100,40 +100,47 @@ if (isset($httpReqData['get'][ROUTE_URL_PARAM])) {
 		characters: '/'
 	);
 } else {
-	$httpReqData['get'][ROUTE_URL_PARAM] = '/';
+	$httpReqData['get'][ROUTE_URL_PARAM] = '/index.html';
 }
 switch (
-	trim(
-		substr(
-			string: $httpReqData['get'][ROUTE_URL_PARAM],
-			start: strlen($httpReqData['get'][ROUTE_URL_PARAM]) - 1,
-			length: -4
-		),
-		'.'
+	$extension = strtoupper(
+		trim(
+			substr(
+				string: $httpReqData['get'][ROUTE_URL_PARAM],
+				offset: strlen($httpReqData['get'][ROUTE_URL_PARAM]) - 4,
+				length: 4
+			),
+			'.'
+		)
 	)
 ) {
-		case 'json':
+		case 'JSON':
 			$httpReqData['OUTPUT_REPRESENTATION'] = 'JSON';
 			$httpReqData['INPUT_REPRESENTATION'] = 'JSON';
 			break;
-		case 'xml':
+		case 'XML':
 			$httpReqData['OUTPUT_REPRESENTATION'] = 'XML';
 			$httpReqData['INPUT_REPRESENTATION'] = 'XML';
 			break;
-		case 'xslt':
+		case 'XSLT':
 			$httpReqData['OUTPUT_REPRESENTATION'] = 'XSLT';
 			$httpReqData['INPUT_REPRESENTATION'] = 'XML';
 			break;
-		case 'html':
+		case 'HTML':
 			$httpReqData['OUTPUT_REPRESENTATION'] = 'HTML';
 			$httpReqData['INPUT_REPRESENTATION'] = 'HTML';
 			break;
-		case 'php':
+		case 'PHP':
 			$httpReqData['OUTPUT_REPRESENTATION'] = 'PHP';
 			$httpReqData['INPUT_REPRESENTATION'] = 'HTML';
 			break;
 }
 
+$httpReqData['get'][ROUTE_URL_PARAM] = substr(
+	string: $httpReqData['get'][ROUTE_URL_PARAM],
+	offset: 0,
+	length: (strlen($httpReqData['get'][ROUTE_URL_PARAM]) - strlen($extension) - 1)
+);
 
 $httpReqData['post'] = file_get_contents(
 	filename: 'php://input'

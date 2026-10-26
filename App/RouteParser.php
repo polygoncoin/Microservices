@@ -326,6 +326,17 @@ class RouteParser
 			separator: '/',
 			array: $configuredRoute
 		);
+		if (
+			in_array(
+				$this->httpObject->httpReqData['OUTPUT_REPRESENTATION'],
+				['XSLT', 'PHP', 'HTML']
+			)
+		) {
+			$outputRepresentationFile = $this->httpObject->httpReqData['server']['httpRequestMethod']
+				. DIRECTORY_SEPARATOR . str_replace(['{', '}'], ['', ''], $this->configuredRoute)
+				. '.' . strtolower($this->httpObject->httpReqData['OUTPUT_REPRESENTATION']);
+			$this->httpObject->response->encodeObject->outputRepresentationFile = $outputRepresentationFile;
+		}
 		$this->validateConfigFile(
 			routeConfig: $routeConfig
 		);
