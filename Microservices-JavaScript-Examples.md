@@ -3,7 +3,7 @@
 ## Login
 
 ```javascript
-var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/login";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/login.json";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
@@ -32,7 +32,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - GET request
 
 ```javascript
-var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/routes";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/routes.json";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "GET", handlerUrl );
@@ -53,7 +53,7 @@ xmlhttp . send();
 - POST request
 
 ```javascript
-var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/ajax-handler-route";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/ajax-handler-route.json";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "POST", handlerUrl );
@@ -79,7 +79,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - PUT request
 
 ```javascript
-var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/custom/password";
+var handlerUrl = "http://api.customer001.localhost/Microservices/www/public_html/index.php?route=/custom/password.json";
 var xmlhttp = new XMLHttpRequest();
 
 xmlhttp . open( "PUT", handlerUrl );
@@ -105,7 +105,7 @@ xmlhttp . send( JSON.stringify(payload) );
 - XML request example
 
 ```javascript
-var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address";
+var handlerUrl = "http://public.localhost/Microservices/www/public_html/index.php?route=/registration-with-address.json";
 
 var payload = '<?xml version="1.0" encoding="UTF-8" ?>' +
 '<Payload>' +
