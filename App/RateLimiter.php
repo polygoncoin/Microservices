@@ -135,6 +135,9 @@ class RateLimiter
 		$rateLimitDetail = $this->getRateLimitDetail(
 			feature: $feature
 		);
+		if ($rateLimitDetail === null) {
+			return;
+		}
 		try {
 			$result = $this->check(
 				rateLimitDetail: $rateLimitDetail
