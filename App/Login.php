@@ -552,7 +552,7 @@ class Login
 
 				foreach ($customerUserConcurrencyData as $authId => $authData) {
 					if (
-						$this->httpObject->Env->ENABLE_PRIVATE_API_DOMAIN
+						$this->httpObject->request->isPrivateApiRequest
 						&& $authData['authMode'] === 'API Token'
 						&& !$this->cacheExist(
 							cacheKey: CacheServerKey::apiToken(

@@ -86,6 +86,18 @@ return [
 
 - This '{id:int|!0}' means id is integer but can't be zero.
 
+## Data representation
+
+- The input and output format depencds on the extension applied during accessing.
+
+```ini
+route=/category/1.json  ; for JSON 
+route=/category/1.xml   ; for XML
+route=/category/1.xslt  ; for parsing XSLT (ServindFile/XSLT folder)
+route=/category/1.html  ; for HTML (ServindFile/HTML folder)
+route=/category/1.php   ; for PHP (ServindFile/PHP folder)
+```
+
 ## Defining Custom DataTypes
 
 ```PHP
@@ -122,9 +134,9 @@ public static $PrimaryKey = [
 
 Examples:
 
-- route=/registration/explain (returns the payload information)
-- route=/registration/import (import CSV)
-- route=/registration/import-sample (sample CSV download for respective HTTP Method)
+- route=/registration/explain.json (returns the payload information)
+- route=/registration/import.csv (import CSV)
+- route=/registration/import-sample.csv (sample CSV download for respective HTTP Method)
 
 One need to enable same in .env file as below
 
